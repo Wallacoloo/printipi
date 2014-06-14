@@ -20,17 +20,19 @@ std::string readLine(int fd) {
 	while(read(fd, &chr, 1) == 1 && chr != '\n') {
 		if (chr != '\r') {
 			r += chr;
-			printf("c: %c\n", chr);
+			//printf("c: %c\n", chr);
 		}
 	}
 	return r;
 }
+
 void readLoop(int fd) {
 	std::string cmd;
-	//while ((cmd=readLine(fd)).length()) {
+	std::string resp = "TEST\n";
 	while (1) {
 		cmd = readLine(fd);
 		printf("command: %s\n", cmd.c_str());
+		write(fd, resp.c_str(), resp.length());
 	}
 }
 
