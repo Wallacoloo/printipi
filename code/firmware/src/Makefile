@@ -1,9 +1,12 @@
 CC=gcc
 CPP=g++
-CFLAGS=
+CFLAGS=-std=c++11
 
-all: main.o
-	$(CPP) main.cpp -o ../kossel-firmware $(CFLAGS)
+%.o: %.cpp
+	$(CPP) -c -o $@ $< $(CFLAGS)
+
+all: main.o command.o
+	$(CPP) main.o command.o -o ../kossel-firmware $(CFLAGS)
 	
 .PHONY: clean
 
