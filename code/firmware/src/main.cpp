@@ -5,7 +5,10 @@
 #include <stdio.h> //for printf?
 
 #include "gparse/serial.h"
+#include "driver.h"
 //#include "command.h"
+
+Driver driver;
 
 void printUsageAndQuit(char* cmd) {
     std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
@@ -19,7 +22,7 @@ int main(int argc, char** argv) {
     char* serialFileName = argv[1];
     printf("Serial file: %s\n", serialFileName);
     int fd = open(serialFileName, O_RDWR);
-    gparse::readLoop(fd);
+    gparse::comLoop(fd, driver);
     printf("Exiting\n");
     return 0;
 }
