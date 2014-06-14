@@ -1,5 +1,5 @@
 #include <iostream>
-//#include <string.h>
+#include <string.h>
 //#include <sys/types.h>
 //#include <sys/stat.h>
 #include <fcntl.h> //needed for (file) open()
@@ -14,10 +14,23 @@ void printUsageAndQuit(char* cmd) {
     exit(1);
 }
 
-void readLoop(int fd) {
+std::string readLine(int fd) {
+	std::string r;
 	char chr;
-	while (read(fd, &chr, 1) == 1) {
-		printf("%c", chr);
+	while(read(fd, &chr, 1) == 1 && chr != '\n') {
+		if (chr != '\r') {
+			r += chr;
+			printf("c: %c\n", chr);
+		}
+	}
+	return r;
+}
+void readLoop(int fd) {
+	std::string cmd;
+	//while ((cmd=readLine(fd)).length()) {
+	while (1) {
+		cmd = readLine(fd);
+		printf("command: %s\n", cmd.c_str());
 	}
 }
 
