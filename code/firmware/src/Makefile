@@ -2,9 +2,10 @@ CC=gcc
 CPP=g++
 CFLAGS=
 
-clean:
-	rm main.o
-	rm kossel-firmware
-
 all: main.o
-	$(CPP) main.cpp -o kossel-firmware $(CFLAGS)
+	$(CPP) main.cpp -o ../kossel-firmware $(CFLAGS)
+	
+.PHONY: clean
+
+clean: main.o
+	rm main.o
