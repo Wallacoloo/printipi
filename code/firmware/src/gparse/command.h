@@ -19,10 +19,12 @@ class Command {
 		template <typename T> Command execute(T &target) {
 			std::string opcode = getOpcode();
 			Command resp;
-			if (opcode == "M105") {
+			if (opcode == "M105") { //get temperature
 				int t, b;
 				target.getTemperature(t, b);
 				resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
+			} else if (opcode == "M110") { //set current line number
+				resp = Command("ok");
 			} else {
 				throw new std::string("unrecognized gcode opcode");
 			}
