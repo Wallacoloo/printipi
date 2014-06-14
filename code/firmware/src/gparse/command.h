@@ -19,7 +19,9 @@ class Command {
 		template <typename T> Command execute(T &target) {
 			std::string opcode = getOpcode();
 			Command resp;
-			if (opcode == "M105") { //get temperature
+			if (opcode == "M21") { //initialize SD card.
+				resp = Command("ok");
+			} else if (opcode == "M105") { //get temperature
 				int t, b;
 				target.getTemperature(t, b);
 				resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
