@@ -1,5 +1,7 @@
 #include "command.h"
 
+namespace gparse {
+
 Command::Command(std::string &cmd) {
 	//initialize the command from a line of GCode
 	std::string piece;
@@ -16,6 +18,10 @@ Command::Command(std::string &cmd) {
 	}
 }
 
+std::string Command::getOpcode() {
+	return this->pieces[0];
+}
+
 std::string Command::toGCode() {
 	std::string r="";
 	for (std::string &s : this->pieces) {
@@ -25,4 +31,6 @@ std::string Command::toGCode() {
 		r += s;
 	}
 	return r + '\n';
+}
+
 }
