@@ -30,7 +30,7 @@ std::string Command::toGCode() {
 		}
 		r += s;
 	}
-	return r + '\n';
+	return r;
 }
 
 }
