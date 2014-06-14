@@ -17,6 +17,7 @@ template <typename T> void comLoop(int fd, T& driver) {
 		printf("size of command: %i\n", parsed.pieces.size());
 		Command response = parsed.execute(driver);
 		std::string resp = response.toGCode();
+		printf("response: %s\n", resp);
 		write(fd, resp.c_str(), resp.length());
 	}
 }
