@@ -5,7 +5,7 @@ namespace gparse {
 Command::Command(std::string const& cmd) {
 	//initialize the command from a line of GCode
 	std::string piece;
-	for (auto chr : cmd) { //split the command on spaces.
+	for (char chr : cmd) { //split the command on spaces.
 		if (chr == ' ' || chr == '\n' || chr == '\t' || chr == '*') {
 			if (piece.length()) { //allow for multiple spaces between parameters
 				if (piece[0] != 'N') { //don't store optional line numbers.
@@ -25,13 +25,13 @@ Command::Command(std::string const& cmd) {
 	}
 }
 
-std::string Command::getOpcode() {
+std::string Command::getOpcode() const {
 	return this->pieces[0];
 }
 
-std::string Command::toGCode() {
+std::string Command::toGCode() const {
 	std::string r="";
-	for (std::string &s : this->pieces) {
+	for (std::string const& s : this->pieces) {
 		if (r.length()) {
 			r += ' ';
 		}
