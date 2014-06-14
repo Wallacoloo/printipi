@@ -1,13 +1,11 @@
 #include <iostream>
-#include <string.h>
-//#include <sys/types.h>
-//#include <sys/stat.h>
+#include <string>
 #include <fcntl.h> //needed for (file) open()
 #include <stdlib.h> //needed for exit()
-//#include <pthread.h>
-//#include <termios.h>
 #include <stdio.h>
 #include <unistd.h> //for (file) read()
+
+#include "command.h"
 
 void printUsageAndQuit(char* cmd) {
     std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
@@ -32,6 +30,8 @@ void readLoop(int fd) {
 	while (1) {
 		cmd = readLine(fd);
 		printf("command: %s\n", cmd.c_str());
+		Command parsed = Command(cmd);
+		printf("size of command: %i\n", parsed.pieces.size());
 		write(fd, resp.c_str(), resp.length());
 	}
 }
