@@ -26,12 +26,14 @@ std::string readLine(int fd) {
 
 void readLoop(int fd) {
 	std::string cmd;
-	std::string resp = "TEST\n";
+	//std::string resp = "TEST\n";
 	while (1) {
 		cmd = readLine(fd);
 		printf("command: %s\n", cmd.c_str());
 		Command parsed = Command(cmd);
 		printf("size of command: %i\n", parsed.pieces.size());
+		Command response = parsed.execute("1");
+		std::string resp = response.toGCode();
 		write(fd, resp.c_str(), resp.length());
 	}
 }
