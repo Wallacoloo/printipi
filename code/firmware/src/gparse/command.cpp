@@ -2,7 +2,7 @@
 
 namespace gparse {
 
-Command::Command(std::string &cmd) {
+Command::Command(std::string const& cmd) {
 	//initialize the command from a line of GCode
 	std::string piece;
 	for (auto chr : cmd) { //split the command on spaces.
