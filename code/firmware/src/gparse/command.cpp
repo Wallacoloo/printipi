@@ -6,9 +6,11 @@ Command::Command(std::string const& cmd) {
 	//initialize the command from a line of GCode
 	std::string piece;
 	for (auto chr : cmd) { //split the command on spaces.
-		if (chr == ' ') {
-			this->pieces.push_back(piece);
-			piece = "";
+		if (chr == ' ' || chr == '\n' || chr == '\t') {
+			if (piece.length()) { //allow for multiple spaces between parameters
+				this->pieces.push_back(piece);
+				piece = "";
+			}
 		} else {
 			piece += chr;
 		}
