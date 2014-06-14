@@ -6,10 +6,15 @@ Command::Command(std::string const& cmd) {
 	//initialize the command from a line of GCode
 	std::string piece;
 	for (auto chr : cmd) { //split the command on spaces.
-		if (chr == ' ' || chr == '\n' || chr == '\t') {
+		if (chr == ' ' || chr == '\n' || chr == '\t' || chr == '*') {
 			if (piece.length()) { //allow for multiple spaces between parameters
-				this->pieces.push_back(piece);
-				piece = "";
+				if (piece[0] != 'N') { //don't store optional line numbers.
+					this->pieces.push_back(piece);
+					piece = "";
+				}
+			}
+			if (chr == '*') { //checksum. Don't verify for now.
+				break;
 			}
 		} else {
 			piece += chr;
