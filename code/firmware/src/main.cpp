@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     char* serialFileName = argv[1];
     printf("Serial file: %s\n", serialFileName);
     int fd = open(serialFileName, O_RDWR);
-    readLoop(fd);
+    gparse::readLoop(fd);
     printf("Exiting\n");
     return 0;
 }

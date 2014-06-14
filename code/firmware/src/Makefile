@@ -4,8 +4,8 @@ CFLAGS=-std=c++0x #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 OUT=../kossel-firmware
 	
-all: main.o gparse
-	$(CPP) main.o gparse/gparse.o -o $(OUT) $(CFLAGS)
+all: gparse driver.o main.o
+	$(CPP) main.o gparse/gparse.o driver.o -o $(OUT) $(CFLAGS)
 	
 %.o: %.cpp
 	$(CPP) -c -o $@ $< $(CFLAGS)
