@@ -22,7 +22,7 @@ class Command {
 			if (opcode == "M105") {
 				int t, b;
 				target.getTemperature(t, b);
-				resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b) + "\n");
+				resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 			} else {
 				throw new std::string("unrecognized gcode opcode");
 			}
