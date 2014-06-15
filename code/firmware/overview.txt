@@ -11,3 +11,12 @@ main.cpp ties everything together into a command-line application.
 
 
 Mathematics for motor coordinates: http://deltabot.tumblr.com/post/27300149759/hack-a-day-has-a-very-good-summary-of-rostock
+working out on paper:
+  c1 = z + sqrt(L^2 - x^2 - y^2)
+  c2 = z + sqrt(L^2 - (d/2 - x)^2 - (d*sqrt(3)/2 - y)^2)
+  c3 = z + sqrt(L^2 - (d-x)^2 + y^2)
+  where x, y, z are the desired coordinates, c1, c2, c3 are the vertical heights that the 3 linear sliders should be positioned, L is the length of the rods connected to the effector, and d is the distance between the posts.
+  x(t) = x0 + t*vx where vx = v*(x1-x0) / sqrt((x1-x0)^2 + (y1-y0))^2
+  y(t) = y0 + t*vy where vy = v*(y1-y0) / sqrt((x1-x0)^2 + (y1-y0))^2
+  Can solve for t as a function of c1, setting c1=0, 1, 2, ... to find the specific times at which c1 must be incremented.
+  Can do the same with c2, c3. Use hrtimer to schedule wakeups at those times.
