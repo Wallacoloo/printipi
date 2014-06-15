@@ -1,0 +1,13 @@
+gparse/serial.cpp reads lines of serially-communicated code and parses them into commands, sending them to the State and relaying a reply back to the host.
+
+gparse/command.cpp stores/parses/encodes GCode in a more accessible format (breaks the command on spaces).
+
+gparse/state.cpp executes the commands, passing some onto a Driver. Also tracks any state-changes caused by the gcode.
+This includes translating any relative coordinates to absolute coordinates. Unfortunately, it cannot *directly* translate these into step-counts for each motor because not motor coordinate systems are cartesian (eg polar, or rostock).
+
+driver.cpp receives commands from gparse/state.cpp regarding where to move (X,Y,Z) and is queryable for temperature.
+
+main.cpp ties everything together into a command-line application.
+
+
+Mathematics for motor coordinates: http://deltabot.tumblr.com/post/27300149759/hack-a-day-has-a-very-good-summary-of-rostock
