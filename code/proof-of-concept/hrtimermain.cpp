@@ -98,7 +98,7 @@ long testSleepAndSpinPrecision() {
     sleepDur.tv_sec = 0;
     sleepDur.tv_nsec = 500000000;
     sleepPad.tv_sec = 0;
-    sleepPad.tv_nsec = 220000;
+    sleepPad.tv_nsec = 180000;
     //endTime.tv_sec = 0;
     //endTime.tv_nsec = 0;
     clock_gettime(0, &startTime);
