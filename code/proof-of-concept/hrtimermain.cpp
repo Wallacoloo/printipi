@@ -17,7 +17,7 @@ Distributions for testSleepAndSpinPrecision() @ 1/2 second:
   Raspberry Pi (40 samples, 130000 ns buffer): mean: 2315.925 ns, sd: 9485.23442 ns (14 ns w/o the outlier)
   Raspberry Pi (40 samples, 130000 ns buffer, nice: -10): mean: 1911.775, sd: 8231.99072
   Raspberry Pi (40 samples, 130000 ns buffer, nice: -20): mean: 388.525, sd: 1745.81225 (repeatable thrice to within sd=2500 ns)
-    RPi appears to have resolution of 1 uSec (samples looked like 5 4 3 2 1 0 999 998 997 ...)
+    RPi appears to take 1 uSec to gettime. (samples looked like 5 4 3 2 1 0 999 998 997 ...)
   
 Can use Linux process "niceness"; -20 for most priority, +19 for least.
 */
@@ -110,7 +110,7 @@ long testSleepAndSpinPrecision() {
     //while (endTime.tv_sec < desiredEndTime.tv_sec || endTime.tv_nsec < desiredEndTime.tv_nsec) {
     do {
     	clock_gettime(0, &curTime);
-    } while (timespec_to_nano(timespec_sub(&curTime, &desiredEndTime)) < -avgCostOfGetTime);
+    } while (timespec_to_nano(timespec_sub(&curTime, &desiredEndTime)) < -avgCostOfGetTime/2);
     //timespec_sub(&endTime, &desiredEndTime);
     //return timespec_to_nano(&endTime);
     return timespec_to_nano(&curTime);
