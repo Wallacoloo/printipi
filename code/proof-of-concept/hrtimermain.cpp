@@ -18,6 +18,7 @@ Distributions for testSleepAndSpinPrecision() @ 1/2 second:
   Raspberry Pi (40 samples, 130000 ns buffer, nice: -10): mean: 1911.775, sd: 8231.99072
   Raspberry Pi (40 samples, 130000 ns buffer, nice: -20): mean: 388.525, sd: 1745.81225 (repeatable thrice to within sd=2500 ns)
     RPi appears to take 1 uSec to gettime. (samples looked like 5 4 3 2 1 0 999 998 997 ...)
+  Raspberry Pi (40 samples, 180000 ns buffer, nice: -20, costOfGetTime): mean: -94.85, sd: 158.41726 (almost always sd<2500 ns. Saw 7000 ns ONCE)
   
 Can use Linux process "niceness"; -20 for most priority, +19 for least.
 */
