@@ -5,12 +5,41 @@ Or is it kernel modules? http://raspberrypi.stackexchange.com/questions/8586/arm
 hrtimers are now used in Posix timers and nanosleep and itimers: http://lwn.net/Articles/168399/
   https://www.kernel.org/doc/Documentation/timers/hrtimers.txt
   
-Distributions for testNanoSleep @ 1/2 second:
-Ubunutu Laptop (40 samples): mean: 206546.75 ns, sd: 40484.71056 ns, about 40 uSec
+Distributions for testSleepPrecision() @ 1/2 second:
+  Ubuntu Laptop (40 samples): mean: 206546.75 ns, sd: 40484.71056 ns, about 40 uSec
+  Raspberry Pi (40 samples): mean: 107167.375 ns, sd: 8504.03636 ns, about 8.5 uSec
+
+What precision is needed?
+Aiming for 100 mm/sec extrusion. Assume 10 steps per mm, then 1000 steps/sec = 1 step per 1000 uSec.
+
+Distributions for testSleepAndSpinPrecision() @ 1/2 second:
+  Ubuntu Laptop (40 samples, 240000 ns buffer): mean: 2784.875 ns, sd: 7604.23667 ns
 */
 
 #include <time.h>
 #include <stdio.h>
+
+void timespec_add(struct timespec * tv_a, const struct timespec * tv_b) { //a is modified
+    tv_a->tv_sec += tv_b->tv_sec;
+    tv_a->tv_nsec += tv_b->tv_nsec;
+   
+    if (tv_a->tv_nsec > 999999999) {
+        tv_a->tv_sec += 1;
+        tv_a->tv_nsec -= 1000000000;
+    }
+}
+void timespec_sub(struct timespec * tv_a, const struct timespec * tv_b) { //a is modified
+	tv_a->tv_sec -= tv_b->tv_sec;
+    tv_a->tv_nsec -= tv_b->tv_nsec;
+   
+    if (tv_a->tv_nsec < 0) {
+        tv_a->tv_sec -= 1;
+        tv_a->tv_nsec += 1000000000;
+    }
+}
+long timespec_to_nano(struct timespec *t) {
+	return t->tv_sec * 1000000000 + t->tv_nsec;
+}
 
 void getClockInfo() {
     clockid_t types[] = {CLOCK_REALTIME, CLOCK_MONOTONIC, CLOCK_PROCESS_CPUTIME_ID, CLOCK_THREAD_CPUTIME_ID, (clockid_t)-1};
@@ -47,8 +76,32 @@ long testSleepPrecision() {
     clock_gettime(0, &startTime);
     nanosleep(&sleepDur, &remaining);
     clock_gettime(0, &endTime);
-    endTime.tv_sec -= startTime.tv_sec;
-    return (endTime.tv_sec - sleepDur.tv_sec)*1000000000 + (endTime.tv_nsec - startTime.tv_nsec - sleepDur.tv_nsec);
+    //endTime.tv_sec -= startTime.tv_sec;
+    timespec_sub(&endTime, &sleepDur);
+    timespec_sub(&endTime, &startTime);
+    return timespec_to_nano(&endTime);
+    //return (endTime.tv_sec - sleepDur.tv_sec)*1000000000 + (endTime.tv_nsec - startTime.tv_nsec - sleepDur.tv_nsec);
+}
+
+long testSleepAndSpinPrecision() {
+	struct timespec sleepDur, remaining, startTime, endTime, desiredEndTime, sleepPad;
+    sleepDur.tv_sec = 0;
+    sleepDur.tv_nsec = 500000000;
+    sleepPad.tv_sec = 0;
+    sleepPad.tv_nsec = 130000;
+    endTime.tv_sec = 0;
+    endTime.tv_nsec = 0;
+    clock_gettime(0, &startTime);
+    desiredEndTime.tv_sec = startTime.tv_sec;
+    desiredEndTime.tv_nsec = startTime.tv_nsec;
+    timespec_add(&desiredEndTime, &sleepDur);
+    timespec_sub(&sleepDur, &sleepPad);
+    nanosleep(&sleepDur, &remaining);
+    while (endTime.tv_sec < desiredEndTime.tv_sec || endTime.tv_nsec < desiredEndTime.tv_nsec) {
+    	clock_gettime(0, &endTime);
+    }
+    timespec_sub(&endTime, &desiredEndTime);
+    return timespec_to_nano(&endTime);
 }
 
 
@@ -56,6 +109,7 @@ int main(int argc, char** argv) {
     getClockInfo();
     testNanoSleep();
     for (int i=0; i<40; ++i) {
-        printf("%lu, ", testSleepPrecision());
+        //printf("%ld, \n", testSleepPrecision());
+        printf("%ld, \n", testSleepAndSpinPrecision());
     }
 }
