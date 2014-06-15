@@ -25,7 +25,9 @@ Can use Linux process "niceness"; -20 for most priority, +19 for least.
 #include <time.h>
 #include <stdio.h>
 
-void timespec_add(struct timespec * tv_a, const struct timespec * tv_b) { //a is modified
+long avgCostOfGetTime;
+
+timespec* timespec_add(struct timespec * tv_a, const struct timespec * tv_b) { //a is modified
     tv_a->tv_sec += tv_b->tv_sec;
     tv_a->tv_nsec += tv_b->tv_nsec;
    
@@ -33,8 +35,9 @@ void timespec_add(struct timespec * tv_a, const struct timespec * tv_b) { //a is
         tv_a->tv_sec += 1;
         tv_a->tv_nsec -= 1000000000;
     }
+    return tv_a;
 }
-void timespec_sub(struct timespec * tv_a, const struct timespec * tv_b) { //a is modified
+timespec* timespec_sub(struct timespec * tv_a, const struct timespec * tv_b) { //a is modified
 	tv_a->tv_sec -= tv_b->tv_sec;
     tv_a->tv_nsec -= tv_b->tv_nsec;
    
@@ -42,9 +45,10 @@ void timespec_sub(struct timespec * tv_a, const struct timespec * tv_b) { //a is
         tv_a->tv_sec -= 1;
         tv_a->tv_nsec += 1000000000;
     }
+    return tv_a;
 }
 long timespec_to_nano(struct timespec *t) {
-	return t->tv_sec * 1000000000 + t->tv_nsec;
+	return (long)t->tv_sec * 1000000000 + (long)t->tv_nsec;
 }
 
 void getClockInfo() {
@@ -90,24 +94,26 @@ long testSleepPrecision() {
 }
 
 long testSleepAndSpinPrecision() {
-	struct timespec sleepDur, remaining, startTime, endTime, desiredEndTime, sleepPad;
+	struct timespec sleepDur, remaining, startTime, curTime, desiredEndTime, sleepPad;
     sleepDur.tv_sec = 0;
     sleepDur.tv_nsec = 500000000;
     sleepPad.tv_sec = 0;
-    sleepPad.tv_nsec = 130000;
-    endTime.tv_sec = 0;
-    endTime.tv_nsec = 0;
+    sleepPad.tv_nsec = 220000;
+    //endTime.tv_sec = 0;
+    //endTime.tv_nsec = 0;
     clock_gettime(0, &startTime);
     desiredEndTime.tv_sec = startTime.tv_sec;
     desiredEndTime.tv_nsec = startTime.tv_nsec;
     timespec_add(&desiredEndTime, &sleepDur);
     timespec_sub(&sleepDur, &sleepPad);
     nanosleep(&sleepDur, &remaining);
-    while (endTime.tv_sec < desiredEndTime.tv_sec || endTime.tv_nsec < desiredEndTime.tv_nsec) {
-    	clock_gettime(0, &endTime);
-    }
-    timespec_sub(&endTime, &desiredEndTime);
-    return timespec_to_nano(&endTime);
+    //while (endTime.tv_sec < desiredEndTime.tv_sec || endTime.tv_nsec < desiredEndTime.tv_nsec) {
+    do {
+    	clock_gettime(0, &curTime);
+    } while (timespec_to_nano(timespec_sub(&curTime, &desiredEndTime)) < -avgCostOfGetTime);
+    //timespec_sub(&endTime, &desiredEndTime);
+    //return timespec_to_nano(&endTime);
+    return timespec_to_nano(&curTime);
 }
 
 long costOfGetTime() {
@@ -118,9 +124,24 @@ long costOfGetTime() {
 	return timespec_to_nano(&t2);
 }
 
+long getAvgCostOfGetTime(int n=40) {
+	long sum = 0;
+	for (int i=0; i<n; ++i) {
+		sum += costOfGetTime();
+	}
+	return sum/n;
+}
 
 int main(int argc, char** argv) {
+	struct timespec a, b;
+	a.tv_sec = 0;
+	a.tv_nsec = 1;
+	b.tv_sec = 0;
+	b.tv_nsec = 2;
+	printf("Test timespec_sub: %ld\n", timespec_to_nano(timespec_sub(&a, &b)));
     getClockInfo();
+    avgCostOfGetTime = getAvgCostOfGetTime();
+    printf("Average cost of gettime: %lu\n", avgCostOfGetTime);
     testNanoSleep();
     for (int i=0; i<40; ++i) {
         //printf("%ld, \n", testSleepPrecision());
