@@ -13,7 +13,13 @@ What precision is needed?
 Aiming for 100 mm/sec extrusion. Assume 10 steps per mm, then 1000 steps/sec = 1 step per 1000 uSec.
 
 Distributions for testSleepAndSpinPrecision() @ 1/2 second:
-  Ubuntu Laptop (40 samples, 240000 ns buffer): mean: 2784.875 ns, sd: 7604.23667 ns
+  Ubuntu Laptop (40 samples, 240000 ns buffer): mean: 2784.875 ns, sd: 7604.23667 ns (multiple outliers)
+  Raspberry Pi (40 samples, 130000 ns buffer): mean: 2315.925 ns, sd: 9485.23442 ns (14 ns w/o the outlier)
+  Raspberry Pi (40 samples, 130000 ns buffer, nice: -10): mean: 1911.775, sd: 8231.99072
+  Raspberry Pi (40 samples, 130000 ns buffer, nice: -20): mean: 388.525, sd: 1745.81225 (repeatable thrice to within sd=2500 ns)
+    RPi appears to have resolution of 1 uSec (samples looked like 5 4 3 2 1 0 999 998 997 ...)
+  
+Can use Linux process "niceness"; -20 for most priority, +19 for least.
 */
 
 #include <time.h>
@@ -104,12 +110,21 @@ long testSleepAndSpinPrecision() {
     return timespec_to_nano(&endTime);
 }
 
+long costOfGetTime() {
+	struct timespec t1, t2;
+	clock_gettime(0, &t1);
+	clock_gettime(0, &t2);
+	timespec_sub(&t2, &t1);
+	return timespec_to_nano(&t2);
+}
+
 
 int main(int argc, char** argv) {
     getClockInfo();
     testNanoSleep();
     for (int i=0; i<40; ++i) {
         //printf("%ld, \n", testSleepPrecision());
-        printf("%ld, \n", testSleepAndSpinPrecision());
+        //printf("%ld, \n", testSleepAndSpinPrecision());
+        printf("%ld, \n", costOfGetTime());
     }
 }
