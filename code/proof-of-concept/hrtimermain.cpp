@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
     testNanoSleep();
     for (int i=0; i<40; ++i) {
         //printf("%ld, \n", testSleepPrecision());
-        //printf("%ld, \n", testSleepAndSpinPrecision());
-        printf("%ld, \n", costOfGetTime());
+        printf("%ld, \n", testSleepAndSpinPrecision());
+        //printf("%ld, \n", costOfGetTime());
     }
 }
