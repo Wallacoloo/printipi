@@ -50,7 +50,7 @@ std::string Command::toGCode() const {
 	return r + '\n';
 }
 
-std::string Command::getParam(char label) const {
+std::string Command::getStrParam(char label) const {
 	for (const std::string &p : this->pieces) {
 		if (p[0] == label) {
 			if (p[1] == ':') {
@@ -62,15 +62,18 @@ std::string Command::getParam(char label) const {
 	}
 	return "";
 }
+float Command::getFloatParam(char label) const {
+	return std::stof(this->getStrParam(label));
+}
 
-std::string Command::getX() const {
-	return this->getParam('X');
+float Command::getX() const {
+	return this->getFloatParam('X');
 }
-std::string Command::getY() const {
-	return this->getParam('Y');
+float Command::getY() const {
+	return this->getFloatParam('Y');
 }
-std::string Command::getE() const {
-	return this->getParam('E');
+float Command::getE() const {
+	return this->getFloatParam('E');
 }
 
 }
