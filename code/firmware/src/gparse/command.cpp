@@ -2,6 +2,8 @@
 
 namespace gparse {
 
+const Command Command::OK("ok");
+
 Command::Command(std::string const& cmd) {
 	//initialize the command from a line of GCode
 	std::string piece;
