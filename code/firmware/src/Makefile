@@ -16,8 +16,6 @@ gparse: gparse/command.o gparse/serial.o gparse/state.o
 .PHONY: clean
 
 clean: 
-	rm -rf main.o
-	rm -rf gparse/command.o
-	rm -rf gparse/serial.o
-	rm -rf gparse/gparse.o
+	rm -rf gparse/command.o gparse/serial.o gparse/state.o gparse/gparse.o #alphabetical
+	rm -rf driver.o main.o
 	rm -rf $(OUT)
