@@ -18,10 +18,11 @@ class Command {
 		Command(std::string const&);
 		std::string getOpcode() const;
 		std::string toGCode() const;
-		std::string getParam(char label) const;
-		std::string getX() const;
-		std::string getY() const;
-		std::string getE() const;
+		std::string getStrParam(char label) const;
+		float getFloatParam(char label) const;
+		float getX() const;
+		float getY() const;
+		float getE() const;
 	private:
 		void addPieceOrOpcode(std::string const& piece);
 };
