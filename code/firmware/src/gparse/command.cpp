@@ -11,7 +11,8 @@ Command::Command(std::string const& cmd) {
 		if (chr == ' ' || chr == '\n' || chr == '\t' || chr == '*') {
 			if (piece.length()) { //allow for multiple spaces between parameters
 				if (piece[0] != 'N') { //don't store optional line numbers.
-					this->pieces.push_back(piece);
+					this->addPieceOrOpcode(piece);
+					//this->pieces.push_back(piece);
 					piece = "";
 				}
 			}
@@ -23,23 +24,53 @@ Command::Command(std::string const& cmd) {
 		}
 	}
 	if (piece.length()) {
+		this->addPieceOrOpcode(piece);
+		//this->pieces.push_back(piece);
+	}
+}
+
+void Command::addPieceOrOpcode(std::string const& piece) {
+	if (this->getOpcode().length()) {
 		this->pieces.push_back(piece);
+	} else {
+		this->opcode = piece;
 	}
 }
 
 std::string Command::getOpcode() const {
-	return this->pieces[0];
+	return this->opcode;
 }
 
 std::string Command::toGCode() const {
-	std::string r="";
+	std::string r=opcode;
 	for (std::string const& s : this->pieces) {
-		if (r.length()) {
-			r += ' ';
-		}
+		r += ' ';
 		r += s;
 	}
 	return r + '\n';
+}
+
+std::string Command::getParam(char label) const {
+	for (const std::string &p : this->pieces) {
+		if (p[0] == label) {
+			if (p[1] == ':') {
+				return p.substr(2);
+			} else {
+				return p.substr(1);
+			}
+		}
+	}
+	return "";
+}
+
+std::string Command::getX() const {
+	return this->getParam('X');
+}
+std::string Command::getY() const {
+	return this->getParam('Y');
+}
+std::string Command::getE() const {
+	return this->getParam('E');
 }
 
 }

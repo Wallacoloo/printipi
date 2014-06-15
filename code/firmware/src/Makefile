@@ -10,12 +10,12 @@ all: gparse driver.o main.o
 %.o: %.cpp
 	$(CPP) -c -o $@ $< $(CFLAGS)
 
-gparse: gparse/command.o gparse/serial.o gparse/state.o
-	ld -r gparse/command.o gparse/serial.o gparse/state.o -o gparse/gparse.o
+gparse: gparse/command.o gparse/event.o gparse/serial.o gparse/state.o
+	ld -r gparse/command.o gparse/event.o gparse/serial.o gparse/state.o -o gparse/gparse.o
 	
 .PHONY: clean
 
 clean: 
-	rm -rf gparse/command.o gparse/serial.o gparse/state.o gparse/gparse.o #alphabetical
+	rm -rf gparse/command.o gparse/event.o gparse/serial.o gparse/state.o gparse/gparse.o #alphabetical
 	rm -rf driver.o main.o
 	rm -rf $(OUT)
