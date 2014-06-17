@@ -2,12 +2,22 @@
 import RPi.GPIO as GPIO
 import time
 
+#What is the source of the vibrations?
+#Doesn't happen when all pins are OUT and LOW. (0 0 0 0)
+#Happens when (0 0 0 1)
+#Doesn't happen when (0 0 1 1)
+#Happens when (1 0 1 1)
+#Doesn't happen when (1 1 1 1)
+#Basically happens when the inputs are out-of-phase
+#Is it possible that 
+
 GPIO.setwarnings(False)
  
 #GPIO.setmode(GPIO.BCM)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
 coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 12, 15, 16
+step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
 
 for p in pins:
 	GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
@@ -17,6 +27,18 @@ for p in pins:
 #GPIO.setup(coil_B_2_pin, GPIO.OUT)
 
 def forward(delay, steps):
+	for i in range(steps):
+		for c in step_configs:
+			setStep(*c)
+			time.sleep(delay)
+			
+def backwards(delay, steps):
+	for i in range(steps):
+		for c in step_configs[::-1]:
+			setStep(*c)
+			time.sleep(delay)
+
+"""def forward(delay, steps):
     for i in range(0, steps):
         setStep(1, 0, 1, 0)
         time.sleep(delay)
@@ -36,7 +58,7 @@ def backwards(delay, steps):
         setStep(0, 1, 1, 0)
         time.sleep(delay)
         setStep(1, 0, 1, 0)
-        time.sleep(delay)
+        time.sleep(delay)"""
 
 def setStep(w1, w2, w3, w4):
 	for p, v in ((coil_A_1_pin, w1), (coil_A_2_pin, w2), (coil_B_1_pin, w3), (coil_B_2_pin, w4)):
