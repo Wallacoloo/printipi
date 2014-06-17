@@ -11,6 +11,8 @@ Distributions for testSleepPrecision() @ 1/2 second:
 
 What precision is needed?
 Aiming for 100 mm/sec extrusion. Assume 10 steps per mm, then 1000 steps/sec = 1 step per 1000 uSec.
+According to Rostock wiki, average 30 steps/mm, max at 300 steps/mm. http://reprap.org/wiki/Rostock#What.27s_the_resolution_in_X.2FY_direction.3F
+  Then max is 300*100 steps/sec = 30000 steps/sec = 1 step per 33 uSec
 
 Distributions for testSleepAndSpinPrecision() @ 1/2 second:
   Ubuntu Laptop (40 samples, 240000 ns buffer): mean: 2784.875 ns, sd: 7604.23667 ns (multiple outliers)
@@ -21,6 +23,11 @@ Distributions for testSleepAndSpinPrecision() @ 1/2 second:
   Raspberry Pi (40 samples, 180000 ns buffer, nice: -20, costOfGetTime): mean: -94.85, sd: 158.41726 (almost always sd<2500 ns. Saw 7000 ns ONCE)
   
 Can use Linux process "niceness"; -20 for most priority, +19 for least.
+Is there a delayUs function to get finer accuracy over the gettime loop?
+  - wiringPi contains a delayMicroseconds function. http://www.raspberrypi.org/forums/viewtopic.php?f=33&t=17688
+  - appears that the raspberry pi's hardware clock only supports microsecond precision (exactly):
+    https://projects.drogon.net/accurate-delays-on-the-raspberry-pi/
+  - Knowing the clockrate, one can delay for a specific number of cycles (600 MHz = 600 cycles / uS)
 */
 
 #include <time.h>
