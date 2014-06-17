@@ -40,8 +40,8 @@ def backwards(delay, steps):
 
 def setStep(w1, w2, w3, w4):
 	for p, v in ((coil_A_1_pin, w1), (coil_A_2_pin, w2), (coil_B_1_pin, w3), (coil_B_2_pin, w4)):
-		#GPIO.setup(p, GPIO.OUT, initial=GPIO.HIGH) if v else GPIO.setup(p, GPIO.IN)
-		GPIO.output(p, v)
+		GPIO.setup(p, GPIO.OUT, initial=GPIO.HIGH) if v else GPIO.setup(p, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+		#GPIO.output(p, v)
     #GPIO.output(coil_A_1_pin, w1)
     #GPIO.output(coil_A_2_pin, w2)
     #GPIO.output(coil_B_1_pin, w3)
