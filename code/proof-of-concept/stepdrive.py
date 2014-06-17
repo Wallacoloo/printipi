@@ -7,12 +7,14 @@ GPIO.setwarnings(False)
 #GPIO.setmode(GPIO.BCM)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
-coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 11, 12, 15, 16
+coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 12, 15, 16
 
-GPIO.setup(coil_A_1_pin, GPIO.OUT)
-GPIO.setup(coil_A_2_pin, GPIO.OUT)
-GPIO.setup(coil_B_1_pin, GPIO.OUT)
-GPIO.setup(coil_B_2_pin, GPIO.OUT)
+for p in pins:
+	GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
+#GPIO.setup(coil_A_1_pin, GPIO.OUT)
+#GPIO.setup(coil_A_2_pin, GPIO.OUT)
+#GPIO.setup(coil_B_1_pin, GPIO.OUT)
+#GPIO.setup(coil_B_2_pin, GPIO.OUT)
 
 def forward(delay, steps):
     for i in range(0, steps):
