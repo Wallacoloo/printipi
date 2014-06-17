@@ -21,11 +21,12 @@ GPIO.setwarnings(False)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
 coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 12, 15, 16
-#step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
-step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
+step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
+#step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
 
 for p in pins:
-	GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
+	#GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
+	GPIO.setup(p, GPIO.OUT)
 #GPIO.setup(coil_A_1_pin, GPIO.OUT)
 #GPIO.setup(coil_A_2_pin, GPIO.OUT)
 #GPIO.setup(coil_B_1_pin, GPIO.OUT)
