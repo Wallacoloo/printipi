@@ -1,5 +1,8 @@
+#!/usr/bin/python
 import RPi.GPIO as GPIO
 import time
+
+GPIO.setwarnings(False)
  
 #GPIO.setmode(GPIO.BCM)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
