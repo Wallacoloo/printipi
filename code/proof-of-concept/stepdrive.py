@@ -8,8 +8,12 @@ import time
 #Doesn't happen when (0 0 1 1)
 #Happens when (1 0 1 1)
 #Doesn't happen when (1 1 1 1)
+#Happens when (1 0 1 0)
 #Basically happens when the inputs are out-of-phase
-#Is it possible that 
+#Putting a cap over the 12V power supply seems to help this (10uF)
+#  RAMPS uses 100 uF cap for each driver.
+#  1000 uF / $0.09 http://www.taydaelectronics.com/capacitors/electrolytic-capacitors/1000uf-16v-105c-radial-electrolytic-capacitor-10x16mm.html
+#http://forum.arduino.cc/index.php/topic,226350.0.html recommends a different combo.
 
 GPIO.setwarnings(False)
  
@@ -17,7 +21,8 @@ GPIO.setwarnings(False)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
 coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 12, 15, 16
-step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
+#step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
+step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
 
 for p in pins:
 	GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
