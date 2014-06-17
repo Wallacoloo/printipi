@@ -12,6 +12,12 @@ git clone git://git.drogon.net/wiringPi
 cd wiringPi
 git pull origin
 ./build #will also install it.
+
+IO benchmarks: http://codeandlife.com/2012/07/03/benchmarking-raspberry-pi-gpio-speed/
+  wiringPi can toggle pins at 7 MHz; Should be plenty fast enough, and hardware limit is 21 MHz.
+  
+WiringPi functions doc: https://projects.drogon.net/raspberry-pi/wiringpi/functions/
+  piHiPri(...) can change the program priority (niceness). Must be root.
 */
 
 #include <wiringPi.h>
@@ -23,6 +29,6 @@ int main() {
 		return 1;
     }
     pinMode(0, OUTPUT);
-    digitalWrite(0, 1);
+    digitalWrite(0, 1); //set GPIO 1 (BCM 17) to output HIGH
 	return 0;
 }
