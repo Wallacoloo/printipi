@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #GPIO 1 (phys 12) has been damaged! Can only output "low".
 import RPi.GPIO as GPIO
-from RPIO import PWM
+#from RPIO import PWM
 import time
 
 #What is the source of the vibrations?
@@ -40,7 +40,7 @@ GPIO.setwarnings(False)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
 coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 13, 15, 16 #board numbering
-pwm_pin = 24 #BCM numbering
+pwm_pin = 18 #board numbering
 step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
 #step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
 
@@ -48,8 +48,12 @@ for p in pins:
 	#GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
 	GPIO.setup(p, GPIO.OUT)
 
-servo = PWM.Servo(subcycle_time_us=3000) #min 3 ms subcycle.
-servo.set_servo(pwm_pin, 750) #1/4 duty cycle.
+GPIO.setup(pwm_pin)
+p = GPIO.PWM(pwm_pin, 1000)
+p.start(25) #25% duty cycle.
+
+#servo = PWM.Servo(subcycle_time_us=3000) #min 3 ms subcycle.
+#servo.set_servo(pwm_pin, 750) #1/4 duty cycle.
 
 def forward(delay, steps):
 	for i in range(steps):
