@@ -48,8 +48,8 @@ for p in pins:
 	#GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
 	GPIO.setup(p, GPIO.OUT)
 
-servo = PWM.Servo(subcycle_time_us=2000) #min 2 ms subcycle.
-servo.set_servo(pwm_pin, 500) #1/4 duty cycle.
+servo = PWM.Servo(subcycle_time_us=3000) #min 3 ms subcycle.
+servo.set_servo(pwm_pin, 750) #1/4 duty cycle.
 
 def forward(delay, steps):
 	for i in range(steps):
