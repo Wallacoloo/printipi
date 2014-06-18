@@ -1,6 +1,7 @@
 #!/usr/bin/python
 #GPIO 1 (phys 12) has been damaged! Can only output "low".
 import RPi.GPIO as GPIO
+from RPIO import PWM
 import time
 
 #What is the source of the vibrations?
@@ -28,23 +29,27 @@ import time
 #Visible voltage jitter under load using multimeter
 #Even though my LAPTOP power supply shows no jitter with multimeter, still some jitter wit stepper.
 #Radioshack Switching regulator: http://www.radioshack.com/product/index.jsp?productId=12753563
+#1000 uF cap from Radioshack makes no difference, nor did the 4700 uF
+#@W5V0 says I'm shorting my power supply: http://chat.stackexchange.com/rooms/15/electrical-engineering
+#@W5V0 recommends I use a variable voltage switching regulator on each stepper.
+#  4.2V, 1.5A are absolute maximum ratings.
 
 GPIO.setwarnings(False)
  
 #GPIO.setmode(GPIO.BCM)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
-coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 13, 15, 16
+coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 13, 15, 16 #board numbering
+pwm_pin = 24 #BCM numbering
 step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
 #step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
 
 for p in pins:
 	#GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
 	GPIO.setup(p, GPIO.OUT)
-#GPIO.setup(coil_A_1_pin, GPIO.OUT)
-#GPIO.setup(coil_A_2_pin, GPIO.OUT)
-#GPIO.setup(coil_B_1_pin, GPIO.OUT)
-#GPIO.setup(coil_B_2_pin, GPIO.OUT)
+
+servo = PWM.Servo(subcycle_time_us=2000) #min 2 ms subcycle.
+servo.set_servo(pwm_pin, 500) #1/4 duty cycle.
 
 def forward(delay, steps):
 	for i in range(steps):
