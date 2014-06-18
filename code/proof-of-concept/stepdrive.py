@@ -1,4 +1,5 @@
 #!/usr/bin/python
+#GPIO 1 (phys 12) has been damaged! Can only output "low".
 import RPi.GPIO as GPIO
 import time
 
@@ -14,13 +15,26 @@ import time
 #  RAMPS uses 100 uF cap for each driver.
 #  1000 uF / $0.09 http://www.taydaelectronics.com/capacitors/electrolytic-capacitors/1000uf-16v-105c-radial-electrolytic-capacitor-10x16mm.html
 #http://forum.arduino.cc/index.php/topic,226350.0.html recommends a different combo.
+#NO JITTERING OCCURS WHEN 9v BATTERY IS POWERING CIRCUITRY INSTEAD OF AC ADAPTER, AND STEPPER TURNS CORRECTLY.
+#then use more capacitors, or - better yet - a voltage regulator.
+#  Radioshack sells good-sized caps (1000+uF) http://www.radioshack.com/family/index.jsp?categoryId=12648753&pg=2
+#  Radioshack sells 12V regulator http://www.radioshack.com/product/index.jsp?productId=2062600
+#    LM7812 requires 14.5V input voltage.
+#  I have a 5V, 1.5A regulator on-hand: https://www.sparkfun.com/products/107
+#    NO JITTERING OCCURS WHEN USING 5V REGULATOR AND LAPTOP POWER SUPPLY (though regulator heats up QUICKLY)
+#Page for smoothing capacitor selection: http://electronicsclub.info/powersupplies.htm#smoothing
+#Jittering still occurs with a wall-wart 12V 1.5A power-supply though less-so during the actual driving.
+#Explanation for jitter in wall warts: http://www.robotshop.com/media/files/pdf/unregulated-power-supply-tutorial-prt-08619.pdf
+#Visible voltage jitter under load using multimeter
+#Even though my LAPTOP power supply shows no jitter with multimeter, still some jitter wit stepper.
+#Radioshack Switching regulator: http://www.radioshack.com/product/index.jsp?productId=12753563
 
 GPIO.setwarnings(False)
  
 #GPIO.setmode(GPIO.BCM)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
-coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 12, 15, 16
+coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 13, 15, 16
 step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
 #step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
 
