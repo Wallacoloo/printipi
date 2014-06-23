@@ -33,8 +33,12 @@ import time
 #@W5V0 says I'm shorting my power supply: http://chat.stackexchange.com/rooms/15/electrical-engineering
 #@W5V0 recommends I use a variable voltage switching regulator on each stepper.
 #  4.2V, 1.5A are absolute maximum ratings.
+#physical pin #12 shorted; broken
+#PWM on enable pin reduces stutter, allows stepper to be driven more smoothly. Creates humming sound.
+#Created a large "snap" sound at 1MHz -- stepper discharge?
+#RPi.GPIO.PWM tutorial: http://raspi.tv/2013/rpi-gpio-0-5-2a-now-has-software-pwm-how-to-use-it
 
-GPIO.setwarnings(False)
+GPIO.setwarnings(False) #don't warn on pin reassignment.
  
 #GPIO.setmode(GPIO.BCM)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
