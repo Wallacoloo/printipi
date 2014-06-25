@@ -7,9 +7,10 @@
 #include "gparse/serial.h"
 #include "gparse/state.h"
 #include "drivers/driver.h"
+#include "drivers/kossel.h"
 //#include "command.h"
 
-drv::Driver driver;
+drv::Kossel driver;
 gparse::State gState;
 
 void printUsageAndQuit(char* cmd) {

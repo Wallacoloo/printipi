@@ -22,6 +22,8 @@ class State {
 	LengthUnit unitMode = UNIT_MM;
 	std::queue<Event> eventQueue;
 	public:
+		static const int DEFAULT_HOTEND_TEMP = -300;
+		static const int DEFAULT_BED_TEMP = -300;
 		static const std::string OP_G1  ;//  = "G1" ;
 		static const std::string OP_G20 ;//  = "G20";
 		static const std::string OP_G21 ;//  = "G21";
@@ -42,6 +44,7 @@ class State {
 			if (opcode == OP_G1) { //controlled (linear) movement.
 				float x = cmd.getX(); //new x-coordinate.
 				float y = cmd.getY(); //new y-coordinate.
+				float z = cmd.getZ();
 				float e = cmd.getE(); //extrusion amount.
 				
 			} else if (opcode == OP_G20) { //g-code coordinates will now be interpreted as inches
@@ -59,7 +62,7 @@ class State {
 			} else if (opcode == OP_M21) { //initialize SD card (nothing to do).
 				resp = Command::OK;
 			} else if (opcode == OP_M105) { //get temperature, in C
-				int t=-300, b=-300; //a temperature < absolute zero means no reading available.
+				int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
 				driver.getTemperature(t, b);
 				resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 			} else if (opcode == OP_M110) { //set current line number
