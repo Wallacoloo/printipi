@@ -6,10 +6,10 @@
 
 #include "gparse/serial.h"
 #include "gparse/state.h"
-#include "driver.h"
+#include "drivers/driver.h"
 //#include "command.h"
 
-Driver driver;
+drv::Driver driver;
 gparse::State gState;
 
 void printUsageAndQuit(char* cmd) {

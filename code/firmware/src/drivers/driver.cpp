@@ -1,0 +1,10 @@
+#include "driver.h"
+
+namespace drv {
+
+void Driver::getTemperature(int &extruder, int &bed) {
+	//extruder=100;
+	//bed=100;
+}
+
+}
