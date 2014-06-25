@@ -62,18 +62,22 @@ std::string Command::getStrParam(char label) const {
 	}
 	return "";
 }
-float Command::getFloatParam(char label) const {
-	return std::stof(this->getStrParam(label));
+float Command::getFloatParam(char label, float def) const {
+    std::string s = this->getStrParam(label);
+    return s.empty() ? def : std::stof(s);
 }
 
-float Command::getX() const {
-	return this->getFloatParam('X');
+float Command::getX(float def) const {
+	return this->getFloatParam('X', def);
 }
-float Command::getY() const {
-	return this->getFloatParam('Y');
+float Command::getY(float def) const {
+	return this->getFloatParam('Y', def);
 }
-float Command::getE() const {
-	return this->getFloatParam('E');
+float Command::getZ(float def) const {
+	return this->getFloatParam('Z', def);
+}
+float Command::getE(float def) const {
+	return this->getFloatParam('E', def);
 }
 
 }
