@@ -12,6 +12,11 @@ const std::string State::OP_M21  = "M21";
 const std::string State::OP_M105 = "M105";
 const std::string State::OP_M110 = "M110";
 
+State::State(const drv::Driver &drv) {
+	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
+	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
+}
+
 void State::setPositionMode(PositionMode mode) {
 	this->positionMode = mode; 
 }
@@ -102,15 +107,17 @@ float State::destZPrimitive() const {
 float State::destEPrimitive() const {
 	return this->_destEPrimitive;
 }
+float State::destMoveRatePrimitive() const {
+	return this->_destMoveRatePrimitive;
+}
+void State::setDestMoveRatePrimitive(float f) {
+	this->_destMoveRatePrimitive = f;
+}
 float State::destFeedRatePrimitive() const {
 	return this->_destFeedRatePrimitive;
 }
 void State::setDestFeedRatePrimitive(float f) {
 	this->_destFeedRatePrimitive = f;
-}
-
-void State::queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e) {
-	//todo: implement.
 }
 
 }
