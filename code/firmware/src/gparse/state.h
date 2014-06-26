@@ -4,10 +4,15 @@
 //Gcode documentation can be found:
 //  http://reprap.org/wiki/G-code
 //  or (with implementation): https://github.com/Traumflug/Teacup_Firmware/blob/master/gcode_process.c
+//  Marlin-specific: http://www.ctheroux.com/2012/11/g-code-commands-supported-by-marlin/
 
 #include <string>
+#include <cstddef> //for size_t
+#include <memory> //for unique_ptr
 #include "command.h"
 #include "event.h"
+#include "scheduler.h"
+#include "../drivers/driver.h"
 
 namespace gparse {
 
@@ -25,9 +30,11 @@ class State {
 	PositionMode positionMode = POS_ABSOLUTE;
 	//PositionMode extruderPosMode = POS_RELATIVE; //set via M82 and M83
 	LengthUnit unitMode = UNIT_MM;
-	std::queue<Event> eventQueue;
-	float _destXPrimitive, _destYPrimitive, _destZPrimitive;
-	float _destEPrimitive;
+	Scheduler scheduler;
+	//std::queue<Event> eventQueue;
+	float _destXPrimitive=0, _destYPrimitive=0, _destZPrimitive=0;
+	float _destEPrimitive=0;
+	float _destMoveRatePrimitive; //varies accross drivers
 	float _destFeedRatePrimitive;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
@@ -41,7 +48,7 @@ class State {
 		static const std::string OP_M21 ;//  = "M21";
 		static const std::string OP_M105;// = "M105";
 		static const std::string OP_M110;// = "M110";
-		State() {}
+		State(const drv::Driver &drv);
 		void setPositionMode(PositionMode mode);
 		void setUnitMode(LengthUnit mode);
 		float xUnitToAbsolute(float posUnit) const;
@@ -58,14 +65,16 @@ class State {
 		float destYPrimitive() const;
 		float destZPrimitive() const;
 		float destEPrimitive() const;
+		float destMoveRatePrimitive() const;
+		void setDestMoveRatePrimitive(float f);
 		float destFeedRatePrimitive() const;
 		void setDestFeedRatePrimitive(float f);
 		
-		void queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e);
+		//void queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velSpace, float velExt);
 		/*execute the GCode on a Driver object that supports a well-defined interface.
 		 *returns a Command to send back to the host.
 		 */
-		template <typename T> Command execute(Command const& cmd, T &driver) {
+		template <typename Drv> Command execute(Command const& cmd, Drv &driver) {
 			std::string opcode = cmd.getOpcode();
 			Command resp;
 			if (opcode == OP_G1) { //controlled (linear) movement.
@@ -85,7 +94,8 @@ class State {
 				if (hasF) {
 					this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
 				}
-				this->queueMovement(curX, curY, curZ, curE, x, y, z, e);
+				//TODO: calculate future e based on feedrate.
+				this->queueMovement(driver, curX, curY, curZ, curE, x, y, z, e, destMoveRatePrimitive(), destFeedRatePrimitive());
 			} else if (opcode == OP_G20) { //g-code coordinates will now be interpreted as inches
 				setUnitMode(UNIT_IN);
 				resp = Command::OK;
@@ -110,6 +120,25 @@ class State {
 				throw new std::string("unrecognized gcode opcode");
 			}
 			return resp;
+		}
+		
+		template <typename Drv> void queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
+			//todo: implement.
+			float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
+			float dist = sqrt(distSq);
+			float vx = (x-curX)/dist * velXYZ;
+			float vy = (y-curY)/dist * velXYZ;
+			float vz = (z-curZ)/dist * velXYZ;
+			float durationXYZ = dist/velXYZ;
+			float durationE = abs(e-curE)/velE;
+			//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
+			std::size_t numAxis = driver.numAxis();
+			std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty using -Os and -flto
+			//float* times = new float[numAxis];
+			for (int i=0; i<numAxis; ++i) {
+				times[i] = driver.relativeTimeOfNextStep(i, curX, curY, curZ, curE, vx, vy, vz, velE);
+			}
+			//delete[] times; 
 		}
 };
 
