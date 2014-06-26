@@ -12,13 +12,8 @@ const std::string State::OP_M21  = "M21";
 const std::string State::OP_M105 = "M105";
 const std::string State::OP_M110 = "M110";
 
-State::State(const drv::Driver &drv) {
-	this->positionMode = POS_ABSOLUTE;
-	this->unitMode = UNIT_MM;
-	this->_destXPrimitive = 0;
-	this->_destYPrimitive = 0;
-	this->_destZPrimitive = 0;
-	this->_destEPrimitive = 0;
+State::State(const drv::Driver &drv) : positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
+	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0) {
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
