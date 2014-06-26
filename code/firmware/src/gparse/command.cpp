@@ -50,34 +50,66 @@ std::string Command::toGCode() const {
 	return r + '\n';
 }
 
+std::string Command::getStrParam(char label, bool &hasParam) const {
+    for (const std::string &p : this->pieces) {
+        if (p[0] == label) {
+            if (p[1] == ':') {
+			    hasParam = true;
+                return p.substr(2);
+            } else {
+			    hasParam = true;
+                return p.substr(1);
+            }
+        }
+    }
+    hasParam = false;
+    return "";
+}
 std::string Command::getStrParam(char label) const {
-	for (const std::string &p : this->pieces) {
-		if (p[0] == label) {
-			if (p[1] == ':') {
-				return p.substr(2);
-			} else {
-				return p.substr(1);
-			}
-		}
-	}
-	return "";
+    bool _ignore;
+    return this->getStrParam(label, _ignore);
+}
+float Command::getFloatParam(char label, float def, bool &hasParam) const {
+    std::string s = this->getStrParam(label, hasParam);
+    return hasParam ? std::stof(s) : def;
 }
 float Command::getFloatParam(char label, float def) const {
-    std::string s = this->getStrParam(label);
-    return s.empty() ? def : std::stof(s);
+    bool _ignore;
+    return this->getFloatParam(label, def, _ignore);
+}
+float Command::getFloatParam(char label, bool &hasParam) const {
+    return this->getFloatParam(label, NAN, hasParam);
 }
 
 float Command::getX(float def) const {
-	return this->getFloatParam('X', def);
+    return this->getFloatParam('X', def);
+}
+float Command::getX(bool &hasParam) const {
+    return this->getFloatParam('X', hasParam);
 }
 float Command::getY(float def) const {
-	return this->getFloatParam('Y', def);
+    return this->getFloatParam('Y', def);
+}
+float Command::getY(bool &hasParam) const {
+    return this->getFloatParam('Y', hasParam);
 }
 float Command::getZ(float def) const {
-	return this->getFloatParam('Z', def);
+    return this->getFloatParam('Z', def);
+}
+float Command::getZ(bool &hasParam) const {
+    return this->getFloatParam('Z', hasParam);
 }
 float Command::getE(float def) const {
-	return this->getFloatParam('E', def);
+    return this->getFloatParam('E', def);
+}
+float Command::getE(bool &hasParam) const {
+    return this->getFloatParam('E', hasParam);
+}
+float Command::getF(float def) const {
+    return this->getFloatParam('F', def);
+}
+float Command::getF(bool &hasParam) const {
+    return this->getFloatParam('F', hasParam);
 }
 
 }
