@@ -1,0 +1,106 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 9.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      2794,         96]
+NotebookOptionsPosition[      2558,         83]
+NotebookOutlinePosition[      2895,         98]
+CellTagsIndexPosition[      2852,         95]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"arm", " ", "constraints"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"const", " ", "=", " ", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      SuperscriptBox["L", "2"], "\[Equal]", " ", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"A", "-", "z"}], ")"}], "2"], " ", "+", " ", 
+       SuperscriptBox["x", "2"], " ", "+", " ", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"d", 
+           FractionBox[
+            RowBox[{"sqrt", 
+             RowBox[{"(", "3", ")"}]}], "4"]}], " ", "-", " ", "y"}], ")"}], 
+        "2"]}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      SuperscriptBox["L", "2"], "\[Equal]", " ", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"B", "-", "z"}], ")"}], "2"], " ", "+", " ", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          FractionBox["d", "2"], "-", "x"}], ")"}], "2"], " ", "+", " ", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"-", "d"}], 
+           FractionBox[
+            RowBox[{"sqrt", 
+             RowBox[{"(", "3", ")"}]}], "4"]}], " ", "-", " ", "y"}], ")"}], 
+        "2"]}]}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      SuperscriptBox["L", "2"], "\[Equal]", " ", 
+      RowBox[{
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{"C", "-", "z"}], ")"}], "2"], " ", "+", " ", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", 
+           FractionBox["d", "2"]}], "-", "x"}], ")"}], "2"], " ", "+", " ", 
+       SuperscriptBox[
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"-", "d"}], 
+           FractionBox[
+            RowBox[{"sqrt", 
+             RowBox[{"(", "3", ")"}]}], "4"]}], " ", "-", " ", "y"}], ")"}], 
+        "2"]}]}]}], "}"}]}]}]], "Input",
+ CellChangeTimes->{{3.612745581370421*^9, 3.612745739537196*^9}}]
+},
+WindowSize->{740, 600},
+WindowMargins->{{148, Automatic}, {Automatic, 34}},
+FrontEndVersion->"9.0 for Linux x86 (64-bit) (February 7, 2013)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[557, 20, 1997, 61, 181, "Input"]
+}
+]
+*)
+
+(* End of internal cache information *)
+
