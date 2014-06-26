@@ -28,13 +28,14 @@ enum LengthUnit {
 };
 
 class State {
-	PositionMode positionMode = POS_ABSOLUTE;
+	PositionMode positionMode; // = POS_ABSOLUTE;
 	//PositionMode extruderPosMode = POS_RELATIVE; //set via M82 and M83
-	LengthUnit unitMode = UNIT_MM;
+	LengthUnit unitMode; // = UNIT_MM;
 	Scheduler scheduler;
-	//std::queue<Event> eventQueue;
-	float _destXPrimitive=0, _destYPrimitive=0, _destZPrimitive=0;
-	float _destEPrimitive=0;
+	//float _destXPrimitive=0, _destYPrimitive=0, _destZPrimitive=0;
+	//float _destEPrimitive=0;
+	float _destXPrimitive, _destYPrimitive, _destZPrimitive;
+	float _destEPrimitive;
 	float _destMoveRatePrimitive; //varies accross drivers
 	float _destFeedRatePrimitive;
 	public:
