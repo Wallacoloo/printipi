@@ -9,6 +9,7 @@
 #include <string>
 #include <cstddef> //for size_t
 #include <memory> //for unique_ptr
+#include <utility> //for std::pair
 #include "command.h"
 #include "event.h"
 #include "scheduler.h"
@@ -131,14 +132,36 @@ class State {
 			float vz = (z-curZ)/dist * velXYZ;
 			float durationXYZ = dist/velXYZ;
 			float durationE = abs(e-curE)/velE;
+			float duration = std::min(durationXYZ, durationE);
 			//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
 			std::size_t numAxis = driver.numAxis();
-			std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty using -Os and -flto
-			//float* times = new float[numAxis];
-			for (int i=0; i<numAxis; ++i) {
-				times[i] = driver.relativeTimeOfNextStep(i, curX, curY, curZ, curE, vx, vy, vz, velE);
+			if (numAxis == 0) { 
+				return; //some of the following logic may assume that there are at least 1 axis.
 			}
-			//delete[] times; 
+			//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
+			std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
+			for (int i=0; i<numAxis; ++i) { //initialize
+				times[i].first = driver.relativeTimeOfNextStep(i, times[i].second, curX, curY, curZ, curE, vx, vy, vz, velE);
+			}
+			
+			int minIdx = 0;
+			do {
+				for (int i=1; i<numAxis; ++i) {
+					if (times[i].first < times[minIdx].first) {
+						minIdx = i;
+					} 
+				}
+				float t = times[minIdx].second;
+				scheduler.queue(Event::StepperEvent(t, minIdx, times[minIdx].second));
+				float txyz = std::min(t, duration); //need to know how much time has been spent traveling for XYZ or Extruder.
+				float te = std::min(t, durationE);
+				float tempX = curX + txyz*vx; //get the current X/Y/Z for which we want to find the next step.
+				float tempY = curY + txyz*vy;
+				float tempZ = curZ + txyz*vz;
+				float tempE = curE + te*velE;
+				//Calculate the next time to trigger this motor.
+				times[minIdx].first = driver.relativeTimeOfNextStep(minIdx, times[minIdx].second, curX, curY, curZ, curE, vx, vy, vz, velE);
+			} while (times[minIdx].first < duration);
 		}
 };
 

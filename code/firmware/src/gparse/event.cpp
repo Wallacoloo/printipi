@@ -12,4 +12,8 @@ const struct timespec& Event::time() const {
 	return this->_time;
 }
 
+Event Event::StepperEvent(float relTime, char stepperNum, StepDirection dir) {
+	return Event();
+}
+
 }
