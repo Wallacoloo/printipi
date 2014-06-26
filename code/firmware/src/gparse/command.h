@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <cmath>
 
 namespace gparse {
 
@@ -19,11 +20,20 @@ class Command {
 		std::string getOpcode() const;
 		std::string toGCode() const;
 		std::string getStrParam(char label) const;
-		float getFloatParam(char label, float def=0) const;
-		float getX(float def=0) const;
-		float getY(float def=0) const;
-		float getZ(float def=0) const;
-		float getE(float def=0) const;
+		std::string getStrParam(char label, bool &hasParam) const;
+		float getFloatParam(char label, float def, bool &hasParam) const;
+		float getFloatParam(char label, float def=NAN) const;
+		float getFloatParam(char label, bool &hasParam) const;
+		float getX(float def=NAN) const;
+		float getX(bool &hasX) const;
+		float getY(float def=NAN) const;
+		float getY(bool &hasY) const;
+		float getZ(float def=NAN) const;
+		float getZ(bool &hasZ) const;
+		float getE(float def=NAN) const; //extrusion distance
+		float getE(bool &hasE) const;
+		float getF(float def=NAN) const; //extruder feed-rate.
+		float getF(bool &hasF) const;
 	private:
 		void addPieceOrOpcode(std::string const& piece);
 };

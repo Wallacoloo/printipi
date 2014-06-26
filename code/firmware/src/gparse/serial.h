@@ -20,7 +20,7 @@ template <typename T> void comLoop(int fd, State& state, T& driver) {
 		Command response = state.execute(parsed, driver);
 		std::string resp = response.toGCode();
 		printf("response: %s", resp.c_str());
-		write(fd, resp.c_str(), resp.length());
+		ssize_t res = write(fd, resp.c_str(), resp.length());
 	}
 }
 

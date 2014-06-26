@@ -1,6 +1,6 @@
 CC=gcc
 CPP=g++
-CFLAGS=-std=c++0x #Use c++0x for gcc <= 4.6, not c++11
+CFLAGS=-std=c++0x -Og -g #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 OUT=../kossel-firmware
 	
