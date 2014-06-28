@@ -14,6 +14,7 @@
 #include "event.h"
 #include "scheduler.h"
 #include "../drivers/driver.h"
+#include "math.h" //note: relative import
 
 namespace gparse {
 
@@ -77,94 +78,10 @@ template <typename Drv> class State {
 		 *returns a Command to send back to the host.
 		 */
 		//template <typename Drv> Command execute(Command const& cmd, Drv &driver) {
-		Command execute(Command const& cmd, Drv &driver) {
-			std::string opcode = cmd.getOpcode();
-			Command resp;
-			if (opcode == OP_G1) { //controlled (linear) movement.
-			    bool hasX, hasY, hasZ, hasE, hasF;
-			    float curX = destXPrimitive();
-			    float curY = destYPrimitive();
-			    float curZ = destZPrimitive();
-			    float curE = destEPrimitive();
-				float x = cmd.getX(hasX); //new x-coordinate.
-				float y = cmd.getY(hasY); //new y-coordinate.
-				float z = cmd.getZ(hasZ); //new z-coordinate.
-				float e = cmd.getE(hasE); //extrusion amount.
-				float f = cmd.getF(hasF); //feed-rate.
-				x = hasX ? xUnitToPrimitive(x) : curX;
-				y = hasY ? yUnitToPrimitive(y) : curY;
-				z = hasZ ? zUnitToPrimitive(z) : curZ;
-				if (hasF) {
-					this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
-				}
-				//TODO: calculate future e based on feedrate.
-				this->queueMovement(driver, curX, curY, curZ, curE, x, y, z, e, destMoveRatePrimitive(), destFeedRatePrimitive());
-			} else if (opcode == OP_G20) { //g-code coordinates will now be interpreted as inches
-				setUnitMode(UNIT_IN);
-				resp = Command::OK;
-			} else if (opcode == OP_G21) { //g-code coordinates will now be interpreted as millimeters.
-				setUnitMode(UNIT_MM);
-				resp = Command::OK;
-			} else if (opcode == OP_G90) { //set g-code coordinates to absolute
-				setPositionMode(POS_ABSOLUTE);
-				resp = Command::OK;
-			} else if (opcode == OP_G91) { //set g-code coordinates to relative
-				setPositionMode(POS_RELATIVE);
-				resp = Command::OK;
-			} else if (opcode == OP_M21) { //initialize SD card (nothing to do).
-				resp = Command::OK;
-			} else if (opcode == OP_M105) { //get temperature, in C
-				int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
-				driver.getTemperature(t, b);
-				resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
-			} else if (opcode == OP_M110) { //set current line number
-				resp = Command::OK;
-			} else {
-				throw new std::string("unrecognized gcode opcode");
-			}
-			return resp;
-		}
+		Command execute(Command const& cmd, Drv &driver);
 		
 		//template <typename Drv> void queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
-		void queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
-			float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
-			float dist = sqrt(distSq);
-			float vx = (x-curX)/dist * velXYZ;
-			float vy = (y-curY)/dist * velXYZ;
-			float vz = (z-curZ)/dist * velXYZ;
-			float durationXYZ = dist/velXYZ;
-			float durationE = abs(e-curE)/velE;
-			float duration = std::min(durationXYZ, durationE);
-			//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
-			std::size_t numAxis = driver.numAxis();
-			if (numAxis == 0) { 
-				return; //some of the following logic may assume that there are at least 1 axis.
-			}
-			//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
-			std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
-			for (int i=0; i<numAxis; ++i) { //initialize
-				times[i].first = driver.relativeTimeOfNextStep(i, times[i].second, curX, curY, curZ, curE, vx, vy, vz, velE);
-			}
-			
-			int minIdx = 0;
-			do {
-				for (int i=1; i<numAxis; ++i) {
-					if (times[i].first < times[minIdx].first) {
-						minIdx = i;
-					} 
-				}
-				float t = times[minIdx].second;
-				scheduler.queue(Event::StepperEvent(t, minIdx, times[minIdx].second));
-				float txyz = std::min(t, duration); //need to know how much time has been spent traveling for XYZ or Extruder.
-				float te = std::min(t, durationE);
-				float tempX = curX + txyz*vx; //get the current X/Y/Z for which we want to find the next step.
-				float tempY = curY + txyz*vy;
-				float tempZ = curZ + txyz*vz;
-				float tempE = curE + te*velE;
-				//Calculate the next time to trigger this motor.
-				times[minIdx].first = driver.relativeTimeOfNextStep(minIdx, times[minIdx].second, curX, curY, curZ, curE, vx, vy, vz, velE);
-			} while (times[minIdx].first < duration);
-		}
+		void queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE);
 };
 
 template <typename Drv> const std::string State<Drv>::OP_G1   = "G1";
@@ -244,7 +161,7 @@ template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
 	}
 }
 
-template <typename Drv> float State<Drv>":xUnitToPrimitive(float posUnit) const {
+template <typename Drv> float State<Drv>::xUnitToPrimitive(float posUnit) const {
 	return posUnitToMM(xUnitToAbsolute(posUnit));
 }
 template <typename Drv> float State<Drv>::yUnitToPrimitive(float posUnit) const {
@@ -283,6 +200,94 @@ template <typename Drv> float State<Drv>::destFeedRatePrimitive() const {
 }
 template <typename Drv> void State<Drv>::setDestFeedRatePrimitive(float f) {
 	this->_destFeedRatePrimitive = f;
+}
+
+template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &driver) {
+	std::string opcode = cmd.getOpcode();
+	Command resp;
+	if (opcode == OP_G1) { //controlled (linear) movement.
+	    bool hasX, hasY, hasZ, hasE, hasF;
+	    float curX = destXPrimitive();
+	    float curY = destYPrimitive();
+	    float curZ = destZPrimitive();
+	    float curE = destEPrimitive();
+		float x = cmd.getX(hasX); //new x-coordinate.
+		float y = cmd.getY(hasY); //new y-coordinate.
+		float z = cmd.getZ(hasZ); //new z-coordinate.
+		float e = cmd.getE(hasE); //extrusion amount.
+		float f = cmd.getF(hasF); //feed-rate.
+		x = hasX ? xUnitToPrimitive(x) : curX;
+		y = hasY ? yUnitToPrimitive(y) : curY;
+		z = hasZ ? zUnitToPrimitive(z) : curZ;
+		if (hasF) {
+			this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
+		}
+		//TODO: calculate future e based on feedrate.
+		this->queueMovement(driver, curX, curY, curZ, curE, x, y, z, e, destMoveRatePrimitive(), destFeedRatePrimitive());
+	} else if (opcode == OP_G20) { //g-code coordinates will now be interpreted as inches
+		setUnitMode(UNIT_IN);
+		resp = Command::OK;
+	} else if (opcode == OP_G21) { //g-code coordinates will now be interpreted as millimeters.
+		setUnitMode(UNIT_MM);
+		resp = Command::OK;
+	} else if (opcode == OP_G90) { //set g-code coordinates to absolute
+		setPositionMode(POS_ABSOLUTE);
+		resp = Command::OK;
+	} else if (opcode == OP_G91) { //set g-code coordinates to relative
+		setPositionMode(POS_RELATIVE);
+		resp = Command::OK;
+	} else if (opcode == OP_M21) { //initialize SD card (nothing to do).
+		resp = Command::OK;
+	} else if (opcode == OP_M105) { //get temperature, in C
+		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
+		driver.getTemperature(t, b);
+		resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
+	} else if (opcode == OP_M110) { //set current line number
+		resp = Command::OK;
+	} else {
+		throw new std::string("unrecognized gcode opcode");
+	}
+	return resp;
+}
+		
+template <typename Drv> void State<Drv>::queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
+	float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
+	float dist = sqrt(distSq);
+	float vx = (x-curX)/dist * velXYZ;
+	float vy = (y-curY)/dist * velXYZ;
+	float vz = (z-curZ)/dist * velXYZ;
+	float durationXYZ = dist/velXYZ;
+	float durationE = abs(e-curE)/velE;
+	float duration = std::min(durationXYZ, durationE);
+	//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
+	std::size_t numAxis = driver.numAxis();
+	if (numAxis == 0) { 
+		return; //some of the following logic may assume that there are at least 1 axis.
+	}
+	//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
+	std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
+	for (int i=0; i<numAxis; ++i) { //initialize
+		times[i].first = driver.relativeTimeOfNextStep(i, times[i].second, curX, curY, curZ, curE, vx, vy, vz, velE);
+	}
+	
+	int minIdx = 0;
+	do {
+		for (int i=1; i<numAxis; ++i) {
+			if (times[i].first < times[minIdx].first) {
+				minIdx = i;
+			} 
+		}
+		float t = times[minIdx].second;
+		scheduler.queue(Event::StepperEvent(t, minIdx, times[minIdx].second));
+		float txyz = std::min(t, duration); //need to know how much time has been spent traveling for XYZ or Extruder.
+		float te = std::min(t, durationE);
+		float tempX = curX + txyz*vx; //get the current X/Y/Z for which we want to find the next step.
+		float tempY = curY + txyz*vy;
+		float tempZ = curZ + txyz*vz;
+		float tempE = curE + te*velE;
+		//Calculate the next time to trigger this motor.
+		times[minIdx].first = driver.relativeTimeOfNextStep(minIdx, times[minIdx].second, curX, curY, curZ, curE, vx, vy, vz, velE);
+	} while (times[minIdx].first < duration);
 }
 
 }
