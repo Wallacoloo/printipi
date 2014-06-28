@@ -11,7 +11,7 @@
 //#include "command.h"
 
 drv::Kossel driver;
-gparse::State gState(driver);
+gparse::State<drv::Kossel> gState(driver);
 
 void printUsageAndQuit(char* cmd) {
     std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
