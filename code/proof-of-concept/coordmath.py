@@ -76,9 +76,9 @@ def checkRelativeTimeOfNextStep(axisIdx, dir, s, x0, y0, z0, e0, vx, vy, vz, ve)
 	print "xyzs", xyz0, xyz
           
 print xyzsFromABC(h, h-1, h-2)
-checkRelativeTimeOfNextStep(0, None, -1, 0, 0, 0, 0, 1, 0, 0, 0) #Correct[time 1];
-checkRelativeTimeOfNextStep(0, None, -2, 0, 0, 0, 0, 1, 0, 0, 0) #Correct[time 1];
-checkRelativeTimeOfNextStep(0, None, -3, 0, 0, 0, 0, 1, 0, 0, 0) #Correct[time 1];
+checkRelativeTimeOfNextStep(0, None, -1, 0, 0, 0, 0, 1, 0, 0, 0) #Correct[xyzs 1];
+checkRelativeTimeOfNextStep(0, None, -2, 0, 0, 0, 0, 1, 0, 0, 0) #Correct[xyzs 1];
+checkRelativeTimeOfNextStep(0, None, -3, 0, 0, 0, 0, 1, 0, 0, 0) #Correct[xyzs 1];
 checkRelativeTimeOfNextStep(0, None, 3, 0, 0, 0, 0, 1, 0, 0, 0) #Correct; when moving away from x=0, A should decrease - not increase.
-checkRelativeTimeOfNextStep(0, None, -2, 0, 0, 0, 0, -1, 0, 0, 0) #Correct[time 0];
-checkRelativeTimeOfNextStep(0, None, -3, 0, 0, 0, 0, -1, 0, 0, 0) #Correct[time 0]; even though the z-value is negative, it's a VERY small magnitude.
+checkRelativeTimeOfNextStep(0, None, -2, 0, 0, 0, 0, -1, 0, 0, 0) #Correct[xyzs 0];
+checkRelativeTimeOfNextStep(0, None, -3, 0, 0, 0, 0, -1, 0, 0, 0) #Correct[xyzs 0]; even though the z-value is negative, it's a VERY small magnitude.
