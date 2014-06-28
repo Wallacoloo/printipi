@@ -1,4 +1,4 @@
-#include "state.h"
+/*#include "state.h"
 #include "math.h"
 
 namespace gparse {
@@ -121,4 +121,4 @@ void State::setDestFeedRatePrimitive(float f) {
 	this->_destFeedRatePrimitive = f;
 }
 
-}
+}*/
