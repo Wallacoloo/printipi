@@ -45,8 +45,8 @@ GPIO.setwarnings(False) #don't warn on pin reassignment.
 GPIO.setmode(GPIO.BOARD)
 coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 11, 13, 15, 16 #board numbering
 pwm_pin = 18 #board numbering
-step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
-#step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
+#step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
+step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
 
 for p in pins:
 	#GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
