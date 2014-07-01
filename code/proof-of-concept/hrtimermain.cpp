@@ -28,6 +28,21 @@ Is there a delayUs function to get finer accuracy over the gettime loop?
   - appears that the raspberry pi's hardware clock only supports microsecond precision (exactly):
     https://projects.drogon.net/accurate-delays-on-the-raspberry-pi/
   - Knowing the clockrate, one can delay for a specific number of cycles (600 MHz = 600 cycles / uS)
+  
+More realtime:
+  thread about realtime kernel: http://www.raspberrypi.org/forums/viewtopic.php?t=2376
+    Real-time Application Interface: www.rtai.org (OUT OF DATE - use Xenomai)
+  SO post about rt on raspberry pi: http://raspberrypi.stackexchange.com/questions/1408/is-it-possible-to-run-real-time-software
+    Secondary RT kernel: http://www.xenomai.org/
+      runs side-by-side with normal Linux kernel
+  Stackable arduino (sits right on top RPi): http://wyolum.com/shop/25-alamode.html
+  enable CONFIG_PREEMPT_RT in kernel: http://www.emlid.com/raspberry-pi-real-time-kernel-available-for-download/
+  * Stepper driving on RPi: https://www.youtube.com/watch?v=uIXkvz1-weQ
+    Explains to use clock_nanosleep instead of nanosleep, in order to specify a time to sleep TO, rather than a duration to sleep.
+    Use (to increase priority): struct sched_param sp; sp.sched_priority=30; pthread_setthreadparam(pthread_self(), SCHED_FIFO, &sp)
+      Note: piHiPri does exactly this.
+    Use (to prevent mem-swapping): mlockall(MCL_FUTURE|MCL_CURRENT)
+  Linux RT wiki: https://rt.wiki.kernel.org/index.php/Main_Page
 */
 
 #include <time.h>
