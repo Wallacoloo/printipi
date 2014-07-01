@@ -43,7 +43,7 @@ GPIO.setwarnings(False) #don't warn on pin reassignment.
 #GPIO.setmode(GPIO.BCM)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
-coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 13, 11, 15, 16 #board numbering
+coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 13, 11, 16, 15 #board numbering
 pwm_pin = 18 #board numbering
 #step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
 step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
