@@ -34,8 +34,9 @@ import time
 #@W5V0 recommends I use a variable voltage switching regulator on each stepper.
 #  4.2V, 1.5A are absolute maximum ratings.
 #physical pin #12 shorted; broken
+#physical pin #11 ?; broken
 #PWM on enable pin reduces stutter, allows stepper to be driven more smoothly. Creates humming sound.
-#Created a large "snap" sound at 1MHz -- stepper discharge?
+#Created a large "snap" sound at 1MHz -- stepper back-emf?
 #RPi.GPIO.PWM tutorial: http://raspi.tv/2013/rpi-gpio-0-5-2a-now-has-software-pwm-how-to-use-it
 
 GPIO.setwarnings(False) #don't warn on pin reassignment.
@@ -43,7 +44,7 @@ GPIO.setwarnings(False) #don't warn on pin reassignment.
 #GPIO.setmode(GPIO.BCM)
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
-coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 13, 11, 16, 15 #board numbering
+coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 13, 15, 16, 18 #board numbering
 pwm_pin = 18 #board numbering
 #step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
 step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
