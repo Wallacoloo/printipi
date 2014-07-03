@@ -239,7 +239,7 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		}
 		//TODO: calculate future e based on feedrate.
 		this->queueMovement(driver, curX, curY, curZ, curE, x, y, z, e, destMoveRatePrimitive(), destFeedRatePrimitive());
-		response = Command::OK;
+		resp = Command::OK;
 	} else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
 		setUnitMode(UNIT_IN);
 		resp = Command::OK;
