@@ -45,7 +45,7 @@ GPIO.setwarnings(False) #don't warn on pin reassignment.
 #coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = 17, 18, 22, 23
 GPIO.setmode(GPIO.BOARD)
 coil_A_1_pin, coil_A_2_pin, coil_B_1_pin, coil_B_2_pin = pins = 13, 15, 16, 18 #board numbering
-pwm_pin = 18 #board numbering
+#pwm_pin = 18 #board numbering
 #step_configs = (1, 0, 1, 0), (0, 1, 1, 0), (0, 1, 0, 1), (1, 0, 0, 1)
 step_configs = (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
 
@@ -54,8 +54,8 @@ for p in pins:
 	GPIO.setup(p, GPIO.OUT)
 
 GPIO.setup(pwm_pin, GPIO.OUT)
-p = GPIO.PWM(pwm_pin, 1000)
-p.start(25) #25% duty cycle.
+#p = GPIO.PWM(pwm_pin, 1000)
+#p.start(25) #25% duty cycle.
 
 #servo = PWM.Servo(subcycle_time_us=3000) #min 3 ms subcycle.
 #servo.set_servo(pwm_pin, 750) #1/4 duty cycle.

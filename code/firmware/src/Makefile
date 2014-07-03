@@ -1,18 +1,18 @@
 CC=gcc
-CPP=g++
+CXX=g++
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 CFLAGS=-std=c++0x -O2 -g -Wall #No -flto for gcc-4.6
 #CFLAGS=-std=c++0x -Os -flto
 #CFLAGS=-std=c++0x -O3 -flto
 LD=ld
-LDFLAGS = -flto
+LDFLAGS = #-flto
 OUT=../kossel-firmware
 	
 all: gparse drivers main.o
-	$(CPP) main.o gparse/gparse.o drivers/drivers.o -o $(OUT) $(CFLAGS)
+	$(CXX) main.o gparse/gparse.o drivers/drivers.o -o $(OUT) $(CFLAGS)
 	
 %.o: %.cpp
-	$(CPP) -c -o $@ $< $(CFLAGS)
+	$(CXX) -c -o $@ $< $(CFLAGS)
 	
 drivers: drivers/driver.o drivers/kossel.o
 	$(LD) -r drivers/driver.o drivers/kossel.o -o drivers/drivers.o $(LDFLAGS)
