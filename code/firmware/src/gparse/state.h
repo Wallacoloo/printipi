@@ -21,7 +21,8 @@ namespace gparse {
 
 enum PositionMode {
 	POS_ABSOLUTE,
-	POS_RELATIVE
+	POS_RELATIVE,
+	POS_UNDEFINED //Sadly, need a way to tie extruder coords to positioning coords in the case that it's undefined.
 };
 
 enum LengthUnit {
@@ -30,8 +31,8 @@ enum LengthUnit {
 };
 
 template <typename Drv> class State {
-	PositionMode positionMode; // = POS_ABSOLUTE;
-	//PositionMode extruderPosMode = POS_RELATIVE; //set via M82 and M83
+	PositionMode _positionMode; // = POS_ABSOLUTE;
+	PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
 	LengthUnit unitMode; // = UNIT_MM;
 	Scheduler scheduler;
 	//float _destXPrimitive=0, _destYPrimitive=0, _destZPrimitive=0;
@@ -50,12 +51,17 @@ template <typename Drv> class State {
 		static const std::string OP_G90 ;// =  "G90";
 		static const std::string OP_G91 ;// =  "G91";
 		static const std::string OP_M21 ;// =  "M21";
+		static const std::string OP_M82 ;// =  "M82";
+		static const std::string OP_M83 ;// =  "M83";
 		static const std::string OP_M105;// = "M105";
 		static const std::string OP_M109;// = "M109";
 		static const std::string OP_M110;// = "M110";
 		//static const std::string OP_T0;  // =   "T0";
 		State(const drv::Driver &drv);
+		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
+		PositionMode extruderPosMode() const;
+		void setExtruderPosMode(PositionMode mode);
 		void setUnitMode(LengthUnit mode);
 		float xUnitToAbsolute(float posUnit) const;
 		float yUnitToAbsolute(float posUnit) const;
@@ -93,19 +99,32 @@ template <typename Drv> const std::string State<Drv>::OP_G21  = "G21";
 template <typename Drv> const std::string State<Drv>::OP_G90  = "G90";
 template <typename Drv> const std::string State<Drv>::OP_G91  = "G91";
 template <typename Drv> const std::string State<Drv>::OP_M21  = "M21";
+template <typename Drv> const std::string State<Drv>::OP_M82  = "M82";
+template <typename Drv> const std::string State<Drv>::OP_M83  = "M83";
 template <typename Drv> const std::string State<Drv>::OP_M105 = "M105";
 template <typename Drv> const std::string State<Drv>::OP_M109 = "M109";
 template <typename Drv> const std::string State<Drv>::OP_M110 = "M110";
 //template <typename Drv> const std::string State<Drv>::OP_T0   = "T0";
 
-template <typename Drv> State<Drv>::State(const drv::Driver &drv) : positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
+template <typename Drv> State<Drv>::State(const drv::Driver &drv) : _positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
+	_extruderPosMode(POS_UNDEFINED), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0) {
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
 
+template <typename Drv> PositionMode State<Drv>::positionMode() const {
+	return this->_positionMode;
+}
 template <typename Drv> void State<Drv>::setPositionMode(PositionMode mode) {
-	this->positionMode = mode; 
+	this->_positionMode = mode; 
+}
+
+template <typename Drv> PositionMode State<Drv>::extruderPosMode() const {
+	return this->_extruderPosMode == POS_UNDEFINED ? positionMode() : this->_extruderPosMode;
+}
+template <typename Drv> void State<Drv>::setExtruderPosMode(PositionMode mode) {
+	this->_extruderPosMode = mode;
 }
 
 template <typename Drv> void State<Drv>::setUnitMode(LengthUnit mode) {
@@ -113,7 +132,7 @@ template <typename Drv> void State<Drv>::setUnitMode(LengthUnit mode) {
 }
 
 template <typename Drv> float State<Drv>::xUnitToAbsolute(float posUnit) const {
-	switch (this->positionMode) {
+	switch (this->positionMode()) {
 		case POS_RELATIVE:
 			posUnit += this->_destXPrimitive;
 			break;
@@ -124,7 +143,7 @@ template <typename Drv> float State<Drv>::xUnitToAbsolute(float posUnit) const {
 	return posUnit;
 }
 template <typename Drv> float State<Drv>::yUnitToAbsolute(float posUnit) const {
-	switch (this->positionMode) {
+	switch (this->positionMode()) {
 		case POS_RELATIVE:
 			posUnit += this->_destYPrimitive;
 			break;
@@ -135,7 +154,7 @@ template <typename Drv> float State<Drv>::yUnitToAbsolute(float posUnit) const {
 	return posUnit;
 }
 template <typename Drv> float State<Drv>::zUnitToAbsolute(float posUnit) const {
-	switch (this->positionMode) {
+	switch (this->positionMode()) {
 		case POS_RELATIVE:
 			posUnit += this->_destZPrimitive;
 			break;
@@ -146,7 +165,7 @@ template <typename Drv> float State<Drv>::zUnitToAbsolute(float posUnit) const {
 	return posUnit;
 }
 template <typename Drv> float State<Drv>::eUnitToAbsolute(float posUnit) const {
-	switch (this->positionMode) {
+	switch (this->extruderPosMode()) {
 		case POS_RELATIVE:
 			posUnit += this->_destEPrimitive;
 			break;
@@ -242,6 +261,12 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		setPositionMode(POS_RELATIVE);
 		resp = Command::OK;
 	} else if (opcode == OP_M21) { //initialize SD card (nothing to do).
+		resp = Command::OK;
+	} else if (opcode == OP_M82) { //set extruder absolute mode
+		setExtruderPosMode(POS_ABSOLUTE);
+		resp = Command::OK;
+	} else if (opcode == OP_M83) { //set extruder relative mode
+		setExtruderPosMode(POS_RELATIVE);
 		resp = Command::OK;
 	} else if (opcode == OP_M105) { //get temperature, in C
 		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
