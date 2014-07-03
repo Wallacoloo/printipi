@@ -4,7 +4,7 @@ CFLAGS=-std=c++0x
 LD=ld
 LDFLAGS=
 #FLTOFLAG=-flto #Enable link-time optimization
-FLTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
+LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
 BUILDROOT=../build
 DEBUGDIR=$(BUILDROOT)/debug
 RELEASEDIR=$(BUILDROOT)/release
@@ -15,8 +15,8 @@ all: debug
 #Configure debug/release settings:
 debug: CFLAGS+=-O2 -g -Wall
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3 -Wall $(FLTOFLAG)
-release: LDFLAGS+= $(FLTOFLAG)
+release: CFLAGS+= -O3 -Wall $(LTOFLAG)
+release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
 	
 %/$(NAME): %/gparse %/drivers %/main.o
