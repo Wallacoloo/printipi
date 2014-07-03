@@ -88,8 +88,8 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(const drv::Driver &drv) : _positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
-	_extruderPosMode(POS_UNDEFINED), 
+template <typename Drv> State<Drv>::State(const drv::Driver &drv) : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
+	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0) {
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
@@ -219,8 +219,8 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &driver) {
 	std::string opcode = cmd.getOpcode();
 	Command resp;
-	if (cmd.isG1()) { //controlled (linear) movement.
-		printf("Warning (gparse/state.h): OP_G1 (linear movement) not fully implemented - notably extrusion\n");
+	if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
+		printf("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
 	    bool hasX, hasY, hasZ, hasE, hasF;
 	    float curX = destXPrimitive();
 	    float curY = destYPrimitive();

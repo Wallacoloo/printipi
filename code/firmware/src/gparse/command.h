@@ -41,6 +41,7 @@ class Command {
 		bool hasE() const;
 		bool hasAnyXYZParam() const;
 		bool hasAnyXYZEParam() const;
+		inline bool isG0()   const { return this->opcode ==   "G0"; }
 		inline bool isG1()   const { return this->opcode ==   "G1"; }
 		inline bool isG20()  const { return this->opcode ==  "G20"; }
 		inline bool isG21()  const { return this->opcode ==  "G21"; }
