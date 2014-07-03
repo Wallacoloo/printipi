@@ -51,6 +51,7 @@ template <typename Drv> class State {
 		static const std::string OP_G91 ;//  = "G91";
 		static const std::string OP_M21 ;//  = "M21";
 		static const std::string OP_M105;// = "M105";
+		static const std::string OP_M109;// = "M109";
 		static const std::string OP_M110;// = "M110";
 		State(const drv::Driver &drv);
 		void setPositionMode(PositionMode mode);
@@ -92,6 +93,7 @@ template <typename Drv> const std::string State<Drv>::OP_G90  = "G90";
 template <typename Drv> const std::string State<Drv>::OP_G91  = "G91";
 template <typename Drv> const std::string State<Drv>::OP_M21  = "M21";
 template <typename Drv> const std::string State<Drv>::OP_M105 = "M105";
+template <typename Drv> const std::string State<Drv>::OP_M109 = "M109";
 template <typename Drv> const std::string State<Drv>::OP_M110 = "M110";
 
 template <typename Drv> State<Drv>::State(const drv::Driver &drv) : positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
@@ -243,6 +245,9 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
 		driver.getTemperature(t, b);
 		resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
+	} else if (opcode == OP_M109) { //set extruder temperature to S param and wait.
+		printf("Warning (gparse/state.h): OP_M109 not implemented\n");
+		resp = Command::OK;
 	} else if (opcode == OP_M110) { //set current line number
 		resp = Command::OK;
 	} else {
