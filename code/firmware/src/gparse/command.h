@@ -35,16 +35,22 @@ class Command {
 		float getE(bool &hasE) const;
 		float getF(float def=NAN) const; //extruder feed-rate.
 		float getF(bool &hasF) const;
-		inline bool isG1()   const { return this->opcode   == "G1"; }
-		inline bool isG20()  const { return this->opcode  == "G20"; }
-		inline bool isG21()  const { return this->opcode  == "G21"; }
-		inline bool isG28()  const { return this->opcode  == "G28"; }
-		inline bool isG90()  const { return this->opcode  == "G90"; }
-		inline bool isG91()  const { return this->opcode  == "G91"; }
-		inline bool isG92()  const { return this->opcode  == "G92"; }
-		inline bool isM21()  const { return this->opcode  == "M21"; }
-		inline bool isM82()  const { return this->opcode  == "M82"; }
-		inline bool isM83()  const { return this->opcode  == "M83"; }
+		bool hasX() const;
+		bool hasY() const;
+		bool hasZ() const;
+		bool hasE() const;
+		bool hasAnyXYZParam() const;
+		bool hasAnyXYZEParam() const;
+		inline bool isG1()   const { return this->opcode ==   "G1"; }
+		inline bool isG20()  const { return this->opcode ==  "G20"; }
+		inline bool isG21()  const { return this->opcode ==  "G21"; }
+		inline bool isG28()  const { return this->opcode ==  "G28"; }
+		inline bool isG90()  const { return this->opcode ==  "G90"; }
+		inline bool isG91()  const { return this->opcode ==  "G91"; }
+		inline bool isG92()  const { return this->opcode ==  "G92"; }
+		inline bool isM21()  const { return this->opcode ==  "M21"; }
+		inline bool isM82()  const { return this->opcode ==  "M82"; }
+		inline bool isM83()  const { return this->opcode ==  "M83"; }
 		inline bool isM105() const { return this->opcode == "M105"; }
 		inline bool isM106() const { return this->opcode == "M106"; }
 		inline bool isM107() const { return this->opcode == "M107"; }

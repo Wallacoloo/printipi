@@ -124,4 +124,24 @@ float Command::getF(bool &hasParam) const {
     return this->getFloatParam('F', hasParam);
 }
 
+bool Command::hasX() const {
+	return hasParam('X');
+}
+bool Command::hasY() const {
+	return hasParam('Y');
+}
+bool Command::hasZ() const {
+	return hasParam('Z');
+}
+bool Command::hasE() const {
+	return hasParam('E');
+}
+
+bool Command::hasAnyXYZParam() const {
+	return hasX() || hasY() || hasZ();
+}
+bool Command::hasAnyXYZEParam() const {
+	return hasAnyXYZParam() || hasE();
+}
+
 }
