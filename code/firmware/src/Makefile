@@ -6,25 +6,30 @@ CFLAGS=-std=c++0x -O2 -g -Wall #No -flto for gcc-4.6
 #CFLAGS=-std=c++0x -O3 -flto
 LD=ld
 LDFLAGS = #-flto
-OUT=../kossel-firmware
+BUILDDIR=../build
+OUT=$(BUILDDIR)/kossel-firmware
+
 	
-all: gparse drivers main.o
-	$(CXX) main.o gparse/gparse.o drivers/drivers.o -o $(OUT) $(CFLAGS)
+all: gparse drivers $(BUILDDIR)/main.o
+	$(CXX) $(BUILDDIR)/main.o $(BUILDDIR)/gparse/gparse.o $(BUILDDIR)/drivers/drivers.o -o $(OUT) $(CFLAGS)
 	
-%.o: %.cpp
+$(BUILDDIR)/%.o: %.cpp
+	@mkdir -p $(@D)
 	$(CXX) -c -o $@ $< $(CFLAGS)
 	
-drivers: drivers/driver.o drivers/kossel.o
-	$(LD) -r drivers/driver.o drivers/kossel.o -o drivers/drivers.o $(LDFLAGS)
+drivers: $(BUILDDIR)/drivers/driver.o $(BUILDDIR)/drivers/kossel.o
+	$(LD) -r $^ -o $(BUILDDIR)/drivers/drivers.o $(LDFLAGS)
 
-gparse: gparse/command.o gparse/event.o gparse/scheduler.o gparse/serial.o gparse/state.o
-	$(LD) -r gparse/command.o gparse/event.o gparse/scheduler.o gparse/serial.o gparse/state.o -o gparse/gparse.o $(LDFLAGS)
+gparse: $(BUILDDIR)/gparse/command.o $(BUILDDIR)/gparse/event.o $(BUILDDIR)/gparse/scheduler.o $(BUILDDIR)/gparse/serial.o $(BUILDDIR)/gparse/state.o
+	$(LD) -r $^ -o $(BUILDDIR)/gparse/gparse.o $(LDFLAGS)
 	
 .PHONY: clean
 
 clean: 
 	#rm -rf gparse/command.o gparse/event.o gparse/serial.o gparse/state.o gparse/gparse.o #alphabetical
-	rm -rf gparse/*.o
-	rm -rf drivers/*.o
-	rm -rf main.o
+	#rm -rf gparse/*.o
+	#rm -rf drivers/*.o
+	#rm -rf main.o
+	#rm -rf $(OUT)
+	rm -rf $(BUILDDIR)
 	rm -rf $(OUT)
