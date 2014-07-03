@@ -53,7 +53,7 @@ for p in pins:
 	#GPIO.setup(p, GPIO.OUT, pull_up_down=GPIO.PUD_DOWN)
 	GPIO.setup(p, GPIO.OUT)
 
-GPIO.setup(pwm_pin, GPIO.OUT)
+#GPIO.setup(pwm_pin, GPIO.OUT)
 #p = GPIO.PWM(pwm_pin, 1000)
 #p.start(25) #25% duty cycle.
 
