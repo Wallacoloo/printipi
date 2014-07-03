@@ -1,35 +1,45 @@
-CC=gcc
 CXX=g++
+CFLAGS=-std=c++0x
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
-CFLAGS=-std=c++0x -O2 -g -Wall #No -flto for gcc-4.6
+#CFLAGS=-std=c++0x -O2 -g -Wall #No -flto for gcc-4.6
 #CFLAGS=-std=c++0x -Os -flto
 #CFLAGS=-std=c++0x -O3 -flto
 LD=ld
-LDFLAGS = #-flto
-BUILDDIR=../build
-OUT=$(BUILDDIR)/kossel-firmware
+LDFLAGS=
+#FLTOFLAG=-flto #Enable link-time optimization
+FLTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
+BUILDROOT=../build
+DEBUGDIR=$(BUILDROOT)/debug
+RELEASEDIR=$(BUILDROOT)/release
+NAME=kossel-firmware
 
+all: debug
+
+debug: CFLAGS+=-O2 -g -Wall
+debug: $(DEBUGDIR)/$(NAME)
+release: CFLAGS+= -O3 -Wall $(FLTOFLAG)
+release: LDFLAGS+= $(FLTOFLAG)
+release: $(RELEASEDIR)/$(NAME)
 	
-all: gparse drivers $(BUILDDIR)/main.o
-	$(CXX) $(BUILDDIR)/main.o $(BUILDDIR)/gparse/gparse.o $(BUILDDIR)/drivers/drivers.o -o $(OUT) $(CFLAGS)
+%/$(NAME): %/gparse %/drivers %/main.o
+	$(CXX) $(@D)/main.o $(@D)/gparse/gparse.o $(@D)/drivers/drivers.o -o $@ $(CFLAGS)
 	
-$(BUILDDIR)/%.o: %.cpp
+%.dir:
 	@mkdir -p $(@D)
-	$(CXX) -c -o $@ $< $(CFLAGS)
+$(DEBUGDIR)/%.o: %.cpp $(DEBUGDIR)/%.dir
+	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
+$(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
+	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-drivers: $(BUILDDIR)/drivers/driver.o $(BUILDDIR)/drivers/kossel.o
-	$(LD) -r $^ -o $(BUILDDIR)/drivers/drivers.o $(LDFLAGS)
+%/drivers: %/drivers/driver.o %/drivers/kossel.o
+	$(LD) -r $^ -o $(@D)/drivers/drivers.o $(LDFLAGS)
 
-gparse: $(BUILDDIR)/gparse/command.o $(BUILDDIR)/gparse/event.o $(BUILDDIR)/gparse/scheduler.o $(BUILDDIR)/gparse/serial.o $(BUILDDIR)/gparse/state.o
-	$(LD) -r $^ -o $(BUILDDIR)/gparse/gparse.o $(LDFLAGS)
+%/gparse: %/gparse/command.o %/gparse/event.o %/gparse/scheduler.o %/gparse/serial.o %/gparse/state.o
+	$(LD) -r $^ -o $(@D)/gparse/gparse.o $(LDFLAGS)
 	
-.PHONY: clean
+#Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.
+.SECONDARY:
 
+.PHONY: clean debug release
 clean: 
-	#rm -rf gparse/command.o gparse/event.o gparse/serial.o gparse/state.o gparse/gparse.o #alphabetical
-	#rm -rf gparse/*.o
-	#rm -rf drivers/*.o
-	#rm -rf main.o
-	#rm -rf $(OUT)
-	rm -rf $(BUILDDIR)
-	rm -rf $(OUT)
+	rm -rf $(BUILDROOT)
