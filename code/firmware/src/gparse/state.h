@@ -35,49 +35,55 @@ template <typename Drv> class State {
 	PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
 	LengthUnit unitMode; // = UNIT_MM;
 	Scheduler scheduler;
-	//float _destXPrimitive=0, _destYPrimitive=0, _destZPrimitive=0;
-	//float _destEPrimitive=0;
 	float _destXPrimitive, _destYPrimitive, _destZPrimitive;
 	float _destEPrimitive;
 	float _destMoveRatePrimitive; //varies accross drivers
 	float _destFeedRatePrimitive;
+	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static const int DEFAULT_HOTEND_TEMP = -300;
 		static const int DEFAULT_BED_TEMP = -300;
 		State(const drv::Driver &drv);
+		/* Control interpretation of positions from the host as relative or absolute */
 		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
+		/* Control interpretation of *extruder* positions from the host as relative or absolute.
+		 *If not explicitly set, it will default to the XYZ position mode. */
 		PositionMode extruderPosMode() const;
 		void setExtruderPosMode(PositionMode mode);
+		/* Control interpretation of distances sent by the host as inches or millimeters */
 		void setUnitMode(LengthUnit mode);
+		/* Convert an x/y/z/e value sent from the host to its absolute value, in the case that the host is sending relative positions */
 		float xUnitToAbsolute(float posUnit) const;
 		float yUnitToAbsolute(float posUnit) const;
 		float zUnitToAbsolute(float posUnit) const;
 		float eUnitToAbsolute(float posUnit) const;
+		/* Convert an x/y/z/e value sent from the host to MM, in the case that the host is sending inches */
 		float posUnitToMM(float posUnit) const;
+		/* Convert an x/y/z/e value sent from the host to whatever primitive value we're using internally
+		 * Acts similarly as a shortcut for posUnitToMM(xUnitToAbsolute(x)), though it may apply transformations in the future.*/
 		float xUnitToPrimitive(float posUnit) const;
 		float yUnitToPrimitive(float posUnit) const;
 		float zUnitToPrimitive(float posUnit) const;
 		float eUnitToPrimitive(float posUnit) const;
 		float fUnitToPrimitive(float posUnit) const;
-		float destXPrimitive() const; //the last queued position (X, Y, Z, E) and feed rate. Future queued commands may depend on this.
+		/* Get the last queued position (X, Y, Z, E). Future queued commands may depend on this */
+		float destXPrimitive() const; 
 		float destYPrimitive() const;
 		float destZPrimitive() const;
 		float destEPrimitive() const;
+		/* Control the feed and move rate */
 		float destMoveRatePrimitive() const;
 		void setDestMoveRatePrimitive(float f);
 		float destFeedRatePrimitive() const;
 		void setDestFeedRatePrimitive(float f);
+		/* The host can set any arbitrary point to be a reference to 0 */
+		void setHostZeroPos(float x, float y, float z, float e);
 		
-		//void queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velSpace, float velExt);
 		/*execute the GCode on a Driver object that supports a well-defined interface.
-		 *returns a Command to send back to the host.
-		 */
-		//template <typename Drv> Command execute(Command const& cmd, Drv &driver) {
+		 *returns a Command to send back to the host.*/
 		Command execute(Command const& cmd, Drv &driver);
-		
-		//template <typename Drv> void queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
 		void queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE);
 };
 
@@ -200,6 +206,13 @@ template <typename Drv> float State<Drv>::destFeedRatePrimitive() const {
 }
 template <typename Drv> void State<Drv>::setDestFeedRatePrimitive(float f) {
 	this->_destFeedRatePrimitive = f;
+}
+
+template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float z, float e) {
+	_hostZeroX = x;
+	_hostZeroY = y;
+	_hostZeroZ = z;
+	_hostZeroE = e;
 }
 
 template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &driver) {
