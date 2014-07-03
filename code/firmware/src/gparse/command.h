@@ -19,6 +19,7 @@ class Command {
 		Command(std::string const&);
 		std::string getOpcode() const;
 		std::string toGCode() const;
+		bool hasParam(char label) const;
 		std::string getStrParam(char label) const;
 		std::string getStrParam(char label, bool &hasParam) const;
 		float getFloatParam(char label, float def, bool &hasParam) const;

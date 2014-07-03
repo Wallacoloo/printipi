@@ -53,6 +53,15 @@ std::string Command::toGCode() const {
 	return r + '\n';
 }
 
+bool Command::hasParam(char label) const {
+	for (const std::string &p : this->pieces) {
+        if (p[0] == label) {
+        	return true;
+        }
+    }
+    return false;
+}
+
 std::string Command::getStrParam(char label, bool &hasParam) const {
     for (const std::string &p : this->pieces) {
         if (p[0] == label) {

@@ -48,6 +48,7 @@ template <typename Drv> class State {
 		static const std::string OP_G1  ;// =   "G1";
 		static const std::string OP_G20 ;// =  "G20";
 		static const std::string OP_G21 ;// =  "G21";
+		static const std::string OP_G28 ;// =  "G28";
 		static const std::string OP_G90 ;// =  "G90";
 		static const std::string OP_G91 ;// =  "G91";
 		static const std::string OP_M21 ;// =  "M21";
@@ -96,6 +97,7 @@ template <typename Drv> class State {
 template <typename Drv> const std::string State<Drv>::OP_G1   = "G1";
 template <typename Drv> const std::string State<Drv>::OP_G20  = "G20";
 template <typename Drv> const std::string State<Drv>::OP_G21  = "G21";
+template <typename Drv> const std::string State<Drv>::OP_G28  = "G28";
 template <typename Drv> const std::string State<Drv>::OP_G90  = "G90";
 template <typename Drv> const std::string State<Drv>::OP_G91  = "G91";
 template <typename Drv> const std::string State<Drv>::OP_M21  = "M21";
@@ -230,6 +232,7 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 	std::string opcode = cmd.getOpcode();
 	Command resp;
 	if (opcode == OP_G1) { //controlled (linear) movement.
+		printf("Warning (gparse/state.h): OP_G1 (linear movement) not fully implemented - notably extrusion\n");
 	    bool hasX, hasY, hasZ, hasE, hasF;
 	    float curX = destXPrimitive();
 	    float curY = destYPrimitive();
@@ -253,6 +256,23 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		resp = Command::OK;
 	} else if (opcode == OP_G21) { //g-code coordinates will now be interpreted as millimeters.
 		setUnitMode(UNIT_MM);
+		resp = Command::OK;
+	} else if (opcode == OP_G28) { //home to end-stops
+		printf("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
+		bool homeX = cmd.hasParam('X'); //can optionally specify specific axis to home.
+		bool homeY = cmd.hasParam('Y');
+		bool homeZ = cmd.hasParam('Z');
+		if (!homeX && !homeY && !homeZ) { //if no axis are passed, then home ALL axis.
+			homeX = homeY = homeZ = true;
+		}
+		float curX = destXPrimitive();
+		float curY = destYPrimitive();
+		float curZ = destZPrimitive();
+		float curE = destEPrimitive();
+		float newX = homeX ? 0 : curX;
+		float newY = homeY ? 0 : curY;
+		float newZ = homeZ ? 0 : curZ;
+		this->queueMovement(driver, curX, curY, curZ, curE, newX, newY, newZ, curE, destMoveRatePrimitive(), destFeedRatePrimitive());
 		resp = Command::OK;
 	} else if (opcode == OP_G90) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
