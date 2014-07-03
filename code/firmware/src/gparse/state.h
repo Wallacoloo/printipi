@@ -335,13 +335,13 @@ template <typename Drv> void State<Drv>::queueMovement(const Drv &driver, float 
 	//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
 	//std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
 	std::pair<float, gparse::StepDirection> times[numAxis];
-	for (int i=0; i<numAxis; ++i) { //initialize
+	for (unsigned i=0; i<numAxis; ++i) { //initialize
 		times[i].first = driver.relativeTimeOfNextStep(i, times[i].second, curX, curY, curZ, curE, vx, vy, vz, velE);
 	}
 	
-	int minIdx = 0;
+	unsigned minIdx = 0;
 	do {
-		for (int i=1; i<numAxis; ++i) {
+		for (unsigned i=1; i<numAxis; ++i) {
 			if (times[i].first < times[minIdx].first) {
 				minIdx = i;
 			} 
