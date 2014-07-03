@@ -29,7 +29,6 @@ Command::Command(std::string const& cmd) {
 	}
 	if (piece.length()) {
 		this->addPieceOrOpcode(piece);
-		//this->pieces.push_back(piece);
 	}
 }
 
