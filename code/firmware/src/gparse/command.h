@@ -57,6 +57,7 @@ class Command {
 		inline bool isM107() const { return this->opcode == "M107"; }
 		inline bool isM109() const { return this->opcode == "M109"; }
 		inline bool isM110() const { return this->opcode == "M110"; }
+		inline bool isM117() const { return this->opcode == "M117"; }
 		inline bool isTxxx() const { return this->opcode.length() && this->opcode[0] == 'T'; }
 	private:
 		void addPieceOrOpcode(std::string const& piece);

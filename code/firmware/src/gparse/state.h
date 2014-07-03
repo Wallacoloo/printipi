@@ -309,6 +309,8 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		resp = Command::OK;
 	} else if (cmd.isM110()) { //set current line number
 		resp = Command::OK;
+	} else if (cmd.isM117()) { //print message
+		resp = Command::OK;
 	} else if (cmd.isTxxx()) { //set tool number
 		printf("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
 		resp = Command::OK;
