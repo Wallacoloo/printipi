@@ -55,6 +55,8 @@ template <typename Drv> class State {
 		static const std::string OP_M82 ;// =  "M82";
 		static const std::string OP_M83 ;// =  "M83";
 		static const std::string OP_M105;// = "M105";
+		static const std::string OP_M106;// = "M106";
+		static const std::string OP_M107;// = "M107";
 		static const std::string OP_M109;// = "M109";
 		static const std::string OP_M110;// = "M110";
 		//static const std::string OP_T0;  // =   "T0";
@@ -104,6 +106,8 @@ template <typename Drv> const std::string State<Drv>::OP_M21  = "M21";
 template <typename Drv> const std::string State<Drv>::OP_M82  = "M82";
 template <typename Drv> const std::string State<Drv>::OP_M83  = "M83";
 template <typename Drv> const std::string State<Drv>::OP_M105 = "M105";
+template <typename Drv> const std::string State<Drv>::OP_M106 = "M106";
+template <typename Drv> const std::string State<Drv>::OP_M107 = "M107";
 template <typename Drv> const std::string State<Drv>::OP_M109 = "M109";
 template <typename Drv> const std::string State<Drv>::OP_M110 = "M110";
 //template <typename Drv> const std::string State<Drv>::OP_T0   = "T0";
@@ -292,6 +296,12 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
 		driver.getTemperature(t, b);
 		resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
+	} else if (opcode == OP_M106) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
+		printf("Warning (gparse/state.h): OP_M106 (set fan speed) not implemented\n");
+		resp = Command::OK;
+	} else if (opcode == OP_M107) { //set fan = off.
+		printf("Warning (gparse/state.h): OP_M106 (set fan off) not implemented\n");
+		resp = Command::OK;
 	} else if (opcode == OP_M109) { //set extruder temperature to S param and wait.
 		printf("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");
 		resp = Command::OK;
