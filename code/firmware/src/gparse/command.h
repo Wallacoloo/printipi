@@ -51,6 +51,7 @@ class Command {
 		inline bool isM21()  const { return this->opcode ==  "M21"; }
 		inline bool isM82()  const { return this->opcode ==  "M82"; }
 		inline bool isM83()  const { return this->opcode ==  "M83"; }
+		inline bool isM104() const { return this->opcode == "M104"; }
 		inline bool isM105() const { return this->opcode == "M105"; }
 		inline bool isM106() const { return this->opcode == "M106"; }
 		inline bool isM107() const { return this->opcode == "M107"; }

@@ -291,6 +291,9 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 	} else if (cmd.isM83()) { //set extruder relative mode
 		setExtruderPosMode(POS_RELATIVE);
 		resp = Command::OK;
+	} else if (cmd.isM104()) { //set hotend temperature
+		printf("Warning (gparse/state.h): OP_M104 (set hotend temp) not implemented\n");
+		resp = Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
 		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
 		driver.getTemperature(t, b);
