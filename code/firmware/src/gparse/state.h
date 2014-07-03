@@ -90,7 +90,8 @@ template <typename Drv> class State {
 
 template <typename Drv> State<Drv>::State(const drv::Driver &drv) : _positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
 	_extruderPosMode(POS_UNDEFINED), 
-	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0) {
+	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
+	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0) {
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
@@ -168,16 +169,16 @@ template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
 }
 
 template <typename Drv> float State<Drv>::xUnitToPrimitive(float posUnit) const {
-	return posUnitToMM(xUnitToAbsolute(posUnit));
+	return posUnitToMM(xUnitToAbsolute(posUnit)) + this->_hostZeroX;
 }
 template <typename Drv> float State<Drv>::yUnitToPrimitive(float posUnit) const {
-	return posUnitToMM(yUnitToAbsolute(posUnit));
+	return posUnitToMM(yUnitToAbsolute(posUnit)) + this->_hostZeroY;
 }
 template <typename Drv> float State<Drv>::zUnitToPrimitive(float posUnit) const {
-	return posUnitToMM(zUnitToAbsolute(posUnit));
+	return posUnitToMM(zUnitToAbsolute(posUnit)) + this->_hostZeroZ;
 }
 template <typename Drv> float State<Drv>::eUnitToPrimitive(float posUnit) const {
-	return posUnitToMM(eUnitToAbsolute(posUnit));
+	return posUnitToMM(eUnitToAbsolute(posUnit)) + this->_hostZeroE;
 }
 template <typename Drv> float State<Drv>::fUnitToPrimitive(float posUnit) const {
 	return posUnitToMM(posUnit); //feed rate is always relative, so no need to call toAbsolute
@@ -246,9 +247,9 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		resp = Command::OK;
 	} else if (cmd.isG28()) { //home to end-stops
 		printf("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
-		bool homeX = cmd.hasParam('X'); //can optionally specify specific axis to home.
-		bool homeY = cmd.hasParam('Y');
-		bool homeZ = cmd.hasParam('Z');
+		bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
+		bool homeY = cmd.hasY();
+		bool homeZ = cmd.hasZ();
 		if (!homeX && !homeY && !homeZ) { //if no axis are passed, then home ALL axis.
 			homeX = homeY = homeZ = true;
 		}
@@ -268,7 +269,18 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		setPositionMode(POS_RELATIVE);
 		resp = Command::OK;
 	} else if (cmd.isG92()) { //set current position = 0
-		printf("Warning (gparse/state.h): OP_G92 (set current position as reference to zero) not implemented\n");
+		//printf("Warning (gparse/state.h): OP_G92 (set current position as reference to zero) not tested\n");
+		float actualX, actualY, actualZ, actualE;
+		bool hasXYZE = cmd.hasAnyXYZEParam();
+		if (!hasXYZE) { //make current position (0, 0, 0, 0)
+			actualX = actualY = actualZ = actualE = posUnitToMM(0);
+		} else {
+			actualX = cmd.hasX() ? posUnitToMM(cmd.getX()) : _hostZeroX;
+			actualY = cmd.hasY() ? posUnitToMM(cmd.getY()) : _hostZeroY;
+			actualZ = cmd.hasZ() ? posUnitToMM(cmd.getZ()) : _hostZeroZ;
+			actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : _hostZeroE;
+		}
+		setHostZeroPos(actualX, actualY, actualZ, actualE);
 		resp = Command::OK;
 	} else if (cmd.isM21()) { //initialize SD card (nothing to do).
 		resp = Command::OK;
