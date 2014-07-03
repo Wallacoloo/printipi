@@ -51,6 +51,7 @@ template <typename Drv> class State {
 		static const std::string OP_G28 ;// =  "G28";
 		static const std::string OP_G90 ;// =  "G90";
 		static const std::string OP_G91 ;// =  "G91";
+		static const std::string OP_G92 ;// =  "G92";
 		static const std::string OP_M21 ;// =  "M21";
 		static const std::string OP_M82 ;// =  "M82";
 		static const std::string OP_M83 ;// =  "M83";
@@ -102,6 +103,7 @@ template <typename Drv> const std::string State<Drv>::OP_G21  = "G21";
 template <typename Drv> const std::string State<Drv>::OP_G28  = "G28";
 template <typename Drv> const std::string State<Drv>::OP_G90  = "G90";
 template <typename Drv> const std::string State<Drv>::OP_G91  = "G91";
+template <typename Drv> const std::string State<Drv>::OP_G92  = "G92";
 template <typename Drv> const std::string State<Drv>::OP_M21  = "M21";
 template <typename Drv> const std::string State<Drv>::OP_M82  = "M82";
 template <typename Drv> const std::string State<Drv>::OP_M83  = "M83";
@@ -283,6 +285,9 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		resp = Command::OK;
 	} else if (opcode == OP_G91) { //set g-code coordinates to relative
 		setPositionMode(POS_RELATIVE);
+		resp = Command::OK;
+	} else if (opcode == OP_G92) { //set current position = 0
+		printf("Warning (gparse/state.h): OP_G92 (home to end-stops) not implemented\n");
 		resp = Command::OK;
 	} else if (opcode == OP_M21) { //initialize SD card (nothing to do).
 		resp = Command::OK;
