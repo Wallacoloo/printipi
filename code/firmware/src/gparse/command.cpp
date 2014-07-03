@@ -13,16 +13,12 @@ Command::Command(std::string const& cmd) {
 		    ++it;
 		} while (it != cmd.end() && *it != ' ' && *it != '\n' && *it != '\t' && *it != '*');
 	}
-	//for (char chr : cmd) { //split the command on spaces.
-	for (; it != cmd.end(); ++it) {
+	for (; it != cmd.end(); ++it) { //split the command on spaces...
 		char chr = *it;
 		if (chr == ' ' || chr == '\n' || chr == '\t' || chr == '*') {
 			if (piece.length()) { //allow for multiple spaces between parameters
-				//if (piece[0] != 'N') { //don't store optional line numbers.
-					this->addPieceOrOpcode(piece);
-					//this->pieces.push_back(piece);
-					piece = "";
-				//}
+				this->addPieceOrOpcode(piece);
+				piece = "";
 			}
 			if (chr == '*') { //checksum. Don't verify for now.
 				break;
