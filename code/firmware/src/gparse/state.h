@@ -8,6 +8,7 @@
 
 #include <string>
 #include <cstddef> //for size_t
+#include <stdexcept> //for runtime_error
 //#include <memory> //for unique_ptr
 #include <utility> //for std::pair
 #include "command.h"
@@ -245,7 +246,7 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 	} else if (opcode == OP_M110) { //set current line number
 		resp = Command::OK;
 	} else {
-		throw new std::string("unrecognized gcode opcode");
+		throw new std::runtime_error("unrecognized gcode opcode");
 	}
 	return resp;
 }
