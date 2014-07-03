@@ -1,5 +1,5 @@
 CXX=g++
-CFLAGS=-std=c++0x
+CFLAGS=-std=c++0x -march-native
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
