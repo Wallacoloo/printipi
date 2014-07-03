@@ -44,15 +44,16 @@ template <typename Drv> class State {
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static const int DEFAULT_HOTEND_TEMP = -300;
 		static const int DEFAULT_BED_TEMP = -300;
-		static const std::string OP_G1  ;//  = "G1" ;
-		static const std::string OP_G20 ;//  = "G20";
-		static const std::string OP_G21 ;//  = "G21";
-		static const std::string OP_G90 ;//  = "G90";
-		static const std::string OP_G91 ;//  = "G91";
-		static const std::string OP_M21 ;//  = "M21";
+		static const std::string OP_G1  ;// =   "G1";
+		static const std::string OP_G20 ;// =  "G20";
+		static const std::string OP_G21 ;// =  "G21";
+		static const std::string OP_G90 ;// =  "G90";
+		static const std::string OP_G91 ;// =  "G91";
+		static const std::string OP_M21 ;// =  "M21";
 		static const std::string OP_M105;// = "M105";
 		static const std::string OP_M109;// = "M109";
 		static const std::string OP_M110;// = "M110";
+		static const std::string OP_T0;  // =   "T0";
 		State(const drv::Driver &drv);
 		void setPositionMode(PositionMode mode);
 		void setUnitMode(LengthUnit mode);
@@ -95,6 +96,7 @@ template <typename Drv> const std::string State<Drv>::OP_M21  = "M21";
 template <typename Drv> const std::string State<Drv>::OP_M105 = "M105";
 template <typename Drv> const std::string State<Drv>::OP_M109 = "M109";
 template <typename Drv> const std::string State<Drv>::OP_M110 = "M110";
+template <typename Drv> const std::string State<Drv>::OP_T0   = "T0";
 
 template <typename Drv> State<Drv>::State(const drv::Driver &drv) : positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0) {
@@ -249,6 +251,9 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		printf("Warning (gparse/state.h): OP_M109 not implemented\n");
 		resp = Command::OK;
 	} else if (opcode == OP_M110) { //set current line number
+		resp = Command::OK;
+	} else if (opcode == OP_T0) { //set tool number
+		printf("Warning (gparse/state.h): OP_T0 not implemented\n");
 		resp = Command::OK;
 	} else {
 		throw new std::runtime_error("unrecognized gcode opcode");
