@@ -9,7 +9,7 @@ class Kossel : public Driver {
     public:
         void getTemperature(int &extruder, int& platform) const;
         //constexpr std::size_t numAxis() const;
-        constexpr std::size_t numAxis() const {
+        constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
         float defaultMoveRate() const;

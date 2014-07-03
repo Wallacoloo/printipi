@@ -8,7 +8,7 @@
 
 #include <string>
 #include <cstddef> //for size_t
-#include <memory> //for unique_ptr
+//#include <memory> //for unique_ptr
 #include <utility> //for std::pair
 #include "command.h"
 #include "event.h"
@@ -260,12 +260,13 @@ template <typename Drv> void State<Drv>::queueMovement(const Drv &driver, float 
 	float durationE = abs(e-curE)/velE;
 	float duration = std::min(durationXYZ, durationE);
 	//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
-	std::size_t numAxis = driver.numAxis();
+	constexpr std::size_t numAxis = Drv::numAxis(); //driver.numAxis();
 	if (numAxis == 0) { 
 		return; //some of the following logic may assume that there are at least 1 axis.
 	}
 	//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
-	std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
+	//std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
+	std::pair<float, gparse::StepDirection> times[numAxis];
 	for (int i=0; i<numAxis; ++i) { //initialize
 		times[i].first = driver.relativeTimeOfNextStep(i, times[i].second, curX, curY, curZ, curE, vx, vy, vz, velE);
 	}
