@@ -7,14 +7,22 @@ const Command Command::OK("ok");
 Command::Command(std::string const& cmd) {
 	//initialize the command from a line of GCode
 	std::string piece;
-	for (char chr : cmd) { //split the command on spaces.
+	std::string::const_iterator it=cmd.begin();
+	if (cmd[0] == 'N') { //line-number
+		do {
+		    ++it;
+		} while (it != cmd.end() && *it != ' ' && *it != '\n' && *it != '\t' && *it != '*');
+	}
+	//for (char chr : cmd) { //split the command on spaces.
+	for (; it != cmd.end(); ++it) {
+		char chr = *it;
 		if (chr == ' ' || chr == '\n' || chr == '\t' || chr == '*') {
 			if (piece.length()) { //allow for multiple spaces between parameters
-				if (piece[0] != 'N') { //don't store optional line numbers.
+				//if (piece[0] != 'N') { //don't store optional line numbers.
 					this->addPieceOrOpcode(piece);
 					//this->pieces.push_back(piece);
 					piece = "";
-				}
+				//}
 			}
 			if (chr == '*') { //checksum. Don't verify for now.
 				break;
