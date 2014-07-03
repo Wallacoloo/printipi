@@ -1,9 +1,6 @@
 CXX=g++
 CFLAGS=-std=c++0x
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
-#CFLAGS=-std=c++0x -O2 -g -Wall #No -flto for gcc-4.6
-#CFLAGS=-std=c++0x -Os -flto
-#CFLAGS=-std=c++0x -O3 -flto
 LD=ld
 LDFLAGS=
 #FLTOFLAG=-flto #Enable link-time optimization
@@ -15,6 +12,7 @@ NAME=kossel-firmware
 
 all: debug
 
+#Configure debug/release settings:
 debug: CFLAGS+=-O2 -g -Wall
 debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 -Wall $(FLTOFLAG)
@@ -23,6 +21,7 @@ release: $(RELEASEDIR)/$(NAME)
 	
 %/$(NAME): %/gparse %/drivers %/main.o
 	$(CXX) $(@D)/main.o $(@D)/gparse/gparse.o $(@D)/drivers/drivers.o -o $@ $(CFLAGS)
+	cp $@ $(BUILDROOT)/$(NAME)
 	
 %.dir:
 	@mkdir -p $(@D)
