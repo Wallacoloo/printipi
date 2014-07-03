@@ -45,22 +45,6 @@ template <typename Drv> class State {
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static const int DEFAULT_HOTEND_TEMP = -300;
 		static const int DEFAULT_BED_TEMP = -300;
-		static const std::string OP_G1  ;// =   "G1";
-		static const std::string OP_G20 ;// =  "G20";
-		static const std::string OP_G21 ;// =  "G21";
-		static const std::string OP_G28 ;// =  "G28";
-		static const std::string OP_G90 ;// =  "G90";
-		static const std::string OP_G91 ;// =  "G91";
-		static const std::string OP_G92 ;// =  "G92";
-		static const std::string OP_M21 ;// =  "M21";
-		static const std::string OP_M82 ;// =  "M82";
-		static const std::string OP_M83 ;// =  "M83";
-		static const std::string OP_M105;// = "M105";
-		static const std::string OP_M106;// = "M106";
-		static const std::string OP_M107;// = "M107";
-		static const std::string OP_M109;// = "M109";
-		static const std::string OP_M110;// = "M110";
-		//static const std::string OP_T0;  // =   "T0";
 		State(const drv::Driver &drv);
 		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
@@ -97,22 +81,6 @@ template <typename Drv> class State {
 		void queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE);
 };
 
-template <typename Drv> const std::string State<Drv>::OP_G1   = "G1";
-template <typename Drv> const std::string State<Drv>::OP_G20  = "G20";
-template <typename Drv> const std::string State<Drv>::OP_G21  = "G21";
-template <typename Drv> const std::string State<Drv>::OP_G28  = "G28";
-template <typename Drv> const std::string State<Drv>::OP_G90  = "G90";
-template <typename Drv> const std::string State<Drv>::OP_G91  = "G91";
-template <typename Drv> const std::string State<Drv>::OP_G92  = "G92";
-template <typename Drv> const std::string State<Drv>::OP_M21  = "M21";
-template <typename Drv> const std::string State<Drv>::OP_M82  = "M82";
-template <typename Drv> const std::string State<Drv>::OP_M83  = "M83";
-template <typename Drv> const std::string State<Drv>::OP_M105 = "M105";
-template <typename Drv> const std::string State<Drv>::OP_M106 = "M106";
-template <typename Drv> const std::string State<Drv>::OP_M107 = "M107";
-template <typename Drv> const std::string State<Drv>::OP_M109 = "M109";
-template <typename Drv> const std::string State<Drv>::OP_M110 = "M110";
-//template <typename Drv> const std::string State<Drv>::OP_T0   = "T0";
 
 template <typename Drv> State<Drv>::State(const drv::Driver &drv) : _positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
 	_extruderPosMode(POS_UNDEFINED), 
@@ -237,7 +205,7 @@ template <typename Drv> void State<Drv>::setDestFeedRatePrimitive(float f) {
 template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &driver) {
 	std::string opcode = cmd.getOpcode();
 	Command resp;
-	if (opcode == OP_G1) { //controlled (linear) movement.
+	if (cmd.isG1()) { //controlled (linear) movement.
 		printf("Warning (gparse/state.h): OP_G1 (linear movement) not fully implemented - notably extrusion\n");
 	    bool hasX, hasY, hasZ, hasE, hasF;
 	    float curX = destXPrimitive();
@@ -257,13 +225,13 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		}
 		//TODO: calculate future e based on feedrate.
 		this->queueMovement(driver, curX, curY, curZ, curE, x, y, z, e, destMoveRatePrimitive(), destFeedRatePrimitive());
-	} else if (opcode == OP_G20) { //g-code coordinates will now be interpreted as inches
+	} else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
 		setUnitMode(UNIT_IN);
 		resp = Command::OK;
-	} else if (opcode == OP_G21) { //g-code coordinates will now be interpreted as millimeters.
+	} else if (cmd.isG21()) { //g-code coordinates will now be interpreted as millimeters.
 		setUnitMode(UNIT_MM);
 		resp = Command::OK;
-	} else if (opcode == OP_G28) { //home to end-stops
+	} else if (cmd.isG28()) { //home to end-stops
 		printf("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
 		bool homeX = cmd.hasParam('X'); //can optionally specify specific axis to home.
 		bool homeY = cmd.hasParam('Y');
@@ -280,39 +248,39 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		float newZ = homeZ ? 0 : curZ;
 		this->queueMovement(driver, curX, curY, curZ, curE, newX, newY, newZ, curE, destMoveRatePrimitive(), destFeedRatePrimitive());
 		resp = Command::OK;
-	} else if (opcode == OP_G90) { //set g-code coordinates to absolute
+	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
 		resp = Command::OK;
-	} else if (opcode == OP_G91) { //set g-code coordinates to relative
+	} else if (cmd.isG91()) { //set g-code coordinates to relative
 		setPositionMode(POS_RELATIVE);
 		resp = Command::OK;
-	} else if (opcode == OP_G92) { //set current position = 0
-		printf("Warning (gparse/state.h): OP_G92 (home to end-stops) not implemented\n");
+	} else if (cmd.isG92()) { //set current position = 0
+		printf("Warning (gparse/state.h): OP_G92 (set current position as reference to zero) not implemented\n");
 		resp = Command::OK;
-	} else if (opcode == OP_M21) { //initialize SD card (nothing to do).
+	} else if (cmd.isM21()) { //initialize SD card (nothing to do).
 		resp = Command::OK;
-	} else if (opcode == OP_M82) { //set extruder absolute mode
+	} else if (cmd.isM82()) { //set extruder absolute mode
 		setExtruderPosMode(POS_ABSOLUTE);
 		resp = Command::OK;
-	} else if (opcode == OP_M83) { //set extruder relative mode
+	} else if (cmd.isM83()) { //set extruder relative mode
 		setExtruderPosMode(POS_RELATIVE);
 		resp = Command::OK;
-	} else if (opcode == OP_M105) { //get temperature, in C
+	} else if (cmd.isM105()) { //get temperature, in C
 		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
 		driver.getTemperature(t, b);
 		resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
-	} else if (opcode == OP_M106) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
+	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
 		printf("Warning (gparse/state.h): OP_M106 (set fan speed) not implemented\n");
 		resp = Command::OK;
-	} else if (opcode == OP_M107) { //set fan = off.
+	} else if (cmd.isM107()) { //set fan = off.
 		printf("Warning (gparse/state.h): OP_M106 (set fan off) not implemented\n");
 		resp = Command::OK;
-	} else if (opcode == OP_M109) { //set extruder temperature to S param and wait.
+	} else if (cmd.isM109()) { //set extruder temperature to S param and wait.
 		printf("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");
 		resp = Command::OK;
-	} else if (opcode == OP_M110) { //set current line number
+	} else if (cmd.isM110()) { //set current line number
 		resp = Command::OK;
-	} else if (opcode.length() && opcode[0] == 'T') { //set tool number
+	} else if (cmd.isTxxx()) { //set tool number
 		printf("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
 		resp = Command::OK;
 	} else {
