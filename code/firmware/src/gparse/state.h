@@ -53,7 +53,7 @@ template <typename Drv> class State {
 		static const std::string OP_M105;// = "M105";
 		static const std::string OP_M109;// = "M109";
 		static const std::string OP_M110;// = "M110";
-		static const std::string OP_T0;  // =   "T0";
+		//static const std::string OP_T0;  // =   "T0";
 		State(const drv::Driver &drv);
 		void setPositionMode(PositionMode mode);
 		void setUnitMode(LengthUnit mode);
@@ -96,7 +96,7 @@ template <typename Drv> const std::string State<Drv>::OP_M21  = "M21";
 template <typename Drv> const std::string State<Drv>::OP_M105 = "M105";
 template <typename Drv> const std::string State<Drv>::OP_M109 = "M109";
 template <typename Drv> const std::string State<Drv>::OP_M110 = "M110";
-template <typename Drv> const std::string State<Drv>::OP_T0   = "T0";
+//template <typename Drv> const std::string State<Drv>::OP_T0   = "T0";
 
 template <typename Drv> State<Drv>::State(const drv::Driver &drv) : positionMode(POS_ABSOLUTE), unitMode(UNIT_MM),
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0) {
@@ -248,12 +248,12 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		driver.getTemperature(t, b);
 		resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (opcode == OP_M109) { //set extruder temperature to S param and wait.
-		printf("Warning (gparse/state.h): OP_M109 not implemented\n");
+		printf("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");
 		resp = Command::OK;
 	} else if (opcode == OP_M110) { //set current line number
 		resp = Command::OK;
-	} else if (opcode == OP_T0) { //set tool number
-		printf("Warning (gparse/state.h): OP_T0 not implemented\n");
+	} else if (opcode.length() && opcode[0] == 'T') { //set tool number
+		printf("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
 		resp = Command::OK;
 	} else {
 		throw new std::runtime_error("unrecognized gcode opcode");
