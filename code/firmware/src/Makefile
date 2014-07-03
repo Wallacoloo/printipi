@@ -9,13 +9,15 @@ BUILDROOT=../build
 DEBUGDIR=$(BUILDROOT)/debug
 RELEASEDIR=$(BUILDROOT)/release
 NAME=kossel-firmware
+#ARCHFLAGS=-march=native -mtune=native -mcpu=native
+ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 
 all: debug
 
 #Configure debug/release settings:
 debug: CFLAGS+=-O2 -g -Wall
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3 -Wall $(LTOFLAG)
+release: CFLAGS+= -O3 -Wall $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
 	
