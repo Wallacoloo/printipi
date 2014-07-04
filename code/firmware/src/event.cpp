@@ -1,6 +1,5 @@
 #include "event.h"
 
-namespace gparse {
 
 int Event::stepperNumber() const {
 	return this->_stepperNum;
@@ -16,4 +15,3 @@ Event Event::StepperEvent(float relTime, char stepperNum, StepDirection dir) {
 	return Event();
 }
 
-}

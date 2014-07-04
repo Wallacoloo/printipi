@@ -14,7 +14,7 @@ class Kossel : public Driver {
         }
         float defaultMoveRate() const;
         float defaultFeedRate() const;
-        float relativeTimeOfNextStep(int axisIdx, gparse::StepDirection &dir, float x, float y, float z, float e, float velx, float vely, float velz, float velExt) const;
+        float relativeTimeOfNextStep(int axisIdx, StepDirection &dir, float x, float y, float z, float e, float velx, float vely, float velz, float velExt) const;
 };
 
 }

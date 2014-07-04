@@ -21,8 +21,8 @@ release: CFLAGS+= -O3 -Wall $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
 	
-%/$(NAME): %/gparse %/drivers %/main.o
-	$(CXX) $(@D)/main.o $(@D)/gparse/gparse.o $(@D)/drivers/drivers.o -o $@ $(CFLAGS)
+%/$(NAME): %/gparse %/drivers %/rest
+	$(CXX) $(@D)/rest.o $(@D)/gparse/gparse.o $(@D)/drivers/drivers.o -o $@ $(CFLAGS)
 	cp $@ $(BUILDROOT)/$(NAME)
 	
 %.dir:
@@ -35,8 +35,11 @@ $(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
 %/drivers: %/drivers/driver.o %/drivers/kossel.o
 	$(LD) -r $^ -o $(@D)/drivers/drivers.o $(LDFLAGS)
 
-%/gparse: %/gparse/command.o %/gparse/event.o %/gparse/scheduler.o %/gparse/serial.o %/gparse/state.o
+%/gparse: %/gparse/command.o %/gparse/serial.o
 	$(LD) -r $^ -o $(@D)/gparse/gparse.o $(LDFLAGS)
+	
+%/rest: %/event.o %/main.o %/scheduler.o %/state.o
+	$(LD) -r $^ -o $(@D)/rest.o $(LDFLAGS)
 	
 #Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.
 .SECONDARY:

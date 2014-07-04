@@ -1,31 +1,33 @@
 #include <iostream> //for std::cerr?
 #include <string>
 #include <fcntl.h> //needed for (file) open()
-#include <stdlib.h> //needed for exit()
+//#include <stdlib.h> //needed for exit()
 #include <stdio.h> //for printf?
 
 #include "gparse/serial.h"
-#include "gparse/state.h"
+#include "state.h"
 #include "drivers/driver.h"
 #include "drivers/kossel.h"
 //#include "command.h"
 
 drv::Kossel driver;
-gparse::State<drv::Kossel> gState(driver);
+State<drv::Kossel> gState(driver);
 
-void printUsageAndQuit(char* cmd) {
+void printUsage(char* cmd) {
     std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
-    exit(1);
+    //exit(1);
 }
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        printUsageAndQuit(argv[0]);
+        printUsage(argv[0]);
+        return 1;
     }
     char* serialFileName = argv[1];
     printf("Serial file: %s\n", serialFileName);
     int fd = open(serialFileName, O_RDWR);
-    gparse::comLoop(fd, gState, driver);
+    gparse::comLoop(fd, gState);
     printf("Exiting\n");
+    //exit(0);
     return 0;
 }
