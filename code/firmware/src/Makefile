@@ -1,5 +1,5 @@
 CXX=g++
-CFLAGS=-std=c++0x -Wall
+CFLAGS=-std=c++0x -Wall -Wextra -Wwrite-strings -Wno-unused-result
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
