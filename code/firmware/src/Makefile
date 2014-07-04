@@ -1,5 +1,5 @@
 CXX=g++
-CFLAGS=-std=c++0x
+CFLAGS=-std=c++0x -Wall
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
@@ -15,9 +15,9 @@ ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 all: debug
 
 #Configure debug/release settings:
-debug: CFLAGS+=-O2 -g -Wall
+debug: CFLAGS+=-O2 -g -fsanitize=address
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3 -Wall $(LTOFLAG) $(ARCHFLAGS)
+release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
 	
