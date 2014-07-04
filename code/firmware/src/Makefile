@@ -8,18 +8,23 @@ LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors 
 BUILDROOT=../build
 DEBUGDIR=$(BUILDROOT)/debug
 RELEASEDIR=$(BUILDROOT)/release
+MINSIZEDIR=$(BUILDROOT)/minsize
 NAME=kossel-firmware
-#ARCHFLAGS=-march=native -mtune=native -mcpu=native
+#ARCHFLAGS=-march=native -mtune=native
 ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 
 all: debug
 
 #Configure debug/release settings:
-debug: CFLAGS+=-O2 -g -fsanitize=address
+debug: CFLAGS+=-O2 -g -fsanitize=address -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
+minsize: CFLAGS+= -Os -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS)
+minsize: LDFLAGS+= $(LTOFLAG)
+minsize: $(MINSIZEDIR)/$(NAME)
+	@strip -s $(BUILDROOT)/$(NAME)
 	
 %/$(NAME): %/gparse/gparse.a %/drivers/drivers.a %/rest.a
 	$(CXX) $^ -o $@ $(CFLAGS)
@@ -30,6 +35,8 @@ release: $(RELEASEDIR)/$(NAME)
 $(DEBUGDIR)/%.o: %.cpp $(DEBUGDIR)/%.dir
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 $(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
+	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
+$(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
 %/drivers/drivers.a: %/drivers/driver.o %/drivers/kossel.o
