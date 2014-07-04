@@ -16,8 +16,6 @@
 
 #include <time.h> //for timespec
 
-namespace gparse {
-
 /*enum EventType {
 	Evt_StepForward,
 	Evt_StepBackward
@@ -40,6 +38,4 @@ class Event {
 		
 };
 
-
-}
 #endif

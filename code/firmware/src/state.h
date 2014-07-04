@@ -9,15 +9,14 @@
 #include <string>
 #include <cstddef> //for size_t
 #include <stdexcept> //for runtime_error
+#include <array>
 //#include <memory> //for unique_ptr
 #include <utility> //for std::pair
-#include "command.h"
+#include "gparse/command.h"
 #include "event.h"
 #include "scheduler.h"
-#include "../drivers/driver.h"
-#include "math.h" //note: relative import
-
-namespace gparse {
+#include "drivers/driver.h"
+#include "gparse/math.h" //note: relative import
 
 enum PositionMode {
 	POS_ABSOLUTE,
@@ -40,11 +39,13 @@ template <typename Drv> class State {
 	float _destMoveRatePrimitive; //varies accross drivers
 	float _destFeedRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
+	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
+	const Drv &driver;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static const int DEFAULT_HOTEND_TEMP = -300;
 		static const int DEFAULT_BED_TEMP = -300;
-		State(const drv::Driver &drv);
+		State(const Drv &drv);
 		/* Control interpretation of positions from the host as relative or absolute */
 		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
@@ -83,15 +84,16 @@ template <typename Drv> class State {
 		
 		/*execute the GCode on a Driver object that supports a well-defined interface.
 		 *returns a Command to send back to the host.*/
-		Command execute(Command const& cmd, Drv &driver);
-		void queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE);
+		gparse::Command execute(gparse::Command const& cmd);
+		void queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE);
 };
 
 
-template <typename Drv> State<Drv>::State(const drv::Driver &drv) : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
+template <typename Drv> State<Drv>::State(const Drv &drv) : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
-	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0) {
+	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
+	driver(drv) {
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
@@ -216,9 +218,9 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 	_hostZeroE = e;
 }
 
-template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &driver) {
+template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command const& cmd) {
 	std::string opcode = cmd.getOpcode();
-	Command resp;
+	gparse::Command resp;
 	if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
 		printf("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
 	    bool hasX, hasY, hasZ, hasE, hasF;
@@ -238,14 +240,14 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 			this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
 		}
 		//TODO: calculate future e based on feedrate.
-		this->queueMovement(driver, curX, curY, curZ, curE, x, y, z, e, destMoveRatePrimitive(), destFeedRatePrimitive());
-		resp = Command::OK;
+		this->queueMovement(curX, curY, curZ, curE, x, y, z, e, destMoveRatePrimitive(), destFeedRatePrimitive());
+		resp = gparse::Command::OK;
 	} else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
 		setUnitMode(UNIT_IN);
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isG21()) { //g-code coordinates will now be interpreted as millimeters.
 		setUnitMode(UNIT_MM);
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isG28()) { //home to end-stops
 		printf("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
 		bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
@@ -261,14 +263,14 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 		float newX = homeX ? 0 : curX;
 		float newY = homeY ? 0 : curY;
 		float newZ = homeZ ? 0 : curZ;
-		this->queueMovement(driver, curX, curY, curZ, curE, newX, newY, newZ, curE, destMoveRatePrimitive(), destFeedRatePrimitive());
-		resp = Command::OK;
+		this->queueMovement(curX, curY, curZ, curE, newX, newY, newZ, curE, destMoveRatePrimitive(), destFeedRatePrimitive());
+		resp = gparse::Command::OK;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isG91()) { //set g-code coordinates to relative
 		setPositionMode(POS_RELATIVE);
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isG92()) { //set current position = 0
 		//printf("Warning (gparse/state.h): OP_G92 (set current position as reference to zero) not tested\n");
 		float actualX, actualY, actualZ, actualE;
@@ -282,45 +284,45 @@ template <typename Drv> Command State<Drv>::execute(Command const& cmd, Drv &dri
 			actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : _hostZeroE;
 		}
 		setHostZeroPos(actualX, actualY, actualZ, actualE);
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM21()) { //initialize SD card (nothing to do).
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM82()) { //set extruder absolute mode
 		setExtruderPosMode(POS_ABSOLUTE);
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM83()) { //set extruder relative mode
 		setExtruderPosMode(POS_RELATIVE);
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM104()) { //set hotend temperature
 		printf("Warning (gparse/state.h): OP_M104 (set hotend temp) not implemented\n");
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
 		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
 		driver.getTemperature(t, b);
-		resp = Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
+		resp = gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
 		printf("Warning (gparse/state.h): OP_M106 (set fan speed) not implemented\n");
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM107()) { //set fan = off.
 		printf("Warning (gparse/state.h): OP_M106 (set fan off) not implemented\n");
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM109()) { //set extruder temperature to S param and wait.
 		printf("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM110()) { //set current line number
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isM117()) { //print message
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else if (cmd.isTxxx()) { //set tool number
 		printf("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
-		resp = Command::OK;
+		resp = gparse::Command::OK;
 	} else {
 		throw new std::runtime_error("unrecognized gcode opcode");
 	}
 	return resp;
 }
 		
-template <typename Drv> void State<Drv>::queueMovement(const Drv &driver, float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
+template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
 	float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
 	float dist = sqrt(distSq);
 	float vx = (x-curX)/dist * velXYZ;
@@ -336,7 +338,7 @@ template <typename Drv> void State<Drv>::queueMovement(const Drv &driver, float 
 	}
 	//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
 	//std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
-	std::pair<float, gparse::StepDirection> times[numAxis];
+	std::pair<float, StepDirection> times[numAxis];
 	for (unsigned i=0; i<numAxis; ++i) { //initialize
 		times[i].first = driver.relativeTimeOfNextStep(i, times[i].second, curX, curY, curZ, curE, vx, vy, vz, velE);
 	}
@@ -361,5 +363,4 @@ template <typename Drv> void State<Drv>::queueMovement(const Drv &driver, float 
 	} while (times[minIdx].first < duration);
 }
 
-}
 #endif

@@ -4,7 +4,6 @@
 #include <queue>
 #include "event.h"
 
-namespace gparse {
 
 class Scheduler {
 	std::queue<Event> eventQueue;
@@ -13,6 +12,5 @@ class Scheduler {
 
 };
 
-}
 
 #endif
