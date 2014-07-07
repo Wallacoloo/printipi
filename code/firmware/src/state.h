@@ -335,7 +335,7 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	do {
 		drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
 		LOG("Next step: %i at %f of %f", s.index(), s.time, duration);
-		if (s.time > duration || s.time < 0) { 
+		if (s.time > duration || s.time <= 0) { 
 			break; 
 		}
 		scheduler.queue(s.getEvent());
