@@ -19,17 +19,7 @@
 #include "drivers/driver.h"
 #include "gmath.h" //note: relative import
 #include "drivers/axisstepper.h"
-
-enum PositionMode {
-	POS_ABSOLUTE,
-	POS_RELATIVE,
-	POS_UNDEFINED //Sadly, need a way to tie extruder coords to positioning coords in the case that it's undefined.
-};
-
-enum LengthUnit {
-	UNIT_MM,
-	UNIT_IN
-};
+#include "typesettings.h"
 
 template <typename Drv> class State {
 	PositionMode _positionMode; // = POS_ABSOLUTE;

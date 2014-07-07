@@ -68,6 +68,10 @@ template <typename TupleT> void AxisStepper::initAxisSteppers(TupleT &steppers, 
 }
 
 //Helper classes for AxisStepper::nextStep method
+//this iterates through all steppers and checks if their index is equal to the index of the desired stepper to step.
+//if so, it calls _nextStep().
+//This allows for _nextStep to act as if it were virtual (by defining a method of that name in a derived type), but without using a vtable.
+//It also allows for the compiler to easily optimize the if statements into a jump-table.
 
 template <typename TupleT, std::size_t myIdx> struct _AxisStepper__nextStep {
 	void operator()(TupleT &steppers, int desiredIdx) {

@@ -22,11 +22,6 @@
 	Evt_StepBackward
 };*/
 
-enum StepDirection {
-	StepForward,
-	StepBackward
-};
-
 class Event {
 	struct timespec _time;
 	AxisIdType _stepperNum;
