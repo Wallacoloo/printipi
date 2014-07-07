@@ -9,7 +9,7 @@ namespace drv {
 
 class AxisStepper {
 	private:
-		int _index; //ID of stepper.
+		int _index; //ID of axis. Does not necessarily have to be stored as a variable (other option is one template instance per ID, which pretty much already happens)
 	public:
 		float time; //time of next step
 		StepDirection direction; //direction of next step
@@ -66,6 +66,7 @@ template <typename TupleT> void AxisStepper::initAxisSteppers(TupleT &steppers, 
 	_AxisStepper__initAxisSteppers<TupleT, std::tuple_size<TupleT>::value-1>()(steppers, curPos, vx, vy, vz, ve);
 }
 
+//Helper classes for AxisStepper::nextStep method
 
 template <typename TupleT, std::size_t myIdx> struct _AxisStepper__nextStep {
 	void operator()(TupleT &steppers, int desiredIdx) {

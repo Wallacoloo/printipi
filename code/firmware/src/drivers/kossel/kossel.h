@@ -1,8 +1,8 @@
 #ifndef DRIVERS_KOSSEL_H
 #define DRIVERS_KOSSEL_H
 
-#include "driver.h"
-#include "axisstepper.h"
+#include "drivers/driver.h"
+#include "drivers/axisstepper.h"
 #include <tuple>
 
 namespace drv {
