@@ -9,12 +9,15 @@ namespace drv {
 
 class AxisStepper {
 	public:
-		float time;
-		StepDirection direction;
+		float time; //time of next step
+		StepDirection direction; //direction of next step
+		int index; //ID of stepper.
 		AxisStepper() {}
-		template <std::size_t sz> AxisStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve) {}
+		template <std::size_t sz> AxisStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
+			: index(idx) {}
 		template <typename TupleT> static AxisStepper& getNextTime(TupleT &axes);
 		template <typename TupleT> static void initAxisSteppers(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve);
+		Event getEvent() const; //NOT TO BE OVERRIDEN
 		
 };
 

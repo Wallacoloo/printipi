@@ -40,7 +40,7 @@ $(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
 $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-%/drivers/drivers.a: %/drivers/driver.o %/drivers/kossel.o
+%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/kossel.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/command.o %/gparse/serial.o
