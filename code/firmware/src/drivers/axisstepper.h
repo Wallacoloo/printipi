@@ -18,6 +18,8 @@ class AxisStepper {
 		template <typename TupleT> static AxisStepper& getNextTime(TupleT &axes);
 		template <typename TupleT> static void initAxisSteppers(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve);
 		Event getEvent() const; //NOT TO BE OVERRIDEN
+		template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
+		void _nextStep(); //OVERRIDE THIS.
 		
 };
 
@@ -62,6 +64,27 @@ template <typename TupleT> void AxisStepper::initAxisSteppers(TupleT &steppers, 
 	_AxisStepper__initAxisSteppers<TupleT, std::tuple_size<TupleT>::value-1>()(steppers, curPos, vx, vy, vz, ve);
 }
 
+
+template <typename TupleT, std::size_t myIdx> struct _AxisStepper__nextStep {
+	void operator()(TupleT &steppers, int desiredIdx) {
+		_AxisStepper__nextStep<TupleT, myIdx-1>()(steppers, desiredIdx);
+		if (desiredIdx == myIdx) {
+			std::get<myIdx>(steppers)._nextStep();
+		}
+	}
+};
+template <typename TupleT> struct _AxisStepper__nextStep<TupleT, 0> {
+	void operator()(TupleT &steppers, int desiredIdx) {
+		if (desiredIdx == 0) {
+			std::get<0>(steppers)._nextStep();
+		}
+	}
+};
+
+
+template <typename TupleT> void AxisStepper::nextStep(TupleT &axes) {
+	_AxisStepper__nextStep<TupleT, std::tuple_size<TupleT>::value-1>()(axes, this->index);
+}
 
 }
 

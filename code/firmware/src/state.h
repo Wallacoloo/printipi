@@ -343,33 +343,12 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	//initialize iterators...
 	do {
 		drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
-		scheduler.queue(s.getEvent());
-	} while (1);
-	//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
-	//std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
-	/*std::pair<float, StepDirection> times[numAxis];
-	for (unsigned i=0; i<numAxis; ++i) { //initialize
-		times[i].first = driver.relativeTimeOfNextStep(i, times[i].second, curX, curY, curZ, curE, vx, vy, vz, velE);
-	}
-	
-	unsigned minIdx = 0;
-	do {
-		for (unsigned i=1; i<numAxis; ++i) {
-			if (times[i].first < times[minIdx].first) {
-				minIdx = i;
-			} 
+		if (s.time > duration) { 
+			break; 
 		}
-		float t = times[minIdx].second;
-		scheduler.queue(Event::StepperEvent(t, minIdx, times[minIdx].second));
-		float txyz = std::min(t, duration); //need to know how much time has been spent traveling for XYZ or Extruder.
-		float te = std::min(t, durationE);
-		float tempX = curX + txyz*vx; //get the current X/Y/Z for which we want to find the next step.
-		float tempY = curY + txyz*vy;
-		float tempZ = curZ + txyz*vz;
-		float tempE = curE + te*velE;
-		//Calculate the next time to trigger this motor.
-		times[minIdx].first = driver.relativeTimeOfNextStep(minIdx, times[minIdx].second, curX, curY, curZ, curE, vx, vy, vz, velE);
-	} while (times[minIdx].first < duration);*/
+		scheduler.queue(s.getEvent());
+		s.nextStep(iters);
+	} while (1);
 }
 
 #endif
