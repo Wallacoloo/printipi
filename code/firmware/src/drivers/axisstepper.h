@@ -33,8 +33,8 @@ template <typename TupleT, int idx> struct _AxisStepper__getNextTime {
 	AxisStepper& operator()(TupleT &axes) {
 		AxisStepper &m1 = _AxisStepper__getNextTime<TupleT, idx-1>()(axes);
 		AxisStepper &m2 = std::get<idx>(axes);
-		if (m1.time < 0) { return m2; }
-		if (m2.time < 0) { return m1; }
+		if (m1.time <= 0) { return m2; } //if one of the times is non-positive (ie no next step), return the other one.
+		if (m2.time <= 0) { return m1; }
 		return (m1.time < m2.time) ? m1 : m2;
 	}
 };
