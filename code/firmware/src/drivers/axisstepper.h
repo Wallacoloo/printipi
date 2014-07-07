@@ -2,6 +2,7 @@
 #define DRIVERS_AXISSTEPPER_H
 
 #include "event.h"
+#include "typesettings.h" //for AxisIdType
 #include <tuple>
 #include <array>
 
@@ -9,7 +10,7 @@ namespace drv {
 
 class AxisStepper {
 	private:
-		int _index; //ID of axis. Does not necessarily have to be stored as a variable (other option is one template instance per ID, which pretty much already happens)
+		AxisIdType _index; //ID of axis. Does not necessarily have to be stored as a variable (other option is one template instance per ID, which pretty much already happens)
 	public:
 		float time; //time of next step
 		StepDirection direction; //direction of next step
