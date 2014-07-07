@@ -22,7 +22,7 @@ class AxisStepper {
 		template <typename TupleT> static void initAxisSteppers(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve);
 		Event getEvent() const; //NOT TO BE OVERRIDEN
 		template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
-		void _nextStep(); //OVERRIDE THIS.
+		void _nextStep(); //OVERRIDE THIS. Will be called upon initialization.
 		
 };
 
@@ -54,12 +54,14 @@ template <typename TupleT, int idx> struct _AxisStepper__initAxisSteppers {
 	void operator()(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve) {
 		_AxisStepper__initAxisSteppers<TupleT, idx-1>()(steppers, curPos, vx, vy, vz, ve); //initialize all previous values.
 		std::get<idx>(steppers) = typename std::tuple_element<idx, TupleT>::type(idx, curPos, vx, vy, vz, ve);
+		std::get<idx>(steppers)._nextStep();
 	}
 };
 
 template <typename TupleT> struct _AxisStepper__initAxisSteppers<TupleT, 0> {
 	void operator()(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve) {
 		std::get<0>(steppers) = typename std::tuple_element<0, TupleT>::type(0, curPos, vx, vy, vz, ve);
+		std::get<0>(steppers)._nextStep();
 	}
 };
 
