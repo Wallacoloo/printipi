@@ -2,7 +2,7 @@
 #define DRIVERS_DRIVER_H
 
 #include <cstddef> //for size_t
-#include "../event.h" //for gparse::StepDirection
+#include "event.h" //for gparse::StepDirection
 
 namespace drv {
 

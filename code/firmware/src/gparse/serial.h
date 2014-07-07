@@ -3,7 +3,7 @@
 
 #include <string>
 #include <unistd.h> //for (file) read() and write()
-#include "../logging.h"
+#include "logging.h"
 #include "command.h"
 //#include "state.h"
 
