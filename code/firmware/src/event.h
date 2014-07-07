@@ -15,6 +15,7 @@
 //      yes - M116 is unbuffered.
 
 #include <time.h> //for timespec
+#include "typesettings.h" //for AxisIdType
 
 /*enum EventType {
 	Evt_StepForward,
@@ -28,7 +29,7 @@ enum StepDirection {
 
 class Event {
 	struct timespec _time;
-	char _stepperNum;
+	AxisIdType _stepperNum;
 	bool _isForward;
 	public:
 		int stepperNumber() const;
