@@ -1,5 +1,5 @@
-#ifndef GPARSE_EVENT_H
-#define GPARSE_EVENT_H
+#ifndef EVENT_H
+#define EVENT_H
 
 //There will be these events:
 //  step forward (motor 0, 1, 2, 3)

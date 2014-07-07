@@ -1,5 +1,5 @@
-#ifndef GPARSE_STATE_H
-#define GPARSE_STATE_H
+#ifndef STATE_H
+#define STATE_H
 
 //Gcode documentation can be found:
 //  http://reprap.org/wiki/G-code
