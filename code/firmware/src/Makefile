@@ -4,8 +4,8 @@ CFLAGS=-std=c++0x -Wall -Wextra -Wwrite-strings -Wno-unused-result
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
-#LOGFLAGS=
-LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
+LOGFLAGS=
+#LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
