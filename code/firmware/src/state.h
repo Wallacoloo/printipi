@@ -334,7 +334,7 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	//initialize iterators...
 	do {
 		drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
-		LOG("Next step: %i at %f of %f. Is <= 0? %i\n", s.index(), s.time, duration, s.time <= 0);
+		LOG("Next step: %i at %f of %f. Is s.time <= 0? %i. Is vy == 0? %i\n", s.index(), s.time, duration, s.time <= 0, vy == 0);
 		if (s.time > duration || s.time <= 0) { 
 			break; 
 		}

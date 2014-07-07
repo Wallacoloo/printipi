@@ -24,6 +24,8 @@ NAME=kossel-firmware
 
 all: debug
 
+-include $(wildcard **.d)
+
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
 debug: CFLAGS+=-O2 -g -fno-omit-frame-pointer $(LOGFLAGS)
@@ -45,10 +47,13 @@ minsize: $(MINSIZEDIR)/$(NAME)
 %.dir:
 	@mkdir -p $(@D)
 $(DEBUGDIR)/%.o: %.cpp $(DEBUGDIR)/%.dir
+	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 $(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
+	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
+	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
 %/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/kossel/kossel.o
