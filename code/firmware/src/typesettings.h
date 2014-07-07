@@ -19,4 +19,8 @@ enum StepDirection {
 	StepBackward
 };
 
+template <typename T> StepDirection stepDirFromSign(T dir) {
+	return dir < 0 ? StepBackward : StepForward;
+}
+
 #endif

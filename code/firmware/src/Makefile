@@ -33,6 +33,7 @@ release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
 minsize: CFLAGS+= -Os -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS) $(LOGFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
+minsize: LOGFLAGS+= -DNO_LOGGING -DNO_USAGE_INFO
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip -s $(BUILDROOT)/$(NAME)
 	
