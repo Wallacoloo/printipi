@@ -93,7 +93,8 @@ template <typename Drv> State<Drv>::State(const Drv &drv) : _positionMode(POS_AB
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
-	driver(drv) {
+	driver(drv),
+	_destMechanicalPos{} {
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
@@ -336,9 +337,10 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	if (numAxis == 0) { 
 		return; //some of the following logic may assume that there are at least 1 axis.
 	}
+	typename Drv::AxisSteppers iters;
 	//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
 	//std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
-	std::pair<float, StepDirection> times[numAxis];
+	/*std::pair<float, StepDirection> times[numAxis];
 	for (unsigned i=0; i<numAxis; ++i) { //initialize
 		times[i].first = driver.relativeTimeOfNextStep(i, times[i].second, curX, curY, curZ, curE, vx, vy, vz, velE);
 	}
@@ -360,7 +362,7 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 		float tempE = curE + te*velE;
 		//Calculate the next time to trigger this motor.
 		times[minIdx].first = driver.relativeTimeOfNextStep(minIdx, times[minIdx].second, curX, curY, curZ, curE, vx, vy, vz, velE);
-	} while (times[minIdx].first < duration);
+	} while (times[minIdx].first < duration);*/
 }
 
 #endif
