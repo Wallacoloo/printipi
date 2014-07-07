@@ -1,9 +1,12 @@
+#directory containing this makefile:
+SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+
 CXX=g++
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
-CFLAGS=-std=c++0x -Wall -Wextra -Wwrite-strings -Wno-unused-result
+CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
-LDFLAGS=
+LDFLAGS=-I$(SRCDIR)
 LOGFLAGS=
 #LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
 ifeq "$(GCC_GTEQ_470)" "1"
@@ -47,7 +50,7 @@ $(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
 $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/kossel.o
+%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/kossel/kossel.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/command.o %/gparse/serial.o

@@ -8,7 +8,7 @@
 #include "gparse/serial.h"
 #include "state.h"
 #include "drivers/driver.h"
-#include "drivers/kossel.h"
+#include "drivers/kossel/kossel.h"
 //#include "command.h"
 
 drv::Kossel driver;

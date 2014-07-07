@@ -17,7 +17,7 @@
 #include "event.h"
 #include "scheduler.h"
 #include "drivers/driver.h"
-#include "gparse/math.h" //note: relative import
+#include "gmath.h" //note: relative import
 #include "drivers/axisstepper.h"
 
 enum PositionMode {
@@ -166,7 +166,7 @@ template <typename Drv> float State<Drv>::eUnitToAbsolute(float posUnit) const {
 template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
 	switch (this->unitMode) {
 		case UNIT_IN:
-			return gparse::math::MM_PER_IN * posUnit;
+			return gmath::MM_PER_IN * posUnit;
 		case UNIT_MM:
 		default: //impossible case.
 			return posUnit;
