@@ -2,20 +2,22 @@
 #define LINEARSTEPPER_H
 
 #include "axisstepper.h"
+#include "typesettings.h"
+#include "logging.h"
 #include <tuple>
 
 namespace drv {
 
-template <int STEPS_PER_METER, char CoordType> class LinearStepper : public AxisStepper {
+template <int STEPS_PER_METER, CoordAxis CoordType> class LinearStepper : public AxisStepper {
 	private:
 		float timePerStep;
 	public:
 		static constexpr float STEPS_MM() { return STEPS_PER_METER/1000.0; }
 		static constexpr float GET_COORD(float x, float y, float z, float e) {
-			return CoordType=='x' ? x : \
-				  (CoordType=='y' ? y : \
-				  (CoordType=='z' ? z : 
-				  (CoordType=='e' ? e : 0) ) );
+			return CoordType==COORD_X ? x : \
+				  (CoordType==COORD_Y ? y : \
+				  (CoordType==COORD_Z ? z : 
+				  (CoordType==COORD_E ? e : 0) ) );
 		}
 		LinearStepper() {}
 		template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
@@ -25,6 +27,7 @@ template <int STEPS_PER_METER, char CoordType> class LinearStepper : public Axis
 			}
 		void _nextStep() {
 			this->time += timePerStep;
+			LOG("LinearStepper::_nextStep() %i, %f\n", CoordType, timePerStep);
 		}
 };
 
