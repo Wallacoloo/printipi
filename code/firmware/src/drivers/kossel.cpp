@@ -19,19 +19,11 @@ void Kossel::getTemperature(int &extruder, int &bed) const {
 	//bed=100;
 }
 
-/*constexpr std::size_t Kossel::numAxis() const {
-	return 4; //A, B, C + Extruder
-}*/
-
 float Kossel::defaultMoveRate() const {
 	return 10;
 }
 float Kossel::defaultFeedRate() const {
 	return 10;
 }
-
-/*float Kossel::relativeTimeOfNextStep(int axisIdx, StepDirection &dir, float x, float y, float z, float e, float velx, float vely, float velz, float velExt) const {
-	return 0;
-}*/
 
 }

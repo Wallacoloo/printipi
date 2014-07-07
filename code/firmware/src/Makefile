@@ -4,6 +4,8 @@ CFLAGS=-std=c++0x -Wall -Wextra -Wwrite-strings -Wno-unused-result
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
+#LOGFLAGS=
+LOGFLAGS= -DNO_LOGGING
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
@@ -21,12 +23,12 @@ all: debug
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
-debug: CFLAGS+=-O2 -g -fno-omit-frame-pointer
+debug: CFLAGS+=-O2 -g -fno-omit-frame-pointer $(LOGFLAGS)
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
+release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS) $(LOGFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
-minsize: CFLAGS+= -Os -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS)
+minsize: CFLAGS+= -Os -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS) $(LOGFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip -s $(BUILDROOT)/$(NAME)
