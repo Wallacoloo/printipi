@@ -8,7 +8,6 @@ std::string readLine(int fd) {
 	while(read(fd, &chr, 1) == 1 && chr != '\n') {
 		if (chr != '\r') {
 			r += chr;
-			//printf("c: %c\n", chr);
 		}
 	}
 	return r;
