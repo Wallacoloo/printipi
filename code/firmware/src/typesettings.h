@@ -19,6 +19,13 @@ enum StepDirection {
 	StepBackward
 };
 
+enum CoordAxis {
+	COORD_X,
+	COORD_Y,
+	COORD_Z,
+	COORD_E
+};
+
 template <typename T> StepDirection stepDirFromSign(T dir) {
 	return dir < 0 ? StepBackward : StepForward;
 }
