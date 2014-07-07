@@ -17,6 +17,7 @@
 #include "scheduler.h"
 #include "drivers/driver.h"
 #include "gparse/math.h" //note: relative import
+#include "drivers/axisstepper.h"
 
 enum PositionMode {
 	POS_ABSOLUTE,
@@ -338,6 +339,8 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 		return; //some of the following logic may assume that there are at least 1 axis.
 	}
 	typename Drv::AxisSteppers iters;
+	//initialize iterators...
+	drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
 	//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
 	//std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
 	/*std::pair<float, StepDirection> times[numAxis];
