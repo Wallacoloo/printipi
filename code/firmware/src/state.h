@@ -341,7 +341,10 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	typename Drv::AxisSteppers iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
 	//initialize iterators...
-	drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
+	do {
+		drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
+		scheduler.queue(s.getEvent());
+	} while (1);
 	//std::unique_ptr<float[]> times(new float[numAxis]); //no size penalty vs new/delete using -Os and -flto
 	//std::unique_ptr<std::pair<float, gparse::StepDirection>[] > times(new std::pair<float, gparse::StepDirection>[numAxis]);
 	/*std::pair<float, StepDirection> times[numAxis];
