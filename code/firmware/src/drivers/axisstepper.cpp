@@ -1,5 +1,7 @@
 #include "axisstepper.h"
 
+#include <stdexcept>
+
 namespace drv {
 
 Event AxisStepper::getEvent() const {
