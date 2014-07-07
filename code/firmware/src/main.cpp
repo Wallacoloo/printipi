@@ -15,7 +15,9 @@ drv::Kossel driver;
 State<drv::Kossel> gState(driver);
 
 void printUsage(char* cmd) {
+	#ifndef NO_USAGE_INFO
     std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
+    #endif
     //exit(1);
 }
 

@@ -5,7 +5,7 @@ CFLAGS=-std=c++0x -Wall -Wextra -Wwrite-strings -Wno-unused-result
 LD=ld
 LDFLAGS=
 #LOGFLAGS=
-LOGFLAGS= -DNO_LOGGING
+LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
