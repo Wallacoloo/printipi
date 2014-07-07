@@ -6,7 +6,7 @@ GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\
 CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
-LDFLAGS=-I$(SRCDIR)
+LDFLAGS=
 LOGFLAGS=
 #LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
 ifeq "$(GCC_GTEQ_470)" "1"

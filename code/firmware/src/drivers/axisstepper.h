@@ -1,7 +1,7 @@
 #ifndef DRIVERS_AXISSTEPPER_H
 #define DRIVERS_AXISSTEPPER_H
 
-#include "../event.h"
+#include "event.h"
 #include <tuple>
 #include <array>
 
