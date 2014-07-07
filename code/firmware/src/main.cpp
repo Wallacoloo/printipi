@@ -3,6 +3,7 @@
 #include <fcntl.h> //needed for (file) open()
 //#include <stdlib.h> //needed for exit()
 #include <stdio.h> //for printf?
+#include "logging.h"
 
 #include "gparse/serial.h"
 #include "state.h"
@@ -24,10 +25,10 @@ int main(int argc, char** argv) {
         return 1;
     }
     char* serialFileName = argv[1];
-    printf("Serial file: %s\n", serialFileName);
+    LOG("Serial file: %s\n", serialFileName);
     int fd = open(serialFileName, O_RDWR);
     gparse::comLoop(fd, gState);
-    printf("Exiting\n");
+    LOG("Exiting\n");
     //exit(0);
     return 0;
 }

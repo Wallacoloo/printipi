@@ -1,10 +1,11 @@
 #include "scheduler.h"
 
-#include <stdio.h>
+//#include <stdio.h>
+#include "logging.h"
 
 
 void Scheduler::queue(const Event& evt) {
-	printf("Scheduler::queue\n");
+	LOG("Scheduler::queue\n");
 	this->eventQueue.push(evt);
 }
 
