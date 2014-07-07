@@ -1,5 +1,5 @@
-#ifndef GPARSE_SCHEDULER_H
-#define GPARSE_SCHEDULER_H
+#ifndef SCHEDULER_H
+#define SCHEDULER_H
 
 #include <queue>
 #include "event.h"
