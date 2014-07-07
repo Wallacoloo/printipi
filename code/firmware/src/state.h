@@ -94,8 +94,8 @@ template <typename Drv> State<Drv>::State(const Drv &drv) : _positionMode(POS_AB
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
-	driver(drv),
-	_destMechanicalPos{} {
+	_destMechanicalPos(), 
+	driver(drv) {
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
