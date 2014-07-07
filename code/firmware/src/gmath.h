@@ -1,5 +1,5 @@
-#ifndef GPARSE_MATH_H
-#define GPARSE_MATH_H
+#ifndef GMATH_H
+#define GMATH_H
 
 namespace gmath {
 
