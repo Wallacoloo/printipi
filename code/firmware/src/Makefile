@@ -1,17 +1,21 @@
 CXX=g++
+GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
 CFLAGS=-std=c++0x -Wall -Wextra -Wwrite-strings -Wno-unused-result
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
-#FLTOFLAG=-flto #Enable link-time optimization
-LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
+ifeq "$(GCC_GTEQ_470)" "1"
+	LTOFLAG=-flto #Enable link-time optimization
+	ARCHFLAGS=-march=native -mtune=native
+else #gcc < 4.7, or non-gcc compiler
+	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
+	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
+endif
 BUILDROOT=../build
 DEBUGDIR=$(BUILDROOT)/debug
 RELEASEDIR=$(BUILDROOT)/release
 MINSIZEDIR=$(BUILDROOT)/minsize
 NAME=kossel-firmware
-#ARCHFLAGS=-march=native -mtune=native
-ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 
 all: debug
 
@@ -28,6 +32,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 	@strip -s $(BUILDROOT)/$(NAME)
 	
 %/$(NAME): %/gparse/gparse.a %/drivers/drivers.a %/rest.a
+	@echo $(GCC_GTEQ_470)
 	$(CXX) $^ -o $@ $(CFLAGS)
 	cp $@ $(BUILDROOT)/$(NAME)
 	
