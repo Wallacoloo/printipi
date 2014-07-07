@@ -63,6 +63,12 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 #Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.
 .SECONDARY:
 
-.PHONY: clean debug release
-clean: 
-	rm -rf $(BUILDROOT)
+.PHONY: clean cleandebug cleanrelease cleanminsize debug release minsize
+cleandebug:
+	rm -rf $(DEBUGDIR)
+cleanrelease:
+	rm -rf $(RELEASEDIR)
+cleanminsize:
+	rm -rf $(MINSIZEDIR)
+clean: cleandebug cleanrelease cleanminsize
+	rm -rf $(BUILDROOT)/$(NAME)
