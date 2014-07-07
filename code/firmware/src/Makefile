@@ -16,7 +16,8 @@ ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 all: debug
 
 #Configure debug/release settings:
-debug: CFLAGS+=-O2 -g -fsanitize=address -fno-omit-frame-pointer
+# -fsanitize=address (gcc 4.8)
+debug: CFLAGS+=-O2 -g -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
