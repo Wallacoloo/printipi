@@ -6,13 +6,23 @@
 #endif
 
 #define LOG(format, args...) \
-	if (DO_LOG && logging::isEnabled()) { \
+	if (DO_LOG && logging::isInfoEnabled()) { \
+		printf(format, ## args); \
+	}
+#define LOGV(format, args...) \
+	if (DO_LOG && logging::isVerboseEnabled()) { \
+		printf(format, ## args); \
+	}
+#define LOGD(format, args...) \
+	if (DO_LOG && logging::isVerboseEnabled()) { \
 		printf(format, ## args); \
 	}
 	
 namespace logging {
 
-bool isEnabled();
+bool isInfoEnabled();
+bool isVerboseEnabled();
 void disable();
+void enableVerbose();
 
 }
