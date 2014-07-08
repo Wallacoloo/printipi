@@ -16,7 +16,7 @@ class AxisStepper {
 		StepDirection direction; //direction of next step
 		inline int index() const { return _index; }
 		AxisStepper() {}
-		template <std::size_t sz> AxisStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
+		template <std::size_t sz> AxisStepper(int idx, const std::array<int, sz>& /*curPos*/, float /*vx*/, float /*vy*/, float /*vz*/, float /*ve*/)
 			: _index(idx) {}
 		template <typename TupleT> static AxisStepper& getNextTime(TupleT &axes);
 		template <typename TupleT> static void initAxisSteppers(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve);
