@@ -26,8 +26,9 @@ class Scheduler {
 		void queue(const Event& evt);
 		//Scheduler(const std::function<void(const Event&)>& callback);
 		Scheduler();
+		Event nextEvent();
 	private:
-		void consumerLoop();
+		//void consumerLoop();
 		//void consumerLoop(const std::function<void(const Event&)>& callback);
 	public:
 		//template <typename T> Scheduler(T& callback) : consumer(std::thread(&Scheduler::consumerLoop<T>, this, callback)) {}

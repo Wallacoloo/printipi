@@ -7,7 +7,9 @@
 
 /*Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {}*/
 
-Scheduler::Scheduler() : consumer(std::thread(&Scheduler::consumerLoop, this)) {}
+//Scheduler::Scheduler() : consumer(std::thread(&Scheduler::consumerLoop, this)) {}
+Scheduler::Scheduler() {}
+
 
 void Scheduler::queue(const Event& evt) {
 	LOGV("Scheduler::queue\n");
@@ -42,7 +44,21 @@ void Scheduler::queue(const Event& evt) {
 	}
 }*/
 
-void Scheduler::consumerLoop() {
+Event Scheduler::nextEvent() {
+	Event evt;
+	{
+		std::unique_lock<std::mutex> lock(this->mutex);
+		while (this->eventQueue.empty()) { //wait for an event to be pushed.
+			this->nonemptyCond.wait(lock); //condition_variable.wait() can produce spurious wakeups; need the while loop.
+		}
+		evt = this->eventQueue.front();
+		this->eventQueue.pop();
+	} //unlock the mutex and then handle the event.
+	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &(evt.time()), NULL); //sleep to event time.
+	return evt;
+}
+
+/*void Scheduler::consumerLoop() {
 	LOGD("Scheduler::consumerLoop begin\n");
 	
 	struct sched_param sp; //set high priority for the scheduling thread.
@@ -66,4 +82,4 @@ void Scheduler::consumerLoop() {
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &(evt.time()), NULL); //sleep to event time.
 		//callback(evt); //process the event.
 	}
-}
+}*/

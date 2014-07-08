@@ -13,6 +13,7 @@
 //#include <memory> //for unique_ptr
 #include <utility> //for std::pair
 #include <functional>
+#include <thread>
 #include "logging.h"
 #include "gparse/command.h"
 #include "event.h"
@@ -35,6 +36,7 @@ template <typename Drv> class State {
 	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	Drv &driver;
 	Scheduler scheduler;
+	std::thread schedthread;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static const int DEFAULT_HOTEND_TEMP = -300;
@@ -77,6 +79,7 @@ template <typename Drv> class State {
 		void setHostZeroPos(float x, float y, float z, float e);
 		/* Processes the event immediately, eg stepping a stepper motor */
 		void handleEvent(const Event &evt);
+		void eventLoop();
 		/*execute the GCode on a Driver object that supports a well-defined interface.
 		 *returns a Command to send back to the host.*/
 		gparse::Command execute(gparse::Command const& cmd);
@@ -90,9 +93,10 @@ template <typename Drv> State<Drv>::State(Drv &drv) : _positionMode(POS_ABSOLUTE
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
 	_destMechanicalPos(), 
 	driver(drv),
-	scheduler()
+	scheduler(),
 	//scheduler(std::bind(&State<Drv>::handleEvent, this, std::placeholders::_1)) 
 	//scheduler(*this)
+	schedthread(&State<Drv>::eventLoop, this)
 	{
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
@@ -224,6 +228,13 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 		drv::IODriver::selectAndStepForward(this->driver.ioDrivers, evt.stepperId());
 	} else {
 		drv::IODriver::selectAndStepBackward(this->driver.ioDrivers, evt.stepperId());
+	}
+}
+
+template <typename Drv> void State<Drv>::eventLoop() {
+	while (1) {
+		Event evt = this->scheduler.nextEvent();
+		this->handleEvent(evt);
 	}
 }
 
