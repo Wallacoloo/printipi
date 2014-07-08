@@ -6,6 +6,7 @@
 #include "rpi.h"
 #include "bcm2835.h"
 #include "drivers/iodriver.h"
+#include "logging.h"
 
 namespace drv {
 namespace rpi {
@@ -28,6 +29,7 @@ template <uint8_t STEPPIN, uint8_t DIRPIN> class A4988 : public IODriver {
 			cycleStepPin();
 		}
 		void cycleStepPin() {
+			LOGV("cycling pin %i\n", DIRPIN);
 			bcm2835_gpio_write(STEPPIN, HIGH); 
 			bcm2835_gpio_write(STEPPIN, LOW); //note: may need a (SHORT!) delay here.
 		}
