@@ -6,6 +6,13 @@
 #endif
 
 #define LOG(format, args...) \
-	if (DO_LOG) { \
+	if (DO_LOG && logging::isEnabled()) { \
 		printf(format, ## args); \
 	}
+	
+namespace logging {
+
+bool isEnabled();
+void disable();
+
+}
