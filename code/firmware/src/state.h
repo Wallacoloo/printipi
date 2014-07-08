@@ -232,6 +232,7 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 }
 
 template <typename Drv> void State<Drv>::eventLoop() {
+	this->scheduler.initSchedThread();
 	while (1) {
 		Event evt = this->scheduler.nextEvent();
 		this->handleEvent(evt);

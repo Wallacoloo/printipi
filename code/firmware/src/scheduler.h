@@ -5,12 +5,12 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
-#include <functional>
+//#include <functional>
 #include "event.h"
 
-#include <pthread.h> //for pthread_setschedparam
-#include <time.h> //for clock_nanosleep
-#include "logging.h"
+//#include <pthread.h> //for pthread_setschedparam
+//#include <time.h> //for clock_nanosleep
+//#include "logging.h"
 
 #ifndef SCHED_PRIORITY
 #define SCHED_PRIORITY 30
@@ -27,13 +27,14 @@ class Scheduler {
 	std::queue<Event> eventQueue;
 	std::mutex mutex;
 	std::unique_lock<std::mutex> _lockPushes;
-	//std::mutex allowPushMutex; //lock this when capacity is exceeded.
-	bool _isPushLocked;
+	bool _arePushesLocked;
 	std::condition_variable nonemptyCond;
 	public:
+		//queue and nextEvent can be called from separate threads, but nextEvent must NEVER be called from multiple threads.
 		void queue(const Event& evt);
 		Scheduler();
 		Event nextEvent();
+		void initSchedThread(); //call this from whatever threads call nextEvent to optimize that thread's priority.
 };
 
 

@@ -8,20 +8,11 @@
 /*Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {}*/
 
 //Scheduler::Scheduler() : consumer(std::thread(&Scheduler::consumerLoop, this)) {}
-Scheduler::Scheduler() : _isPushLocked(false), _lockPushes(mutex, std::defer_lock) {}
+Scheduler::Scheduler() : _lockPushes(mutex, std::defer_lock), _arePushesLocked(false) {}
 
 
 void Scheduler::queue(const Event& evt) {
 	LOGV("Scheduler::queue\n");
-	/*do {
-		std::unique_lock<std::mutex> lock(this->mutex);
-		if (this->eventQueue.size() < SCHED_CAPACITY) {
-			this->eventQueue.push(evt);
-			break;
-		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(SCHED_PUSH_SPIN_INTERVAL));
-	} while(1);*/
-	//std::unique_lock<std::mutex> requestAccess(this->allowPushMutex);
 	std::unique_lock<std::mutex> lock(this->mutex);
 	this->eventQueue.push(evt);
 	this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
@@ -32,7 +23,7 @@ Event Scheduler::nextEvent() {
 	Event evt;
 	{
 		//std::unique_lock<std::mutex> lock(this->mutex);
-		if (!this->_isPushLocked) {
+		if (!this->_arePushesLocked) { //check if the mutex is already locked *by us*
 			_lockPushes.lock();
 		}
 		while (this->eventQueue.empty()) { //wait for an event to be pushed.
@@ -40,21 +31,22 @@ Event Scheduler::nextEvent() {
 		}
 		evt = this->eventQueue.front();
 		this->eventQueue.pop();
-		/*if (this->eventQueue.size() >= SCHED_CAPACITY && !this->_isPushLocked) {
-			this->allowPushMutex.lock();
-			this->_isPushLocked = true;
-		} else if (this->eventQueue.size() == SCHED_CAPACITY-1 && this->_isPushLocked){
-			this->allowPushMutex.unlock();
-			this->_isPushLocked = false;
-		}*/
-		if (this->eventQueue.size() < SCHED_CAPACITY) {
+		if (this->eventQueue.size() < SCHED_CAPACITY) { //queue is underfilled; release the lock
 			_lockPushes.unlock();
-			this->_isPushLocked = false;
-		} else {
-			this->_isPushLocked = true;
+			this->_arePushesLocked = false;
+		} else { //queue is filled; do not release the lock.
+			this->_arePushesLocked = true;
 		}
 	} //unlock the mutex and then handle the event.
 	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &(evt.time()), NULL); //sleep to event time.
 	return evt;
+}
+
+void Scheduler::initSchedThread() {
+	struct sched_param sp; 
+	sp.sched_priority=SCHED_PRIORITY; 
+	if (int ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp)) {
+		LOGW("Warning: pthread_setschedparam (increase thread priority) at scheduler.cpp returned non-zero: %i\n", ret);
+	}
 }
 
