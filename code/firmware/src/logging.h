@@ -5,6 +5,10 @@
 	#define DO_LOG true
 #endif
 
+#define LOGE(format, args...) \
+	if (logging::isInfoEnabled()) { \
+		fprintf(stderr, format, ## args); \
+	}
 #define LOGW(format, args...) \
 	if (logging::isInfoEnabled()) { \
 		printf(format, ## args); \
