@@ -9,6 +9,7 @@ CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-string
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
+LIBS=-lrt
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
@@ -41,7 +42,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 	
 %/$(NAME): %/gparse/gparse.a %/drivers/drivers.a %/rest.a
 	@echo $(GCC_GTEQ_470)
-	$(CXX) $^ -o $@ $(CFLAGS)
+	$(CXX) $^ -o $@ $(CFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)
 	
 %.dir:
