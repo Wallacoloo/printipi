@@ -30,6 +30,7 @@ class Event {
 		int stepperNumber() const;
 		StepDirection direction() const;
 		const struct timespec& time() const;
+		Event() {}
 		Event(const timespec &t, AxisIdType stepperNum, StepDirection dir);
 		static Event StepperEvent(float relTime, char stepperNum, StepDirection dir);
 		
