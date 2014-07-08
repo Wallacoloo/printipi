@@ -30,7 +30,7 @@ template <int STEPS_PER_METER, CoordAxis CoordType> class LinearStepper : public
 		LinearStepper() {}
 		template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
 			: AxisStepper(idx, curPos, vx, vy, vz, ve),
-			timePerStep(abs( TIME_PER_STEP(vx, vy, vz, ve) )) {
+			timePerStep(std::fabs( TIME_PER_STEP(vx, vy, vz, ve) )) {
 				this->direction = stepDirFromSign( TIME_PER_STEP(vx, vy, vz, ve) );
 			}
 		void _nextStep() {

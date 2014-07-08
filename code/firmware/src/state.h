@@ -324,6 +324,10 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	float vx = (x-curX)/dist * velXYZ;
 	float vy = (y-curY)/dist * velXYZ;
 	float vz = (z-curZ)/dist * velXYZ;
+	/*float vx = gparse::makeZeroIfClose((x-curX)/dist * velXYZ);
+	float vy = gparse::makeZeroIfClose((y-curY)/dist * velXYZ);
+	float vz = gparse::makeZeroIfClose((z-curZ)/dist * velXYZ);
+	velE = gparse::makeZeroIfClose(velE);*/
 	float durationXYZ = dist/velXYZ;
 	float durationE = abs(e-curE)/velE;
 	float duration = std::min(durationXYZ, durationE);
@@ -338,7 +342,8 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	do {
 		drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
 		LOG("Next step: %i at %g of %g. Is s.time <= 0? %i. Is vy == 0? %i\n", s.index(), s.time, duration, s.time <= 0, vy == 0);
-		if (s.time > duration || s.time <= 0) { 
+		//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
+		if (s.time > duration || s.time <= 0) {
 			break; 
 		}
 		scheduler.queue(s.getEvent());
