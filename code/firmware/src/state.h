@@ -74,12 +74,12 @@ template <typename Drv> class State {
 		void setDestFeedRatePrimitive(float f);
 		/* The host can set any arbitrary point to be a reference to 0 */
 		void setHostZeroPos(float x, float y, float z, float e);
-		
+		/* Processes the event immediately, eg stepping a stepper motor */
+		void handleEvent(const Event &evt);
 		/*execute the GCode on a Driver object that supports a well-defined interface.
 		 *returns a Command to send back to the host.*/
 		gparse::Command execute(gparse::Command const& cmd);
 		void queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE);
-		void handleEvent(const Event &evt) {}
 };
 
 
@@ -212,6 +212,9 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 	_hostZeroY = y;
 	_hostZeroZ = z;
 	_hostZeroE = e;
+}
+
+template <typename Drv> void handleEvent(const Event &evt) {
 }
 
 template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command const& cmd) {
