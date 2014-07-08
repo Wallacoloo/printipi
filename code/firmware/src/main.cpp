@@ -12,9 +12,6 @@
 #include "drivers/kossel/kossel.h"
 #include "argparse.h"
 
-drv::Kossel driver;
-State<drv::Kossel> gState(driver);
-
 void printUsage(char* cmd) {
 	#ifndef NO_USAGE_INFO
     std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
@@ -43,6 +40,10 @@ int main(int argc, char** argv) {
     char* serialFileName = argv[1];
     LOG("Serial file: %s\n", serialFileName);
     int fd = open(serialFileName, O_RDWR);
+    
+    drv::Kossel driver;
+	State<drv::Kossel> gState(driver);
+    
     gparse::comLoop(fd, gState);
     LOG("Exiting\n");
     //exit(0);
