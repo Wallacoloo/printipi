@@ -9,7 +9,7 @@ namespace rpi {
 bool wasBcmInit = false;
 
 void atexit_bcm2835_close() {
-	bcm2835_close(); //return value is int.
+	bcm2835_close(); //return value is int. Must be wrapped as void function for std::atexit to be used.
 }
 
 void initIO() {
