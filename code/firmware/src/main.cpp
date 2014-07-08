@@ -1,8 +1,8 @@
-#include <iostream> //for std::cerr?
+//#include <iostream> //for std::cerr?
 #include <string>
 #include <fcntl.h> //needed for (file) open()
 //#include <stdlib.h> //needed for exit()
-#include <stdio.h> //for printf?
+//#include <stdio.h> //for printf?
 #include <sys/mman.h> //for mlockall
 #include "logging.h"
 
@@ -14,7 +14,8 @@
 
 void printUsage(char* cmd) {
 	#ifndef NO_USAGE_INFO
-    std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
+	LOGE("usage: %s ttyFile\n", cmd);
+    //std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
     #endif
     //exit(1);
 }
