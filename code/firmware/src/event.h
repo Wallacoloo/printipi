@@ -27,12 +27,12 @@ class Event {
 	AxisIdType _stepperNum;
 	bool _isForward;
 	public:
-		int stepperNumber() const;
+		AxisIdType stepperId() const;
 		StepDirection direction() const;
 		const struct timespec& time() const;
 		Event() {}
 		Event(const timespec &t, AxisIdType stepperNum, StepDirection dir);
-		static Event StepperEvent(float relTime, char stepperNum, StepDirection dir);
+		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		
 };
 

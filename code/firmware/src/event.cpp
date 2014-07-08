@@ -1,7 +1,7 @@
 #include "event.h"
 
 
-int Event::stepperNumber() const {
+AxisIdType Event::stepperId() const {
 	return this->_stepperNum;
 }
 StepDirection Event::direction() const {
