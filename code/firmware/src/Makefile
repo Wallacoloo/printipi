@@ -5,7 +5,7 @@ CXX=g++
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
 LOGFLAGS=
 #LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
-CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result $(LOGFLAGS)
+CFLAGS=-std=c++0x -pthread -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result $(LOGFLAGS)
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
@@ -28,7 +28,7 @@ all: debug
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
-debug: CFLAGS+=-O0 -g -fno-omit-frame-pointer $(ARCHFLAGS)
+debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer $(ARCHFLAGS)
 debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
