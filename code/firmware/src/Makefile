@@ -28,7 +28,7 @@ all: debug
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
-debug: CFLAGS+=-Og -g -fno-omit-frame-pointer $(ARCHFLAGS)
+debug: CFLAGS+=-O0 -g -fno-omit-frame-pointer $(ARCHFLAGS)
 debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
