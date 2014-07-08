@@ -25,11 +25,13 @@ class Scheduler {
 	public:
 		void queue(const Event& evt);
 		//Scheduler(const std::function<void(const Event&)>& callback);
+		Scheduler();
 	private:
+		void consumerLoop();
 		//void consumerLoop(const std::function<void(const Event&)>& callback);
 	public:
 		//template <typename T> Scheduler(T& callback) : consumer(std::thread(&Scheduler::consumerLoop<T>, this, callback)) {}
-		template <typename T> Scheduler(T& callback) : consumer(std::thread([&]{ consumerLoop(callback); })) {}
+		/*template <typename T> Scheduler(T& callback) : consumer(std::thread([&]{ consumerLoop(callback); })) {}
 		template <typename T> void consumerLoop(T& callback) {
 			LOGD("Scheduler::consumerLoop begin\n");
 	
@@ -55,7 +57,7 @@ class Scheduler {
 				callback.handleEvent(evt);
 				//callback(evt); //process the event.
 			}
-		}
+		}*/
 		
 };
 
