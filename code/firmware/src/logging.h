@@ -5,15 +5,19 @@
 	#define DO_LOG true
 #endif
 
+#define LOGW(format, args...) \
+	if (logging::isInfoEnabled()) { \
+		printf(format, ## args); \
+	}
 #define LOG(format, args...) \
 	if (logging::isInfoEnabled()) { \
 		printf(format, ## args); \
 	}
-#define LOGV(format, args...) \
+#define LOGD(format, args...) \
 	if (logging::isVerboseEnabled()) { \
 		printf(format, ## args); \
 	}
-#define LOGD(format, args...) \
+#define LOGV(format, args...) \
 	if (logging::isVerboseEnabled()) { \
 		printf(format, ## args); \
 	}

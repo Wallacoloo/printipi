@@ -3,6 +3,7 @@
 #include <fcntl.h> //needed for (file) open()
 //#include <stdlib.h> //needed for exit()
 #include <stdio.h> //for printf?
+#include <sys/mman.h> //for mlockall
 #include "logging.h"
 
 #include "gparse/serial.h"
@@ -26,12 +27,19 @@ int main(int argc, char** argv) {
         printUsage(argv[0]);
         return 1;
     }
-    if (argparse::cmdOptionExists(argv, argv+argc, "--no-log")) {
+    if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
     }
     if (argparse::cmdOptionExists(argv, argv+argc, "--verbose")) {
     	logging::enableVerbose();
     }
+    
+    //prevent page-swaps to increase performace:
+    int retval = mlockall(MCL_FUTURE|MCL_CURRENT);
+    if (retval) {
+    	LOGW("Warning: mlockall (prevent memory swaps) in main.cpp::main() returned non-zero: %i\n", retval);
+    }
+    
     char* serialFileName = argv[1];
     LOG("Serial file: %s\n", serialFileName);
     int fd = open(serialFileName, O_RDWR);

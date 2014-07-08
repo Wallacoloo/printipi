@@ -1,11 +1,14 @@
 #include "scheduler.h"
 
-//#include <stdio.h>
+#include <pthread.h> //for pthread_setschedparam
 #include "logging.h"
 
+#ifndef SCHED_PRIORITY
+#define SCHED_PRIORITY 30
+#endif
 
-Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {
-}
+
+Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {}
 
 void Scheduler::queue(const Event& evt) {
 	LOGV("Scheduler::queue\n");
@@ -15,7 +18,16 @@ void Scheduler::queue(const Event& evt) {
 }
 
 void Scheduler::consumerLoop(const std::function<void(const Event&)>& callback) {
-	LOGD("Scheduler::consumerLoop begin");
+	LOGD("Scheduler::consumerLoop begin\n");
+	
+	struct sched_param sp; //set high priority for the scheduling thread.
+    sp.sched_priority=SCHED_PRIORITY; 
+    int retval = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp);
+    if (retval) {
+    	LOGW("Warning: pthread_setschedparam (set thread to high priority) in Scheduler::consumerLoop returned non-zero: %i\n", retval);
+    }
+    LOGD("Scheduler::consumerLoop priority set to %i\n", SCHED_PRIORITY);
+    
 	Event evt;
 	while (1) {
 		{
@@ -26,6 +38,7 @@ void Scheduler::consumerLoop(const std::function<void(const Event&)>& callback) 
 			evt = this->eventQueue.front();
 			this->eventQueue.pop();
 		} //unlock the mutex and then handle the event.
+		
 		callback(evt); //process the event.
 	}
 }
