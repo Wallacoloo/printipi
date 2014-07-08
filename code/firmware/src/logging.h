@@ -6,15 +6,15 @@
 #endif
 
 #define LOG(format, args...) \
-	if (DO_LOG && logging::isInfoEnabled()) { \
+	if (logging::isInfoEnabled()) { \
 		printf(format, ## args); \
 	}
 #define LOGV(format, args...) \
-	if (DO_LOG && logging::isVerboseEnabled()) { \
+	if (logging::isVerboseEnabled()) { \
 		printf(format, ## args); \
 	}
 #define LOGD(format, args...) \
-	if (DO_LOG && logging::isVerboseEnabled()) { \
+	if (logging::isVerboseEnabled()) { \
 		printf(format, ## args); \
 	}
 	

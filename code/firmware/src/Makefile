@@ -3,12 +3,12 @@ SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 CXX=g++
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
-CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result
+LOGFLAGS=
+#LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
+CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result $(LOGFLAGS)
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
 LD=ld
 LDFLAGS=
-LOGFLAGS=
-#LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
@@ -28,12 +28,12 @@ all: debug
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
-debug: CFLAGS+=-O2 -g -fno-omit-frame-pointer $(LOGFLAGS)
+debug: CFLAGS+=-O2 -g -fno-omit-frame-pointer $(ARCHFLAGS)
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS) $(LOGFLAGS)
+release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
-minsize: CFLAGS+= -Os -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS) $(LOGFLAGS)
+minsize: CFLAGS+= -Os -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
 minsize: LOGFLAGS+= -DNO_LOGGING -DNO_USAGE_INFO
 minsize: $(MINSIZEDIR)/$(NAME)
