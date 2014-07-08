@@ -216,6 +216,7 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 }
 
 template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
+	LOGD("State::handleEvent\n");
 	if (evt.direction() == StepForward) {
 		drv::IODriver::selectAndStepForward(this->driver.ioDrivers, evt.stepperId());
 	} else {
