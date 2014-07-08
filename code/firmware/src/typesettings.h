@@ -1,7 +1,9 @@
 #ifndef TYPESETTINGS_H
 #define TYPESETTINGS_H
 
-typedef char AxisIdType;
+#include <cstdint>
+
+typedef uint8_t AxisIdType;
 
 enum PositionMode {
 	POS_ABSOLUTE,

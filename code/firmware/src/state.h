@@ -18,8 +18,9 @@
 #include "event.h"
 #include "scheduler.h"
 #include "drivers/driver.h"
-#include "gmath.h" //note: relative import
+#include "gmath.h"
 #include "drivers/axisstepper.h"
+#include "drivers/iodriver.h"
 #include "typesettings.h"
 
 template <typename Drv> class State {
@@ -32,13 +33,13 @@ template <typename Drv> class State {
 	float _destFeedRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
-	const Drv &driver;
+	Drv &driver;
 	Scheduler scheduler;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static const int DEFAULT_HOTEND_TEMP = -300;
 		static const int DEFAULT_BED_TEMP = -300;
-		State(const Drv &drv);
+		State(Drv &drv);
 		/* Control interpretation of positions from the host as relative or absolute */
 		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
@@ -83,7 +84,7 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(const Drv &drv) : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
+template <typename Drv> State<Drv>::State(Drv &drv) : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
@@ -215,6 +216,11 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 }
 
 template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
+	if (evt.direction() == StepForward) {
+		drv::IODriver::selectAndStepForward(this->driver.ioDrivers, evt.stepperId());
+	} else {
+		drv::IODriver::selectAndStepBackward(this->driver.ioDrivers, evt.stepperId());
+	}
 }
 
 template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command const& cmd) {
