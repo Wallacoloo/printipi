@@ -286,7 +286,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	} else if (cmd.isM83()) { //set extruder relative mode
 		setExtruderPosMode(POS_RELATIVE);
 		resp = gparse::Command::OK;
-	} else if (cmd.isM104()) { //set hotend temperature
+	} else if (cmd.isM104()) { //set hotend temperature and return immediately.
 		LOG("Warning (gparse/state.h): OP_M104 (set hotend temp) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
@@ -305,6 +305,9 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	} else if (cmd.isM110()) { //set current line number
 		resp = gparse::Command::OK;
 	} else if (cmd.isM117()) { //print message
+		resp = gparse::Command::OK;
+	} else if (cmd.isM140()) { //set BED temp and return immediately.
+		LOG("Warning (gparse/state.h): OP_M140 (set bed temp) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isTxxx()) { //set tool number
 		LOG("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");

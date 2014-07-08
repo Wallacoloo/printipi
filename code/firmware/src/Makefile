@@ -46,7 +46,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 	
 %.dir:
 	@mkdir -p $(@D)
-$(DEBUGDIR)/%.o: %.cpp $(DEBUGDIR)/%.dir
+$(DEBUGDIR)/%.o: %.cpp %.d $(DEBUGDIR)/%.dir
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 $(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
