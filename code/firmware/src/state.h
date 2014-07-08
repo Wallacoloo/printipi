@@ -90,7 +90,9 @@ template <typename Drv> State<Drv>::State(Drv &drv) : _positionMode(POS_ABSOLUTE
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
 	_destMechanicalPos(), 
 	driver(drv),
-	scheduler(std::bind(&State<Drv>::handleEvent, this, std::placeholders::_1)) {
+	//scheduler(std::bind(&State<Drv>::handleEvent, this, std::placeholders::_1)) 
+	scheduler(*this)
+	{
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
