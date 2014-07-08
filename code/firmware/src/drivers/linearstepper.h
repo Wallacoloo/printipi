@@ -35,7 +35,7 @@ template <int STEPS_PER_METER, CoordAxis CoordType> class LinearStepper : public
 			}
 		void _nextStep() {
 			this->time += timePerStep;
-			//LOG("LinearStepper::_nextStep() %i, %f\n", CoordType, timePerStep);
+			LOG("LinearStepper::_nextStep() %i, %f\n", CoordType, timePerStep);
 		}
 };
 
