@@ -5,6 +5,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <functional>
 #include "event.h"
 
 
@@ -15,9 +16,9 @@ class Scheduler {
 	std::condition_variable nonemptyCond;
 	public:
 		void queue(const Event& evt);
-		Scheduler();
+		Scheduler(const std::function<void(const Event&)>& callback);
 	private:
-		void consumerLoop();
+		void consumerLoop(const std::function<void(const Event&)>& callback);
 
 };
 

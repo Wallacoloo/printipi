@@ -12,6 +12,7 @@
 #include <array>
 //#include <memory> //for unique_ptr
 #include <utility> //for std::pair
+#include <functional>
 #include "logging.h"
 #include "gparse/command.h"
 #include "event.h"
@@ -25,7 +26,6 @@ template <typename Drv> class State {
 	PositionMode _positionMode; // = POS_ABSOLUTE;
 	PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
 	LengthUnit unitMode; // = UNIT_MM;
-	Scheduler scheduler;
 	float _destXPrimitive, _destYPrimitive, _destZPrimitive;
 	float _destEPrimitive;
 	float _destMoveRatePrimitive; //varies accross drivers
@@ -33,6 +33,7 @@ template <typename Drv> class State {
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	const Drv &driver;
+	Scheduler scheduler;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static const int DEFAULT_HOTEND_TEMP = -300;
@@ -78,6 +79,7 @@ template <typename Drv> class State {
 		 *returns a Command to send back to the host.*/
 		gparse::Command execute(gparse::Command const& cmd);
 		void queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE);
+		void handleEvent(const Event &evt) {}
 };
 
 
@@ -86,7 +88,8 @@ template <typename Drv> State<Drv>::State(const Drv &drv) : _positionMode(POS_AB
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
 	_destMechanicalPos(), 
-	driver(drv) {
+	driver(drv),
+	scheduler(std::bind(&State<Drv>::handleEvent, this, std::placeholders::_1)) {
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }

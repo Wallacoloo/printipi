@@ -4,7 +4,7 @@
 #include "logging.h"
 
 
-Scheduler::Scheduler() : consumer(std::thread(&Scheduler::consumerLoop, this)) {
+Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {
 }
 
 void Scheduler::queue(const Event& evt) {
@@ -14,7 +14,7 @@ void Scheduler::queue(const Event& evt) {
 	this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
 }
 
-void Scheduler::consumerLoop() {
+void Scheduler::consumerLoop(const std::function<void(const Event&)>& callback) {
 	LOGD("Scheduler::consumerLoop begin");
 	Event evt;
 	while (1) {
@@ -26,6 +26,6 @@ void Scheduler::consumerLoop() {
 			evt = this->eventQueue.front();
 			this->eventQueue.pop();
 		} //unlock the mutex and then handle the event.
-		
+		callback(evt); //process the event.
 	}
 }
