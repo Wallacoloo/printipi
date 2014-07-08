@@ -26,7 +26,8 @@
 class Scheduler {
 	std::queue<Event> eventQueue;
 	std::mutex mutex;
-	std::mutex allowPushMutex; //lock this when capacity is exceeded.
+	std::unique_lock<std::mutex> _lockPushes;
+	//std::mutex allowPushMutex; //lock this when capacity is exceeded.
 	bool _isPushLocked;
 	std::condition_variable nonemptyCond;
 	public:
