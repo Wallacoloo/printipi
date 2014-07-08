@@ -1,6 +1,7 @@
 #include "scheduler.h"
 
 #include <pthread.h> //for pthread_setschedparam
+#include <time.h> //for clock_nanosleep
 #include "logging.h"
 
 #ifndef SCHED_PRIORITY
@@ -38,7 +39,7 @@ void Scheduler::consumerLoop(const std::function<void(const Event&)>& callback) 
 			evt = this->eventQueue.front();
 			this->eventQueue.pop();
 		} //unlock the mutex and then handle the event.
-		
+		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &(evt.time()), NULL); //sleep to event time.
 		callback(evt); //process the event.
 	}
 }
