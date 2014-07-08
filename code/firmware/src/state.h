@@ -214,7 +214,7 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 	_hostZeroE = e;
 }
 
-template <typename Drv> void handleEvent(const Event &evt) {
+template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 }
 
 template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command const& cmd) {
