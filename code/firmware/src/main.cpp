@@ -9,7 +9,7 @@
 #include "state.h"
 #include "drivers/driver.h"
 #include "drivers/kossel/kossel.h"
-//#include "command.h"
+#include "argparse.h"
 
 drv::Kossel driver;
 State<drv::Kossel> gState(driver);
@@ -22,9 +22,12 @@ void printUsage(char* cmd) {
 }
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
+    if (argc < 2 || argparse::getCmdOption(argv, argv+argc, "-h") || argparse::getCmdOption(argv, argv+argc, "--help")) {
         printUsage(argv[0]);
         return 1;
+    }
+    if (argparse::getCmdOption(argv, argv+argc, "--no-log")) {
+    	logging::disable();
     }
     char* serialFileName = argv[1];
     LOG("Serial file: %s\n", serialFileName);
