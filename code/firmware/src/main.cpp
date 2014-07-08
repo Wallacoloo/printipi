@@ -22,12 +22,15 @@ void printUsage(char* cmd) {
 }
 
 int main(int argc, char** argv) {
-    if (argc < 2 || argparse::getCmdOption(argv, argv+argc, "-h") || argparse::getCmdOption(argv, argv+argc, "--help")) {
+    if (argc < 2 || argparse::cmdOptionExists(argv, argv+argc, "-h") || argparse::cmdOptionExists(argv, argv+argc, "--help")) {
         printUsage(argv[0]);
         return 1;
     }
-    if (argparse::getCmdOption(argv, argv+argc, "--no-log")) {
+    if (argparse::cmdOptionExists(argv, argv+argc, "--no-log")) {
     	logging::disable();
+    }
+    if (argparse::cmdOptionExists(argv, argv+argc, "--verbose")) {
+    	logging::enableVerbose();
     }
     char* serialFileName = argv[1];
     LOG("Serial file: %s\n", serialFileName);

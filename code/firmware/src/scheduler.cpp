@@ -5,7 +5,7 @@
 
 
 void Scheduler::queue(const Event& evt) {
-	LOG("Scheduler::queue\n");
+	LOGV("Scheduler::queue\n");
 	this->eventQueue.push(evt);
 }
 
