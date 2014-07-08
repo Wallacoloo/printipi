@@ -4,12 +4,8 @@
 #include <time.h> //for clock_nanosleep
 #include "logging.h"
 
-#ifndef SCHED_PRIORITY
-#define SCHED_PRIORITY 30
-#endif
 
-
-Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {}
+/*Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {}*/
 
 void Scheduler::queue(const Event& evt) {
 	LOGV("Scheduler::queue\n");
@@ -18,7 +14,7 @@ void Scheduler::queue(const Event& evt) {
 	this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
 }
 
-void Scheduler::consumerLoop(const std::function<void(const Event&)>& callback) {
+/*void Scheduler::consumerLoop(const std::function<void(const Event&)>& callback) {
 	LOGD("Scheduler::consumerLoop begin\n");
 	
 	struct sched_param sp; //set high priority for the scheduling thread.
@@ -42,4 +38,4 @@ void Scheduler::consumerLoop(const std::function<void(const Event&)>& callback) 
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &(evt.time()), NULL); //sleep to event time.
 		callback(evt); //process the event.
 	}
-}
+}*/
