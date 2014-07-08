@@ -216,7 +216,7 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 }
 
 template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
-	LOGD("State::handleEvent %i\n", evt.stepperId());
+	//LOGD("State::handleEvent %i\n", evt.stepperId());
 	if (evt.direction() == StepForward) {
 		drv::IODriver::selectAndStepForward(this->driver.ioDrivers, evt.stepperId());
 	} else {
@@ -228,7 +228,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	std::string opcode = cmd.getOpcode();
 	gparse::Command resp;
 	if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
-		LOG("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
+		LOGW("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
 	    bool hasX, hasY, hasZ, hasE, hasF;
 	    float curX = destXPrimitive();
 	    float curY = destYPrimitive();
@@ -255,7 +255,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		setUnitMode(UNIT_MM);
 		resp = gparse::Command::OK;
 	} else if (cmd.isG28()) { //home to end-stops
-		LOG("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
+		LOGW("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
 		bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
 		bool homeY = cmd.hasY();
 		bool homeZ = cmd.hasZ();
@@ -299,31 +299,34 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	} else if (cmd.isM83()) { //set extruder relative mode
 		setExtruderPosMode(POS_RELATIVE);
 		resp = gparse::Command::OK;
+	} else if (cmd.isM84()) { //stop idle hold: relax all motors.
+		LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
+		resp = gparse::Command::OK;
 	} else if (cmd.isM104()) { //set hotend temperature and return immediately.
-		LOG("Warning (gparse/state.h): OP_M104 (set hotend temp) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M104 (set hotend temp) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
 		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
 		driver.getTemperature(t, b);
 		resp = gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
-		LOG("Warning (gparse/state.h): OP_M106 (set fan speed) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M106 (set fan speed) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM107()) { //set fan = off.
-		LOG("Warning (gparse/state.h): OP_M106 (set fan off) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M106 (set fan off) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM109()) { //set extruder temperature to S param and wait.
-		LOG("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM110()) { //set current line number
 		resp = gparse::Command::OK;
 	} else if (cmd.isM117()) { //print message
 		resp = gparse::Command::OK;
 	} else if (cmd.isM140()) { //set BED temp and return immediately.
-		LOG("Warning (gparse/state.h): OP_M140 (set bed temp) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M140 (set bed temp) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isTxxx()) { //set tool number
-		LOG("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
 		resp = gparse::Command::OK;
 	} else {
 		throw new std::runtime_error("unrecognized gcode opcode");
