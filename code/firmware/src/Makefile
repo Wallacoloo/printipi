@@ -56,7 +56,7 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/kossel/kossel.o
+%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/kossel/kossel.o %/drivers/rpi/rpi.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/command.o %/gparse/serial.o
