@@ -367,6 +367,7 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	if (numAxis == 0) { 
 		return; //some of the following logic may assume that there are at least 1 axis.
 	}*/
+	LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE x, y, z, e);
 	typename Drv::AxisSteppers iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
 	timespec baseTime = scheduler.lastSchedTime();
