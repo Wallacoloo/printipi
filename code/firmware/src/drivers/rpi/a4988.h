@@ -1,6 +1,12 @@
 #ifndef DRIVERS_RPI_A4988
 #define DRIVERS_RPI_A4988
 
+/*
+ * The A4988 is a current-chopping stepper motor driver IC.
+ * It is used in the StepStick, Pololu stepper motor drivers, etc.
+ * It consists of 2 control pins: STEP and DIRECTION.
+*/
+
 #include <cstdint> //for uint8_t
 
 #include "rpi.h"
