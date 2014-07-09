@@ -50,3 +50,19 @@ void Scheduler::initSchedThread() {
 	}
 }
 
+struct timespec Scheduler::lastSchedTime() const {
+	Event evt;
+	{
+		std::unique_lock<std::mutex> lock(this->mutex);
+		if (this->eventQueue.size()) {
+			evt = this->eventQueue.back();
+		} else {
+			lock.unlock();
+			timespec ts;
+			clock_gettime(CLOCK_MONOTONIC, &ts);
+			return ts;
+		}
+	}
+	return evt.time();
+}
+

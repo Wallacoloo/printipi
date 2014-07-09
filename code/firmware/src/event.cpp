@@ -20,3 +20,11 @@ Event Event::StepperEvent(float relTime, AxisIdType stepperNum, StepDirection di
 	return Event(t, stepperNum, dir);
 }
 
+void Event::offset(const struct timespec& offset) {
+	this->_time.tv_sec += offset.tv_sec;
+	this->_time.tv_nsec += offset.tv_nsec;
+	if (this->_time.tv_nsec > 999999999) {
+        this->_time.tv_sec += 1;
+        this->_time.tv_nsec -= 1000000000;
+    }
+}

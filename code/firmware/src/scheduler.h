@@ -5,6 +5,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <time.h> //for timespec
 //#include <functional>
 #include "event.h"
 
@@ -25,7 +26,7 @@
 
 class Scheduler {
 	std::queue<Event> eventQueue;
-	std::mutex mutex;
+	mutable std::mutex mutex;
 	std::unique_lock<std::mutex> _lockPushes;
 	bool _arePushesLocked;
 	std::condition_variable nonemptyCond;
@@ -35,6 +36,7 @@ class Scheduler {
 		Scheduler();
 		Event nextEvent();
 		void initSchedThread(); //call this from whatever threads call nextEvent to optimize that thread's priority.
+		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 };
 
 
