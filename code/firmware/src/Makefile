@@ -1,3 +1,5 @@
+#NOTE: compiling with g++-4.7.2 may lead to some runtime errors in the scheduler!
+
 #directory containing this makefile:
 SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 

@@ -1,8 +1,16 @@
-//#include <iostream> //for std::cerr?
+/*TODO:
+ *  Write SN754410 drivers
+ *  Test output on one single motor
+ *  Add Kossel Axis drivers
+ *  Add endstop support
+ *  Add max/min bounds for each axis
+ *  Add thermister support
+ *  Investigate single-threading for entire process.
+*/
+
 #include <string>
 #include <fcntl.h> //needed for (file) open()
 //#include <stdlib.h> //needed for exit()
-//#include <stdio.h> //for printf?
 #include <sys/mman.h> //for mlockall
 #include "logging.h"
 
