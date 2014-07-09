@@ -7,6 +7,7 @@
 #include "rpi.h"
 #include "bcm2835.h"
 #include "drivers/iodriver.h"
+#include "logging.h"
 
 namespace drv {
 namespace rpi {
@@ -35,6 +36,7 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 		}
 		
 		void stepForward() {
+			LOGV("SN754410::stepForward()\n");
 			uint8_t pinSwap = cycleInversions[index];
 			index = (index == 7) ? 0 : index+1; //increment index, or wrap around.
 			if (index & 1) { //note: new index
@@ -44,6 +46,7 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 			}
 		}
 		void stepBackward() {
+			LOGV("SN754410::stepBackward()\n");
 			index = (index == 0) ? 7 : index-1; //decrement index, or wrap around.
 			uint8_t pinSwap = cycleInversions[index];
 			if (index & 1) { //note: new index
