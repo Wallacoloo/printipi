@@ -1,3 +1,6 @@
+/* 
+ * The SN754410 is a quadruple half-h bridge IC.
+*/
 #ifndef DRIVERS_RPI_SN754410_H
 #define DRIVERS_RPI_SN754410_H
 

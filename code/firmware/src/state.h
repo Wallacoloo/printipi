@@ -365,7 +365,8 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	velE = gparse::makeZeroIfClose(velE);*/
 	float durationXYZ = dist/velXYZ;
 	float durationE = abs(e-curE)/velE;
-	float duration = durationXYZ;
+	float duration = durationXYZ; //DEBUG
+	velE = 0; //DEBUG
 	//float duration = std::min(durationXYZ, durationE); //will these always be equal? TODO: Do the full movemement as two parts; once XYZ is reached, idle while moving E. This allows for code that simply pushes filament through during start-up.
 	//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
 	/*constexpr std::size_t numAxis = Drv::numAxis(); //driver.numAxis();
