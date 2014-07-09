@@ -13,7 +13,6 @@ class Driver {
 		//constexpr std::size_t numAxis() const;
 		//static std::tuple<AxisStepperA, AxisStepperB, ...> AxisSteppers;
 		//virtual float defaultMoveRate() const = 0;
-		//virtual float defaultFeedRate() const = 0;
 };
 
 }

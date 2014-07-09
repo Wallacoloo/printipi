@@ -26,7 +26,6 @@ class Kossel : public Driver {
         }
         void getTemperature(int &extruder, int& platform) const;
         float defaultMoveRate() const;
-        float defaultFeedRate() const;
 };
 
 }

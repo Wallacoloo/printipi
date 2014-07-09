@@ -246,21 +246,22 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	std::string opcode = cmd.getOpcode();
 	gparse::Command resp;
 	if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
-		LOGW("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
-	    bool hasX, hasY, hasZ, hasE, hasF;
-	    float curX = destXPrimitive();
+		//LOGW("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
+	    //bool hasX, hasY, hasZ, hasE, hasF;
+	    bool hasF;
+	    /*float curX = destXPrimitive();
 	    float curY = destYPrimitive();
 	    float curZ = destZPrimitive();
-	    float curE = destEPrimitive();
-		float x = cmd.getX(hasX); //new x-coordinate.
-		float y = cmd.getY(hasY); //new y-coordinate.
-		float z = cmd.getZ(hasZ); //new z-coordinate.
-		float e = cmd.getE(hasE); //extrusion amount.
+	    float curE = destEPrimitive();*/
+		float x = cmd.getX(destXPrimitive()); //new x-coordinate.
+		float y = cmd.getY(destYPrimitive()); //new y-coordinate.
+		float z = cmd.getZ(destZPrimitive()); //new z-coordinate.
+		float e = cmd.getE(destEPrimitive()); //extrusion amount.
 		float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
-		x = hasX ? xUnitToPrimitive(x) : curX;
+		/*x = hasX ? xUnitToPrimitive(x) : curX;
 		y = hasY ? yUnitToPrimitive(y) : curY;
 		z = hasZ ? zUnitToPrimitive(z) : curZ;
-		e = hasE ? eUnitToPrimitive(e) : curE;
+		e = hasE ? eUnitToPrimitive(e) : curE;*/
 		if (hasF) {
 			//this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
 			this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
@@ -396,7 +397,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 		//LOG("Next step: %i at %g of %g. Is s.time <= 0? %i. Is vy == 0? %i\n", s.index(), s.time, duration, s.time <= 0, vy == 0);
 		LOGV("Next step: %i at %g of %g\n", s.index(), s.time, duration);
 		//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
-		if (s.time > duration || s.time <= 0 || isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
+		if (s.time > duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
 			break; 
 		}
 		Event e = s.getEvent();
