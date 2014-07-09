@@ -1,6 +1,9 @@
 #ifndef DRIVERS_RPI_SN754410_H
 #define DRIVERS_RPI_SN754410_H
 
+#include <cstdint> //for uint8_t
+#include <array>
+
 #include "rpi.h"
 #include "bcm2835.h"
 #include "drivers/iodriver.h"
@@ -11,7 +14,7 @@ namespace rpi {
 template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : public IODriver {
 	int index;
 	public:
-		static const std::array<unit8_t, 8> cycleInversions{A1, A2, B2, B1, A2, A1, B1, B2};
+		static const std::array<uint8_t, 8> cycleInversions;
 		//output cycle looks like: (1, 0, 0, 1), (0, 0, 0, 1), (0, 1, 0, 1), (0, 1, 0, 0), (0, 1, 1, 0), (0, 0, 1, 0), (1, 0, 1, 0), (1, 0, 0, 0)
 		//This is a form of greycode; only 1 bit is changed between any adjacent steps.
 		//pattern is: (#0-#1) -A1, +A2, -B2, +B1, -A2, +A1, -B1, +B2
@@ -32,24 +35,26 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 		}
 		
 		void stepForward() {
-			unit8_t pinSwap = cycleInversions[index];
-			index = (index == 7) ? 0 : ++index; //increment index, or wrap around.
+			uint8_t pinSwap = cycleInversions[index];
+			index = (index == 7) ? 0 : index+1; //increment index, or wrap around.
 			if (index & 1) { //note: new index
-				bcm2835_gpio_clear(pinSwap);
+				bcm2835_gpio_clr(pinSwap);
 			} else { //on steps 1->2, 3->4, 5->6, 7->0: set pin
 				bcm2835_gpio_set(pinSwap);
 			}
 		}
 		void stepBackward() {
-			index = (index == 0) ? 7 : --index; //decrement index, or wrap around.
-			unit8_t pinSwap = cycleInversions[index];
+			index = (index == 0) ? 7 : index-1; //decrement index, or wrap around.
+			uint8_t pinSwap = cycleInversions[index];
 			if (index & 1) { //note: new index
-				bcm2835_gpio_clear(pinSwap);
+				bcm2835_gpio_clr(pinSwap);
 			} else { //on steps 1->0, 3->2, 5->4, 7->6: set pin
 				bcm2835_gpio_set(pinSwap);
 			}
 		}
 };
+
+template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> const std::array<uint8_t, 8> SN754410<A1, A2, B1, B2>::cycleInversions = {A1, A2, B2, B1, A2, A1, B1, B2};
 
 }
 }

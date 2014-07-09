@@ -1,5 +1,5 @@
 /*TODO:
- *  Write SN754410 drivers
+ * *Write SN754410 drivers
  *  Test output on one single motor
  *  Add Kossel Axis drivers
  *  Add endstop support
