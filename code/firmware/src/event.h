@@ -34,7 +34,7 @@ class Event {
 		Event(const timespec &t, AxisIdType stepperNum, StepDirection dir);
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		
-		void offset(const struct timespec& offset);
+		//void offset(const struct timespec& offset);
 		
 };
 

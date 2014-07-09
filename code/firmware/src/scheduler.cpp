@@ -3,12 +3,15 @@
 #include <pthread.h> //for pthread_setschedparam
 #include <time.h> //for clock_nanosleep
 #include "logging.h"
+#include "timeutil.h"
 
 
 /*Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {}*/
 
 //Scheduler::Scheduler() : consumer(std::thread(&Scheduler::consumerLoop, this)) {}
-Scheduler::Scheduler() : _lockPushes(mutex, std::defer_lock), _arePushesLocked(false) {}
+Scheduler::Scheduler() : _lockPushes(mutex, std::defer_lock), _arePushesLocked(false) {
+	clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //initialize to current time.
+}
 
 
 void Scheduler::queue(const Event& evt) {
@@ -38,7 +41,10 @@ Event Scheduler::nextEvent() {
 			this->_arePushesLocked = true;
 		}
 	} //unlock the mutex and then handle the event.
-	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &(evt.time()), NULL); //sleep to event time.
+	struct timespec sleepUntil = timespecAdd(this->lastEventHandledTime, evt.time());
+	LOGV("Scheduler::nextEvent sleep until %lu.%lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
+	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
+	clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
 	return evt;
 }
 
@@ -50,7 +56,7 @@ void Scheduler::initSchedThread() {
 	}
 }
 
-struct timespec Scheduler::lastSchedTime() const {
+/*struct timespec Scheduler::lastSchedTime() const {
 	Event evt;
 	{
 		std::unique_lock<std::mutex> lock(this->mutex);
@@ -64,5 +70,5 @@ struct timespec Scheduler::lastSchedTime() const {
 		}
 	}
 	return evt.time();
-}
+}*/
 
