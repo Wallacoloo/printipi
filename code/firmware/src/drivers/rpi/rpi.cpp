@@ -15,10 +15,8 @@ void atexit_bcm2835_close() {
 void initIO() {
 	if (!wasBcmInit) {
 		wasBcmInit = true;
-		//wiringPiSetup();
 		if (bcm2835_init()) {
 			std::atexit(atexit_bcm2835_close);
-			//atexit: bcm2835_close
 		}
 	}
 }
