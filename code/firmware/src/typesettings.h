@@ -1,7 +1,7 @@
 #ifndef TYPESETTINGS_H
 #define TYPESETTINGS_H
 
-#include <cstdint>
+#include <cstdint> //for uint8_t
 
 typedef uint8_t AxisIdType;
 

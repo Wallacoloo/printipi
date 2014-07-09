@@ -1,6 +1,8 @@
 #ifndef DRIVERS_IODRIVER_H
 #define DRIVERS_IODRIVER_H
 
+#include "typesettings.h"
+
 namespace drv {
 
 class IODriver {
