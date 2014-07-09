@@ -5,6 +5,7 @@
 #include "typesettings.h" //for AxisIdType
 #include <tuple>
 #include <array>
+#include <cmath> //for isnan
 
 namespace drv {
 
@@ -34,9 +35,16 @@ template <typename TupleT, int idx> struct _AxisStepper__getNextTime {
 	AxisStepper& operator()(TupleT &axes) {
 		AxisStepper &m1 = _AxisStepper__getNextTime<TupleT, idx-1>()(axes);
 		AxisStepper &m2 = std::get<idx>(axes);
+		//assume that .time can be finite, infinite, or NaN.
+		//comparisons against NaN are ALWAYS false.
 		if (m1.time <= 0) { return m2; } //if one of the times is non-positive (ie no next step), return the other one.
 		if (m2.time <= 0) { return m1; }
-		return (m1.time < m2.time) ? m1 : m2;
+		//if m2.time == NaN, then (m1.time < m2.time) ? m1 : m2 will return NaN
+		//if m1.time == NaN, then (m1.time < m2.time) ? m1 : m2 will return m2.time.
+		//if m2.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m1.time
+		//elif m1.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m2.time
+		
+		return (m1.time < m2.time || isnan(m2.time)) ? m1 : m2;
 	}
 };
 
