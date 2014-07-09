@@ -16,10 +16,10 @@ class Kossel : public Driver {
         typedef std::tuple<LinearStepper<1000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisSteppers;
         typedef std::tuple<
         	//rpi::A4988<RPI_GPIO_P1_11, RPI_GPIO_P1_12>,
-        	rpi::SN754410<RPI_GPIO_P1_13, RPI_GPIO_P1_15, RPI_GPIO_P1_16, RPI_GPIO_P1_18>, //X coord
-        	rpi::A4988<RPI_GPIO_P1_11, RPI_GPIO_P1_12>, //Y coord
-        	rpi::A4988<RPI_GPIO_P1_11, RPI_GPIO_P1_12>, //Z coord
-        	rpi::A4988<RPI_GPIO_P1_11, RPI_GPIO_P1_12>  > IODriverTypes;
+        	rpi::SN754410<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_16, RPI_V2_GPIO_P1_18>, //X coord
+        	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>, //Y coord
+        	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>, //Z coord
+        	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>  > IODriverTypes;
         IODriverTypes ioDrivers;
         constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
