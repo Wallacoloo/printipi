@@ -1,5 +1,6 @@
 /* 
- * The SN754410 is a quadruple half-h bridge IC.
+ * The SN754410 is a quadruple half-h bridge IC by TI.
+ * It can be used to drive a bipolar stepper motor.
 */
 #ifndef DRIVERS_RPI_SN754410_H
 #define DRIVERS_RPI_SN754410_H
