@@ -22,7 +22,7 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 		//shifted             001  010  011  100  101  110  111  000
 		//shifted             111  000  001  010  011  100  101  110
 		//notice the alternating set, clr, set clr
-		SN754410() {
+		SN754410() : index(0) {
 			initIO();
 			bcm2835_gpio_fsel(A1, BCM2835_GPIO_FSEL_OUTP); //configure these pins as output
 			bcm2835_gpio_fsel(A2, BCM2835_GPIO_FSEL_OUTP);

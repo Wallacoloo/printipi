@@ -12,6 +12,7 @@
 #include <fcntl.h> //needed for (file) open()
 //#include <stdlib.h> //needed for exit()
 #include <sys/mman.h> //for mlockall
+#include <cstdlib> //for atexit
 #include "logging.h"
 
 #include "gparse/serial.h"
@@ -28,16 +29,21 @@ void printUsage(char* cmd) {
     //exit(1);
 }
 
+void onExit() {
+	LOG("Exiting\n");
+}
+
 int main(int argc, char** argv) {
-    if (argc < 2 || argparse::cmdOptionExists(argv, argv+argc, "-h") || argparse::cmdOptionExists(argv, argv+argc, "--help")) {
-        printUsage(argv[0]);
-        return 1;
-    }
-    if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
+	std::atexit(onExit);
+	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
     }
     if (argparse::cmdOptionExists(argv, argv+argc, "--verbose")) {
     	logging::enableVerbose();
+    }
+    if (argc < 2 || argparse::cmdOptionExists(argv, argv+argc, "-h") || argparse::cmdOptionExists(argv, argv+argc, "--help")) {
+        printUsage(argv[0]);
+        return 1;
     }
     
     //prevent page-swaps to increase performace:
@@ -54,7 +60,8 @@ int main(int argc, char** argv) {
 	State<drv::Kossel> gState(driver);
     
     gparse::comLoop(fd, gState);
-    LOG("Exiting\n");
+    onExit();
+    //LOG("Exiting\n");
     //exit(0);
     return 0;
 }
