@@ -37,7 +37,7 @@ class Scheduler {
 		Scheduler();
 		Event nextEvent();
 		void initSchedThread(); //call this from whatever threads call nextEvent to optimize that thread's priority.
-		//struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
+		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 };
 
 
