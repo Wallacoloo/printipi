@@ -10,11 +10,11 @@ namespace drv {
 
 class AxisStepper {
 	private:
-		AxisIdType _index; //ID of axis. Does not necessarily have to be stored as a variable (other option is one template instance per ID, which pretty much already happens)
+		AxisIdType _index; //ID of axis. Does not necessarily have to be stored as a variable (other option is one template instance per ID, which pretty much already happens), but this allows AxisStepper::nextStep() to not be virtual
 	public:
 		float time; //time of next step
 		StepDirection direction; //direction of next step
-		inline int index() const { return _index; }
+		inline int index() const { return _index; } //NOT TO BE OVERRIDEN
 		AxisStepper() {}
 		template <std::size_t sz> AxisStepper(int idx, const std::array<int, sz>& /*curPos*/, float /*vx*/, float /*vy*/, float /*vz*/, float /*ve*/)
 			: _index(idx) {}
@@ -22,6 +22,7 @@ class AxisStepper {
 		template <typename TupleT> static void initAxisSteppers(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve);
 		Event getEvent() const; //NOT TO BE OVERRIDEN
 		template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
+	protected:
 		void _nextStep(); //OVERRIDE THIS. Will be called upon initialization.
 		
 };

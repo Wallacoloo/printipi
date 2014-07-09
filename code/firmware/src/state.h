@@ -363,10 +363,10 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	float durationE = abs(e-curE)/velE;
 	float duration = std::min(durationXYZ, durationE); //will these always be equal? TODO: Do the full movemement as two parts; once XYZ is reached, idle while moving E. This allows for code that simply pushes filament through during start-up.
 	//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
-	constexpr std::size_t numAxis = Drv::numAxis(); //driver.numAxis();
+	/*constexpr std::size_t numAxis = Drv::numAxis(); //driver.numAxis();
 	if (numAxis == 0) { 
 		return; //some of the following logic may assume that there are at least 1 axis.
-	}
+	}*/
 	typename Drv::AxisSteppers iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
 	//initialize iterators...
@@ -379,6 +379,7 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 			break; 
 		}
 		scheduler.queue(s.getEvent());
+		_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
 		s.nextStep(iters);
 	} while (1);
 }
