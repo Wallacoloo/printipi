@@ -17,7 +17,7 @@ template <typename T> void comLoop(int fd, T& state) {
 		cmd = readLine(fd);
 		LOG("command: %s\n", cmd.c_str());
 		Command parsed = Command(cmd);
-		LOGD("parsed: %s", parsed.toGCode().c_str());
+		//LOGD("parsed: %s", parsed.toGCode().c_str());
 		//printf("size of command: %i\n", parsed.pieces.size());
 		Command response = state.execute(parsed);
 		std::string resp = response.toGCode();
