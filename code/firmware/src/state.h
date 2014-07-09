@@ -356,6 +356,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 }
 		
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
+	Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, _destXPrimitive, _destYPrimitive, _destZPrimitive, _destEPrimitive);
 	float curX = destXPrimitive();
 	float curY = destYPrimitive();
 	float curZ = destZPrimitive();

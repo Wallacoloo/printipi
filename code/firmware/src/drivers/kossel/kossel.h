@@ -7,6 +7,7 @@
 #include "drivers/linearstepper.h"
 #include "drivers/rpi/a4988.h"
 #include "drivers/rpi/sn754410.h"
+#include "drivers/linearcoordmap.h"
 #include <tuple>
 
 namespace drv {
@@ -20,6 +21,7 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>, //Y coord
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>, //Z coord
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>  > IODriverTypes;
+        typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
         IODriverTypes ioDrivers;
         constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
