@@ -5,6 +5,8 @@
 //  http://reprap.org/wiki/G-code
 //  or (with implementation): https://github.com/Traumflug/Teacup_Firmware/blob/master/gcode_process.c
 //  Marlin-specific: http://www.ctheroux.com/2012/11/g-code-commands-supported-by-marlin/
+//  Clarification of E and F: http://forums.reprap.org/read.php?263,208245
+//    E is the extruder coordinate. F is the "feed rate", which is really the rate at which X, Y, Z moves.
 
 #include <string>
 #include <cstddef> //for size_t
@@ -31,7 +33,7 @@ template <typename Drv> class State {
 	float _destXPrimitive, _destYPrimitive, _destZPrimitive;
 	float _destEPrimitive;
 	float _destMoveRatePrimitive; //varies accross drivers
-	float _destFeedRatePrimitive;
+	//float _destFeedRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	Drv &driver;
@@ -73,8 +75,8 @@ template <typename Drv> class State {
 		/* Control the feed and move rate */
 		float destMoveRatePrimitive() const;
 		void setDestMoveRatePrimitive(float f);
-		float destFeedRatePrimitive() const;
-		void setDestFeedRatePrimitive(float f);
+		//float destFeedRatePrimitive() const;
+		//void setDestFeedRatePrimitive(float f);
 		/* The host can set any arbitrary point to be a reference to 0 */
 		void setHostZeroPos(float x, float y, float z, float e);
 		/* Processes the event immediately, eg stepping a stepper motor */
@@ -83,7 +85,7 @@ template <typename Drv> class State {
 		/*execute the GCode on a Driver object that supports a well-defined interface.
 		 *returns a Command to send back to the host.*/
 		gparse::Command execute(gparse::Command const& cmd);
-		void queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE);
+		void queueMovement(float x, float y, float z, float e);
 };
 
 
@@ -99,7 +101,7 @@ template <typename Drv> State<Drv>::State(Drv &drv) : _positionMode(POS_ABSOLUTE
 	schedthread(&State<Drv>::eventLoop, this)
 	{
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
-	this->setDestFeedRatePrimitive(drv.defaultFeedRate());
+	//this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
 
 template <typename Drv> PositionMode State<Drv>::positionMode() const {
@@ -187,7 +189,7 @@ template <typename Drv> float State<Drv>::eUnitToPrimitive(float posUnit) const 
 	return posUnitToMM(eUnitToAbsolute(posUnit)) + this->_hostZeroE;
 }
 template <typename Drv> float State<Drv>::fUnitToPrimitive(float posUnit) const {
-	return posUnitToMM(posUnit); //feed rate is always relative, so no need to call toAbsolute
+	return posUnitToMM(posUnit/60); //feed rate is always relative, so no need to call toAbsolute. It is also given in mm/minute
 }
 
 template <typename Drv> float State<Drv>::destXPrimitive() const {
@@ -208,12 +210,12 @@ template <typename Drv> float State<Drv>::destMoveRatePrimitive() const {
 template <typename Drv> void State<Drv>::setDestMoveRatePrimitive(float f) {
 	this->_destMoveRatePrimitive = f;
 }
-template <typename Drv> float State<Drv>::destFeedRatePrimitive() const {
+/*template <typename Drv> float State<Drv>::destFeedRatePrimitive() const {
 	return this->_destFeedRatePrimitive;
 }
 template <typename Drv> void State<Drv>::setDestFeedRatePrimitive(float f) {
 	this->_destFeedRatePrimitive = f;
-}
+}*/
 
 template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float z, float e) {
 	_hostZeroX = x;
@@ -253,15 +255,17 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		float y = cmd.getY(hasY); //new y-coordinate.
 		float z = cmd.getZ(hasZ); //new z-coordinate.
 		float e = cmd.getE(hasE); //extrusion amount.
-		float f = cmd.getF(hasF); //feed-rate.
+		float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
 		x = hasX ? xUnitToPrimitive(x) : curX;
 		y = hasY ? yUnitToPrimitive(y) : curY;
 		z = hasZ ? zUnitToPrimitive(z) : curZ;
+		e = hasE ? eUnitToPrimitive(e) : curE;
 		if (hasF) {
-			this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
+			//this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
+			this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
 		}
 		//TODO: calculate future e based on feedrate.
-		this->queueMovement(curX, curY, curZ, curE, x, y, z, e, destMoveRatePrimitive(), destFeedRatePrimitive());
+		this->queueMovement(x, y, z, e);
 		resp = gparse::Command::OK;
 	} else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
 		setUnitMode(UNIT_IN);
@@ -284,7 +288,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		float newX = homeX ? 0 : curX;
 		float newY = homeY ? 0 : curY;
 		float newZ = homeZ ? 0 : curZ;
-		this->queueMovement(curX, curY, curZ, curE, newX, newY, newZ, curE, destMoveRatePrimitive(), destFeedRatePrimitive());
+		this->queueMovement(newX, newY, newZ, curE);
 		resp = gparse::Command::OK;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
@@ -349,7 +353,12 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	return resp;
 }
 		
-template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
+template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
+	float curX = destXPrimitive();
+	float curY = destYPrimitive();
+	float curZ = destZPrimitive();
+	float curE = destEPrimitive();
+	float velXYZ = destMoveRatePrimitive();
 	_destXPrimitive = x;
 	_destYPrimitive = y;
 	_destZPrimitive = z;
@@ -363,10 +372,12 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	float vy = gparse::makeZeroIfClose((y-curY)/dist * velXYZ);
 	float vz = gparse::makeZeroIfClose((z-curZ)/dist * velXYZ);
 	velE = gparse::makeZeroIfClose(velE);*/
-	float durationXYZ = dist/velXYZ;
-	float durationE = abs(e-curE)/velE;
-	float duration = durationXYZ; //DEBUG
-	velE = 0; //DEBUG
+	//float durationXYZ = dist/velXYZ;
+	float duration = dist/velXYZ;
+	//float durationE = abs(e-curE)/velE;
+	//float duration = durationXYZ; //DEBUG
+	//float velE = 0; //DEBUG
+	float velE = (e-curE)/duration;
 	//float duration = std::min(durationXYZ, durationE); //will these always be equal? TODO: Do the full movemement as two parts; once XYZ is reached, idle while moving E. This allows for code that simply pushes filament through during start-up.
 	//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
 	/*constexpr std::size_t numAxis = Drv::numAxis(); //driver.numAxis();
