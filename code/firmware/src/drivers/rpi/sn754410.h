@@ -57,7 +57,7 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 		}
 };
 
-template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> const std::array<uint8_t, 8> SN754410<A1, A2, B1, B2>::cycleInversions = {A1, A2, B2, B1, A2, A1, B1, B2};
+template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> const std::array<uint8_t, 8> SN754410<A1, A2, B1, B2>::cycleInversions = {{A1, A2, B2, B1, A2, A1, B1, B2}};
 
 }
 }

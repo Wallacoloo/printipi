@@ -1,6 +1,8 @@
 /*TODO:
  * *Write SN754410 drivers
  *  Test output on one single motor
+ *  in State::queueMovement, curX, curY, curZ, etc should be recalculated from the actual axis positions to prevent drift
+ *    dest*Primitive must be maintained in order to handle relative movements.
  *  Add Kossel Axis drivers
  *  Add endstop support
  *  Add max/min bounds for each axis
