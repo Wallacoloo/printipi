@@ -22,8 +22,5 @@ void Kossel::getTemperature(int &extruder, int &bed) const {
 float Kossel::defaultMoveRate() const {
 	return 10;
 }
-float Kossel::defaultFeedRate() const {
-	return 10;
-}
 
 }

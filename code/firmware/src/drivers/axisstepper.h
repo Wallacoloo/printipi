@@ -44,7 +44,7 @@ template <typename TupleT, int idx> struct _AxisStepper__getNextTime {
 		//if m2.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m1.time
 		//elif m1.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m2.time
 		
-		return (m1.time < m2.time || isnan(m2.time)) ? m1 : m2;
+		return (m1.time < m2.time || std::isnan(m2.time)) ? m1 : m2;
 	}
 };
 
