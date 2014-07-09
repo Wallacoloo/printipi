@@ -373,30 +373,20 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	float vx = (x-curX)/dist * velXYZ;
 	float vy = (y-curY)/dist * velXYZ;
 	float vz = (z-curZ)/dist * velXYZ;
-	/*float vx = gparse::makeZeroIfClose((x-curX)/dist * velXYZ);
-	float vy = gparse::makeZeroIfClose((y-curY)/dist * velXYZ);
-	float vz = gparse::makeZeroIfClose((z-curZ)/dist * velXYZ);
-	velE = gparse::makeZeroIfClose(velE);*/
-	//float durationXYZ = dist/velXYZ;
 	float duration = dist/velXYZ;
-	//float durationE = abs(e-curE)/velE;
-	//float duration = durationXYZ; //DEBUG
-	//float velE = 0; //DEBUG
 	float velE = (e-curE)/duration;
-	//float duration = std::min(durationXYZ, durationE); //will these always be equal? TODO: Do the full movemement as two parts; once XYZ is reached, idle while moving E. This allows for code that simply pushes filament through during start-up.
-	//this->_queueMovement(driver, curX, curY, curZ, curE, vx, vy, vz, velE, durationXYZ, durationE);
 	/*constexpr std::size_t numAxis = Drv::numAxis(); //driver.numAxis();
 	if (numAxis == 0) { 
 		return; //some of the following logic may assume that there are at least 1 axis.
 	}*/
 	LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
 	LOGD("State::queueMovement _destMechanicalPos: %i\n", _destMechanicalPos[0]);
-	typename Drv::AxisSteppers iters;
+	typename Drv::AxisStepperTypes iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
 	timespec baseTime = scheduler.lastSchedTime();
 	//initialize iterators...
 	do {
-		drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
+		drv::AxisStepper& s = drv::AxisStepper::getNextTime(iters);
 		//LOG("Next step: %i at %g of %g. Is s.time <= 0? %i. Is vy == 0? %i\n", s.index(), s.time, duration, s.time <= 0, vy == 0);
 		LOGV("Next step: %i at %g of %g\n", s.index(), s.time, duration);
 		//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
