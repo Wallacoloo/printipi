@@ -30,13 +30,14 @@ class Scheduler {
 	std::unique_lock<std::mutex> _lockPushes;
 	bool _arePushesLocked;
 	std::condition_variable nonemptyCond;
+	struct timespec lastEventHandledTime;
 	public:
 		//queue and nextEvent can be called from separate threads, but nextEvent must NEVER be called from multiple threads.
 		void queue(const Event& evt);
 		Scheduler();
 		Event nextEvent();
 		void initSchedThread(); //call this from whatever threads call nextEvent to optimize that thread's priority.
-		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
+		//struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 };
 
 

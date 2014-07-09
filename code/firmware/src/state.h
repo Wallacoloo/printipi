@@ -369,7 +369,7 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 	}*/
 	typename Drv::AxisSteppers iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
-	timespec baseTime = scheduler.lastSchedTime();
+	//timespec baseTime = scheduler.lastSchedTime();
 	//initialize iterators...
 	do {
 		drv::AxisStepper& s = drv::AxisStepper::getNextTime<typename Drv::AxisSteppers>(iters);
@@ -380,7 +380,7 @@ template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, f
 			break; 
 		}
 		Event e = s.getEvent();
-		e.offset(baseTime);
+		//e.offset(baseTime);
 		scheduler.queue(e);
 		_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
 		s.nextStep(iters);
