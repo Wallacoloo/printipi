@@ -350,6 +350,10 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 }
 		
 template <typename Drv> void State<Drv>::queueMovement(float curX, float curY, float curZ, float curE, float x, float y, float z, float e, float velXYZ, float velE) {
+	_destXPrimitive = x;
+	_destYPrimitive = y;
+	_destZPrimitive = z;
+	_destEPrimitive = e;
 	float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
 	float dist = sqrt(distSq);
 	float vx = (x-curX)/dist * velXYZ;
