@@ -39,11 +39,18 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 				z = A-sqrt(L*L-r*r);
 				//LOGV("LinearDeltaCoordMap::z=%f (%f)\n", z, A-sqrt(L*L-r*r));
 			} else if (B == C) { //prevent a division-by-zero.
-				LOGV("LinearDeltaCoordMap::A!-B==C\n");
+				LOGV("LinearDeltaCoordMap::A!=B==C\n");
+				/*ydiv = (2.*(4*A*A - 8*A*B + 4*B*B + 9*r*r))
+				ya = 2*(A-B)*(A-B)*r
+				yb = 4*Sqrt((A - B)*(A - B)*(-(A - B)*(A - B)*(A - B)*(A - B) + 4*(A - B)*(A - B)*L*L + 3*(-2*(A - B)*(A - B) + 3*L*L)*r*r - 9*r*r*r*r))
+				com1 = abs(yb/((A-B)*ydiv))
+				com2 = ya/ydiv
+				z = 0.5*(A+B - 3*r*(com2/(A-B) + com1))
+				y = com2 + (A-B)*com1*/
 				auto ydiv = 2*(4*A*A - 8*A*B + 4*B*B + 9*r*r);
 				auto ya = 2*(A-B)*(A-B)*r;
 				auto yb = 4*sqrt((A - B)*(A - B)*(-(A - B)*(A - B)*(A - B)*(A - B) + 4*(A - B)*(A - B)*L*L + 3*(-2*(A - B)*(A - B) + 3*L*L)*r*r - 9*r*r*r*r));
-				auto com1 = abs(yb/((A-B)*ydiv));
+				auto com1 = fabs(yb/((A-B)*ydiv));
 				auto com2 = ya/ydiv;
 				z = 0.5*(A+B - 3*r*(com2/(A-B) + com1));
 				y = com2 + (A-B)*com1;
@@ -57,7 +64,7 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 				//will use smaller of z.
 				//if sign(zb) == sign(zdiv), this should be z2, else z1.
 				//therefore z = za/zdiv - abs(zb/zdiv)
-				z = za/zdiv - abs(zb/zdiv);
+				z = za/zdiv - fabs(zb/zdiv);
 				//Solving for x, y in terms of z gives 
 				x = ((B - C)*(B + C - 2*z))/(2*sqrt(3)*r);
 				y = -((-2*A*A + B*B + C*C + 4*A*z - 2*B*z - 2*C*z)/(6*r));
