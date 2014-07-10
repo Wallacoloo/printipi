@@ -40,9 +40,11 @@ def xyzsFromABC_(A, B, C):
 	if A == B == C: #handle a division-by-zero.
 		return (0, 0, A-sqrt(L*L-r*r))
 	elif B == C: #handle a division-by-zero.
-		ya = 2*A**2*r - 4*A*B*r + 2*B**2*r
-		yb = Sqrt((-2*A**2*r + 4*A*B*r - 2*B**2*r)**2 - 4*(4*A**2 - 8*A*B + 4*B**2 + 9*r**2)*(A**4 - 4*A**3*B + 6*A**2*B**2 - 4*A*B**3 + B**4 - 4*A**2*L**2 + 8*A*B*L**2 - 4*B**2*L**2 + 4*A**2*r**2 - 8*A*B*r**2 + 4*B**2*r**2))
-		ydiv = (2.*(4*A**2 - 8*A*B + 4*B**2 + 9*r**2))
+		#ya = 2*A*A*r - 4*A*B*r + 2*B*B*r
+		#yb = Sqrt((-2*A*A*r + 4*A*B*r - 2*B*B*r)**2 - 4*(4*A*A - 8*A*B + 4*B*B + 9*r*r)*(A*A*A*A - 4*A*A*A*B + 6*A*A*B*B - 4*A*B*B*B + B*B*B*B - 4*A*A*L*L + 8*A*B*L*L - 4*B*B*L*L + 4*A*A*r*r - 8*A*B*r*r + 4*B*B*r*r))
+		ydiv = (2.*(4*A*A - 8*A*B + 4*B*B + 9*r*r))
+		ya = 2*(A-B)*(A-B)*r
+		yb = 4*Sqrt((A - B)*(A - B)*(-(A - B)*(A - B)*(A - B)*(A - B) + 4*(A - B)*(A - B)*L*L + 3*(-2*(A - B)*(A - B) + 3*L*L)*r*r - 9*r*r*r*r))
 		#y1 = (ya - yb)/ydiv
 		#y2 = (ya + yb)/ydiv
 		#z1 = (A**2 - B**2 - 3*r*y1)/(2.*(A - B))
@@ -73,9 +75,11 @@ def xyzsFromABC_(A, B, C):
 		#z = (A**2 - B**2 - 3*r*y)/(2.*(A - B))
 		return (0, y, z)
 		#return (0, y1, z1), (0, y2, z2)
-	za = 2*B**4*r + 2*A**3*(B - C)*r - 3*B**3*C*r + 3*B*C**3*r - 2*C**4*r + A**2*(-B**2 + C**2)*r + 3*B**2*r**3 - 3*C**2*r**3 - A*(B - C)*r*(B**2 + C**2 - 3*r**2)
-	zb = Sqrt(3)*Sqrt(-((B - C)**2*r**2*(B**4*(C**2 + 3*r**2) + A**4*(B**2 - 2*B*C + C**2 + 3*r**2) - 2*A**3*(B + C)*(B**2 - 2*B*C + C**2 + 3*r**2) - 6*B*C*r**2*(C**2 - 2*L**2 + 3*r**2) - 2*B**3*(C**3 + 3*C*r**2) + B**2*(C**4 + 9*C**2*r**2 - 12*L**2*r**2 + 18*r**4) + 3*r**2*(C**4 - 9*L**2*r**2 + 9*r**4 + C**2*(-4*L**2 + 6*r**2)) + A**2*(B**4 + 2*B**3*C + 2*B*C**3 + C**4 + 9*C**2*r**2 - 12*L**2*r**2 + 18*r**4 + B**2*(-6*C**2 + 9*r**2)) - 2*A*(B + C)*(B**3*C + B**2*(-2*C**2 + 3*r**2) + 3*r**2*(C**2 - 2*L**2 + 3*r**2) + B*(C**3 - 3*C*r**2)))))
-	zdiv = ((B - C)*r*(4*A**2 + 4*B**2 - 4*B*C + 4*C**2 - 4*A*(B + C) + 9*r**2))
+	#za = 2*B*B*B*B*r + 2*A*A*A*(B - C)*r - 3*B*B*B*C*r + 3*B*C*C*C*r - 2*C*C*C*C*r + A*A*(-B*B + C*C)*r + 3*B*B*r*r*r - 3*C*C*r*r*r - A*(B - C)*r*(B*B + C*C - 3*r*r)
+	#zb = Sqrt(3)*Sqrt(-((B - C)*(B - C)*r*r*(B*B*B*B*(C*C + 3*r*r) + A*A*A*A*(B*B - 2*B*C + C*C + 3*r*r) - 2*A*A*A*(B + C)*(B*B - 2*B*C + C*C + 3*r*r) - 6*B*C*r*r*(C*C - 2*L*L + 3*r*r) - 2*B*B*B*(C*C*C + 3*C*r*r) + B*B*(C*C*C*C + 9*C*C*r*r - 12*L*L*r*r + 18*r*r*r*r) + 3*r*r*(C*C*C*C - 9*L*L*r*r + 9*r*r*r*r + C*C*(-4*L*L + 6*r*r)) + A*A*(B*B*B*B + 2*B*B*B*C + 2*B*C*C*C + C*C*C*C + 9*C*C*r*r - 12*L*L*r*r + 18*r*r*r*r + B*B*(-6*C*C + 9*r*r)) - 2*A*(B + C)*(B*B*B*C + B*B*(-2*C*C + 3*r*r) + 3*r*r*(C*C - 2*L*L + 3*r*r) + B*(C*C*C - 3*C*r*r)))))
+	za = (B - C)*r*(2*A*A*A - A*A*(B + C) - A*(B*B + C*C - 3*r*r) + (B + C)*(2*B*B - 3*B*C + 2*C*C + 3*r*r))
+	zb = Sqrt(3)*Sqrt(-((B - C)*(B - C)*r*r*((A - B)*(A - B)*(A - C)*(A - C)*(B - C)*(B - C) + 3*(A*A + B*B - B*C + C*C - A*(B + C))*(A*A + B*B - B*C + C*C - A*(B + C) - 4*L*L)*r*r + 9*(2*(A*A + B*B - B*C + C*C - A*(B + C)) - 3*L*L)*r*r*r*r + 27*r*r*r*r*r*r)))
+	zdiv = (B - C)*r*(4*(A*A + B*B - B*C + C*C - A*(B + C)) + 9*r*r)
 	
 	#z1 = (za + zb)/zdiv
 	
@@ -87,13 +91,13 @@ def xyzsFromABC_(A, B, C):
 	z = za/zdiv - abs(zb/zdiv)
 	#Solving for x, y in terms of z gives 
 	x = ((B - C)*(B + C - 2*z))/(2*Sqrt(3)*r)
-	y = -((-2*A**2 + B**2 + C**2 + 4*A*z - 2*B*z - 2*C*z)/(6*r))
+	y = -((-2*A*A + B*B + C*C + 4*A*z - 2*B*z - 2*C*z)/(6*r))
 
 	#zdiv = 0 when C == B || 
 	# C == 1/2 (A + B - Sqrt[3] Sqrt[-A^2 + 2 A B - B^2 - 3 r^2]) || 
 	# C == 1/2 (A + B + Sqrt[3] Sqrt[-A^2 + 2 A B - B^2 - 3 r^2])
 	# only the first value of C (C == B) can be real.
-	return (x, y, z),
+	return (x, y, z)
 	
 def xyzsFromABCFilt(A, B, C):
 	#recall that A > z, B > z and C > z.
@@ -103,14 +107,16 @@ def xyzsFromABCFilt(A, B, C):
 def relativeTimeOfNextStep(axisIdx, dir, s, x0, y0, z0, e0, vx, vy, vz, ve):
 	A, B, C = ABCFromXyz(x0, y0, z0)
 	v2 = (vx**2 + vy**2 + vz**2)
-	term1 = r*vy + A*vz + s*vz - vx*x0 - vy*y0 - vz*z0
-	rootparam = 4*(r*vy + A*vz + s*vz - vx*x0 - vy*y0 - vz*z0)**2 - 4*v2*(A**2 - L**2 + r**2 + s**2 + x0**2 - 2*r*y0 + y0**2 + 2*A*(s - z0) - 2*s*z0 + z0**2)
+	#term1 = r*vy + A*vz + s*vz - vx*x0 - vy*y0 - vz*z0
+	term1 = r*vy - vx*x0 - vy*y0 + vz*(A + s - z0)
+	#rootparam = 4*(r*vy + A*vz + s*vz - vx*x0 - vy*y0 - vz*z0)**2 - 4*v2*(A**2 - L**2 + r**2 + s**2 + x0**2 - 2*r*y0 + y0**2 + 2*A*(s - z0) - 2*s*z0 + z0**2)
+	rootparam = term1*term1 - v2*(-L*L + x0*x0 + (r - y0)*(r - y0) + (A + s - z0)*(A + s - z0))
 	if rootparam < 0: 
 		print "(wrong direction)"
 		return -1
 	root = Sqrt(rootparam)
-	t1 = (term1 - root/2.)/v2
-	t2 = (term1 + root/2.)/v2
+	t1 = (term1 - root)/v2
+	t2 = (term1 + root)/v2
 	print "(times:", t1, t2, ")"
 	if t1 < 0:
 		return t2 #t2 may be < 0, in which case that means wrong direction.
@@ -119,10 +125,33 @@ def relativeTimeOfNextStep(axisIdx, dir, s, x0, y0, z0, e0, vx, vy, vz, ve):
 	else:
 		return min(t1, t2)
 		
+def relativeTimeDirOfNextStep(axisIdx, A, B, C, D, vx, vy, vz, ve):
+	#A, B, C = ABCFromXyz(x0, y0, z0)
+	x0, y0, z0 = xyzsFromABC_(A, B, C)
+	def testDir(s):
+		v2 = (vx**2 + vy**2 + vz**2)
+		term1 = r*vy - vx*x0 - vy*y0 + vz*(A + s - z0)
+		rootparam = term1*term1 - v2*(-L*L + x0*x0 + (r - y0)*(r - y0) + (A + s - z0)*(A + s - z0))
+		if rootparam < 0: 
+			return None
+		root = Sqrt(rootparam)
+		t1 = (term1 - root)/v2
+		t2 = (term1 + root)/v2
+		print "(times:", t1, t2, ")"
+		if root > term1:
+			return t2 if t2 > 0 else None
+		else:
+			return t1
+	neg = testDir(-1), -1
+	if neg[0] is not None: return neg
+	pos = testDir(1), 1
+	return pos
+		
 def checkRelativeTimeOfNextStep(axisIdx, dir, s, x0, y0, z0, e0, vx, vy, vz, ve):
 	args = axisIdx, dir, s, x0, y0, z0, e0, vx, vy, vz, ve
 	print "relativeTimeOfNextStep", args
 	t = relativeTimeOfNextStep(*args)
+	if t is None: return
 	print "time:", t
 	ABC0 = ABCFromXyz(x0, y0, z0)
 	ABC = ABCFromXyz(x0 + t*vx, y0 + t*vy, z0 + t*vz)
@@ -130,6 +159,22 @@ def checkRelativeTimeOfNextStep(axisIdx, dir, s, x0, y0, z0, e0, vx, vy, vz, ve)
 	xyz0 = xyzsFromABC(*ABC0)
 	xyz = xyzsFromABCFilt(*ABC)
 	print "xyzs", xyz0, xyz, xyzsFromABC_(*ABC)
+	
+def checkRelativeTimeDirOfNextStep(axisIdx, A, B, C, D, vx, vy, vz, ve, msg=None):
+	args = axisIdx, A, B, C, D, vx, vy, vz, ve
+	print "relativeTimeDirOfNextStep", args
+	if msg:
+		print msg
+	t, dir = relativeTimeDirOfNextStep(*args)
+	if t is None: return
+	print "time, dir:", t, dir
+	xyz0 = xyzsFromABC_(A, B, C)
+	xyz = xyz0[0] + t*vx, xyz0[1] + t*vy, xyz0[2] + t*vz
+	print "xyz0, dest:", xyz0, xyz
+	#ABC0 = [A, B, C]
+	#ABC0[axisIdx] += dir
+	#xyz1 = xyzsFromABC_(*ABC0)
+	#print "calc xyz", xyz1
           
 print xyzsFromABC(h, h-1, h-2)
 print xyzsFromABC_(h, h-1, h-2) #Should be positive x, more positive y
@@ -141,10 +186,16 @@ print xyzsFromABC(h-2, h-1, h-1) #should be (0, -, *)
 print xyzsFromABC_(h-2, h-1, h-1) #should be (0, -, *)
 print xyzsFromABC(h-50, h-10, h-30) #should be (+, -, *)
 print xyzsFromABC_(h-50, h-10, h-30) #should be (+, -, *)
-checkRelativeTimeOfNextStep(0, None, -1, 0, 0, 0, 0, 1,  0, 0, 0) #Correct[xyzs 1];
-checkRelativeTimeOfNextStep(0, None, -2, 0, 0, 0, 0, 1,  0, 0, 0) #Correct[xyzs 1];
-checkRelativeTimeOfNextStep(0, None, -3, 0, 0, 0, 0, 1,  0, 0, 0) #Correct[xyzs 1];
+checkRelativeTimeOfNextStep(0, None, -1, 0, 0, 0, 0, 1,  0, 0, 0) #(21.886068628239236, -9.985980212144613e-17, 1.1368683772161603e-13)
+checkRelativeTimeOfNextStep(0, None, -2, 0, 0, 0, 0, 1,  0, 0, 0) #(30.91924966748058, 1.172236991982472e-14, 2.2737367544323206e-13),
+checkRelativeTimeOfNextStep(0, None, -3, 0, 0, 0, 0, 1,  0, 0, 0) #(37.82856063875542, -3.8354017639237094e-16, 1.4210854715202004e-13)
 checkRelativeTimeOfNextStep(0, None,  3, 0, 0, 0, 0, 1,  0, 0, 0) #Correct; when moving away from x=0, A should decrease - not increase.
-checkRelativeTimeOfNextStep(0, None, -2, 0, 0, 0, 0, -1, 0, 0, 0) #Correct[xyzs 0];
-checkRelativeTimeOfNextStep(0, None, -3, 0, 0, 0, 0, -1, 0, 0, 0) #Correct[xyzs 0]; even though the z-value is negative, it's a VERY small magnitude.
-checkRelativeTimeOfNextStep(0, None,  1, 0, 0, 0, 0,  0, 1, 0, 0) #Correct[xyzs 1]; WRONG auto.
+checkRelativeTimeOfNextStep(0, None, -2, 0, 0, 0, 0, -1, 0, 0, 0) #(-30.91924966748061, 1.2126596023639044e-14, 0.0)
+checkRelativeTimeOfNextStep(0, None, -3, 0, 0, 0, 0, -1, 0, 0, 0) #(-37.82856063875544, -0.0, 0.0)
+checkRelativeTimeOfNextStep(0, None,  1, 0, 0, 0, 0,  0, 1, 0, 0) #(0, 2.4346372937608436, 2.842170943040401e-14)
+
+
+print "TEST RELATIVE TIME AND DIR"
+checkRelativeTimeDirOfNextStep(0, h, h, h, None, 1, 0, 0, 0, "dir should be negative")
+checkRelativeTimeDirOfNextStep(0, h, h, h, None, 4, 0, 0, 0, "dir should be negative; sooner")
+checkRelativeTimeDirOfNextStep(0, h, h, h, None, -1, 0, 0, 0, "dir should be negative")
