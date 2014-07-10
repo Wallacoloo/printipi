@@ -48,7 +48,7 @@ Event Scheduler::nextEvent() {
 	struct timespec curTime;
 	clock_gettime(CLOCK_MONOTONIC, &curTime);
 	//struct timespec sleepUntil = timespecAdd(this->lastEventHandledTime, evt.time());
-	LOGV("Scheduler::nextEvent sleep from %lu.%lu until %lu.%lu\n", curTime.tv_sec, curTime.tv_nsec, sleepUntil.tv_sec, sleepUntil.tv_nsec);
+	//LOGV("Scheduler::nextEvent sleep from %lu.%lu until %lu.%lu\n", curTime.tv_sec, curTime.tv_nsec, sleepUntil.tv_sec, sleepUntil.tv_nsec);
 	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 	//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
 	this->lastEventHandledTime = sleepUntil;
