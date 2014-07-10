@@ -35,7 +35,7 @@ template <uint8_t STEPPIN, uint8_t DIRPIN> class A4988 : public IODriver {
 			cycleStepPin();
 		}
 		void cycleStepPin() {
-			LOGV("cycling pin %i\n", DIRPIN);
+			//LOGV("cycling pin %i\n", DIRPIN);
 			bcm2835_gpio_write(STEPPIN, HIGH); 
 			bcm2835_gpio_write(STEPPIN, LOW); //note: may need a (SHORT!) delay here.
 		}
