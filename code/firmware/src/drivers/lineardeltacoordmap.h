@@ -21,23 +21,26 @@
 
 namespace drv {
 
-template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx, unsigned R1000, unsigned L1000> class LinearDeltaCoordMap : public CoordMap {
+template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx, unsigned R1000, unsigned L1000, unsigned STEPS_M> class LinearDeltaCoordMap : public CoordMap {
 	static constexpr float r = R1000 / 1000.;
 	static constexpr float L = L1000 / 1000.;
+	static constexpr float STEPS_MM = STEPS_M / 1000.;
+	static constexpr float MM_STEPS = 1. / STEPS_MM;
 	public:
 		template <std::size_t size> static void xyzeFromMechanical(const std::array<int, size> &mech, float &x, float &y, float &z, float &e) {
 			e = mech[EIdx];
-			auto A = mech[AIdx];
-			auto B = mech[BIdx];
-			auto C = mech[CIdx];
+			float A = mech[AIdx]*MM_STEPS; //convert mechanical positions (steps) to MM.
+			float B = mech[BIdx]*MM_STEPS;
+			float C = mech[CIdx]*MM_STEPS;
 			if (A == B && B == C) { //prevent a division-by-zero.
 				LOGV("LinearDeltaCoordMap::A==B==C\n");
 				x = 0;
 				y = 0;
 				z = A-sqrt(L*L-r*r);
+				LOGV("LinearDeltaCoordMap::z=%f (%f)\n", z, A-sqrt(L*L-r*r));
 			} else if (B == C) { //prevent a division-by-zero.
 				LOGV("LinearDeltaCoordMap::A!-B==C\n");
-				float ydiv = 2*(4*A*A - 8*A*B + 4*B*B + 9*r*r);
+				auto ydiv = 2*(4*A*A - 8*A*B + 4*B*B + 9*r*r);
 				auto ya = 2*(A-B)*(A-B)*r;
 				auto yb = 4*sqrt((A - B)*(A - B)*(-(A - B)*(A - B)*(A - B)*(A - B) + 4*(A - B)*(A - B)*L*L + 3*(-2*(A - B)*(A - B) + 3*L*L)*r*r - 9*r*r*r*r));
 				auto com1 = abs(yb/((A-B)*ydiv));
