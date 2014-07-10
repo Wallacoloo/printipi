@@ -9,6 +9,7 @@ LOGFLAGS=
 #LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
 CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result $(LOGFLAGS)
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
+#CFLAGS+= -fassociateive-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
 LD=ld
 LDFLAGS=
 LIBS=-lrt
@@ -36,10 +37,11 @@ debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
-minsize: CFLAGS+= -Os -s -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS)
+minsize: CFLAGS+= -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections $(LTOFLAG) $(ARCHFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
 minsize: LOGFLAGS+= -DNO_LOGGING -DNO_USAGE_INFO
 minsize: $(MINSIZEDIR)/$(NAME)
+	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)
 	
 %/$(NAME): %/gparse/gparse.a %/drivers/drivers.a %/rest.a
 	@echo $(GCC_GTEQ_470)
