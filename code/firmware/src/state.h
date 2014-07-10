@@ -399,6 +399,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	} while (1);
 	Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, curX, curY, curZ, curE);
 	LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
+	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 }
 
 #endif
