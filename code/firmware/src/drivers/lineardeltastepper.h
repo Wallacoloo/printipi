@@ -61,20 +61,22 @@
 
 namespace drv {
 
-template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L1000> class LinearDeltaStepper : public AxisStepper {
+template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L1000, unsigned STEPS_M> class LinearDeltaStepper : public AxisStepper {
 	private:
-		int M0; //initial coordinate of THIS axis.
+		float M0; //initial coordinate of THIS axis.
 		int Mlast;
 		float x0, y0, z0;
 		float vx, vy, vz;
 		float v2; //squared velocity.
 		static constexpr float r = R1000 / 1000.;
 		static constexpr float L = L1000 / 1000.;
+		static constexpr float STEPS_MM = STEPS_M / 1000.;
+		static constexpr float MM_STEPS = 1. / STEPS_MM;
 	public:
 		LinearDeltaStepper() {}
 		template <std::size_t sz> LinearDeltaStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
 			: AxisStepper(idx, curPos, vx, vy, vz, ve),
-			 M0(curPos[AxisIdx]), 
+			 M0(curPos[AxisIdx]*MM_STEPS), 
 			 Mlast(curPos[AxisIdx]),
 			 vx(vx), vy(vy), vz(vz),
 			 v2(vx*vx + vy*vy + vz*vz) {
@@ -112,8 +114,8 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 			}
 		}
 		void _nextStep() {
-			float negTime = testDir(Mlast-1); //get the time at which next steps would occur.
-			float posTime = testDir(Mlast+1);
+			float negTime = testDir((Mlast-1)*MM_STEPS); //get the time at which next steps would occur.
+			float posTime = testDir((Mlast+1)*MM_STEPS);
 			if (negTime < time || std::isnan(negTime)) { //negTime is invalid
 				if (posTime > time) {
 					this->time = posTime;
