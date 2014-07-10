@@ -397,6 +397,8 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 		_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
 		s.nextStep(iters);
 	} while (1);
+	Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, curX, curY, curZ, curE);
+	LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
 }
 
 #endif
