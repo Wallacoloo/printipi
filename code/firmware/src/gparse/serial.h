@@ -15,13 +15,17 @@ template <typename T> void comLoop(int fd, T& state) {
 	std::string cmd;
 	while (1) {
 		cmd = readLine(fd);
-		LOG("command: %s\n", cmd.c_str());
 		Command parsed = Command(cmd);
+		if (!NO_LOG_M105 || !parsed.isM105()) {
+			LOG("command: %s\n", cmd.c_str());
+		}
 		//LOGD("parsed: %s", parsed.toGCode().c_str());
 		//printf("size of command: %i\n", parsed.pieces.size());
 		Command response = state.execute(parsed);
 		std::string resp = response.toGCode();
-		LOG("response: %s", resp.c_str());
+		if (!NO_LOG_M105 || !parsed.isM105()) {
+			LOG("response: %s", resp.c_str());
+		}
 		/*ssize_t res = */ write(fd, resp.c_str(), resp.length());
 	}
 }

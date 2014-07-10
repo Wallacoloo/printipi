@@ -5,7 +5,7 @@ SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 CXX=g++
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
-LOGFLAGS=
+LOGFLAGS=-DDNO_LOG_M105
 #LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
 CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result $(LOGFLAGS)
 #CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
@@ -39,7 +39,7 @@ release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
 minsize: CFLAGS+= -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections $(LTOFLAG) $(ARCHFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
-minsize: LOGFLAGS+= -DNO_LOGGING
+minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)
 	
