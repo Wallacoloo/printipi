@@ -17,6 +17,7 @@
 #define DRIVERS_LINEARDELTACOORDMAP_H
 
 #include "coordmap.h"
+#include "logging.h"
 
 namespace drv {
 
@@ -30,11 +31,13 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 			auto B = mech[BIdx];
 			auto C = mech[CIdx];
 			if (A == B && B == C) { //prevent a division-by-zero.
+				LOGV("LinearDeltaCoordMap::A==B==C\n");
 				x = 0;
 				y = 0;
 				z = A-sqrt(L*L-r*r);
 			} else if (B == C) { //prevent a division-by-zero.
-				auto ydiv = (2.*(4*A*A - 8*A*B + 4*B*B + 9*r*r));
+				LOGV("LinearDeltaCoordMap::A!-B==C\n");
+				float ydiv = 2*(4*A*A - 8*A*B + 4*B*B + 9*r*r);
 				auto ya = 2*(A-B)*(A-B)*r;
 				auto yb = 4*sqrt((A - B)*(A - B)*(-(A - B)*(A - B)*(A - B)*(A - B) + 4*(A - B)*(A - B)*L*L + 3*(-2*(A - B)*(A - B) + 3*L*L)*r*r - 9*r*r*r*r));
 				auto com1 = abs(yb/((A-B)*ydiv));
@@ -43,6 +46,7 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 				y = com2 + (A-B)*com1;
 				x = 0;
 			} else {
+				LOGV("LinearDeltaCoordMap::B!=C\n");
 				auto za = (B - C)*r*(2*A*A*A - A*A*(B + C) - A*(B*B + C*C - 3*r*r) + (B + C)*(2*B*B - 3*B*C + 2*C*C + 3*r*r));
 				auto zb = sqrt(3)*sqrt(-((B - C)*(B - C)*r*r*((A - B)*(A - B)*(A - C)*(A - C)*(B - C)*(B - C) + 3*(A*A + B*B - B*C + C*C - A*(B + C))*(A*A + B*B - B*C + C*C - A*(B + C) - 4*L*L)*r*r + 9*(2*(A*A + B*B - B*C + C*C - A*(B + C)) - 3*L*L)*r*r*r*r + 27*r*r*r*r*r*r)));
 				auto zdiv = (B - C)*r*(4*(A*A + B*B - B*C + C*C - A*(B + C)) + 9*r*r);
