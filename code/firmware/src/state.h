@@ -247,21 +247,21 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	gparse::Command resp;
 	if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
 		//LOGW("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
-	    //bool hasX, hasY, hasZ, hasE, hasF;
+	    bool hasX, hasY, hasZ, hasE;
 	    bool hasF;
-	    /*float curX = destXPrimitive();
+	    float curX = destXPrimitive();
 	    float curY = destYPrimitive();
 	    float curZ = destZPrimitive();
-	    float curE = destEPrimitive();*/
-		float x = cmd.getX(destXPrimitive()); //new x-coordinate.
-		float y = cmd.getY(destYPrimitive()); //new y-coordinate.
-		float z = cmd.getZ(destZPrimitive()); //new z-coordinate.
-		float e = cmd.getE(destEPrimitive()); //extrusion amount.
+	    float curE = destEPrimitive();
+		float x = cmd.getX(hasX); //new x-coordinate.
+		float y = cmd.getY(hasY); //new y-coordinate.
+		float z = cmd.getZ(hasZ); //new z-coordinate.
+		float e = cmd.getE(hasE); //extrusion amount.
 		float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
-		/*x = hasX ? xUnitToPrimitive(x) : curX;
+		x = hasX ? xUnitToPrimitive(x) : curX;
 		y = hasY ? yUnitToPrimitive(y) : curY;
 		z = hasZ ? zUnitToPrimitive(z) : curZ;
-		e = hasE ? eUnitToPrimitive(e) : curE;*/
+		e = hasE ? eUnitToPrimitive(e) : curE;
 		if (hasF) {
 			//this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
 			this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
@@ -283,13 +283,10 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		if (!homeX && !homeY && !homeZ) { //if no axis are passed, then home ALL axis.
 			homeX = homeY = homeZ = true;
 		}
-		float curX = destXPrimitive();
-		float curY = destYPrimitive();
-		float curZ = destZPrimitive();
 		float curE = destEPrimitive();
-		float newX = homeX ? 0 : curX;
-		float newY = homeY ? 0 : curY;
-		float newZ = homeZ ? 0 : curZ;
+		float newX = homeX ? 0 : destXPrimitive();
+		float newY = homeY ? 0 : destYPrimitive();
+		float newZ = homeZ ? 0 : destZPrimitive();;
 		this->queueMovement(newX, newY, newZ, curE);
 		resp = gparse::Command::OK;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute

@@ -1,8 +1,8 @@
 /*TODO:
  * *Write SN754410 drivers
  * *Test output on one single motor
- *  Figure out extrusion in State::queueMovement.
- *  in State::queueMovement, curX, curY, curZ, etc should be recalculated from the actual axis positions to prevent drift
+ * *Figure out extrusion in State::queueMovement.
+ * *in State::queueMovement, curX, curY, curZ, etc should be recalculated from the actual axis positions to prevent drift
  *    dest*Primitive must be maintained in order to handle relative movements.
  *  Add Kossel Axis drivers
  *  Add endstop support
