@@ -39,6 +39,7 @@ More realtime:
   enable CONFIG_PREEMPT_RT in kernel: http://www.emlid.com/raspberry-pi-real-time-kernel-available-for-download/
   * Stepper driving on RPi: https://www.youtube.com/watch?v=uIXkvz1-weQ
     Explains to use clock_nanosleep instead of nanosleep, in order to specify a time to sleep TO, rather than a duration to sleep.
+      clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, timespec, NULL)
     Use (to increase priority): struct sched_param sp; sp.sched_priority=30; pthread_setthreadparam(pthread_self(), SCHED_FIFO, &sp)
       Note: piHiPri does exactly this.
     Use (to prevent mem-swapping): mlockall(MCL_FUTURE|MCL_CURRENT)

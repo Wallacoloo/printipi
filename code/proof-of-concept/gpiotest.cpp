@@ -25,7 +25,7 @@ WiringPi functions doc: https://projects.drogon.net/raspberry-pi/wiringpi/functi
 
 
 int main() {
-	if (wiringPiSetup () == -1) {
+	if (wiringPiSetup() == -1) {
 		return 1;
     }
     pinMode(0, OUTPUT);
