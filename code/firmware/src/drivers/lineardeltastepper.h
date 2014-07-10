@@ -120,7 +120,7 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 		void _nextStep() {
 			float negTime = testDir((sTotal-1)*MM_STEPS); //get the time at which next steps would occur.
 			float posTime = testDir((sTotal+1)*MM_STEPS);
-			A0LOGV("LinearDeltaStepper<%u>::neg/pos/cur-time %f, %f\n", AxisIdx, negTime, posTime, time);
+			A0LOGV("LinearDeltaStepper<%u>::neg/pos/cur-time %f, %f, %f\n", AxisIdx, negTime, posTime, time);
 			if (negTime < time || std::isnan(negTime)) { //negTime is invalid
 				if (posTime > time) {
 					A0LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
