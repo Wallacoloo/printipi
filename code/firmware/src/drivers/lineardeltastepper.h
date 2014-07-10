@@ -59,8 +59,9 @@
 		return filt[0] if filt[0][0] < filt[0][1] else filt[1]
 */
 
-#define A0LOGV(format, args...) \
-	if (AxisIdx==0) { LOGV(format, ## args); }
+//#define A0LOGV(format, args...) \
+//	if (AxisIdx==0) { LOGV(format, ## args); }
+#define A0LOGV(format, args...) LOGV(format, ## args)
 
 namespace drv {
 
