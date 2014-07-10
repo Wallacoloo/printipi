@@ -384,10 +384,8 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	typename Drv::AxisStepperTypes iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
 	timespec baseTime = scheduler.lastSchedTime();
-	//initialize iterators...
 	do {
 		drv::AxisStepper& s = drv::AxisStepper::getNextTime(iters);
-		//LOG("Next step: %i at %g of %g. Is s.time <= 0? %i. Is vy == 0? %i\n", s.index(), s.time, duration, s.time <= 0, vy == 0);
 		LOGV("Next step: %i at %g of %g\n", s.index(), s.time, duration);
 		//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
 		if (s.time > duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
