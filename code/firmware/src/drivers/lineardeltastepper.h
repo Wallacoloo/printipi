@@ -64,7 +64,7 @@ namespace drv {
 template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L1000, unsigned STEPS_M> class LinearDeltaStepper : public AxisStepper {
 	private:
 		float M0; //initial coordinate of THIS axis.
-		int Mlast;
+		int sTotal;
 		float x0, y0, z0;
 		float vx, vy, vz;
 		float v2; //squared velocity.
@@ -77,13 +77,13 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 		template <std::size_t sz> LinearDeltaStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
 			: AxisStepper(idx, curPos, vx, vy, vz, ve),
 			 M0(curPos[AxisIdx]*MM_STEPS), 
-			 Mlast(curPos[AxisIdx]),
+			 sTotal(0),
 			 vx(vx), vy(vy), vz(vz),
 			 v2(vx*vx + vy*vy + vz*vz) {
 				float e_;
 				CoordMath::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
 			}
-		void getTerm1AndRootParam(float &term1, float &rootParam, int s) {
+		void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
 			if (AxisIdx == 0) {
 				term1 = r*vy - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L*L + x0*x0 + (r - y0)*(r - y0) + (M0 + s - z0)*(M0 + s - z0));
@@ -115,13 +115,13 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 			}
 		}
 		void _nextStep() {
-			float negTime = testDir((Mlast-1)*MM_STEPS); //get the time at which next steps would occur.
-			float posTime = testDir((Mlast+1)*MM_STEPS);
+			float negTime = testDir((sTotal-1)*MM_STEPS); //get the time at which next steps would occur.
+			float posTime = testDir((sTotal+1)*MM_STEPS);
 			if (negTime < time || std::isnan(negTime)) { //negTime is invalid
 				if (posTime > time) {
 					this->time = posTime;
 					this->direction = StepForward;
-					++Mlast;
+					++sTotal;
 				} else {
 					this->time = NAN;
 				}
@@ -129,7 +129,7 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 				if (negTime > time) {
 					this->time = negTime;
 					this->direction = StepBackward;
-					--Mlast;
+					--sTotal;
 				} else {
 					this->time = NAN;
 				}
@@ -137,11 +137,11 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 				if (negTime < posTime) {
 					this->time = negTime;
 					this->direction = StepBackward;
-					--Mlast;
+					--sTotal;
 				} else {
 					this->time = posTime;
 					this->direction = StepForward;
-					++Mlast;
+					++sTotal;
 				}
 			}
 		}
