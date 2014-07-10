@@ -2,6 +2,7 @@
 #define DRIVERS_LINEARDELTASTEPPER_H
 
 #include "axisstepper.h"
+//(2250, 2476, 2406, 0) -> (2400, 2400, 2400, 0) only gets to (2250, 2476, 2400, 0)
 
 /*
 	#t1,t2 were solved in Mathematica as such:
@@ -84,6 +85,7 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 			 sTotal(0),
 			 vx(vx), vy(vy), vz(vz),
 			 v2(vx*vx + vy*vy + vz*vz) {
+			 	this->time = 0; //this may NOT be zero-initialized by parent.
 				float e_;
 				CoordMath::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
 			}
@@ -95,6 +97,9 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 				term1 = r*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
 			} else if (AxisIdx == 2) {
+				//term1 = -r*(Sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(C + s - z0)
+				//rootparam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(Sqrt(3)*x0 + y0) + (C + s - z0)*(C + s - z0))
+			
 				term1 = -r*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
 				//t1 = (term1 - root)/(v2)
