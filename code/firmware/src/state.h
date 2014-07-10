@@ -380,7 +380,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 		return; //some of the following logic may assume that there are at least 1 axis.
 	}*/
 	LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
-	LOGD("State::queueMovement _destMechanicalPos: %i\n", _destMechanicalPos[0]);
+	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2]);
 	typename Drv::AxisStepperTypes iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
 	timespec baseTime = scheduler.lastSchedTime();
