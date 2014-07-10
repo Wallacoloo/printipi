@@ -123,7 +123,7 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 			A0LOGV("LinearDeltaStepper<%u>::neg/pos/cur-time %f, %f\n", AxisIdx, negTime, posTime, time);
 			if (negTime < time || std::isnan(negTime)) { //negTime is invalid
 				if (posTime > time) {
-					A0LOGV("LinearDeltaStepper<%lu>::chose %f (pos)\n", AxisIdx, posTime);
+					A0LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
 					this->time = posTime;
 					this->direction = StepForward;
 					++sTotal;
