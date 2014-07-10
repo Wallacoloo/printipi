@@ -25,19 +25,21 @@
 #include "argparse.h"
 
 void printUsage(char* cmd) {
-	#ifndef NO_USAGE_INFO
+	//#ifndef NO_USAGE_INFO
 	LOGE("usage: %s ttyFile\n", cmd);
     //std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
-    #endif
+    //#endif
     //exit(1);
 }
 
-void onExit() {
+/*void onExit() {
 	LOG("Exiting\n");
-}
+}*/
 
 int main(int argc, char** argv) {
-	std::atexit(onExit);
+	/*if (DO_LOG) {
+		std::atexit(onExit);
+	}*/
 	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
     }
@@ -63,8 +65,5 @@ int main(int argc, char** argv) {
 	State<drv::Kossel> gState(driver);
     
     gparse::comLoop(fd, gState);
-    onExit();
-    //LOG("Exiting\n");
-    //exit(0);
     return 0;
 }
