@@ -37,7 +37,7 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 				x = 0;
 				y = 0;
 				z = A-sqrt(L*L-r*r);
-				LOGV("LinearDeltaCoordMap::z=%f (%f)\n", z, A-sqrt(L*L-r*r));
+				//LOGV("LinearDeltaCoordMap::z=%f (%f)\n", z, A-sqrt(L*L-r*r));
 			} else if (B == C) { //prevent a division-by-zero.
 				LOGV("LinearDeltaCoordMap::A!-B==C\n");
 				auto ydiv = 2*(4*A*A - 8*A*B + 4*B*B + 9*r*r);
