@@ -21,7 +21,7 @@ class Kossel : public Driver {
     public:
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000> CoordMapT;
-        typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
+        typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000>, LinearDeltaStepper<1, CoordMapT, R1000, L1000>, LinearDeltaStepper<2, CoordMapT, R1000, L1000>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
         	//rpi::A4988<RPI_GPIO_P1_11, RPI_GPIO_P1_12>,
         	rpi::SN754410<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_16, RPI_V2_GPIO_P1_18>, //X coord
