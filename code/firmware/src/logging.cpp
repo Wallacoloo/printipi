@@ -2,7 +2,7 @@
 
 namespace logging {
 
-#ifdef DO_LOG
+#if DO_LOG == 1
 
 bool _info = true;
 bool _verbose = false;
@@ -26,7 +26,8 @@ void enableVerbose() {
 
 #else
 
-bool isInfoEnabled() {
+//already defined in header.
+/*bool isInfoEnabled() {
 	return false;
 }
 bool isVerboseEnabled() {
@@ -34,7 +35,7 @@ bool isVerboseEnabled() {
 }
 
 void disable() {}
-void enableVerbose() {}
+void enableVerbose() {}*/
 
 #endif
 
