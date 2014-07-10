@@ -36,11 +36,10 @@ debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
-minsize: CFLAGS+= -Os -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS)
+minsize: CFLAGS+= -Os -s -fomit-frame-pointer $(LTOFLAG) $(ARCHFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
 minsize: LOGFLAGS+= -DNO_LOGGING -DNO_USAGE_INFO
 minsize: $(MINSIZEDIR)/$(NAME)
-	@strip -s $(BUILDROOT)/$(NAME)
 	
 %/$(NAME): %/gparse/gparse.a %/drivers/drivers.a %/rest.a
 	@echo $(GCC_GTEQ_470)
