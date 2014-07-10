@@ -117,8 +117,10 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 		void _nextStep() {
 			float negTime = testDir((sTotal-1)*MM_STEPS); //get the time at which next steps would occur.
 			float posTime = testDir((sTotal+1)*MM_STEPS);
+			LOGV("LinearDeltaStepper<%lu>::neg/pos-time %f, %f\n", AxisIdx, negTime, posTime);
 			if (negTime < time || std::isnan(negTime)) { //negTime is invalid
 				if (posTime > time) {
+					LOGV("LinearDeltaStepper<%lu>::chose %f (pos)\n", AxisIdx, posTime);
 					this->time = posTime;
 					this->direction = StepForward;
 					++sTotal;
@@ -127,6 +129,7 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 				}
 			} else if (posTime < time || std::isnan(posTime)) { //posTime is invalid
 				if (negTime > time) {
+					LOGV("LinearDeltaStepper<%lu>::chose %f (neg)\n", AxisIdx, negTime);
 					this->time = negTime;
 					this->direction = StepBackward;
 					--sTotal;
@@ -135,10 +138,12 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 				}
 			} else { //neither time is invalid
 				if (negTime < posTime) {
+					LOGV("LinearDeltaStepper<%lu>::chose %f (neg)\n", AxisIdx, negTime);
 					this->time = negTime;
 					this->direction = StepBackward;
 					--sTotal;
 				} else {
+					LOGV("LinearDeltaStepper<%lu>::chose %f (pos)\n", AxisIdx, posTime);
 					this->time = posTime;
 					this->direction = StepForward;
 					++sTotal;
