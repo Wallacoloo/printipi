@@ -39,7 +39,7 @@ release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
 minsize: CFLAGS+= -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections $(LTOFLAG) $(ARCHFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
-minsize: LOGFLAGS+= -DNO_LOGGING -DNO_USAGE_INFO
+minsize: LOGFLAGS+= -DNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)
 	
