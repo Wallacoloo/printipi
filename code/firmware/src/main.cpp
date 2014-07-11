@@ -4,8 +4,12 @@
  * *Figure out extrusion in State::queueMovement.
  * *in State::queueMovement, curX, curY, curZ, etc should be recalculated from the actual axis positions to prevent drift
  *    dest*Primitive must be maintained in order to handle relative movements.
- *  Add Kossel Axis drivers
- *  Run valgrind to hunt for uninitialized variables
+ * *Add Kossel Axis drivers
+ * *Run valgrind to hunt for uninitialized variables
+ *  Enable new stepper driver
+ *  Wire all three steppers
+ *  Add acceleration
+ *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Add endstop support
  *  Add max/min bounds for each axis
  *  Add thermister support
