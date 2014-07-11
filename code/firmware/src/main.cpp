@@ -1,3 +1,8 @@
+/* 
+ * Printipi
+ * (c) 2014 Colin Wallace
+ */
+
 /*TODO:
  * *Write SN754410 drivers
  * *Test output on one single motor
@@ -6,14 +11,17 @@
  *    dest*Primitive must be maintained in order to handle relative movements.
  * *Add Kossel Axis drivers
  * *Run valgrind to hunt for uninitialized variables
- *  Enable new stepper driver
- *  Wire all three steppers
- *  Add acceleration
- *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
+ * *Enable new stepper driver
+ * *Wire all three steppers
+ *  Solder thermistor
+ *  Add thermister support
  *  Add endstop support
  *  Add max/min bounds for each axis
- *  Add thermister support
+ *  Add acceleration
+ *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Investigate single-threading for entire process.
+ *  Look into coordinate rounding for State::queueMovement
+ *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi
 */
 
 #include <string>
