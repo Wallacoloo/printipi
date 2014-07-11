@@ -5,6 +5,10 @@
  * The A4988 is a current-chopping stepper motor driver IC.
  * It is used in the StepStick, Pololu stepper motor drivers, etc.
  * It consists of 2 control pins: STEP and DIRECTION.
+ * Documentation: http://www.pololu.com/file/download/a4988_DMOS_microstepping_driver_with_translator.pdf?file_id=0J450
+ * Minimum STEP high pulse: 1uS
+ * Minimum STEP low pulse:  1uS
+ * Low -> High transition on STEP pin trigger the step.
 */
 
 #include <cstdint> //for uint8_t
@@ -37,7 +41,9 @@ template <uint8_t STEPPIN, uint8_t DIRPIN> class A4988 : public IODriver {
 		void cycleStepPin() {
 			//LOGV("cycling pin %i\n", DIRPIN);
 			bcm2835_gpio_write(STEPPIN, HIGH); 
+			bcm2835_delayMicroseconds(2);
 			bcm2835_gpio_write(STEPPIN, LOW); //note: may need a (SHORT!) delay here.
+			bcm2835_delayMicroseconds(1);
 		}
 };
 
