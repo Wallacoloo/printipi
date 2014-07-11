@@ -118,9 +118,11 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 			A0LOGV("LinearDeltaStepper<%u>::testDir(%f) times %f, %f\n", AxisIdx, s, t1, t2);
 			if (root > term1) { //t1 MUST be negative.
 				//return t2 if t2 > 0 else None
-				return t2 > 0 ? t2 : NAN;
+				//return t2 > 0 ? t2 : NAN;
+				return t2 > time ? t2 : NAN;
 			} else {
-				return t1;
+				//return t1;
+				return t1 > time ? t1 : (t2 > time ? t2 : NAN); //ensure no value < time is returned.
 			}
 		}
 		void _nextStep() {
