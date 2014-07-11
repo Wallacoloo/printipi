@@ -18,6 +18,8 @@
  *  Add endstop support
  *  Add max/min bounds for each axis
  *  Add acceleration
+ *  Add IO deactivation upon exit
+ *  Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Investigate single-threading for entire process.
  *  Look into coordinate rounding for State::queueMovement
@@ -28,7 +30,7 @@
 #include <fcntl.h> //needed for (file) open()
 //#include <stdlib.h> //needed for exit()
 #include <sys/mman.h> //for mlockall
-#include <cstdlib> //for atexit
+//#include <cstdlib> //for atexit
 #include "logging.h"
 
 #include "gparse/serial.h"
