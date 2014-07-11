@@ -31,7 +31,7 @@ class Kossel : public Driver {
         	//rpi::SN754410<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_16, RPI_V2_GPIO_P1_18>, //X coord
         	rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21>, //X coord
         	rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23>, //Y coord
-        	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>, //Z coord
+        	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15>, //Z coord
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>  > IODriverTypes; //E coord
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
         IODriverTypes ioDrivers;
