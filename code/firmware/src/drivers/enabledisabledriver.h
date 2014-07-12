@@ -13,7 +13,9 @@ namespace drv {
 class EnableDisableDriver : public IODriver {
 	public:
 		template <typename ThisT> EnableDisableDriver(ThisT *_this) : IODriver(_this) {}
-		inline static void enable() {}
+		inline static void enable() {
+			LOGV("EnableDisablerDriver::enable()\n");
+		}
 		inline static void disable() {
 			LOGV("EnableDisablerDriver::disable()\n");
 		}
