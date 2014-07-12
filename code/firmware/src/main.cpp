@@ -13,13 +13,14 @@
  * *Run valgrind to hunt for uninitialized variables
  * *Enable new stepper driver
  * *Wire all three steppers
- *  Add exit handlers, TO SCHEDULER.
+ * *Add exit handlers, TO SCHEDULER.
  *  Solder thermistor
  *  Add thermister support
  *  Add endstop support
  *  Add max/min bounds for each axis
  *  Add acceleration
  *  Add IO deactivation upon exit
+ *  Add enable pin
  *  Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Investigate single-threading for entire process.
