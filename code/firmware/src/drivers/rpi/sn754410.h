@@ -11,12 +11,14 @@
 #include "rpi.h"
 #include "bcm2835.h"
 #include "drivers/iodriver.h"
+#include "drivers/enabledisabledriver.h"
 #include "logging.h"
 
 namespace drv {
 namespace rpi {
 
-template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : public IODriver {
+template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2, typename Enabler=NullEnabler> class SN754410 : public IODriver {
+	//Enabler enabler;
 	int index;
 	public:
 		static const std::array<uint8_t, 8> cycleInversions;
@@ -37,6 +39,7 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 			bcm2835_gpio_clr(A2); //, LOW); 
 			bcm2835_gpio_clr(B1); //, LOW); 
 			bcm2835_gpio_set(B2); //, HIGH); 
+			Enabler::enable();
 		}
 		
 		static void deactivate() {
@@ -44,6 +47,7 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 			bcm2835_gpio_clr(A2);
 			bcm2835_gpio_clr(B1);
 			bcm2835_gpio_clr(B2);
+			Enabler::disable();
 			//bcm2835_gpio_fsel(A1, BCM2835_GPIO_FSEL_INPT); //configure these pins as output
 			//bcm2835_gpio_fsel(A2, BCM2835_GPIO_FSEL_INPT);
 			//bcm2835_gpio_fsel(B1, BCM2835_GPIO_FSEL_INPT); 
@@ -72,7 +76,7 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 		}
 };
 
-template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> const std::array<uint8_t, 8> SN754410<A1, A2, B1, B2>::cycleInversions = {{A1, A2, B2, B1, A2, A1, B1, B2}};
+template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2, typename Enabler> const std::array<uint8_t, 8> SN754410<A1, A2, B1, B2, Enabler>::cycleInversions = {{A1, A2, B2, B1, A2, A1, B1, B2}};
 
 }
 }
