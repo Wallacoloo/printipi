@@ -31,6 +31,7 @@ static void Scheduler::configureExitHandlers() {
 	sigemptyset(&sigIntHandler.sa_mask);
 	sigIntHandler.sa_flags = 0;
 	sigaction(SIGINT, &sigIntHandler, NULL);
+	sigaction(SIGTSTP, &sigIntHandler, NULL);
 	
 	struct sigaction sa;
 
