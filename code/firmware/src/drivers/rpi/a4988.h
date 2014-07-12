@@ -23,7 +23,7 @@ namespace drv {
 namespace rpi {
 
 template <uint8_t STEPPIN, uint8_t DIRPIN, typename Enabler=NullEnabler> class A4988 : public IODriver {
-	Enabler enabler;
+	//Enabler enabler;
 	public:
 		A4988() : IODriver(this) {
 			initIO();
@@ -33,11 +33,11 @@ template <uint8_t STEPPIN, uint8_t DIRPIN, typename Enabler=NullEnabler> class A
 		}
 		//A4988 is directed by putting a direction on the DIRPIN, and then
 		//sending a pulse on the STEPPIN.
-		//static void deactivate() {
-			//EnableDisableDriver::disable(); //will be called directly on the Enabler.
+		static void deactivate() {
+			EnableDisableDriver::disable(); //will be called directly on the Enabler.
 			//bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_INPT); //unmount pins.
 			//bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_INPT);
-		//}
+		}
 		void stepForward() {
 			bcm2835_gpio_write(DIRPIN, HIGH); //set direction as forward
 			cycleStepPin();

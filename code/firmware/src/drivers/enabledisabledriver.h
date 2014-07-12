@@ -14,14 +14,16 @@ class EnableDisableDriver : public IODriver {
 	public:
 		template <typename ThisT> EnableDisableDriver(ThisT *_this) : IODriver(_this) {}
 		inline static void enable() {}
-		inline static void disable() {}
+		inline static void disable() {
+			LOGV("EnableDisablerDriver::disable()\n");
+		}
 };
 
 struct NullEnabler : public EnableDisableDriver {
 	NullEnabler() : EnableDisableDriver(this) {}
-	static void deactivate() {
+	/*static void deactivate() {
 		LOGV("NullEnabler::deactivate()\n");
-	}
+	}*/
 };
 
 
