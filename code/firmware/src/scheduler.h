@@ -32,6 +32,7 @@ class Scheduler {
 	std::condition_variable nonemptyCond;
 	struct timespec lastEventHandledTime;
 	public:
+		static void configureExitHandlers();
 		//queue and nextEvent can be called from separate threads, but nextEvent must NEVER be called from multiple threads.
 		void queue(const Event& evt);
 		Scheduler();

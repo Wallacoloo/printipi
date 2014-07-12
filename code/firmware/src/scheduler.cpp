@@ -2,13 +2,47 @@
 
 #include <pthread.h> //for pthread_setschedparam
 #include <time.h> //for clock_nanosleep
+#include <signal.h> //for sigaction signal handlers
 #include "logging.h"
 #include "timeutil.h"
 
+void onExit() {
+	LOG("Exiting\n");
+}
 
-/*Scheduler::Scheduler(const std::function<void(const Event&)>& callback) : consumer(std::thread(&Scheduler::consumerLoop, this, callback)) {}*/
+void signalHandler(int s){
+   printf("Caught signal %d\n",s);
+   exit(1); 
+}
 
-//Scheduler::Scheduler() : consumer(std::thread(&Scheduler::consumerLoop, this)) {}
+void segfaultHandler(int signal, siginfo_t *si, void *arg) {
+    printf("Caught segfault at address %p\n", si->si_addr);
+    exit(1);
+}
+
+
+static void Scheduler::configureExitHandlers() {
+	if (DO_LOG) {
+		std::atexit(onExit);
+	}
+	struct sigaction sigIntHandler;
+
+	sigIntHandler.sa_handler = signalHandler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+	sigaction(SIGINT, &sigIntHandler, NULL);
+	
+	struct sigaction sa;
+
+    //memset(&sa, 0, sizeof(sigaction));
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = segfaultHandler;
+    sa.sa_flags   = SA_SIGINFO;
+
+    sigaction(SIGSEGV, &sa, NULL);
+}
+
+
 Scheduler::Scheduler() : _lockPushes(mutex, std::defer_lock), _arePushesLocked(false) {
 	clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //initialize to current time.
 }
