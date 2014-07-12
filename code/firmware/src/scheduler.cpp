@@ -3,6 +3,7 @@
 #include <pthread.h> //for pthread_setschedparam
 #include <time.h> //for clock_nanosleep
 #include <signal.h> //for sigaction signal handlers
+#include <cstdlib> //for atexit
 #include "logging.h"
 #include "timeutil.h"
 
@@ -10,7 +11,7 @@ void onExit() {
 	LOG("Exiting\n");
 }
 
-void signalHandler(int s){
+void ctrlCOrZHandler(int s){
    printf("Caught signal %d\n",s);
    exit(1); 
 }
@@ -21,26 +22,28 @@ void segfaultHandler(int signal, siginfo_t *si, void *arg) {
 }
 
 
-static void Scheduler::configureExitHandlers() {
+void Scheduler::configureExitHandlers() {
 	if (DO_LOG) {
 		std::atexit(onExit);
 	}
+	//listen for ctrl+c, ctrl+z and segfaults. Then try to properly unmount any I/Os (crucial for disabling the heated nozzle)
 	struct sigaction sigIntHandler;
-
-	sigIntHandler.sa_handler = signalHandler;
+	sigIntHandler.sa_handler = ctrlCOrZHandler;
 	sigemptyset(&sigIntHandler.sa_mask);
 	sigIntHandler.sa_flags = 0;
-	sigaction(SIGINT, &sigIntHandler, NULL);
-	sigaction(SIGTSTP, &sigIntHandler, NULL);
+	sigaction(SIGINT, &sigIntHandler, NULL); //register ctrl+c
+	sigaction(SIGTSTP, &sigIntHandler, NULL); //register ctrl+z
 	
 	struct sigaction sa;
-
     //memset(&sa, 0, sizeof(sigaction));
     sigemptyset(&sa.sa_mask);
     sa.sa_sigaction = segfaultHandler;
     sa.sa_flags   = SA_SIGINFO;
+    sigaction(SIGSEGV, &sa, NULL); //register segfault listener
+}
 
-    sigaction(SIGSEGV, &sa, NULL);
+void Scheduler::registerExitHandler(void (*handler)()) {
+	std::atexit(handler);
 }
 
 
