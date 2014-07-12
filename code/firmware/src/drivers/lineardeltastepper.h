@@ -115,7 +115,7 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 			float root = std::sqrt(rootParam);
 			float t1 = (term1 - root)/v2;
 			float t2 = (term1 + root)/v2;
-			A0LOGV("LinearDeltaStepper<%u>::testDir(%f) times %f, %f\n", AxisIdx, s, t1, t2);
+			A0LOGV("LinearDeltaStepper<%zu>::testDir(%f) times %f, %f\n", AxisIdx, s, t1, t2);
 			if (root > term1) { //t1 MUST be negative.
 				//return t2 if t2 > 0 else None
 				//return t2 > 0 ? t2 : NAN;
@@ -128,10 +128,10 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 		void _nextStep() {
 			float negTime = testDir((sTotal-1)*MM_STEPS); //get the time at which next steps would occur.
 			float posTime = testDir((sTotal+1)*MM_STEPS);
-			A0LOGV("LinearDeltaStepper<%u>::neg/pos/cur-time %f, %f, %f\n", AxisIdx, negTime, posTime, time);
+			A0LOGV("LinearDeltaStepper<%zu>::neg/pos/cur-time %f, %f, %f\n", AxisIdx, negTime, posTime, time);
 			if (negTime < time || std::isnan(negTime)) { //negTime is invalid
 				if (posTime > time) {
-					A0LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
+					A0LOGV("LinearDeltaStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
 					this->time = posTime;
 					this->direction = StepForward;
 					++sTotal;
@@ -140,7 +140,7 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 				}
 			} else if (posTime < time || std::isnan(posTime)) { //posTime is invalid
 				if (negTime > time) {
-					A0LOGV("LinearDeltaStepper<%u>::chose %f (neg)\n", AxisIdx, negTime);
+					A0LOGV("LinearDeltaStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
 					this->time = negTime;
 					this->direction = StepBackward;
 					--sTotal;
@@ -149,12 +149,12 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 				}
 			} else { //neither time is invalid
 				if (negTime < posTime) {
-					A0LOGV("LinearDeltaStepper<%u>::chose %f (neg)\n", AxisIdx, negTime);
+					A0LOGV("LinearDeltaStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
 					this->time = negTime;
 					this->direction = StepBackward;
 					--sTotal;
 				} else {
-					A0LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
+					A0LOGV("LinearDeltaStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
 					this->time = posTime;
 					this->direction = StepForward;
 					++sTotal;

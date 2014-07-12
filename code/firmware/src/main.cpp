@@ -13,6 +13,7 @@
  * *Run valgrind to hunt for uninitialized variables
  * *Enable new stepper driver
  * *Wire all three steppers
+ *  Add exit handlers, TO SCHEDULER.
  *  Solder thermistor
  *  Add thermister support
  *  Add endstop support
@@ -31,6 +32,7 @@
 //#include <stdlib.h> //needed for exit()
 #include <sys/mman.h> //for mlockall
 //#include <cstdlib> //for atexit
+#include <signal.h> //for
 #include "logging.h"
 
 #include "gparse/serial.h"
@@ -47,14 +49,41 @@ void printUsage(char* cmd) {
     //exit(1);
 }
 
-/*void onExit() {
+void onExit() {
 	LOG("Exiting\n");
-}*/
+}
+
+void my_handler(int s){
+   printf("Caught signal %d\n",s);
+   exit(1); 
+}
+
+void segfault_sigaction(int signal, siginfo_t *si, void *arg)
+{
+    printf("Caught segfault at address %p\n", si->si_addr);
+    exit(1);
+}
 
 int main(int argc, char** argv) {
-	/*if (DO_LOG) {
+	if (DO_LOG) {
 		std::atexit(onExit);
-	}*/
+	}
+	struct sigaction sigIntHandler;
+
+	sigIntHandler.sa_handler = my_handler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+	sigaction(SIGINT, &sigIntHandler, NULL);
+	
+	struct sigaction sa;
+
+    //memset(&sa, 0, sizeof(sigaction));
+    sigemptyset(&sa.sa_mask);
+    sa.sa_sigaction = segfault_sigaction;
+    sa.sa_flags   = SA_SIGINFO;
+
+    sigaction(SIGSEGV, &sa, NULL);
+	
 	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
     }
@@ -72,13 +101,16 @@ int main(int argc, char** argv) {
     	LOGW("Warning: mlockall (prevent memory swaps) in main.cpp::main() returned non-zero: %i\n", retval);
     }
     
+    //Open the serial device:
     char* serialFileName = argv[1];
     LOG("Serial file: %s\n", serialFileName);
     int fd = open(serialFileName, O_RDWR);
     
+    //instantiate main driver:
     drv::Kossel driver;
 	State<drv::Kossel> gState(driver);
     
+    //main loop:
     gparse::comLoop(fd, gState);
     return 0;
 }
