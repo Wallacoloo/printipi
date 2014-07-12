@@ -15,9 +15,9 @@ template <uint8_t Pin, bool ValueEn, bool ValueDis> class OnePinEnabler : public
 		static void disable() {
 			bcm2835_gpio_write(Pin, ValueDis);
 		}
-		static void deactivate() { //called on shutdown.
+		/*static void deactivate() { //called on shutdown.
 			disable();
-		}
+		}*/
 };
 
 }
