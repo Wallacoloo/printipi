@@ -1,7 +1,8 @@
 #include "rpi.h"
 #include "bcm2835.h"
 
-#include <cstdlib> //for atexit
+//#include <cstdlib> //for atexit
+#include "scheduler.h"
 
 namespace drv {
 namespace rpi {
@@ -16,7 +17,8 @@ void initIO() {
 	if (!wasBcmInit) {
 		wasBcmInit = true;
 		if (bcm2835_init()) {
-			std::atexit(atexit_bcm2835_close);
+			Scheduler::registerExitHandler(atexit_bcm2835_close);
+			//std::atexit(atexit_bcm2835_close);
 		}
 	}
 }
