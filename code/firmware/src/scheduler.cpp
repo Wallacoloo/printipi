@@ -24,7 +24,8 @@ void segfaultHandler(int signal, siginfo_t *si, void *arg) {
 
 void Scheduler::configureExitHandlers() {
 	if (DO_LOG) {
-		std::atexit(onExit);
+		Scheduler::registerExitHandler(&onExit);
+		//std::atexit(onExit);
 	}
 	//listen for ctrl+c, ctrl+z and segfaults. Then try to properly unmount any I/Os (crucial for disabling the heated nozzle)
 	struct sigaction sigIntHandler;
