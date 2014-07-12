@@ -10,6 +10,7 @@
 #include "drivers/rpi/sn754410.h"
 #include "drivers/linearcoordmap.h"
 #include "drivers/lineardeltacoordmap.h"
+#include "drivers/rpi/onepinenabler.h"
 #include <tuple>
 
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
@@ -27,12 +28,13 @@ class Kossel : public Driver {
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000, STEPS_M> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
+        typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_11, 1, 0> _StepperEn;
         typedef std::tuple<
         	//rpi::SN754410<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_16, RPI_V2_GPIO_P1_18>, //X coord
-        	rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21>, //X coord
-        	rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23>, //Y coord
-        	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15>, //Z coord
-        	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12>  > IODriverTypes; //E coord
+        	rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21, _StepperEn>, //X coord
+        	rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //Y coord
+        	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //Z coord
+        	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12, _StepperEn>  > IODriverTypes; //E coord
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
         IODriverTypes ioDrivers;
         constexpr static std::size_t numAxis() {

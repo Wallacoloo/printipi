@@ -29,12 +29,12 @@ template <uint8_t STEPPIN, uint8_t DIRPIN, typename Enabler=NullEnabler> class A
 			initIO();
 			bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_OUTP); //configure these pins as output
 			bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_OUTP);
-			EnableDisableDriver::enable();
+			Enabler::enable();
 		}
 		//A4988 is directed by putting a direction on the DIRPIN, and then
 		//sending a pulse on the STEPPIN.
 		static void deactivate() {
-			EnableDisableDriver::disable(); //will be called directly on the Enabler.
+			Enabler::disable(); //will be called directly on the Enabler.
 			//bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_INPT); //unmount pins.
 			//bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_INPT);
 		}
