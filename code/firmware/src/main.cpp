@@ -32,7 +32,6 @@
 //#include <stdlib.h> //needed for exit()
 #include <sys/mman.h> //for mlockall
 //#include <cstdlib> //for atexit
-#include <signal.h> //for
 #include "logging.h"
 
 #include "gparse/serial.h"
@@ -49,41 +48,8 @@ void printUsage(char* cmd) {
     //exit(1);
 }
 
-void onExit() {
-	LOG("Exiting\n");
-}
-
-void my_handler(int s){
-   printf("Caught signal %d\n",s);
-   exit(1); 
-}
-
-void segfault_sigaction(int signal, siginfo_t *si, void *arg)
-{
-    printf("Caught segfault at address %p\n", si->si_addr);
-    exit(1);
-}
-
 int main(int argc, char** argv) {
-	if (DO_LOG) {
-		std::atexit(onExit);
-	}
-	struct sigaction sigIntHandler;
-
-	sigIntHandler.sa_handler = my_handler;
-	sigemptyset(&sigIntHandler.sa_mask);
-	sigIntHandler.sa_flags = 0;
-	sigaction(SIGINT, &sigIntHandler, NULL);
-	
-	struct sigaction sa;
-
-    //memset(&sa, 0, sizeof(sigaction));
-    sigemptyset(&sa.sa_mask);
-    sa.sa_sigaction = segfault_sigaction;
-    sa.sa_flags   = SA_SIGINFO;
-
-    sigaction(SIGSEGV, &sa, NULL);
-	
+	Scheduler::configureExitHandlers(); //useful to do this first-thing for catching debug info.
 	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
     }
