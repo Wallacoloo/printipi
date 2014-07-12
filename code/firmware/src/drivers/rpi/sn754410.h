@@ -39,6 +39,17 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2> class SN754410 : publi
 			bcm2835_gpio_set(B2); //, HIGH); 
 		}
 		
+		void deactivate() {
+			bcm2835_gpio_clr(A1); //stop all current through H-bridge:
+			bcm2835_gpio_clr(A2);
+			bcm2835_gpio_clr(B1);
+			bcm2835_gpio_clr(B2);
+			//bcm2835_gpio_fsel(A1, BCM2835_GPIO_FSEL_INPT); //configure these pins as output
+			//bcm2835_gpio_fsel(A2, BCM2835_GPIO_FSEL_INPT);
+			//bcm2835_gpio_fsel(B1, BCM2835_GPIO_FSEL_INPT); 
+			//bcm2835_gpio_fsel(B2, BCM2835_GPIO_FSEL_INPT);
+		}
+		
 		void stepForward() {
 			//LOGV("SN754410::stepForward()\n");
 			uint8_t pinSwap = cycleInversions[index];

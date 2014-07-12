@@ -7,8 +7,13 @@ namespace drv {
 
 class IODriver {
 	public:
-		void stepForward() {} //OVERRIDE THIS
-		void stepBackward() {} //OVERRIDE THIS
+		//for a (stepper) motor, advance +/- 1 step:
+		inline void stepForward() {} //OVERRIDE THIS
+		inline void stepBackward() {} //OVERRIDE THIS
+		/*deactivate: called at program exit.
+		safely deactivate any IOs, including motors, heaters, etc.*/
+		inline void deactivate() {} //OVERRIDE THIS
+		//selectAndStep...: used internally
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
 };
