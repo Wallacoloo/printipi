@@ -2,11 +2,27 @@
 #define DRIVERS_IODRIVER_H
 
 #include "typesettings.h"
+#include "scheduler.h"
 
 namespace drv {
 
+/*template<typename T> struct IODriverInfo {
+    template<typename U, size_t (U::*)() const> struct SFINAE {};
+    template<typename U> static char Test(SFINAE<U, &U::deactivate>*);
+    template<typename U> static int Test(...);
+    static constexpr bool HasDeactivateMethod = sizeof(Test<T>(0)) == sizeof(char);
+};*/
+
 class IODriver {
 	public:
+		template <typename ThisT> IODriver(const ThisT * /* _this */) {
+			//TODO: only register an exit handler if ThisT::deactivate is non-empty
+			//can do this with C++ "SFINAE"
+			//if (IODriverInfo<ThisT>::HasDeactivateMethod) {
+				//Scheduler::registerExitHandler((void(*)())&ThisT::deactivate);
+			//}
+			Scheduler::registerExitHandler((void(*)())&ThisT::deactivate);
+		}
 		//for a (stepper) motor, advance +/- 1 step:
 		inline void stepForward() {} //OVERRIDE THIS
 		inline void stepBackward() {} //OVERRIDE THIS

@@ -23,14 +23,14 @@ namespace rpi {
 
 template <uint8_t STEPPIN, uint8_t DIRPIN> class A4988 : public IODriver {
 	public:
-		A4988() {
+		A4988() : IODriver(this) {
 			initIO();
 			bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_OUTP); //configure these pins as output
 			bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_OUTP);
 		}
 		//A4988 is directed by putting a direction on the DIRPIN, and then
 		//sending a pulse on the STEPPIN.
-		/*void deactivate() {
+		/*static void deactivate() {
 			bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_INPT); //unmount pins.
 			bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_INPT);
 		}*/
