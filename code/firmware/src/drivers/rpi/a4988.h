@@ -30,6 +30,10 @@ template <uint8_t STEPPIN, uint8_t DIRPIN> class A4988 : public IODriver {
 		}
 		//A4988 is directed by putting a direction on the DIRPIN, and then
 		//sending a pulse on the STEPPIN.
+		/*void deactivate() {
+			bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_INPT); //unmount pins.
+			bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_INPT);
+		}*/
 		void stepForward() {
 			bcm2835_gpio_write(DIRPIN, HIGH); //set direction as forward
 			cycleStepPin();
