@@ -8,9 +8,15 @@ namespace drv {
 namespace rpi {
 
 
-template <uint8_t Pin, bool ValueTriggered> class LeverEndstop : public Endstop {
+template <uint8_t Pin, bool ValueTriggered, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class LeverEndstop : public Endstop {
 	public:
-		LeverEndstop() : Endstop(this) {}
+		LeverEndstop() : Endstop(this) {
+			bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_INPT);
+			bcm2835_gpio_set_pud(Pin, PullUpDown);
+		}
+		static bool isTriggered() {
+			return bcm2835_gpio_lev(Pin) == ValueTriggered;
+		}
 };
 
 
