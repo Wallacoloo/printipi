@@ -32,7 +32,7 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 			//z = A*MM_STEPS-sqrt(L*L-r*r);
 			//A=(z+sqrt(L*L-r*r))*STEPS_MM
 			mech[EIdx] = 0;
-			mech[AIdx] = mech[BIdx] = mech[CIdx] = (h+sqrt(L*L-r*r))*STEPS_MM;
+			mech[AIdx] = mech[BIdx] = mech[CIdx] = h*STEPS_MM; //(h+sqrt(L*L-r*r))*STEPS_MM;
 		}
 		template <std::size_t size> static void xyzeFromMechanical(const std::array<int, size> &mech, float &x, float &y, float &z, float &e) {
 			e = mech[EIdx];
