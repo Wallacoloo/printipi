@@ -17,14 +17,23 @@ class AxisStepper {
 		StepDirection direction; //direction of next step
 		inline int index() const { return _index; } //NOT TO BE OVERRIDEN
 		AxisStepper() {}
+		//standard initializer:
 		template <std::size_t sz> AxisStepper(int idx, const std::array<int, sz>& /*curPos*/, float /*vx*/, float /*vy*/, float /*vz*/, float /*ve*/)
 			: _index(idx) {}
+		//initializer when homing to endstops:
+		AxisStepper(int idx, float /*vHome*/) : _index(idx) {}
 		template <typename TupleT> static AxisStepper& getNextTime(TupleT &axes);
 		template <typename TupleT> static void initAxisSteppers(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve);
+		template <typename TupleT> static void initAxisHomeSteppers(TupleT &steppers, float vHome);
 		Event getEvent() const; //NOT TO BE OVERRIDEN
 		template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
 	protected:
 		void _nextStep(); //OVERRIDE THIS. Will be called upon initialization.
+	public:
+		template <typename... Types> struct GetHomeStepperTypes {
+			typedef std::tuple<typename Types::HomeStepperT...> HomeStepperTypes;
+		};
+		template <typename... Types> struct GetHomeStepperTypes<std::tuple<Types...> > : GetHomeStepperTypes<Types...> {};
 		
 };
 
@@ -39,11 +48,9 @@ template <typename TupleT, int idx> struct _AxisStepper__getNextTime {
 		//comparisons against NaN are ALWAYS false.
 		if (m1.time <= 0) { return m2; } //if one of the times is non-positive (ie no next step), return the other one.
 		if (m2.time <= 0) { return m1; }
-		//if m2.time == NaN, then (m1.time < m2.time) ? m1 : m2 will return NaN
-		//if m1.time == NaN, then (m1.time < m2.time) ? m1 : m2 will return m2.time.
+		//Now return the smallest of the two, discarding any NaNs:
 		//if m2.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m1.time
 		//elif m1.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m2.time
-		
 		return (m1.time < m2.time || std::isnan(m2.time)) ? m1 : m2;
 	}
 };
@@ -77,6 +84,27 @@ template <typename TupleT> struct _AxisStepper__initAxisSteppers<TupleT, 0> {
 
 template <typename TupleT> void AxisStepper::initAxisSteppers(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve) {
 	_AxisStepper__initAxisSteppers<TupleT, std::tuple_size<TupleT>::value-1>()(steppers, curPos, vx, vy, vz, ve);
+}
+
+//Helper classes for AxisStepper::initAxisHomeSteppers
+
+template <typename TupleT, int idx> struct _AxisStepper__initAxisHomeSteppers {
+	void operator()(TupleT &steppers, float vHome) {
+		_AxisStepper__initAxisHomeSteppers<TupleT, idx-1>()(steppers, vHome); //initialize all previous values.
+		std::get<idx>(steppers) = typename std::tuple_element<idx, TupleT>::type(idx, vHome);
+		std::get<idx>(steppers)._nextStep();
+	}
+};
+
+template <typename TupleT> struct _AxisStepper__initAxisHomeSteppers<TupleT, 0> {
+	void operator()(TupleT &steppers, float vHome) {
+		std::get<0>(steppers) = typename std::tuple_element<0, TupleT>::type(0, vHome);
+		std::get<0>(steppers)._nextStep();
+	}
+};
+
+template <typename TupleT> void AxisStepper::initAxisHomeSteppers(TupleT &steppers, float vHome) {
+	_AxisStepper__initAxisHomeSteppers<TupleT, std::tuple_size<TupleT>::value-1>()(steppers, vHome);
 }
 
 //Helper classes for AxisStepper::nextStep method

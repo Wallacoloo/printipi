@@ -10,6 +10,7 @@ namespace rpi {
 
 template <uint8_t Pin, bool ValueTriggered> class LeverEndstop : public Endstop {
 	public:
+		LeverEndstop() : Endstop(this) {}
 };
 
 

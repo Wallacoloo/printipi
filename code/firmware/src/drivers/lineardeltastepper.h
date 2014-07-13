@@ -1,9 +1,6 @@
 #ifndef DRIVERS_LINEARDELTASTEPPER_H
 #define DRIVERS_LINEARDELTASTEPPER_H
 
-#include "axisstepper.h"
-//(2250, 2476, 2406, 0) -> (2400, 2400, 2400, 0) only gets to (2250, 2476, 2400, 0)
-
 /*
 	#t1,t2 were solved in Mathematica as such:
 	#xyzOfT = {x ->  x0 + vx t, y ->  y0 + vy t, z ->  z0 + vz t} 
@@ -11,54 +8,11 @@
 	#Solve[(A == A0 + s) /. ABCOfT, t]
 	#FullSimplify[%]
 	#Then proceed to hand-optimize
-	x0, y0, z0 = xyzsFromABC_(A, B, C)
-	def testDir(s):
-		v2 = (vx**2 + vy**2 + vz**2)
-		if axisIdx == 0:
-			#t1 = (r*vy + A0*vz + s*vz - vx*x0 - vy*y0 - Sqrt(4*(r*vy - vx*x0 - vy*y0 + vz*(A0 + s - z0))**2 - 4*(vx**2 + vy**2 + vz**2)*(-L**2 + x0**2 + (r - y0)**2 + (A0 + s - z0)**2))/2. - vz*z0)/(vx**2 + vy**2 + vz**2)
-			#t2 = (r*vy + A0*vz + s*vz - vx*x0 - vy*y0 + Sqrt(4*(r*vy - vx*x0 - vy*y0 + vz*(A0 + s - z0))**2 - 4*(vx**2 + vy**2 + vz**2)*(-L**2 + x0**2 + (r - y0)**2 + (A0 + s - z0)**2))/2. - vz*z0)/(vx**2 + vy**2 + vz**2)
-			#term1 = r*vy + A*vz + s*vz - vx*x0 - vy*y0 - vz*z0
-			#rootparam = (r*vy - vx*x0 - vy*y0 + vz*(A + s - z0))**2 - v2*(-L**2 + x0**2 + (r - y0)**2 + (A + s - z0)**2)
-			term1 = r*vy - vx*x0 - vy*y0 + vz*(A + s - z0)
-			rootparam = term1*term1 - v2*(-L*L + x0*x0 + (r - y0)*(r - y0) + (A + s - z0)*(A + s - z0))
-		elif axisIdx == 1:
-			#t1 = -(-(Sqrt(3)*r*vx) + r*vy - 2*B0*vz - 2*s*vz + 2*vx*x0 + 2*vy*y0 + Sqrt((-(Sqrt(3)*r*vx) + r*vy + 2*vx*x0 + 2*vy*y0 - 2*vz*(B0 + s - z0))**2 - 4*(vx**2 + vy**2 + vz**2)*(-L**2 + r**2 + x0**2 + y0**2 + r*(-(Sqrt(3)*x0) + y0) + (B0 + s - z0)**2)) + 2*vz*z0)/(2.*(vx**2 + vy**2 + vz**2))
-			#t2 = (Sqrt(3)*r*vx - r*vy + 2*B0*vz + 2*s*vz - 2*vx*x0 - 2*vy*y0 + Sqrt((-(Sqrt(3)*r*vx) + r*vy + 2*vx*x0 + 2*vy*y0 - 2*vz*(B0 + s - z0))**2 - 4*(vx**2 + vy**2 + vz**2)*(-L**2 + r**2 + x0**2 + y0**2 + r*(-(Sqrt(3)*x0) + y0) + (B0 + s - z0)**2)) - 2*vz*z0)/(2.*(vx**2 + vy**2 + vz**2))
-			#term1 = 0.5*(Sqrt(3)*r*vx - r*vy + 2*B0*vz + 2*s*vz - 2*vx*x0 - 2*vy*y0 - 2*vz*z0)
-			#rootparam = 0.25*((-Sqrt(3)*r*vx + r*vy + 2*vx*x0 + 2*vy*y0 - 2*vz*(B + s - z0))**2 - 4*v2*(-L**2 + r**2 + x0**2 + y0**2 + r*(-Sqrt(3)*x0 + y0) + (B + s - z0)**2))
-			term1 = (r*(Sqrt(3)*vx - vy))/2. - vx*x0 - vy*y0 + vz*(B + s - z0)
-			rootparam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(-Sqrt(3)*x0 + y0) + (B + s - z0)*(B + s - z0))
-		elif axisIdx == 2:
-			#t1 = -(r*(Sqrt(3)*vx + vy) + Sqrt((Sqrt(3)*r*vx + r*vy + 2*vx*x0 + 2*vy*y0 - 2*vz*(C0 + s - z0))**2 - 4*(vx**2 + vy**2 + vz**2)*(-L**2 + r**2 + x0**2 + y0**2 + r*(Sqrt(3)*x0 + y0) + (C0 + s - z0)**2)) + 2*(vx*x0 + vy*y0 - vz*(C0 + s - z0)))/(2.*(vx**2 + vy**2 + vz**2))
-			#t2 = (-(r*(Sqrt(3)*vx + vy)) + Sqrt((Sqrt(3)*r*vx + r*vy + 2*vx*x0 + 2*vy*y0 - 2*vz*(C0 + s - z0))**2 - 4*(vx**2 + vy**2 + vz**2)*(-L**2 + r**2 + x0**2 + y0**2 + r*(Sqrt(3)*x0 + y0) + (C0 + s - z0)**2)) - 2*(vx*x0 + vy*y0 - vz*(C0 + s - z0)))/(2.*(vx**2 + vy**2 + vz**2))
-			#term1 = -r*(Sqrt(3)*vx + vy)/2 - (vx*x0 + vy*y0 - vz*(C + s - z0))
-			#rootparam = 0.25*(Sqrt(3)*r*vx + r*vy + 2*vx*x0 + 2*vy*y0 - 2*vz*(C + s - z0))**2 - v2*(-L**2 + r**2 + x0**2 + y0**2 + r*(Sqrt(3)*x0 + y0) + (C + s - z0)**2)
-			term1 = -r*(Sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(C + s - z0)
-			rootparam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(Sqrt(3)*x0 + y0) + (C + s - z0)*(C + s - z0))
-			#t1 = (term1 - root)/(v2)
-			#t2 = (term1 + root)/(v2)
-		if rootparam < 0:
-			print "(times: None)" 
-			return None
-		root = sqrt(rootparam)
-		t1 = (term1 - root)/v2
-		t2 = (term1 + root)/v2
-		print "(times:", t1, t2, ")"
-		if root > term1:
-			return t2 if t2 > 0 else None
-		else:
-			return t1
-	neg = testDir(-1), -1
-	pos = testDir(1), 1
-	#Return the smallest non-negative term:
-	filt = [a for a in (neg, pos) if a[0] is not None and a[0] >= 0]
-	if len(filt) == 0:
-		return None, None
-	elif len(filt) == 1:
-		return filt[0]
-	else:
-		return filt[0] if filt[0][0] < filt[0][1] else filt[1]
 */
+
+#include "axisstepper.h"
+#include "linearstepper.h" //for LinearHomeStepper
+#include "endstop.h"
 
 //#define A0LOGV(format, args...) \
 //	if (AxisIdx==0) { LOGV(format, ## args); }
@@ -66,7 +20,27 @@
 
 namespace drv {
 
-template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L1000, unsigned STEPS_M> class LinearDeltaStepper : public AxisStepper {
+/*template <unsigned STEPS_M, typename EndstopT> class LinearDeltaHomeStepper : public AxisStepper {
+	float timePerStep;
+	static constexpr float STEPS_MM = STEPS_M / 1000.;
+	public:
+		LinearDeltaHomeStepper() {}
+		LinearDeltaHomeStepper(int idx, float vHome) : AxisStepper(idx, vHome) {
+			this->time = 0;
+			this->direction = StepForward;
+			this->timePerStep = 1./ (vHome*STEPS_MM);
+		}
+		
+		void _nextStep() {
+			if (EndstopT::isTriggered()) {
+				this->time = NAN; //at endstop; no more steps.
+			} else {
+				this->time += timePerStep;
+			}
+		}
+};*/
+
+template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000, unsigned STEPS_M, typename EndstopT=Endstop> class LinearDeltaStepper : public AxisStepper {
 	private:
 		float M0; //initial coordinate of THIS axis.
 		int sTotal;
@@ -78,6 +52,7 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 		static constexpr float STEPS_MM = STEPS_M / 1000.;
 		static constexpr float MM_STEPS = 1. / STEPS_MM;
 	public:
+		typedef LinearHomeStepper<STEPS_M, EndstopT> HomeStepperT;
 		LinearDeltaStepper() {}
 		template <std::size_t sz> LinearDeltaStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
 			: AxisStepper(idx, curPos, vx, vy, vz, ve),
@@ -87,9 +62,11 @@ template <std::size_t AxisIdx, typename CoordMath, unsigned R1000, unsigned L100
 			 v2(vx*vx + vy*vy + vz*vz) {
 			 	this->time = 0; //this may NOT be zero-initialized by parent.
 				float e_;
-				CoordMath::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
+				CoordMap::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
 			}
 		void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
+			//TODO: compiler probably can't optimize this well since it probably won't be able to allocate more space on the object to hold semi-constants.
+			//Therefore, we should cache values calculatable at init-time, like all of the second-half on rootParam.
 			if (AxisIdx == 0) {
 				term1 = r*vy - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L*L + x0*x0 + (r - y0)*(r - y0) + (M0 + s - z0)*(M0 + s - z0));

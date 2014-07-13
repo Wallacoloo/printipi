@@ -3,17 +3,48 @@
 
 #include "axisstepper.h"
 #include "typesettings.h"
+#include "endstop.h"
 #include "logging.h"
 #include <tuple>
 #include <cmath> //for fabs
 
 namespace drv {
 
-template <int STEPS_PER_METER, CoordAxis CoordType> class LinearStepper : public AxisStepper {
+template <int STEPS_M, typename EndstopT> class LinearHomeStepper : public AxisStepper {
+	float timePerStep;
+	static constexpr float STEPS_MM = STEPS_M / 1000.;
+	public:
+		LinearHomeStepper() {}
+		LinearHomeStepper(int idx, float vHome) : AxisStepper(idx, vHome) {
+			this->time = 0;
+			this->direction = StepForward;
+			this->timePerStep = 1./ (vHome*STEPS_MM);
+		}
+		
+		void _nextStep() {
+			if (EndstopT::isTriggered()) {
+				this->time = NAN; //at endstop; no more steps.
+			} else {
+				this->time += timePerStep;
+			}
+		}
+};
+
+template <int STEPS_M> class LinearHomeStepper<STEPS_M, EndstopNoExist> : public AxisStepper {
+	public:
+		LinearHomeStepper() {}
+		LinearHomeStepper(int idx, float vHome) : AxisStepper(idx, vHome) {
+			this->time = NAN; //device isn't homeable, so never step.
+		}
+		void _nextStep() {}
+};
+
+template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoExist> class LinearStepper : public AxisStepper {
 	private:
 		float timePerStep;
+		static constexpr float STEPS_MM = STEPS_PER_METER/1000.0;
 	public:
-		static constexpr float STEPS_MM() { return STEPS_PER_METER/1000.0; }
+		typedef LinearHomeStepper<STEPS_PER_METER, EndstopT> HomeStepperT;
 		static constexpr float GET_COORD(float x, float y, float z, float e) {
 			return CoordType==COORD_X ? x : \
 				  (CoordType==COORD_Y ? y : \
@@ -26,7 +57,7 @@ template <int STEPS_PER_METER, CoordAxis CoordType> class LinearStepper : public
 			//1/(v*STEPS_MM) is sec/steps.
 			//multiplied by 1 step and units are sec. Therefore t = 1/(v*STEPS_MM);
 			//NOTE: this may return a NEGATIVE time, indicating that the stepping direction is backward.
-			return 1./ (GET_COORD(vx, vy, vz, ve) * STEPS_MM());
+			return 1./ (GET_COORD(vx, vy, vz, ve) * STEPS_MM);
 		}
 		LinearStepper() {}
 		template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
@@ -40,22 +71,6 @@ template <int STEPS_PER_METER, CoordAxis CoordType> class LinearStepper : public
 			//LOG("LinearStepper::_nextStep() %i, %f\n", CoordType, timePerStep);
 		}
 };
-
-/*template <int STEPS_PER_METER, AxisIdType AXIS_ID> class LinearStepper : public AxisStepper {
-	private:
-		float timePerStep;
-	public:
-		static constexpr float STEPS_MM() { return STEPS_PER_METER/1000.0; }
-		LinearStepper() {}
-		template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
-			: AxisStepper(idx, curPos, vx, vy, vz, ve),
-			timePerStep(abs( std::get<AXIS_ID>(std::make_tuple(vx, vy, vz, ve)) / STEPS_MM() )) {
-				this->direction = stepDirFromSign( std::get<AXIS_ID>(std::make_tuple(vx, vy, vz, ve)) / STEPS_MM() );
-			}
-		void _nextStep() {
-			this->time += timePerStep;
-		}
-};*/
 
 }
 

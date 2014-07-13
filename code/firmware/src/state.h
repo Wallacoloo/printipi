@@ -86,7 +86,9 @@ template <typename Drv> class State {
 		/*execute the GCode on a Driver object that supports a well-defined interface.
 		 *returns a Command to send back to the host.*/
 		gparse::Command execute(gparse::Command const& cmd);
+		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration);
 		void queueMovement(float x, float y, float z, float e);
+		void homeEndstops();
 };
 
 
@@ -277,7 +279,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		resp = gparse::Command::OK;
 	} else if (cmd.isG28()) { //home to end-stops
 		LOGW("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
-		bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
+		/*bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
 		bool homeY = cmd.hasY();
 		bool homeZ = cmd.hasZ();
 		if (!homeX && !homeY && !homeZ) { //if no axis are passed, then home ALL axis.
@@ -287,7 +289,8 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		float newX = homeX ? 0 : destXPrimitive();
 		float newY = homeY ? 0 : destYPrimitive();
 		float newZ = homeZ ? 0 : destZPrimitive();;
-		this->queueMovement(newX, newY, newZ, curE);
+		this->queueMovement(newX, newY, newZ, curE);*/
+		this->homeEndstops();
 		resp = gparse::Command::OK;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
@@ -351,6 +354,23 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	}
 	return resp;
 }
+
+template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration) {
+	timespec baseTime = scheduler.lastSchedTime();
+	do {
+		drv::AxisStepper& s = drv::AxisStepper::getNextTime(iters);
+		LOGV("Next step: %i at %g of %g\n", s.index(), s.time, duration);
+		//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
+		if (s.time > duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
+			break; 
+		}
+		Event e = s.getEvent();
+		e.offset(baseTime);
+		scheduler.queue(e);
+		_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
+		s.nextStep(iters);
+	} while (1);
+}
 		
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
 	//Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, _destXPrimitive, _destYPrimitive, _destZPrimitive, _destEPrimitive);
@@ -381,23 +401,17 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, dur:%f\n", velXYZ, vx, vy, vz, duration);
 	typename Drv::AxisStepperTypes iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
-	timespec baseTime = scheduler.lastSchedTime();
-	do {
-		drv::AxisStepper& s = drv::AxisStepper::getNextTime(iters);
-		LOGV("Next step: %i at %g of %g\n", s.index(), s.time, duration);
-		//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
-		if (s.time > duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
-			break; 
-		}
-		Event e = s.getEvent();
-		e.offset(baseTime);
-		scheduler.queue(e);
-		_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
-		s.nextStep(iters);
-	} while (1);
+	this->scheduleAxisSteppers(iters, duration);
 	Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, curX, curY, curZ, curE);
 	LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
+}
+
+template <typename Drv> void State<Drv>::homeEndstops() {
+	//typename Drv::AxisStepperTypes iters;
+	typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
+	drv::AxisStepper::initAxisHomeSteppers(iters, destMoveRatePrimitive());
+	//this->scheduleAxisSteppers(iters, NAN);
 }
 
 #endif
