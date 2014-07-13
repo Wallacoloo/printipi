@@ -48,7 +48,7 @@ void Scheduler::registerExitHandler(void (*handler)()) {
 }
 
 
-Scheduler::Scheduler() : _lockPushes(mutex, std::defer_lock), _arePushesLocked(false) {
+Scheduler::Scheduler() : _lockPushes(mutex, std::defer_lock), _arePushesLocked(false), bufferSize(SCHED_CAPACITY) {
 	clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //initialize to current time.
 }
 
@@ -76,7 +76,7 @@ Event Scheduler::nextEvent() {
 		}
 		evt = this->eventQueue.front();
 		this->eventQueue.pop();
-		if (this->eventQueue.size() < SCHED_CAPACITY) { //queue is underfilled; release the lock
+		if (this->eventQueue.size() < bufferSize) { //queue is underfilled; release the lock
 			_lockPushes.unlock();
 			this->_arePushesLocked = false;
 		} else { //queue is filled; do not release the lock.
@@ -118,3 +118,9 @@ struct timespec Scheduler::lastSchedTime() const {
 	return evt.time();
 }
 
+void Scheduler::setBufferSize(unsigned size) {
+	this->bufferSize = size;
+}
+unsigned Scheduler::getBufferSize() const {
+	return this->bufferSize;
+}
