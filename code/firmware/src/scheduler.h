@@ -31,6 +31,7 @@ class Scheduler {
 	bool _arePushesLocked;
 	std::condition_variable nonemptyCond;
 	struct timespec lastEventHandledTime;
+	unsigned bufferSize;
 	public:
 		static void configureExitHandlers();
 		static void registerExitHandler(void (*handler)());
@@ -40,6 +41,8 @@ class Scheduler {
 		Event nextEvent();
 		void initSchedThread(); //call this from whatever threads call nextEvent to optimize that thread's priority.
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
+		void setBufferSize(unsigned size);
+		unsigned getBufferSize() const;
 };
 
 

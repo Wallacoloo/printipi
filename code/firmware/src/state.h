@@ -411,7 +411,10 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	//typename Drv::AxisStepperTypes iters;
 	typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 	drv::AxisStepper::initAxisHomeSteppers(iters, destMoveRatePrimitive());
+	auto b = this->scheduler.getBufferSize();
+	this->scheduler.setBufferSize(1);
 	this->scheduleAxisSteppers(iters, NAN);
+	this->scheduler.setBufferSize(b);
 }
 
 #endif
