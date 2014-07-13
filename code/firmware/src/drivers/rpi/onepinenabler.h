@@ -6,7 +6,7 @@
 namespace drv {
 namespace rpi {
 
-template <uint8_t Pin, bool ValueEn, bool ValueDis> class OnePinEnabler : public EnableDisableDriver {
+template <uint8_t Pin, bool ValueEn, bool ValueDis=!ValueEn> class OnePinEnabler : public EnableDisableDriver {
 	public:
 		static void enable() {
 			EnableDisableDriver::enable();
