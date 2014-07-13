@@ -27,7 +27,7 @@ namespace drv {
 class Kossel : public Driver {
 	private:
 		typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_16, 0> _StepperEn; //enable pin is LOW for on, HIGH for off
-		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, 1> _EndstopA; //endstop is triggered on HIGH
+		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, 1> _EndstopA; //endstop is triggered on HIGH
     public:
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000, STEPS_M> CoordMapT;
@@ -40,6 +40,7 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12, _StepperEn>  > IODriverTypes; //E coord
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
         IODriverTypes ioDrivers;
+        _EndstopA endstops;
         constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
