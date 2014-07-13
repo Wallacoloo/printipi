@@ -415,6 +415,7 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	this->scheduler.setBufferSize(1);
 	this->scheduleAxisSteppers(iters, NAN);
 	this->scheduler.setBufferSize(b);
+	Drv::CoordMapT::getHomePosition(_destMechanicalPos);
 }
 
 #endif
