@@ -14,6 +14,7 @@
  * *Enable new stepper driver
  * *Wire all three steppers
  * *Add exit handlers, TO SCHEDULER.
+ *  Prevent calling exit() from within an atexit handler
  *  Solder thermistor
  *  Add thermister support
  *  Add endstop support
