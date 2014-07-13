@@ -18,16 +18,18 @@
  *  Add 100 uF capacitors to stepper drivers (crucial!)
  *  Solder thermistor
  *  Add thermister support
- *  Add endstop support
+ * *Add endstop support
+ *  Prevent stepping when endstop is triggered.
  *  Add max/min bounds for each axis
  *  Add acceleration
+ *  Add atexit levels, so that rpi gpio is disabled AFTER the IOdrivers are disabled.
  * *Add IO deactivation upon exit
- *  Add enable pin
+ * *Add enable pin
  *  Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Investigate single-threading for entire process.
  *  Look into coordinate rounding for State::queueMovement
- *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface
+ *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
 */
 
 #include <string>
