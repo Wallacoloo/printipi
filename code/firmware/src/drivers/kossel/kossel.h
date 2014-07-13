@@ -28,7 +28,7 @@ class Kossel : public Driver {
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000, STEPS_M> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
-        typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_11, 1, 0> _StepperEn;
+        typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_11, 0, 1> _StepperEn; //enable pin is 0 for on, 1 for off
         typedef std::tuple<
         	//rpi::SN754410<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_16, RPI_V2_GPIO_P1_18>, //X coord
         	rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21, _StepperEn>, //X coord
