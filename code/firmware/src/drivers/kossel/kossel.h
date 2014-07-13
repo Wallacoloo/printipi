@@ -20,7 +20,7 @@
 #define R1000 100000
 #define L1000 260000
 #define H1000 700000
-#define STEPS_M 2000
+#define STEPS_M 10000
 #define STEPS_M_EXT 1000
 
 namespace drv {
@@ -47,7 +47,7 @@ class Kossel : public Driver {
         }
         void getTemperature(int &extruder, int& platform) const;
         inline float defaultMoveRate() const { //in mm/sec
-        	return 100;
+        	return 20;
         }
 };
 
