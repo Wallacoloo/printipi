@@ -3,6 +3,7 @@
 
 #include "drivers/endstop.h"
 #include "drivers/rpi/rpi.h"
+#include "logging.h"
 
 namespace drv {
 namespace rpi {
@@ -15,7 +16,9 @@ template <uint8_t Pin, bool ValueTriggered, bcm2835PUDControl PullUpDown=BCM2835
 			bcm2835_gpio_set_pud(Pin, PullUpDown);
 		}
 		static bool isTriggered() {
-			return bcm2835_gpio_lev(Pin) == ValueTriggered;
+			bool t = bcm2835_gpio_lev(Pin) == ValueTriggered;
+			LOGV("LeverEndstop: %i is %i\n", Pin, t);
+			return t;
 		}
 };
 
