@@ -411,7 +411,7 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	//typename Drv::AxisStepperTypes iters;
 	typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 	drv::AxisStepper::initAxisHomeSteppers(iters, destMoveRatePrimitive());
-	//this->scheduleAxisSteppers(iters, NAN);
+	this->scheduleAxisSteppers(iters, NAN);
 }
 
 #endif
