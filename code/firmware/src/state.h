@@ -312,6 +312,12 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		}
 		setHostZeroPos(actualX, actualY, actualZ, actualE);
 		resp = gparse::Command::OK;
+	/*} else if (cmd.isM17()) { //enable all stepper motors
+		LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not implemented\n");
+		resp = gparse::Command::OK;
+	} else if (cmd.isM18()) { //allow stepper motors to move 'freely'
+		LOGW("Warning (gparse/state.h): OP_M18 (disable stepper motors) not implemented\n");
+		resp = gparse::Command::OK;*/
 	} else if (cmd.isM21()) { //initialize SD card (nothing to do).
 		resp = gparse::Command::OK;
 	} else if (cmd.isM82()) { //set extruder absolute mode
@@ -334,7 +340,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		LOGW("Warning (gparse/state.h): OP_M106 (set fan speed) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM107()) { //set fan = off.
-		LOGW("Warning (gparse/state.h): OP_M106 (set fan off) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M107 (set fan off) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM109()) { //set extruder temperature to S param and wait.
 		LOGW("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");

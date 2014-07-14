@@ -25,6 +25,7 @@
  *  Add atexit levels, so that rpi gpio is disabled AFTER the IOdrivers are disabled.
  * *Add IO deactivation upon exit
  * *Add enable pin
+ *  Make CoordMapT, etc return tuples instead of using writebacks
  *  Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Investigate single-threading for entire process.
@@ -53,7 +54,7 @@ void printUsage(char* cmd) {
     //exit(1);
 }
 
-int main(int argc, char** argv) {
+int main_(int argc, char** argv) {
 	Scheduler::configureExitHandlers(); //useful to do this first-thing for catching debug info.
 	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
@@ -84,4 +85,16 @@ int main(int argc, char** argv) {
     //main loop:
     gparse::comLoop(fd, gState);
     return 0;
+}
+
+int main(int argc, char** argv) {
+	try { //wrap in a try/catch loop so we can safely clean up (disable IOs)
+		return main_(argc, argv);
+	} catch (const std::exception &e) {
+		LOGE("caught std::exception*: %s. ... Exiting\n", e.what());
+		return 1;
+	} catch (...) {
+		LOGE("caught unknown exception. Exiting\n");
+		return 1;
+	}
 }
