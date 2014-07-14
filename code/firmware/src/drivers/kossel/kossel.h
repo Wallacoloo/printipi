@@ -17,9 +17,9 @@
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
 //L1000 = length of the rods that connect each axis to the end effector
 //STEPS_M = #of steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
-#define R1000 100000
-#define L1000 260000
-#define H1000 800000
+#define R1000 125000
+#define L1000 215000
+#define H1000 500000
 #define STEPS_M 8000
 #define STEPS_M_EXT 1000
 
