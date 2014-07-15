@@ -20,7 +20,7 @@
 #define R1000 125000
 #define L1000 215000
 #define H1000 500000
-#define STEPS_M 8000
+#define STEPS_M 9000
 #define STEPS_M_EXT 1000
 
 namespace drv {

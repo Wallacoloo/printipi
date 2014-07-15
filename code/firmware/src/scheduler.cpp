@@ -34,6 +34,7 @@ void Scheduler::configureExitHandlers() {
 	sigIntHandler.sa_flags = 0;
 	sigaction(SIGINT, &sigIntHandler, NULL); //register ctrl+c
 	sigaction(SIGTSTP, &sigIntHandler, NULL); //register ctrl+z
+	sigaction(SIGABRT, &sigIntHandler, NULL); //register SIGABRT, which is triggered for critical errors (eg glibc detects double-free)
 	
 	struct sigaction sa;
     //memset(&sa, 0, sizeof(sigaction));
