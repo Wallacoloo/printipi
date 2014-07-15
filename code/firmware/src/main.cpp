@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
 	try { //wrap in a try/catch loop so we can safely clean up (disable IOs)
 		return main_(argc, argv);
 	} catch (const std::exception &e) {
-		LOGE("caught std::exception*: %s. ... Exiting\n", e.what());
+		LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
 		return 1;
 	} catch (...) {
 		LOGE("caught unknown exception. Exiting\n");
