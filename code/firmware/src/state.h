@@ -13,6 +13,7 @@
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
 #include <array>
+#include <atomic>
 //#include <memory> //for unique_ptr
 #include <utility> //for std::pair
 #include <functional>
@@ -28,6 +29,7 @@
 #include "typesettings.h"
 
 template <typename Drv> class State {
+	std::atomic<bool> _isDeadOrDying; //for thread destruction upon death.
 	PositionMode _positionMode; // = POS_ABSOLUTE;
 	PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
 	LengthUnit unitMode; // = UNIT_MM;
@@ -45,6 +47,7 @@ template <typename Drv> class State {
 		static const int DEFAULT_HOTEND_TEMP = -300;
 		static const int DEFAULT_BED_TEMP = -300;
 		State(Drv &drv);
+		~State();
 		/* Control interpretation of positions from the host as relative or absolute */
 		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
@@ -92,7 +95,8 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(Drv &drv) : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
+template <typename Drv> State<Drv>::State(Drv &drv) : _isDeadOrDying(false), 
+	_positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
@@ -105,6 +109,12 @@ template <typename Drv> State<Drv>::State(Drv &drv) : _positionMode(POS_ABSOLUTE
 	{
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	//this->setDestFeedRatePrimitive(drv.defaultFeedRate());
+}
+
+template <typename Drv> State<Drv>::~State() {
+	this->_isDeadOrDying = true;
+	this->scheduler.queue(Event());
+	this->schedthread.join();
 }
 
 template <typename Drv> PositionMode State<Drv>::positionMode() const {
@@ -240,6 +250,9 @@ template <typename Drv> void State<Drv>::eventLoop() {
 	this->scheduler.initSchedThread();
 	while (1) {
 		Event evt = this->scheduler.nextEvent();
+		if (this->_isDeadOrDying) {
+			return;
+		}
 		this->handleEvent(evt);
 	}
 }
