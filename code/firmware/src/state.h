@@ -369,7 +369,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		LOGW("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
 		resp = gparse::Command::OK;
 	} else {
-		throw new std::runtime_error("unrecognized gcode opcode");
+		throw std::runtime_error("unrecognized gcode opcode");
 	}
 	return resp;
 }
