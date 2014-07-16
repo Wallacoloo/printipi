@@ -51,6 +51,14 @@ class Kossel : public Driver {
         inline float defaultMoveRate() const { //in mm/sec
         	return 50;
         }
+        inline float clampMoveRate(float inp) const {
+        	if (inp > defaultMoveRate()) {
+        		return defaultMoveRate();
+        	}
+        }
+        inline float clampHomeRate(float inp) const {
+        	return 10;
+        }
 };
 
 }

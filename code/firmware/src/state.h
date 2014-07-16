@@ -221,7 +221,7 @@ template <typename Drv> float State<Drv>::destMoveRatePrimitive() const {
 	return this->_destMoveRatePrimitive;
 }
 template <typename Drv> void State<Drv>::setDestMoveRatePrimitive(float f) {
-	this->_destMoveRatePrimitive = f;
+	this->_destMoveRatePrimitive = this->driver.clampMoveRate(f);
 }
 /*template <typename Drv> float State<Drv>::destFeedRatePrimitive() const {
 	return this->_destFeedRatePrimitive;
@@ -429,7 +429,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 template <typename Drv> void State<Drv>::homeEndstops() {
 	//typename Drv::AxisStepperTypes iters;
 	typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
-	drv::AxisStepper::initAxisHomeSteppers(iters, destMoveRatePrimitive());
+	drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
 	auto b = this->scheduler.getBufferSize();
 	this->scheduler.setBufferSize(1);
 	this->scheduleAxisSteppers(iters, NAN);
