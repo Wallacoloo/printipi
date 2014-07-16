@@ -223,12 +223,6 @@ template <typename Drv> float State<Drv>::destMoveRatePrimitive() const {
 template <typename Drv> void State<Drv>::setDestMoveRatePrimitive(float f) {
 	this->_destMoveRatePrimitive = this->driver.clampMoveRate(f);
 }
-/*template <typename Drv> float State<Drv>::destFeedRatePrimitive() const {
-	return this->_destFeedRatePrimitive;
-}
-template <typename Drv> void State<Drv>::setDestFeedRatePrimitive(float f) {
-	this->_destFeedRatePrimitive = f;
-}*/
 
 template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float z, float e) {
 	_hostZeroX = x;

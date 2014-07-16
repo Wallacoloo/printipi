@@ -14,7 +14,7 @@ void atexit_bcm2835_close() {
 }
 
 void initIO() {
-	if (!wasBcmInit) {
+	if (!wasBcmInit) { //it's OK to double-init (or double-free), but just wastes CPU, and we only really want 1 exit handler.
 		wasBcmInit = true;
 		if (bcm2835_init()) {
 			Scheduler::registerExitHandler(atexit_bcm2835_close, SCHED_MEM_EXIT_LEVEL);

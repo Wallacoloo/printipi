@@ -14,15 +14,17 @@
  * *Enable new stepper driver
  * *Wire all three steppers
  * *Add exit handlers, TO SCHEDULER.
- *  Prevent calling exit() from within an atexit handler
- *  Add 100 uF capacitors to stepper drivers (crucial!)
+ * *Prevent calling exit() from within an atexit handler
+ * *Add 100 uF capacitors to stepper drivers (crucial!)
  *  Solder thermistor
  *  Add thermister support
  * *Add endstop support
  *  Prevent stepping when endstop is triggered.
  *  Add max/min bounds for each axis
  *  Add acceleration
- *  Add atexit levels, so that rpi gpio is disabled AFTER the IOdrivers are disabled.
+ * *Add atexit levels, so that rpi gpio is disabled AFTER the IOdrivers are disabled.
+ *    Should the exit handlers prevent double-registration (ie, use std::set)?
+ *      avoid std::set just for the extra memory and code usage
  * *Add IO deactivation upon exit
  * *Add enable pin
  *  Make CoordMapT, etc return tuples instead of using writebacks
@@ -31,6 +33,8 @@
  *  Investigate single-threading for entire process.
  *  Look into coordinate rounding for State::queueMovement
  *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
+ *  Document
+ *  Put copywrite at head of every file.
 */
 
 #include <string>
