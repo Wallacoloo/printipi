@@ -49,7 +49,7 @@ class Kossel : public Driver {
         }
         void getTemperature(int &extruder, int& platform) const;
         inline float defaultMoveRate() const { //in mm/sec
-        	return 50;
+        	return 30;
         }
         inline float clampMoveRate(float inp) const {
         	if (inp > defaultMoveRate()) {
