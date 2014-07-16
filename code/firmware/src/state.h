@@ -369,6 +369,9 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 }
 
 template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration) {
+	if (Drv::numAxis() == 0) { 
+		return; //some of the following logic may assume that there are at least 1 axis.
+	}
 	timespec baseTime = scheduler.lastSchedTime();
 	do {
 		drv::AxisStepper& s = drv::AxisStepper::getNextTime(iters);
@@ -389,10 +392,6 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	//Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, _destXPrimitive, _destYPrimitive, _destZPrimitive, _destEPrimitive);
 	float curX, curY, curZ, curE;
 	Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, curX, curY, curZ, curE);
-	/*float curX = destXPrimitive();
-	float curY = destYPrimitive();
-	float curZ = destZPrimitive();
-	float curE = destEPrimitive();*/
 	float velXYZ = destMoveRatePrimitive();
 	_destXPrimitive = x;
 	_destYPrimitive = y;
@@ -405,10 +404,6 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	float vz = (z-curZ)/dist * velXYZ;
 	float duration = dist/velXYZ;
 	float velE = (e-curE)/duration;
-	/*constexpr std::size_t numAxis = Drv::numAxis(); //driver.numAxis();
-	if (numAxis == 0) { 
-		return; //some of the following logic may assume that there are at least 1 axis.
-	}*/
 	LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 	LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, dur:%f\n", velXYZ, vx, vy, vz, duration);
