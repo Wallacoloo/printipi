@@ -43,7 +43,7 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12, _StepperEn>  > IODriverTypes; //E coord
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
         IODriverTypes ioDrivers;
-        _EndstopA endstops;
+        std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
