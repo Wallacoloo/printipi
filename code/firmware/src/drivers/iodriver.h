@@ -21,7 +21,7 @@ class IODriver {
 			//if (IODriverInfo<ThisT>::HasDeactivateMethod) {
 				//Scheduler::registerExitHandler((void(*)())&ThisT::deactivate);
 			//}
-			Scheduler::registerExitHandler((void(*)())&ThisT::deactivate);
+			Scheduler::registerExitHandler((void(*)())&ThisT::deactivate, SCHED_IO_EXIT_LEVEL);
 		}
 		//for a (stepper) motor, advance +/- 1 step:
 		inline void stepForward() {} //OVERRIDE THIS

@@ -7,26 +7,34 @@
 #include "logging.h"
 #include "timeutil.h"
 
-void onExit() {
-	LOG("Exiting\n");
-}
+std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> Scheduler::exitHandlers;
+std::atomic<bool> Scheduler::isExiting(false);
+
 
 void ctrlCOrZHandler(int s){
    printf("Caught signal %d\n",s);
    exit(1); 
 }
 
-void segfaultHandler(int signal, siginfo_t *si, void *arg) {
+void segfaultHandler(int /*signal*/, siginfo_t *si, void */*arg*/) {
     printf("Caught segfault at address %p\n", si->si_addr);
     exit(1);
 }
 
+void Scheduler::callExitHandlers() {
+	if (!isExiting.exchange(true)) { //try setting isExiting to true. If it was previously false, then call the exit handlers:
+		LOG("Exiting\n");
+		for (const std::vector<void(*)()>& level : exitHandlers) {
+			for (void(*handler)()& : level) {
+				(*handler)();
+			}
+		}
+	}
+}
+
 
 void Scheduler::configureExitHandlers() {
-	if (DO_LOG) {
-		Scheduler::registerExitHandler(&onExit);
-		//std::atexit(onExit);
-	}
+	std::atexit((void(*)())&Scheduler::callExitHandlers);
 	//listen for ctrl+c, ctrl+z and segfaults. Then try to properly unmount any I/Os (crucial for disabling the heated nozzle)
 	struct sigaction sigIntHandler;
 	sigIntHandler.sa_handler = ctrlCOrZHandler;
@@ -44,8 +52,12 @@ void Scheduler::configureExitHandlers() {
     sigaction(SIGSEGV, &sa, NULL); //register segfault listener
 }
 
-void Scheduler::registerExitHandler(void (*handler)()) {
-	std::atexit(handler);
+void Scheduler::registerExitHandler(void (*handler)(), unsigned level) {
+	if (level > exitHandlers.size()) {
+		throw std::runtime_error("Tried to register an exit handler at too high of a level");
+	}
+	exitHandlers[level].push_back(handler);
+	//std::atexit(handler);
 }
 
 
