@@ -17,7 +17,7 @@ void initIO() {
 	if (!wasBcmInit) {
 		wasBcmInit = true;
 		if (bcm2835_init()) {
-			Scheduler::registerExitHandler(atexit_bcm2835_close);
+			Scheduler::registerExitHandler(atexit_bcm2835_close, SCHED_MEM_EXIT_LEVEL);
 			//std::atexit(atexit_bcm2835_close);
 		}
 	}
