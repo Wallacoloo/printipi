@@ -12,6 +12,7 @@
 #include "drivers/lineardeltacoordmap.h"
 #include "drivers/rpi/onepinenabler.h"
 #include "drivers/rpi/leverendstop.h"
+#include "drivers/rpi/rcthermistor.h"
 #include <tuple>
 
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
@@ -31,6 +32,7 @@ class Kossel : public Driver {
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, 0, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, 0, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, 0, BCM2835_GPIO_PUD_DOWN> _EndstopC;
+		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_11, 470, 1000> _Thermistor;
     public:
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000, H1000, STEPS_M> CoordMapT;
@@ -44,10 +46,13 @@ class Kossel : public Driver {
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
         IODriverTypes ioDrivers;
         std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
+        _Thermistor thermistor;
         constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-        void getTemperature(int &extruder, int& platform) const;
+        inline void getTemperature(int &extruder, int& platform) const {
+        	extruder = thermistor.readTemperature();
+        }
         inline float defaultMoveRate() const { //in mm/sec
         	return 30;
         }
