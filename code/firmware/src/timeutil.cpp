@@ -1,5 +1,11 @@
 #include "timeutil.h"
 
+timespec timespecNow() {
+	struct timespec curTime;
+	clock_gettime(CLOCK_MONOTONIC, &curTime);
+	return curTime;
+}
+
 timespec timespecAdd(const struct timespec &a, const struct timespec &b) {
 	struct timespec ret;
 	ret.tv_sec = a.tv_sec + b.tv_sec;

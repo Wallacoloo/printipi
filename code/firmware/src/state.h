@@ -437,6 +437,7 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 }
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
+	this->scheduler.schedPwm(driver.getFanIODriverIdx(), PwmInfo(rate, driver.defaultFanPwmPeriod()));
 }
 
 #endif
