@@ -1,4 +1,5 @@
 #include "event.h"
+#include "timeutil.h" //for timespecLt
 
 
 AxisIdType Event::stepperId() const {
@@ -35,4 +36,8 @@ void Event::offsetNano(unsigned nsec) {
         this->_time.tv_sec += 1;
         this->_time.tv_nsec -= 1000000000;
     }
+}
+
+bool Event::operator<(const Event &other) {
+	return timespecLt(this->time(), other.time());
 }

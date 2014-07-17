@@ -4,6 +4,7 @@
 #include <time.h> //for clock_nanosleep
 #include <signal.h> //for sigaction signal handlers
 #include <cstdlib> //for atexit
+#include <algorithm> //for push_heap
 #include "logging.h"
 #include "timeutil.h"
 
@@ -77,9 +78,9 @@ void Scheduler::queue(const Event& evt) {
 }
 
 void Scheduler::orderedInsert(const Event &evt) {
-	if (timespecLt(evt.time(), this->eventQueue.back().time())) { //insert to middle of queue.
-	} else { //Fast insert to end of queue.
-		this->eventQueue.push_back(evt);
+	this->eventQueue.push_back(evt);
+	if (timespecLt(evt.time(), this->eventQueue.back().time())) { //If not already ordered, we must order it.
+		std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
 	}
 }
 
