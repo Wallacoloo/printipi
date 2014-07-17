@@ -19,7 +19,7 @@
  * *Solder thermistor
  *  Add thermister support
  * *Add endstop support
- *  Rename gmath.h to mathutil.h
+ * *Rename gmath.h to mathutil.h
  *  Prevent stepping when endstop is triggered.
  *  Add max/min bounds for each axis
  *  Add acceleration

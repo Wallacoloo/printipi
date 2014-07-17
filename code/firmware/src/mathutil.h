@@ -1,9 +1,9 @@
-#ifndef GMATH_H
-#define GMATH_H
+#ifndef MATHUTIL_H
+#define MATHUTIL_H
 
 #include <limits>
 
-namespace gmath {
+namespace mathutil {
 
 const float MM_PER_IN = 25.4; //It appears that by definition, there are EXACTLY 25.4 mm per inch.
 const float NANOSECOND = 1e-9;

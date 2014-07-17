@@ -23,7 +23,7 @@
 #include "event.h"
 #include "scheduler.h"
 #include "drivers/driver.h"
-#include "gmath.h"
+#include "mathutil.h"
 #include "drivers/axisstepper.h"
 #include "drivers/iodriver.h"
 #include "typesettings.h"
@@ -182,7 +182,7 @@ template <typename Drv> float State<Drv>::eUnitToAbsolute(float posUnit) const {
 template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
 	switch (this->unitMode) {
 		case UNIT_IN:
-			return gmath::MM_PER_IN * posUnit;
+			return mathutil::MM_PER_IN * posUnit;
 		case UNIT_MM:
 		default: //impossible case.
 			return posUnit;
