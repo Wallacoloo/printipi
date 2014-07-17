@@ -24,6 +24,21 @@
 #define STEPS_M 9000
 #define STEPS_M_EXT 1000
 
+/*Used IOs:
+  7
+  (11)
+  (12)
+  13
+  15
+  16
+  18
+  19
+  21
+  22
+  23
+  24
+  26
+*/
 namespace drv {
 
 class Kossel : public Driver {
@@ -32,7 +47,7 @@ class Kossel : public Driver {
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, 0, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, 0, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, 0, BCM2835_GPIO_PUD_DOWN> _EndstopC;
-		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_11, 470, 1000> _Thermistor;
+		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, 470, 100000> _Thermistor;
     public:
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000, H1000, STEPS_M> CoordMapT;
