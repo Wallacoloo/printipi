@@ -16,9 +16,10 @@
  * *Add exit handlers, TO SCHEDULER.
  * *Prevent calling exit() from within an atexit handler
  * *Add 100 uF capacitors to stepper drivers (crucial!)
- *  Solder thermistor
+ * *Solder thermistor
  *  Add thermister support
  * *Add endstop support
+ *  Rename gmath.h to mathutil.h
  *  Prevent stepping when endstop is triggered.
  *  Add max/min bounds for each axis
  *  Add acceleration

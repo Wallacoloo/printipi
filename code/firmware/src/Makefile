@@ -63,7 +63,7 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 %/drivers/rpi/rpi.a: %/drivers/rpi/bcm2835.o %/drivers/rpi/rpi.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/kossel/kossel.o %/drivers/rpi/rpi.a
+%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/rpi/rpi.a
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/command.o %/gparse/serial.o

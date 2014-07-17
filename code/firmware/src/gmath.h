@@ -27,6 +27,9 @@ template <typename T1> T1 makeZeroIfClose(T1 a, float epsilon=NANOSECOND) {
 	}
 }
 
+template <typename T> T binaryParameterGuess(T(*func)(T), T lower, T upper) {
+}
+
 
 }
 
