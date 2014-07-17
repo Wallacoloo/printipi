@@ -84,6 +84,16 @@ void Scheduler::orderedInsert(const Event &evt) {
 	}
 }
 
+void Scheduler::schedPwm(AxisIdType idx, const PwmInfo &p) {
+	if (pwmInfo[idx].nsHigh != 0 && pwmInfo[idx].nsLow != 0) { //already scheduled and running. Just update times.
+		pwmInfo[idx] = p;
+	} else { //have to schedule:
+		pwmInfo[idx] = p;
+		Event evt(timespecNow(), idx, StepForward);
+		this->queue(evt);
+	}
+}
+
 
 Event Scheduler::nextEvent() {
 	Event evt;

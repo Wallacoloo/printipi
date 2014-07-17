@@ -59,6 +59,7 @@ class Scheduler {
 		static void registerExitHandler(void (*handler)(), unsigned level);
 		//queue and nextEvent can be called from separate threads, but nextEvent must NEVER be called from multiple threads.
 		void queue(const Event &evt);
+		void schedPwm(AxisIdType idx, const PwmInfo &p);
 		Scheduler();
 		Event nextEvent();
 		void initSchedThread(); //call this from whatever threads call nextEvent to optimize that thread's priority.
