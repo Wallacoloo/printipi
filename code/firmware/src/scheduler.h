@@ -1,7 +1,8 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-#include <queue>
+//#include <queue>
+#include <deque>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
@@ -38,7 +39,8 @@ struct PwmInfo {
 
 class Scheduler {
 	std::array<PwmInfo, 256> pwmInfo; 
-	std::queue<Event> eventQueue;
+	//std::queue<Event> eventQueue;
+	std::deque<Event> eventQueue;
 	
 	mutable std::mutex mutex;
 	std::unique_lock<std::mutex> _lockPushes;
@@ -51,11 +53,12 @@ class Scheduler {
 	static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic.
 	private:
 		static void callExitHandlers();
+		void orderedInsert(const Event &evt);
 	public:
 		static void configureExitHandlers();
 		static void registerExitHandler(void (*handler)(), unsigned level);
 		//queue and nextEvent can be called from separate threads, but nextEvent must NEVER be called from multiple threads.
-		void queue(const Event& evt);
+		void queue(const Event &evt);
 		Scheduler();
 		Event nextEvent();
 		void initSchedThread(); //call this from whatever threads call nextEvent to optimize that thread's priority.
