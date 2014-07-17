@@ -38,10 +38,14 @@ class Command {
 		float getE(bool &hasE) const;
 		float getF(float def=NAN) const; //extruder feed-rate.
 		float getF(bool &hasF) const;
+		float getS(float def=NAN) const; //PWM rate
+		float getS(bool &hasS) const;
 		bool hasX() const;
 		bool hasY() const;
 		bool hasZ() const;
 		bool hasE() const;
+		bool hasF() const;
+		bool hasS() const;
 		bool hasAnyXYZParam() const;
 		bool hasAnyXYZEParam() const;
 		inline bool isG0()   const { return this->opcode ==   "G0"; }

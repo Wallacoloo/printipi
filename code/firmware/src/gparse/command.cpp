@@ -123,6 +123,12 @@ float Command::getF(float def) const {
 float Command::getF(bool &hasParam) const {
     return this->getFloatParam('F', hasParam);
 }
+float Command::getS(float def) const {
+    return this->getFloatParam('S', def);
+}
+float Command::getS(bool &hasParam) const {
+    return this->getFloatParam('S', hasParam);
+}
 
 bool Command::hasX() const {
 	return hasParam('X');
@@ -135,6 +141,12 @@ bool Command::hasZ() const {
 }
 bool Command::hasE() const {
 	return hasParam('E');
+}
+bool Command::hasF() const {
+	return hasParam('F');
+}
+bool Command::hasS() const {
+	return hasParam('S');
 }
 
 bool Command::hasAnyXYZParam() const {
