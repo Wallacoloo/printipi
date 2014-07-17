@@ -1,6 +1,6 @@
 #include "driver.h"
 
-void Driver::getTemperature(int &extruder, int &bed) {
-	extruder=100;
+void Driver::getTemperature(CelciusType &extruder, CelciusType &bed) {
+	//extruder=100;
 	//bed=100;
 }

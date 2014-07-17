@@ -35,6 +35,7 @@ class Event {
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		
 		void offset(const struct timespec& offset);
+		void offsetNano(unsigned nsec); //must be less than 1 second.
 		
 };
 

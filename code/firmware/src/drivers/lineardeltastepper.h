@@ -14,7 +14,7 @@
 #include "linearstepper.h" //for LinearHomeStepper
 #include "endstop.h"
 
-//#define A0LOGV(format, args...) \
+//#define A0LOGV(format, args...) 
 //	if (AxisIdx==0) { LOGV(format, ## args); }
 #define A0LOGV(format, args...) LOGV(format, ## args)
 

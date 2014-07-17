@@ -28,3 +28,11 @@ void Event::offset(const struct timespec& offset) {
         this->_time.tv_nsec -= 1000000000;
     }
 }
+
+void Event::offsetNano(unsigned nsec) {
+	this->_time.tv_nsec += nsec;
+	if (this->_time.tv_nsec > 999999999) {
+        this->_time.tv_sec += 1;
+        this->_time.tv_nsec -= 1000000000;
+    }
+}
