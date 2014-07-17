@@ -5,6 +5,7 @@
 
 timespec timespecAdd(const struct timespec &a, const struct timespec &b);
 timespec timespecSub(const struct timespec &a, const struct timespec &b);
+bool timespecLt(const struct timespec &a, const struct timespec &b);
 float timespecToFloat(const struct timespec &a);
 
 #endif

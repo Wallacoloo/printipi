@@ -77,7 +77,10 @@ void Scheduler::queue(const Event& evt) {
 }
 
 void Scheduler::orderedInsert(const Event &evt) {
-	this->eventQueue.push_back(evt);
+	if (timespecLt(evt.time(), this->eventQueue.back().time())) { //insert to middle of queue.
+	} else { //Fast insert to end of queue.
+		this->eventQueue.push_back(evt);
+	}
 }
 
 
