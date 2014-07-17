@@ -40,7 +40,7 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 			//now try to guess the resistance:
 			float resistance = guessRFromTime(duration);
 			LOG("Resistance guess: %f\n", resistance);
-			return resistance;
+			return temperatureFromR(resistance);
 			//return time;
 		}
 		float guessRFromTime(float time) const {
@@ -65,6 +65,9 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 				}
 			}
 			return 0.5*(lower+upper);
+		}
+		float temperatureFromR(float resistance) const {
+			return resistance;
 		}
 };
 
