@@ -86,12 +86,12 @@ void Scheduler::orderedInsert(const Event &evt) {
 
 void Scheduler::schedPwm(AxisIdType idx, const PwmInfo &p) {
 	LOGV("Scheduler::schedPwm: %i, %u, %u. Current: %u, %u\n", idx, p.nsHigh, p.nsLow, pwmInfo[idx].nsHigh, pwmInfo[idx].nsLow);
-	if (pwmInfo[idx].nsHigh != 0 && pwmInfo[idx].nsLow != 0) { //already scheduled and running. Just update times.
+	if (pwmInfo[idx].nsHigh != 0 || pwmInfo[idx].nsLow != 0) { //already scheduled and running. Just update times.
 		pwmInfo[idx] = p;
 	} else { //have to schedule:
 		LOGV("Scheduler::schedPwm: queueing\n");
 		pwmInfo[idx] = p;
-		Event evt(timespecNow(), idx, StepForward);
+		Event evt(timespecNow(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
 		this->queue(evt);
 	}
 }
@@ -108,17 +108,21 @@ Event Scheduler::nextEvent() {
 	evt = this->eventQueue.front();
 	this->eventQueue.pop_front();
 	//check if event is PWM-based:
-	if (evt.direction() == StepForward) {
-		if (pwmInfo[evt.stepperId()].nsHigh != 0) { //do we have a defined high-time? If not, then PWM is over.
-			Event nextPwm(evt.time(), evt.stepperId(), StepBackward);
-			nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
-			this->orderedInsert(nextPwm); //to do: ordered insert
-		}
-	} else {
-		if (pwmInfo[evt.stepperId()].nsLow != 0) { //do we have a defined low-time? If not, then PWM is over.
-			Event nextPwm(evt.time(), evt.stepperId(), StepForward);
-			nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
-			this->orderedInsert(nextPwm);
+	if (pwmInfo[evt.stepperId()].nsLow != 0 || pwmInfo[evt.stepperId()].nsHigh != 0) {
+		if (evt.direction() == StepForward) {
+			//if (pwmInfo[evt.stepperId()].nsLow != 0) { //do we need to transition to a low time again? If not, then stay here forever.
+				//next event will be StepBackward, or refresh this event if there is no off-duty.
+				Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
+				nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
+				this->orderedInsert(nextPwm); //to do: ordered insert
+			//}
+		} else {
+			//if (pwmInfo[evt.stepperId()].nsHigh != 0) { //do we need to transition to a high time again? If not, then stay here forever.
+				//next event will be StepForward, or refresh this event if there is no on-duty.
+				Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
+				nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
+				this->orderedInsert(nextPwm);
+			//}
 		}
 	}
 	if (this->eventQueue.size() < bufferSize) { //queue is underfilled; release the lock
