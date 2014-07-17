@@ -14,10 +14,10 @@
 
 namespace drv {
 
-void Kossel::getTemperature(int &extruder, int &bed) const {
+/*void Kossel::getTemperature(int &extruder, int &bed) const {
 	extruder=100;
 	//bed=100;
-}
+}*/
 
 /*float Kossel::defaultMoveRate() const {
 	return 10;
