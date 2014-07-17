@@ -15,10 +15,10 @@
 namespace drv {
 namespace rpi {
 
-template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO> class RCThermistor {
+template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV> class RCThermistor {
 	static constexpr float C = C_PICO * 1.0e-12;
-	static constexpr float Vcc = 3.3;
-	static constexpr float Va = 1.65;
+	static constexpr float Vcc = VCC_mV/1000;
+	static constexpr float Va = V_TOGGLE_mV/1000;
 	static constexpr float Ra = R_OHMS;
 	public:
 		RCThermistor() {
