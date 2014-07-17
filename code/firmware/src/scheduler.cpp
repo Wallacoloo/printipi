@@ -25,7 +25,7 @@ void Scheduler::callExitHandlers() {
 	if (!isExiting.exchange(true)) { //try setting isExiting to true. If it was previously false, then call the exit handlers:
 		LOG("Exiting\n");
 		for (const std::vector<void(*)()>& level : exitHandlers) {
-			for (void(*handler)()& : level) {
+			for (void(*handler)() : level) {
 				(*handler)();
 			}
 		}

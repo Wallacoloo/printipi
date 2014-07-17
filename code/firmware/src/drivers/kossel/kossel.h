@@ -60,6 +60,7 @@ class Kossel : public Driver {
         	if (inp > defaultMoveRate()) {
         		return defaultMoveRate();
         	}
+        	return inp;
         }
         inline float clampHomeRate(float inp) const {
         	return 10;
