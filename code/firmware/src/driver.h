@@ -4,7 +4,7 @@
 class Driver {
 	public:
 		//M105
-		void getTemperature(int &extruder, int& platform);
+		void getTemperature(CelciusType &extruder, CelciusType& platform);
 };
 
 #endif

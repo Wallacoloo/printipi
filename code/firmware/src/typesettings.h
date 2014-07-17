@@ -4,6 +4,7 @@
 #include <cstdint> //for uint8_t
 
 typedef uint8_t AxisIdType;
+typedef float CelciusType;
 
 enum PositionMode {
 	POS_ABSOLUTE,

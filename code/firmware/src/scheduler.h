@@ -9,6 +9,7 @@
 #include <array>
 #include <vector>
 #include <atomic>
+#include <tuple>
 //#include <functional>
 #include "event.h"
 
@@ -28,14 +29,23 @@
 #define SCHED_IO_EXIT_LEVEL 0
 #define SCHED_MEM_EXIT_LEVEL 1
 
+struct PwmInfo {
+	unsigned nsHigh;
+	unsigned nsLow;
+	PwmInfo() : nsHigh(0), nsLow(0) {}
+	PwmInfo(float duty, float period) : nsHigh(duty*period*1000000000), nsLow((1-duty)*period*1000000000) {}
+};
 
 class Scheduler {
+	std::array<PwmInfo, 256> pwmInfo; 
 	std::queue<Event> eventQueue;
+	
 	mutable std::mutex mutex;
 	std::unique_lock<std::mutex> _lockPushes;
 	bool _arePushesLocked;
 	std::condition_variable nonemptyCond;
-	struct timespec lastEventHandledTime;
+	
+	//struct timespec lastEventHandledTime; //used? Only written - never read!
 	unsigned bufferSize;
 	static std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> exitHandlers;
 	static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic.

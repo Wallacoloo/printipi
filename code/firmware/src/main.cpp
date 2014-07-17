@@ -17,8 +17,8 @@
  * *Prevent calling exit() from within an atexit handler
  * *Add 100 uF capacitors to stepper drivers (crucial!)
  * *Solder thermistor
- *  Add thermister support
- *  Add heater support
+ * *Add thermister support
+ *  Add heater support (And PWM)
  * *Add endstop support
  * *Rename gmath.h to mathutil.h
  *  Prevent stepping when endstop is triggered.
@@ -30,6 +30,7 @@
  * *Add IO deactivation upon exit
  * *Add enable pin
  *  Make CoordMapT, etc return tuples instead of using writebacks
+ *  Make Driver::getTemperature return tuples
  *  Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Investigate single-threading for entire process.
@@ -37,6 +38,7 @@
  *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
  *  Document
  *  Put copywrite at head of every file.
+ *  Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
 */
 
 #include <string>

@@ -44,8 +44,8 @@ template <typename Drv> class State {
 	std::thread schedthread;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
-		static const int DEFAULT_HOTEND_TEMP = -300;
-		static const int DEFAULT_BED_TEMP = -300;
+		static constexpr CelciusType DEFAULT_HOTEND_TEMP = -300; // < absolute 0
+		static constexpr CelciusType DEFAULT_BED_TEMP = -300;
 		State(Drv &drv);
 		~State();
 		/* Control interpretation of positions from the host as relative or absolute */
@@ -340,7 +340,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		LOGW("Warning (gparse/state.h): OP_M104 (set hotend temp) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
-		int t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
+		CelciusType t=DEFAULT_HOTEND_TEMP, b=DEFAULT_BED_TEMP; //a temperature < absolute zero means no reading available.
 		driver.getTemperature(t, b);
 		resp = gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
