@@ -10,16 +10,20 @@
 #include <time.h> //for timespec
 #include <cmath>
 #include "timeutil.h" //for timespecSub, etc
+#include "mathutil.h" //for CtoK, etc
 #include "logging.h"
 
 namespace drv {
 namespace rpi {
 
-template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV> class RCThermistor {
+template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV, unsigned T0_C, unsigned R0_OHMS, unsigned BETA> class RCThermistor {
 	static constexpr float C = C_PICO * 1.0e-12;
 	static constexpr float Vcc = VCC_mV/1000.;
 	static constexpr float Va = V_TOGGLE_mV/1000.;
 	static constexpr float Ra = R_OHMS;
+	static constexpr float T0 = mathutil::CtoK(T0_C); //convert to Kelvin
+	static constexpr float R0 = R0_OHMS; //measured resistance of thermistor at T0
+	static constexpr float B = BETA; //describes how thermistor changes resistance over the temperature range.
 	public:
 		RCThermistor() {
 			initIO();
@@ -66,8 +70,9 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 			}
 			return 0.5*(lower+upper);
 		}
-		float temperatureFromR(float resistance) const {
-			return resistance;
+		float temperatureFromR(float R) const {
+			float K = 1. / (1./T0 + log(R/R0)/B); //resistance;
+			return mathutil::KtoC(K);
 		}
 };
 

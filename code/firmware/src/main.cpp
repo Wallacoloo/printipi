@@ -18,6 +18,7 @@
  * *Add 100 uF capacitors to stepper drivers (crucial!)
  * *Solder thermistor
  *  Add thermister support
+ *  Add heater support
  * *Add endstop support
  * *Rename gmath.h to mathutil.h
  *  Prevent stepping when endstop is triggered.
