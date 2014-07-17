@@ -66,7 +66,7 @@ class Kossel : public Driver {
             return 4; //A, B, C + Extruder
         }
         inline void getTemperature(int &extruder, int& platform) const {
-        	extruder = thermistor.readTemperature();
+        	extruder = thermistor.readTemperature()*100000;
         }
         inline float defaultMoveRate() const { //in mm/sec
         	return 30;

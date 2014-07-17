@@ -29,7 +29,7 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO> class RCThermistor {
 			clock_gettime(CLOCK_MONOTONIC, &t1);
 			do {} while (bcm2835_gpio_lev(PIN));
 			clock_gettime(CLOCK_MONOTONIC, &t2);
-			tDelta = timespecSub(t1, t2);
+			tDelta = timespecSub(t2, t1);
 			float time = timespecToFloat(tDelta);
 			LOG("time to read resistor: %f\n", time);
 			return time;
