@@ -72,8 +72,12 @@ void Scheduler::queue(const Event& evt) {
 	/*if (this->eventQueue.empty()) { //if no event is before this, then the relative time held by this event must be associated with the current time:
 		clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime));
 	}*/
-	this->eventQueue.push(evt);
+	this->orderedInsert(evt);
 	this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
+}
+
+void Scheduler::orderedInsert(const Event &evt) {
+	this->eventQueue.push_back(evt);
 }
 
 
@@ -86,19 +90,19 @@ Event Scheduler::nextEvent() {
 		this->nonemptyCond.wait(_lockPushes); //condition_variable.wait() can produce spurious wakeups; need the while loop.
 	}
 	evt = this->eventQueue.front();
-	this->eventQueue.pop();
+	this->eventQueue.pop_front();
 	//check if event is PWM-based:
 	if (evt.direction() == StepForward) {
 		if (pwmInfo[evt.stepperId()].nsHigh != 0) { //do we have a defined high-time? If not, then PWM is over.
 			Event nextPwm(evt.time(), evt.stepperId(), StepBackward);
 			nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
-			this->eventQueue.push(nextPwm); //to do: ordered insert
+			this->orderedInsert(nextPwm); //to do: ordered insert
 		}
 	} else {
 		if (pwmInfo[evt.stepperId()].nsLow != 0) { //do we have a defined low-time? If not, then PWM is over.
 			Event nextPwm(evt.time(), evt.stepperId(), StepForward);
 			nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
-			this->eventQueue.push(nextPwm);
+			this->orderedInsert(nextPwm);
 		}
 	}
 	if (this->eventQueue.size() < bufferSize) { //queue is underfilled; release the lock
