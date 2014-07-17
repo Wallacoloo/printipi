@@ -27,11 +27,12 @@ template <typename T1> T1 makeZeroIfClose(T1 a, float epsilon=NANOSECOND) {
 	}
 }
 
-/*template <typename T> T binaryParameterGuess(T(*func)(T), T lower, T upper, T res) {
-	while (1) {
-		if 
-	}
-}*/
+template <typename T> constexpr T CtoK(T C) {
+	return C + 273.15;
+}
+template <typename T> constexpr T KtoC(T K) {
+	return K - 273.15;
+}
 
 
 }
