@@ -39,6 +39,7 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO> class RCThermistor {
 			LOG("time to read resistor: %f\n", duration);
 			//now try to guess the resistance:
 			float resistance = guessRFromTime(duration);
+			LOG("Resistance guess: %f\n", resistance);
 			return resistance;
 			//return time;
 		}
