@@ -47,7 +47,7 @@ class Kossel : public Driver {
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, 0, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, 0, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, 0, BCM2835_GPIO_PUD_DOWN> _EndstopC;
-		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, 670, 100000> _Thermistor;
+		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, 665, 100000, 3300, 1500> _Thermistor;
     public:
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000, H1000, STEPS_M> CoordMapT;
@@ -65,7 +65,7 @@ class Kossel : public Driver {
         constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-        inline void getTemperature(int &extruder, int& platform) const {
+        inline void getTemperature(int &extruder, int& /*platform*/) const {
         	extruder = thermistor.readTemperature(); //*100000;
         }
         inline float defaultMoveRate() const { //in mm/sec
@@ -77,7 +77,7 @@ class Kossel : public Driver {
         	}
         	return inp;
         }
-        inline float clampHomeRate(float inp) const {
+        inline float clampHomeRate(float /*inp*/) const {
         	return 10;
         }
 };
