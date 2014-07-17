@@ -24,6 +24,10 @@ timespec timespecSub(const struct timespec &a, const struct timespec &b) {
 	return ret;
 }
 
+bool timespecLt(const struct timespec &a, const struct timespec &b) {
+	return a.tv_sec < b.tv_sec || (a.tv_sec == b.tv_sec && a.tv_nsec < b.tv_nsec);
+}
+
 float timespecToFloat(const struct timespec &a) {
 	return a.tv_sec + a.tv_nsec/1000000000.;
 }
