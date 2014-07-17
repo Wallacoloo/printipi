@@ -14,10 +14,10 @@ class EnableDisableDriver : public IODriver {
 	public:
 		template <typename ThisT> EnableDisableDriver(ThisT *_this) : IODriver(_this) {}
 		inline static void enable() {
-			LOGD("EnableDisablerDriver::enable()\n");
+			//LOGD("EnableDisablerDriver::enable()\n");
 		}
 		inline static void disable() {
-			LOGD("EnableDisablerDriver::disable()\n");
+			//LOGD("EnableDisablerDriver::disable()\n");
 		}
 };
 
