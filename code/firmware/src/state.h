@@ -52,7 +52,7 @@ template <typename Drv> class State {
 		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
 		/* Control interpretation of *extruder* positions from the host as relative or absolute.
-		 *If not explicitly set, it will default to the XYZ position mode. */
+		 *If not explicitly set, it will default to the same as the XYZ position mode. */
 		PositionMode extruderPosMode() const;
 		void setExtruderPosMode(PositionMode mode);
 		/* Control interpretation of distances sent by the host as inches or millimeters */
@@ -76,22 +76,26 @@ template <typename Drv> class State {
 		float destYPrimitive() const;
 		float destZPrimitive() const;
 		float destEPrimitive() const;
-		/* Control the feed and move rate */
+		/* Control the move rate (AKA "feed rate") */
 		float destMoveRatePrimitive() const;
 		void setDestMoveRatePrimitive(float f);
-		//float destFeedRatePrimitive() const;
-		//void setDestFeedRatePrimitive(float f);
 		/* The host can set any arbitrary point to be a reference to 0 */
 		void setHostZeroPos(float x, float y, float z, float e);
 		/* Processes the event immediately, eg stepping a stepper motor */
 		void handleEvent(const Event &evt);
 		void eventLoop();
-		/*execute the GCode on a Driver object that supports a well-defined interface.
-		 *returns a Command to send back to the host.*/
+		/* execute the GCode on a Driver object that supports a well-defined interface.
+		 * returns a Command to send back to the host. */
 		gparse::Command execute(gparse::Command const& cmd);
-		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration);
+		/* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
 		void queueMovement(float x, float y, float z, float e);
+		/* Home to the endstops. Does not return until endstops have been reached. */
 		void homeEndstops();
+		/* Set the hotend fan to a duty cycle between 0.0 and 1.0 */
+		void setFanRate(float rate);
+	private:
+		/* Used internally to communicate step event times with the scheduler when moving or homing */
+		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration);
 };
 
 
@@ -344,10 +348,16 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		driver.getTemperature(t, b);
 		resp = gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
-		LOGW("Warning (gparse/state.h): OP_M106 (set fan speed) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M106 (set fan speed) not tested\n");
+		float s = cmd.getS(1.0); //PWM duty cycle
+		if (s > 1) { //host thinks we're working from 0 to 255
+			s = s/256.0;
+		}
+		setFanRate(s);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM107()) { //set fan = off.
-		LOGW("Warning (gparse/state.h): OP_M107 (set fan off) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M107 (set fan off) not tested\n");
+		setFanRate(0);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM109()) { //set extruder temperature to S param and wait.
 		LOGW("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");
@@ -424,6 +434,9 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	this->scheduleAxisSteppers(iters, NAN);
 	this->scheduler.setBufferSize(b);
 	Drv::CoordMapT::getHomePosition(_destMechanicalPos);
+}
+
+template <typename Drv> void State<Drv>::setFanRate(float rate) {
 }
 
 #endif
