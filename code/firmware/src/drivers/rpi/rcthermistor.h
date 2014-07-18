@@ -16,7 +16,7 @@
 namespace drv {
 namespace rpi {
 
-template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV, unsigned T0_C, unsigned R0_OHMS, unsigned BETA> class RCThermistor {
+template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV, unsigned T0_C, unsigned R0_OHMS, unsigned BETA, unsigned MIN_R=0, unsigned MAX_R=R0_OHMS*2> class RCThermistor {
 	static constexpr float C = C_PICO * 1.0e-12;
 	static constexpr float Vcc = VCC_mV/1000.;
 	static constexpr float Va = V_TOGGLE_mV/1000.;
@@ -59,8 +59,8 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 			//t = C*Rt*ln(Rt*Vcc/ ((Ra+Rt)*Va));
 			//do a binary search for the value of Rt by judging to proximity to t.
 			//if the calculated t is < measured t, then Rt is too low. else too high.
-			float lower = 0;
-			float upper = 100000;
+			float lower = MIN_R;
+			float upper = MAX_R;
 			while (upper-lower > 2) {
 				float Rt = 0.5*(upper+lower);
 				float calcT = C*Rt*log(Rt*Vcc / ((Ra+Rt)*Va));
