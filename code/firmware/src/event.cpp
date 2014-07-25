@@ -43,7 +43,7 @@ void Event::offsetNano(unsigned nsec) {
     }
 }
 
-bool Event::operator<(const Event &other) {
+bool Event::operator<(const Event &other) const {
 	return timespecLt(this->time(), other.time());
 }
 

@@ -132,18 +132,24 @@ Event Scheduler::nextEvent(bool doSleep) {
 		this->_arePushesLocked = true;
 	}
 	if (doSleep) {
-		struct timespec sleepUntil = evt.time();
+		this->sleepUntilEvent(evt);
+		/*struct timespec sleepUntil = evt.time();
 		//struct timespec curTime;
 		//clock_gettime(CLOCK_MONOTONIC, &curTime);
 		//LOGV("Scheduler::nextEvent sleep from %lu.%lu until %lu.%lu\n", curTime.tv_sec, curTime.tv_nsec, sleepUntil.tv_sec, sleepUntil.tv_nsec);
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 		//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
-		//this->lastEventHandledTime = sleepUntil;
+		//this->lastEventHandledTime = sleepUntil;*/
 	}
 	return evt;
 }
 
-void Scheduler::initSchedThread() {
+void Scheduler::sleepUntilEvent(const Event &evt) const {
+	struct timespec sleepUntil = evt.time();
+	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
+}
+
+void Scheduler::initSchedThread() const {
 	struct sched_param sp; 
 	sp.sched_priority=SCHED_PRIORITY; 
 	if (int ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp)) {
