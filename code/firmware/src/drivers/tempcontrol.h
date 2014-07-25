@@ -20,6 +20,7 @@ template <typename IOFace, typename Thermistor> class TempControl : public IODri
 			if (_isReading) {
 				if (_therm.isReady()) {
 					_lastTemp = _therm.value();
+					_isReading = false;
 					return false; //no more cpu needed.
 				} else {
 					return true; //need more cpu time.
@@ -29,6 +30,7 @@ template <typename IOFace, typename Thermistor> class TempControl : public IODri
 				if (timespecLt(_nextReadTime, now)) { //time for another read
 					_nextReadTime = timespecAdd(now, _interval);
 					_therm.startRead();
+					_isReading = true;
 					return true; //more cpu time needed.
 				} else {
 					return false;
