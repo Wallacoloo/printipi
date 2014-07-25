@@ -61,7 +61,7 @@ class Kossel : public Driver {
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, 0, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, 0, BCM2835_GPIO_PUD_DOWN> _EndstopC;
 		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_8, 1> _Fan;
+		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> _Fan;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 1> _HotendOut;
 		//typedef TempControl<_HotendOut, _Thermistor> _HotendController;
     public:
