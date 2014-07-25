@@ -11,8 +11,9 @@ template <typename IOFace, typename Thermistor> class TempControl : public IODri
 	public:
 		TempControl() : IODriver(this), _lastTemp(0) {
 		}
-		void onIdleCpu() const {
+		bool onIdleCpu() const {
 			LOGV("TempControl::onIdleCpu()\n");
+			return false;
 			//_therm.onIdleCp
 		}
 		float getLastTemp() const {

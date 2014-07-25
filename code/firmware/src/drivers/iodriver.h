@@ -30,12 +30,13 @@ class IODriver {
 		safely deactivate any IOs, including motors, heaters, etc.*/
 		inline void deactivate() {} //OVERRIDE THIS
 		/* called when the scheduler has extra time,
-		Can be used to check the status of inputs, etc */
-		inline void onIdleCpu() {} //OVERRIDE THIS
+		Can be used to check the status of inputs, etc.
+		Return true if object needs to continue to be serviced, false otherwise. */
+		inline bool onIdleCpu() { return false; } //OVERRIDE THIS
 		//selectAndStep...: used internally
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
-		template <typename TupleT> static void callIdleCpuHandlers(TupleT &drivers);
+		template <typename TupleT> static bool callIdleCpuHandlers(TupleT &drivers);
 };
 
 //IODriver::selectAndStepForward helper functions:
@@ -89,20 +90,20 @@ template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers,
 //IODriver::callIdleCpuHandlers helper functions:
 
 template <typename TupleT, std::size_t myIdx> struct IODriver__onIdleCpu {
-	void operator()(TupleT &drivers) {
-		IODriver__onIdleCpu<TupleT, myIdx-1>()(drivers);
-		std::get<myIdx>(drivers).onIdleCpu();
+	bool operator()(TupleT &drivers) {
+		bool prev = IODriver__onIdleCpu<TupleT, myIdx-1>()(drivers);
+		return prev || std::get<myIdx>(drivers).onIdleCpu(); //return true if ANY objects need future servicing.
 	}
 };
 
 template <typename TupleT> struct IODriver__onIdleCpu<TupleT, 0> {
-	void operator()(TupleT &drivers) {
-		std::get<0>(drivers).onIdleCpu();
+	bool operator()(TupleT &drivers) {
+		return std::get<0>(drivers).onIdleCpu();
 	}
 };
 
-template <typename TupleT> void IODriver::callIdleCpuHandlers(TupleT &drivers) {
-	IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value-1>()(drivers);
+template <typename TupleT> bool IODriver::callIdleCpuHandlers(TupleT &drivers) {
+	return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value-1>()(drivers);
 }
 
 }

@@ -62,15 +62,18 @@ class Scheduler {
 		void schedPwm(AxisIdType idx, const PwmInfo &p);
 		Scheduler();
 		Event nextEvent(bool doSleep=true);
-		void initSchedThread(); //call this from whatever threads call nextEvent to optimize that thread's priority.
+		void sleepUntilEvent(const Event &evt) const;
+		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 		void setBufferSize(unsigned size);
 		unsigned getBufferSize() const;
-		template <typename T> void eventLoop(T* callbackObj, void(T::*onEvent)(const Event &e), void(T::*onWait)()) {
+		template <typename T> void eventLoop(T* callbackObj, void(T::*onEvent)(const Event &e), bool(T::*onWait)()) {
 			while (1) {
 				Event evt = this->nextEvent(false); //get next event, but don't sleep.
 				while (!evt.isTime()) {
-					(callbackObj->*onWait)();
+					if (!(callbackObj->*onWait)()) { //if we don't need any future waiting, then sleep to give cpu to other processes:
+						this->sleepUntilEvent(evt);
+					}
 				}
 				(callbackObj->*onEvent)(evt);
 			}
