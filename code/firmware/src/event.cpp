@@ -12,6 +12,11 @@ const struct timespec& Event::time() const {
 	return this->_time;
 }
 
+bool Event::isTime() const {
+	//time to handle event if now >= _time
+	return !timespecLt(timespecNow(), this->_time);
+}
+
 Event::Event(const timespec &t, AxisIdType stepperNum, StepDirection dir) : _time(t), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
 
 Event Event::StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir) {
@@ -41,3 +46,4 @@ void Event::offsetNano(unsigned nsec) {
 bool Event::operator<(const Event &other) {
 	return timespecLt(this->time(), other.time());
 }
+

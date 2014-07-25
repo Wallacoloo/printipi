@@ -97,7 +97,7 @@ void Scheduler::schedPwm(AxisIdType idx, const PwmInfo &p) {
 }
 
 
-Event Scheduler::nextEvent() {
+Event Scheduler::nextEvent(bool doSleep) {
 	Event evt;
 	if (!this->_arePushesLocked) { //Lock other threads from pushing to queue, if not done already.
 		_lockPushes.lock();
@@ -131,14 +131,15 @@ Event Scheduler::nextEvent() {
 	} else { //queue is filled; do not release the lock.
 		this->_arePushesLocked = true;
 	}
-	
-	struct timespec sleepUntil = evt.time();
-	struct timespec curTime;
-	clock_gettime(CLOCK_MONOTONIC, &curTime);
-	//LOGV("Scheduler::nextEvent sleep from %lu.%lu until %lu.%lu\n", curTime.tv_sec, curTime.tv_nsec, sleepUntil.tv_sec, sleepUntil.tv_nsec);
-	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
-	//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
-	//this->lastEventHandledTime = sleepUntil;
+	if (doSleep) {
+		struct timespec sleepUntil = evt.time();
+		//struct timespec curTime;
+		//clock_gettime(CLOCK_MONOTONIC, &curTime);
+		//LOGV("Scheduler::nextEvent sleep from %lu.%lu until %lu.%lu\n", curTime.tv_sec, curTime.tv_nsec, sleepUntil.tv_sec, sleepUntil.tv_nsec);
+		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
+		//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
+		//this->lastEventHandledTime = sleepUntil;
+	}
 	return evt;
 }
 

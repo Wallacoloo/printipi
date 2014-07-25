@@ -35,6 +35,7 @@ class IODriver {
 		//selectAndStep...: used internally
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
+		template <typename TupleT> static void callIdleCpuHandlers(TupleT &drivers);
 };
 
 //IODriver::selectAndStepForward helper functions:
@@ -83,6 +84,25 @@ template <typename TupleT> struct IODriver__stepBackward<TupleT, 0> {
 
 template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers, AxisIdType axis) {
 	IODriver__stepBackward<TupleT, std::tuple_size<TupleT>::value-1>()(drivers, axis);
+}
+
+//IODriver::callIdleCpuHandlers helper functions:
+
+template <typename TupleT, std::size_t myIdx> struct IODriver__onIdleCpu {
+	void operator()(TupleT &drivers) {
+		IODriver__onIdleCpu<TupleT, myIdx-1>()(drivers);
+		std::get<myIdx>(drivers).onIdleCpu();
+	}
+};
+
+template <typename TupleT> struct IODriver__onIdleCpu<TupleT, 0> {
+	void operator()(TupleT &drivers) {
+		std::get<0>(drivers).onIdleCpu();
+	}
+};
+
+template <typename TupleT> void IODriver::callIdleCpuHandlers(TupleT &drivers) {
+	IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value-1>()(drivers);
 }
 
 }
