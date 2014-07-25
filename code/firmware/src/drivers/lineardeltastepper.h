@@ -40,7 +40,7 @@ namespace drv {
 		}
 };*/
 
-template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000, unsigned STEPS_M, typename EndstopT=Endstop> class LinearDeltaStepper : public AxisStepper {
+template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000, unsigned STEPS_M, typename EndstopT=EndstopNoExist> class LinearDeltaStepper : public AxisStepper {
 	private:
 		float M0; //initial coordinate of THIS axis.
 		int sTotal;
