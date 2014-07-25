@@ -106,7 +106,9 @@ Event Scheduler::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 		//condition_variable.wait() can produce spurious wakeups; need the while loop.
 		//this->nonemptyCond.wait(_lockPushes); //condition_variable.wait() can produce spurious wakeups; need the while loop.
 		if (this->nonemptyCond.wait_for(_lockPushes, timeout) == std::cv_status::timeout) { 
-			_lockPushes.unlock(); //allow other threads to push to queue. It's clearly empty anyway.
+			if (!this->_arePushesLocked) { //if pushes aren't locked, then unlock the physical lock.
+				_lockPushes.unlock();
+			}
 			return Event(); //return null event
 		}
 	}
