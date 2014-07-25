@@ -14,6 +14,7 @@
 #include "drivers/rpi/leverendstop.h"
 #include "drivers/rpi/rcthermistor.h"
 #include "drivers/rpi/onepiniodriver.h"
+#include "drivers/tempcontrol.h"
 #include <tuple>
 
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
@@ -59,6 +60,8 @@ class Kossel : public Driver {
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, 0, BCM2835_GPIO_PUD_DOWN> _EndstopC;
 		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_11, 1> _Fan;
+		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_11, 1> _HotendOut;
+		typedef TempControl<_HotendOut, _Thermistor> _HotendController;
     public:
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000, H1000, STEPS_M> CoordMapT;
@@ -69,12 +72,14 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //B tower
         	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12, _StepperEn>, //E coord
-        	_Fan  
+        	_Fan,
+        	_HotendController,
+        	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
         IODriverTypes ioDrivers;
-        std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
-        _Thermistor thermistor;
+        //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
+        //_Thermistor thermistor;
         constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
@@ -85,13 +90,14 @@ class Kossel : public Driver {
         	return 0.002; //don't need high resolution
         }
         inline void getTemperature(CelciusType &extruder, CelciusType& /*platform*/) const {
-        	extruder = thermistor.readTemperature(); //*100000;
+        	extruder = std::get<5>(ioDrivers).getLastTemp();
+        	//extruder = thermistor.readTemperature(); //*100000;
         }
         inline float defaultMoveRate() const { //in mm/sec
         	return 30;
         }
         inline float clampMoveRate(float inp) const {
-        	if (inp > defaultMoveRate()) {
+        	if (inp > defaultMoveRate()) { //ensure we never move too fast.
         		return defaultMoveRate();
         	}
         	return inp;
