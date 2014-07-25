@@ -94,6 +94,9 @@ class Kossel : public Driver {
         	extruder = std::get<5>(ioDrivers).getLastTemp();
         	//extruder = thermistor.readTemperature(); //*100000;
         }
+        inline void setTemperature(CelciusType temp) {
+        	std::get<5>(ioDrivers).setTemp(temp);
+        }
         inline float defaultMoveRate() const { //in mm/sec
         	return 30;
         }
