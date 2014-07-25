@@ -6,8 +6,8 @@
 
 namespace drv {
 
-template <AxisIdType Axis, typename IOFace, typename Thermistor> class TempControl : public IODriver {
-	IOFace _ioFace;
+template <AxisIdType Axis, typename Heater, typename Thermistor> class TempControl : public IODriver {
+	Heater _heater;
 	Thermistor _therm;
 	float _destTemp;
 	float _lastTemp;
@@ -16,6 +16,13 @@ template <AxisIdType Axis, typename IOFace, typename Thermistor> class TempContr
 	struct timespec _interval;
 	public:
 		TempControl() : IODriver(this), _destTemp(0), _lastTemp(0), _isReading(false), _nextReadTime(timespecNow()), _interval{1, 0} {
+		}
+		//route output commands to the heater:
+		void stepForward() {
+			_heater.stepForward();
+		}
+		void stepBackward() {
+			_heater.stepBackward();
 		}
 		void setTemp(CelciusType t) {
 			_destTemp = t;
