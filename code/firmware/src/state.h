@@ -83,6 +83,8 @@ template <typename Drv> class State {
 		void setHostZeroPos(float x, float y, float z, float e);
 		/* Processes the event immediately, eg stepping a stepper motor */
 		void handleEvent(const Event &evt);
+		/* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
+		void satisfyIOs();
 		void eventLoop();
 		/* execute the GCode on a Driver object that supports a well-defined interface.
 		 * returns a Command to send back to the host. */
@@ -244,16 +246,19 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 		drv::IODriver::selectAndStepBackward(this->driver.ioDrivers, evt.stepperId());
 	}
 }
+template <typename Drv> void State<Drv>::satisfyIOs() {
+}
 
 template <typename Drv> void State<Drv>::eventLoop() {
 	this->scheduler.initSchedThread();
-	while (1) {
+	this->scheduler.eventLoop(this, &State<Drv>::handleEvent, &State<Drv>::satisfyIOs);
+	/*while (1) {
 		Event evt = this->scheduler.nextEvent();
 		if (this->_isDeadOrDying) {
 			return;
 		}
 		this->handleEvent(evt);
-	}
+	}*/
 }
 
 template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command const& cmd) {

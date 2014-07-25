@@ -66,6 +66,13 @@ class Scheduler {
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 		void setBufferSize(unsigned size);
 		unsigned getBufferSize() const;
+		template <typename T> void eventLoop(T* callbackObj, void(T::*onEvent)(const Event &e), void(T::*onWait)()) {
+			while (1) {
+				Event evt = this->nextEvent();
+				(callbackObj->*onWait)();
+				(callbackObj->*onEvent)(evt);
+			}
+		}
 };
 
 
