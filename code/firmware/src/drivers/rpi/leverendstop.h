@@ -12,6 +12,7 @@ namespace rpi {
 template <uint8_t Pin, bool ValueTriggered, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class LeverEndstop : public Endstop {
 	public:
 		LeverEndstop() : Endstop(this) {
+			initIO();
 			bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_INPT);
 			bcm2835_gpio_set_pud(Pin, PullUpDown);
 		}
