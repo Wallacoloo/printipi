@@ -33,7 +33,7 @@ class IODriver {
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */
 		//inline bool onIdleCpu() { return false; } //OVERRIDE THIS
-		inline bool onIdleCpu(Scheduler &sched) { return false; }
+		inline bool onIdleCpu(Scheduler & /*sched*/) { return false; }
 		//selectAndStep...: used internally
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);

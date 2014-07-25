@@ -17,6 +17,9 @@ template <AxisIdType Axis, typename IOFace, typename Thermistor> class TempContr
 	public:
 		TempControl() : IODriver(this), _destTemp(0), _lastTemp(0), _isReading(false), _nextReadTime(timespecNow()), _interval{1, 0} {
 		}
+		void setTemp(CelciusType t) {
+			_destTemp = t;
+		}
 		bool onIdleCpu(Scheduler &sched) {
 			//LOGV("TempControl::onIdleCpu()\n");
 			if (_isReading) {
@@ -45,7 +48,7 @@ template <AxisIdType Axis, typename IOFace, typename Thermistor> class TempContr
 		}
 	private:
 		void updatePwm(Scheduler &sched) {
-			float error = _lastTemp - _destTemp;
+			float error = _destTemp - _lastTemp;
 			float P = 0.01*error;
 			LOG("tempcontrol: pwm=%f\n", P);
 			sched.schedPwm(Axis, PwmInfo(P, 0.1));

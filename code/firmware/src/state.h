@@ -248,7 +248,6 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 }
 template <typename Drv> bool State<Drv>::satisfyIOs() {
 	//return drv::IODriver::callIdleCpuHandlers(this->driver.ioDrivers); //, this->scheduler);
-	//return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes>(this->driver.ioDrivers);
 	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, Scheduler&>(this->driver.ioDrivers, this->scheduler);
 }
 
@@ -351,6 +350,8 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		resp = gparse::Command::OK;
 	} else if (cmd.isM104()) { //set hotend temperature and return immediately.
 		LOGW("Warning (gparse/state.h): OP_M104 (set hotend temp) not implemented\n");
+		float t = cmd.getS();
+		driver.setTemperature(t);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
 		CelciusType t=DEFAULT_HOTEND_TEMP(), b=DEFAULT_BED_TEMP(); //a temperature < absolute zero means no reading available.
@@ -360,7 +361,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		LOGW("Warning (gparse/state.h): OP_M106 (set fan speed) not tested\n");
 		float s = cmd.getS(1.0); //PWM duty cycle
 		if (s > 1) { //host thinks we're working from 0 to 255
-			s = s/256.0;
+			s = s/256.0; //TODO: move this logic into cmd.getSNorm()
 		}
 		setFanRate(s);
 		resp = gparse::Command::OK;
