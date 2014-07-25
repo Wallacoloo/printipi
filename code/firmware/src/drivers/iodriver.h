@@ -29,6 +29,9 @@ class IODriver {
 		/*deactivate: called at program exit.
 		safely deactivate any IOs, including motors, heaters, etc.*/
 		inline void deactivate() {} //OVERRIDE THIS
+		/* called when the scheduler has extra time,
+		Can be used to check the status of inputs, etc */
+		inline void onIdleCpu() {} //OVERRIDE THIS
 		//selectAndStep...: used internally
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
