@@ -97,13 +97,17 @@ void Scheduler::schedPwm(AxisIdType idx, const PwmInfo &p) {
 }
 
 
-Event Scheduler::nextEvent(bool doSleep) {
+Event Scheduler::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 	Event evt;
 	if (!this->_arePushesLocked) { //Lock other threads from pushing to queue, if not done already.
 		_lockPushes.lock();
 	}
 	while (this->eventQueue.empty()) { //wait for an event to be pushed.
-		this->nonemptyCond.wait(_lockPushes); //condition_variable.wait() can produce spurious wakeups; need the while loop.
+		//condition_variable.wait() can produce spurious wakeups; need the while loop.
+		//this->nonemptyCond.wait(_lockPushes); //condition_variable.wait() can produce spurious wakeups; need the while loop.
+		if (this->nonemptyCond.wait_for(_lockPushes, timeout) == std::cv_status::timeout) { 
+			return Event(); //return null event
+		}
 	}
 	evt = this->eventQueue.front();
 	this->eventQueue.pop_front();

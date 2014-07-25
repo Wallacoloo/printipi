@@ -17,6 +17,10 @@ bool Event::isTime() const {
 	return !timespecLt(timespecNow(), this->_time);
 }
 
+bool Event::isNull() const {
+	return this->stepperId() == NULL_STEPPER_ID;
+}
+
 Event::Event(const timespec &t, AxisIdType stepperNum, StepDirection dir) : _time(t), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
 
 Event Event::StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir) {
