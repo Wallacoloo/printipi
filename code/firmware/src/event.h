@@ -30,6 +30,7 @@ class Event {
 		AxisIdType stepperId() const;
 		StepDirection direction() const;
 		const struct timespec& time() const;
+		bool isTime() const;
 		Event() : _time{0, 0}, _stepperNum(255) {}
 		Event(const timespec &t, AxisIdType stepperNum, StepDirection dir);
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
@@ -37,6 +38,7 @@ class Event {
 		void offset(const struct timespec& offset);
 		void offsetNano(unsigned nsec); //must be less than 1 second.
 		bool operator<(const Event &other);
+		//returns whether the current time is > the time to trigger the event.
 		
 };
 
