@@ -61,7 +61,7 @@ class Kossel : public Driver {
 		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_11, 1> _Fan;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_11, 1> _HotendOut;
-		typedef TempControl<_HotendOut, _Thermistor> _HotendController;
+		//typedef TempControl<_HotendOut, _Thermistor> _HotendController;
     public:
         //typedef std::tuple<LinearStepper<10000, COORD_X>, LinearStepper<1000, COORD_Y>, LinearStepper<1000, COORD_Z>, LinearStepper<1000, COORD_E> > AxisStepperTypes;
         typedef LinearDeltaCoordMap<0, 1, 2, 3, R1000, L1000, H1000, STEPS_M> CoordMapT;
@@ -73,7 +73,8 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12, _StepperEn>, //E coord
         	_Fan,
-        	_HotendController,
+        	//_HotendController,
+        	TempControl<5, _HotendOut, _Thermistor>,
         	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E

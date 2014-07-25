@@ -35,7 +35,12 @@ struct PwmInfo {
 	unsigned nsHigh;
 	unsigned nsLow;
 	PwmInfo() : nsHigh(0), nsLow(0) {}
-	PwmInfo(float duty, float period) : nsHigh(duty*period*1000000000), nsLow((1-duty)*period*1000000000) {}
+	PwmInfo(float duty, float period) : 
+		nsHigh(std::max(0, (int)(duty*period*1000000000))), //clamp the times to >= 0
+		nsLow(std::max(0, (int)((1-duty)*period*1000000000))) {}
+	float period() const {
+		return nsHigh + nsLow;
+	}
 };
 
 class Scheduler {
@@ -61,6 +66,10 @@ class Scheduler {
 		//queue and nextEvent can be called from separate threads, but nextEvent must NEVER be called from multiple threads.
 		void queue(const Event &evt);
 		void schedPwm(AxisIdType idx, const PwmInfo &p);
+		inline void schedPwm(AxisIdType idx, float duty) {
+			PwmInfo pi(duty, pwmInfo[idx].period());
+			schedPwm(idx, pi);
+		}
 		Scheduler();
 		Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
 		void sleepUntilEvent(const Event &evt) const;
