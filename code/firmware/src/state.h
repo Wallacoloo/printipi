@@ -247,7 +247,9 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 	}
 }
 template <typename Drv> bool State<Drv>::satisfyIOs() {
-	return drv::IODriver::callIdleCpuHandlers(this->driver.ioDrivers);
+	//return drv::IODriver::callIdleCpuHandlers(this->driver.ioDrivers); //, this->scheduler);
+	//return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes>(this->driver.ioDrivers);
+	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, Scheduler&>(this->driver.ioDrivers, this->scheduler);
 }
 
 template <typename Drv> void State<Drv>::eventLoop() {

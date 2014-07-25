@@ -32,11 +32,12 @@ class IODriver {
 		/* called when the scheduler has extra time,
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */
-		inline bool onIdleCpu() { return false; } //OVERRIDE THIS
+		//inline bool onIdleCpu() { return false; } //OVERRIDE THIS
+		inline bool onIdleCpu(Scheduler &sched) { return false; }
 		//selectAndStep...: used internally
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
-		template <typename TupleT> static bool callIdleCpuHandlers(TupleT &drivers);
+		template <typename TupleT, typename ...Args > static bool callIdleCpuHandlers(TupleT &drivers, Args... args);
 };
 
 //IODriver::selectAndStepForward helper functions:
@@ -89,21 +90,21 @@ template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers,
 
 //IODriver::callIdleCpuHandlers helper functions:
 
-template <typename TupleT, std::size_t myIdx> struct IODriver__onIdleCpu {
-	bool operator()(TupleT &drivers) {
-		bool prev = IODriver__onIdleCpu<TupleT, myIdx-1>()(drivers);
-		return prev || std::get<myIdx>(drivers).onIdleCpu(); //return true if ANY objects need future servicing.
+template <typename TupleT, std::size_t myIdx, typename ...Args> struct IODriver__onIdleCpu {
+	bool operator()(TupleT &drivers, Args... args) {
+		bool prev = IODriver__onIdleCpu<TupleT, myIdx-1, Args...>()(drivers, args...);
+		return prev || std::get<myIdx>(drivers).onIdleCpu(args...); //return true if ANY objects need future servicing.
 	}
 };
 
-template <typename TupleT> struct IODriver__onIdleCpu<TupleT, 0> {
-	bool operator()(TupleT &drivers) {
-		return std::get<0>(drivers).onIdleCpu();
+template <typename TupleT, typename ...Args> struct IODriver__onIdleCpu<TupleT, 0, Args...> {
+	bool operator()(TupleT &drivers, Args... args) {
+		return std::get<0>(drivers).onIdleCpu(args...);
 	}
 };
 
-template <typename TupleT> bool IODriver::callIdleCpuHandlers(TupleT &drivers) {
-	return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value-1>()(drivers);
+template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
+	return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value-1, Args...>()(drivers, args...);
 }
 
 }
