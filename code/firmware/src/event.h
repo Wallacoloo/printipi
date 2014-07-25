@@ -27,11 +27,13 @@ class Event {
 	AxisIdType _stepperNum;
 	bool _isForward;
 	public:
+		static const AxisIdType NULL_STEPPER_ID = 255;
 		AxisIdType stepperId() const;
 		StepDirection direction() const;
 		const struct timespec& time() const;
 		bool isTime() const;
-		Event() : _time{0, 0}, _stepperNum(255) {}
+		bool isNull() const;
+		Event() : _time{0, 0}, _stepperNum(NULL_STEPPER_ID) {}
 		Event(const timespec &t, AxisIdType stepperNum, StepDirection dir);
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		

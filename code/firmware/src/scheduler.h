@@ -7,6 +7,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <time.h> //for timespec
+#include <chrono> 
 #include <array>
 #include <vector>
 #include <atomic>
@@ -61,21 +62,26 @@ class Scheduler {
 		void queue(const Event &evt);
 		void schedPwm(AxisIdType idx, const PwmInfo &p);
 		Scheduler();
-		Event nextEvent(bool doSleep=true);
+		Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
 		void sleepUntilEvent(const Event &evt) const;
 		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 		void setBufferSize(unsigned size);
 		unsigned getBufferSize() const;
 		template <typename T> void eventLoop(T* callbackObj, void(T::*onEvent)(const Event &e), bool(T::*onWait)()) {
+			Event evt;
 			while (1) {
-				Event evt = this->nextEvent(false); //get next event, but don't sleep.
-				while (!evt.isTime()) {
-					if (!(callbackObj->*onWait)()) { //if we don't need any future waiting, then sleep to give cpu to other processes:
-						this->sleepUntilEvent(evt);
+				bool needCpuTime = (callbackObj->*onWait)();
+				evt = this->nextEvent(false, std::chrono::microseconds(needCpuTime ? 0 : 100000)); //get next event, but don't sleep. Yield to the OS for ~100ms if we DON'T need the cpu time.
+				if (!evt.isNull()) { //wait for event to occur if it is non-null.
+					while (!evt.isTime()) {
+						if (!(callbackObj->*onWait)()) { //if we don't need any future waiting, then sleep to give cpu to other processes:
+							this->sleepUntilEvent(evt);
+						}
 					}
+					(callbackObj->*onEvent)(evt);
+					needCpuTime = true;
 				}
-				(callbackObj->*onEvent)(evt);
 			}
 		}
 };
