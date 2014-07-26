@@ -6,9 +6,10 @@
 
 namespace drv {
 
-template <AxisIdType DeviceIdx, typename Heater, typename Thermistor> class TempControl : public IODriver {
+template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID> class TempControl : public IODriver {
 	Heater _heater;
 	Thermistor _therm;
+	PID _pid;
 	float _destTemp;
 	float _lastTemp;
 	bool _isReading;
@@ -56,9 +57,10 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor> class Temp
 	private:
 		void updatePwm(Scheduler &sched) {
 			float error = _destTemp - _lastTemp;
-			float P = 0.01*error;
-			LOG("tempcontrol: pwm=%f\n", P);
-			sched.schedPwm(DeviceIdx, PwmInfo(P, 0.1));
+			float pwm = _pid.feed(error);
+			//float P = 0.01*error;
+			LOG("tempcontrol: pwm=%f\n", pwm);
+			sched.schedPwm(DeviceIdx, PwmInfo(pwm, 0.1));
 		}
 };
 
