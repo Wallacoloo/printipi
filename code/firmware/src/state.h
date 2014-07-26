@@ -418,21 +418,24 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	_destEPrimitive = e;
 	float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
 	float dist = sqrt(distSq);
-	float vx = (x-curX)/dist * velXYZ;
-	float vy = (y-curY)/dist * velXYZ;
-	float vz = (z-curZ)/dist * velXYZ;
+	//float vx = (x-curX)/dist * velXYZ;
+	//float vy = (y-curY)/dist * velXYZ;
+	//float vz = (z-curZ)/dist * velXYZ;
 	float duration = std::max(mathutil::NANOSECOND, dist/velXYZ); //minimum duration to avoid divisions by 0.
 	float velE = (e-curE)/duration;
 	float newVelE = this->driver.clampExtrusionRate(velE);
 	if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
-		float ratio = newVelE / velE;
+		//float ratio = newVelE / velE;
 		velE = newVelE;
-		vx *= ratio;
-		vy *= ratio;
-		vz *= ratio;
-		//duration /= ratio;
 		duration = (e-curE)/newVelE;
+		//vx *= ratio;
+		//vy *= ratio;
+		//vz *= ratio;
+		//duration /= ratio;
 	}
+	float vx = (x-curX)/duration;
+	float vy = (y-curY)/duration;
+	float vz = (z-curZ)/duration;
 	LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 	LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, dur:%f\n", velXYZ, vx, vy, vz, duration);
