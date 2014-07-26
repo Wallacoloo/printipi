@@ -21,12 +21,14 @@
 
 namespace drv {
 
-template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx, unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M> class LinearDeltaCoordMap : public CoordMap {
+template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx, unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT> class LinearDeltaCoordMap : public CoordMap {
 	static constexpr float r = R1000 / 1000.;
 	static constexpr float L = L1000 / 1000.;
 	static constexpr float h = H1000 / 1000.;
 	static constexpr float STEPS_MM = STEPS_M / 1000.;
 	static constexpr float MM_STEPS = 1. / STEPS_MM;
+	static constexpr float STEPS_MM_EXT = STEPS_M_EXT / 1000.;
+	static constexpr float MM_STEPS_EXT = 1. / STEPS_MM_EXT;
 	public:
 		template <std::size_t size> static void getHomePosition(std::array<int, size> &mech) {
 			//z = A*MM_STEPS-sqrt(L*L-r*r);
@@ -35,7 +37,7 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 			mech[AIdx] = mech[BIdx] = mech[CIdx] = h*STEPS_MM; //(h+sqrt(L*L-r*r))*STEPS_MM;
 		}
 		template <std::size_t size> static void xyzeFromMechanical(const std::array<int, size> &mech, float &x, float &y, float &z, float &e) {
-			e = mech[EIdx];
+			e = mech[EIdx]*MM_STEPS_EXT;
 			float A = mech[AIdx]*MM_STEPS; //convert mechanical positions (steps) to MM.
 			float B = mech[BIdx]*MM_STEPS;
 			float C = mech[CIdx]*MM_STEPS;
