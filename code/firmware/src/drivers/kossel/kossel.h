@@ -1,6 +1,8 @@
 #ifndef DRIVERS_KOSSEL_H
 #define DRIVERS_KOSSEL_H
 
+
+#include "pid.h"
 #include "drivers/driver.h"
 #include "drivers/axisstepper.h"
 #include "drivers/extruderstepper.h"
@@ -76,7 +78,7 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12, _StepperEn>, //E coord
         	_Fan,
         	//_HotendController,
-        	TempControl<5, _HotendOut, _Thermistor>,
+        	TempControl<5, _HotendOut, _Thermistor, PID<12, 3, 1> >,
         	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
@@ -90,7 +92,7 @@ class Kossel : public Driver {
         	return 4;
         }
         inline float defaultFanPwmPeriod() const {
-        	return 0.002; //don't need high resolution
+        	return 0.02; //don't need high resolution
         }
         inline void getTemperature(CelciusType &extruder, CelciusType& /*platform*/) const {
         	extruder = std::get<5>(ioDrivers).getLastTemp();
