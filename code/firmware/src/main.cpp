@@ -79,8 +79,8 @@ int main_(int argc, char** argv) {
     	printUsage(argv[0]);
     	return 0;
     } 
-    if (argc < 2) {
-        printUsage(argv[0]);
+    if (argc < 2 || argv[1][0] == '-') { //if no arguments, or if first argument (and therefore all args) is an option
+        //printUsage(argv[0]);
         serialFileName = defaultSerialFile;
         //return 1;
     } else {

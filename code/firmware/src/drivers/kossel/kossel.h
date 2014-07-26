@@ -27,7 +27,7 @@
 #define H1000 500000
 //#define STEPS_M 9000
 #define STEPS_M 5200 //no microstepping enabled.
-#define STEPS_M_EXT 14000
+#define STEPS_M_EXT 4000
 
 #define THERM_RA 665
 #define THERM_CAP_PICO 100000
