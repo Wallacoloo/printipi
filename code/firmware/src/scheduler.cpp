@@ -115,7 +115,8 @@ Event Scheduler::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 	evt = this->eventQueue.front();
 	this->eventQueue.pop_front();
 	//check if event is PWM-based:
-	if (pwmInfo[evt.stepperId()].nsLow != 0 || pwmInfo[evt.stepperId()].nsHigh != 0) {
+	//if (pwmInfo[evt.stepperId()].nsLow != 0 || pwmInfo[evt.stepperId()].nsHigh != 0) {
+	if (pwmInfo[evt.stepperId()].isNonNull()) {
 		if (evt.direction() == StepForward) {
 			//if (pwmInfo[evt.stepperId()].nsLow != 0) { //do we need to transition to a low time again? If not, then stay here forever.
 				//next event will be StepBackward, or refresh this event if there is no off-duty.
@@ -185,4 +186,14 @@ void Scheduler::setBufferSize(unsigned size) {
 }
 unsigned Scheduler::getBufferSize() const {
 	return this->bufferSize;
+}
+
+unsigned Scheduler::numActivePwmChannels() const {
+	unsigned r=0;
+	for (const PwmInfo &p : this->pwmInfo) {
+		if (p.isNonNull()) {
+			r += 1;
+		}
+	}
+	return r;
 }

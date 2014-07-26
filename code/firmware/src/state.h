@@ -439,7 +439,7 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 	drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
 	auto b = this->scheduler.getBufferSize();
-	this->scheduler.setBufferSize(1);
+	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
 	this->scheduleAxisSteppers(iters, NAN);
 	this->scheduler.setBufferSize(b);
 	Drv::CoordMapT::getHomePosition(_destMechanicalPos);
