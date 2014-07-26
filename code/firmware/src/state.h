@@ -430,7 +430,8 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 		vx *= ratio;
 		vy *= ratio;
 		vz *= ratio;
-		duration /= ratio;
+		//duration /= ratio;
+		duration = (e-curE)/newVelE;
 	}
 	LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
