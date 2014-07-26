@@ -349,7 +349,6 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM104()) { //set hotend temperature and return immediately.
-		LOGW("Warning (gparse/state.h): OP_M104 (set hotend temp) not tested\n");
 		float t = cmd.getS();
 		driver.setTemperature(t);
 		resp = gparse::Command::OK;
