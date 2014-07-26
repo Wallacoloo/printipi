@@ -59,13 +59,15 @@
 
 void printUsage(char* cmd) {
 	//#ifndef NO_USAGE_INFO
-	LOGE("usage: %s ttyFile\n", cmd);
+	LOGE("usage: %s [ttyFile] [--help] [--quiet] [--verbose]\n", cmd);
     //std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
     //#endif
     //exit(1);
 }
 
 int main_(int argc, char** argv) {
+	char defaultSerialFile[] = "/dev/stdin";
+	char* serialFileName;
 	Scheduler::configureExitHandlers(); //useful to do this first-thing for catching debug info.
 	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
@@ -73,9 +75,16 @@ int main_(int argc, char** argv) {
     if (argparse::cmdOptionExists(argv, argv+argc, "--verbose")) {
     	logging::enableVerbose();
     }
-    if (argc < 2 || argparse::cmdOptionExists(argv, argv+argc, "-h") || argparse::cmdOptionExists(argv, argv+argc, "--help")) {
+    if (argparse::cmdOptionExists(argv, argv+argc, "-h") || argparse::cmdOptionExists(argv, argv+argc, "--help")) {
+    	printUsage(argv[0]);
+    	return 0;
+    } 
+    if (argc < 2) {
         printUsage(argv[0]);
-        return 1;
+        serialFileName = defaultSerialFile;
+        //return 1;
+    } else {
+    	serialFileName = argv[1];
     }
     
     //prevent page-swaps to increase performace:
@@ -85,7 +94,6 @@ int main_(int argc, char** argv) {
     }
     
     //Open the serial device:
-    char* serialFileName = argv[1];
     LOG("Serial file: %s\n", serialFileName);
     int fd = open(serialFileName, O_RDWR);
     
