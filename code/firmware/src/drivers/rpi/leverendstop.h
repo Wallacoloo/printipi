@@ -17,8 +17,9 @@ template <uint8_t Pin, bool ValueTriggered, bcm2835PUDControl PullUpDown=BCM2835
 			bcm2835_gpio_set_pud(Pin, PullUpDown);
 		}
 		static bool isTriggered() {
-			bool t = bcm2835_gpio_lev(Pin) == ValueTriggered;
-			LOGV("LeverEndstop: %i is %i\n", Pin, t);
+			auto raw = bcm2835_gpio_lev(Pin);
+			bool t = raw == ValueTriggered;
+			LOGV("LeverEndstop: %i is %i (bool: %i)\n", Pin, raw, t);
 			return t;
 		}
 };
