@@ -122,7 +122,7 @@ class Kossel : public Driver {
         }
         inline float clampExtrusionRate(float rate) const {
         	//need to cover both the positive (extruding) and negative (retracting) possibilities.
-        	return std::max((float)-50, std::min(rate, (float)50));
+        	return std::max((float)-10, std::min(rate, (float)10));
         }
 };
 
