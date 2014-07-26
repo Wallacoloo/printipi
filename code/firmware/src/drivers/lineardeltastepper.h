@@ -47,16 +47,16 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 		float x0, y0, z0;
 		float vx, vy, vz;
 		float v2; //squared velocity.
-		static constexpr float r = R1000 / 1000.;
-		static constexpr float L = L1000 / 1000.;
-		static constexpr float STEPS_MM = STEPS_M / 1000.;
-		static constexpr float MM_STEPS = 1. / STEPS_MM;
+		static constexpr float r() { return R1000 / 1000.; }
+		static constexpr float L() { return L1000 / 1000.; }
+		static constexpr float STEPS_MM() { return STEPS_M / 1000.; }
+		static constexpr float MM_STEPS() { return  1. / STEPS_MM(); }
 	public:
 		typedef LinearHomeStepper<STEPS_M, EndstopT> HomeStepperT;
 		LinearDeltaStepper() {}
 		template <std::size_t sz> LinearDeltaStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
 			: AxisStepper(idx, curPos, vx, vy, vz, ve),
-			 M0(curPos[AxisIdx]*MM_STEPS), 
+			 M0(curPos[AxisIdx]*MM_STEPS()), 
 			 sTotal(0),
 			 vx(vx), vy(vy), vz(vz),
 			 v2(vx*vx + vy*vy + vz*vz) {
@@ -68,17 +68,17 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			//TODO: compiler probably can't optimize this well since it probably won't be able to allocate more space on the object to hold semi-constants.
 			//Therefore, we should cache values calculatable at init-time, like all of the second-half on rootParam.
 			if (AxisIdx == 0) {
-				term1 = r*vy - vx*x0 - vy*y0 + vz*(M0 + s - z0);
-				rootParam = term1*term1 - v2*(-L*L + x0*x0 + (r - y0)*(r - y0) + (M0 + s - z0)*(M0 + s - z0));
+				term1 = r()*vy - vx*x0 - vy*y0 + vz*(M0 + s - z0);
+				rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
 			} else if (AxisIdx == 1) { 
-				term1 = r*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 + s - z0);
-				rootParam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
+				term1 = r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 + s - z0);
+				rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
 			} else if (AxisIdx == 2) {
 				//term1 = -r*(Sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(C + s - z0)
 				//rootparam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(Sqrt(3)*x0 + y0) + (C + s - z0)*(C + s - z0))
 			
-				term1 = -r*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 + s - z0);
-				rootParam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
+				term1 = -r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 + s - z0);
+				rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
 				//t1 = (term1 - root)/(v2)
 				//t2 = (term1 + root)/(v2)
 			}
@@ -103,8 +103,8 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			}
 		}
 		void _nextStep() {
-			float negTime = testDir((sTotal-1)*MM_STEPS); //get the time at which next steps would occur.
-			float posTime = testDir((sTotal+1)*MM_STEPS);
+			float negTime = testDir((sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
+			float posTime = testDir((sTotal+1)*MM_STEPS());
 			A0LOGV("LinearDeltaStepper<%zu>::neg/pos/cur-time %f, %f, %f\n", AxisIdx, negTime, posTime, time);
 			if (negTime < time || std::isnan(negTime)) { //negTime is invalid
 				if (posTime > time) {
