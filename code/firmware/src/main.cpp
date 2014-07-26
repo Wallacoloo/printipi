@@ -29,7 +29,8 @@
  *      avoid std::set just for the extra memory and code usage
  * *Add IO deactivation upon exit
  * *Add enable pin
- *  Account for PWM pins when setting Scheduler queue size.
+ * *Account for PWM pins when setting Scheduler queue size.
+ *  Add absolute PWM limits to hotend, etc.
  *  Make CoordMapT, etc return tuples instead of using writebacks
  *  Make Driver::getTemperature return tuples
  *  Drop temperature readings when thread has been interrupted.
