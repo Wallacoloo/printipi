@@ -6,7 +6,7 @@
 
 namespace drv {
 
-template <AxisIdType Axis, typename Heater, typename Thermistor> class TempControl : public IODriver {
+template <AxisIdType DeviceIdx, typename Heater, typename Thermistor> class TempControl : public IODriver {
 	Heater _heater;
 	Thermistor _therm;
 	float _destTemp;
@@ -58,7 +58,7 @@ template <AxisIdType Axis, typename Heater, typename Thermistor> class TempContr
 			float error = _destTemp - _lastTemp;
 			float P = 0.01*error;
 			LOG("tempcontrol: pwm=%f\n", P);
-			sched.schedPwm(Axis, PwmInfo(P, 0.1));
+			sched.schedPwm(DeviceIdx, PwmInfo(P, 0.1));
 		}
 };
 
