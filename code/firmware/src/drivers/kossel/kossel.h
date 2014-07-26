@@ -103,6 +103,8 @@ class Kossel : public Driver {
         inline void getTemperature(CelciusType &extruder, CelciusType& /*platform*/) const {
         	extruder = std::get<5>(ioDrivers).getLastTemp();
         }
+        //inline std::tuple<CelciusType, CelciusType> getTemperature() const {
+        //	return std::make_tuple(std::get<t>(ioDrivers).getLastTemp()
         inline void setTemperature(CelciusType temp) {
         	std::get<5>(ioDrivers).setTemp(temp);
         }
@@ -116,7 +118,8 @@ class Kossel : public Driver {
         	return 10;
         }
         inline float clampExtrusionRate(float rate) const {
-        	return std::min(rate, (float)50);
+        	//need to cover both the positive (extruding) and negative (retracting) possibilities.
+        	return std::max((float)-50, std::min(rate, (float)50));
         }
 };
 
