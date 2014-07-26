@@ -102,7 +102,6 @@ class Kossel : public Driver {
         }
         inline void getTemperature(CelciusType &extruder, CelciusType& /*platform*/) const {
         	extruder = std::get<5>(ioDrivers).getLastTemp();
-        	//extruder = thermistor.readTemperature(); // *100000;
         }
         inline void setTemperature(CelciusType temp) {
         	std::get<5>(ioDrivers).setTemp(temp);
@@ -111,13 +110,13 @@ class Kossel : public Driver {
         	return 30;
         }
         inline float clampMoveRate(float inp) const {
-        	if (inp > defaultMoveRate()) { //ensure we never move too fast.
-        		return defaultMoveRate();
-        	}
-        	return inp;
+        	return std::min(inp, defaultMoveRate());//ensure we never move too fast.
         }
         inline float clampHomeRate(float /*inp*/) const {
         	return 10;
+        }
+        inline float clampExtrusionRate(float rate) const {
+        	return std::min(rate, (float)50);
         }
 };
 
