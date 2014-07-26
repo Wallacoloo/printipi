@@ -78,7 +78,8 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12, _StepperEn>, //E coord
         	_Fan,
         	//_HotendController,
-        	TempControl<5, _HotendOut, _Thermistor, PID<12000, 800, 400> >,
+        	//12000, 3000, 1000 gives osc of ~3 min. Converges.
+        	TempControl<5, _HotendOut, _Thermistor, PID<20000, 600, 0> >,
         	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
