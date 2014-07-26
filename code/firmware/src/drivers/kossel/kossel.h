@@ -38,6 +38,8 @@
 #define THERM_BETA 3950
 
 /*Used IOs:
+  3
+  5
   7
   8
   10
@@ -75,12 +77,13 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21, _StepperEn>, //A tower
         	rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //B tower
         	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
-        	rpi::A4988<RPI_V2_GPIO_P1_11, RPI_V2_GPIO_P1_12, _StepperEn>, //E coord
+        	rpi::A4988<RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, _StepperEn>, //E coord
         	_Fan,
         	//_HotendController,
         	//12000, 3000, 1000 gives osc of ~3 min (20C-80C). Converges.
         	//20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.
         	//12000,  600, 1200 (50C->130C). Peaks 22C above target. Underdamped. 5 mins to converge
+        	//18000,  300, 1000 (40C->130C). Overdamped. 4.5 minutes to reach target (& is stabilized when it gets there)
         	TempControl<5, _HotendOut, _Thermistor, PID<18000, 300, 1000> >,
         	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
