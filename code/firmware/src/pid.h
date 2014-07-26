@@ -4,10 +4,10 @@
 #include "timeutil.h" //for timespec*
 
 
-template <int P1000, int I1000=0, int D1000=0> class PID {
-	static constexpr float P = P1000 / 1000.;
-	static constexpr float I = I1000 / 1000.;
-	static constexpr float D = D1000 / 1000.;
+template <int P1000000, int I1000000=0, int D1000000=0> class PID {
+	static constexpr float P = P1000000 / 1000000.;
+	static constexpr float I = I1000000 / 1000000.;
+	static constexpr float D = D1000000 / 1000000.;
 	float errorI;
 	float lastError;
 	struct timespec lastTime;
