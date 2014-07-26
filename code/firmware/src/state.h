@@ -119,7 +119,7 @@ template <typename Drv> State<Drv>::State(Drv &drv) : _isDeadOrDying(false),
 
 template <typename Drv> State<Drv>::~State() {
 	this->_isDeadOrDying = true;
-	this->scheduler.queue(Event()); //push a null event in order to wake up the scheduling thread so it can terminate.
+	//this->scheduler.queue(Event()); //push a null event in order to wake up the scheduling thread so it can terminate.
 	this->schedthread.join();
 }
 
