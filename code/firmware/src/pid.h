@@ -12,6 +12,7 @@ template <int P1000, int I1000=0, int D1000=0> class PID {
 	float lastError;
 	struct timespec lastTime;
 	public:
+		PID() : lastTime{0, 0} {}
 		/* notify PID controller of a newly-read error value.
 		Returns a recalculated output */
 		float feed(float error) {
