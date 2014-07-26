@@ -26,7 +26,9 @@ template <int P1000, int I1000=0, int D1000=0> class PID {
 			if (lastTime.tv_sec == 0) {
 				lastTime = newTime;
 			}
-			return timespecToFloat(timespecSub(newTime, lastTime));
+			float r = timespecToFloat(timespecSub(newTime, lastTime));
+			lastTime = newTime;
+			return r;
 		}
 			
 };
