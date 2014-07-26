@@ -183,6 +183,7 @@ struct timespec Scheduler::lastSchedTime() const {
 
 void Scheduler::setBufferSize(unsigned size) {
 	this->bufferSize = size;
+	LOGI("Scheduler buffer size set: %u\n", size);
 }
 unsigned Scheduler::getBufferSize() const {
 	return this->bufferSize;
