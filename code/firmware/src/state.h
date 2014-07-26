@@ -427,7 +427,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
 		//float ratio = newVelE / velE;
 		velE = newVelE;
-		duration = (e-curE)/newVelE;
+		duration = (e-curE)/newVelE; //L/(L/t) = t
 		//vx *= ratio;
 		//vy *= ratio;
 		//vz *= ratio;
@@ -438,7 +438,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	float vz = (z-curZ)/duration;
 	LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
-	LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, dur:%f\n", velXYZ, vx, vy, vz, duration);
+	LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", velXYZ, vx, vy, vz, velE, duration);
 	typename Drv::AxisStepperTypes iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
 	this->scheduleAxisSteppers(iters, duration);
