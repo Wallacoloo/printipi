@@ -23,7 +23,7 @@
 	#define SCHED_PRIORITY 30
 #endif
 #ifndef SCHED_CAPACITY
-	#define SCHED_CAPACITY 1024
+	#define SCHED_CAPACITY 512
 #endif
 #ifndef SCHED_NUM_EXIT_HANDLER_LEVELS
 	#define SCHED_NUM_EXIT_HANDLER_LEVELS 2
@@ -52,8 +52,8 @@ class Scheduler {
 	std::deque<Event> eventQueue;
 	
 	mutable std::mutex mutex;
-	std::unique_lock<std::mutex> _lockPushes;
-	bool _arePushesLocked;
+	//std::unique_lock<std::mutex> _lockPushes;
+	//bool _arePushesLocked;
 	std::condition_variable nonemptyCond;
 	std::condition_variable eventConsumedCond;
 	
