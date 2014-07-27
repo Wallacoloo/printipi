@@ -70,9 +70,12 @@ Scheduler::Scheduler() : _lockPushes(mutex, std::defer_lock), _arePushesLocked(f
 void Scheduler::queue(const Event& evt) {
 	//LOGV("Scheduler::queue\n");
 	std::unique_lock<std::mutex> lock(this->mutex);
-	/*if (this->eventQueue.empty()) { //if no event is before this, then the relative time held by this event must be associated with the current time:
-		clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime));
-	}*/
+	while (this->eventQueue.size() >= this->bufferSize) {
+		eventConsumedCond.wait(lock);
+	}
+	//_lockPushes.lock(); //aquire a lock
+	//if (this->eventQueue.size() >= this->bufferSize) {
+	//	return; //keep pushes locked.
 	this->orderedInsert(evt);
 	this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
 }
@@ -136,6 +139,7 @@ Event Scheduler::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 	if (this->eventQueue.size() < bufferSize) { //queue is underfilled; release the lock
 		_lockPushes.unlock();
 		this->_arePushesLocked = false;
+		eventConsumedCond.notify_one();
 	} else { //queue is filled; do not release the lock.
 		this->_arePushesLocked = true;
 	}
@@ -149,6 +153,7 @@ Event Scheduler::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 		//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
 		//this->lastEventHandledTime = sleepUntil;*/
 	}
+	
 	return evt;
 }
 
