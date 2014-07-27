@@ -55,6 +55,7 @@ class Scheduler {
 	std::unique_lock<std::mutex> _lockPushes;
 	bool _arePushesLocked;
 	std::condition_variable nonemptyCond;
+	std::condition_variable eventConsumedCond;
 	
 	//struct timespec lastEventHandledTime; //used? Only written - never read!
 	unsigned bufferSize;
