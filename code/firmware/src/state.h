@@ -410,7 +410,8 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
 	//Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, _destXPrimitive, _destYPrimitive, _destZPrimitive, _destEPrimitive);
 	float curX, curY, curZ, curE;
-	Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, curX, curY, curZ, curE);
+	//Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, curX, curY, curZ, curE);
+	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 	float velXYZ = destMoveRatePrimitive();
 	_destXPrimitive = x;
 	_destYPrimitive = y;
@@ -442,7 +443,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	typename Drv::AxisStepperTypes iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
 	this->scheduleAxisSteppers(iters, duration);
-	Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, curX, curY, curZ, curE);
+	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 	LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 }
