@@ -1,12 +1,13 @@
 #ifndef DRIVERS_COORDMAP_H
 #define DRIVERS_COORDMAP_H
 
+#include <tuple> //needed for children
 
 namespace drv {
 
 class CoordMap {
 	public:
-		//static void xyzeFromMechanical(const std::array<int, N>&, float &x, float &y, float &z, float &e);
+		//static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, N>&);
 };
 
 }
