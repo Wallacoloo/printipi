@@ -102,6 +102,49 @@ void Scheduler::schedPwm(AxisIdType idx, const PwmInfo &p) {
 
 Event Scheduler::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 	Event evt;
+	{
+		std::unique_lock<std::mutex> lock(this->mutex);
+		while (this->eventQueue.empty()) { //wait for an event to be pushed.
+			//condition_variable.wait() can produce spurious wakeups; need the while loop.
+			//this->nonemptyCond.wait(_lockPushes); //condition_variable.wait() can produce spurious wakeups; need the while loop.
+			if (this->nonemptyCond.wait_for(lock, timeout) == std::cv_status::timeout) { 
+				return Event(); //return null event
+			}
+		}
+		evt = this->eventQueue.front();
+		this->eventQueue.pop_front();
+		//check if event is PWM-based:
+		//if (pwmInfo[evt.stepperId()].nsLow != 0 || pwmInfo[evt.stepperId()].nsHigh != 0) {
+		if (pwmInfo[evt.stepperId()].isNonNull()) {
+			if (evt.direction() == StepForward) {
+				//next event will be StepBackward, or refresh this event if there is no off-duty.
+				Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
+				nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
+				this->orderedInsert(nextPwm); //to do: ordered insert
+			} else {
+				//next event will be StepForward, or refresh this event if there is no on-duty.
+				Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
+				nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
+				this->orderedInsert(nextPwm);
+			}
+		} else { //non-pwm event, means the queue size has decreased by 1.
+			lock.unlock();
+			eventConsumedCond.notify_one();
+		}
+	}
+	if (doSleep) {
+		this->sleepUntilEvent(evt);
+		/*struct timespec sleepUntil = evt.time();
+		//struct timespec curTime;
+		//clock_gettime(CLOCK_MONOTONIC, &curTime);
+		//LOGV("Scheduler::nextEvent sleep from %lu.%lu until %lu.%lu\n", curTime.tv_sec, curTime.tv_nsec, sleepUntil.tv_sec, sleepUntil.tv_nsec);
+		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
+		//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
+		//this->lastEventHandledTime = sleepUntil;*/
+	}
+	
+	return evt;
+	/*Event evt;
 	if (!this->_arePushesLocked) { //Lock other threads from pushing to queue, if not done already.
 		_lockPushes.lock();
 	}
@@ -152,9 +195,9 @@ Event Scheduler::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 		//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
 		//this->lastEventHandledTime = sleepUntil;*/
-	}
+	//}
 	
-	return evt;
+	//return evt;
 }
 
 void Scheduler::sleepUntilEvent(const Event &evt) const {
