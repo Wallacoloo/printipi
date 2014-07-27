@@ -36,8 +36,10 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 			mech[EIdx] = 0;
 			mech[AIdx] = mech[BIdx] = mech[CIdx] = h*STEPS_MM; //(h+sqrt(L*L-r*r))*STEPS_MM;
 		}
-		template <std::size_t size> static void xyzeFromMechanical(const std::array<int, size> &mech, float &x, float &y, float &z, float &e) {
-			e = mech[EIdx]*MM_STEPS_EXT;
+		//template <std::size_t size> static void xyzeFromMechanical(const std::array<int, size> &mech, float &x, float &y, float &z, float &e) {
+		template <std::size_t size> static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, size> &mech) {
+			float e = mech[EIdx]*MM_STEPS_EXT;
+			float x, y, z;
 			float A = mech[AIdx]*MM_STEPS; //convert mechanical positions (steps) to MM.
 			float B = mech[BIdx]*MM_STEPS;
 			float C = mech[CIdx]*MM_STEPS;
@@ -78,6 +80,7 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 				x = ((B - C)*(B + C - 2*z))/(2*sqrt(3)*r);
 				y = -((-2*A*A + B*B + C*C + 4*A*z - 2*B*z - 2*C*z)/(6*r));
 			}
+			return std::make_tuple(x, y, z, e);
 		}
 
 };

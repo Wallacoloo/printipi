@@ -62,7 +62,8 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			 v2(vx*vx + vy*vy + vz*vz) {
 			 	this->time = 0; //this may NOT be zero-initialized by parent.
 				float e_;
-				CoordMap::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
+				//CoordMap::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
+				std::tie(this->x0, this->y0, this->z0, e_) = CoordMap::xyzeFromMechanical(curPos);
 			}
 		void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
 			//TODO: compiler probably can't optimize this well since it probably won't be able to allocate more space on the object to hold semi-constants.
