@@ -185,19 +185,19 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
 }
 
 template <typename Interface> struct timespec Scheduler<Interface>::lastSchedTime() const {
-	Event evt;
-	{
-		//std::unique_lock<std::mutex> lock(this->mutex);
-		if (this->eventQueue.size()) {
+	/*if (this->eventQueue.size()) {
 			evt = this->eventQueue.back();
 		} else {
 			//lock.unlock();
 			timespec ts;
 			clock_gettime(CLOCK_MONOTONIC, &ts);
 			return ts;
-		}
+		}*/
+	if (this->eventQueue.empty()) {
+		return timespecNow();
+	} else {
+		return this->eventQueue.back().time();
 	}
-	return evt.time();
 }
 
 template <typename Interface> void Scheduler<Interface>::setBufferSize(unsigned size) {
@@ -236,32 +236,24 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 }
 
 template <typename Interface> void Scheduler<Interface>::yield() {
-	/*if (eventQueue.size()) {
-		Event evt = eventQueue.front();
-		if (evt.isTime()) {
-			nextEvent();
-			//eventQueue.pop_front();
-			interface.onEvent(evt);
-		}
-	}*/
 	while (1) {
 		if (eventQueue.empty()) { //if no events, then run idle events and return.
-			do {} while (interface.onIdleCpu());
-			return;
-		}
-		Event evt = this->eventQueue.front();
-		while (!evt.isTime()) {
-			if (!interface.onIdleCpu()) { //if we don't need any future waiting, then either sleep to give cpu to other processes, or return control to main program:
-				if (this->isEventNear(evt)) {
-					this->sleepUntilEvent(evt);
-					break;
-				} else {
+			if (!interface.onIdleCpu()) { //loop is implied by the outer while(1)
+				return;
+			}
+			//do {} while (interface.onIdleCpu());
+			//return;
+		} else {
+			Event evt = this->eventQueue.front();
+			while (!this->isEventNear(evt)) {
+				if (!interface.onIdleCpu()) { //if we don't need any future waiting, and the event isn't near, yield to main part of the program.
 					return;
 				}
 			}
+			this->sleepUntilEvent(evt);
+			this->eventQueue.pop_front();
+			interface.onEvent(evt);
 		}
-		this->eventQueue.pop_front();
-		interface.onEvent(evt);
 	}
 }
 
