@@ -110,7 +110,7 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
 		yield(true);
 	}
 	this->orderedInsert(evt);
-	yield(); //fast yield.
+	yield(); //fast yield. Not really necessary if the earlier yield statement was ever reached.
 }
 
 template <typename Interface> void Scheduler<Interface>::orderedInsert(const Event &evt) {
@@ -189,7 +189,7 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 	while (1) {
 		yield(true);
 		if (eventQueue.empty()) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			std::this_thread::sleep_for(std::chrono::milliseconds(40));
 		}
 	}
 }
@@ -217,21 +217,23 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 				}
 			}
 			//this->sleepUntilEvent(evt);
-			interface.onEvent(evt);
 			this->eventQueue.pop_front(); //CANNOT put this after the regeneration of the PWM event, otherwise the wrong event may be popped.
+			interface.onEvent(evt);
+			
 			//manage PWM events:
-			if (pwmInfo[evt.stepperId()].isNonNull()) {
+			const PwmInfo &pwm = pwmInfo[evt.stepperId()];
+			if (pwm.isNonNull()) {
+				Event nextPwm;
 				if (evt.direction() == StepForward) {
 					//next event will be StepBackward, or refresh this event if there is no off-duty.
-					Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
-					nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
-					this->orderedInsert(nextPwm); 
+					nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
+					nextPwm.offsetNano(pwm.nsHigh);
 				} else {
 					//next event will be StepForward, or refresh this event if there is no on-duty.
-					Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
-					nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
-					this->orderedInsert(nextPwm);
+					nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
+					nextPwm.offsetNano(pwm.nsLow);
 				}
+				this->orderedInsert(nextPwm);
 			}
 			forceWait = false; //avoid draining ALL events - just drain the first.
 		}
