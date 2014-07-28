@@ -6,8 +6,8 @@
 #include <cstdlib> //for atexit
 
 std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> SchedulerBase::exitHandlers;
-std::atomic<bool> SchedulerBase::isExiting(false);
-
+//std::atomic<bool> SchedulerBase::isExiting(false);
+bool SchedulerBase::isExiting(false);
 
 void ctrlCOrZHandler(int s){
    printf("Caught signal %d\n",s);
@@ -20,7 +20,9 @@ void segfaultHandler(int /*signal*/, siginfo_t *si, void */*arg*/) {
 }
 
 void SchedulerBase::callExitHandlers() {
-	if (!isExiting.exchange(true)) { //try setting isExiting to true. If it was previously false, then call the exit handlers:
+	//if (!isExiting.exchange(true)) { //try setting isExiting to true. If it was previously false, then call the exit handlers:
+	if (!isExiting) {
+		isExiting = true;
 		LOG("Exiting\n");
 		for (const std::vector<void(*)()>& level : exitHandlers) {
 			for (void(*handler)() : level) {

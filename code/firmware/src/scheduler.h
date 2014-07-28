@@ -3,14 +3,14 @@
 
 //#include <queue>
 #include <deque>
-#include <thread>
+#include <thread> //for this_thread.sleep
 //#include <mutex>
 //#include <condition_variable>
 #include <time.h> //for timespec
 #include <chrono> 
 #include <array>
 #include <vector>
-#include <atomic>
+//#include <atomic>
 #include <tuple>
 #include <algorithm> //for push_heap
 //#include <functional>
@@ -51,8 +51,8 @@ struct PwmInfo {
 
 class SchedulerBase {
 	static std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> exitHandlers;
-	static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic.
-	//bool isExiting;
+	//static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic.
+	static bool isExiting;
 	private:
 		static void callExitHandlers();
 	public:
@@ -132,35 +132,6 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 	}
 }
 
-
-/*template <typename Interface> Event Scheduler<Interface>::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
-	if (this->eventQueue.empty()) {
-		return Event(); //return null event
-	}
-	
-	Event evt = this->eventQueue.front();
-	this->eventQueue.pop_front();
-	
-	//check if event is PWM-based:
-	if (pwmInfo[evt.stepperId()].isNonNull()) {
-		if (evt.direction() == StepForward) {
-			//next event will be StepBackward, or refresh this event if there is no off-duty.
-			Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
-			nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
-			this->orderedInsert(nextPwm); //to do: ordered insert
-		} else {
-			//next event will be StepForward, or refresh this event if there is no on-duty.
-			Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
-			nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
-			this->orderedInsert(nextPwm);
-		}
-	}
-	if (doSleep) {
-		this->sleepUntilEvent(evt);
-	}
-	
-	return evt;
-}*/
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
 	timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000}); //20000 = 20 uSec

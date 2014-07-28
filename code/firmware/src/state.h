@@ -15,9 +15,9 @@
 #include <array>
 //#include <atomic>
 //#include <memory> //for unique_ptr
-#include <utility> //for std::pair
+//#include <utility> //for std::pair
 #include <functional>
-#include <thread>
+//#include <thread>
 #include "logging.h"
 #include "gparse/command.h"
 #include "gparse/com.h"
