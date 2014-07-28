@@ -312,7 +312,6 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		setUnitMode(UNIT_MM);
 		resp = gparse::Command::OK;
 	} else if (cmd.isG28()) { //home to end-stops / zero coordinates
-		LOGW("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
 		this->homeEndstops();
 		/*float homeX, homeY, homeZ, homeE;
 		if (cmd.hasAnyXYZ()) {
