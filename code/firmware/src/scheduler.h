@@ -18,8 +18,8 @@
 #include "logging.h"
 #include "timeutil.h"
 
-//#include <pthread.h> //for pthread_setschedparam
-//#include <time.h> //for clock_nanosleep
+#include <pthread.h> //for pthread_setschedparam
+#include <time.h> //for clock_nanosleep
 //#include "logging.h"
 
 #ifndef SCHED_PRIORITY
@@ -96,7 +96,8 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		void setBufferSize(unsigned size);
 		unsigned getBufferSize() const;
 		unsigned numActivePwmChannels() const;
-		template <typename OnEvent, typename OnWait> void eventLoop(OnEvent onEvent, OnWait onWait) {
+		void eventLoop();
+		/*template <typename OnEvent, typename OnWait> void eventLoop(OnEvent onEvent, OnWait onWait) {
 			Event evt;
 			while (1) {
 				bool needCpuTime = onWait();
@@ -111,7 +112,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 					needCpuTime = true;
 				}
 			}
-		}
+		}*/
 };
 
 
@@ -246,6 +247,23 @@ template <typename Interface> unsigned Scheduler<Interface>::numActivePwmChannel
 		}
 	}
 	return r;
+}
+
+template <typename Interface> void Scheduler<Interface>::eventLoop() {
+	Event evt;
+	while (1) {
+		bool needCpuTime = interface.onIdleCpu();
+		evt = this->nextEvent(false, std::chrono::microseconds(needCpuTime ? 0 : 100000)); //get next event, but don't sleep. Yield to the OS for ~100ms if we DON'T need the cpu time.
+		if (!evt.isNull()) { //wait for event to occur if it is non-null.
+			while (!evt.isTime()) {
+				if (!interface.onIdleCpu()) { //if we don't need any future waiting, then sleep to give cpu to other processes:
+					this->sleepUntilEvent(evt);
+				}
+			}
+			interface.onEvent(evt);
+			needCpuTime = true;
+		}
+	}
 }
 
 #endif
