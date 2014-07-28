@@ -13,7 +13,7 @@
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
 #include <array>
-#include <atomic>
+//#include <atomic>
 //#include <memory> //for unique_ptr
 #include <utility> //for std::pair
 #include <functional>
@@ -41,7 +41,7 @@ template <typename Drv> class State {
 		}
 	};
 	typedef Scheduler<SchedInterface> SchedType;
-	std::atomic<bool> _isDeadOrDying; //for thread destruction upon death.
+	//std::atomic<bool> _isDeadOrDying; //for thread destruction upon death.
 	PositionMode _positionMode; // = POS_ABSOLUTE;
 	PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
 	LengthUnit unitMode; // = UNIT_MM;
@@ -113,8 +113,8 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com) : _isDeadOrDying(false), 
-	_positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
+template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDeadOrDying(false), 
+	: _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
@@ -131,7 +131,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com) : _isDeadO
 }
 
 template <typename Drv> State<Drv>::~State() {
-	this->_isDeadOrDying = true;
+	//this->_isDeadOrDying = true;
 	//this->scheduler.queue(Event()); //push a null event in order to wake up the scheduling thread so it can terminate.
 	//this->schedthread.join();
 }
@@ -276,17 +276,6 @@ template <typename Drv> bool State<Drv>::satisfyIOs() {
 template <typename Drv> void State<Drv>::eventLoop() {
 	this->scheduler.initSchedThread();
 	this->scheduler.eventLoop();
-	//this->scheduler.eventLoop(this, &State<Drv>::handleEvent, &State<Drv>::satisfyIOs);
-	//EventLoop_HandleEvent evtHandler = EventLoop_HandleEvent(*this);
-	//EventLoop_SatisfyIOs ioSat = EventLoop_SatisfyIOs(*this);
-	//this->scheduler.eventLoop(evtHandler, ioSat);
-	/*while (1) {
-		Event evt = this->scheduler.nextEvent();
-		if (this->_isDeadOrDying) {
-			return;
-		}
-		this->handleEvent(evt);
-	}*/
 }
 
 template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command const& cmd) {
