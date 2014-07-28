@@ -218,7 +218,8 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//do {} while (interface.onIdleCpu());
 		} else {
 			//interface.onIdleCpu();
-			const Event &evt = this->eventQueue.front();
+			//const Event &evt = this->eventQueue.front();
+			Event evt = this->eventQueue.front();
 			//do NOT pop the event here, because it might not be handled this time around.
 			while (!evt.isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
@@ -230,6 +231,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					}
 				}
 			}
+			this->eventQueue.pop_front();
 			interface.onEvent(evt);
 			
 			//manage PWM events:
@@ -251,7 +253,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 				}
 				this->orderedInsert(nextPwm);
 			}
-			this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
+			//this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
 			forceWait = false; //avoid draining ALL events - just drain the first.
 		}
 	}
