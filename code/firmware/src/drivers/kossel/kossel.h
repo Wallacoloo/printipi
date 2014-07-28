@@ -104,11 +104,12 @@ class Kossel : public Driver {
         inline float defaultFanPwmPeriod() const {
         	return 0.02; //don't need high resolution
         }
-        inline void getTemperature(CelciusType &extruder, CelciusType& /*platform*/) const {
-        	extruder = std::get<5>(ioDrivers).getLastTemp();
+        //inline void getTemperature(CelciusType &extruder, CelciusType& /*platform*/) const {
+        //	extruder = std::get<5>(ioDrivers).getLastTemp();
+        //}
+        inline std::tuple<CelciusType, CelciusType> getTemperature() const {
+        	return std::make_tuple(std::get<5>(ioDrivers).getLastTemp(), -300);
         }
-        //inline std::tuple<CelciusType, CelciusType> getTemperature() const {
-        //	return std::make_tuple(std::get<t>(ioDrivers).getLastTemp()
         inline void setTemperature(CelciusType temp) {
         	std::get<5>(ioDrivers).setTemp(temp);
         }

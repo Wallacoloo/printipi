@@ -364,8 +364,10 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		driver.setTemperature(t);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
-		CelciusType t=DEFAULT_HOTEND_TEMP(), b=DEFAULT_BED_TEMP(); //a temperature < absolute zero means no reading available.
-		driver.getTemperature(t, b);
+		//CelciusType t=DEFAULT_HOTEND_TEMP(), b=DEFAULT_BED_TEMP(); //a temperature < absolute zero means no reading available.
+		//driver.getTemperature(t, b);
+		CelciusType t, b;
+		std::tie(t, b) = driver.getTemperature();
 		resp = gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
 		LOGW("Warning (gparse/state.h): OP_M106 (set fan speed) not tested\n");
