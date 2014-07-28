@@ -238,18 +238,20 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//avoid the following, in case onIdleCpu causes the generation of events:
 			//do {} while (interface.onIdleCpu());
 		} else {
-			interface.onIdleCpu();
+			//interface.onIdleCpu();
 			Event evt = this->eventQueue.front();
-			while (!this->isEventNear(evt)) {
-				if (!interface.onIdleCpu()) { //if we don't need any future waiting, and the event isn't near, yield to main part of the program.
-					if (forceWait) {
-						break;
-					} else {
+			//while (!this->isEventNear(evt)) {
+			while (!evt.isTime()) {
+				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
+					if (isEventNear(evt) && !forceWait) { //need to retain control if the event is near, or if the queue must be emptied.
 						return;
+					} else {
+						this->sleepUntilEvent(evt);
+						break;
 					}
 				}
 			}
-			this->sleepUntilEvent(evt);
+			//this->sleepUntilEvent(evt);
 			interface.onEvent(evt);
 			//manage PWM events:
 			if (pwmInfo[evt.stepperId()].isNonNull()) {
