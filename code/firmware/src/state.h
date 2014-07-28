@@ -43,7 +43,7 @@ template <typename Drv> class State {
 	Drv &driver;
 	gparse::Com com;
 	Scheduler scheduler;
-	std::thread schedthread;
+	//std::thread schedthread;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
@@ -111,10 +111,10 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com) : _isDeadO
 	_destMechanicalPos(), 
 	driver(drv),
 	com(com), 
-	scheduler(),
+	scheduler()
 	//scheduler(std::bind(&State<Drv>::handleEvent, this, std::placeholders::_1)) 
 	//scheduler(*this)
-	schedthread(&State<Drv>::eventLoop, this)
+	//schedthread(&State<Drv>::eventLoop, this)
 	{
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
 	//this->setDestFeedRatePrimitive(drv.defaultFeedRate());
@@ -123,7 +123,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com) : _isDeadO
 template <typename Drv> State<Drv>::~State() {
 	this->_isDeadOrDying = true;
 	//this->scheduler.queue(Event()); //push a null event in order to wake up the scheduling thread so it can terminate.
-	this->schedthread.join();
+	//this->schedthread.join();
 }
 
 template <typename Drv> PositionMode State<Drv>::positionMode() const {
