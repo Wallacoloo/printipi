@@ -205,8 +205,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		} else {
 			//interface.onIdleCpu();
 			Event evt = this->eventQueue.front();
-			this->eventQueue.pop_front(); //CANNOT put this after the regeneration of the PWM event, otherwise the wrong event may be popped.
-			//while (!this->isEventNear(evt)) {
+			//do NOT pop the event here, because it might not be handled this time around.
 			while (!evt.isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
 					if (isEventNear(evt) && !forceWait) { //need to retain control if the event is near, or if the queue must be emptied.
@@ -219,13 +218,14 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			}
 			//this->sleepUntilEvent(evt);
 			interface.onEvent(evt);
+			this->eventQueue.pop_front(); //CANNOT put this after the regeneration of the PWM event, otherwise the wrong event may be popped.
 			//manage PWM events:
 			if (pwmInfo[evt.stepperId()].isNonNull()) {
 				if (evt.direction() == StepForward) {
 					//next event will be StepBackward, or refresh this event if there is no off-duty.
 					Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
 					nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
-					this->orderedInsert(nextPwm); //to do: ordered insert
+					this->orderedInsert(nextPwm); 
 				} else {
 					//next event will be StepForward, or refresh this event if there is no on-duty.
 					Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
