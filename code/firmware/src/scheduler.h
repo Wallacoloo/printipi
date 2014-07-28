@@ -97,22 +97,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		unsigned getBufferSize() const;
 		unsigned numActivePwmChannels() const;
 		void eventLoop();
-		/*template <typename OnEvent, typename OnWait> void eventLoop(OnEvent onEvent, OnWait onWait) {
-			Event evt;
-			while (1) {
-				bool needCpuTime = onWait();
-				evt = this->nextEvent(false, std::chrono::microseconds(needCpuTime ? 0 : 100000)); //get next event, but don't sleep. Yield to the OS for ~100ms if we DON'T need the cpu time.
-				if (!evt.isNull()) { //wait for event to occur if it is non-null.
-					while (!evt.isTime()) {
-						if (!onWait()) { //if we don't need any future waiting, then sleep to give cpu to other processes:
-							this->sleepUntilEvent(evt);
-						}
-					}
-					onEvent(evt);
-					needCpuTime = true;
-				}
-			}
-		}*/
+		void yield();
 };
 
 
@@ -127,7 +112,8 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
 	//LOGV("Scheduler::queue\n");
 	std::unique_lock<std::mutex> lock(this->mutex);
 	while (this->eventQueue.size() >= this->bufferSize) {
-		eventConsumedCond.wait(lock);
+		yield();
+		//eventConsumedCond.wait(lock);
 	}
 	//_lockPushes.lock(); //aquire a lock
 	//if (this->eventQueue.size() >= this->bufferSize) {
@@ -262,6 +248,16 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 			}
 			interface.onEvent(evt);
 			needCpuTime = true;
+		}
+	}
+}
+
+template <typename Interface> void Scheduler<Interface>::yield() {
+	if (eventQueue.size()) {
+		Event evt = eventQueue.front();
+		if (evt.isTime()) {
+			eventQueue.pop_front();
+			interface.onEvent(evt);
 		}
 	}
 }
