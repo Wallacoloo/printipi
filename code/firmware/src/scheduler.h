@@ -130,7 +130,7 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 	}*/
 	this->eventQueue.push_back(evt);
 	std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
-	LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec);
+	LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u. %i\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec, std::is_heap(eventQueue.begin(), eventQueue.end()));
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
