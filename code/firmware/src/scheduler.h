@@ -119,7 +119,7 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 	//it may be beneficial to compare against the previously last element.
 	//if buffer size is 512, then that gives 1 compare instead of 9.
 	//on the other hand, if the buffer is that big, insertion time probably isn't crucial.
-	if (this->eventQueue.empty()) {
+	/*if (this->eventQueue.empty()) {
 		this->eventQueue.push_back(evt);
 	} else { //fetching eventQueue.back() is only valid if the queue is non-empty.
 		const Event &oldBack = this->eventQueue.back();
@@ -127,7 +127,9 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 		if (timespecLt(evt.time(), oldBack.time())) { //If not already ordered, we must order it.
 			std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
 		}
-	}
+	}*/
+	this->eventQueue.push_back(evt);
+	std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
