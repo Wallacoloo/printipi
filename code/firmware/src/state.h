@@ -484,7 +484,7 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
 	this->scheduleAxisSteppers(iters, NAN);
 	this->scheduler.setBufferSize(b);
-	Drv::CoordMapT::getHomePosition(_destMechanicalPos);
+	Drv::CoordMapT::getHomePosition(_destMechanicalPos); //TODO: replace with an assignment
 }
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
