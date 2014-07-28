@@ -259,7 +259,7 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 
 template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 	//handle an event from the scheduler.
-	//LOGV("State::handleEvent(idx, dir): %i, %i\n", evt.stepperId(), evt.direction()==StepForward);
+	LOGV("State::handleEvent(idx, dir): %i, %i\n", evt.stepperId(), evt.direction()==StepForward);
 	if (evt.direction() == StepForward) {
 		drv::IODriver::selectAndStepForward(this->driver.ioDrivers, evt.stepperId());
 	} else {
