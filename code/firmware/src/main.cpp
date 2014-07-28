@@ -31,7 +31,7 @@
  * *Add enable pin
  * *Account for PWM pins when setting Scheduler queue size.
  *  Add absolute PWM limits to hotend, etc.
- *  Make CoordMapT, etc return tuples instead of using writebacks
+ * *Make CoordMapT, etc return tuples instead of using writebacks
  *  Make Driver::getTemperature return tuples
  *  Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading
