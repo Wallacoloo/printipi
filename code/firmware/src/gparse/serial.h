@@ -10,11 +10,13 @@
 namespace gparse {
 
 std::string readLine(int fd);
+bool readLinePart(int fd, std::string &out);
 //template <typename T> void comLoop(int fd, State<T>& state) {
 template <typename T> void comLoop(int fd, T& state) {
-	std::string cmd;
 	while (1) {
-		cmd = readLine(fd);
+		std::string cmd;
+		do { } while (!readLinePart(fd, cmd));
+		//cmd = readLine(fd);
 		Command parsed = Command(cmd);
 		if (!NO_LOG_M105 || !parsed.isM105()) {
 			LOG("command: %s\n", cmd.c_str());

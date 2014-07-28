@@ -96,7 +96,7 @@ int main_(int argc, char** argv) {
     
     //Open the serial device:
     LOG("Serial file: %s\n", serialFileName);
-    int fd = open(serialFileName, O_RDWR);
+    int fd = open(serialFileName, O_RDWR | O_NONBLOCK);
     
     //instantiate main driver:
     drv::Kossel driver;
