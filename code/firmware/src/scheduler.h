@@ -92,7 +92,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		unsigned getBufferSize() const;
 		unsigned numActivePwmChannels() const;
 		void eventLoop();
-		void yield();
+		void yield(bool fast=true);
 };
 
 
@@ -107,7 +107,8 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
 	//LOGV("Scheduler::queue\n");
 	//std::unique_lock<std::mutex> lock(this->mutex);
 	while (this->eventQueue.size() >= this->bufferSize) {
-		yield();
+		//yield();
+		yield(false);
 		//eventConsumedCond.wait(lock);
 	}
 	//_lockPushes.lock(); //aquire a lock
@@ -219,7 +220,7 @@ template <typename Interface> unsigned Scheduler<Interface>::numActivePwmChannel
 }
 
 template <typename Interface> void Scheduler<Interface>::eventLoop() {
-	Event evt;
+	/*Event evt;
 	while (1) {
 		bool needCpuTime = interface.onIdleCpu();
 		evt = this->nextEvent(false, std::chrono::microseconds(needCpuTime ? 0 : 100000)); //get next event, but don't sleep. Yield to the OS for ~100ms if we DON'T need the cpu time.
@@ -232,10 +233,13 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 			interface.onEvent(evt);
 			needCpuTime = true;
 		}
+	}*/
+	while (1) {
+		yield(false);
 	}
 }
 
-template <typename Interface> void Scheduler<Interface>::yield() {
+template <typename Interface> void Scheduler<Interface>::yield(bool fast) {
 	while (1) {
 		if (eventQueue.empty()) { //if no events, then run idle events and return.
 			if (!interface.onIdleCpu()) { //loop is implied by the outer while(1)
@@ -247,7 +251,12 @@ template <typename Interface> void Scheduler<Interface>::yield() {
 			Event evt = this->eventQueue.front();
 			while (!this->isEventNear(evt)) {
 				if (!interface.onIdleCpu()) { //if we don't need any future waiting, and the event isn't near, yield to main part of the program.
-					return;
+					if (fast) {
+						return;
+					} else {
+						break;
+						//this->sleepUntilEvent(evt);
+					}
 				}
 			}
 			this->sleepUntilEvent(evt);
