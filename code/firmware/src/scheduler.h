@@ -114,9 +114,19 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
 }
 
 template <typename Interface> void Scheduler<Interface>::orderedInsert(const Event &evt) {
-	this->eventQueue.push_back(evt);
-	if (timespecLt(evt.time(), this->eventQueue.back().time())) { //If not already ordered, we must order it.
-		std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
+	//Most inserts will already be ordered (ie the event will occur after all scheduled events)
+	//glibc push_heap will be logarithmic no matter WHAT: https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01051_source.html
+	//it may be beneficial to compare against the previously last element.
+	//if buffer size is 512, then that gives 1 compare instead of 9.
+	//on the other hand, if the buffer is that big, insertion time probably isn't crucial.
+	if (this->eventQueue.empty()) {
+		this->eventQueue.push_back(evt);
+	} else { //fetching eventQueue.back() is only valid if the queue is non-empty.
+		const Event &oldBack = this->eventQueue.back();
+		this->eventQueue.push_back(evt);
+		if (timespecLt(evt.time(), oldBack.time())) { //If not already ordered, we must order it.
+			std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
+		}
 	}
 }
 
