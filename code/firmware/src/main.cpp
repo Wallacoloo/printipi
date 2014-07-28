@@ -104,11 +104,13 @@ int main_(int argc, char** argv) {
     
     //instantiate main driver:
     drv::Kossel driver;
-	State<drv::Kossel> gState(driver, com);
+	State<drv::Kossel> state(driver, com);
 	
-    while (1) {
+	state.eventLoop();
+	
+    /*while (1) {
     	std::this_thread::sleep_for(std::chrono::seconds(2));
-    }
+    }*/
     //main loop:
     //gparse::comLoop(fd, gState);
     return 0;
