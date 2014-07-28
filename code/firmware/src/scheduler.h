@@ -4,8 +4,8 @@
 //#include <queue>
 #include <deque>
 #include <thread>
-#include <mutex>
-#include <condition_variable>
+//#include <mutex>
+//#include <condition_variable>
 #include <time.h> //for timespec
 #include <chrono> 
 #include <array>
@@ -52,6 +52,7 @@ struct PwmInfo {
 class SchedulerBase {
 	static std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> exitHandlers;
 	static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic.
+	//bool isExiting;
 	private:
 		static void callExitHandlers();
 	public:
@@ -71,17 +72,10 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 	//std::condition_variable nonemptyCond;
 	//std::condition_variable eventConsumedCond;
 	
-	//struct timespec lastEventHandledTime; //used? Only written - never read!
 	unsigned bufferSize;
-	//static std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> exitHandlers;
-	//static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic.
 	private:
-		//static void callExitHandlers();
 		void orderedInsert(const Event &evt);
 	public:
-		//static void configureExitHandlers();
-		//static void registerExitHandler(void (*handler)(), unsigned level);
-		//queue and nextEvent can be called from separate threads, but nextEvent must NEVER be called from multiple threads.
 		void queue(const Event &evt);
 		void schedPwm(AxisIdType idx, const PwmInfo &p);
 		inline void schedPwm(AxisIdType idx, float duty) {
@@ -90,6 +84,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		}
 		Scheduler(Interface interface);
 		Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
+		bool isEventNear(const Event &evt) const;
 		void sleepUntilEvent(const Event &evt) const;
 		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
@@ -143,49 +138,37 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 
 
 template <typename Interface> Event Scheduler<Interface>::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
-	Event evt;
-	{
-		//std::unique_lock<std::mutex> lock(this->mutex);
-		while (this->eventQueue.empty()) { //wait for an event to be pushed.
-			//condition_variable.wait() can produce spurious wakeups; need the while loop.
-			//this->nonemptyCond.wait(_lockPushes); //condition_variable.wait() can produce spurious wakeups; need the while loop.
-			//if (this->nonemptyCond.wait_for(lock, timeout) == std::cv_status::timeout) { 
-				return Event(); //return null event
-			//}
-		}
-		evt = this->eventQueue.front();
-		this->eventQueue.pop_front();
-		//check if event is PWM-based:
-		//if (pwmInfo[evt.stepperId()].nsLow != 0 || pwmInfo[evt.stepperId()].nsHigh != 0) {
-		if (pwmInfo[evt.stepperId()].isNonNull()) {
-			if (evt.direction() == StepForward) {
-				//next event will be StepBackward, or refresh this event if there is no off-duty.
-				Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
-				nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
-				this->orderedInsert(nextPwm); //to do: ordered insert
-			} else {
-				//next event will be StepForward, or refresh this event if there is no on-duty.
-				Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
-				nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
-				this->orderedInsert(nextPwm);
-			}
-		} else { //non-pwm event, means the queue size has decreased by 1.
-			//lock.unlock();
-			//eventConsumedCond.notify_one();
+	if (this->eventQueue.empty()) {
+		return Event(); //return null event
+	}
+	
+	Event evt = this->eventQueue.front();
+	this->eventQueue.pop_front();
+	
+	//check if event is PWM-based:
+	if (pwmInfo[evt.stepperId()].isNonNull()) {
+		if (evt.direction() == StepForward) {
+			//next event will be StepBackward, or refresh this event if there is no off-duty.
+			Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
+			nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
+			this->orderedInsert(nextPwm); //to do: ordered insert
+		} else {
+			//next event will be StepForward, or refresh this event if there is no on-duty.
+			Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
+			nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
+			this->orderedInsert(nextPwm);
 		}
 	}
 	if (doSleep) {
 		this->sleepUntilEvent(evt);
-		/*struct timespec sleepUntil = evt.time();
-		//struct timespec curTime;
-		//clock_gettime(CLOCK_MONOTONIC, &curTime);
-		//LOGV("Scheduler::nextEvent sleep from %lu.%lu until %lu.%lu\n", curTime.tv_sec, curTime.tv_nsec, sleepUntil.tv_sec, sleepUntil.tv_nsec);
-		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
-		//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
-		//this->lastEventHandledTime = sleepUntil;*/
 	}
 	
 	return evt;
+}
+
+template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
+	timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000});
+	return timespecLt(evt.time(), thresh);
 }
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event &evt) const {
@@ -253,12 +236,32 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 }
 
 template <typename Interface> void Scheduler<Interface>::yield() {
-	if (eventQueue.size()) {
+	/*if (eventQueue.size()) {
 		Event evt = eventQueue.front();
 		if (evt.isTime()) {
-			eventQueue.pop_front();
+			nextEvent();
+			//eventQueue.pop_front();
 			interface.onEvent(evt);
 		}
+	}*/
+	while (1) {
+		if (eventQueue.empty()) { //if no events, then run idle events and return.
+			do {} while (interface.onIdleCpu());
+			return;
+		}
+		Event evt = this->eventQueue.front();
+		while (!evt.isTime()) {
+			if (!interface.onIdleCpu()) { //if we don't need any future waiting, then either sleep to give cpu to other processes, or return control to main program:
+				if (this->isEventNear(evt)) {
+					this->sleepUntilEvent(evt);
+					break;
+				} else {
+					return;
+				}
+			}
+		}
+		this->eventQueue.pop_front();
+		interface.onEvent(evt);
 	}
 }
 
