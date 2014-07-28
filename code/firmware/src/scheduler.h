@@ -263,8 +263,22 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 				}
 			}
 			this->sleepUntilEvent(evt);
-			this->eventQueue.pop_front();
 			interface.onEvent(evt);
+			//manage PWM events.
+			if (pwmInfo[evt.stepperId()].isNonNull()) {
+				if (evt.direction() == StepForward) {
+					//next event will be StepBackward, or refresh this event if there is no off-duty.
+					Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
+					nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
+					this->orderedInsert(nextPwm); //to do: ordered insert
+				} else {
+					//next event will be StepForward, or refresh this event if there is no on-duty.
+					Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
+					nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
+					this->orderedInsert(nextPwm);
+				}
+			}
+			this->eventQueue.pop_front();
 			forceWait = false;
 		}
 	}
