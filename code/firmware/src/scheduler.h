@@ -234,7 +234,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		} else {
 			//interface.onIdleCpu();
 			Event evt = this->eventQueue.front();
-			this->eventQueue.pop_front();
+			this->eventQueue.pop_front(); //CANNOT put this after the regeneration of the PWM event, otherwise the wrong event may be popped.
 			//while (!this->isEventNear(evt)) {
 			while (!evt.isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
@@ -249,7 +249,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//this->sleepUntilEvent(evt);
 			interface.onEvent(evt);
 			//manage PWM events:
-			if (pwmInfo[evt.stepperId()].isNonNull()) {
+			/*if (pwmInfo[evt.stepperId()].isNonNull()) {
 				if (evt.direction() == StepForward) {
 					//next event will be StepBackward, or refresh this event if there is no off-duty.
 					Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
@@ -261,7 +261,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
 					this->orderedInsert(nextPwm);
 				}
-			}
+			}*/
 			forceWait = false;
 		}
 	}
