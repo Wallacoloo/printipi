@@ -3,13 +3,15 @@
 
 #include "drivers/iodriver.h"
 #include "timeutil.h"
+#include "filters/nofilter.h"
 
 namespace drv {
 
-template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID> class TempControl : public IODriver {
+template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
 	Heater _heater;
 	Thermistor _therm;
 	PID _pid;
+	Filter _filter;
 	float _destTemp;
 	float _lastTemp;
 	bool _isReading;
@@ -57,6 +59,7 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 	private:
 		void updatePwm(Scheduler &sched) {
 			float error = _destTemp - _lastTemp;
+			error = _filter.feed(error);
 			float pwm = _pid.feed(error);
 			//float P = 0.01*error;
 			LOG("tempcontrol: pwm=%f\n", pwm);
