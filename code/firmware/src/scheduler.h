@@ -208,9 +208,9 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//do NOT pop the event here, because it might not be handled this time around.
 			while (!evt.isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
-					if (isEventNear(evt) && !forceWait) { //need to retain control if the event is near, or if the queue must be emptied.
+					if (!isEventNear(evt) && !forceWait) { //if the event is far away, then return control to program.
 						return;
-					} else {
+					} else { //retain control if the event is near, or if the queue must be emptied.
 						this->sleepUntilEvent(evt);
 						break;
 					}
@@ -224,6 +224,10 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			const PwmInfo &pwm = pwmInfo[evt.stepperId()];
 			if (pwm.isNonNull()) {
 				Event nextPwm;
+				/*         for | back
+				 * nsLow    0     1
+				 * nsHigh   1     0   */
+				//dir = (nsLow ^ for)
 				if (evt.direction() == StepForward) {
 					//next event will be StepBackward, or refresh this event if there is no off-duty.
 					nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
