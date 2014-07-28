@@ -51,3 +51,7 @@ bool Event::operator<(const Event &other) const {
 	return timespecLt(this->time(), other.time());
 }
 
+bool Event::operator>(const Event &other) const {
+	return timespecLt(other.time(), this->time());
+}
+

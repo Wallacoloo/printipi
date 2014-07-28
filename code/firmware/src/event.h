@@ -40,7 +40,7 @@ class Event {
 		void offset(const struct timespec& offset);
 		void offsetNano(unsigned nsec); //must be less than 1 second.
 		bool operator<(const Event &other) const;
-		//returns whether the current time is > the time to trigger the event.
+		bool operator>(const Event &other) const;
 		
 };
 
