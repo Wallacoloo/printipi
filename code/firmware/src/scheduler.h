@@ -196,6 +196,7 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 
 template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 	while (1) {
+		LOGV("Scheduler::eventQueue.size(): %zu\n", eventQueue.size());
 		if (eventQueue.empty()) { //if no events, then run idle events and return.
 			if (!interface.onIdleCpu()) { //loop is implied by the outer while(1)
 				return;
