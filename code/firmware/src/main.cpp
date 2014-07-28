@@ -49,7 +49,6 @@
 //#include <fcntl.h> //needed for (file) open()
 //#include <stdlib.h> //needed for exit()
 #include <sys/mman.h> //for mlockall
-//#include <cstdlib> //for atexit
 #include "logging.h"
 
 //#include "gparse/serial.h"
@@ -58,8 +57,6 @@
 #include "drivers/driver.h"
 #include "drivers/kossel/kossel.h"
 #include "argparse.h"
-//#include <thread>         // std::this_thread::sleep_for
-//#include <chrono>         // std::chrono::seconds
 
 void printUsage(char* cmd) {
 	//#ifndef NO_USAGE_INFO

@@ -262,7 +262,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					this->orderedInsert(nextPwm);
 				}
 			}
-			forceWait = false;
+			forceWait = false; //avoid draining ALL events - just drain the first.
 		}
 	}
 }
