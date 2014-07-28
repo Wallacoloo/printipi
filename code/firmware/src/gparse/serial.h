@@ -3,6 +3,7 @@
 
 #include <string>
 #include <unistd.h> //for (file) read() and write()
+//#include <tuple>
 #include "logging.h"
 #include "command.h"
 //#include "state.h"
@@ -11,6 +12,7 @@ namespace gparse {
 
 std::string readLine(int fd);
 bool readLinePart(int fd, std::string &out);
+char tryReadChar(int fd);
 //template <typename T> void comLoop(int fd, State<T>& state) {
 template <typename T> void comLoop(int fd, T& state) {
 	while (1) {

@@ -20,6 +20,7 @@
 #include <thread>
 #include "logging.h"
 #include "gparse/command.h"
+#include "gparse/com.h"
 #include "event.h"
 #include "scheduler.h"
 #include "drivers/driver.h"
@@ -40,13 +41,14 @@ template <typename Drv> class State {
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	Drv &driver;
+	gparse::Com com;
 	Scheduler scheduler;
 	std::thread schedthread;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
 		static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
 		static constexpr CelciusType DEFAULT_BED_TEMP() { return -300; }
-		State(Drv &drv);
+		State(Drv &drv, gparse::Com &com);
 		~State();
 		/* Control interpretation of positions from the host as relative or absolute */
 		PositionMode positionMode() const;
@@ -101,13 +103,14 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(Drv &drv) : _isDeadOrDying(false), 
+template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com) : _isDeadOrDying(false), 
 	_positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
 	_destMechanicalPos(), 
 	driver(drv),
+	com(com), 
 	scheduler(),
 	//scheduler(std::bind(&State<Drv>::handleEvent, this, std::placeholders::_1)) 
 	//scheduler(*this)
@@ -258,7 +261,9 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 	}
 }
 template <typename Drv> bool State<Drv>::satisfyIOs() {
-	//return drv::IODriver::callIdleCpuHandlers(this->driver.ioDrivers); //, this->scheduler);
+	if (com.tendCom()) {
+		com.reply(execute(com.getCommand()));
+	}
 	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, Scheduler&>(this->driver.ioDrivers, this->scheduler);
 }
 
