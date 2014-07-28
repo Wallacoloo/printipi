@@ -83,7 +83,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 			schedPwm(idx, pi);
 		}
 		Scheduler(Interface interface);
-		Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
+		//Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
 		bool isEventNear(const Event &evt) const;
 		void sleepUntilEvent(const Event &evt) const;
 		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
@@ -139,7 +139,7 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 }
 
 
-template <typename Interface> Event Scheduler<Interface>::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
+/*template <typename Interface> Event Scheduler<Interface>::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 	if (this->eventQueue.empty()) {
 		return Event(); //return null event
 	}
@@ -166,10 +166,10 @@ template <typename Interface> Event Scheduler<Interface>::nextEvent(bool doSleep
 	}
 	
 	return evt;
-}
+}*/
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
-	timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000});
+	timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000}); //20000 = 20 uSec
 	return timespecLt(evt.time(), thresh);
 }
 
@@ -221,24 +221,10 @@ template <typename Interface> unsigned Scheduler<Interface>::numActivePwmChannel
 }
 
 template <typename Interface> void Scheduler<Interface>::eventLoop() {
-	/*Event evt;
-	while (1) {
-		bool needCpuTime = interface.onIdleCpu();
-		evt = this->nextEvent(false, std::chrono::microseconds(needCpuTime ? 0 : 100000)); //get next event, but don't sleep. Yield to the OS for ~100ms if we DON'T need the cpu time.
-		if (!evt.isNull()) { //wait for event to occur if it is non-null.
-			while (!evt.isTime()) {
-				if (!interface.onIdleCpu()) { //if we don't need any future waiting, then sleep to give cpu to other processes:
-					this->sleepUntilEvent(evt);
-				}
-			}
-			interface.onEvent(evt);
-			needCpuTime = true;
-		}
-	}*/
 	while (1) {
 		yield(true);
 		if (eventQueue.empty()) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+			std::this_thread::sleep_for(std::chrono::milliseconds(20));
 		}
 	}
 }
@@ -249,9 +235,10 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			if (!interface.onIdleCpu()) { //loop is implied by the outer while(1)
 				return;
 			}
+			//avoid the following, in case onIdleCpu causes the generation of events:
 			//do {} while (interface.onIdleCpu());
-			//return;
 		} else {
+			interface.onIdleCpu();
 			Event evt = this->eventQueue.front();
 			while (!this->isEventNear(evt)) {
 				if (!interface.onIdleCpu()) { //if we don't need any future waiting, and the event isn't near, yield to main part of the program.
@@ -264,7 +251,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			}
 			this->sleepUntilEvent(evt);
 			interface.onEvent(evt);
-			//manage PWM events.
+			//manage PWM events:
 			if (pwmInfo[evt.stepperId()].isNonNull()) {
 				if (evt.direction() == StepForward) {
 					//next event will be StepBackward, or refresh this event if there is no off-duty.
