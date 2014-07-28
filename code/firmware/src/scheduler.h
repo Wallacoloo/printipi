@@ -105,18 +105,12 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 
 template <typename Interface> void Scheduler<Interface>::queue(const Event& evt) {
 	//LOGV("Scheduler::queue\n");
-	//std::unique_lock<std::mutex> lock(this->mutex);
-	yield(); //fast yield.
 	while (this->eventQueue.size() >= this->bufferSize) {
 		//yield();
 		yield(true);
-		//eventConsumedCond.wait(lock);
 	}
-	//_lockPushes.lock(); //aquire a lock
-	//if (this->eventQueue.size() >= this->bufferSize) {
-	//	return; //keep pushes locked.
 	this->orderedInsert(evt);
-	//this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
+	yield(); //fast yield.
 }
 
 template <typename Interface> void Scheduler<Interface>::orderedInsert(const Event &evt) {
@@ -240,6 +234,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		} else {
 			//interface.onIdleCpu();
 			Event evt = this->eventQueue.front();
+			this->eventQueue.pop_front();
 			//while (!this->isEventNear(evt)) {
 			while (!evt.isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
@@ -267,7 +262,6 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					this->orderedInsert(nextPwm);
 				}
 			}
-			this->eventQueue.pop_front();
 			forceWait = false;
 		}
 	}
