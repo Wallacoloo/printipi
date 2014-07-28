@@ -30,7 +30,7 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 		void setTemp(CelciusType t) {
 			_destTemp = t;
 		}
-		bool onIdleCpu(Scheduler &sched) {
+		template <typename Sched> bool onIdleCpu(Sched &sched) {
 			//LOGV("TempControl::onIdleCpu()\n");
 			if (_isReading) {
 				if (_therm.isReady()) {
@@ -57,7 +57,7 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 			return _lastTemp;
 		}
 	private:
-		void updatePwm(Scheduler &sched) {
+		template <typename Sched> void updatePwm(Sched &sched) {
 			float error = _destTemp - _lastTemp;
 			error = _filter.feed(error);
 			float pwm = _pid.feed(error);

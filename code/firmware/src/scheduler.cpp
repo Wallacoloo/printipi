@@ -4,12 +4,9 @@
 #include <time.h> //for clock_nanosleep
 #include <signal.h> //for sigaction signal handlers
 #include <cstdlib> //for atexit
-#include <algorithm> //for push_heap
-#include "logging.h"
-#include "timeutil.h"
 
-std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> Scheduler::exitHandlers;
-std::atomic<bool> Scheduler::isExiting(false);
+std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> SchedulerBase::exitHandlers;
+std::atomic<bool> SchedulerBase::isExiting(false);
 
 
 void ctrlCOrZHandler(int s){
@@ -22,7 +19,7 @@ void segfaultHandler(int /*signal*/, siginfo_t *si, void */*arg*/) {
     exit(1);
 }
 
-void Scheduler::callExitHandlers() {
+void SchedulerBase::callExitHandlers() {
 	if (!isExiting.exchange(true)) { //try setting isExiting to true. If it was previously false, then call the exit handlers:
 		LOG("Exiting\n");
 		for (const std::vector<void(*)()>& level : exitHandlers) {
@@ -34,8 +31,8 @@ void Scheduler::callExitHandlers() {
 }
 
 
-void Scheduler::configureExitHandlers() {
-	std::atexit((void(*)())&Scheduler::callExitHandlers);
+void SchedulerBase::configureExitHandlers() {
+	std::atexit((void(*)())&SchedulerBase::callExitHandlers);
 	//listen for ctrl+c, ctrl+z and segfaults. Then try to properly unmount any I/Os (crucial for disabling the heated nozzle)
 	struct sigaction sigIntHandler;
 	sigIntHandler.sa_handler = ctrlCOrZHandler;
@@ -53,7 +50,7 @@ void Scheduler::configureExitHandlers() {
     sigaction(SIGSEGV, &sa, NULL); //register segfault listener
 }
 
-void Scheduler::registerExitHandler(void (*handler)(), unsigned level) {
+void SchedulerBase::registerExitHandler(void (*handler)(), unsigned level) {
 	if (level > exitHandlers.size()) {
 		throw std::runtime_error("Tried to register an exit handler at too high of a level");
 	}
@@ -61,134 +58,3 @@ void Scheduler::registerExitHandler(void (*handler)(), unsigned level) {
 	//std::atexit(handler);
 }
 
-
-Scheduler::Scheduler() : bufferSize(SCHED_CAPACITY) {
-	//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //initialize to current time.
-}
-
-
-void Scheduler::queue(const Event& evt) {
-	//LOGV("Scheduler::queue\n");
-	std::unique_lock<std::mutex> lock(this->mutex);
-	while (this->eventQueue.size() >= this->bufferSize) {
-		eventConsumedCond.wait(lock);
-	}
-	//_lockPushes.lock(); //aquire a lock
-	//if (this->eventQueue.size() >= this->bufferSize) {
-	//	return; //keep pushes locked.
-	this->orderedInsert(evt);
-	this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
-}
-
-void Scheduler::orderedInsert(const Event &evt) {
-	this->eventQueue.push_back(evt);
-	if (timespecLt(evt.time(), this->eventQueue.back().time())) { //If not already ordered, we must order it.
-		std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
-	}
-}
-
-void Scheduler::schedPwm(AxisIdType idx, const PwmInfo &p) {
-	LOGV("Scheduler::schedPwm: %i, %u, %u. Current: %u, %u\n", idx, p.nsHigh, p.nsLow, pwmInfo[idx].nsHigh, pwmInfo[idx].nsLow);
-	if (pwmInfo[idx].nsHigh != 0 || pwmInfo[idx].nsLow != 0) { //already scheduled and running. Just update times.
-		pwmInfo[idx] = p;
-	} else { //have to schedule:
-		LOGV("Scheduler::schedPwm: queueing\n");
-		pwmInfo[idx] = p;
-		Event evt(timespecNow(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
-		this->queue(evt);
-	}
-}
-
-
-Event Scheduler::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
-	Event evt;
-	{
-		std::unique_lock<std::mutex> lock(this->mutex);
-		while (this->eventQueue.empty()) { //wait for an event to be pushed.
-			//condition_variable.wait() can produce spurious wakeups; need the while loop.
-			//this->nonemptyCond.wait(_lockPushes); //condition_variable.wait() can produce spurious wakeups; need the while loop.
-			if (this->nonemptyCond.wait_for(lock, timeout) == std::cv_status::timeout) { 
-				return Event(); //return null event
-			}
-		}
-		evt = this->eventQueue.front();
-		this->eventQueue.pop_front();
-		//check if event is PWM-based:
-		//if (pwmInfo[evt.stepperId()].nsLow != 0 || pwmInfo[evt.stepperId()].nsHigh != 0) {
-		if (pwmInfo[evt.stepperId()].isNonNull()) {
-			if (evt.direction() == StepForward) {
-				//next event will be StepBackward, or refresh this event if there is no off-duty.
-				Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsLow ? StepBackward : StepForward);
-				nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsHigh);
-				this->orderedInsert(nextPwm); //to do: ordered insert
-			} else {
-				//next event will be StepForward, or refresh this event if there is no on-duty.
-				Event nextPwm(evt.time(), evt.stepperId(), pwmInfo[evt.stepperId()].nsHigh ? StepForward : StepBackward);
-				nextPwm.offsetNano(pwmInfo[evt.stepperId()].nsLow);
-				this->orderedInsert(nextPwm);
-			}
-		} else { //non-pwm event, means the queue size has decreased by 1.
-			lock.unlock();
-			eventConsumedCond.notify_one();
-		}
-	}
-	if (doSleep) {
-		this->sleepUntilEvent(evt);
-		/*struct timespec sleepUntil = evt.time();
-		//struct timespec curTime;
-		//clock_gettime(CLOCK_MONOTONIC, &curTime);
-		//LOGV("Scheduler::nextEvent sleep from %lu.%lu until %lu.%lu\n", curTime.tv_sec, curTime.tv_nsec, sleepUntil.tv_sec, sleepUntil.tv_nsec);
-		clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
-		//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //in case we fall behind, preserve the relative time between events.
-		//this->lastEventHandledTime = sleepUntil;*/
-	}
-	
-	return evt;
-}
-
-void Scheduler::sleepUntilEvent(const Event &evt) const {
-	struct timespec sleepUntil = evt.time();
-	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
-}
-
-void Scheduler::initSchedThread() const {
-	struct sched_param sp; 
-	sp.sched_priority=SCHED_PRIORITY; 
-	if (int ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp)) {
-		LOGW("Warning: pthread_setschedparam (increase thread priority) at scheduler.cpp returned non-zero: %i\n", ret);
-	}
-}
-
-struct timespec Scheduler::lastSchedTime() const {
-	Event evt;
-	{
-		std::unique_lock<std::mutex> lock(this->mutex);
-		if (this->eventQueue.size()) {
-			evt = this->eventQueue.back();
-		} else {
-			lock.unlock();
-			timespec ts;
-			clock_gettime(CLOCK_MONOTONIC, &ts);
-			return ts;
-		}
-	}
-	return evt.time();
-}
-
-void Scheduler::setBufferSize(unsigned size) {
-	this->bufferSize = size;
-	LOG("Scheduler buffer size set: %u\n", size);
-}
-unsigned Scheduler::getBufferSize() const {
-	return this->bufferSize;
-}
-
-unsigned Scheduler::numActivePwmChannels() const {
-	unsigned r=0;
-	for (const PwmInfo &p : this->pwmInfo) {
-		if (p.isNonNull()) {
-			r += 1;
-		}
-	}
-	return r;
-}

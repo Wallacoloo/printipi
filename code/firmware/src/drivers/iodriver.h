@@ -21,7 +21,7 @@ class IODriver {
 			//if (IODriverInfo<ThisT>::HasDeactivateMethod) {
 				//Scheduler::registerExitHandler((void(*)())&ThisT::deactivate);
 			//}
-			Scheduler::registerExitHandler((void(*)())&ThisT::deactivate, SCHED_IO_EXIT_LEVEL);
+			SchedulerBase::registerExitHandler((void(*)())&ThisT::deactivate, SCHED_IO_EXIT_LEVEL);
 		}
 		//for a (stepper) motor, advance +/- 1 step:
 		inline void stepForward() {} //OVERRIDE THIS
@@ -37,7 +37,7 @@ class IODriver {
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */
 		//inline bool onIdleCpu() { return false; } //OVERRIDE THIS
-		inline bool onIdleCpu(Scheduler & /*sched*/) { return false; }
+		template <typename Sched> inline bool onIdleCpu(Sched & /*sched*/) { return false; }
 		//selectAndStep...: used internally
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
