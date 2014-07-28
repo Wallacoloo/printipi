@@ -53,7 +53,7 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 			float resistance = guessRFromTime(duration);
 			LOGV("Resistance guess: %f\n", resistance);
 			float temp = temperatureFromR(resistance);
-			//LOG("Temperature guess: %f\n", temp);
+			LOGV("Temperature guess: %f\n", temp);
 			return temp;
 		}
 	private:
