@@ -64,7 +64,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 	Interface interface;
 	std::array<PwmInfo, 256> pwmInfo; 
 	//std::queue<Event> eventQueue;
-	std::deque<Event> eventQueue;
+	std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
 	
 	//mutable std::mutex mutex;
 	//std::unique_lock<std::mutex> _lockPushes;
@@ -130,7 +130,7 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 	}*/
 	this->eventQueue.push_back(evt);
 	std::push_heap(this->eventQueue.begin(), this->eventQueue.end(), std::greater<Event>());
-	LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u. %i\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec, std::is_heap(eventQueue.begin(), eventQueue.end()));
+	//LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u. %i\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec, std::is_heap(eventQueue.begin(), eventQueue.end()));
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
@@ -209,8 +209,8 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 
 template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 	while (1) {
-		LOGV("Scheduler::eventQueue.size(): %zu\n", eventQueue.size());
-		LOGV("front().time(), back().time(): %lu.%u, %lu.%u\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec);
+		//LOGV("Scheduler::eventQueue.size(): %zu\n", eventQueue.size());
+		//LOGV("front().time(), back().time(): %lu.%u, %lu.%u\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec);
 		if (eventQueue.empty()) { //if no events, then run idle events and return.
 			if (!interface.onIdleCpu()) { //loop is implied by the outer while(1)
 				return;
