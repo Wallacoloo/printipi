@@ -65,11 +65,11 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 	//std::queue<Event> eventQueue;
 	std::deque<Event> eventQueue;
 	
-	mutable std::mutex mutex;
+	//mutable std::mutex mutex;
 	//std::unique_lock<std::mutex> _lockPushes;
 	//bool _arePushesLocked;
-	std::condition_variable nonemptyCond;
-	std::condition_variable eventConsumedCond;
+	//std::condition_variable nonemptyCond;
+	//std::condition_variable eventConsumedCond;
 	
 	//struct timespec lastEventHandledTime; //used? Only written - never read!
 	unsigned bufferSize;
@@ -110,7 +110,7 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 
 template <typename Interface> void Scheduler<Interface>::queue(const Event& evt) {
 	//LOGV("Scheduler::queue\n");
-	std::unique_lock<std::mutex> lock(this->mutex);
+	//std::unique_lock<std::mutex> lock(this->mutex);
 	while (this->eventQueue.size() >= this->bufferSize) {
 		yield();
 		//eventConsumedCond.wait(lock);
@@ -119,7 +119,7 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
 	//if (this->eventQueue.size() >= this->bufferSize) {
 	//	return; //keep pushes locked.
 	this->orderedInsert(evt);
-	this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
+	//this->nonemptyCond.notify_one(); //notify the consumer thread that a new event is ready.
 }
 
 template <typename Interface> void Scheduler<Interface>::orderedInsert(const Event &evt) {
@@ -145,13 +145,13 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 template <typename Interface> Event Scheduler<Interface>::nextEvent(bool doSleep, std::chrono::microseconds timeout) {
 	Event evt;
 	{
-		std::unique_lock<std::mutex> lock(this->mutex);
+		//std::unique_lock<std::mutex> lock(this->mutex);
 		while (this->eventQueue.empty()) { //wait for an event to be pushed.
 			//condition_variable.wait() can produce spurious wakeups; need the while loop.
 			//this->nonemptyCond.wait(_lockPushes); //condition_variable.wait() can produce spurious wakeups; need the while loop.
-			if (this->nonemptyCond.wait_for(lock, timeout) == std::cv_status::timeout) { 
+			//if (this->nonemptyCond.wait_for(lock, timeout) == std::cv_status::timeout) { 
 				return Event(); //return null event
-			}
+			//}
 		}
 		evt = this->eventQueue.front();
 		this->eventQueue.pop_front();
@@ -170,8 +170,8 @@ template <typename Interface> Event Scheduler<Interface>::nextEvent(bool doSleep
 				this->orderedInsert(nextPwm);
 			}
 		} else { //non-pwm event, means the queue size has decreased by 1.
-			lock.unlock();
-			eventConsumedCond.notify_one();
+			//lock.unlock();
+			//eventConsumedCond.notify_one();
 		}
 	}
 	if (doSleep) {
@@ -204,11 +204,11 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
 template <typename Interface> struct timespec Scheduler<Interface>::lastSchedTime() const {
 	Event evt;
 	{
-		std::unique_lock<std::mutex> lock(this->mutex);
+		//std::unique_lock<std::mutex> lock(this->mutex);
 		if (this->eventQueue.size()) {
 			evt = this->eventQueue.back();
 		} else {
-			lock.unlock();
+			//lock.unlock();
 			timespec ts;
 			clock_gettime(CLOCK_MONOTONIC, &ts);
 			return ts;
