@@ -39,8 +39,8 @@ struct PwmInfo {
 	unsigned nsLow;
 	PwmInfo() : nsHigh(0), nsLow(0) {}
 	PwmInfo(float duty, float period) : 
-		nsHigh(std::max(0, (int)(duty*period*1000000000))), //clamp the times to >= 0
-		nsLow(std::max(0, (int)((1-duty)*period*1000000000))) {}
+		nsHigh(std::min(999999999, std::max(0, (int)(duty*period*1000000000)))), //clamp the times to >= 0 and <= 1
+		nsLow(std::min(999999999, std::max(0, (int)((1-duty)*period*1000000000)))) {}
 	float period() const {
 		return nsHigh + nsLow;
 	}
