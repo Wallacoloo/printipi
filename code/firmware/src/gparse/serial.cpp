@@ -28,4 +28,10 @@ bool readLinePart(int fd, std::string &out) {
 	}
 }
 
+char tryReadChar(int fd) {
+	char chr = 0;
+	read(fd, &chr, 1);
+	return chr; //will return NULL if the read failed (no data available), else the character.
+}
+
 }

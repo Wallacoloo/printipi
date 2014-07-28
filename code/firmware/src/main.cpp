@@ -52,11 +52,14 @@
 //#include <cstdlib> //for atexit
 #include "logging.h"
 
-#include "gparse/serial.h"
+//#include "gparse/serial.h"
+#include "gparse/com.h"
 #include "state.h"
 #include "drivers/driver.h"
 #include "drivers/kossel/kossel.h"
 #include "argparse.h"
+#include <thread>         // std::this_thread::sleep_for
+#include <chrono>         // std::chrono::seconds
 
 void printUsage(char* cmd) {
 	//#ifndef NO_USAGE_INFO
@@ -96,14 +99,18 @@ int main_(int argc, char** argv) {
     
     //Open the serial device:
     LOG("Serial file: %s\n", serialFileName);
-    int fd = open(serialFileName, O_RDWR | O_NONBLOCK);
+    //int fd = open(serialFileName, O_RDWR | O_NONBLOCK);
+    gparse::Com com = gparse::Com(std::string(serialFileName));
     
     //instantiate main driver:
     drv::Kossel driver;
-	State<drv::Kossel> gState(driver);
-    
+	State<drv::Kossel> gState(driver, com);
+	
+    while (1) {
+    	std::this_thread::sleep_for(std::chrono::seconds(2));
+    }
     //main loop:
-    gparse::comLoop(fd, gState);
+    //gparse::comLoop(fd, gState);
     return 0;
 }
 
