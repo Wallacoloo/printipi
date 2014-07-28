@@ -20,7 +20,7 @@ void initIO() {
 		wasBcmInit = true;
 		LOG("Initializing bcm2835 memmaps\n");
 		if (bcm2835_init()) {
-			Scheduler::registerExitHandler(atexit_bcm2835_close, SCHED_MEM_EXIT_LEVEL);
+			SchedulerBase::registerExitHandler(atexit_bcm2835_close, SCHED_MEM_EXIT_LEVEL);
 			//std::atexit(atexit_bcm2835_close);
 		}
 	}

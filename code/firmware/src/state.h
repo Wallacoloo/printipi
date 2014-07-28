@@ -30,6 +30,27 @@
 #include "typesettings.h"
 
 template <typename Drv> class State {
+	/*struct EventLoop_SatisfyIOs {
+		State<Drv>& _state;
+		EventLoop_SatisfyIOs(State<Drv> &state) : _state(state) {}
+		bool operator()() {}
+	};
+	struct EventLoop_HandleEvent {
+		State<Drv>& _state;
+		EventLoop_HandleEvent(State<Drv> &state) : _state(state) {}
+		void operator()(const Event& evt) {}
+	};*/
+	struct SchedInterface {
+		State<Drv>& _state;
+		SchedInterface(State<Drv> &state) : _state(state) {}
+		void onEvent(const Event& evt) {
+			_state.handleEvent(evt);
+		}
+		bool onIdleCpu() {
+			return _state.satisfyIOs();
+		}
+	};
+	typedef Scheduler<SchedInterface> SchedType;
 	std::atomic<bool> _isDeadOrDying; //for thread destruction upon death.
 	PositionMode _positionMode; // = POS_ABSOLUTE;
 	PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
@@ -42,7 +63,7 @@ template <typename Drv> class State {
 	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	Drv &driver;
 	gparse::Com com;
-	Scheduler scheduler;
+	SchedType scheduler;
 	//std::thread schedthread;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
@@ -111,7 +132,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com) : _isDeadO
 	_destMechanicalPos(), 
 	driver(drv),
 	com(com), 
-	scheduler()
+	scheduler(SchedInterface(*this))
 	//scheduler(std::bind(&State<Drv>::handleEvent, this, std::placeholders::_1)) 
 	//scheduler(*this)
 	//schedthread(&State<Drv>::eventLoop, this)
@@ -245,10 +266,6 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 	//What x value makes _hostZeroX (new) == _hostZeroX (old) ?
 	//_destXPrimitive - x = _hostZeroX
 	//x = _destXPrimitive - _hostZeroX;
-	//_hostZeroX = x;
-	//_hostZeroY = y;
-	//_hostZeroZ = z;
-	//_hostZeroE = e;
 }
 
 template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
@@ -264,12 +281,15 @@ template <typename Drv> bool State<Drv>::satisfyIOs() {
 	if (com.tendCom()) {
 		com.reply(execute(com.getCommand()));
 	}
-	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, Scheduler&>(this->driver.ioDrivers, this->scheduler);
+	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->driver.ioDrivers, this->scheduler);
 }
 
 template <typename Drv> void State<Drv>::eventLoop() {
 	this->scheduler.initSchedThread();
-	this->scheduler.eventLoop(this, &State<Drv>::handleEvent, &State<Drv>::satisfyIOs);
+	//this->scheduler.eventLoop(this, &State<Drv>::handleEvent, &State<Drv>::satisfyIOs);
+	//EventLoop_HandleEvent evtHandler = EventLoop_HandleEvent(*this);
+	//EventLoop_SatisfyIOs ioSat = EventLoop_SatisfyIOs(*this);
+	//this->scheduler.eventLoop(evtHandler, ioSat);
 	/*while (1) {
 		Event evt = this->scheduler.nextEvent();
 		if (this->_isDeadOrDying) {

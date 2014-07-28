@@ -72,7 +72,7 @@ void printUsage(char* cmd) {
 int main_(int argc, char** argv) {
 	char defaultSerialFile[] = "/dev/stdin";
 	char* serialFileName;
-	Scheduler::configureExitHandlers(); //useful to do this first-thing for catching debug info.
+	SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
 	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
     }
