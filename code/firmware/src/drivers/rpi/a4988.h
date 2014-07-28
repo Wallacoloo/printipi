@@ -38,6 +38,12 @@ template <uint8_t STEPPIN, uint8_t DIRPIN, typename Enabler=NullEnabler> class A
 			//bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_INPT); //unmount pins.
 			//bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_INPT);
 		}
+		void lockAxis() {
+			Enabler::enable();
+		}
+		void unlockAxis() {
+			Enabler::disable();
+		}
 		void stepForward() {
 			bcm2835_gpio_write(DIRPIN, HIGH); //set direction as forward
 			cycleStepPin();
@@ -46,6 +52,7 @@ template <uint8_t STEPPIN, uint8_t DIRPIN, typename Enabler=NullEnabler> class A
 			bcm2835_gpio_write(DIRPIN, LOW); //set direction as backward
 			cycleStepPin();
 		}
+	private:
 		void cycleStepPin() {
 			//LOGV("cycling pin %i\n", DIRPIN);
 			bcm2835_gpio_write(STEPPIN, HIGH); 

@@ -342,12 +342,14 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		}
 		setHostZeroPos(actualX, actualY, actualZ, actualE);
 		resp = gparse::Command::OK;
-	/*} else if (cmd.isM17()) { //enable all stepper motors
-		LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not implemented\n");
+	} else if (cmd.isM17()) { //enable all stepper motors
+		LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not tested\n");
+		drv::IODriver::lockAllAxis(this->driver.ioDrivers);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM18()) { //allow stepper motors to move 'freely'
-		LOGW("Warning (gparse/state.h): OP_M18 (disable stepper motors) not implemented\n");
-		resp = gparse::Command::OK;*/
+		LOGW("Warning (gparse/state.h): OP_M18 (disable stepper motors) not tested\n");
+		drv::IODriver::unlockAllAxis(this->driver.ioDrivers);
+		resp = gparse::Command::OK;
 	} else if (cmd.isM21()) { //initialize SD card (nothing to do).
 		resp = gparse::Command::OK;
 	} else if (cmd.isM82()) { //set extruder absolute mode

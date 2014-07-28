@@ -35,7 +35,7 @@
  * *Make Driver::getTemperature return tuples
  *  Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading
- *  Add ability to put steppers to rest upon idle
+ * *Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Investigate single-threading for entire process.
  *  Look into coordinate rounding for State::queueMovement
