@@ -122,8 +122,8 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
 	LOGV("Scheduler::schedPwm: %i, %u, %u. Current: %u, %u\n", idx, p.nsHigh, p.nsLow, pwmInfo[idx].nsHigh, pwmInfo[idx].nsLow);
-	if (pwmInfo[idx].nsHigh != 0 || pwmInfo[idx].nsLow != 0) { //already scheduled and running. Just update times.
-		pwmInfo[idx] = p;
+	if (pwmInfo[idx].isNonNull()) { //already scheduled and running. Just update times.
+		pwmInfo[idx] = p; //note: purposely redundant with below; must check isNonNull() before modifying the pwmInfo.
 	} else { //have to schedule:
 		LOGV("Scheduler::schedPwm: queueing\n");
 		pwmInfo[idx] = p;
@@ -204,7 +204,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//do {} while (interface.onIdleCpu());
 		} else {
 			//interface.onIdleCpu();
-			Event evt = this->eventQueue.front();
+			const Event &evt = this->eventQueue.front();
 			//do NOT pop the event here, because it might not be handled this time around.
 			while (!evt.isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
@@ -216,8 +216,6 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					}
 				}
 			}
-			//this->sleepUntilEvent(evt);
-			this->eventQueue.pop_front(); //CANNOT put this after the regeneration of the PWM event, otherwise the wrong event may be popped.
 			interface.onEvent(evt);
 			
 			//manage PWM events:
@@ -239,6 +237,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 				}
 				this->orderedInsert(nextPwm);
 			}
+			this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
 			forceWait = false; //avoid draining ALL events - just drain the first.
 		}
 	}

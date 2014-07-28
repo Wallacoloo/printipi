@@ -42,6 +42,7 @@
  *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
  *  Document
  *  Put copywrite at head of every file.
+ *  Replace certain template parameters (eg STEPS_MM_1000 with std::ratio)
  *  Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
 */
 
