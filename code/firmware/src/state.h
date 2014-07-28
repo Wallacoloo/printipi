@@ -79,7 +79,7 @@ template <typename Drv> class State {
 		/* Control the move rate (AKA "feed rate") */
 		float destMoveRatePrimitive() const;
 		void setDestMoveRatePrimitive(float f);
-		/* The host can set any arbitrary point to be a reference to 0 */
+		/* The host can set the current physical position to be a reference to an arbitrary point (like 0) */
 		void setHostZeroPos(float x, float y, float z, float e);
 		/* Processes the event immediately, eg stepping a stepper motor */
 		void handleEvent(const Event &evt);
@@ -231,10 +231,21 @@ template <typename Drv> void State<Drv>::setDestMoveRatePrimitive(float f) {
 }
 
 template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float z, float e) {
-	_hostZeroX = x;
-	_hostZeroY = y;
-	_hostZeroZ = z;
-	_hostZeroE = e;
+	//want it such that xUnitToPrimitive(x) (new) == _destXPrimitive (old)
+	//note that x, y, z, e are already in mm.
+	//thus, x + _hostZeroX (new) == _destXPrimitive
+	//so, _hostZeroX = _destXPrimitive - x
+	_hostZeroX = destXPrimitive() - x;
+	_hostZeroY = destYPrimitive() - y;
+	_hostZeroZ = destZPrimitive() - z;
+	_hostZeroE = destEPrimitive() - e;
+	//What x value makes _hostZeroX (new) == _hostZeroX (old) ?
+	//_destXPrimitive - x = _hostZeroX
+	//x = _destXPrimitive - _hostZeroX;
+	//_hostZeroX = x;
+	//_hostZeroY = y;
+	//_hostZeroZ = z;
+	//_hostZeroE = e;
 }
 
 template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
@@ -324,10 +335,10 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		if (!hasXYZE) { //make current position (0, 0, 0, 0)
 			actualX = actualY = actualZ = actualE = posUnitToMM(0);
 		} else {
-			actualX = cmd.hasX() ? posUnitToMM(cmd.getX()) : _hostZeroX;
-			actualY = cmd.hasY() ? posUnitToMM(cmd.getY()) : _hostZeroY;
-			actualZ = cmd.hasZ() ? posUnitToMM(cmd.getZ()) : _hostZeroZ;
-			actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : _hostZeroE;
+			actualX = cmd.hasX() ? posUnitToMM(cmd.getX()) : destXPrimitive() - _hostZeroX; //_hostZeroX;
+			actualY = cmd.hasY() ? posUnitToMM(cmd.getY()) : destYPrimitive() - _hostZeroY; //_hostZeroY;
+			actualZ = cmd.hasZ() ? posUnitToMM(cmd.getZ()) : destZPrimitive() - _hostZeroZ; //_hostZeroZ;
+			actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : destEPrimitive() - _hostZeroE; //_hostZeroE;
 		}
 		setHostZeroPos(actualX, actualY, actualZ, actualE);
 		resp = gparse::Command::OK;
