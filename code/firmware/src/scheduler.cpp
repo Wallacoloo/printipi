@@ -1,7 +1,7 @@
 #include "scheduler.h"
 
-#include <pthread.h> //for pthread_setschedparam
-#include <time.h> //for clock_nanosleep
+//#include <pthread.h> //for pthread_setschedparam
+//#include <time.h> //for clock_nanosleep
 #include <signal.h> //for sigaction signal handlers
 #include <cstdlib> //for atexit
 

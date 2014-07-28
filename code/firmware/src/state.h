@@ -30,16 +30,6 @@
 #include "typesettings.h"
 
 template <typename Drv> class State {
-	/*struct EventLoop_SatisfyIOs {
-		State<Drv>& _state;
-		EventLoop_SatisfyIOs(State<Drv> &state) : _state(state) {}
-		bool operator()() {}
-	};
-	struct EventLoop_HandleEvent {
-		State<Drv>& _state;
-		EventLoop_HandleEvent(State<Drv> &state) : _state(state) {}
-		void operator()(const Event& evt) {}
-	};*/
 	struct SchedInterface {
 		State<Drv>& _state;
 		SchedInterface(State<Drv> &state) : _state(state) {}
@@ -57,8 +47,7 @@ template <typename Drv> class State {
 	LengthUnit unitMode; // = UNIT_MM;
 	float _destXPrimitive, _destYPrimitive, _destZPrimitive;
 	float _destEPrimitive;
-	float _destMoveRatePrimitive; //varies accross drivers
-	//float _destFeedRatePrimitive;
+	float _destMoveRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	Drv &driver;
@@ -286,6 +275,7 @@ template <typename Drv> bool State<Drv>::satisfyIOs() {
 
 template <typename Drv> void State<Drv>::eventLoop() {
 	this->scheduler.initSchedThread();
+	this->scheduler.eventLoop();
 	//this->scheduler.eventLoop(this, &State<Drv>::handleEvent, &State<Drv>::satisfyIOs);
 	//EventLoop_HandleEvent evtHandler = EventLoop_HandleEvent(*this);
 	//EventLoop_SatisfyIOs ioSat = EventLoop_SatisfyIOs(*this);
