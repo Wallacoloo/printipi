@@ -29,6 +29,10 @@ class IODriver {
 		/*deactivate: called at program exit.
 		safely deactivate any IOs, including motors, heaters, etc.*/
 		inline void deactivate() {} //OVERRIDE THIS
+		/* called by M17; Enable/power all stepper motors */
+		inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
+		/* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
+		inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
 		/* called when the scheduler has extra time,
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */
@@ -38,6 +42,8 @@ class IODriver {
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT, typename ...Args > static bool callIdleCpuHandlers(TupleT &drivers, Args... args);
+		template <typename TupleT> static void lockAllAxis(TupleT &drivers);
+		template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
 };
 
 //IODriver::selectAndStepForward helper functions:
@@ -105,6 +111,42 @@ template <typename TupleT, typename ...Args> struct IODriver__onIdleCpu<TupleT, 
 
 template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
 	return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value-1, Args...>()(drivers, args...);
+}
+
+//IODriver::lockAllAxis helper functions:
+template <typename TupleT, std::size_t myIdx> struct IODriver__lockAllAxis {
+	void operator()(TupleT &drivers) {
+		IODriver__lockAllAxis<TupleT, myIdx-1>()(drivers);
+		std::get<myIdx>(drivers).lockAxis();
+	}
+};
+
+template <typename TupleT> struct IODriver__lockAllAxis<TupleT, 0> {
+	void operator()(TupleT &drivers) {
+		std::get<0>(drivers).lockAxis();
+	}
+};
+
+template <typename TupleT> void IODriver::lockAllAxis(TupleT &drivers) {
+	IODriver__lockAllAxis<TupleT, std::tuple_size<TupleT>::value-1>()(drivers);
+}
+
+//IODriver::unlockAllAxis helper functions:
+template <typename TupleT, std::size_t myIdx> struct IODriver__unlockAllAxis {
+	void operator()(TupleT &drivers) {
+		IODriver__unlockAllAxis<TupleT, myIdx-1>()(drivers);
+		std::get<myIdx>(drivers).unlockAxis();
+	}
+};
+
+template <typename TupleT> struct IODriver__unlockAllAxis<TupleT, 0> {
+	void operator()(TupleT &drivers) {
+		std::get<0>(drivers).unlockAxis();
+	}
+};
+
+template <typename TupleT> void IODriver::unlockAllAxis(TupleT &drivers) {
+	IODriver__unlockAllAxis<TupleT, std::tuple_size<TupleT>::value-1>()(drivers);
 }
 
 }

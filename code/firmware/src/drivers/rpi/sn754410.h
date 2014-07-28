@@ -53,6 +53,12 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2, typename Enabler=NullE
 			//bcm2835_gpio_fsel(B1, BCM2835_GPIO_FSEL_INPT); 
 			//bcm2835_gpio_fsel(B2, BCM2835_GPIO_FSEL_INPT);
 		}
+		void lockAxis() {
+			Enabler::enable();
+		}
+		void unlockAxis() {
+			Enabler::disable();
+		}
 		
 		void stepForward() {
 			//LOGV("SN754410::stepForward()\n");
