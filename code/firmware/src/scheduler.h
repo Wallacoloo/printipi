@@ -92,7 +92,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		unsigned getBufferSize() const;
 		unsigned numActivePwmChannels() const;
 		void eventLoop();
-		void yield(bool fast=true);
+		void yield(bool forceWait=false);
 };
 
 
@@ -106,9 +106,10 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 template <typename Interface> void Scheduler<Interface>::queue(const Event& evt) {
 	//LOGV("Scheduler::queue\n");
 	//std::unique_lock<std::mutex> lock(this->mutex);
+	yield(); //fast yield.
 	while (this->eventQueue.size() >= this->bufferSize) {
 		//yield();
-		yield(false);
+		yield(true);
 		//eventConsumedCond.wait(lock);
 	}
 	//_lockPushes.lock(); //aquire a lock
@@ -235,11 +236,14 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 		}
 	}*/
 	while (1) {
-		yield(false);
+		yield(true);
+		if (eventQueue.empty()) {
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
+		}
 	}
 }
 
-template <typename Interface> void Scheduler<Interface>::yield(bool fast) {
+template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 	while (1) {
 		if (eventQueue.empty()) { //if no events, then run idle events and return.
 			if (!interface.onIdleCpu()) { //loop is implied by the outer while(1)
@@ -251,17 +255,17 @@ template <typename Interface> void Scheduler<Interface>::yield(bool fast) {
 			Event evt = this->eventQueue.front();
 			while (!this->isEventNear(evt)) {
 				if (!interface.onIdleCpu()) { //if we don't need any future waiting, and the event isn't near, yield to main part of the program.
-					if (fast) {
-						return;
-					} else {
+					if (forceWait) {
 						break;
-						//this->sleepUntilEvent(evt);
+					} else {
+						return;
 					}
 				}
 			}
 			this->sleepUntilEvent(evt);
 			this->eventQueue.pop_front();
 			interface.onEvent(evt);
+			forceWait = false;
 		}
 	}
 }
