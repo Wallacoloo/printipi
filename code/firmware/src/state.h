@@ -311,20 +311,30 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	} else if (cmd.isG21()) { //g-code coordinates will now be interpreted as millimeters.
 		setUnitMode(UNIT_MM);
 		resp = gparse::Command::OK;
-	} else if (cmd.isG28()) { //home to end-stops
+	} else if (cmd.isG28()) { //home to end-stops / zero coordinates
 		LOGW("Warning (gparse/state.h): OP_G28 (home to end-stops) not fully implemented\n");
-		/*bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
+		this->homeEndstops();
+		/*float homeX, homeY, homeZ, homeE;
+		if (cmd.hasAnyXYZ()) {
+			homeX = cmd.hasX() ? 0 : destXPrimitive(); 
+			homeY = cmd.hasY() ? 0 : destYPrimitive();
+			homeZ = cmd.hasZ() ? 0 : destZPrimitive();
+		} else { //default behavior is to home ALL axis
+			homeX = homeY = homeZ = 0;
+		}
+		homeE = destEPrimitive();
+		this->queueMovement(homeX, homeY, homeZ, homeE);*/
+		bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
 		bool homeY = cmd.hasY();
 		bool homeZ = cmd.hasZ();
 		if (!homeX && !homeY && !homeZ) { //if no axis are passed, then home ALL axis.
 			homeX = homeY = homeZ = true;
 		}
-		float curE = destEPrimitive();
 		float newX = homeX ? 0 : destXPrimitive();
 		float newY = homeY ? 0 : destYPrimitive();
-		float newZ = homeZ ? 0 : destZPrimitive();;
-		this->queueMovement(newX, newY, newZ, curE);*/
-		this->homeEndstops();
+		float newZ = homeZ ? 0 : destZPrimitive();
+		float curE = destEPrimitive();
+		this->queueMovement(newX, newY, newZ, curE);
 		resp = gparse::Command::OK;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
