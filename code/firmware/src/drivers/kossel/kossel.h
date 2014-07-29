@@ -28,7 +28,7 @@
 //#define H1000 507000
 #define R1000 121000
 #define L1000 222000
-#define H1000 500000
+#define H1000 518000
 //#define STEPS_M 9000
 #define STEPS_M 5200 //no microstepping enabled.
 #define STEPS_M_EXT 4000
