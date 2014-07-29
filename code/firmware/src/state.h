@@ -39,6 +39,9 @@ template <typename Drv> class State {
 		bool onIdleCpu() {
 			return _state.satisfyIOs();
 		}
+		static constexpr std::size_t numIoDrivers() {
+			return std::tuple_size<Drv::IODriverTypes>::value;
+		}
 	};
 	typedef Scheduler<SchedInterface> SchedType;
 	//std::atomic<bool> _isDeadOrDying; //for thread destruction upon death.
@@ -299,7 +302,6 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 			//this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
 			this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
 		}
-		//TODO: calculate future e based on feedrate.
 		this->queueMovement(x, y, z, e);
 		resp = gparse::Command::OK;
 	} else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches

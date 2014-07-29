@@ -61,6 +61,7 @@ class SchedulerBase {
 		static void registerExitHandler(void (*handler)(), unsigned level);
 };
 
+//When queueing an event, one may hint that it is either near or far away, and this may give a performance boost to the container.
 enum InsertHint {
 	INSERT_FRONT,
 	INSERT_BACK
@@ -68,7 +69,8 @@ enum InsertHint {
 
 template <typename Interface> class Scheduler : public SchedulerBase {
 	Interface interface;
-	std::array<PwmInfo, 256> pwmInfo; 
+	//std::array<PwmInfo, 256> pwmInfo; 
+	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
 	//std::queue<Event> eventQueue;
 	//std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
 	std::multiset<Event> eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
