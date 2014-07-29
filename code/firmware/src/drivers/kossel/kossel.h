@@ -26,7 +26,7 @@
 //#define R1000 125000
 //#define L1000 215000
 //#define H1000 507000
-#define R1000 110000
+#define R1000 118000
 #define L1000 232000
 #define H1000 500000
 //#define STEPS_M 9000
@@ -69,6 +69,8 @@
     joint to edge of bed is ~43 mm. bed is 170mm, so R is 43 + 85 = 128mm
     L is 215mm as measured BUT math doesn't consider the existence of an effector (so L should be longer?)
   Note: increasing L reduces the warping.
+  Note: increasing R increases concavity
+  Note: decreasing R increases convexity
 */
 namespace drv {
 
