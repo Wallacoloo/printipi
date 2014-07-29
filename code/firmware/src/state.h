@@ -53,6 +53,7 @@ template <typename Drv> class State {
 	Drv &driver;
 	gparse::Com com;
 	SchedType scheduler;
+	bool _isExecutingGCode; //cannot schedule two movements simultaneously, so this serves as a lock
 	//std::thread schedthread;
 	public:
 	    //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
@@ -121,19 +122,13 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDea
 	_destMechanicalPos(), 
 	driver(drv),
 	com(com), 
-	scheduler(SchedInterface(*this))
-	//scheduler(std::bind(&State<Drv>::handleEvent, this, std::placeholders::_1)) 
-	//scheduler(*this)
-	//schedthread(&State<Drv>::eventLoop, this)
+	scheduler(SchedInterface(*this)),
+	_isExecutingGCode(false)
 	{
 	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
-	//this->setDestFeedRatePrimitive(drv.defaultFeedRate());
 }
 
 template <typename Drv> State<Drv>::~State() {
-	//this->_isDeadOrDying = true;
-	//this->scheduler.queue(Event()); //push a null event in order to wake up the scheduling thread so it can terminate.
-	//this->schedthread.join();
 }
 
 template <typename Drv> PositionMode State<Drv>::positionMode() const {
@@ -267,8 +262,10 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 	}
 }
 template <typename Drv> bool State<Drv>::satisfyIOs() {
-	if (com.tendCom()) {
+	if (!_isExecutingGCode && com.tendCom()) {
+		_isExecutingGCode = true;
 		com.reply(execute(com.getCommand()));
+		_isExecutingGCode = false;
 	}
 	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->driver.ioDrivers, this->scheduler);
 }
