@@ -23,7 +23,9 @@
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
 //L1000 = length of the rods that connect each axis to the end effector
 //STEPS_M = #of steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
-#define R1000 125000
+//#define R1000 125000
+//#define L1000 215000
+#define R1000 130000
 #define L1000 215000
 #define H1000 507000
 //#define STEPS_M 9000
@@ -56,6 +58,15 @@
   23
   24
   26
+*/
+/* Calibrating:
+  as y leaves 0 to +side, z increases (should stay level)
+    Even more so as it goes to -side.
+  as x becomes +size, z increases
+  as x becomes -size, z increases
+  This points to either R or L being off, but in what way?
+    joint to edge of bed is ~43 mm. bed is 170mm, so R is 43 + 85 = 128mm
+    L is 215mm as measured BUT math doesn't consider the existence of an effector (so L should be longer?)
 */
 namespace drv {
 
