@@ -5,10 +5,16 @@
 
 namespace drv {
 
-template <std::size_t xIdx, std::size_t yIdx, std::size_t zIdx, std::size_t eIdx> class LinearCoordMap : public CoordMap {
+template <std::size_t xIdx=0, std::size_t yIdx=1, std::size_t zIdx=2, std::size_t eIdx=3> class LinearCoordMap : public CoordMap {
 	public:
-		template <std::size_t size> static void xyzeFromMechanical(const std::array<int, size> &mech) {
+		static constexpr std::size_t numAxis() {
+            return 4; //A, B, C + Extruder
+        }
+		static void xyzeFromMechanical(const std::array<int, 4> &mech) {
 			return std::make_tuple(mech[xIdx], mech[yIdx], mech[zIdx], mech[eIdx]);
+		}
+		static constexpr std::array<int, 4> getHomePosition() {
+			return std::array<int, 4>({0, 0, 0, 0});
 		}
 
 };
