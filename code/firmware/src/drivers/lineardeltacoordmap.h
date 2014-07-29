@@ -34,20 +34,15 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsi
 	static constexpr float STEPS_MM_EXT = STEPS_M_EXT / 1000.;
 	static constexpr float MM_STEPS_EXT = 1. / STEPS_MM_EXT;
 	public:
-		/*template <std::size_t size> static void getHomePosition(std::array<int, size> &mech) {
-			//z = A*MM_STEPS-sqrt(L*L-r*r);
-			//A=(z+sqrt(L*L-r*r))*STEPS_MM
-			mech[EIdx] = 0;
-			mech[AIdx] = mech[BIdx] = mech[CIdx] = h*STEPS_MM; //(h+sqrt(L*L-r*r))*STEPS_MM;
-		}*/
 		static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
 		static constexpr std::array<int, 4> getHomePosition() {
-			static_assert(AIdx == 0 && BIdx == 1 && CIdx == 2 && EIdx == 3, "explicit coord indices are deprecated");
-			return std::array<int, 4>{h*STEPS_MM, h*STEPS_MM, h*STEPS_MM, 0};
+			//z = A*MM_STEPS-sqrt(L*L-r*r);
+			//A=(z+sqrt(L*L-r*r))*STEPS_MM
+			return std::array<int, 4>({(int)(h*STEPS_MM), (int)(h*STEPS_MM), (int)(h*STEPS_MM), 0});
 		}
-		template <std::size_t size> static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, size> &mech) {
+		static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
 			float e = mech[EIdx]*MM_STEPS_EXT;
 			float x, y, z;
 			float A = mech[AIdx]*MM_STEPS; //convert mechanical positions (steps) to MM.
