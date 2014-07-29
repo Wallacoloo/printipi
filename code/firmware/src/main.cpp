@@ -31,6 +31,8 @@
  * *Add enable pin
  * *Account for PWM pins when setting Scheduler queue size.
  *  Add (configurable) absolute PWM limits to hotend, etc.
+ *  Reduce number of PWM channels to what is actually needed.
+ *  Make driver.numAxis a property of the CoordMap
  * *Make CoordMapT, etc return tuples instead of using writebacks
  * *Make Driver::getTemperature return tuples
  *  Drop temperature readings when thread has been interrupted.

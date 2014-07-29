@@ -21,7 +21,7 @@
 
 namespace drv {
 
-template </*std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx, */ unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT> class LinearDeltaCoordMap : public CoordMap {
+template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT> class LinearDeltaCoordMap : public CoordMap {
 	static constexpr std::size_t AIdx = 0;
 	static constexpr std::size_t BIdx = 1;
 	static constexpr std::size_t CIdx = 2;
@@ -40,11 +40,13 @@ template </*std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EI
 			mech[EIdx] = 0;
 			mech[AIdx] = mech[BIdx] = mech[CIdx] = h*STEPS_MM; //(h+sqrt(L*L-r*r))*STEPS_MM;
 		}*/
+		static constexpr std::size_t numAxis() {
+            return 4; //A, B, C + Extruder
+        }
 		static constexpr std::array<int, 4> getHomePosition() {
 			static_assert(AIdx == 0 && BIdx == 1 && CIdx == 2 && EIdx == 3, "explicit coord indices are deprecated");
 			return std::array<int, 4>{h*STEPS_MM, h*STEPS_MM, h*STEPS_MM, 0};
 		}
-		//template <std::size_t size> static void xyzeFromMechanical(const std::array<int, size> &mech, float &x, float &y, float &z, float &e) {
 		template <std::size_t size> static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, size> &mech) {
 			float e = mech[EIdx]*MM_STEPS_EXT;
 			float x, y, z;

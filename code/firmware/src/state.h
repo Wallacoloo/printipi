@@ -49,7 +49,7 @@ template <typename Drv> class State {
 	float _destEPrimitive;
 	float _destMoveRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
-	std::array<int, Drv::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
+	std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	Drv &driver;
 	gparse::Com com;
 	SchedType scheduler;
@@ -413,7 +413,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 }
 
 template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration) {
-	if (Drv::numAxis() == 0) { 
+	if (Drv::CoordMapT::numAxis() == 0) { 
 		return; //some of the following logic may assume that there are at least 1 axis.
 	}
 	timespec baseTime = scheduler.lastSchedTime();
