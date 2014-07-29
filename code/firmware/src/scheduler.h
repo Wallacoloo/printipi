@@ -2,7 +2,8 @@
 #define SCHEDULER_H
 
 //#include <queue>
-#include <deque>
+//#include <deque>
+#include <set>
 #include <thread> //for this_thread.sleep
 //#include <mutex>
 //#include <condition_variable>
@@ -64,8 +65,8 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 	Interface interface;
 	std::array<PwmInfo, 256> pwmInfo; 
 	//std::queue<Event> eventQueue;
-	std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
-	
+	//std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
+	std::multiset<Event> eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
 	//mutable std::mutex mutex;
 	//std::unique_lock<std::mutex> _lockPushes;
 	//bool _arePushesLocked;
@@ -128,9 +129,11 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 			std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
 		}
 	}*/
-	this->eventQueue.push_back(evt);
+	//NOTE: heap is not a sorted collection.
+	/*this->eventQueue.push_back(evt);
 	std::push_heap(this->eventQueue.begin(), this->eventQueue.end(), std::greater<Event>());
-	LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u. %i\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec, std::is_heap(eventQueue.begin(), eventQueue.end(), std::greater<Event>()));
+	LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u. %i\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec, std::is_heap(eventQueue.begin(), eventQueue.end(), std::greater<Event>()));*/
+	eventQueue.insert(evt); //TODO: provide insertion hint.
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
@@ -176,7 +179,8 @@ template <typename Interface> struct timespec Scheduler<Interface>::lastSchedTim
 	if (this->eventQueue.empty()) {
 		return timespecNow();
 	} else {
-		return this->eventQueue.back().time();
+		return this->eventQueue.rbegin()->time();
+		//return this->eventQueue.back().time();
 	}
 }
 
@@ -220,7 +224,8 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		} else {
 			//interface.onIdleCpu();
 			//const Event &evt = this->eventQueue.front();
-			Event evt = this->eventQueue.front();
+			//Event evt = this->eventQueue.front();
+			Event evt = *this->eventQueue.begin();
 			//do NOT pop the event here, because it might not be handled this time around.
 			while (!evt.isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
@@ -232,7 +237,8 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					}
 				}
 			}
-			this->eventQueue.pop_front();
+			this->eventQueue.erase(eventQueue.begin());
+			//this->eventQueue.pop_front();
 			interface.onEvent(evt);
 			
 			//manage PWM events:
