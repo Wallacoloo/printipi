@@ -25,9 +25,10 @@
 //STEPS_M = #of steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
 //#define R1000 125000
 //#define L1000 215000
+//#define H1000 507000
 #define R1000 130000
-#define L1000 215000
-#define H1000 507000
+#define L1000 225000
+#define H1000 500000
 //#define STEPS_M 9000
 #define STEPS_M 5200 //no microstepping enabled.
 #define STEPS_M_EXT 4000
