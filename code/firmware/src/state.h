@@ -481,10 +481,10 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 	drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
 	auto b = this->scheduler.getBufferSize();
-	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
+	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1); //todo: what happens when another PWM channel is enabled during scheduling?
 	this->scheduleAxisSteppers(iters, NAN);
 	this->scheduler.setBufferSize(b);
-	Drv::CoordMapT::getHomePosition(_destMechanicalPos); //TODO: replace with an assignment
+	_destMechanicalPos = Drv::CoordMapT::getHomePosition();
 }
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {

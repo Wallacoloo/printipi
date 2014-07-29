@@ -13,21 +13,21 @@
 #include <vector>
 //#include <atomic>
 #include <tuple>
-#include <algorithm> //for push_heap
+//#include <algorithm> //for push_heap
 //#include <functional>
 #include "event.h"
 #include "logging.h"
 #include "timeutil.h"
 
 #include <pthread.h> //for pthread_setschedparam
-#include <time.h> //for clock_nanosleep
+//#include <time.h> //for clock_nanosleep
 //#include "logging.h"
 
 #ifndef SCHED_PRIORITY
 	#define SCHED_PRIORITY 30
 #endif
 #ifndef SCHED_CAPACITY
-	#define SCHED_CAPACITY 512
+	#define SCHED_CAPACITY 256
 #endif
 #ifndef SCHED_NUM_EXIT_HANDLER_LEVELS
 	#define SCHED_NUM_EXIT_HANDLER_LEVELS 2

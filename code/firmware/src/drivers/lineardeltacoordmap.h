@@ -21,7 +21,11 @@
 
 namespace drv {
 
-template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx, unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT> class LinearDeltaCoordMap : public CoordMap {
+template </*std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx, */ unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT> class LinearDeltaCoordMap : public CoordMap {
+	static constexpr std::size_t AIdx = 0;
+	static constexpr std::size_t BIdx = 1;
+	static constexpr std::size_t CIdx = 2;
+	static constexpr std::size_t EIdx = 3;
 	static constexpr float r = R1000 / 1000.;
 	static constexpr float L = L1000 / 1000.;
 	static constexpr float h = H1000 / 1000.;
@@ -30,11 +34,15 @@ template <std::size_t AIdx, std::size_t BIdx, std::size_t CIdx, std::size_t EIdx
 	static constexpr float STEPS_MM_EXT = STEPS_M_EXT / 1000.;
 	static constexpr float MM_STEPS_EXT = 1. / STEPS_MM_EXT;
 	public:
-		template <std::size_t size> static void getHomePosition(std::array<int, size> &mech) {
+		/*template <std::size_t size> static void getHomePosition(std::array<int, size> &mech) {
 			//z = A*MM_STEPS-sqrt(L*L-r*r);
 			//A=(z+sqrt(L*L-r*r))*STEPS_MM
 			mech[EIdx] = 0;
 			mech[AIdx] = mech[BIdx] = mech[CIdx] = h*STEPS_MM; //(h+sqrt(L*L-r*r))*STEPS_MM;
+		}*/
+		static constexpr std::array<int, 4> getHomePosition() {
+			static_assert(AIdx == 0 && BIdx == 1 && CIdx == 2 && EIdx == 3, "explicit coord indices are deprecated");
+			return std::array<int, 4>{h*STEPS_MM, h*STEPS_MM, h*STEPS_MM, 0};
 		}
 		//template <std::size_t size> static void xyzeFromMechanical(const std::array<int, size> &mech, float &x, float &y, float &z, float &e) {
 		template <std::size_t size> static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, size> &mech) {

@@ -36,6 +36,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			 sTotal(0),
 			 vx(vx), vy(vy), vz(vz),
 			 v2(vx*vx + vy*vy + vz*vz) {
+			 	static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
 			 	this->time = 0; //this may NOT be zero-initialized by parent.
 				float e_;
 				//CoordMap::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
