@@ -175,19 +175,10 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
 }
 
 template <typename Interface> struct timespec Scheduler<Interface>::lastSchedTime() const {
-	/*if (this->eventQueue.size()) {
-			evt = this->eventQueue.back();
-		} else {
-			//lock.unlock();
-			timespec ts;
-			clock_gettime(CLOCK_MONOTONIC, &ts);
-			return ts;
-		}*/
 	if (this->eventQueue.empty()) {
 		return timespecNow();
 	} else {
 		return this->eventQueue.rbegin()->time();
-		//return this->eventQueue.back().time();
 	}
 }
 
