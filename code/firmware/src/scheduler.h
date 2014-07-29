@@ -61,6 +61,11 @@ class SchedulerBase {
 		static void registerExitHandler(void (*handler)(), unsigned level);
 };
 
+enum InsertHint {
+	INSERT_FRONT,
+	INSERT_BACK
+};
+
 template <typename Interface> class Scheduler : public SchedulerBase {
 	Interface interface;
 	std::array<PwmInfo, 256> pwmInfo; 
@@ -75,7 +80,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 	
 	unsigned bufferSize;
 	private:
-		void orderedInsert(const Event &evt);
+		void orderedInsert(const Event &evt, InsertHint insertBack=INSERT_BACK);
 	public:
 		void queue(const Event &evt);
 		void schedPwm(AxisIdType idx, const PwmInfo &p);
@@ -110,11 +115,11 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
 		//yield();
 		yield(true);
 	}
-	this->orderedInsert(evt);
+	this->orderedInsert(evt, INSERT_BACK);
 	yield(); //fast yield. Not really necessary if the earlier yield statement was ever reached.
 }
 
-template <typename Interface> void Scheduler<Interface>::orderedInsert(const Event &evt) {
+template <typename Interface> void Scheduler<Interface>::orderedInsert(const Event &evt, InsertHint insertHint) {
 	//Most inserts will already be ordered (ie the event will occur after all scheduled events)
 	//glibc push_heap will be logarithmic no matter WHAT: https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01051_source.html
 	//it may be beneficial to compare against the previously last element.
@@ -133,7 +138,7 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 	/*this->eventQueue.push_back(evt);
 	std::push_heap(this->eventQueue.begin(), this->eventQueue.end(), std::greater<Event>());
 	LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u. %i\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec, std::is_heap(eventQueue.begin(), eventQueue.end(), std::greater<Event>()));*/
-	eventQueue.insert(evt); //TODO: provide insertion hint.
+	eventQueue.insert(insertHint == INSERT_BACK ? eventQueue.end() : eventQueue.begin(), evt); 
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
@@ -258,7 +263,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
 					nextPwm.offsetNano(pwm.nsLow);
 				}
-				this->orderedInsert(nextPwm);
+				this->orderedInsert(nextPwm, INSERT_FRONT);
 			}
 			//this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
 			forceWait = false; //avoid draining ALL events - just drain the first.
