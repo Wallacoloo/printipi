@@ -26,7 +26,7 @@
 //#define R1000 125000
 //#define L1000 215000
 //#define H1000 507000
-#define R1000 118000
+#define R1000 121000
 #define L1000 232000
 #define H1000 500000
 //#define STEPS_M 9000
