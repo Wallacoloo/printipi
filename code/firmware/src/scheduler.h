@@ -68,12 +68,13 @@ enum InsertHint {
 };
 
 template <typename Interface> class Scheduler : public SchedulerBase {
+	typedef std::multiset<Event> EventQueueType;
 	Interface interface;
 	//std::array<PwmInfo, 256> pwmInfo; 
 	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
 	//std::queue<Event> eventQueue;
 	//std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
-	std::multiset<Event> eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
+	EventQueueType eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
 	//mutable std::mutex mutex;
 	//std::unique_lock<std::mutex> _lockPushes;
 	//bool _arePushesLocked;
@@ -223,7 +224,9 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//interface.onIdleCpu();
 			//const Event &evt = this->eventQueue.front();
 			//Event evt = this->eventQueue.front();
-			Event evt = *this->eventQueue.begin();
+			EventQueueType::const_iterator iter = this->eventQueue.cbegin();
+			Event evt = *iter;
+			//Event evt = *this->eventQueue.begin();
 			//do NOT pop the event here, because it might not be handled this time around.
 			while (!evt.isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
@@ -235,8 +238,11 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					}
 				}
 			}
-			this->eventQueue.erase(eventQueue.begin());
-			//this->eventQueue.pop_front();
+			//this->eventQueue.erase(eventQueue.begin());
+			this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
+			//The error: eventQueue got flooded with stepper #5 PWM events.
+			//  They somehow got duplicated, likely by a failure to erase the *correct* previous pwm event.
+			//  this should be fixed by saving the iter and erasing it.
 			interface.onEvent(evt);
 			
 			//manage PWM events:
