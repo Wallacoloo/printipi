@@ -95,18 +95,15 @@ class Kossel : public Driver {
         IODriverTypes ioDrivers;
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         //_Thermistor thermistor;
-        constexpr static std::size_t numAxis() {
+        /*constexpr static std::size_t numAxis() {
             return 4; //A, B, C + Extruder
-        }
+        }*/
         inline AxisIdType getFanIODriverIdx() const {
         	return 4;
         }
         inline float defaultFanPwmPeriod() const {
         	return 0.02; //don't need high resolution
         }
-        //inline void getTemperature(CelciusType &extruder, CelciusType& /*platform*/) const {
-        //	extruder = std::get<5>(ioDrivers).getLastTemp();
-        //}
         inline std::tuple<CelciusType, CelciusType> getTemperature() const {
         	return std::make_tuple(std::get<5>(ioDrivers).getLastTemp(), -300);
         }
