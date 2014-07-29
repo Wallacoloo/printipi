@@ -31,10 +31,11 @@
  * *Add enable pin
  * *Account for PWM pins when setting Scheduler queue size.
  *  Add (configurable) absolute PWM limits to hotend, etc.
- *  Reduce number of PWM channels to what is actually needed.
- *  Make driver.numAxis a property of the CoordMap
+ * *Reduce number of PWM channels to what is actually needed.
+ * *Make driver.numAxis a property of the CoordMap
  * *Make CoordMapT, etc return tuples instead of using writebacks
  * *Make Driver::getTemperature return tuples
+ *  Allow G28 to be called multiple times
  *  Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading
  * *Add ability to put steppers to rest upon idle
