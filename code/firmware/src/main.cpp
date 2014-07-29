@@ -2,6 +2,8 @@
  * Printipi
  * (c) 2014 Colin Wallace
  */
+ 
+//Note: this file is great for debugging with gdb: https://gist.githubusercontent.com/skyscribe/3978082/raw/e8a0c8daec409e24b29f7c14cf74140a43a9278c/.gdbinit
 
 /*TODO:
  * *Write SN754410 drivers
@@ -36,6 +38,7 @@
  * *Make CoordMapT, etc return tuples instead of using writebacks
  * *Make Driver::getTemperature return tuples
  *  Allow G28 to be called multiple times
+ *  Reset I part of PID control when target changes
  *  Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading
  * *Add ability to put steppers to rest upon idle
