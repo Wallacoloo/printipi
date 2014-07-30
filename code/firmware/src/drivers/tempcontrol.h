@@ -9,7 +9,7 @@
 namespace drv {
 
 template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
-	static const struct timespec _intervalThresh; //maximum error amount in read before temperature is dropped.
+	static const struct timespec _intervalThresh; //drop thermistor read if the IOs aren't serviced regularly enough.
 	static const struct timespec _readInterval; //how often to read the thermistor
 	IntervalTimer _intervalTimer;
 	Heater _heater;

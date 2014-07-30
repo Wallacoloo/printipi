@@ -40,7 +40,7 @@ template <typename Drv> class State {
 			return _state.satisfyIOs();
 		}
 		static constexpr std::size_t numIoDrivers() {
-			return std::tuple_size<Drv::IODriverTypes>::value;
+			return std::tuple_size<typename Drv::IODriverTypes>::value;
 		}
 	};
 	typedef Scheduler<SchedInterface> SchedType;
