@@ -37,7 +37,7 @@
  * *Make driver.numAxis a property of the CoordMap
  * *Make CoordMapT, etc return tuples instead of using writebacks
  * *Make Driver::getTemperature return tuples
- *  Allow G28 to be called multiple times
+ * *Allow G28 to be called multiple times
  *  Reset I part of PID control when target changes
  *  Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading

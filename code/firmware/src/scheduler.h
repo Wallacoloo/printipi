@@ -28,7 +28,7 @@
 #endif
 //really is the default scheduler buffer size.
 #ifndef SCHED_CAPACITY
-	#define SCHED_CAPACITY 256
+	#define SCHED_CAPACITY 128
 #endif
 #ifndef SCHED_NUM_EXIT_HANDLER_LEVELS
 	#define SCHED_NUM_EXIT_HANDLER_LEVELS 2
