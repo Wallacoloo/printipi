@@ -1,6 +1,15 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+/* 
+ * Printipi/event.h
+ * (c) 2014 Colin Wallace
+ *
+ * An Event encapsulates information about something that needs to happen at a specific time.
+ *   Eg, "advance stepper #2 at time T", or "set hotend #1 high at time T"
+ * Events are queued in the Scheduler and then handled by the State at their appropriate time.
+ */
+
 //There will be these events:
 //  step forward (motor 0, 1, 2, 3)
 //  step backward (motor 0, 1, 2, 3)

@@ -1,6 +1,13 @@
 #ifndef MATHUTIL_H
 #define MATHUTIL_H
 
+/* 
+ * Printipi//mathutil.h
+ * (c) 2014 Colin Wallace
+ *
+ * This file provides some useful conversion (mm to inches, celcius to kelvin, etc), mathematical constants, and basic mathematical functions for convenience.
+ */
+
 #include <limits>
 
 namespace mathutil {

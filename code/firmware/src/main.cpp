@@ -1,6 +1,10 @@
 /* 
  * Printipi/main.cpp
  * (c) 2014 Colin Wallace
+ *
+ * main is the program's main entry point.
+ * main handles command line arguments, and instantiates the serial communications, State, and machine-specific driver.
+ * Currently, the driver type must set explicitly further down in the file
  */
  
 //Note: this file is great for debugging with gdb: https://gist.githubusercontent.com/skyscribe/3978082/raw/e8a0c8daec409e24b29f7c14cf74140a43a9278c/.gdbinit

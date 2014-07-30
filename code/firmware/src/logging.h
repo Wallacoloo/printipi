@@ -1,6 +1,14 @@
 #ifndef LOGGING_H
 #define LOGGING_H
 
+/* 
+ * Printipi/logging.h
+ * (c) 2014 Colin Wallace
+ *
+ * This file provides some functions that allow for logging information to stdout.
+ * Use LOG for information logging, LOGE to log an error, LOGW for warnings, LOGD for debug logging, and LOGV for verbose debug logging.
+ */
+
 #include <stdio.h>
 #ifdef DNO_LOGGING
 	#define DO_LOG 0

@@ -1,6 +1,16 @@
 #ifndef LOWPASSFILTER_H
 #define LOWPASSFILTER_H
 
+/* 
+ * Printipi/filters/nofilter.h
+ * (c) 2014 Colin Wallace
+ *
+ * Provides a low-pass filter implementation for algorithms that allow a filter parameter, such as in src/drivers/tempcontrol.h
+ * A low-pass filter allows low-frequency signals to pass while attenuating (decreasing the amplitude of) the higher frequencies.
+ * 
+ * Note that this implementation currently assumes it is fed 1 sample per second.
+ */
+
 
 /* http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter
    y[n] = y[n-1] + a(x[n] - y[n-1]), where x=input, y=output, n=sample number, a = dt / (RC + dt)

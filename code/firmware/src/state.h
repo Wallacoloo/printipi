@@ -1,6 +1,15 @@
 #ifndef STATE_H
 #define STATE_H
 
+/* 
+ * Printipi/state.h
+ * (c) 2014 Colin Wallace
+ *
+ * State handles as much driver-mutual functionality as possible, including mapping Gcodes to specific functions,
+ *   tracking unit mode and axis position, and interfacing with the scheduler.
+ * State controls the communications channel, the scheduler, and the underlying driver.
+ */
+
 //Gcode documentation can be found:
 //  http://reprap.org/wiki/G-code
 //  or (with implementation): https://github.com/Traumflug/Teacup_Firmware/blob/master/gcode_process.c
@@ -30,6 +39,7 @@
 #include "typesettings.h"
 
 template <typename Drv> class State {
+	//The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
 	struct SchedInterface {
 		State<Drv>& _state;
 		SchedInterface(State<Drv> &state) : _state(state) {}
