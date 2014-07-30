@@ -1,6 +1,14 @@
 #ifndef DRIVERS_LINEARCOORDMAP_H
 #define DRIVERS_LINEARCOORDMAP_H
 
+/* 
+ * Printipi/drivers/linearcoordmap.h
+ * (c) 2014 Colin Wallace
+ *
+ * LinearCoordMap implements the CoordMap interface for Cartesian robots.
+ * This is the CoordMap that your driver (src/drivers/driver.h implementation) should use if it is a Cartesian robot.
+ */
+
 #include "coordmap.h"
 
 namespace drv {

@@ -1,5 +1,5 @@
 /* 
- * Printipi
+ * Printipi/main.cpp
  * (c) 2014 Colin Wallace
  */
  
@@ -44,28 +44,28 @@
  * *Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  * *Investigate single-threading for entire process.
+ *  CoordMap::getHomePosition should return the MECHANICAL home position, instead of cartesian (simpler implementation)
  *  Look into coordinate rounding for State::queueMovement
  *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
  *  Document
  *  Put copywrite at head of every file.
- *  Replace certain template parameters (eg STEPS_MM_1000 with std::ratio)
+ * *NO: Replace certain template parameters (eg STEPS_MM_1000 with std::ratio)
+ *    Not worth it; will make code more difficult to read.
  *  Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
  *  Optimize gcode parser.
  *    opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
+ *  rename IODriver::stepForward/backword
 */
 
 #include <string>
-//#include <fcntl.h> //needed for (file) open()
-//#include <stdlib.h> //needed for exit()
 #include <sys/mman.h> //for mlockall
 #include "logging.h"
 
-//#include "gparse/serial.h"
 #include "gparse/com.h"
 #include "state.h"
-#include "drivers/driver.h"
-#include "drivers/kossel/kossel.h"
 #include "argparse.h"
+
+#include "drivers/kossel/kossel.h"
 
 void printUsage(char* cmd) {
 	//#ifndef NO_USAGE_INFO

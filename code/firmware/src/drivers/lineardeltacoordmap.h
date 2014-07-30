@@ -1,4 +1,9 @@
-/* This class allows for translating mechanical positions to the cartesian x, y, z, e system.
+/* 
+ * Printipi/drivers/lineardeltacoordmap.h
+ * (c) 2014 Colin Wallace
+ * 
+ * LinearDeltaCoordMap implements the CoordMap interface for (rail-based) Delta-style robots like the Kossel
+ * This class allows for translating mechanical positions to the cartesian x, y, z, e system.
  * It assumes there are 3 legs arranged in a circle (120 degrees between each adjacent pair)
  *   and these legs have carriages a distance d from their base.
  * The leg at (x=0, y=+) is axis A,
