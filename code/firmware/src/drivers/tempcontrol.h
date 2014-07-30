@@ -38,17 +38,19 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 			if (_isReading) {
 				if (_therm.isReady()) {
 					_isReading = false;
-					if (_intervalTimer.clockCmp(_intervalThresh) <= 0) {
+					if (_intervalTimer.clockCmp(_intervalThresh) > 0) { //too much latency in reading sample; restart.
+						return true; //restart read.
+					} else {
 						_lastTemp = _therm.value();
 						updatePwm(sched);
-					} //else: drop sample.
-					return false; //no more cpu needed.
+						return false; //no more cpu needed.
+					}
 				} else {
 					_intervalTimer.clock();
 					return true; //need more cpu time.
 				}
 			} else {
-				const struct timespec& now = _intervalTimer.clockGet();
+				const struct timespec& now = _intervalTimer.clock();
 				if (timespecLt(_nextReadTime, now)) { //time for another read
 					_nextReadTime = timespecAdd(now, _readInterval);
 					_therm.startRead();
@@ -67,7 +69,6 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 			float error = _destTemp - _lastTemp;
 			error = _filter.feed(error);
 			float pwm = _pid.feed(error);
-			//float P = 0.01*error;
 			LOG("tempcontrol: pwm=%f\n", pwm);
 			sched.schedPwm(DeviceIdx, PwmInfo(pwm, 0.1));
 		}
