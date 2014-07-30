@@ -1,27 +1,31 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-//#include <queue>
-//#include <deque>
+/* 
+ * Printipi/scheduler.h
+ * (c) 2014 Colin Wallace
+ *
+ * The Scheduler controls program flow between tending communications and executing events at precise times.
+ * It also allows for software PWM of any output.
+ * It is designed to run in a single-threaded environment so it can have maximum control.
+ * As such, the program should call Scheduler.yield() periodically if doing any long-running task.
+ * Events can be queued with Scheduler.queue, and Scheduler.eventLoop should be called after any program setup is completed.
+ */
+
+
 #include <set>
 #include <thread> //for this_thread.sleep
-//#include <mutex>
-//#include <condition_variable>
 #include <time.h> //for timespec
 #include <chrono> 
 #include <array>
 #include <vector>
 //#include <atomic>
 #include <tuple>
-//#include <algorithm> //for push_heap
-//#include <functional>
 #include "event.h"
 #include "logging.h"
 #include "timeutil.h"
 
 #include <pthread.h> //for pthread_setschedparam
-//#include <time.h> //for clock_nanosleep
-//#include "logging.h"
 
 #ifndef SCHED_PRIORITY
 	#define SCHED_PRIORITY 30

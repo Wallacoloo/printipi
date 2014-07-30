@@ -1,6 +1,13 @@
 #ifndef TIMEUTIL_H
 #define TIMEUTIL_H
 
+/* 
+ * Printipi/timeutil.h
+ * (c) 2014 Colin Wallace
+ *
+ * This file provides convenience functions for dealing with Linux high-resolution timers.
+ */
+
 #include <time.h>
 
 timespec timespecNow();

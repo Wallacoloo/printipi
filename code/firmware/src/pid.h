@@ -1,8 +1,16 @@
 #ifndef PID_H
 #define PID_H
 
-#include "timeutil.h" //for timespec*
+/* 
+ * Printipi/pid.h
+ * (c) 2014 Colin Wallace
+ *
+ * http://en.wikipedia.org/wiki/PID_controller
+ * PID provides a Proportional-Integral-Derivative controller that can be used as a control feedback mechanism.
+ * Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
+ */
 
+#include "timeutil.h" //for timespec*
 
 template <int P1000000, int I1000000=0, int D1000000=0> class PID {
 	static constexpr float P = P1000000 / 1000000.;

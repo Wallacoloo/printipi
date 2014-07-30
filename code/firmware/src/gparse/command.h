@@ -1,6 +1,15 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+/* 
+ * Printipi/gparse/command.h
+ * (c) 2014 Colin Wallace
+ *
+ * Command objects represent a single line of gcode.
+ * They can be parsed from a string, and then can be queried by opcode and parameters.
+ * They can also be constructed and used as replies to the host (although this may change in future implementations)
+ */
+
 #include <string>
 #include <vector>
 #include <queue>

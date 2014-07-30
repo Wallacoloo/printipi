@@ -1,6 +1,13 @@
 #ifndef TYPESETTINGS_H
 #define TYPESETTINGS_H
 
+/* 
+ * Printipi/typesettings.h
+ * (c) 2014 Colin Wallace
+ *
+ * This file contains typedefs and enums for types used throughout the program.
+ */
+
 #include <cstdint> //for uint8_t
 
 typedef uint8_t AxisIdType;
