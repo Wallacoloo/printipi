@@ -39,6 +39,7 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 				if (_therm.isReady()) {
 					_isReading = false;
 					if (_intervalTimer.clockCmp(_intervalThresh) > 0) { //too much latency in reading sample; restart.
+						LOGV("Thermistor sample dropped\n");
 						return true; //restart read.
 					} else {
 						_lastTemp = _therm.value();
@@ -74,7 +75,7 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 		}
 };
 
-template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 8000};
+template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 40000};
 
 template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{1, 0};
 
