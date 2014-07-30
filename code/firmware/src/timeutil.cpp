@@ -34,6 +34,10 @@ bool timespecLt(const struct timespec &a, const struct timespec &b) {
 	return a.tv_sec < b.tv_sec || (a.tv_sec == b.tv_sec && a.tv_nsec < b.tv_nsec);
 }
 
+int timespecCmp(const struct timespec &a, const struct timespec &b) {
+	return timespecLt(a, b) ? -1 : (timespecLt(b, a) ? 1 : 0);
+}
+
 float timespecToFloat(const struct timespec &a) {
 	return a.tv_sec + a.tv_nsec/1000000000.;
 }
