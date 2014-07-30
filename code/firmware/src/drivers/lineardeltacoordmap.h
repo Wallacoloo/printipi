@@ -40,7 +40,7 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsi
 		static constexpr std::array<int, 4> getHomePosition() {
 			//z = A*MM_STEPS-sqrt(L*L-r*r);
 			//A=(z+sqrt(L*L-r*r))*STEPS_MM
-			return std::array<int, 4>({(int)(h*STEPS_MM), (int)(h*STEPS_MM), (int)(h*STEPS_MM), 0});
+			return std::array<int, 4>({{(int)(h*STEPS_MM), (int)(h*STEPS_MM), (int)(h*STEPS_MM), 0}});
 		}
 		static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
 			float e = mech[EIdx]*MM_STEPS_EXT;
