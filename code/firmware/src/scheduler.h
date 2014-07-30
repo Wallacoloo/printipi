@@ -220,67 +220,63 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 	while (1) {
 		//LOGV("Scheduler::eventQueue.size(): %zu\n", eventQueue.size());
 		//LOGV("front().time(), back().time(): %lu.%u, %lu.%u\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec);
-		if (eventQueue.empty()) { //if no events, then run idle events and return.
-			if (!interface.onIdleCpu()) { //loop is implied by the outer while(1)
+		//interface.onIdleCpu();
+		//const Event &evt = this->eventQueue.front();
+		//Event evt = this->eventQueue.front();
+		//EventQueueType::const_iterator iter = this->eventQueue.cbegin();
+		//Event evt = *iter;
+		//Event evt = *this->eventQueue.begin();
+		//do NOT pop the event here, because it might not be handled this time around.
+		//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
+		while (!eventQueue.empty() && !this->eventQueue.cbegin()->isTime()) {
+			if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
+				EventQueueType::const_iterator iter = this->eventQueue.cbegin();
+				if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
+					return;
+				} else { //retain control if the event is near, or if the queue must be emptied.
+					this->sleepUntilEvent(*iter);
+					break;
+				}
+			}
+		}
+		//in the case that all events were consumed, or there were none to begin with, satisfy the idle cpu functions:
+		if (eventQueue.empty()) {
+			if (interface.onIdleCpu()) { //loop is implied by the outer while(1)
+				continue;
+			} else {
 				return;
 			}
-			//avoid the following, in case onIdleCpu causes the generation of events:
-			//do {} while (interface.onIdleCpu());
-		} else {
-			//interface.onIdleCpu();
-			//const Event &evt = this->eventQueue.front();
-			//Event evt = this->eventQueue.front();
-			//EventQueueType::const_iterator iter = this->eventQueue.cbegin();
-			//Event evt = *iter;
-			//Event evt = *this->eventQueue.begin();
-			//do NOT pop the event here, because it might not be handled this time around.
-			//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
-			while (!eventQueue.empty() && !this->eventQueue.cbegin()->isTime()) {
-				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
-					EventQueueType::const_iterator iter = this->eventQueue.cbegin();
-					if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
-						return;
-					} else { //retain control if the event is near, or if the queue must be emptied.
-						this->sleepUntilEvent(*iter);
-						break;
-					}
-				}
-			}
-			//if all events were somehow consumed, skip to the other part of the loop which handles this.
-			if (eventQueue.empty()) {
-				continue;
-			}
-			EventQueueType::const_iterator iter = this->eventQueue.cbegin();
-			Event evt = *iter;
-			//this->eventQueue.erase(eventQueue.begin());
-			this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
-			//The error: eventQueue got flooded with stepper #5 PWM events.
-			//  They somehow got duplicated, likely by a failure to erase the *correct* previous pwm event.
-			//  this should be fixed by saving the iter and erasing it.
-			interface.onEvent(evt);
-			
-			//manage PWM events:
-			const PwmInfo &pwm = pwmInfo[evt.stepperId()];
-			if (pwm.isNonNull()) {
-				Event nextPwm;
-				/*         for | back
-				 * nsLow    0     1
-				 * nsHigh   1     0   */
-				//dir = (nsLow ^ for)
-				if (evt.direction() == StepForward) {
-					//next event will be StepBackward, or refresh this event if there is no off-duty.
-					nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
-					nextPwm.offsetNano(pwm.nsHigh);
-				} else {
-					//next event will be StepForward, or refresh this event if there is no on-duty.
-					nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
-					nextPwm.offsetNano(pwm.nsLow);
-				}
-				this->orderedInsert(nextPwm, INSERT_FRONT);
-			}
-			//this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
-			forceWait = false; //avoid draining ALL events - just drain the first.
 		}
+		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
+		Event evt = *iter;
+		//this->eventQueue.erase(eventQueue.begin());
+		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
+		//The error: eventQueue got flooded with stepper #5 PWM events.
+		//  They somehow got duplicated, likely by a failure to erase the *correct* previous pwm event.
+		//  this should be fixed by saving the iter and erasing it.
+		interface.onEvent(evt);
+		
+		//manage PWM events:
+		const PwmInfo &pwm = pwmInfo[evt.stepperId()];
+		if (pwm.isNonNull()) {
+			Event nextPwm;
+			/*         for | back
+			 * nsLow    0     1
+			 * nsHigh   1     0   */
+			//dir = (nsLow ^ for)
+			if (evt.direction() == StepForward) {
+				//next event will be StepBackward, or refresh this event if there is no off-duty.
+				nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
+				nextPwm.offsetNano(pwm.nsHigh);
+			} else {
+				//next event will be StepForward, or refresh this event if there is no on-duty.
+				nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
+				nextPwm.offsetNano(pwm.nsLow);
+			}
+			this->orderedInsert(nextPwm, INSERT_FRONT);
+		}
+		//this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
+		forceWait = false; //avoid draining ALL events - just drain the first.
 	}
 }
 
