@@ -1,6 +1,15 @@
 #ifndef DRIVERS_TEMPCONTROL_H
 #define DRIVERS_TEMPCONTROL_H
 
+/* 
+ * Printipi/drivers/tempcontrol.h
+ * (c) 2014 Colin Wallace
+ * 
+ * TempControl provides a way to coordinate thermistor readings with the PWM control of a hotend.
+ * It used a PID controller to determine the ideal PWM for a given thermistor reading and temperature target.
+ * Additionally, it accepts an (optional) filter applied BEFORE the PID controller, which can be used to weed out some variability in readings (use a low-pass filter for this).
+ */
+
 #include "drivers/iodriver.h"
 #include "timeutil.h"
 #include "filters/nofilter.h"

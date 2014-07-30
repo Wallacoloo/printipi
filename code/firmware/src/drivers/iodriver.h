@@ -1,6 +1,20 @@
 #ifndef DRIVERS_IODRIVER_H
 #define DRIVERS_IODRIVER_H
 
+/* 
+ * Printipi/drivers/iodriver.h
+ * (c) 2014 Colin Wallace
+ *
+ * IODrivers control the electrical interface to each component.
+ * One IODriver is needed for each stepper motor, fan, hotend, etc.
+ * Note that the stepForward and stepBackward methods may have different meanings for non-stepper motors.
+ *   for fans or hotends, this would mean turn on, or turn off
+ *
+ * Note: IODriver is an interface, and not an implementation.
+ * An implementation is needed for each electrical component - the fan, hotend, and 1 for each stepper motor, etc.
+ * These implementations must provide the functions outlined further down in the header.
+ */
+
 #include "typesettings.h"
 #include "scheduler.h"
 
@@ -36,8 +50,7 @@ class IODriver {
 		/* called when the scheduler has extra time,
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */
-		//inline bool onIdleCpu() { return false; } //OVERRIDE THIS
-		template <typename Sched> inline bool onIdleCpu(Sched & /*sched*/) { return false; }
+		template <typename Sched> inline bool onIdleCpu(Sched & /*sched*/) { return false; } //OVERRIDE THIS
 		//selectAndStep...: used internally
 		template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
 		template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);

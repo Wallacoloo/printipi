@@ -6,7 +6,6 @@
 #include "filters/lowpassfilter.h"
 #include "drivers/driver.h"
 #include "drivers/axisstepper.h"
-#include "drivers/extruderstepper.h"
 #include "drivers/linearstepper.h"
 #include "drivers/lineardeltastepper.h"
 #include "drivers/rpi/a4988.h"

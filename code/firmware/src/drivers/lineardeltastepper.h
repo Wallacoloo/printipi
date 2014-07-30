@@ -1,6 +1,13 @@
 #ifndef DRIVERS_LINEARDELTASTEPPER_H
 #define DRIVERS_LINEARDELTASTEPPER_H
 
+/* 
+ * Printipi/drivers/lineardeltastepper.h
+ * (c) 2014 Colin Wallace
+ * 
+ * LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel
+ */
+
 /*
 	#t1,t2 were solved in Mathematica as such:
 	#xyzOfT = {x ->  x0 + vx t, y ->  y0 + vy t, z ->  z0 + vz t} 

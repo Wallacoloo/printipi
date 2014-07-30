@@ -1,6 +1,14 @@
 #ifndef LINEARSTEPPER_H
 #define LINEARSTEPPER_H
 
+/* 
+ * Printipi/drivers/linearstepper.h
+ * (c) 2014 Colin Wallace
+ * 
+ * LinearStepper implements the AxisStepper interface for Cartesian-style robots.
+ * Additionally, the LinearHomeStepper is used to home the axis for some other types of robots.
+ */
+
 #include "axisstepper.h"
 #include "typesettings.h"
 #include "endstop.h"
