@@ -384,7 +384,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM104()) { //set hotend temperature and return immediately.
-		float t = cmd.getS();
+		float t = cmd.getS(0); //default to temp=0. TODO: default to current temperature.
 		driver.setTemperature(t);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
@@ -394,7 +394,6 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		std::tie(t, b) = driver.getTemperature();
 		resp = gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
-		LOGW("Warning (gparse/state.h): OP_M106 (set fan speed) not tested\n");
 		float s = cmd.getS(1.0); //PWM duty cycle
 		if (s > 1) { //host thinks we're working from 0 to 255
 			s = s/256.0; //TODO: move this logic into cmd.getSNorm()
@@ -402,7 +401,6 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		setFanRate(s);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM107()) { //set fan = off.
-		LOGW("Warning (gparse/state.h): OP_M107 (set fan off) not tested\n");
 		setFanRate(0);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM109()) { //set extruder temperature to S param and wait.

@@ -84,7 +84,7 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 		}
 };
 
-template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 40000};
+template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 200000};
 
 template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{1, 0};
 
