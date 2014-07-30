@@ -230,20 +230,28 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//interface.onIdleCpu();
 			//const Event &evt = this->eventQueue.front();
 			//Event evt = this->eventQueue.front();
-			EventQueueType::const_iterator iter = this->eventQueue.cbegin();
-			Event evt = *iter;
+			//EventQueueType::const_iterator iter = this->eventQueue.cbegin();
+			//Event evt = *iter;
 			//Event evt = *this->eventQueue.begin();
 			//do NOT pop the event here, because it might not be handled this time around.
-			while (!evt.isTime()) {
+			//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
+			while (!eventQueue.empty() && !this->eventQueue.cbegin()->isTime()) {
 				if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
-					if (!isEventNear(evt) && !forceWait) { //if the event is far away, then return control to program.
+					EventQueueType::const_iterator iter = this->eventQueue.cbegin();
+					if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
 						return;
 					} else { //retain control if the event is near, or if the queue must be emptied.
-						this->sleepUntilEvent(evt);
+						this->sleepUntilEvent(*iter);
 						break;
 					}
 				}
 			}
+			//if all events were somehow consumed, skip to the other part of the loop which handles this.
+			if (eventQueue.empty()) {
+				continue;
+			}
+			EventQueueType::const_iterator iter = this->eventQueue.cbegin();
+			Event evt = *iter;
 			//this->eventQueue.erase(eventQueue.begin());
 			this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 			//The error: eventQueue got flooded with stepper #5 PWM events.
