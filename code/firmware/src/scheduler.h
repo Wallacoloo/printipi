@@ -26,6 +26,7 @@
 #ifndef SCHED_PRIORITY
 	#define SCHED_PRIORITY 30
 #endif
+//really is the default scheduler buffer size.
 #ifndef SCHED_CAPACITY
 	#define SCHED_CAPACITY 256
 #endif
@@ -152,6 +153,7 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 		LOGV("Scheduler::schedPwm: queueing\n");
 		pwmInfo[idx] = p;
 		Event evt(timespecNow(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
+		setBufferSize(getBufferSize()+1); //Make some room for this event.
 		this->queue(evt);
 	}
 }
