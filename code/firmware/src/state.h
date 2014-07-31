@@ -123,6 +123,7 @@ template <typename Drv> class State {
 		void setFanRate(float rate);
 	private:
 		/* Used internally to communicate step event times with the scheduler when moving or homing */
+		float transformEventTime(float time, float moveDuration);
 		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration);
 };
 
@@ -422,6 +423,19 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	return resp;
 }
 
+template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration) {
+	float Amax = 500;
+	float Vmax = 30;
+	float V0 = 0.1;
+	float k = 4*Amax/Vmax;
+	float c = V0 / (Vmax-V0);
+	if (time <= 0.5*moveDuration) {
+		return 1./k * log(1./c * ((1. + c)*exp(k/Vmax*time) - 1.));
+	} else {
+		return 2*transformEventTime(0.5*moveDuration, moveDuration) - transformEventTime(moveDuration-time, moveDuration);
+	}
+}
+
 template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration) {
 	//Information on acceleration: http://reprap.org/wiki/Firmware/Linear_Acceleration
 	//Current implementation uses instantaneous acceleration, which is physically impossible.
@@ -439,6 +453,8 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 			break; 
 		}
 		Event e = s.getEvent();
+		float transformedTime = transformEventTime(s.time, duration);
+		LOGV("Step transformed time: %f\n", transformedTime);
 		e.offset(baseTime);
 		scheduler.queue(e);
 		_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
