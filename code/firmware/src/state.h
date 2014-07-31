@@ -124,7 +124,7 @@ template <typename Drv> class State {
 	private:
 		/* Used internally to communicate step event times with the scheduler when moving or homing */
 		float transformEventTime(float time, float moveDuration);
-		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate=false);
+		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate=true);
 };
 
 
