@@ -123,8 +123,8 @@ template <typename Drv> class State {
 		void setFanRate(float rate);
 	private:
 		/* Used internally to communicate step event times with the scheduler when moving or homing */
-		float transformEventTime(float time, float moveDuration);
-		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate=true);
+		float transformEventTime(float time, float moveDuration, float maxVel);
+		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate, float maxVel=NAN);
 };
 
 
@@ -423,20 +423,20 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	return resp;
 }
 
-template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration) {
-	float Amax = 500;
-	float Vmax = 30;
+template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration, float maxVel) {
+	float Amax = 30;
+	float Vmax = maxVel; //;30;
 	float V0 = 0.1;
 	float k = 4*Amax/Vmax;
 	float c = V0 / (Vmax-V0);
 	if (time > 0.5*moveDuration) {
-		return 2*transformEventTime(0.5*moveDuration, moveDuration) - transformEventTime(moveDuration-time, moveDuration);
+		return 2*transformEventTime(0.5*moveDuration, moveDuration, maxVel) - transformEventTime(moveDuration-time, moveDuration, maxVel);
 	} else { //take advantage of the fact that comparisons against NaN always compare false to allow for indefinite movements:
 		return 1./k * log(1./c * ((1. + c)*exp(k/Vmax*time) - 1.));
 	}
 }
 
-template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate) {
+template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate, float maxVel) {
 	//Information on acceleration: http://reprap.org/wiki/Firmware/Linear_Acceleration
 	//Current implementation uses instantaneous acceleration, which is physically impossible.
 	//The best course *appears* to be an exponential velocity curve.
@@ -452,7 +452,7 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 		if (s.time > duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
 			break; 
 		}
-		float transformedTime = accelerate ? transformEventTime(s.time, duration) : s.time;
+		float transformedTime = accelerate ? transformEventTime(s.time, duration, maxVel) : s.time;
 		LOGV("Step transformed time: %f\n", transformedTime);
 		Event e = s.getEvent(transformedTime);
 		e.offset(baseTime);
@@ -487,7 +487,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", velXYZ, vx, vy, vz, velE, duration);
 	typename Drv::AxisStepperTypes iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
-	this->scheduleAxisSteppers(iters, duration);
+	this->scheduleAxisSteppers(iters, duration, true, destMoveRatePrimitive());
 	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 	LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
