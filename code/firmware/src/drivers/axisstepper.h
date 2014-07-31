@@ -40,6 +40,7 @@ class AxisStepper {
 		template <typename TupleT> static void initAxisSteppers(TupleT &steppers, const std::array<int, std::tuple_size<TupleT>::value>& curPos, float vx, float vy, float vz, float ve);
 		template <typename TupleT> static void initAxisHomeSteppers(TupleT &steppers, float vHome);
 		Event getEvent() const; //NOT TO BE OVERRIDEN
+		Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN
 		template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
 	protected:
 		void _nextStep(); //OVERRIDE THIS. Will be called upon initialization.
