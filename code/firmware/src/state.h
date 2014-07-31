@@ -429,10 +429,10 @@ template <typename Drv> float State<Drv>::transformEventTime(float time, float m
 	float V0 = 0.1;
 	float k = 4*Amax/Vmax;
 	float c = V0 / (Vmax-V0);
-	if (time <= 0.5*moveDuration) {
-		return 1./k * log(1./c * ((1. + c)*exp(k/Vmax*time) - 1.));
-	} else {
+	if (time > 0.5*moveDuration) {
 		return 2*transformEventTime(0.5*moveDuration, moveDuration) - transformEventTime(moveDuration-time, moveDuration);
+	} else { //take advantage of the fact that comparisons against NaN always compare false to allow for indefinite movements:
+		return 1./k * log(1./c * ((1. + c)*exp(k/Vmax*time) - 1.));
 	}
 }
 
