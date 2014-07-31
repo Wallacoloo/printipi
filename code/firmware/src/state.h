@@ -426,7 +426,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration, float Vmax) {
 	//Note: it is assumed that the original path is already coded for constant velocity = Vmax.
 	float Amax = this->driver.maxAccel();
-	float V0 = std::max(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
+	float V0 = std::min(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
 	float k = 4*Amax/Vmax;
 	float c = V0 / (Vmax-V0);
 	if (time > 0.5*moveDuration) {
