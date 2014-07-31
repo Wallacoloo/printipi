@@ -29,7 +29,7 @@
  * *Rename gmath.h to mathutil.h
  *  Prevent stepping when endstop is triggered.
  *  Add max/min bounds for each axis
- *  Add acceleration
+ * *Add acceleration
  * *Add atexit levels, so that rpi gpio is disabled AFTER the IOdrivers are disabled.
  *    Should the exit handlers prevent double-registration (ie, use std::set)?
  *      avoid std::set just for the extra memory and code usage
@@ -43,6 +43,7 @@
  * *Make Driver::getTemperature return tuples
  * *Allow G28 to be called multiple times
  *  Reset I part of PID control when target changes
+ *  Allow M105, etc to instantly return the temperature
  * *Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading
  * *Add ability to put steppers to rest upon idle
