@@ -436,11 +436,11 @@ template <typename Drv> float State<Drv>::transformEventTime(float time, float m
 		//return 1./k * log(1./c * ((1. + c)*exp(k/Vmax*time) - 1.));
 		//aka: 1./k*( log(1./c) + log((1. + c)*exp(k/Vmax*time) - 1.))
 		//simplify: 1./k*log(e^x-1) ~=~ 1./k*x at x = Log[1 - E^(-k*.001)], at which point it is only .001 off (however, 1ms is significant! Would rather use a smaller value.
-		auto logparam = (1. + c)*exp(k/Vmax*time*Vmax);
+		auto logparam = (1. + c)*exp(k*time) - 1;
 		if (std::isfinite(logparam)) {
 			return 1./k*( log(1./c) + log(logparam));
 		} else { //use the approximation:
-			return 1./k*(log(1./c) + log(1. + c) + k/Vmax*time*Vmax);
+			return 1./k*(log(1./c) + log(1. + c) + k*time);
 		}
 	}
 }
