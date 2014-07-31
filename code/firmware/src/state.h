@@ -123,7 +123,7 @@ template <typename Drv> class State {
 		void setFanRate(float rate);
 	private:
 		/* Used internally to communicate step event times with the scheduler when moving or homing */
-		float transformEventTime(float time, float moveDuration, float maxVel);
+		float transformEventTime(float time, float moveDuration, float Vmax);
 		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate, float maxVel=NAN);
 };
 
@@ -423,24 +423,24 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	return resp;
 }
 
-template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration, float maxVel) {
+template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration, float Vmax) {
+	//Note: it is assumed that the original path is already coded for constant velocity = Vmax.
 	float Amax = this->driver.maxAccel();
-	float Vmax = maxVel; //;30;
-	float V0 = std::max(0.5*maxVel, 0.1); //c becomes invalid if V0 >= Vmax
+	float V0 = std::max(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
 	float k = 4*Amax/Vmax;
 	float c = V0 / (Vmax-V0);
 	if (time > 0.5*moveDuration) {
-		return 2*transformEventTime(0.5*moveDuration, moveDuration, maxVel) - transformEventTime(moveDuration-time, moveDuration, maxVel);
+		return 2*transformEventTime(0.5*moveDuration, moveDuration, Vmax) - transformEventTime(moveDuration-time, moveDuration, Vmax);
 	} else { //take advantage of the fact that comparisons against NaN always compare false to allow for indefinite movements:
 		//the problem with the below equation is that it can return infinity if k/Vmax*time is sufficiently large.
 		//return 1./k * log(1./c * ((1. + c)*exp(k/Vmax*time) - 1.));
 		//aka: 1./k*( log(1./c) + log((1. + c)*exp(k/Vmax*time) - 1.))
 		//simplify: 1./k*log(e^x-1) ~=~ 1./k*x at x = Log[1 - E^(-k*.001)], at which point it is only .001 off (however, 1ms is significant! Would rather use a smaller value.
-		auto logparam = (1. + c)*exp(k/Vmax*time);
+		auto logparam = (1. + c)*exp(k/Vmax*time*Vmax);
 		if (std::isfinite(logparam)) {
 			return 1./k*( log(1./c) + log(logparam));
 		} else { //use the approximation:
-			return 1./k*(log(1./c) + log(1. + c) + k/Vmax*time);
+			return 1./k*(log(1./c) + log(1. + c) + k/Vmax*time*Vmax);
 		}
 	}
 }
@@ -474,29 +474,30 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
 	float curX, curY, curZ, curE;
 	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
-	float velXYZ = 1; //destMoveRatePrimitive();
 	_destXPrimitive = x;
 	_destYPrimitive = y;
 	_destZPrimitive = z;
 	_destEPrimitive = e;
+	float maxVelXyz = destMoveRatePrimitive(); //the maximum velocity this path will be coded for.
 	float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
 	float dist = sqrt(distSq);
-	float duration = std::max(mathutil::NANOSECOND, dist/velXYZ); //minimum duration to avoid divisions by 0.
-	float velE = (e-curE)/duration;
+	float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
+	float velE = (e-curE)/minDuration;
 	float newVelE = this->driver.clampExtrusionRate(velE);
 	if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
 		velE = newVelE;
-		duration = (e-curE)/newVelE; //L/(L/t) = t
+		minDuration = (e-curE)/newVelE; //L/(L/t) = t
+		maxVelXyz = dist/minDuration;
 	}
-	float vx = (x-curX)/duration;
-	float vy = (y-curY)/duration;
-	float vz = (z-curZ)/duration;
+	float vx = (x-curX)/minDuration;
+	float vy = (y-curY)/minDuration;
+	float vz = (z-curZ)/minDuration;
 	LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
-	LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", velXYZ, vx, vy, vz, velE, duration);
+	LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
 	typename Drv::AxisStepperTypes iters;
 	drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
-	this->scheduleAxisSteppers(iters, duration, true, destMoveRatePrimitive());
+	this->scheduleAxisSteppers(iters, minDuration, true, maxVelXyz);
 	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 	LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
 	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);

@@ -49,7 +49,9 @@
  * *Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  * *Investigate single-threading for entire process.
- *  CoordMap::getHomePosition should return the MECHANICAL home position, instead of cartesian (simpler implementation)
+ * *CoordMap::getHomePosition should return the MECHANICAL home position, instead of cartesian (simpler implementation)
+ *  Remove the velocity parameter from steppers.
+ *  Limit movement speed based on maximum extrusion rate.
  *  Look into coordinate rounding for State::queueMovement
  *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
  *  Document
