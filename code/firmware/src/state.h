@@ -452,9 +452,9 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 		if (s.time > duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
 			break; 
 		}
-		Event e = s.getEvent();
 		float transformedTime = transformEventTime(s.time, duration);
 		LOGV("Step transformed time: %f\n", transformedTime);
+		Event e = s.getEvent(transformedTime);
 		e.offset(baseTime);
 		scheduler.queue(e);
 		_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
