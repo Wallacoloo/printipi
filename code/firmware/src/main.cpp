@@ -43,7 +43,7 @@
  * *Make Driver::getTemperature return tuples
  * *Allow G28 to be called multiple times
  *  Reset I part of PID control when target changes
- *  Drop temperature readings when thread has been interrupted.
+ * *Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading
  * *Add ability to put steppers to rest upon idle
  *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
@@ -58,6 +58,7 @@
  *  Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
  *  Optimize gcode parser.
  *    opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
+ *    Can also use one single string for entire command an array of char* to mark the delimiters.
  *  rename IODriver::stepForward/backword
 */
 

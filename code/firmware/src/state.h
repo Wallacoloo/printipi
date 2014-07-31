@@ -423,6 +423,10 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 }
 
 template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration) {
+	//Information on acceleration: http://reprap.org/wiki/Firmware/Linear_Acceleration
+	//Current implementation uses instantaneous acceleration, which is physically impossible.
+	//The best course *appears* to be an exponential velocity curve.
+	//An attempt at that is made in proof-of-concept/acceleration.nb
 	if (Drv::CoordMapT::numAxis() == 0) { 
 		return; //some of the following logic may assume that there are at least 1 axis.
 	}
@@ -443,31 +447,21 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 }
 		
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
-	//Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, _destXPrimitive, _destYPrimitive, _destZPrimitive, _destEPrimitive);
 	float curX, curY, curZ, curE;
-	//Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos, curX, curY, curZ, curE);
 	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
-	float velXYZ = destMoveRatePrimitive();
+	float velXYZ = 1; //destMoveRatePrimitive();
 	_destXPrimitive = x;
 	_destYPrimitive = y;
 	_destZPrimitive = z;
 	_destEPrimitive = e;
 	float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
 	float dist = sqrt(distSq);
-	//float vx = (x-curX)/dist * velXYZ;
-	//float vy = (y-curY)/dist * velXYZ;
-	//float vz = (z-curZ)/dist * velXYZ;
 	float duration = std::max(mathutil::NANOSECOND, dist/velXYZ); //minimum duration to avoid divisions by 0.
 	float velE = (e-curE)/duration;
 	float newVelE = this->driver.clampExtrusionRate(velE);
 	if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
-		//float ratio = newVelE / velE;
 		velE = newVelE;
 		duration = (e-curE)/newVelE; //L/(L/t) = t
-		//vx *= ratio;
-		//vy *= ratio;
-		//vz *= ratio;
-		//duration /= ratio;
 	}
 	float vx = (x-curX)/duration;
 	float vy = (y-curY)/duration;
