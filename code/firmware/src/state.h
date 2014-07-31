@@ -124,7 +124,7 @@ template <typename Drv> class State {
 	private:
 		/* Used internally to communicate step event times with the scheduler when moving or homing */
 		float transformEventTime(float time, float moveDuration);
-		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration);
+		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate=false);
 };
 
 
@@ -436,7 +436,7 @@ template <typename Drv> float State<Drv>::transformEventTime(float time, float m
 	}
 }
 
-template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration) {
+template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate) {
 	//Information on acceleration: http://reprap.org/wiki/Firmware/Linear_Acceleration
 	//Current implementation uses instantaneous acceleration, which is physically impossible.
 	//The best course *appears* to be an exponential velocity curve.
@@ -452,7 +452,7 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 		if (s.time > duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
 			break; 
 		}
-		float transformedTime = transformEventTime(s.time, duration);
+		float transformedTime = accelerate ? transformEventTime(s.time, duration) : s.time;
 		LOGV("Step transformed time: %f\n", transformedTime);
 		Event e = s.getEvent(transformedTime);
 		e.offset(baseTime);
@@ -499,7 +499,7 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
 	auto b = this->scheduler.getBufferSize();
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1); //todo: what happens when another PWM channel is enabled during scheduling?
-	this->scheduleAxisSteppers(iters, NAN);
+	this->scheduleAxisSteppers(iters, NAN, false);
 	this->scheduler.setBufferSize(b);
 	_destMechanicalPos = Drv::CoordMapT::getHomePosition();
 }
