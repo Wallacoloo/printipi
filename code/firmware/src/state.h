@@ -424,7 +424,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 }
 
 template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration, float maxVel) {
-	float Amax = 30;
+	float Amax = this->driver.maxAccel();
 	float Vmax = maxVel; //;30;
 	float V0 = 0.1;
 	float k = 4*Amax/Vmax;

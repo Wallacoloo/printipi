@@ -109,9 +109,6 @@ class Kossel : public Driver {
         IODriverTypes ioDrivers;
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         //_Thermistor thermistor;
-        /*constexpr static std::size_t numAxis() {
-            return 4; //A, B, C + Extruder
-        }*/
         inline AxisIdType getFanIODriverIdx() const {
         	return 4;
         }
@@ -126,6 +123,9 @@ class Kossel : public Driver {
         }
         inline float defaultMoveRate() const { //in mm/sec
         	return 30;
+        }
+        inline float maxAccel() const { //in mm/sec
+        	return 600;
         }
         inline float clampMoveRate(float inp) const {
         	return std::min(inp, defaultMoveRate());//ensure we never move too fast.
