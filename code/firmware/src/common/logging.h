@@ -1,5 +1,5 @@
-#ifndef LOGGING_H
-#define LOGGING_H
+#ifndef COMMON_LOGGING_H
+#define COMMON_LOGGING_H
 
 /* 
  * Printipi/logging.h

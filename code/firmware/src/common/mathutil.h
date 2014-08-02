@@ -1,5 +1,5 @@
-#ifndef MATHUTIL_H
-#define MATHUTIL_H
+#ifndef COMMON_MATHUTIL_H
+#define COMMON_MATHUTIL_H
 
 /* 
  * Printipi//mathutil.h

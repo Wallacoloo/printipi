@@ -116,14 +116,14 @@ class Kossel : public Driver {
         IODriverTypes ioDrivers;
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         //_Thermistor thermistor;
-        inline AxisIdType getFanIODriverIdx() const {
+        /*inline AxisIdType getFanIODriverIdx() const {
         	//TODO: move fan selection logic into the state/drivers;
         	//Can just query ALL iodrivers and ask "Are you a fan?"
         	return 4;
         }
         inline float defaultFanPwmPeriod() const {
         	return 0.02; //don't need high resolution
-        }
+        }*/
         inline std::tuple<CelciusType, CelciusType> getTemperature() const {
         	return std::make_tuple(std::get<5>(ioDrivers).getLastTemp(), -300);
         }

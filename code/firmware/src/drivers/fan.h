@@ -18,6 +18,7 @@ template <typename Driver> class Fan : public IODriver {
 	public:
 		Fan() : IODriver(this) {}
 		constexpr bool isFan() { return true; }
+		//constexpr float fanPwmPeriod() { return 0.1; }
 		//forward output control:
 		void stepForward() {
 			driver.stepForward();

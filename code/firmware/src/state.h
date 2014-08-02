@@ -37,6 +37,7 @@
 #include "drivers/axisstepper.h"
 #include "drivers/iodriver.h"
 #include "common/typesettings.h"
+#include "common/tupleutil.h"
 
 template <typename Drv> class State {
 	//The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
@@ -514,8 +515,23 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	_destMechanicalPos = Drv::CoordMapT::getHomePosition();
 }
 
+/* State utility class for setting the fan rate (State::setFanRate).
+Note: could be replaced with a generic lambda in C++14 (gcc-4.9) */
+template <typename SchedT> struct State_setFanRate {
+	SchedT &sched;
+	float rate;
+	//State_setFanRate() {}
+	State_setFanRate(SchedT &s, float rate) : sched(s), rate(rate) {}
+	template <typename T> void operator()(std::size_t index, const T &f) {
+		if (f.isFan()) {
+			sched.schedPwm(index, PwmInfo(rate, f.fanPwmPeriod()));
+		}
+	}
+};
+
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
-	this->scheduler.schedPwm(driver.getFanIODriverIdx(), PwmInfo(rate, driver.defaultFanPwmPeriod()));
+	callOnAll(driver.ioDrivers, State_setFanRate<SchedType>(scheduler, rate));
+	//this->scheduler.schedPwm(driver.getFanIODriverIdx(), PwmInfo(rate, driver.defaultFanPwmPeriod()));
 }
 
 #endif
