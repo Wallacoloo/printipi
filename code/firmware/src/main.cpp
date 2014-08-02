@@ -62,7 +62,7 @@
  *  Look into coordinate rounding for State::queueMovement
  *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
  *  Document
- *  Put copywrite at head of every file.
+ * *Put copywrite at head of every file.
  * *NO: Replace certain template parameters (eg STEPS_MM_1000 with std::ratio)
  *    Not worth it; will make code more difficult to read.
  *  Add way to define which driver to use without modifying code.
@@ -81,6 +81,7 @@
  *  Add ability to configure the power-on coordinates, or default to homing before any commands.
  *  Optimize PID values
  * *Fix short-circuit operators in onIdleCpu
+ *  Refactor the "enabler" system.
 */
 
 #include <string>
