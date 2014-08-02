@@ -112,7 +112,8 @@ template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers,
 template <typename TupleT, std::size_t myIdx, typename ...Args> struct IODriver__onIdleCpu {
 	bool operator()(TupleT &drivers, Args... args) {
 		bool prev = IODriver__onIdleCpu<TupleT, myIdx-1, Args...>()(drivers, args...);
-		return prev || std::get<myIdx>(drivers).onIdleCpu(args...); //return true if ANY objects need future servicing.
+		bool cur = std::get<myIdx>(drivers).onIdleCpu(args...); //EXPLICITLY CALCULATE THIS SEPARATELY TO PREVENT SHORT-CIRCUIT OPERATIONS
+		return prev || cur; //return true if ANY objects need future servicing.
 	}
 };
 

@@ -84,6 +84,12 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		timespec lastSchedTime;
 		float lastSlope;
 		SchedAdjuster() : lastSchedTime({0, 0}), lastSlope(1) {}
+		/* Reset() should destroy any offset, so that adjust(time.now()) gives time.now() */
+		void reset() {
+			lastRealTime.reset();
+			lastSchedTime = {0, 0};
+			lastSlope = 1;
+		}
 		timespec adjust(const timespec &t) const {
 			//SHOULD work precisely with x0, y0 = (0, 0)
 			float s_s0 = timespecToFloat(timespecSub(t, lastSchedTime)); //s-s0
@@ -107,11 +113,11 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 			//if (timespecGt(timespecSub(t, lastSchedTime), timespec{0, 50000000}) {
 				//only sample every few ms, to mitigate Events scheduled on top of eachother.
 				const timespec &y1 = lastRealTime.clock();
+				//the +X.XXX is to prevent a division-by-zero, and to minimize the effect that small sched errors have on the timeline:
 				auto avgSlope = (timespecToFloat(timespecSub(y1, y0))+0.030) / (0.030+timespecToFloat(timespecSub(t, lastSchedTime)));
 				lastSlope = 2.*avgSlope- lastSlope;
 				lastSchedTime = t;
 			}
-			//lastRealTime updated via above call to clock().
 		}
 	};
 	typedef std::multiset<Event> EventQueueType;
@@ -208,7 +214,8 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
 
 template <typename Interface> struct timespec Scheduler<Interface>::lastSchedTime() const {
 	if (this->eventQueue.empty()) {
-		return timespecNow();
+		this->schedAdjuster.reset(); //we have no events; no need to preserve *their* reference times, so reset for simplicity.
+		return timespecNow(); //an alternative is to not use timespecNow, but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
 	} else {
 		return this->eventQueue.rbegin()->time();
 	}
