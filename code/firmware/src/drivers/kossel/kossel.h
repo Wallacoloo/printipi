@@ -30,7 +30,12 @@
 #define H1000 518700
 //#define STEPS_M 9000
 #define STEPS_M 5200 //no microstepping enabled.
-#define STEPS_M_EXT 4000
+//#define STEPS_M_EXT 4000
+#define STEPS_M_EXT 10000
+#define MAX_ACCEL 600
+#define MAX_MOVE_RATE 30
+#define HOME_RATE 10
+#define MAX_EXT_RATE 8
 
 #define THERM_RA 665
 #define THERM_CAP_PICO 100000
@@ -110,6 +115,8 @@ class Kossel : public Driver {
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         //_Thermistor thermistor;
         inline AxisIdType getFanIODriverIdx() const {
+        	//TODO: move fan selection logic into the state/drivers;
+        	//Can just query ALL iodrivers and ask "Are you a fan?"
         	return 4;
         }
         inline float defaultFanPwmPeriod() const {
@@ -122,20 +129,20 @@ class Kossel : public Driver {
         	std::get<5>(ioDrivers).setTemp(temp);
         }
         inline float defaultMoveRate() const { //in mm/sec
-        	return 30;
+        	return MAX_MOVE_RATE;
         }
         inline float maxAccel() const { //in mm/sec
-        	return 600;
+        	return MAX_ACCEL;
         }
         inline float clampMoveRate(float inp) const {
         	return std::min(inp, defaultMoveRate());//ensure we never move too fast.
         }
         inline float clampHomeRate(float /*inp*/) const {
-        	return 10;
+        	return HOME_RATE;
         }
         inline float clampExtrusionRate(float rate) const {
         	//need to cover both the positive (extruding) and negative (retracting) possibilities.
-        	return std::max((float)-10, std::min(rate, (float)10));
+        	return std::max((float)-MAX_EXT_RATE, std::min(rate, (float)MAX_EXT_RATE));
         }
 };
 
