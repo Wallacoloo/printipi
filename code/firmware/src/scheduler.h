@@ -92,6 +92,9 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 			} else { //stabilized:
 				offset = (1.-lastSlope)*(1.-lastSlope)/-4/a + s_s0;
 			}
+			if (offset <= 0) {
+				LOGV("SchedAdjuster::adjust offset is negative!\n");
+			}
 			return timespecAdd(lastRealTime.get(), floatToTimespec(offset));
 		}
 		//call this when the event scheduled at time t is actually run.
