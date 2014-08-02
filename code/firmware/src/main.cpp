@@ -47,10 +47,12 @@
  * *Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading
  * *Add ability to put steppers to rest upon idle
- *  Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
+ * *Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
+ *  Improve SchedAdjuster formulae.
+ *  Properly implement Scheduler::lastSchedTime for the case where the queue is empty
  * *Investigate single-threading for entire process.
  * *CoordMap::getHomePosition should return the MECHANICAL home position, instead of cartesian (simpler implementation)
- *  Limit movement speed based on maximum extrusion rate.
+ * *Limit movement speed based on maximum extrusion rate.
  *  Look into coordinate rounding for State::queueMovement
  *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
  *  Document
@@ -66,7 +68,7 @@
  *    opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
  *    Can also use one single string for entire command an array of char* to mark the delimiters.
  *  rename IODriver::stepForward/backward
- *  Fix short-circuit operators in onIdleCpu
+ * *Fix short-circuit operators in onIdleCpu
 */
 
 #include <string>

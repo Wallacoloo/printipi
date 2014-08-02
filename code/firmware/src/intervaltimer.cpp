@@ -3,6 +3,9 @@
 
 IntervalTimer::IntervalTimer() : _last({0, 0}) {
 }
+void IntervalTimer::reset() {
+	_last = {0, 0};
+}
 const timespec& IntervalTimer::clock() {
 	_last = timespecNow();
 	return _last;

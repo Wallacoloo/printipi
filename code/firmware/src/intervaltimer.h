@@ -14,6 +14,7 @@ class IntervalTimer {
 	timespec _last;
 	public:
 		IntervalTimer();
+		void reset();
 		const timespec& clock();
 		const timespec& get() const;
 		int clockCmp(const timespec &cmp, int dflt=0);
