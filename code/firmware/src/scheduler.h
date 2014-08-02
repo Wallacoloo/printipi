@@ -313,7 +313,8 @@ template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event
 
 template <typename Interface> bool Scheduler<Interface>::isEventTime(const Event &evt) const {
 	//return !timespecLt(timespecNow(), evt.time());
-	return !timespecLt(timespecNow(), schedAdjuster.adjust(evt.time()));
+	//return !timespecLt(timespecNow(), schedAdjuster.adjust(evt.time()));
+	return timespecLte(schedAdjuster.adjust(evt.time()), timespecNow());
 }
 
 #endif
