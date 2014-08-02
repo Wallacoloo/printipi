@@ -125,7 +125,7 @@ class Kossel : public Driver {
         	return 30;
         }
         inline float maxAccel() const { //in mm/sec
-        	return 450;
+        	return 600;
         }
         inline float clampMoveRate(float inp) const {
         	return std::min(inp, defaultMoveRate());//ensure we never move too fast.

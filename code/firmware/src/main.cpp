@@ -58,11 +58,14 @@
  * *NO: Replace certain template parameters (eg STEPS_MM_1000 with std::ratio)
  *    Not worth it; will make code more difficult to read.
  *  Add way to define which driver to use without modifying code.
+ *  Migrate to std::chrono::high_resolution_clock instead of timespec (http://www.cplusplus.com/reference/chrono/high_resolution_clock/)
+ *    and/or use the Pi's timer directly (performance) http://mindplusplus.wordpress.com/2013/05/21/accessing-the-raspberry-pis-1mhz-timer/
+ *    Perhaps make it configurable, eg as in http://stackoverflow.com/a/11485388/216292 (use std chrono, and also implement that interface for the pi)
  *  Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
  *  Optimize gcode parser.
  *    opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
  *    Can also use one single string for entire command an array of char* to mark the delimiters.
- *  rename IODriver::stepForward/backword
+ *  rename IODriver::stepForward/backward
 */
 
 #include <string>
