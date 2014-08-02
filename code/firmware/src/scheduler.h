@@ -92,10 +92,11 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 			} else { //stabilized:
 				offset = (1.-lastSlope)*(1.-lastSlope)/-4/a + s_s0;
 			}
-			if (offset <= 0) {
-				LOGV("SchedAdjuster::adjust offset is negative!\n");
+			timespec ret = timespecAdd(lastRealTime.get(), floatToTimespec(offset));
+			if (timespecLt(ret, t)) {
+				LOGV("SchedAdjuster::adjust adjusted into the past!\n");
 			}
-			return timespecAdd(lastRealTime.get(), floatToTimespec(offset));
+			return ret;
 		}
 		//call this when the event scheduled at time t is actually run.
 		void update(const timespec &t) {
@@ -272,7 +273,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		}
 		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 		Event evt = *iter;
-		LOGV("Scheduler executing event. original->mapped time: %lu.%u -> %lu.%u\n", evt.time().tv_sec, evt.time().tv_nsec, schedAdjuster.adjust(evt.time()).tv_sec, schedAdjuster.adjust(evt.time()).tv_nsec);
+		LOGV("Scheduler executing event. original->mapped time, now: %lu.%u -> %lu.%u, %lu.%u\n", evt.time().tv_sec, evt.time().tv_nsec, schedAdjuster.adjust(evt.time()).tv_sec, schedAdjuster.adjust(evt.time()).tv_nsec, timespecNow().tv_sec, timespecNow().tv_nsec);
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.
