@@ -17,5 +17,6 @@ timespec timespecSub(const struct timespec &a, const struct timespec &b);
 int timespecCmp(const struct timespec &a, const struct timespec &b);
 bool timespecLt(const struct timespec &a, const struct timespec &b);
 float timespecToFloat(const struct timespec &a);
+timespec floatToTimespec(float f);
 
 #endif

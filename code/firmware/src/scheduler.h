@@ -24,6 +24,7 @@
 #include "event.h"
 #include "logging.h"
 #include "timeutil.h"
+#include "intervaltimer.h"
 
 #include <pthread.h> //for pthread_setschedparam
 
@@ -73,19 +74,42 @@ enum InsertHint {
 };
 
 template <typename Interface> class Scheduler : public SchedulerBase {
+	struct SchedAdjuster {
+		static constexpr float a = -1.0;
+		IntervalTimer lastRealTime;
+		timespec lastSchedTime;
+		float lastSlope;
+		SchedAdjuster() : lastSchedTime({0, 0}), lastSlope(1) {}
+		timespec adjust(const timespec &t) {
+			//if (lastSchedTime.tv_sec == 0 && lastSchedTime.tv_nsec == 0) {
+			//	return t; //no adjustment.
+			//}
+			//SHOULD work precisely with x0, y0 = (0, 0)
+			float s_s0 = timespecToFloat(timespecSub(t, lastSchedTime)); //s-s0
+			float offset;
+			if (s_s0 < (1.-lastSlope)/2./a) { //acclerating:
+				offset = a*s_s0*s_s0 + lastSlope*s_s0;
+			} else { //stabilized:
+				offset = (1.-lastSlope)*(1.-lastSlope)/-4/a + s_s0;
+			}
+			return timespecAdd(lastRealTime.get(), floatToTimespec(offset));
+		}
+		//call this when the event scheduled at time t is actually run.
+		void update(const timespec &t) {
+			//SHOULD work reasonably with x0, y0 = (0, 0)
+			timespec y0 = lastRealTime.get();
+			const timespec &y1 = lastRealTime.clock();
+			lastSlope = 2.*timespecToFloat(timespecSub(y1, y0)) / timespecToFloat(timespecSub(t, lastSchedTime))- lastSlope;
+			lastSchedTime = t;
+			//lastRealTime updated via above call to clock().
+		}
+	};
 	typedef std::multiset<Event> EventQueueType;
 	Interface interface;
-	//std::array<PwmInfo, 256> pwmInfo; 
 	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
-	//std::queue<Event> eventQueue;
 	//std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
 	EventQueueType eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
-	//mutable std::mutex mutex;
-	//std::unique_lock<std::mutex> _lockPushes;
-	//bool _arePushesLocked;
-	//std::condition_variable nonemptyCond;
-	//std::condition_variable eventConsumedCond;
-	
+	SchedAdjuster schedAdjuster;
 	unsigned bufferSize;
 	private:
 		void orderedInsert(const Event &evt, InsertHint insertBack=INSERT_BACK);
@@ -98,7 +122,6 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		}
 		Scheduler(Interface interface);
 		//Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
-		bool isEventNear(const Event &evt) const;
 		void sleepUntilEvent(const Event &evt) const;
 		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
@@ -107,6 +130,9 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		unsigned numActivePwmChannels() const;
 		void eventLoop();
 		void yield(bool forceWait=false);
+	private:
+		bool isEventNear(const Event &evt) const;
+		bool isEventTime(const Event &evt) const;
 };
 
 
@@ -160,12 +186,6 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 		setBufferSize(getBufferSize()+1); //Make some room for this event.
 		this->queue(evt);
 	}
-}
-
-
-template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
-	timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000}); //20000 = 20 uSec
-	return timespecLt(evt.time(), thresh);
 }
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event &evt) const {
@@ -228,7 +248,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//Event evt = *this->eventQueue.begin();
 		//do NOT pop the event here, because it might not be handled this time around.
 		//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
-		while (!eventQueue.empty() && !this->eventQueue.cbegin()->isTime()) {
+		while (!eventQueue.empty() && isEventTime(*eventQueue.cbegin())) {
 			if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
 				EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 				if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
@@ -254,6 +274,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//The error: eventQueue got flooded with stepper #5 PWM events.
 		//  They somehow got duplicated, likely by a failure to erase the *correct* previous pwm event.
 		//  this should be fixed by saving the iter and erasing it.
+		schedAdjuster.update(evt.time());
 		interface.onEvent(evt);
 		
 		//manage PWM events:
@@ -278,6 +299,16 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
 		forceWait = false; //avoid draining ALL events - just drain the first.
 	}
+}
+
+template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
+	timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000}); //20000 = 20 uSec
+	return timespecLt(schedAdjuster.adjust(evt.time()), thresh);
+}
+
+template <typename Interface> bool Scheduler<Interface>::isEventTime(const Event &evt) const {
+	//return !timespecLt(timespecNow(), evt.time());
+	return !timespecLt(timespecNow(), schedAdjuster.adjust(evt.time()));
 }
 
 #endif

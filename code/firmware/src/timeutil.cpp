@@ -41,3 +41,8 @@ int timespecCmp(const struct timespec &a, const struct timespec &b) {
 float timespecToFloat(const struct timespec &a) {
 	return a.tv_sec + a.tv_nsec/1000000000.;
 }
+timespec floatToTimespec(float f) {
+	long sec = (long)f;
+	long nsec = (f-sec)*1000000000;
+	return timespec({sec, nsec});
+}
