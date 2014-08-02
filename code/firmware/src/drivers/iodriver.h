@@ -16,6 +16,7 @@
  */
 
 #include "common/typesettings.h"
+#include "common/tupleutil.h"
 #include "scheduler.h"
 
 namespace drv {
@@ -63,7 +64,7 @@ class IODriver {
 
 //IODriver::selectAndStepForward helper functions:
 
-template <typename TupleT, std::size_t myIdx> struct IODriver__stepForward {
+/*template <typename TupleT, std::size_t myIdx> struct IODriver__stepForward {
 	void operator()(TupleT &drivers, AxisIdType desiredIdx) {
 		IODriver__stepForward<TupleT, myIdx-1>()(drivers, desiredIdx);
 		if (myIdx == desiredIdx) {
@@ -79,22 +80,26 @@ template <typename TupleT> struct IODriver__stepForward<TupleT, 0> {
 		}
 	}
 };
-/*struct IODriver__stepForward {
-	template <typename T> operator()(std::size_t index, T &driver) {
+template <typename TupleT> void IODriver::selectAndStepForward(TupleT &drivers, AxisIdType axis) {
+	IODriver__stepForward<TupleT, std::tuple_size<TupleT>::value-1>()(drivers, axis);
+}*/
+struct IODriver__stepForward {
+	template <typename T> operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
 		if (index == desiredIndex) {
 			driver.stepForward();
 		}
 	}
-};*/
-
-
+};
 template <typename TupleT> void IODriver::selectAndStepForward(TupleT &drivers, AxisIdType axis) {
-	IODriver__stepForward<TupleT, std::tuple_size<TupleT>::value-1>()(drivers, axis);
+	callOnAll(drivers, IODriver__stepForward(), axis);
 }
+
+
+
 
 //IODriver::selectAndStepBackward helper functions:
 
-template <typename TupleT, std::size_t myIdx> struct IODriver__stepBackward {
+/*template <typename TupleT, std::size_t myIdx> struct IODriver__stepBackward {
 	void operator()(TupleT &drivers, AxisIdType desiredIdx) {
 		IODriver__stepBackward<TupleT, myIdx-1>()(drivers, desiredIdx);
 		if (myIdx == desiredIdx) {
@@ -114,6 +119,17 @@ template <typename TupleT> struct IODriver__stepBackward<TupleT, 0> {
 
 template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers, AxisIdType axis) {
 	IODriver__stepBackward<TupleT, std::tuple_size<TupleT>::value-1>()(drivers, axis);
+}*/
+
+struct IODriver__stepBackward {
+	template <typename T> operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
+		if (index == desiredIndex) {
+			driver.stepBackward();
+		}
+	}
+};
+template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers, AxisIdType axis) {
+	callOnAll(drivers, IODriver__stepBackward(), axis);
 }
 
 //IODriver::callIdleCpuHandlers helper functions:
@@ -137,7 +153,7 @@ template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(
 }
 
 //IODriver::lockAllAxis helper functions:
-template <typename TupleT, std::size_t myIdx> struct IODriver__lockAllAxis {
+/*template <typename TupleT, std::size_t myIdx> struct IODriver__lockAllAxis {
 	void operator()(TupleT &drivers) {
 		IODriver__lockAllAxis<TupleT, myIdx-1>()(drivers);
 		std::get<myIdx>(drivers).lockAxis();
@@ -152,10 +168,18 @@ template <typename TupleT> struct IODriver__lockAllAxis<TupleT, 0> {
 
 template <typename TupleT> void IODriver::lockAllAxis(TupleT &drivers) {
 	IODriver__lockAllAxis<TupleT, std::tuple_size<TupleT>::value-1>()(drivers);
+}*/
+struct IODriver__lockAllAxis {
+	template <typename T> operator()(std::size_t index, T &driver) {
+		driver.lockAxis();
+	}
+};
+template <typename TupleT> void IODriver::lockAllAxis(TupleT &drivers) {
+	callOnAll(drivers, IODriver__lockAllAxis());
 }
 
 //IODriver::unlockAllAxis helper functions:
-template <typename TupleT, std::size_t myIdx> struct IODriver__unlockAllAxis {
+/*template <typename TupleT, std::size_t myIdx> struct IODriver__unlockAllAxis {
 	void operator()(TupleT &drivers) {
 		IODriver__unlockAllAxis<TupleT, myIdx-1>()(drivers);
 		std::get<myIdx>(drivers).unlockAxis();
@@ -170,6 +194,15 @@ template <typename TupleT> struct IODriver__unlockAllAxis<TupleT, 0> {
 
 template <typename TupleT> void IODriver::unlockAllAxis(TupleT &drivers) {
 	IODriver__unlockAllAxis<TupleT, std::tuple_size<TupleT>::value-1>()(drivers);
+}*/
+
+struct IODriver__unlockAllAxis {
+	template <typename T> operator()(std::size_t index, T &driver) {
+		driver.unlockAxis();
+	}
+};
+template <typename TupleT> void IODriver::unlockAllAxis(TupleT &drivers) {
+	callOnAll(drivers, IODriver__unlockAllAxis());
 }
 
 }
