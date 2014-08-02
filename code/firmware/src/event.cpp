@@ -12,10 +12,10 @@ const struct timespec& Event::time() const {
 	return this->_time;
 }
 
-bool Event::isTime() const {
+/*bool Event::isTime() const {
 	//time to handle event if now >= _time
 	return !timespecLt(timespecNow(), this->_time);
-}
+}*/
 
 bool Event::isNull() const {
 	return this->stepperId() == NULL_STEPPER_ID;
