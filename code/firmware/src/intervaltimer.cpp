@@ -7,7 +7,7 @@ const timespec& IntervalTimer::clock() {
 	_last = timespecNow();
 	return _last;
 }
-const timespec& IntervalTimer::get() {
+const timespec& IntervalTimer::get() const {
 	return _last;
 }
 int IntervalTimer::clockCmp(const timespec &cmp, int dflt) {

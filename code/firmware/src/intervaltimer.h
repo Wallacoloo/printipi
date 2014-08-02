@@ -15,7 +15,7 @@ class IntervalTimer {
 	public:
 		IntervalTimer();
 		const timespec& clock();
-		const timespec& get();
+		const timespec& get() const;
 		int clockCmp(const timespec &cmp, int dflt=0);
 };
 

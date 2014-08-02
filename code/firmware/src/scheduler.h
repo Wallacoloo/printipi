@@ -80,7 +80,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		timespec lastSchedTime;
 		float lastSlope;
 		SchedAdjuster() : lastSchedTime({0, 0}), lastSlope(1) {}
-		timespec adjust(const timespec &t) {
+		timespec adjust(const timespec &t) const {
 			//if (lastSchedTime.tv_sec == 0 && lastSchedTime.tv_nsec == 0) {
 			//	return t; //no adjustment.
 			//}
