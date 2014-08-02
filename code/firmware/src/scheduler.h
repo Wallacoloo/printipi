@@ -198,7 +198,7 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 	} else { //have to schedule:
 		LOGV("Scheduler::schedPwm: queueing\n");
 		pwmInfo[idx] = p;
-		Event evt(timespecNow(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
+		Event evt(lastSchedTime(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
 		setBufferSize(getBufferSize()+1); //Make some room for this event.
 		this->queue(evt);
 	}
