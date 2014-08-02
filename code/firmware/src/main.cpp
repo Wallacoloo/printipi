@@ -10,6 +10,12 @@
 //Note: this file is great for debugging with gdb: https://gist.githubusercontent.com/skyscribe/3978082/raw/e8a0c8daec409e24b29f7c14cf74140a43a9278c/.gdbinit
 
 /*TODO:
+ *  What is ReplicatorG software? https://github.com/makerbot/ReplicatorG
+ *    It appears that it MAY be similar to this project, although it uses Java, so perhaps it isn't designed to be run as firmware.
+ *    Maybe it sends a dumb control signal to the electronics, parsing the G-code into simpler commands?
+ *  What is SmoothieWare? https://github.com/Smoothieware/Smoothieware
+ *    It claims to be aimed toward ARM cortex M3, and very active development
+ *  Grbl appears to run (partially?) on the raspberry pi: https://github.com/grbl/grbl/issues/252
  * *Write SN754410 drivers
  * *Test output on one single motor
  * *Figure out extrusion in State::queueMovement.
@@ -67,6 +73,10 @@
  *  Optimize gcode parser.
  *    opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
  *    Can also use one single string for entire command an array of char* to mark the delimiters.
+ *    Could consider using a parser generator (yacc, bison, etc)
+ *    Smoothie has a separate gcode parser: https://github.com/Smoothieware/Smoothieware/tree/edge/src/modules/communication/utils
+ *      though it's not much better than this one.
+ *  Make gcode parser handle empty lines
  *  rename IODriver::stepForward/backward
  * *Fix short-circuit operators in onIdleCpu
 */

@@ -79,7 +79,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		  If the scheduler isn't serviced on time, we don't want 10 backed-up events all happening at the same time. Instead, we offset them and pick them up then. We can never execute events with intervals smaller than they would register - this would indicate real movement of, say, 70mm/sec when the user only asked for 60mm/sec. Thus the scheduler can never be made "on track" again, unless there is a gap in scheduled events.
 		  If, because of the stall, actual velocity was decreased to 10mm/sec, we cannot jump instantly back to 60mm/sec (this would certainly cause MORE missed steps)! Instead, we accelerate back up to it.
 		  The tricky bit is - how do we estimate what the actual velocity is? We don't want to overcompensate. Unfortunately for now, some of the logic might :P */
-		static constexpr float a = -1.0;
+		static constexpr float a = -5.0;
 		IntervalTimer lastRealTime;
 		timespec lastSchedTime;
 		float lastSlope;
@@ -115,7 +115,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 				const timespec &y1 = lastRealTime.clock();
 				//the +X.XXX is to prevent a division-by-zero, and to minimize the effect that small sched errors have on the timeline:
 				auto avgSlope = (timespecToFloat(timespecSub(y1, y0))+0.030) / (0.030+timespecToFloat(timespecSub(t, lastSchedTime)));
-				lastSlope = 2.*avgSlope- lastSlope;
+				lastSlope = std::min(20., 2.*avgSlope- lastSlope); //set a minimum for the speed that can be run at.
 				lastSchedTime = t;
 			}
 		}
@@ -213,8 +213,9 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
 }
 
 template <typename Interface> struct timespec Scheduler<Interface>::lastSchedTime() const {
+	//TODO: Note, this method, as-is, is const!
 	if (this->eventQueue.empty()) {
-		this->schedAdjuster.reset(); //we have no events; no need to preserve *their* reference times, so reset for simplicity.
+		const_cast<Scheduler<Interface>*>(this)->schedAdjuster.reset(); //we have no events; no need to preserve *their* reference times, so reset for simplicity.
 		return timespecNow(); //an alternative is to not use timespecNow, but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
 	} else {
 		return this->eventQueue.rbegin()->time();
@@ -283,7 +284,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		Event evt = *iter;
 		auto mapped = schedAdjuster.adjust(evt.time());
 		auto now = timespecNow();
-		LOGV("Scheduler executing event. original->mapped time, now: %lu.%08u -> %lu.%08u, %lu.%08u\n", evt.time().tv_sec, evt.time().tv_nsec, mapped.tv_sec, mapped.tv_nsec, now.tv_sec, now.tv_nsec);
+		LOGV("Scheduler executing event. original->mapped time, now: %ld.%08lu -> %ld.%08lu, %ld.%08lu\n", evt.time().tv_sec, evt.time().tv_nsec, mapped.tv_sec, mapped.tv_nsec, now.tv_sec, now.tv_nsec);
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.
@@ -318,7 +319,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event &evt) const {
 	struct timespec sleepUntil = schedAdjuster.adjust(evt.time());
-	LOGV("Scheduler::sleepUntilEvent: %lu.%08u\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
+	LOGV("Scheduler::sleepUntilEvent: %ld.%08lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
 	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 }
 
