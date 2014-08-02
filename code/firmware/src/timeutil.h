@@ -22,6 +22,11 @@ inline bool timespecLte(const struct timespec &a, const struct timespec &b) {
 	//so a <= b
 	return !timespecLt(b, a);
 }
+inline bool timespecGt(const struct timespec &a, const struct timespec &b) {
+	//if not a <= b,
+	//then a > b
+	return !timespecLte(a, b);
+}
 float timespecToFloat(const struct timespec &a);
 timespec floatToTimespec(float f);
 

@@ -75,15 +75,16 @@ enum InsertHint {
 
 template <typename Interface> class Scheduler : public SchedulerBase {
 	struct SchedAdjuster {
+		/* The logic is a bit odd here, but the idea is to compensate for missed events.
+		  If the scheduler isn't serviced on time, we don't want 10 backed-up events all happening at the same time. Instead, we offset them and pick them up then. We can never execute events with intervals smaller than they would register - this would indicate real movement of, say, 70mm/sec when the user only asked for 60mm/sec. Thus the scheduler can never be made "on track" again, unless there is a gap in scheduled events.
+		  If, because of the stall, actual velocity was decreased to 10mm/sec, we cannot jump instantly back to 60mm/sec (this would certainly cause MORE missed steps)! Instead, we accelerate back up to it.
+		  The tricky bit is - how do we estimate what the actual velocity is? We don't want to overcompensate. Unfortunately for now, some of the logic might :P */
 		static constexpr float a = -1.0;
 		IntervalTimer lastRealTime;
 		timespec lastSchedTime;
 		float lastSlope;
 		SchedAdjuster() : lastSchedTime({0, 0}), lastSlope(1) {}
 		timespec adjust(const timespec &t) const {
-			//if (lastSchedTime.tv_sec == 0 && lastSchedTime.tv_nsec == 0) {
-			//	return t; //no adjustment.
-			//}
 			//SHOULD work precisely with x0, y0 = (0, 0)
 			float s_s0 = timespecToFloat(timespecSub(t, lastSchedTime)); //s-s0
 			float offset;
@@ -102,9 +103,14 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		void update(const timespec &t) {
 			//SHOULD work reasonably with x0, y0 = (0, 0)
 			timespec y0 = lastRealTime.get();
-			const timespec &y1 = lastRealTime.clock();
-			lastSlope = 2.*timespecToFloat(timespecSub(y1, y0)) / timespecToFloat(timespecSub(t, lastSchedTime))- lastSlope;
-			lastSchedTime = t;
+			if (timespecGt(timespecSub(timespecNow(), y0), timespec{0, 30000000})) {
+			//if (timespecGt(timespecSub(t, lastSchedTime), timespec{0, 50000000}) {
+				//only sample every few ms, to mitigate Events scheduled on top of eachother.
+				const timespec &y1 = lastRealTime.clock();
+				auto avgSlope = (timespecToFloat(timespecSub(y1, y0))+0.030) / (0.030+timespecToFloat(timespecSub(t, lastSchedTime)));
+				lastSlope = 2.*avgSlope- lastSlope;
+				lastSchedTime = t;
+			}
 			//lastRealTime updated via above call to clock().
 		}
 	};
