@@ -47,7 +47,8 @@ class IODriver {
 		inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
 		/* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
 		inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
-		inline bool isFan() { return false; } //OVERRIDE THIS (fans only: return true)
+		inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
+		inline float fanPwmPeriod() const { return 0.1; }
 		/* called when the scheduler has extra time,
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */
@@ -78,6 +79,13 @@ template <typename TupleT> struct IODriver__stepForward<TupleT, 0> {
 		}
 	}
 };
+/*struct IODriver__stepForward {
+	template <typename T> operator()(std::size_t index, T &driver) {
+		if (index == desiredIndex) {
+			driver.stepForward();
+		}
+	}
+};*/
 
 
 template <typename TupleT> void IODriver::selectAndStepForward(TupleT &drivers, AxisIdType axis) {

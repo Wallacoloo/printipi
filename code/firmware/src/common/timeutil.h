@@ -1,5 +1,5 @@
-#ifndef TIMEUTIL_H
-#define TIMEUTIL_H
+#ifndef COMMON_TIMEUTIL_H
+#define COMMON_TIMEUTIL_H
 
 /* 
  * Printipi/timeutil.h
