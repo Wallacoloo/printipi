@@ -12,7 +12,7 @@
 #include "bcm2835.h"
 #include "drivers/iodriver.h"
 #include "drivers/enabledisabledriver.h"
-#include "logging.h"
+#include "common/logging.h"
 
 namespace drv {
 namespace rpi {

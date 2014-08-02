@@ -27,16 +27,16 @@
 //#include <utility> //for std::pair
 #include <functional>
 //#include <thread>
-#include "logging.h"
+#include "common/logging.h"
 #include "gparse/command.h"
 #include "gparse/com.h"
 #include "event.h"
 #include "scheduler.h"
 #include "drivers/driver.h"
-#include "mathutil.h"
+#include "common/mathutil.h"
 #include "drivers/axisstepper.h"
 #include "drivers/iodriver.h"
-#include "typesettings.h"
+#include "common/typesettings.h"
 
 template <typename Drv> class State {
 	//The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:

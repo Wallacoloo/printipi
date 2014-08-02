@@ -10,9 +10,9 @@
  */
 
 #include "axisstepper.h"
-#include "typesettings.h"
+#include "common/typesettings.h"
 #include "endstop.h"
-#include "logging.h"
+#include "common/logging.h"
 #include <tuple>
 #include <cmath> //for fabs
 

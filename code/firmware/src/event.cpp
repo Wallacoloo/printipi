@@ -1,5 +1,5 @@
 #include "event.h"
-#include "timeutil.h" //for timespecLt
+#include "common/timeutil.h" //for timespecLt
 
 
 AxisIdType Event::stepperId() const {

@@ -13,7 +13,7 @@
  * These implementations must provide the functions outlined further down in the header.
  */
 
-#include "logging.h"
+#include "common/logging.h"
 
 namespace drv {
 

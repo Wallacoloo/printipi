@@ -15,7 +15,7 @@
  * These implementations must provide the functions outlined further down in the header.
  */
 
-#include "typesettings.h"
+#include "common/typesettings.h"
 #include "scheduler.h"
 
 namespace drv {
@@ -47,6 +47,7 @@ class IODriver {
 		inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
 		/* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
 		inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
+		inline bool isFan() { return false; } //OVERRIDE THIS (fans only: return true)
 		/* called when the scheduler has extra time,
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */

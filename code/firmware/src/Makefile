@@ -43,7 +43,7 @@ minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)
 	
-%/$(NAME): %/gparse/gparse.a %/drivers/drivers.a %/rest.a
+%/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
 	@echo $(GCC_GTEQ_470)
 	$(CXX) $^ -o $@ $(CFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)
@@ -69,7 +69,10 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/rest.a: %/argparse.o %/event.o %/intervaltimer.o %/logging.o %/main.o %/scheduler.o %/timeutil.o
+%/common/common.a: %/common/logging.o %/common/timeutil.o
+	$(LD) -r $^ -o $@ $(LDFLAGS)
+	
+%/rest.a: %/argparse.o %/event.o %/intervaltimer.o  %/main.o %/scheduler.o 
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 #Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.

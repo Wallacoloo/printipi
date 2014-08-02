@@ -16,7 +16,7 @@
  */
 
 #include "event.h"
-#include "typesettings.h" //for AxisIdType
+#include "common/typesettings.h" //for AxisIdType
 #include <tuple>
 #include <array>
 #include <cmath> //for isnan
