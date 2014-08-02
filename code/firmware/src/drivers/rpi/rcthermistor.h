@@ -9,9 +9,9 @@
 
 #include <time.h> //for timespec
 #include <cmath>
-#include "timeutil.h" //for timespecSub, etc
-#include "mathutil.h" //for CtoK, etc
-#include "logging.h"
+#include "common/timeutil.h" //for timespecSub, etc
+#include "common/mathutil.h" //for CtoK, etc
+#include "common/logging.h"
 
 namespace drv {
 namespace rpi {

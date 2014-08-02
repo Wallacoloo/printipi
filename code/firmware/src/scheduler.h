@@ -22,8 +22,8 @@
 //#include <atomic>
 #include <tuple>
 #include "event.h"
-#include "logging.h"
-#include "timeutil.h"
+#include "common/logging.h"
+#include "common/timeutil.h"
 #include "intervaltimer.h"
 
 #include <pthread.h> //for pthread_setschedparam

@@ -85,7 +85,7 @@
 
 #include <string>
 #include <sys/mman.h> //for mlockall
-#include "logging.h"
+#include "common/logging.h"
 
 #include "gparse/com.h"
 #include "state.h"

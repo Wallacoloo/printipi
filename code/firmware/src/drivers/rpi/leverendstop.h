@@ -3,7 +3,7 @@
 
 #include "drivers/endstop.h"
 #include "drivers/rpi/rpi.h"
-#include "logging.h"
+#include "common/logging.h"
 
 namespace drv {
 namespace rpi {

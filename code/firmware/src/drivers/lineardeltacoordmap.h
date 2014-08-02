@@ -22,7 +22,7 @@
 #define DRIVERS_LINEARDELTACOORDMAP_H
 
 #include "coordmap.h"
-#include "logging.h"
+#include "common/logging.h"
 
 namespace drv {
 

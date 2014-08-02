@@ -2,7 +2,7 @@
 
 #include <unistd.h> //for (file) read() and write()
 #include <fcntl.h> //needed for (file) open()
-#include "logging.h"
+#include "common/logging.h"
 
 namespace gparse {
 

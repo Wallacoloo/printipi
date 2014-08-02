@@ -10,7 +10,7 @@
  * Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
  */
 
-#include "timeutil.h" //for timespec*
+#include "common/timeutil.h" //for timespec*
 
 template <int P1000000, int I1000000=0, int D1000000=0> class PID {
 	static constexpr float P = P1000000 / 1000000.;

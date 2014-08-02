@@ -3,7 +3,7 @@
 
 //#include <cstdlib> //for atexit
 #include "scheduler.h"
-#include "logging.h"
+#include "common/logging.h"
 
 namespace drv {
 namespace rpi {

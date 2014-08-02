@@ -24,7 +24,7 @@
 //      yes - M116 is unbuffered.
 
 #include <time.h> //for timespec
-#include "typesettings.h" //for AxisIdType
+#include "common/typesettings.h" //for AxisIdType
 
 /*enum EventType {
 	Evt_StepForward,

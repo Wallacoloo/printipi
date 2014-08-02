@@ -13,7 +13,7 @@ template <uint8_t Pin, bool ValueEn, bool ValueDis=!ValueEn> class OnePinEnabler
 		}
 		static void enable() {
 			EnableDisableDriver::enable();
-			bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_OUTP); //configure this pins as output
+			bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_OUTP); //configure this pin as output
 			bcm2835_gpio_write(Pin, ValueEn);
 		}
 		static void disable() {
