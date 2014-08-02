@@ -40,7 +40,7 @@ class Event {
 		AxisIdType stepperId() const;
 		StepDirection direction() const;
 		const struct timespec& time() const;
-		bool isTime() const;
+		//bool isTime() const;
 		bool isNull() const;
 		Event() : _time{0, 0}, _stepperNum(NULL_STEPPER_ID) {}
 		Event(const timespec &t, AxisIdType stepperNum, StepDirection dir);

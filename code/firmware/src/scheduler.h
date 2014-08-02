@@ -126,7 +126,6 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		}
 		Scheduler(Interface interface);
 		//Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
-		void sleepUntilEvent(const Event &evt) const;
 		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 		void setBufferSize(unsigned size);
@@ -135,6 +134,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		void eventLoop();
 		void yield(bool forceWait=false);
 	private:
+		void sleepUntilEvent(const Event &evt) const;
 		bool isEventNear(const Event &evt) const;
 		bool isEventTime(const Event &evt) const;
 };
@@ -190,11 +190,6 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 		setBufferSize(getBufferSize()+1); //Make some room for this event.
 		this->queue(evt);
 	}
-}
-
-template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event &evt) const {
-	struct timespec sleepUntil = schedAdjuster.adjust(evt.time());
-	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {
@@ -304,6 +299,12 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
 		forceWait = false; //avoid draining ALL events - just drain the first.
 	}
+}
+
+template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event &evt) const {
+	struct timespec sleepUntil = schedAdjuster.adjust(evt.time());
+	LOGV("Scheduler::sleepUntilEvent: %lu.%u\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
+	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
