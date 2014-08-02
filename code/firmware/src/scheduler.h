@@ -247,7 +247,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//Event evt = *this->eventQueue.begin();
 		//do NOT pop the event here, because it might not be handled this time around.
 		//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
-		while (!eventQueue.empty() && isEventTime(*eventQueue.cbegin())) {
+		while (!eventQueue.empty() && !isEventTime(*eventQueue.cbegin())) {
 			if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
 				EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 				if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
