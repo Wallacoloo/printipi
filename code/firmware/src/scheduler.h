@@ -189,7 +189,7 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 }
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event &evt) const {
-	struct timespec sleepUntil = evt.time();
+	struct timespec sleepUntil = schedAdjuster.adjust(evt.time());
 	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 }
 
