@@ -8,7 +8,7 @@
 namespace drv {
 namespace rpi {
 
-template <uint8_t Pin, bool ValueHigh, bool ValueLow=!ValueHigh, bool ValueDis=!ValueHigh> class OnePinIODriver : public IODriver {
+template <uint8_t Pin, bool ValueHigh, bool ValueLow=!ValueHigh, bool ValueDis=ValueLow> class OnePinIODriver : public IODriver {
 	public:
 		OnePinIODriver() : IODriver(this) {
 			initIO();

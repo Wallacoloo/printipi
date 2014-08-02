@@ -78,6 +78,8 @@
  *      though it's not much better than this one.
  *  Make gcode parser handle empty lines
  *  rename IODriver::stepForward/backward
+ *  Add ability to configure the power-on coordinates, or default to homing before any commands.
+ *  Optimize PID values
  * *Fix short-circuit operators in onIdleCpu
 */
 
