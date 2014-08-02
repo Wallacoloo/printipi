@@ -269,6 +269,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		}
 		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 		Event evt = *iter;
+		LOGV("Scheduler executing event. original->mapped time: %lu.%u -> %lu.%u\n", evt.time().tv_sec, evt.time().tv_nsec, schedAdjuster.adjust(evt.time()).tv_sec, schedAdjuster.adjust(evt.time()).tv_nsec);
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.

@@ -66,6 +66,7 @@
  *    opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
  *    Can also use one single string for entire command an array of char* to mark the delimiters.
  *  rename IODriver::stepForward/backward
+ *  Fix short-circuit operators in onIdleCpu
 */
 
 #include <string>
