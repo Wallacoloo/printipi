@@ -274,7 +274,9 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		}
 		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 		Event evt = *iter;
-		LOGV("Scheduler executing event. original->mapped time, now: %lu.%u -> %lu.%u, %lu.%u\n", evt.time().tv_sec, evt.time().tv_nsec, schedAdjuster.adjust(evt.time()).tv_sec, schedAdjuster.adjust(evt.time()).tv_nsec, timespecNow().tv_sec, timespecNow().tv_nsec);
+		auto mapped = schedAdjuster.adjust(evt.time());
+		auto now = timespecNow();
+		LOGV("Scheduler executing event. original->mapped time, now: %lu.%08u -> %lu.%08u, %lu.%08u\n", evt.time().tv_sec, evt.time().tv_nsec, mapped.tv_sec, mapped.tv_nsec, now.tv_sec, now.tv_nsec);
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.
@@ -309,7 +311,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event &evt) const {
 	struct timespec sleepUntil = schedAdjuster.adjust(evt.time());
-	LOGV("Scheduler::sleepUntilEvent: %lu.%u\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
+	LOGV("Scheduler::sleepUntilEvent: %lu.%08u\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
 	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 }
 
