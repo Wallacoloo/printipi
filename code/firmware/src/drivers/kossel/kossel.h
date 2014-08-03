@@ -37,7 +37,7 @@
 
 #define R1000 111000
 #define L1000 222000
-#define H1000 462100
+#define H1000 468300
 #define STEPS_M 6265
 #define STEPS_M_EXT 10000
 
@@ -85,6 +85,7 @@
   Note: increasing L increases convexity (/\)
   Note: increasing R increases concavity (\/)
   Note: decreasing R increases convexity (/\)
+  Note: decreasing R decreases actual displacement (eg X100 becomes only 90mm from center)
   at 121, 222, 60mm in x dir is really 68mm.
 */
 namespace drv {
