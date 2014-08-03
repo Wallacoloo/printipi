@@ -66,7 +66,8 @@
  * *NO: Replace certain template parameters (eg STEPS_MM_1000 with std::ratio)
  *    Not worth it; will make code more difficult to read.
  *  Add way to define which driver to use without modifying code.
- *  Migrate to std::chrono::high_resolution_clock instead of timespec (http://www.cplusplus.com/reference/chrono/high_resolution_clock/)
+ * *NO: Migrate to std::chrono::high_resolution_clock instead of timespec (http://www.cplusplus.com/reference/chrono/high_resolution_clock/)
+ *    the clock types aren't defined in gcc-4.6.3, and, while defined in gcc-4.7, they behave incorrectly on arm!
  *    and/or use the Pi's timer directly (performance) http://mindplusplus.wordpress.com/2013/05/21/accessing-the-raspberry-pis-1mhz-timer/
  *    Perhaps make it configurable, eg as in http://stackoverflow.com/a/11485388/216292 (use std chrono, and also implement that interface for the pi)
  *  Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
@@ -82,6 +83,7 @@
  *  Optimize PID values
  * *Fix short-circuit operators in onIdleCpu
  *  Refactor the "enabler" system.
+ *  Auto-find the hotend, rather than calling on the kossel driver.
 */
 
 #include <string>

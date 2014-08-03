@@ -49,7 +49,10 @@ class IODriver {
 		/* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
 		inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
 		inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
-		inline float fanPwmPeriod() const { return 0.1; }
+		inline float fanPwmPeriod() const { return 0.2; }
+		inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
+		inline bool isBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
+		inline CelciusType getTemperature() const { return -300; } //OVERRIDE THIS (hotends / beds only)
 		/* called when the scheduler has extra time,
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */
@@ -64,7 +67,7 @@ class IODriver {
 
 //IODriver::selectAndStepForward helper functions:
 struct IODriver__stepForward {
-	template <typename T> operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
+	template <typename T> void operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
 		if (index == desiredIndex) {
 			driver.stepForward();
 		}
@@ -77,7 +80,7 @@ template <typename TupleT> void IODriver::selectAndStepForward(TupleT &drivers, 
 
 //IODriver::selectAndStepBackward helper functions:
 struct IODriver__stepBackward {
-	template <typename T> operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
+	template <typename T> void operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
 		if (index == desiredIndex) {
 			driver.stepBackward();
 		}
@@ -109,7 +112,7 @@ template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(
 
 //IODriver::lockAllAxis helper functions:
 struct IODriver__lockAllAxis {
-	template <typename T> operator()(std::size_t index, T &driver) {
+	template <typename T> void operator()(std::size_t /*index*/, T &driver) {
 		driver.lockAxis();
 	}
 };
@@ -119,7 +122,7 @@ template <typename TupleT> void IODriver::lockAllAxis(TupleT &drivers) {
 
 //IODriver::unlockAllAxis helper functions:
 struct IODriver__unlockAllAxis {
-	template <typename T> operator()(std::size_t index, T &driver) {
+	template <typename T> void operator()(std::size_t /*index*/, T &driver) {
 		driver.unlockAxis();
 	}
 };
