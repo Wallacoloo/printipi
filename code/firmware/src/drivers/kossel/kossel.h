@@ -43,9 +43,9 @@
 
 
 #define MAX_ACCEL 600
-#define MAX_MOVE_RATE 30
+#define MAX_MOVE_RATE 40
 #define HOME_RATE 10
-#define MAX_EXT_RATE 16
+#define MAX_EXT_RATE 32
 
 #define THERM_RA 665
 #define THERM_CAP_PICO 100000
