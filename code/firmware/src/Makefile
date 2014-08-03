@@ -37,7 +37,8 @@ debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
-minsize: CFLAGS+= -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections $(LTOFLAG) $(ARCHFLAGS)
+#defining NDEBUG removes assertions.
+minsize: CFLAGS+= -DNDEBUG -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections $(LTOFLAG) $(ARCHFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
 minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
