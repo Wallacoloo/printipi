@@ -86,6 +86,8 @@
  * *Auto-find the hotend, rather than calling on the kossel driver.
  * *Move ioDrivers instantiation into the State.
  *  Prevent long sleeps in Scheduler when the next event is far off.
+ *  Fix how homing changes the extruder coordinates.
+ *    have CoordMap::getHomePosition return std::nan for E coordinate to indicate it has no home.
 */
 
 #include <string>
