@@ -36,7 +36,7 @@
 //#define STEPS_M_EXT 10000
 
 #define R1000 111000
-#define L1000 222000
+#define L1000 221000
 #define H1000 468300
 #define STEPS_M 6265
 #define STEPS_M_EXT 10000
@@ -83,6 +83,7 @@
     joint to edge of bed is ~43 mm. bed is 170mm, so R is 43 + 85 = 128mm
     L is 215mm as measured BUT math doesn't consider the existence of an effector (so L should be longer?)
   Note: increasing L increases convexity (/\)
+  Note: decreasing L increases concavity (\/)
   Note: increasing R increases concavity (\/)
   Note: decreasing R increases convexity (/\)
   Note: decreasing R decreases actual displacement (eg X100 becomes only 90mm from center)
