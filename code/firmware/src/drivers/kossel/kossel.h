@@ -35,7 +35,7 @@
 //#define STEPS_M 5200 //no microstepping enabled.
 //#define STEPS_M_EXT 10000
 
-#define R1000 121000
+#define R1000 111000
 #define L1000 222000
 #define H1000 462100
 #define STEPS_M 6265
@@ -85,6 +85,7 @@
   Note: increasing L increases convexity (/\)
   Note: increasing R increases concavity (\/)
   Note: decreasing R increases convexity (/\)
+  at 121, 222, 60mm in x dir is really 68mm.
 */
 namespace drv {
 
