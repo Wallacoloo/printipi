@@ -387,13 +387,16 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		resp = gparse::Command::OK;
 	} else if (cmd.isM104()) { //set hotend temperature and return immediately.
 		float t = cmd.getS(0); //default to temp=0. TODO: default to current temperature.
-		driver.setTemperature(t);
+		drv::IODriver::setHotendTemp(driver.ioDrivers, t);
+		//driver.setTemperature(t);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
 		//CelciusType t=DEFAULT_HOTEND_TEMP(), b=DEFAULT_BED_TEMP(); //a temperature < absolute zero means no reading available.
 		//driver.getTemperature(t, b);
 		CelciusType t, b;
-		std::tie(t, b) = driver.getTemperature();
+		//std::tie(t, b) = driver.getTemperature();
+		t = drv::IODriver::getHotendTemp(driver.ioDrivers);
+		b = drv::IODriver::getBedTemp(driver.ioDrivers);
 		resp = gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
 		float s = cmd.getS(1.0); //PWM duty cycle

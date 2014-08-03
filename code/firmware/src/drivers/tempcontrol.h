@@ -5,7 +5,7 @@
  * Printipi/drivers/tempcontrol.h
  * (c) 2014 Colin Wallace
  * 
- * TempControl provides a way to coordinate thermistor readings with the PWM control of a hotend.
+ * TempControl provides a way to coordinate thermistor readings with the PWM control of a hotend OR heated bed.
  * It used a PID controller to determine the ideal PWM for a given thermistor reading and temperature target.
  * Additionally, it accepts an (optional) filter applied BEFORE the PID controller, which can be used to weed out some variability in readings (use a low-pass filter for this).
  */
@@ -17,7 +17,14 @@
 
 namespace drv {
 
-template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
+//enum passed as template parameter to define the TempControl instance as either controlling a Hotend or a Heated Bed.
+//Functionally, they work the same, but each type responds to different G-codes.
+enum TempControlType {
+	HotendType,
+	HeatedBedType
+};
+
+template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
 	static const struct timespec _intervalThresh; //drop thermistor read if the IOs aren't serviced regularly enough.
 	static const struct timespec _readInterval; //how often to read the thermistor
 	IntervalTimer _intervalTimer;
@@ -30,7 +37,14 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 	bool _isReading;
 	struct timespec _nextReadTime;
 	public:
-		TempControl() : IODriver(this), _destTemp(0), _lastTemp(0), _isReading(false), _nextReadTime(timespecNow()) {
+		TempControl() : IODriver(this), _destTemp(-300), _lastTemp(-300), _isReading(false), _nextReadTime(timespecNow()) {
+		}
+		//register as the correct device type:
+		bool isHotend() const {
+			return HotType == HotendType;
+		}
+		bool isHeatedBed() const {
+			return HotType == HeatedBedType;
 		}
 		//route output commands to the heater:
 		void stepForward() {
@@ -39,8 +53,11 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 		void stepBackward() {
 			_heater.stepBackward();
 		}
-		void setTemp(CelciusType t) {
+		void setTargetTemperature(CelciusType t) {
 			_destTemp = t;
+		}
+		CelciusType getMeasuredTemperature() const {
+			return _lastTemp;
 		}
 		template <typename Sched> bool onIdleCpu(Sched &sched) {
 			//LOGV("TempControl::onIdleCpu()\n");
@@ -71,9 +88,6 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 				}
 			}
 		}
-		float getLastTemp() const {
-			return _lastTemp;
-		}
 	private:
 		template <typename Sched> void updatePwm(Sched &sched) {
 			float error = _destTemp - _lastTemp;
@@ -84,9 +98,9 @@ template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename P
 		}
 };
 
-template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 2000000}; //use 40000 for debug, 2000000 for valgrind.
+template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 2000000}; //use 40000 for debug, 2000000 for valgrind.
 
-template <AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{1, 0};
+template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{1, 0};
 
 }
 #endif

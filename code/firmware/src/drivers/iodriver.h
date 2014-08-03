@@ -15,6 +15,7 @@
  * These implementations must provide the functions outlined further down in the header.
  */
 
+#include <cassert> //for assert
 #include "common/typesettings.h"
 #include "common/tupleutil.h"
 #include "scheduler.h"
@@ -51,8 +52,9 @@ class IODriver {
 		inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
 		inline float fanPwmPeriod() const { return 0.2; }
 		inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
-		inline bool isBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
-		inline CelciusType getTemperature() const { return -300; } //OVERRIDE THIS (hotends / beds only)
+		inline bool isHeatedBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
+		inline void setTargetTemperature(CelciusType /*temp*/) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
+		inline CelciusType getMeasuredTemperature() const { return -300; } //OVERRIDE THIS (hotends / beds only)
 		/* called when the scheduler has extra time,
 		Can be used to check the status of inputs, etc.
 		Return true if object needs to continue to be serviced, false otherwise. */
@@ -63,6 +65,10 @@ class IODriver {
 		template <typename TupleT, typename ...Args > static bool callIdleCpuHandlers(TupleT &drivers, Args... args);
 		template <typename TupleT> static void lockAllAxis(TupleT &drivers);
 		template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
+		template <typename TupleT> static void setHotendTemp(TupleT &drivers, CelciusType temp);
+		template <typename TupleT> static void setBedTemp(TupleT &drivers, CelciusType temp);
+		template <typename TupleT> static CelciusType getHotendTemp(TupleT &drivers);
+		template <typename TupleT> static CelciusType getBedTemp(TupleT &drivers);
 };
 
 //IODriver::selectAndStepForward helper functions:
@@ -130,6 +136,61 @@ template <typename TupleT> void IODriver::unlockAllAxis(TupleT &drivers) {
 	callOnAll(drivers, IODriver__unlockAllAxis());
 }
 
+//IODriver::setHotendTemp helper functions:
+struct IODriver__setHotendTemp {
+	template <typename T> void operator()(std::size_t /*index*/, T &driver, CelciusType temp) {
+		if (driver.isHotend()) {
+			driver.setTargetTemperature(temp);
+		}
+	}
+};
+template <typename TupleT> void IODriver::setHotendTemp(TupleT &drivers, CelciusType temp) {
+	callOnAll(drivers, IODriver__setHotendTemp(), temp);
+}
+//IODriver::setBedTemp helper functions:
+struct IODriver__setBedTemp {
+	template <typename T> void operator()(std::size_t /*index*/, T &driver, CelciusType temp) {
+		if (driver.isHeatedBed()) {
+			driver.setTargetTemperature(temp);
+		}
+	}
+};
+template <typename TupleT> void IODriver::setBedTemp(TupleT &drivers, CelciusType temp) {
+	callOnAll(drivers, IODriver__setBedTemp(), temp);
 }
 
+//IODriver::getHotendTemp helper functions:
+struct IODriver__getHotendTemp {
+	CelciusType value;
+	IODriver__getHotendTemp() : value(-300) {}
+	template <typename T> void operator()(std::size_t /*index*/, T &driver) {
+		if (driver.isHotend()) {
+			value = driver.getMeasuredTemperature();
+		}
+	}
+};
+template <typename TupleT> CelciusType IODriver::getHotendTemp(TupleT &drivers) {
+	IODriver__getHotendTemp t;
+	callOnAll(drivers, &t);
+	return t.value;
+}
+//IODriver::getBedTemp helper functions:
+struct IODriver__getBedTemp {
+	CelciusType value;
+	IODriver__getBedTemp() : value(-300) {}
+	template <typename T> void operator()(std::size_t /*index*/, T &driver) {
+		if (driver.isHeatedBed()) {
+			value = driver.getMeasuredTemperature();
+		}
+	}
+};
+template <typename TupleT> CelciusType IODriver::getBedTemp(TupleT &drivers) {
+	IODriver__getBedTemp t;
+	callOnAll(drivers, &t);
+	return t.value;
+}
+
+
+
+}
 #endif

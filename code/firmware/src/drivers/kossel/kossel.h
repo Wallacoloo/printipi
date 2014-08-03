@@ -95,10 +95,6 @@ class Kossel : public Driver {
         typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, STEPS_M, STEPS_M_EXT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
-        	//rpi::SN754410<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, RPI_V2_GPIO_P1_16, RPI_V2_GPIO_P1_18>, //X coord
-        	//rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21, _StepperEn>, //A tower
-        	//rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //B tower
-        	//rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
         	rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //A tower
         	rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21, _StepperEn>, //B tower
         	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
@@ -109,19 +105,19 @@ class Kossel : public Driver {
         	//20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.
         	//12000,  600, 1200 (50C->130C). Peaks 22C above target. Underdamped. 5 mins to converge
         	//18000,  300, 1000 (40C->130C). Overdamped. 4.5 minutes to reach target (& is stabilized when it gets there)
-        	TempControl<5, _HotendOut, _Thermistor, PID<18000, 300, 1000>, LowPassFilter<3000> >,
+        	TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 300, 1000>, LowPassFilter<3000> >,
         	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
         //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
         IODriverTypes ioDrivers;
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         //_Thermistor thermistor;
-        inline std::tuple<CelciusType, CelciusType> getTemperature() const {
-        	return std::make_tuple(std::get<5>(ioDrivers).getLastTemp(), -300);
-        }
-        inline void setTemperature(CelciusType temp) {
-        	std::get<5>(ioDrivers).setTemp(temp);
-        }
+        /*inline std::tuple<CelciusType, CelciusType> getTemperature() const {
+        	return std::make_tuple(std::get<5>(ioDrivers).getMeasuredTemperature(), -300);
+        }*/
+        /*inline void setTemperature(CelciusType temp) {
+        	std::get<5>(ioDrivers).setTargetTemperature(temp);
+        }*/
         inline float defaultMoveRate() const { //in mm/sec
         	return MAX_MOVE_RATE;
         }
