@@ -43,7 +43,7 @@
 
 
 #define MAX_ACCEL 600
-#define MAX_MOVE_RATE 80
+#define MAX_MOVE_RATE 120
 #define HOME_RATE 10
 #define MAX_EXT_RATE 20
 
