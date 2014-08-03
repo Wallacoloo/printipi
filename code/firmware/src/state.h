@@ -64,9 +64,10 @@ template <typename Drv> class State {
 	float _destMoveRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
-	Drv &driver;
-	gparse::Com com;
+	gparse::Com &com;
 	SchedType scheduler;
+	Drv &driver;
+	typename Drv::IODriverTypes ioDrivers;
 	bool _isExecutingGCode; //cannot schedule two movements simultaneously, so this serves as a lock
 	//std::thread schedthread;
 	public:
@@ -74,7 +75,7 @@ template <typename Drv> class State {
 		static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
 		static constexpr CelciusType DEFAULT_BED_TEMP() { return -300; }
 		State(Drv &drv, gparse::Com &com);
-		~State();
+		State(const gparse::Com &com);
 		/* Control interpretation of positions from the host as relative or absolute */
 		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
@@ -135,16 +136,14 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDea
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
 	_destMechanicalPos(), 
-	driver(drv),
 	com(com), 
 	scheduler(SchedInterface(*this)),
+	driver(drv),
 	_isExecutingGCode(false)
 	{
-	this->setDestMoveRatePrimitive(drv.defaultMoveRate());
+	this->setDestMoveRatePrimitive(this->driver.defaultMoveRate());
 }
 
-template <typename Drv> State<Drv>::~State() {
-}
 
 template <typename Drv> PositionMode State<Drv>::positionMode() const {
 	return this->_positionMode;
@@ -271,9 +270,9 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 	//handle an event from the scheduler.
 	LOGV("State::handleEvent(time, idx, dir): %ld.%08lu, %i, %i\n", evt.time().tv_sec, evt.time().tv_nsec, evt.stepperId(), evt.direction()==StepForward);
 	if (evt.direction() == StepForward) {
-		drv::IODriver::selectAndStepForward(this->driver.ioDrivers, evt.stepperId());
+		drv::IODriver::selectAndStepForward(this->ioDrivers, evt.stepperId());
 	} else {
-		drv::IODriver::selectAndStepBackward(this->driver.ioDrivers, evt.stepperId());
+		drv::IODriver::selectAndStepBackward(this->ioDrivers, evt.stepperId());
 	}
 }
 template <typename Drv> bool State<Drv>::satisfyIOs() {
@@ -282,7 +281,7 @@ template <typename Drv> bool State<Drv>::satisfyIOs() {
 		com.reply(execute(com.getCommand()));
 		_isExecutingGCode = false;
 	}
-	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->driver.ioDrivers, this->scheduler);
+	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
 }
 
 template <typename Drv> void State<Drv>::eventLoop() {
@@ -368,11 +367,11 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		resp = gparse::Command::OK;
 	} else if (cmd.isM17()) { //enable all stepper motors
 		LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not tested\n");
-		drv::IODriver::lockAllAxis(this->driver.ioDrivers);
+		drv::IODriver::lockAllAxis(this->ioDrivers);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM18()) { //allow stepper motors to move 'freely'
 		LOGW("Warning (gparse/state.h): OP_M18 (disable stepper motors) not tested\n");
-		drv::IODriver::unlockAllAxis(this->driver.ioDrivers);
+		drv::IODriver::unlockAllAxis(this->ioDrivers);
 		resp = gparse::Command::OK;
 	} else if (cmd.isM21()) { //initialize SD card (nothing to do).
 		resp = gparse::Command::OK;
@@ -386,17 +385,19 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
 		resp = gparse::Command::OK;
 	} else if (cmd.isM104()) { //set hotend temperature and return immediately.
-		float t = cmd.getS(0); //default to temp=0. TODO: default to current temperature.
-		drv::IODriver::setHotendTemp(driver.ioDrivers, t);
-		//driver.setTemperature(t);
+		bool hasS;
+		float t = cmd.getS(hasS);
+		if (hasS) {
+			drv::IODriver::setHotendTemp(ioDrivers, t);
+		}
 		resp = gparse::Command::OK;
 	} else if (cmd.isM105()) { //get temperature, in C
 		//CelciusType t=DEFAULT_HOTEND_TEMP(), b=DEFAULT_BED_TEMP(); //a temperature < absolute zero means no reading available.
 		//driver.getTemperature(t, b);
 		CelciusType t, b;
 		//std::tie(t, b) = driver.getTemperature();
-		t = drv::IODriver::getHotendTemp(driver.ioDrivers);
-		b = drv::IODriver::getBedTemp(driver.ioDrivers);
+		t = drv::IODriver::getHotendTemp(ioDrivers);
+		b = drv::IODriver::getBedTemp(ioDrivers);
 		resp = gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
 		float s = cmd.getS(1.0); //PWM duty cycle
@@ -416,7 +417,12 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	} else if (cmd.isM117()) { //print message
 		resp = gparse::Command::OK;
 	} else if (cmd.isM140()) { //set BED temp and return immediately.
-		LOGW("Warning (gparse/state.h): OP_M140 (set bed temp) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M140 (set bed temp) is untested\n");
+		bool hasS;
+		float t = cmd.getS(hasS);
+		if (hasS) {
+			drv::IODriver::setBedTemp(ioDrivers, t);
+		}
 		resp = gparse::Command::OK;
 	} else if (cmd.isTxxx()) { //set tool number
 		LOGW("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
@@ -533,7 +539,7 @@ template <typename SchedT> struct State_setFanRate {
 };
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
-	callOnAll(driver.ioDrivers, State_setFanRate<SchedType>(scheduler, rate));
+	callOnAll(ioDrivers, State_setFanRate<SchedType>(scheduler, rate));
 	//this->scheduler.schedPwm(driver.getFanIODriverIdx(), PwmInfo(rate, driver.defaultFanPwmPeriod()));
 }
 
