@@ -75,7 +75,6 @@ template <typename Drv> class State {
 		static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
 		static constexpr CelciusType DEFAULT_BED_TEMP() { return -300; }
 		State(Drv &drv, gparse::Com &com);
-		State(const gparse::Com &com);
 		/* Control interpretation of positions from the host as relative or absolute */
 		PositionMode positionMode() const;
 		void setPositionMode(PositionMode mode);
