@@ -84,7 +84,8 @@
  * *Fix short-circuit operators in onIdleCpu
  *  Refactor the "enabler" system.
  * *Auto-find the hotend, rather than calling on the kossel driver.
- *  Move ioDrivers instantiation into the State.
+ * *Move ioDrivers instantiation into the State.
+ *  Prevent long sleeps in Scheduler when the next event is far off.
 */
 
 #include <string>

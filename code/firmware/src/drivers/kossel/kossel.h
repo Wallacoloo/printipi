@@ -26,13 +26,22 @@
 //#define R1000 125000
 //#define L1000 215000
 //#define H1000 507000
+//#define STEPS_M 9000
+//#define STEPS_M_EXT 4000
+
+//#define R1000 121000
+//#define L1000 222000
+//#define H1000 518700
+//#define STEPS_M 5200 //no microstepping enabled.
+//#define STEPS_M_EXT 10000
+
 #define R1000 121000
 #define L1000 222000
-#define H1000 518700
-//#define STEPS_M 9000
-#define STEPS_M 5200 //no microstepping enabled.
-//#define STEPS_M_EXT 4000
+#define H1000 300000
+#define STEPS_M 6265
 #define STEPS_M_EXT 10000
+
+
 #define MAX_ACCEL 600
 #define MAX_MOVE_RATE 30
 #define HOME_RATE 10
