@@ -108,16 +108,8 @@ class Kossel : public Driver {
         	TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 300, 1000>, LowPassFilter<3000> >,
         	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
-        //typedef LinearCoordMap<0, 1, 2, 3> CoordMapT; //map A->X, B->Y, C->Z, D->E
-        IODriverTypes ioDrivers;
+        //IODriverTypes ioDrivers;
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
-        //_Thermistor thermistor;
-        /*inline std::tuple<CelciusType, CelciusType> getTemperature() const {
-        	return std::make_tuple(std::get<5>(ioDrivers).getMeasuredTemperature(), -300);
-        }*/
-        /*inline void setTemperature(CelciusType temp) {
-        	std::get<5>(ioDrivers).setTargetTemperature(temp);
-        }*/
         inline float defaultMoveRate() const { //in mm/sec
         	return MAX_MOVE_RATE;
         }

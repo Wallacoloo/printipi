@@ -83,7 +83,8 @@
  *  Optimize PID values
  * *Fix short-circuit operators in onIdleCpu
  *  Refactor the "enabler" system.
- *  Auto-find the hotend, rather than calling on the kossel driver.
+ * *Auto-find the hotend, rather than calling on the kossel driver.
+ *  Move ioDrivers instantiation into the State.
 */
 
 #include <string>
@@ -139,6 +140,7 @@ int main_(int argc, char** argv) {
     //instantiate main driver:
     drv::Kossel driver;
 	State<drv::Kossel> state(driver, com);
+	//State<drv::Kossel> state(com);
 	
 	state.eventLoop();
     return 0;
