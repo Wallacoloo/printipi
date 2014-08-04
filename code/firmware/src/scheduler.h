@@ -120,7 +120,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 			}
 		}
 	};
-	const timespec MAX_SLEEP{0, 40000000}; //need to call onIdleCpu handlers every so often, even if no events are ready.
+	const struct timespec MAX_SLEEP{0, 40000000}; //need to call onIdleCpu handlers every so often, even if no events are ready.
 	typedef std::multiset<Event> EventQueueType;
 	Interface interface;
 	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
