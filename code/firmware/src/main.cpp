@@ -99,7 +99,7 @@
 #include "state.h"
 #include "argparse.h"
 
-#include "drivers/kossel/kossel.h"
+#include "drivers/machines/kossel.h"
 
 void printUsage(char* cmd) {
 	//#ifndef NO_USAGE_INFO
