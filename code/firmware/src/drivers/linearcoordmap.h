@@ -21,8 +21,8 @@ template <std::size_t xIdx=0, std::size_t yIdx=1, std::size_t zIdx=2, std::size_
 		static void xyzeFromMechanical(const std::array<int, 4> &mech) {
 			return std::make_tuple(mech[xIdx], mech[yIdx], mech[zIdx], mech[eIdx]);
 		}
-		static constexpr std::array<int, 4> getHomePosition() {
-			return std::array<int, 4>({0, 0, 0, 0});
+		static constexpr std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) {
+			return std::array<int, 4>({0, 0, 0, cur[3]});
 		}
 
 };

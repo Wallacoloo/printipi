@@ -520,7 +520,13 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1); //todo: what happens when another PWM channel is enabled during scheduling?
 	this->scheduleAxisSteppers(iters, NAN, false);
 	this->scheduler.setBufferSize(b);
-	_destMechanicalPos = Drv::CoordMapT::getHomePosition();
+	/*auto home = Drv::CoordMapT::getHomePosition();
+	for (std::size_t idx=0; idx<home.size(); ++idx) {
+		if (!std::isnan(home[idx])) {
+			_destMechanicalPos[idx] = home[idx];
+		}
+	}*/
+	_destMechanicalPos = Drv::CoordMapT::getHomePosition(_destMechanicalPos);
 }
 
 /* State utility class for setting the fan rate (State::setFanRate).
