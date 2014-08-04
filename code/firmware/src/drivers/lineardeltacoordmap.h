@@ -42,8 +42,8 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsi
 		static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-		static constexpr std::array<int, 4> getHomePosition() {
-			return std::array<int, 4>({{(int)(h*STEPS_MM), (int)(h*STEPS_MM), (int)(h*STEPS_MM), 0}});
+		static constexpr std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) {
+			return std::array<int, 4>({{(int)(h*STEPS_MM), (int)(h*STEPS_MM), (int)(h*STEPS_MM), cur[3]}});
 		}
 		static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
 			float e = mech[EIdx]*MM_STEPS_EXT;
