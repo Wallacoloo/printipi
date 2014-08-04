@@ -37,7 +37,7 @@
 
 #define R1000 111000
 #define L1000 221000
-#define H1000 467000
+#define H1000 467100
 #define STEPS_M 6265
 #define STEPS_M_EXT 10000
 
@@ -45,7 +45,7 @@
 #define MAX_ACCEL 600
 #define MAX_MOVE_RATE 160
 #define HOME_RATE 10
-#define MAX_EXT_RATE 18
+#define MAX_EXT_RATE 12
 
 #define THERM_RA 665
 #define THERM_CAP_PICO 100000
