@@ -4,6 +4,7 @@
 //#include <time.h> //for clock_nanosleep
 #include <signal.h> //for sigaction signal handlers
 #include <cstdlib> //for atexit
+#include <stdexcept> //for runtime_error
 
 std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> SchedulerBase::exitHandlers;
 //std::atomic<bool> SchedulerBase::isExiting(false);
