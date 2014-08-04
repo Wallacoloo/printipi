@@ -30,6 +30,10 @@ timespec timespecSub(const struct timespec &a, const struct timespec &b) {
 	return ret;
 }
 
+const timespec& timespecMin(const struct timespec &a, const struct timespec &b) {
+	return timespecLt(a, b) ? a : b;
+}
+
 bool timespecLt(const struct timespec &a, const struct timespec &b) {
 	return a.tv_sec < b.tv_sec || (a.tv_sec == b.tv_sec && a.tv_nsec < b.tv_nsec);
 }

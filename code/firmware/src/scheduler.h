@@ -14,9 +14,9 @@
 
 
 #include <set>
-#include <thread> //for this_thread.sleep
-#include <time.h> //for timespec
-#include <chrono> 
+//#include <thread> //for this_thread.sleep
+//#include <time.h> //for timespec
+//#include <chrono> 
 #include <array>
 #include <vector>
 //#include <atomic>
@@ -120,6 +120,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 			}
 		}
 	};
+	const timespec MAX_SLEEP{0, 40000000}; //need to call onIdleCpu handlers every so often, even if no events are ready.
 	typedef std::multiset<Event> EventQueueType;
 	Interface interface;
 	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
@@ -146,7 +147,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		void eventLoop();
 		void yield(bool forceWait=false);
 	private:
-		void sleepUntilEvent(const Event &evt) const;
+		void sleepUntilEvent(const Event *evt) const;
 		bool isEventNear(const Event &evt) const;
 		bool isEventTime(const Event &evt) const;
 };
@@ -244,7 +245,8 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 	while (1) {
 		yield(true);
 		if (eventQueue.empty()) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(40));
+			sleepUntilEvent(NULL);
+			//std::this_thread::sleep_for(std::chrono::milliseconds(40));
 		}
 	}
 }
@@ -267,8 +269,8 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 				if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
 					return;
 				} else { //retain control if the event is near, or if the queue must be emptied.
-					this->sleepUntilEvent(*iter);
-					break;
+					this->sleepUntilEvent(&*iter);
+					//break;
 				}
 			}
 		}
@@ -317,9 +319,14 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 	}
 }
 
-template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event &evt) const {
-	struct timespec sleepUntil = schedAdjuster.adjust(evt.time());
-	LOGV("Scheduler::sleepUntilEvent: %ld.%08lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
+template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event *evt) const {
+	//need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
+	timespec sleepUntil = timespecAdd(timespecNow(), MAX_SLEEP);
+	if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
+		struct timespec evtTime = schedAdjuster.adjust(evt->time());
+		sleepUntil = timespecMin(sleepUntil, evtTime);
+	}
+	//LOGV("Scheduler::sleepUntilEvent: %ld.%08lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
 	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
 }
 
