@@ -88,7 +88,8 @@
  * *Prevent long sleeps in Scheduler when the next event is far off.
  * *Fix how homing changes the extruder coordinates.
  *    have CoordMap::getHomePosition return std::nan for E coordinate to indicate it has no home.
- *  Upgrade to larger cap for rcthermistor
+ * *Upgrade to larger cap for rcthermistor
+ *  Make TempControl::_readInterval dynamic.
 */
 
 #include <string>
