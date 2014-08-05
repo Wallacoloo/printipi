@@ -32,6 +32,7 @@
 #include "gparse/com.h"
 #include "event.h"
 #include "scheduler.h"
+#include "motionplanner.h"
 #include "drivers/driver.h"
 #include "common/mathutil.h"
 #include "drivers/axisstepper.h"
@@ -66,6 +67,7 @@ template <typename Drv> class State {
 	std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	gparse::Com &com;
 	SchedType scheduler;
+	MotionPlanner<Drv> motionPlanner;
 	Drv &driver;
 	typename Drv::IODriverTypes ioDrivers;
 	bool _isExecutingGCode; //cannot schedule two movements simultaneously, so this serves as a lock
@@ -124,8 +126,8 @@ template <typename Drv> class State {
 		void setFanRate(float rate);
 	private:
 		/* Used internally to communicate step event times with the scheduler when moving or homing */
-		float transformEventTime(float time, float moveDuration, float Vmax);
-		template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate, float maxVel=NAN);
+		//float transformEventTime(float time, float moveDuration, float Vmax);
+		//template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate, float maxVel=NAN);
 };
 
 
@@ -432,7 +434,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	return resp;
 }
 
-template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration, float Vmax) {
+/*template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration, float Vmax) {
 	//Note: it is assumed that the original path is already coded for constant velocity = Vmax.
 	float Amax = this->driver.maxAccel();
 	float V0 = std::min(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
@@ -478,10 +480,11 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 		_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
 		s.nextStep(iters);
 	} while (1);
-}
+}*/
 		
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
-	float curX, curY, curZ, curE;
+	motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, destMoveRatePrimitive());
+	/*float curX, curY, curZ, curE;
 	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 	_destXPrimitive = x;
 	_destYPrimitive = y;
@@ -509,24 +512,26 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	this->scheduleAxisSteppers(iters, minDuration, true, maxVelXyz);
 	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 	LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
-	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
+	LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);*/
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
+	auto b = this->scheduler.getBufferSize();
+	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
+	motionPlanner.homeEndstops(scheduler.lastSchedTime(), destMoveRatePrimitive());
+	Event evt;
+	while (!(evt = motionPlanner.nextStep()).isNull()) {
+		this->scheduler.queue(evt);
+	}
+	//this->scheduler.setBufferSize(b);
 	//typename Drv::AxisStepperTypes iters;
-	typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
+	/*typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 	drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
 	auto b = this->scheduler.getBufferSize();
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1); //todo: what happens when another PWM channel is enabled during scheduling?
 	this->scheduleAxisSteppers(iters, NAN, false);
 	this->scheduler.setBufferSize(b);
-	/*auto home = Drv::CoordMapT::getHomePosition();
-	for (std::size_t idx=0; idx<home.size(); ++idx) {
-		if (!std::isnan(home[idx])) {
-			_destMechanicalPos[idx] = home[idx];
-		}
-	}*/
-	_destMechanicalPos = Drv::CoordMapT::getHomePosition(_destMechanicalPos);
+	_destMechanicalPos = Drv::CoordMapT::getHomePosition(_destMechanicalPos);*/
 }
 
 /* State utility class for setting the fan rate (State::setFanRate).
