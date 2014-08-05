@@ -157,6 +157,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 		void setBufferSize(unsigned size);
+		void setBufferSizeToDefault();
 		unsigned getBufferSize() const;
 		bool isRoomInBuffer() const;
 		unsigned numActivePwmChannels() const;
@@ -246,11 +247,14 @@ template <typename Interface> void Scheduler<Interface>::setBufferSize(unsigned 
 	this->bufferSize = size;
 	LOG("Scheduler buffer size set: %u\n", size);
 }
+template <typename Interface> void Scheduler<Interface>::setBufferSizeToDefault() {
+	setBufferSize(SCHED_CAPACITY);
+}
 template <typename Interface> unsigned Scheduler<Interface>::getBufferSize() const {
 	return this->bufferSize;
 }
 template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const {
-	this->eventQueue.size() < this->bufferSize;
+	return this->eventQueue.size() < this->bufferSize;
 }
 
 template <typename Interface> unsigned Scheduler<Interface>::numActivePwmChannels() const {

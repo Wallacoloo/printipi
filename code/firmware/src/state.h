@@ -289,6 +289,8 @@ template <typename Drv> bool State<Drv>::satisfyIOs() {
 		if (!(evt = motionPlanner.nextStep()).isNull()) {
 			this->scheduler.queue(evt);
 			motionNeedsCpu = scheduler.isRoomInBuffer();
+		} else {
+			this->scheduler.setBufferSizeToDefault();
 		}
 	}
 	bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
@@ -526,7 +528,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
-	auto b = this->scheduler.getBufferSize();
+	//auto b = this->scheduler.getBufferSize();
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
 	motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
 	/*Event evt;
