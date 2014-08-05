@@ -1,10 +1,12 @@
 #ifndef MOTIONPLANNER_H
 #define MOTIONPLANNER_H
 
+#include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
 
-template <typename Drv> class MotionPlanner {
+template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanner {
 	private:
+		AccelProfile _accel;
 		std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos;
 		typename Drv::AxisStepperTypes _iters;
 		typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes _homeIters;
@@ -13,7 +15,7 @@ template <typename Drv> class MotionPlanner {
 		bool _isHoming;
 		float transformEventTime(float time, float moveDuration, float Vmax) {
 			//Note: it is assumed that the original path is already coded for constant velocity = Vmax.
-			return time;
+			return _accel.transform(time);
 			/*float Amax = this->driver.maxAccel();
 			float V0 = std::min(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
 			float k = 4*Amax/Vmax;
@@ -59,6 +61,7 @@ template <typename Drv> class MotionPlanner {
 			} while (1);
 		}*/
 	public:
+		MotionPlanner() : _accel(), _destMechanicalPos(), _iters(), _homeIters(), _baseTime(), _duration(NAN), _isHoming(false) {}
 		Event nextStep() {
 			drv::AxisStepper& s = _isHoming ? drv::AxisStepper::getNextTime(_homeIters) : drv::AxisStepper::getNextTime(_iters);
 			//s = drv::AxisStepper::getNextTime(_iters);
@@ -86,7 +89,7 @@ template <typename Drv> class MotionPlanner {
 			return e;
 		}
 		void moveTo(const timespec &baseTime, float x, float y, float z, float e, float maxVelXyz) {
-			_baseTime = baseTime;
+			this->_baseTime = baseTime;
 			float curX, curY, curZ, curE;
 			std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 			//_destXPrimitive = x;
@@ -108,24 +111,24 @@ template <typename Drv> class MotionPlanner {
 			float vx = (x-curX)/minDuration;
 			float vy = (y-curY)/minDuration;
 			float vz = (z-curZ)/minDuration;
-			LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
-			LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
-			LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
+			LOGD("MotionPlanner::moveTo (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
+			LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
+			LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
 			//typename Drv::AxisStepperTypes iters;
 			drv::AxisStepper::initAxisSteppers(_iters, _destMechanicalPos, vx, vy, vz, velE);
 			this->_duration = minDuration;
 			this->_isHoming = false;
 			//this->scheduleAxisSteppers(baseTime, _iters, minDuration, true, maxVelXyz);
 			//std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
-			//LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
-			//LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
+			//LOGD("MotionPlanner::moveTo wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
+			//LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 		}
 
 		void homeEndstops(const timespec &baseTime, float maxVelXyz) {
 			//typename Drv::AxisStepperTypes iters;
 			//typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 			//drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
-			_baseTime = baseTime;
+			this->_baseTime = baseTime;
 			//drv::AxisStepper::initAxisHomeSteppers(_homeIters, this->driver.clampHomeRate(maxVelXyz));
 			drv::AxisStepper::initAxisHomeSteppers(_homeIters, maxVelXyz);
 			//auto b = this->scheduler.getBufferSize();
