@@ -83,6 +83,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 				if (isHoming) {
 					_destMechanicalPos = Drv::CoordMapT::getHomePosition(_destMechanicalPos);
 				}
+				_motionType = MotionNone; //motion is over.
 				return Event();
 			}
 			//float transformedTime = accelerate ? transformEventTime(s.time, duration, maxVel) : s.time;
