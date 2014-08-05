@@ -79,7 +79,8 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 		  If the scheduler isn't serviced on time, we don't want 10 backed-up events all happening at the same time. Instead, we offset them and pick them up then. We can never execute events with intervals smaller than they would register - this would indicate real movement of, say, 70mm/sec when the user only asked for 60mm/sec. Thus the scheduler can never be made "on track" again, unless there is a gap in scheduled events.
 		  If, because of the stall, actual velocity was decreased to 10mm/sec, we cannot jump instantly back to 60mm/sec (this would certainly cause MORE missed steps)! Instead, we accelerate back up to it.
 		  The tricky bit is - how do we estimate what the actual velocity is? We don't want to overcompensate. Unfortunately for now, some of the logic might :P */
-		static constexpr float a = -5.0;
+		//static constexpr float a = -5.0;
+		static constexpr float a = -12.0;
 		IntervalTimer lastRealTime;
 		timespec lastSchedTime;
 		float lastSlope;
