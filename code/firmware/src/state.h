@@ -518,7 +518,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 template <typename Drv> void State<Drv>::homeEndstops() {
 	auto b = this->scheduler.getBufferSize();
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
-	motionPlanner.homeEndstops(scheduler.lastSchedTime(), destMoveRatePrimitive());
+	motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
 	Event evt;
 	while (!(evt = motionPlanner.nextStep()).isNull()) {
 		this->scheduler.queue(evt);
