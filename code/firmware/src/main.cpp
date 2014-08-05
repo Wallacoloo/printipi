@@ -16,38 +16,19 @@
  *  What is SmoothieWare? https://github.com/Smoothieware/Smoothieware
  *    It claims to be aimed toward ARM cortex M3, and very active development
  *  Grbl appears to run (partially?) on the raspberry pi: https://github.com/grbl/grbl/issues/252
- * *Write SN754410 drivers
- * *Test output on one single motor
- * *Figure out extrusion in State::queueMovement.
- * *in State::queueMovement, curX, curY, curZ, etc should be recalculated from the actual axis positions to prevent drift
- *    dest*Primitive must be maintained in order to handle relative movements.
- * *Add Kossel Axis drivers
+ *
+ *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
+ *
  * *Run valgrind to hunt for uninitialized variables
- * *Enable new stepper driver
- * *Wire all three steppers
- * *Add exit handlers, TO SCHEDULER.
  * *Prevent calling exit() from within an atexit handler
- * *Add 100 uF capacitors to stepper drivers (crucial!)
- * *Solder thermistor
- * *Add thermister support
- * *Add heater support (And PWM)
- * *Add endstop support
- * *Rename gmath.h to mathutil.h
  *  Prevent stepping when endstop is triggered.
  *  Add max/min bounds for each axis
  * *Add acceleration
- * *Add atexit levels, so that rpi gpio is disabled AFTER the IOdrivers are disabled.
- *    Should the exit handlers prevent double-registration (ie, use std::set)?
- *      avoid std::set just for the extra memory and code usage
  * *Add IO deactivation upon exit
  * *Add enable pin
  * *Account for PWM pins when setting Scheduler queue size.
  *  Add (configurable) absolute PWM limits to hotend, etc.
- * *Reduce number of PWM channels to what is actually needed.
- * *Make driver.numAxis a property of the CoordMap
  * *Make CoordMapT, etc return tuples instead of using writebacks
- * *Make Driver::getTemperature return tuples
- * *Allow G28 to be called multiple times
  *  Reset I part of PID control when target changes
  *  Allow M105, etc to instantly return the temperature
  * *Drop temperature readings when thread has been interrupted.
@@ -56,11 +37,8 @@
  * *Make scheduler more resistant to skipping (make it so it can only run at up to, say, 2x speed to catch up. This minimizes missed steps)
  *  Improve SchedAdjuster formulae.
  *  Properly implement Scheduler::lastSchedTime for the case where the queue is empty
- * *Investigate single-threading for entire process.
- * *CoordMap::getHomePosition should return the MECHANICAL home position, instead of cartesian (simpler implementation)
  * *Limit movement speed based on maximum extrusion rate.
  *  Look into coordinate rounding for State::queueMovement
- *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
  *  Document
  * *Put copywrite at head of every file.
  * *NO: Replace certain template parameters (eg STEPS_MM_1000 with std::ratio)
@@ -100,7 +78,10 @@
 #include "state.h"
 #include "argparse.h"
 
-#include "drivers/machines/kossel.h"
+//MACHINE_PATH is calculated in the Makefile and then passed as a define through the make system (ie gcc -DMACHINEPATH='"path"')
+//To set the path, call make MACHINE_PATH=...
+//or, call make MACHINE=<machine>, eg MACHINE=Kossel (case-sensitive) and the path will be calculated from that (drivers/machines/kossel.h)
+#include MACHINE_PATH
 
 void printUsage(char* cmd) {
 	//#ifndef NO_USAGE_INFO
@@ -143,9 +124,9 @@ int main_(int argc, char** argv) {
     gparse::Com com = gparse::Com(std::string(serialFileName));
     
     //instantiate main driver:
-    drv::Kossel driver;
-	State<drv::Kossel> state(driver, com);
-	//State<drv::Kossel> state(com);
+    typedef drv::MACHINE MachineT;
+    MachineT driver;
+	State<MachineT> state(driver, com);
 	
 	state.eventLoop();
     return 0;
