@@ -64,7 +64,7 @@ template <typename Drv> class State {
 	float _destEPrimitive;
 	float _destMoveRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
-	std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
+	//std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	gparse::Com &com;
 	SchedType scheduler;
 	MotionPlanner<Drv> motionPlanner;
@@ -136,7 +136,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDea
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
-	_destMechanicalPos(), 
+	//_destMechanicalPos(), 
 	com(com), 
 	scheduler(SchedInterface(*this)),
 	driver(drv),
@@ -523,7 +523,7 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	while (!(evt = motionPlanner.nextStep()).isNull()) {
 		this->scheduler.queue(evt);
 	}
-	//this->scheduler.setBufferSize(b);
+	this->scheduler.setBufferSize(b);
 	//typename Drv::AxisStepperTypes iters;
 	/*typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 	drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
