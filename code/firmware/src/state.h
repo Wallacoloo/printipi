@@ -282,7 +282,16 @@ template <typename Drv> bool State<Drv>::satisfyIOs() {
 		com.reply(execute(com.getCommand()));
 		_isExecutingGCode = false;
 	}
-	return drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
+	bool motionNeedsCpu = false;
+	if (scheduler.isRoomInBuffer()) {
+		Event evt;
+		if (!(evt = motionPlanner.nextStep()).isNull()) {
+			this->scheduler.queue(evt);
+			motionNeedsCpu = scheduler.isRoomInBuffer();
+		}
+	}
+	bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
+	return motionNeedsCpu || driversNeedCpu;
 }
 
 template <typename Drv> void State<Drv>::eventLoop() {
@@ -519,11 +528,11 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 	auto b = this->scheduler.getBufferSize();
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
 	motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
-	Event evt;
+	/*Event evt;
 	while (!(evt = motionPlanner.nextStep()).isNull()) {
 		this->scheduler.queue(evt);
 	}
-	this->scheduler.setBufferSize(b);
+	this->scheduler.setBufferSize(b);*/
 	//typename Drv::AxisStepperTypes iters;
 	/*typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 	drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));

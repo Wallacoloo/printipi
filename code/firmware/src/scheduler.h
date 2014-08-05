@@ -158,6 +158,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 		void setBufferSize(unsigned size);
 		unsigned getBufferSize() const;
+		bool isRoomInBuffer() const;
 		unsigned numActivePwmChannels() const;
 		void eventLoop();
 		void yield(bool forceWait=false);
@@ -179,7 +180,8 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 
 template <typename Interface> void Scheduler<Interface>::queue(const Event& evt) {
 	//LOGV("Scheduler::queue\n");
-	while (this->eventQueue.size() >= this->bufferSize) {
+	//while (this->eventQueue.size() >= this->bufferSize) {
+	while (!isRoomInBuffer()) {
 		//yield();
 		yield(true);
 	}
@@ -246,6 +248,9 @@ template <typename Interface> void Scheduler<Interface>::setBufferSize(unsigned 
 }
 template <typename Interface> unsigned Scheduler<Interface>::getBufferSize() const {
 	return this->bufferSize;
+}
+template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const {
+	this->eventQueue.size() < this->bufferSize;
 }
 
 template <typename Interface> unsigned Scheduler<Interface>::numActivePwmChannels() const {
