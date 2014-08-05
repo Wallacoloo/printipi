@@ -4,6 +4,12 @@
 #include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
 
+enum MotionType {
+	MotionNone,
+	MotionMove,
+	MotionHome
+};
+
 template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanner {
 	private:
 		AccelProfile _accel;
@@ -12,7 +18,8 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 		typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes _homeIters;
 		timespec _baseTime;
 		float _duration;
-		bool _isHoming;
+		MotionType _motionType;
+		//bool _isHoming;
 		float transformEventTime(float time, float moveDuration, float Vmax) {
 			//Note: it is assumed that the original path is already coded for constant velocity = Vmax.
 			return _accel.transform(time);
@@ -61,15 +68,19 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			} while (1);
 		}*/
 	public:
-		MotionPlanner() : _accel(), _destMechanicalPos(), _iters(), _homeIters(), _baseTime(), _duration(NAN), _isHoming(false) {}
+		MotionPlanner() : _accel(), _destMechanicalPos(), _iters(), _homeIters(), _baseTime(), _duration(NAN), _motionType(MotionNone) {}
 		Event nextStep() {
-			drv::AxisStepper& s = _isHoming ? drv::AxisStepper::getNextTime(_homeIters) : drv::AxisStepper::getNextTime(_iters);
+			if (_motionType == MotionNone) {
+				return Event();
+			}
+			bool isHoming = _motionType == MotionHome;
+			drv::AxisStepper& s = isHoming ? drv::AxisStepper::getNextTime(_homeIters) : drv::AxisStepper::getNextTime(_iters);
 			//s = drv::AxisStepper::getNextTime(_iters);
 			LOGV("Next step: %i at %g of %g\n", s.index(), s.time, _duration);
 			//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
 			if (s.time > _duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
 				//break; 
-				if (_isHoming) {
+				if (isHoming) {
 					_destMechanicalPos = Drv::CoordMapT::getHomePosition(_destMechanicalPos);
 				}
 				return Event();
@@ -81,7 +92,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			e.offset(_baseTime);
 			//scheduler.queue(e);
 			_destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
-			if (_isHoming) {
+			if (isHoming) {
 				s.nextStep(_homeIters);
 			} else {
 				s.nextStep(_iters);
@@ -117,7 +128,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			//typename Drv::AxisStepperTypes iters;
 			drv::AxisStepper::initAxisSteppers(_iters, _destMechanicalPos, vx, vy, vz, velE);
 			this->_duration = minDuration;
-			this->_isHoming = false;
+			this->_motionType = MotionMove;
 			//this->scheduleAxisSteppers(baseTime, _iters, minDuration, true, maxVelXyz);
 			//std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 			//LOGD("MotionPlanner::moveTo wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
@@ -134,7 +145,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			//auto b = this->scheduler.getBufferSize();
 			//this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1); //todo: what happens when another PWM channel is enabled during scheduling?
 			this->_duration = NAN;
-			this->_isHoming = true;
+			this->_motionType = MotionHome;
 			//this->scheduleAxisSteppers(baseTime, _homeIters, NAN, false);
 			//this->scheduler.setBufferSize(b);
 			//_destMechanicalPos = Drv::CoordMapT::getHomePosition(_destMechanicalPos);
