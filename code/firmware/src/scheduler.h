@@ -41,6 +41,12 @@
 #define SCHED_IO_EXIT_LEVEL 0
 #define SCHED_MEM_EXIT_LEVEL 1
 
+//When queueing an event, one may hint that it is either near or far away, and this may give a performance boost to the container.
+enum InsertHint {
+	INSERT_FRONT,
+	INSERT_BACK
+};
+
 struct PwmInfo {
 	unsigned nsHigh;
 	unsigned nsLow;
@@ -56,6 +62,8 @@ struct PwmInfo {
 	}
 };
 
+/* Base class from which all templated schedulers derive.
+Defines things such as exit handlers */
 class SchedulerBase {
 	static std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> exitHandlers;
 	//static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic.
@@ -67,13 +75,19 @@ class SchedulerBase {
 		static void registerExitHandler(void (*handler)(), unsigned level);
 };
 
-//When queueing an event, one may hint that it is either near or far away, and this may give a performance boost to the container.
-enum InsertHint {
-	INSERT_FRONT,
-	INSERT_BACK
+/* A Scheduler is useless without an interface. In order to use a scheduler, implement a class with the following methods
+and pass it as a template argument to the Scheduler<Interface> type. */
+struct DefaultSchedulerInterface {
+	void onEvent(const Event& /*evt*/) { }
+	bool onIdleCpu() {
+		return false; //no more cpu needed
+	}
+	static constexpr std::size_t numIoDrivers() {
+		return 0; //no IoDrivers;
+	}
 };
 
-template <typename Interface> class Scheduler : public SchedulerBase {
+template <typename Interface=DefaultSchedulerInterface> class Scheduler : public SchedulerBase {
 	struct SchedAdjuster {
 		/* The logic is a bit odd here, but the idea is to compensate for missed events.
 		  If the scheduler isn't serviced on time, we don't want 10 backed-up events all happening at the same time. Instead, we offset them and pick them up then. We can never execute events with intervals smaller than they would register - this would indicate real movement of, say, 70mm/sec when the user only asked for 60mm/sec. Thus the scheduler can never be made "on track" again, unless there is a gap in scheduled events.
