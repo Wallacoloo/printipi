@@ -48,7 +48,8 @@
 #define MAX_EXT_RATE 20
 
 #define THERM_RA 665
-#define THERM_CAP_PICO 100000
+//#define THERM_CAP_PICO 100000
+#define THERM_CAP_PICO  2200000
 #define VCC_mV 3300
 #define THERM_IN_THRESH_mV 1600
 #define THERM_T0 25
