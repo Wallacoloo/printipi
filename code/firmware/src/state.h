@@ -284,6 +284,7 @@ template <typename Drv> bool State<Drv>::satisfyIOs() {
 	}
 	bool motionNeedsCpu = false;
 	if (scheduler.isRoomInBuffer()) {
+		LOGV("State::satisfyIOs, sched has buffer room\n");
 		Event evt;
 		if (!(evt = motionPlanner.nextStep()).isNull()) {
 			this->scheduler.queue(evt);
