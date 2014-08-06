@@ -17,6 +17,10 @@
  *    It claims to be aimed toward ARM cortex M3, and very active development
  *  Grbl appears to run (partially?) on the raspberry pi: https://github.com/grbl/grbl/issues/252
  *
+ *  Investigate fixed-point math.
+ *    http://pithesiser.wordpress.com/2013/02/17/on-raspberry-pi-performance/
+ *      Indicates it MAY be faster, could be the same (esp if 64-bit)
+ *
  *  Consider names: piprint (taken), printchef (exists), Rasprintian (play on raspbian), Rasprint, Rasprinti, Printipi, Piface (taken)
  *
  * *Run valgrind to hunt for uninitialized variables
