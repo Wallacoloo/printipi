@@ -31,7 +31,7 @@
 #ifndef SCHED_PRIORITY
 	#define SCHED_PRIORITY 30
 #endif
-//really is the default scheduler buffer size.
+//really this is the default scheduler buffer size:
 #ifndef SCHED_CAPACITY
 	#define SCHED_CAPACITY 128
 #endif
