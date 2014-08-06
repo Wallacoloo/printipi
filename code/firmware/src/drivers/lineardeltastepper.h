@@ -16,6 +16,11 @@
 	#FullSimplify[%]
 	#Then proceed to hand-optimize
 */
+/* Raspberry Pi float performance can be found here: http://www.raspberrypi.org/forums/viewtopic.php?t=7336
+  float +,-,*: 2 cycles
+  float /: 32 cycles (same for doubles)
+  float sqrt: 48 cycles (same for doubles)
+*/
 
 #include "axisstepper.h"
 #include "linearstepper.h" //for LinearHomeStepper
@@ -30,6 +35,8 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 		float x0, y0, z0;
 		float vx, vy, vz;
 		float v2; //squared velocity.
+		float inv_v2;
+		float vz_over_v2;
 		float _almostTerm1; //used for caching & reducing computational complexity inside nextStep()
 		float _almostRootParam;
 		float _almostRootParamV2S;
@@ -45,7 +52,9 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			 M0(curPos[AxisIdx]*MM_STEPS()), 
 			 sTotal(0),
 			 vx(vx), vy(vy), vz(vz),
-			 v2(vx*vx + vy*vy + vz*vz) {
+			 v2(vx*vx + vy*vy + vz*vz), 
+			 inv_v2(1/v2),
+			 vz_over_v2(vz/v2) {
 			 	static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
 			 	this->time = 0; //this may NOT be zero-initialized by parent.
 				float e_;
@@ -74,8 +83,8 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 		void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
 			//TODO: compiler probably can't optimize this well since it probably won't be able to allocate more space on the object to hold semi-constants.
 			//Therefore, we should cache values calculatable at init-time, like all of the second-half on rootParam.
-			term1 = _almostTerm1 + vz/v2*s;
-			rootParam = term1*term1 + _almostRootParam - 1/v2*s*(_almostRootParamV2S + s);
+			term1 = _almostTerm1 + vz_over_v2*s;
+			rootParam = term1*term1 + _almostRootParam - inv_v2*s*(_almostRootParamV2S + s);
 			/*if (AxisIdx == 0) {
 				term1 = r()*vy - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
