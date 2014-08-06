@@ -24,6 +24,11 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 		MotionType _motionType;
 	public:
 		MotionPlanner() : _accel(), _destMechanicalPos(), _iters(), _homeIters(), _baseTime(), _duration(NAN), _maxVel(0), _motionType(MotionNone) {}
+		/* isReadyForNextMove: returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems) */
+		bool readyForNextMove() const {
+			//Note: for now, there isn't actually buffering.
+			return _motionType == MotionNone;
+		}
 		Event nextStep() {
 			if (_motionType == MotionNone) {
 				return Event();

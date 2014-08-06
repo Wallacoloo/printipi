@@ -24,12 +24,12 @@ class Com {
 	std::string _pending;
 	Command _parsed;
 	public:
-		Com() {}
+		Com();
 		Com(const std::string &file);
 		//returns true if there is a command ready to be interpreted.
 		bool tendCom();
 		Command getCommand() const;
-		void reply(const Command &response) const;
+		void reply(const Command &response);
 			
 };
 
