@@ -4,11 +4,12 @@
 #include "accelerationprofile.h"
 #include <algorithm> //min, isfinite
 
-class ExponentialAcceleration : public AccelerationProfile {
+template <int MaxAccel1000> class ExponentialAcceleration : public AccelerationProfile {
+	static constexpr float maxAccel() { return MaxAccel1000 / 1000.; }
 	public:
 		float transform(float time, float moveDuration, float Vmax) {
 			//float Amax = this->driver.maxAccel();
-			float Amax = 500;
+			float Amax = maxAccel();
 			float V0 = std::min(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
 			float k = 4*Amax/Vmax;
 			float c = V0 / (Vmax-V0);
