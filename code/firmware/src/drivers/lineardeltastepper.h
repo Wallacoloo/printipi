@@ -53,29 +53,29 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 				std::tie(this->x0, this->y0, this->z0, e_) = CoordMap::xyzeFromMechanical(curPos);
 				//precompute as much as possible:
 				if (AxisIdx == 0) {
-					_almostTerm1 = r()*vy - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz*s;
+					_almostTerm1 = 1/v2*(r()*vy - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
 					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
 					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 + 2*M0*s - 2*M0*z0 + s*s - 2*s*z0 + z0*z0);
 					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0) - v2*s*(2*M0 + s - 2*z0);
-					_almostRootParam = -v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0);
-					_almostRootParamV2S = 2*M0 - 2*z0; // (...+s)*-v2*s
+					_almostRootParam = -1/v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0);
+					_almostRootParamV2S = 2*M0 - 2*z0; // (...+s)*-1/v2*s
 				} else if (AxisIdx == 1) { 
-					_almostTerm1 = r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz*s;
+					_almostTerm1 = 1/v2*r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz/v2*s;
 					//rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-					_almostRootParam = -v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
+					_almostRootParam = -1/v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
 					_almostRootParamV2S = 2*M0 - 2*z0;
 				} else if (AxisIdx == 2) {
-					_almostTerm1 = -r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz*s;
+					_almostTerm1 = -1/v2*r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz/v2*s;
 					//rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-					_almostRootParam = -v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
+					_almostRootParam = -1/v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
 					_almostRootParamV2S = 2*M0 - 2*z0;
 				}
 			}
 		void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
 			//TODO: compiler probably can't optimize this well since it probably won't be able to allocate more space on the object to hold semi-constants.
 			//Therefore, we should cache values calculatable at init-time, like all of the second-half on rootParam.
-			term1 = _almostTerm1 + vz*s;
-			rootParam = term1*term1 + _almostRootParam - v2*s*(_almostRootParamV2S + s);
+			term1 = _almostTerm1 + vz/v2*s;
+			rootParam = term1*term1 + _almostRootParam - 1/v2*s*(_almostRootParamV2S + s);
 			/*if (AxisIdx == 0) {
 				term1 = r()*vy - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
@@ -99,9 +99,12 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			//float root = std::sqrt(rootParam);
 			//float t1 = (term1 - root)/v2;
 			//float t2 = (term1 + root)/v2;
-			float root = std::sqrt(rootParam/v2/v2);
-			float t1 = term1/v2 - root;
-			float t2 = term1/v2 + root;
+			//float root = std::sqrt(rootParam/v2/v2);
+			//float t1 = term1/v2 - root;
+			//float t2 = term1/v2 + root;
+			float root = std::sqrt(rootParam);
+			float t1 = term1 - root;
+			float t2 = term1 + root;
 			//LOGV("LinearDeltaStepper<%zu>::testDir(%f) times %f, %f\n", AxisIdx, s, t1, t2);
 			if (root > term1) { //if this is true, then t1 MUST be negative.
 				//return t2 if t2 > 0 else None
