@@ -18,11 +18,12 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 		typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes _homeIters;
 		timespec _baseTime;
 		float _duration;
+		float _maxVel;
 		MotionType _motionType;
 		//bool _isHoming;
 		float transformEventTime(float time, float moveDuration, float Vmax) {
 			//Note: it is assumed that the original path is already coded for constant velocity = Vmax.
-			return _accel.transform(time);
+			return _accel.transform(time, moveDuration, Vmax);
 			/*float Amax = this->driver.maxAccel();
 			float V0 = std::min(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
 			float k = 4*Amax/Vmax;
@@ -68,7 +69,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			} while (1);
 		}*/
 	public:
-		MotionPlanner() : _accel(), _destMechanicalPos(), _iters(), _homeIters(), _baseTime(), _duration(NAN), _motionType(MotionNone) {}
+		MotionPlanner() : _accel(), _destMechanicalPos(), _iters(), _homeIters(), _baseTime(), _duration(NAN), _maxVel(0), _motionType(MotionNone) {}
 		Event nextStep() {
 			if (_motionType == MotionNone) {
 				return Event();
@@ -87,7 +88,8 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 				return Event();
 			}
 			//float transformedTime = accelerate ? transformEventTime(s.time, duration, maxVel) : s.time;
-			float transformedTime = s.time;
+			//float transformedTime = s.time;
+			float transformedTime = transformEventTime(s.time, _duration, _maxVel);
 			LOGV("Step transformed time: %f\n", transformedTime);
 			Event e = s.getEvent(transformedTime);
 			e.offset(_baseTime);
@@ -128,6 +130,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
 			//typename Drv::AxisStepperTypes iters;
 			drv::AxisStepper::initAxisSteppers(_iters, _destMechanicalPos, vx, vy, vz, velE);
+			this->_maxVel = maxVelXyz;
 			this->_duration = minDuration;
 			this->_motionType = MotionMove;
 			//this->scheduleAxisSteppers(baseTime, _iters, minDuration, true, maxVelXyz);
@@ -141,6 +144,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			//typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
 			//drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
 			this->_baseTime = baseTime;
+			this->_maxVel = maxVelXyz;
 			//drv::AxisStepper::initAxisHomeSteppers(_homeIters, this->driver.clampHomeRate(maxVelXyz));
 			drv::AxisStepper::initAxisHomeSteppers(_homeIters, maxVelXyz);
 			//auto b = this->scheduler.getBufferSize();
