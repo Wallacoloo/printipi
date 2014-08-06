@@ -20,29 +20,6 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 		float _duration;
 		float _maxVel;
 		MotionType _motionType;
-		//bool _isHoming;
-		float transformEventTime(float time, float moveDuration, float Vmax) {
-			//Note: it is assumed that the original path is already coded for constant velocity = Vmax.
-			return _accel.transform(time, moveDuration, Vmax);
-			/*float Amax = this->driver.maxAccel();
-			float V0 = std::min(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
-			float k = 4*Amax/Vmax;
-			float c = V0 / (Vmax-V0);
-			if (time > 0.5*moveDuration) {
-				return 2*transformEventTime(0.5*moveDuration, moveDuration, Vmax) - transformEventTime(moveDuration-time, moveDuration, Vmax);
-			} else { //take advantage of the fact that comparisons against NaN always compare false to allow for indefinite movements:
-				//the problem with the below equation is that it can return infinity if k/Vmax*time is sufficiently large.
-				//return 1./k * log(1./c * ((1. + c)*exp(k/Vmax*time) - 1.));
-				//aka: 1./k*( log(1./c) + log((1. + c)*exp(k/Vmax*time) - 1.))
-				//simplify: 1./k*log(e^x-1) ~=~ 1./k*x at x = Log[1 - E^(-k*.001)], at which point it is only .001 off (however, 1ms is significant! Would rather use a smaller value.
-				auto logparam = (1. + c)*exp(k*time) - 1;
-				if (std::isfinite(logparam)) {
-					return 1./k*( log(1./c) + log(logparam));
-				} else { //use the approximation:
-					return 1./k*(log(1./c) + log(1. + c) + k*time);
-				}
-			}*/
-		}
 		/*template <typename AxisStepperTypes> void scheduleAxisSteppers(const timespec &baseTime, float duration, bool accelerate, float maxVel) {
 			//Information on acceleration: http://reprap.org/wiki/Firmware/Linear_Acceleration
 			//Current implementation uses instantaneous acceleration, which is physically impossible.
@@ -89,7 +66,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			}
 			//float transformedTime = accelerate ? transformEventTime(s.time, duration, maxVel) : s.time;
 			//float transformedTime = s.time;
-			float transformedTime = transformEventTime(s.time, _duration, _maxVel);
+			float transformedTime = _accel.transform(s.time, _duration, _maxVel);
 			LOGV("Step transformed time: %f\n", transformedTime);
 			Event e = s.getEvent(transformedTime);
 			e.offset(_baseTime);
