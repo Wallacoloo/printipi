@@ -314,7 +314,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		Event evt = *iter;
 		auto mapped = schedAdjuster.adjust(evt.time());
 		auto now = timespecNow();
-		LOGV("Scheduler executing event. original->mapped time, now: %ld.%08lu -> %ld.%08lu, %ld.%08lu\n", evt.time().tv_sec, evt.time().tv_nsec, mapped.tv_sec, mapped.tv_nsec, now.tv_sec, now.tv_nsec);
+		LOGV("Scheduler executing event. original->mapped time, now, buffer: %ld.%08lu -> %ld.%08lu, %ld.%08lu. sz: %zu\n", evt.time().tv_sec, evt.time().tv_nsec, mapped.tv_sec, mapped.tv_nsec, now.tv_sec, now.tv_nsec, eventQueue.size());
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.

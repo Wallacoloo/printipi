@@ -355,17 +355,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 			return gparse::Command::Null;
 		}
 		this->homeEndstops();
-		/*float homeX, homeY, homeZ, homeE;
-		if (cmd.hasAnyXYZ()) {
-			homeX = cmd.hasX() ? 0 : destXPrimitive(); 
-			homeY = cmd.hasY() ? 0 : destYPrimitive();
-			homeZ = cmd.hasZ() ? 0 : destZPrimitive();
-		} else { //default behavior is to home ALL axis
-			homeX = homeY = homeZ = 0;
-		}
-		homeE = destEPrimitive();
-		this->queueMovement(homeX, homeY, homeZ, homeE);*/
-		bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
+		/*bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
 		bool homeY = cmd.hasY();
 		bool homeZ = cmd.hasZ();
 		if (!homeX && !homeY && !homeZ) { //if no axis are passed, then home ALL axis.
@@ -375,7 +365,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		float newY = homeY ? 0 : destYPrimitive();
 		float newZ = homeZ ? 0 : destZPrimitive();
 		float curE = destEPrimitive();
-		//this->queueMovement(newX, newY, newZ, curE);
+		//this->queueMovement(newX, newY, newZ, curE);*/
 		return gparse::Command::OK;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
