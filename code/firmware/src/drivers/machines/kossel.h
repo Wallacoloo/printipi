@@ -43,7 +43,6 @@
 #define STEPS_M_EXT 10000
 
 #define MAX_ACCEL1000 600000
-#define MAX_ACCEL 600
 #define MAX_MOVE_RATE 160
 #define HOME_RATE 10
 #define MAX_EXT_RATE 20
@@ -123,13 +122,9 @@ class Kossel : public Driver {
         	TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 300, 1000>, LowPassFilter<3000> >,
         	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
-        //IODriverTypes ioDrivers;
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         inline float defaultMoveRate() const { //in mm/sec
         	return MAX_MOVE_RATE;
-        }
-        inline float maxAccel() const { //in mm/sec
-        	return MAX_ACCEL;
         }
         inline float clampMoveRate(float inp) const {
         	return std::min(inp, defaultMoveRate());//ensure we never move too fast.
