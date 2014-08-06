@@ -56,6 +56,11 @@ template <typename Drv> class State {
 			return std::tuple_size<typename Drv::IODriverTypes>::value;
 		}
 	};
+	//The MotionInterface needs certain information about the physical machine, so we provide that without exposing all of Drv:
+	struct MotionInterface {
+		typedef typename Drv::CoordMapT CoordMapT;
+		typedef typename Drv::AxisStepperTypes AxisStepperTypes;
+	};
 	typedef Scheduler<SchedInterface> SchedType;
 	//std::atomic<bool> _isDeadOrDying; //for thread destruction upon death.
 	PositionMode _positionMode; // = POS_ABSOLUTE;
@@ -68,7 +73,7 @@ template <typename Drv> class State {
 	//std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	gparse::Com &com;
 	SchedType scheduler;
-	MotionPlanner<Drv, typename Drv::AccelerationProfileT> motionPlanner;
+	MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
 	Drv &driver;
 	typename Drv::IODriverTypes ioDrivers;
 	bool _isExecutingGCode; //cannot schedule two movements simultaneously, so this serves as a lock
@@ -501,6 +506,10 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	curY = destYPrimitive();
 	curZ = destZPrimitive();
 	curE = destEPrimitive();
+	_destXPrimitive = x;
+	_destYPrimitive = y;
+	_destZPrimitive = z;
+	_destEPrimitive = e;
 	//now determine the velocity (must ensure xyz velocity doesn't cause too much E velocity):
 	float velXyz = destMoveRatePrimitive();
 	float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);

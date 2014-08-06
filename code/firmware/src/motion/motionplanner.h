@@ -10,12 +10,14 @@ enum MotionType {
 	MotionHome
 };
 
-template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanner {
+template <typename Interface, typename AccelProfile=NoAcceleration> class MotionPlanner {
 	private:
+		typedef typename Interface::CoordMapT CoordMapT;
+		typedef typename Interface::AxisStepperTypes AxisStepperTypes;
 		AccelProfile _accel;
-		std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos;
-		typename Drv::AxisStepperTypes _iters;
-		typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes _homeIters;
+		std::array<int, CoordMapT::numAxis()> _destMechanicalPos;
+		AxisStepperTypes _iters;
+		typename drv::AxisStepper::GetHomeStepperTypes<AxisStepperTypes>::HomeStepperTypes _homeIters;
 		timespec _baseTime;
 		float _duration;
 		float _maxVel;
@@ -59,7 +61,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			if (s.time > _duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
 				//break; 
 				if (isHoming) {
-					_destMechanicalPos = Drv::CoordMapT::getHomePosition(_destMechanicalPos);
+					_destMechanicalPos = CoordMapT::getHomePosition(_destMechanicalPos);
 				}
 				_motionType = MotionNone; //motion is over.
 				return Event();
@@ -82,7 +84,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 		void moveTo(const timespec &baseTime, float x, float y, float z, float e, float maxVelXyz) {
 			this->_baseTime = baseTime;
 			float curX, curY, curZ, curE;
-			std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
+			std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 			//_destXPrimitive = x;
 			//_destYPrimitive = y;
 			//_destZPrimitive = z;
@@ -105,7 +107,6 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			LOGD("MotionPlanner::moveTo (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
 			LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 			LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
-			//typename Drv::AxisStepperTypes iters;
 			drv::AxisStepper::initAxisSteppers(_iters, _destMechanicalPos, vx, vy, vz, velE);
 			this->_maxVel = maxVelXyz;
 			this->_duration = minDuration;
