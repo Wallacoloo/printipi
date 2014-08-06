@@ -58,16 +58,16 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 + 2*M0*s - 2*M0*z0 + s*s - 2*s*z0 + z0*z0);
 					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0) - v2*s*(2*M0 + s - 2*z0);
 					_almostRootParam = -v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0);
-					_almostRootParamV2S = 2*M0 - 2*z0;
+					_almostRootParamV2S = 2*M0 - 2*z0; // (...+s)*-v2*s
 				} else if (AxisIdx == 1) { 
 					_almostTerm1 = r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz*s;
 					//rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-					_almostRootParam = -v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0));
+					_almostRootParam = -v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
 					_almostRootParamV2S = 2*M0 - 2*z0;
 				} else if (AxisIdx == 2) {
 					_almostTerm1 = -r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz*s;
 					//rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-					_almostRootParam = -v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0));
+					_almostRootParam = -v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
 					_almostRootParamV2S = 2*M0 - 2*z0;
 				}
 			}
