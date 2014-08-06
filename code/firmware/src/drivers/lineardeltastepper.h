@@ -96,9 +96,12 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			if (rootParam < 0) {
 				return NAN;
 			}
-			float root = std::sqrt(rootParam);
-			float t1 = (term1 - root)/v2;
-			float t2 = (term1 + root)/v2;
+			//float root = std::sqrt(rootParam);
+			//float t1 = (term1 - root)/v2;
+			//float t2 = (term1 + root)/v2;
+			float root = std::sqrt(rootParam/v2/v2);
+			float t1 = term1/v2 - root;
+			float t2 = term1/v2 + root;
 			//LOGV("LinearDeltaStepper<%zu>::testDir(%f) times %f, %f\n", AxisIdx, s, t1, t2);
 			if (root > term1) { //if this is true, then t1 MUST be negative.
 				//return t2 if t2 > 0 else None
