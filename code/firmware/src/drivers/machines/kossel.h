@@ -127,16 +127,23 @@ class Kossel : public Driver {
         inline float defaultMoveRate() const { //in mm/sec
         	return MAX_MOVE_RATE;
         }
+        //currently have to be satisfied with mins/maxes - can't achieve more without muddying the interface, and I see little reason for having more.
+        inline float maxRetractRate() const { //in mm/sec
+        	return MAX_EXT_RATE;
+        }
+        inline float maxExtrudeRate() const { //in mm/sec
+        	return MAX_EXT_RATE;
+        }
         inline float clampMoveRate(float inp) const {
         	return std::min(inp, defaultMoveRate());//ensure we never move too fast.
         }
         inline float clampHomeRate(float /*inp*/) const {
         	return HOME_RATE;
         }
-        inline float clampExtrusionRate(float rate) const {
+        /*inline float clampExtrusionRate(float rate) const {
         	//need to cover both the positive (extruding) and negative (retracting) possibilities.
         	return std::max((float)-MAX_EXT_RATE, std::min(rate, (float)MAX_EXT_RATE));
-        }
+        }*/
 };
 
 }
