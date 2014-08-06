@@ -356,7 +356,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		float newY = homeY ? 0 : destYPrimitive();
 		float newZ = homeZ ? 0 : destZPrimitive();
 		float curE = destEPrimitive();
-		this->queueMovement(newX, newY, newZ, curE);
+		//this->queueMovement(newX, newY, newZ, curE);
 		resp = gparse::Command::OK;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
