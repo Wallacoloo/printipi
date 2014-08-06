@@ -40,7 +40,7 @@
 #define L1000 221000
 #define H1000 467100
 #define STEPS_M 6265*4
-#define STEPS_M_EXT 10000*4
+#define STEPS_M_EXT 10000*8
 
 #define MAX_ACCEL1000 600000
 //Can reach 160mm/sec at full-stepping (haven't tested the boundaries)
