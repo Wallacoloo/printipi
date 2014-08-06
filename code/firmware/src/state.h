@@ -496,7 +496,20 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 }*/
 		
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
-	motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, destMoveRatePrimitive());
+	float curX, curY, curZ, curE; 
+	curX = destXPrimitive(); //could add motionPlanner::realXyze() for slightly increased accuracy, but that adds more interdependencies.
+	curY = destYPrimitive();
+	curZ = destZPrimitive();
+	curE = destEPrimitive();
+	//now determine the velocity (must ensure xyz velocity doesn't cause too much E velocity):
+	float velXyz = destMoveRatePrimitive();
+	float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
+	float distXyz = sqrt(distSq);
+	float durationXyz = distXyz / velXyz;
+	float velE = (e-curE)/durationXyz;
+	float newVelE = this->driver.clampExtrusionRate(velE);
+	velXyz *= newVelE / velE;
+	motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, velXyz);
 	/*float curX, curY, curZ, curE;
 	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 	_destXPrimitive = x;
