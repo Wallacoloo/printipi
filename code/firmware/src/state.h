@@ -68,7 +68,7 @@ template <typename Drv> class State {
 	//std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	gparse::Com &com;
 	SchedType scheduler;
-	MotionPlanner<Drv, ExponentialAcceleration> motionPlanner;
+	MotionPlanner<Drv, typename Drv::AccelerationProfileT> motionPlanner;
 	Drv &driver;
 	typename Drv::IODriverTypes ioDrivers;
 	bool _isExecutingGCode; //cannot schedule two movements simultaneously, so this serves as a lock
