@@ -47,7 +47,7 @@
 //75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
 #define MAX_MOVE_RATE 60
 #define HOME_RATE 10
-#define MAX_EXT_RATE 20
+#define MAX_EXT_RATE 12
 
 #define THERM_RA 665
 //#define THERM_CAP_PICO 100000
