@@ -3,6 +3,7 @@
 namespace gparse {
 
 const Command Command::OK("ok");
+const Command Command::Null("");
 
 Command::Command(std::string const& cmd) {
 	//initialize the command from a line of GCode
@@ -38,6 +39,10 @@ void Command::addPieceOrOpcode(std::string const& piece) {
 	} else {
 		this->opcode = piece;
 	}
+}
+
+bool Command::empty() const {
+	return getOpcode().empty();
 }
 
 std::string Command::getOpcode() const {
