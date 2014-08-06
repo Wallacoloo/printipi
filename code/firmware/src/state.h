@@ -503,11 +503,11 @@ template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::sc
 }*/
 		
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
-	float curX, curY, curZ, curE; 
+	/*float curX, curY, curZ, curE; 
 	curX = destXPrimitive(); //could add motionPlanner::realXyze() for slightly increased accuracy, but that adds more interdependencies.
 	curY = destYPrimitive();
 	curZ = destZPrimitive();
-	curE = destEPrimitive();
+	curE = destEPrimitive();*/
 	_destXPrimitive = x;
 	_destYPrimitive = y;
 	_destZPrimitive = z;

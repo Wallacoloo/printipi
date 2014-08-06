@@ -30,6 +30,9 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 		float x0, y0, z0;
 		float vx, vy, vz;
 		float v2; //squared velocity.
+		float _almostTerm1; //used for caching & reducing computational complexity inside nextStep()
+		float _almostRootParam;
+		float _almostRootParamV2S;
 		static constexpr float r() { return R1000 / 1000.; }
 		static constexpr float L() { return L1000 / 1000.; }
 		static constexpr float STEPS_MM() { return STEPS_M / 1000.; }
@@ -48,25 +51,44 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 				float e_;
 				//CoordMap::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
 				std::tie(this->x0, this->y0, this->z0, e_) = CoordMap::xyzeFromMechanical(curPos);
+				//precompute as much as possible:
+				if (AxisIdx == 0) {
+					_almostTerm1 = r()*vy - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz*s;
+					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
+					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 + 2*M0*s - 2*M0*z0 + s*s - 2*s*z0 + z0*z0);
+					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0) - v2*s*(2*M0 + s - 2*z0);
+					_almostRootParam = -v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0);
+					_almostRootParamV2S = 2*M0 - 2*z0;
+				} else if (AxisIdx == 1) { 
+					_almostTerm1 = r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz*s;
+					//rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
+					_almostRootParam = -v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0));
+					_almostRootParamV2S = 2*M0 - 2*z0;
+				} else if (AxisIdx == 2) {
+					_almostTerm1 = -r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 - z0); // + vz*s;
+					//rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
+					_almostRootParam = -v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0));
+					_almostRootParamV2S = 2*M0 - 2*z0;
+				}
 			}
 		void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
 			//TODO: compiler probably can't optimize this well since it probably won't be able to allocate more space on the object to hold semi-constants.
 			//Therefore, we should cache values calculatable at init-time, like all of the second-half on rootParam.
-			if (AxisIdx == 0) {
+			term1 = _almostTerm1 + vz*s;
+			rootParam = term1*term1 + _almostRootParam - v2*s*(_almostRootParamV2S + s);
+			/*if (AxisIdx == 0) {
 				term1 = r()*vy - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
 			} else if (AxisIdx == 1) { 
 				term1 = r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
 			} else if (AxisIdx == 2) {
-				//term1 = -r*(Sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(C + s - z0)
-				//rootparam = term1*term1 - v2*(-L*L + r*r + x0*x0 + y0*y0 + r*(Sqrt(3)*x0 + y0) + (C + s - z0)*(C + s - z0))
-			
 				term1 = -r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 + s - z0);
 				rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-				//t1 = (term1 - root)/(v2)
-				//t2 = (term1 + root)/(v2)
-			}
+			}*/
+			/*float root = std::sqrt(rootParam);
+			float t1 = (term1 - root)/v2;
+			float t2 = (term1 + root)/v2;*/
 		}
 		float testDir(float s) {
 			float term1, rootParam;
@@ -78,7 +100,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			float t1 = (term1 - root)/v2;
 			float t2 = (term1 + root)/v2;
 			//LOGV("LinearDeltaStepper<%zu>::testDir(%f) times %f, %f\n", AxisIdx, s, t1, t2);
-			if (root > term1) { //t1 MUST be negative.
+			if (root > term1) { //if this is true, then t1 MUST be negative.
 				//return t2 if t2 > 0 else None
 				//return t2 > 0 ? t2 : NAN;
 				return t2 > time ? t2 : NAN;
