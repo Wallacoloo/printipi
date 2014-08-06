@@ -58,7 +58,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			}
 			return e;
 		}
-		void moveTo(const timespec &baseTime, float x, float y, float z, float e, float maxVelXyz) {
+		void moveTo(const timespec &baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
 			this->_baseTime = baseTime;
 			float curX, curY, curZ, curE;
 			std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
@@ -67,6 +67,13 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			float dist = sqrt(distSq);
 			float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
 			float velE = (e-curE)/minDuration;
+			//float newVelE = this->driver.clampExtrusionRate(velE);
+			float newVelE = std::max(minVelE, std::min(maxVelE, velE));
+			if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
+				velE = newVelE;
+				minDuration = (e-curE)/newVelE; //L/(L/t) = t
+				maxVelXyz = dist/minDuration;
+			}
 			float vx = (x-curX)/minDuration;
 			float vy = (y-curY)/minDuration;
 			float vz = (z-curZ)/minDuration;

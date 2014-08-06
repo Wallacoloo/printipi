@@ -71,6 +71,7 @@
  *  Fix motion planner's baseTime.
  *    When it's a PWM event that's at the tail of the queue, the time is based on that instead of the last actual movement event.
  *    A better approach would be to save the last time returned from MotionPlanner, and ask the scheduler if that would occur in the future (good) or not (bad - offset the time).
+ *  Optimize steppers
 */
 
 #include <string>

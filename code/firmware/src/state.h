@@ -514,15 +514,17 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 	_destEPrimitive = e;
 	//now determine the velocity (must ensure xyz velocity doesn't cause too much E velocity):
 	float velXyz = destMoveRatePrimitive();
-	if (curE != e) { //This if-statement avoids a division-by-zero caused by when velE == 0
+	/*if (curE != e) { //This if-statement avoids a division-by-zero caused by when velE == 0
 		float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
 		float distXyz = sqrt(distSq);
 		float durationXyz = distXyz / velXyz;
 		float velE = (e-curE)/durationXyz;
 		float newVelE = this->driver.clampExtrusionRate(velE);
 		velXyz *= newVelE / velE;
-	}
-	motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, velXyz);
+	}*/
+	float minExtRate = -this->driver.maxRetractRate();
+	float maxExtRate = this->driver.maxExtrudeRate();
+	motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, velXyz, minExtRate, maxExtRate);
 	/*float curX, curY, curZ, curE;
 	std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 	_destXPrimitive = x;
