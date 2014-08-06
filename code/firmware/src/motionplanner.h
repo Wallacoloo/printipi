@@ -76,7 +76,7 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			bool isHoming = _motionType == MotionHome;
 			drv::AxisStepper& s = isHoming ? drv::AxisStepper::getNextTime(_homeIters) : drv::AxisStepper::getNextTime(_iters);
 			//s = drv::AxisStepper::getNextTime(_iters);
-			LOGV("Next step: %i at %g of %g\n", s.index(), s.time, _duration);
+			LOGV("MotionPlanner::nextStep() is: %i at %g of %g\n", s.index(), s.time, _duration);
 			//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
 			if (s.time > _duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
 				//break; 
@@ -114,12 +114,12 @@ template <typename Drv, typename AccelProfile=NoAcceleration> class MotionPlanne
 			float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
 			float velE = (e-curE)/minDuration;
 			//float newVelE = this->driver.clampExtrusionRate(velE);
-			float newVelE = velE;
+			/*float newVelE = velE;
 			if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
 				velE = newVelE;
 				minDuration = (e-curE)/newVelE; //L/(L/t) = t
 				maxVelXyz = dist/minDuration;
-			}
+			}*/
 			float vx = (x-curX)/minDuration;
 			float vy = (y-curY)/minDuration;
 			float vz = (z-curZ)/minDuration;
