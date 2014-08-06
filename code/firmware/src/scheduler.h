@@ -244,8 +244,10 @@ template <typename Interface> struct timespec Scheduler<Interface>::lastSchedTim
 }
 
 template <typename Interface> void Scheduler<Interface>::setBufferSize(unsigned size) {
+	if (size != this->bufferSize) {
+		LOG("Scheduler buffer size set: %u\n", size);
+	}
 	this->bufferSize = size;
-	LOG("Scheduler buffer size set: %u\n", size);
 }
 template <typename Interface> void Scheduler<Interface>::setBufferSizeToDefault() {
 	setBufferSize(SCHED_CAPACITY);
