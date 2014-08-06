@@ -32,7 +32,8 @@
 #include "gparse/com.h"
 #include "event.h"
 #include "scheduler.h"
-#include "motionplanner.h"
+#include "motion/motionplanner.h"
+#include "motion/exponentialacceleration.h"
 #include "drivers/driver.h"
 #include "common/mathutil.h"
 #include "drivers/axisstepper.h"
@@ -67,7 +68,7 @@ template <typename Drv> class State {
 	//std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
 	gparse::Com &com;
 	SchedType scheduler;
-	MotionPlanner<Drv> motionPlanner;
+	MotionPlanner<Drv, ExponentialAcceleration> motionPlanner;
 	Drv &driver;
 	typename Drv::IODriverTypes ioDrivers;
 	bool _isExecutingGCode; //cannot schedule two movements simultaneously, so this serves as a lock
@@ -528,22 +529,8 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
-	//auto b = this->scheduler.getBufferSize();
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
 	motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
-	/*Event evt;
-	while (!(evt = motionPlanner.nextStep()).isNull()) {
-		this->scheduler.queue(evt);
-	}
-	this->scheduler.setBufferSize(b);*/
-	//typename Drv::AxisStepperTypes iters;
-	/*typename drv::AxisStepper::GetHomeStepperTypes<typename Drv::AxisStepperTypes>::HomeStepperTypes iters;
-	drv::AxisStepper::initAxisHomeSteppers(iters, this->driver.clampHomeRate(destMoveRatePrimitive()));
-	auto b = this->scheduler.getBufferSize();
-	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1); //todo: what happens when another PWM channel is enabled during scheduling?
-	this->scheduleAxisSteppers(iters, NAN, false);
-	this->scheduler.setBufferSize(b);
-	_destMechanicalPos = Drv::CoordMapT::getHomePosition(_destMechanicalPos);*/
 }
 
 /* State utility class for setting the fan rate (State::setFanRate).
@@ -562,7 +549,6 @@ template <typename SchedT> struct State_setFanRate {
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
 	callOnAll(ioDrivers, State_setFanRate<SchedType>(scheduler, rate));
-	//this->scheduler.schedPwm(driver.getFanIODriverIdx(), PwmInfo(rate, driver.defaultFanPwmPeriod()));
 }
 
 #endif
