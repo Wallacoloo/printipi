@@ -11,6 +11,7 @@
  */
 
 #include "common/timeutil.h" //for timespec*
+#include "common/typesettings.h" //for EventClockT
 
 template <int P1000000, int I1000000=0, int D1000000=0> class PID {
 	static constexpr float P = P1000000 / 1000000.;
@@ -18,9 +19,10 @@ template <int P1000000, int I1000000=0, int D1000000=0> class PID {
 	static constexpr float D = D1000000 / 1000000.;
 	float errorI;
 	float lastError;
-	struct timespec lastTime;
+	//struct timespec lastTime;
+	EventClockT::time_point lastTime;
 	public:
-		PID() : errorI(0), lastError(0), lastTime{0, 0} {}
+		PID() : errorI(0), lastError(0), lastTime() {}
 		/* notify PID controller of a newly-read error value.
 		Returns a recalculated output */
 		float feed(float error) {
@@ -31,11 +33,13 @@ template <int P1000000, int I1000000=0, int D1000000=0> class PID {
 		}
 	private:
 		float refreshTime() {
-			struct timespec newTime = timespecNow();
-			if (lastTime.tv_sec == 0) {
+			//struct timespec newTime = timespecNow();
+			EventClockT::time_point newTime = EventClockT::now();
+			if (lastTime == EventClockT::time_point()) { //no previous time.
 				lastTime = newTime;
 			}
-			float r = timespecToFloat(timespecSub(newTime, lastTime));
+			//float r = timespecToFloat(timespecSub(newTime, lastTime));
+			float r = std::chrono::duration_cast<std::chrono::duration<float> >(newTime-lastTime).count();
 			lastTime = newTime;
 			return r;
 		}

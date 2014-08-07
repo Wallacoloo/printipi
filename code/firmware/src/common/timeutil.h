@@ -11,7 +11,7 @@
 #include <time.h>
 #include <chrono>
 
-timespec timespecNow();
+/*timespec timespecNow();
 timespec timespecAdd(const struct timespec &a, const struct timespec &b);
 timespec timespecSub(const struct timespec &a, const struct timespec &b);
 const timespec& timespecMin(const struct timespec &a, const struct timespec &b);
@@ -46,6 +46,6 @@ inline std::chrono::nanoseconds timespecToDuration(const timespec &ts) {
 template <typename T> T timespecToTimepoint(const timespec &ts) {
 	auto asDuration = timespecToDuration(ts);
 	return T(asDuration);
-}
+}*/
 
 #endif
