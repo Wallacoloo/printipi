@@ -40,7 +40,8 @@ class Event {
 		static const AxisIdType NULL_STEPPER_ID = 255;
 		AxisIdType stepperId() const;
 		StepDirection direction() const;
-		timespec time() const;
+		//timespec time() const;
+		EventClockT::time_point time() const;
 		//bool isTime() const;
 		bool isNull() const;
 		Event() : _time(), _stepperNum(NULL_STEPPER_ID) {}
