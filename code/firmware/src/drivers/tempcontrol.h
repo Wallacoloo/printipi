@@ -27,8 +27,9 @@ enum TempControlType {
 
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
 	static const std::chrono::microseconds _intervalThresh;
+	static const std::chrono::microseconds _readInterval;
 	//static const struct timespec _intervalThresh; //drop thermistor read if the IOs aren't serviced regularly enough.
-	static const struct timespec _readInterval; //how often to read the thermistor
+	//static const struct timespec _readInterval; //how often to read the thermistor
 	IntervalTimer _intervalTimer;
 	Heater _heater;
 	Thermistor _therm;
@@ -81,7 +82,7 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 			} else {
 				const struct timespec& now = timepointToTimespec(_intervalTimer.clock());
 				if (timespecLt(_nextReadTime, now)) { //time for another read
-					_nextReadTime = timespecAdd(now, _readInterval);
+					_nextReadTime = timespecAdd(now, durationToTimespec(_readInterval));
 					_therm.startRead();
 					_isReading = true;
 					return true; //more cpu time needed.
@@ -108,7 +109,8 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 	//template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 40000}; //use 40000 for debug, 2000000 for valgrind.
 #endif
 
-template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{3, 0};
+//template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{3, 0};
+template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval(3000000);
 
 }
 #endif
