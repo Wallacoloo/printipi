@@ -109,9 +109,11 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		}
 		//timespec adjust(const timespec &t) const {
 		EventClockT::time_point adjust(EventClockT::time_point tp) const {
-			auto t = timepointToTimespec(tp);
+			auto t = durationToTimespec(tp - lastSchedTime);
 			//SHOULD work precisely with x0, y0 = (0, 0)
-			float s_s0 = timespecToFloat(timespecSub(t, timepointToTimespec(lastSchedTime))); //s-s0
+			//float s_s0 = timespecToFloat(timespecSub(t, timepointToTimespec(lastSchedTime))); //s-s0
+			//float s_s0 = timespecToFloat(t);
+			float s_s0 = std::chrono::duration_cast<std::chrono::duration<float> >(tp - lastSchedTime).count();
 			float offset;
 			if (s_s0 < (1.-lastSlope)/2./a) { //acclerating:
 				offset = a*s_s0*s_s0 + lastSlope*s_s0;
