@@ -222,7 +222,7 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 	} else { //have to schedule:
 		LOGV("Scheduler::schedPwm: queueing\n");
 		pwmInfo[idx] = p;
-		Event evt(timepointToTimespec(lastSchedTime()), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
+		Event evt(lastSchedTime(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
 		setBufferSize(getBufferSize()+1); //Make some room for this event.
 		this->queue(evt);
 	}
@@ -337,11 +337,11 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//dir = (nsLow ^ for)
 			if (evt.direction() == StepForward) {
 				//next event will be StepBackward, or refresh this event if there is no off-duty.
-				nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
+				nextPwm = Event(timespecToTimepoint<EventClockT::time_point>(evt.time()), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
 				nextPwm.offsetNano(pwm.nsHigh);
 			} else {
 				//next event will be StepForward, or refresh this event if there is no on-duty.
-				nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
+				nextPwm = Event(timespecToTimepoint<EventClockT::time_point>(evt.time()), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
 				nextPwm.offsetNano(pwm.nsLow);
 			}
 			this->orderedInsert(nextPwm, INSERT_FRONT);
