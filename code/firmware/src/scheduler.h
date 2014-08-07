@@ -109,7 +109,6 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		}
 		//timespec adjust(const timespec &t) const {
 		EventClockT::time_point adjust(EventClockT::time_point tp) const {
-			auto t = durationToTimespec(tp - lastSchedTime);
 			//SHOULD work precisely with x0, y0 = (0, 0)
 			//float s_s0 = timespecToFloat(timespecSub(t, timepointToTimespec(lastSchedTime))); //s-s0
 			//float s_s0 = timespecToFloat(t);
@@ -120,11 +119,12 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			} else { //stabilized:
 				offset = (1.-lastSlope)*(1.-lastSlope)/-4/a + s_s0;
 			}
-			timespec ret = timespecAdd(timepointToTimespec(lastRealTime.get()), floatToTimespec(offset));
-			if (timespecLt(ret, t)) {
+			//timespec ret = timespecAdd(timepointToTimespec(lastRealTime.get()), floatToTimespec(offset));
+			EventClockT::time_point ret(lastRealTime.get() + std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(offset)));
+			if (ret < tp) {
 				LOGV("SchedAdjuster::adjust adjusted into the past!\n");
 			}
-			return timespecToTimepoint<EventClockT::time_point>(ret);
+			return ret;
 		}
 		//call this when the event scheduled at time t is actually run.
 		//void update(const timespec &t) {
