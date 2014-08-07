@@ -14,9 +14,9 @@ template <int Accel1000> class ConstantAcceleration : public AccelerationProfile
 		float transform(float time, float moveDuration, float Vmax) {
 			if (time < Vmax/2/a()) { //accelerating
 				return std::sqrt(2*Vmax/a()*time);
-			} else if (time < moveDuration - Vmax/2/a()) { //constant velocity
+			} else if (time < moveDuration - Vmax/2/a() || std::isnan(moveDuration)) { //constant velocity
 				return time + Vmax/2/a();
-			} else { //decelerating
+			} else { //decelerating. Should never be reached if moveDuration is NAN (ie in homing routine)
 				return moveDuration + Vmax/a() - std::sqrt(2*Vmax/a()*(moveDuration-time));
 			}
 		}
