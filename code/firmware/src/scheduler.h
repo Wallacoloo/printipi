@@ -136,7 +136,8 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			}
 		}
 	};
-	static const struct timespec MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
+	//static const struct timespec MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
+	static const EventClockT::duration MAX_SLEEP;
 	typedef std::multiset<Event> EventQueueType;
 	Interface interface;
 	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
@@ -170,8 +171,8 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		bool isEventTime(const Event &evt) const;
 };
 
-template <typename Interface> const struct timespec Scheduler<Interface>::MAX_SLEEP{0, 40000000};
-
+//template <typename Interface> const struct timespec Scheduler<Interface>::MAX_SLEEP{0, 40000000};
+template <typename Interface> const EventClockT::duration Scheduler<Interface>::MAX_SLEEP(std::chrono::duration_cast<EventClockT::duration>(std::chrono::milliseconds(40)));
 
 
 template <typename Interface> Scheduler<Interface>::Scheduler(Interface interface) 
@@ -352,7 +353,8 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event *evt) const {
 	//need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
-	timespec sleepUntil = timespecAdd(timespecNow(), MAX_SLEEP);
+	auto MS = durationToTimespec(MAX_SLEEP);
+	timespec sleepUntil = timespecAdd(timespecNow(), MS);
 	if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
 		struct timespec evtTime = schedAdjuster.adjust(evt->time());
 		sleepUntil = timespecMin(sleepUntil, evtTime);
