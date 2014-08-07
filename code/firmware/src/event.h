@@ -23,7 +23,7 @@
 //    Could be done unbuffered?
 //      yes - M116 is unbuffered.
 
-#include <time.h> //for timespec
+//#include <time.h> //for timespec
 #include "common/typesettings.h" //for AxisIdType
 
 /*enum EventType {

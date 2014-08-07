@@ -1,5 +1,5 @@
 #include "event.h"
-#include "common/timeutil.h" //for timespecLt
+//#include "common/timeutil.h" //for timespecLt
 
 
 AxisIdType Event::stepperId() const {
@@ -24,10 +24,12 @@ bool Event::isNull() const {
 Event::Event(EventClockT::time_point t, AxisIdType stepperNum, StepDirection dir) : _time(t), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
 
 Event Event::StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir) {
-	struct timespec t;
+	/*struct timespec t;
 	t.tv_sec = relTime;
 	t.tv_nsec = (relTime-t.tv_sec)*1000000000;
-	return Event(timespecToTimepoint<EventClockT::time_point>(t), stepperNum, dir);
+	return Event(timespecToTimepoint<EventClockT::time_point>(t), stepperNum, dir);*/
+	auto t = std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(relTime));
+	return Event(EventClockT::time_point(t), stepperNum, dir);
 }
 
 void Event::offset(const EventClockT::duration &offset) {
