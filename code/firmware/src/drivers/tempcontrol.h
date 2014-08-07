@@ -14,6 +14,7 @@
 #include "common/timeutil.h"
 #include "filters/nofilter.h"
 #include "intervaltimer.h"
+#include "common/typesettings.h"
 
 namespace drv {
 
@@ -98,7 +99,11 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 		}
 };
 
-template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 40000}; //use 40000 for debug, 2000000 for valgrind.
+#if RUNNING_IN_VM
+	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 2000000}; //high latency for valgrind
+#else
+	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 40000}; //use 40000 for debug, 2000000 for valgrind.
+#endif
 
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{3, 0};
 

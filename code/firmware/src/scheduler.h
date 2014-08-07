@@ -130,7 +130,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 				const timespec &y1 = lastRealTime.clock();
 				//the +X.XXX is to prevent a division-by-zero, and to minimize the effect that small sched errors have on the timeline:
 				auto avgSlope = (timespecToFloat(timespecSub(y1, y0))+0.030) / (0.030+timespecToFloat(timespecSub(t, lastSchedTime)));
-				lastSlope = std::min(20., 2.*avgSlope- lastSlope); //set a minimum for the speed that can be run at.
+				lastSlope = std::min(RUNNING_IN_VM ? 1. : 20., 2.*avgSlope- lastSlope); //set a minimum for the speed that can be run at.
 				lastSchedTime = t;
 			}
 		}
