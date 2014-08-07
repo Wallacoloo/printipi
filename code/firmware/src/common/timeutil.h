@@ -33,7 +33,7 @@ float timespecToFloat(const struct timespec &a);
 timespec floatToTimespec(float f);
 template <typename T> timespec durationToTimespec(const T& abs) {
 	auto sec = std::chrono::duration_cast<std::chrono::seconds>(abs);
-	auto nsec = abs-sec;
+	auto nsec = std::chrono::duration_cast<std::chrono::nanoseconds>(abs)-sec;
 	return timespec{(time_t)sec.count(), (long int)nsec.count()};
 }
 template <typename T> timespec timepointToTimespec(const T& timepoint) {

@@ -47,6 +47,7 @@ class Event {
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		
 		void offset(const struct timespec& offset);
+		void offset(const EventClockT::duration &offset);
 		void offsetNano(unsigned nsec); //must be less than 1 second.
 		bool operator<(const Event &other) const;
 		bool operator>(const Event &other) const;
