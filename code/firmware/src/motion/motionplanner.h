@@ -59,8 +59,9 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			}
 			return e;
 		}
-		void moveTo(const timespec &baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
-			this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
+		void moveTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
+			//this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
+			this->_baseTime = baseTime.time_since_epoch();
 			float curX, curY, curZ, curE;
 			std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 			
@@ -91,9 +92,10 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			//LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 		}
 
-		void homeEndstops(const timespec &baseTime, float maxVelXyz) {
+		void homeEndstops(EventClockT::time_point baseTime, float maxVelXyz) {
 			drv::AxisStepper::initAxisHomeSteppers(_homeIters, maxVelXyz);
-			this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
+			//this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
+			this->_baseTime = baseTime.time_since_epoch();
 			this->_maxVel = maxVelXyz;
 			this->_duration = NAN;
 			this->_motionType = MotionHome;
