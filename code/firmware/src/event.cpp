@@ -8,7 +8,7 @@ AxisIdType Event::stepperId() const {
 StepDirection Event::direction() const {
 	return this->_isForward ? StepForward : StepBackward;
 }
-const struct timespec& Event::time() const {
+timespec Event::time() const {
 	return timepointToTimespec(this->_time);
 }
 
@@ -21,24 +21,19 @@ bool Event::isNull() const {
 	return this->stepperId() == NULL_STEPPER_ID;
 }
 
-Event::Event(const timespec &t, AxisIdType stepperNum, StepDirection dir) : _time(timespecToTimepoint<EventClockT::time_point>(t)), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
+//Event::Event(const timespec &t, AxisIdType stepperNum, StepDirection dir) : _time(timespecToTimepoint<EventClockT::time_point>(t)), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
+Event::Event(EventClockT::time_point t, AxisIdType stepperNum, StepDirection dir) : _time(t), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
 
 Event Event::StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir) {
 	struct timespec t;
 	t.tv_sec = relTime;
 	t.tv_nsec = (relTime-t.tv_sec)*1000000000;
-	return Event(t, stepperNum, dir);
+	return Event(timespecToTimepoint<EventClockT::time_point>(t), stepperNum, dir);
 }
 
-void Event::offset(const struct timespec& offset) {
+/*void Event::offset(const struct timespec& offset) {
 	this->offset(std::chrono::duration_cast<EventClockT::duration>(timespecToDuration(offset)));
-	/*this->_time.tv_sec += offset.tv_sec;
-	this->_time.tv_nsec += offset.tv_nsec;
-	if (this->_time.tv_nsec > 999999999) {
-        this->_time.tv_sec += 1;
-        this->_time.tv_nsec -= 1000000000;
-    }*/
-}
+}*/
 void Event::offset(const EventClockT::duration &offset) {
 	//timespec t = durationToTimespec(offset);
 	//this->offset(t);
