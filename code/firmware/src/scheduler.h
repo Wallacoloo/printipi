@@ -15,7 +15,7 @@
 
 #include <cassert> //for assert
 #include <set>
-//#include <thread> //for this_thread.sleep
+#include <thread> //for this_thread::sleep_until
 //#include <time.h> //for timespec
 //#include <chrono> 
 #include <array>
@@ -355,8 +355,9 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const E
 		sleepUntil = std::min(sleepUntil, evtTime);
 	}
 	//LOGV("Scheduler::sleepUntilEvent: %ld.%08lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
-	timespec tsSleepUntil = timepointToTimespec(sleepUntil);
-	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &tsSleepUntil, NULL); //sleep to event time.
+	std::this_thread::sleep_until(sleepUntil); //sleep to event time.
+	//timespec tsSleepUntil = timepointToTimespec(sleepUntil);
+	//clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &tsSleepUntil, NULL); //sleep to event time.
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
