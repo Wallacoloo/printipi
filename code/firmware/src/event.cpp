@@ -8,8 +8,11 @@ AxisIdType Event::stepperId() const {
 StepDirection Event::direction() const {
 	return this->_isForward ? StepForward : StepBackward;
 }
-timespec Event::time() const {
+/*timespec Event::time() const {
 	return timepointToTimespec(this->_time);
+}*/
+EventClockT::time_point Event::time() const {
+	return this->_time;
 }
 
 /*bool Event::isTime() const {
@@ -49,10 +52,12 @@ void Event::offsetNano(unsigned nsec) {
 }
 
 bool Event::operator<(const Event &other) const {
-	return timespecLt(this->time(), other.time());
+	return this->time() < other.time();
+	//return timespecLt(this->time(), other.time());
 }
 
 bool Event::operator>(const Event &other) const {
-	return timespecLt(other.time(), this->time());
+	return this->time() > other.time();
+	//return timespecLt(other.time(), this->time());
 }
 

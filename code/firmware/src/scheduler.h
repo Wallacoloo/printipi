@@ -106,7 +106,9 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			lastSchedTime = {0, 0};
 			lastSlope = 1;
 		}
-		timespec adjust(const timespec &t) const {
+		//timespec adjust(const timespec &t) const {
+		timespec adjust(EventClockT::time_point tp) const {
+			auto t = timepointToTimespec(tp);
 			//SHOULD work precisely with x0, y0 = (0, 0)
 			float s_s0 = timespecToFloat(timespecSub(t, lastSchedTime)); //s-s0
 			float offset;
@@ -122,7 +124,9 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			return ret;
 		}
 		//call this when the event scheduled at time t is actually run.
-		void update(const timespec &t) {
+		//void update(const timespec &t) {
+		void update(EventClockT::time_point tp) {
+			auto t = timepointToTimespec(tp);
 			//SHOULD work reasonably with x0, y0 = (0, 0)
 			timespec y0 = timepointToTimespec(lastRealTime.get());
 			if (timespecGt(timespecSub(timespecNow(), y0), timespec{0, 30000000})) {
@@ -243,7 +247,7 @@ template <typename Interface> EventClockT::time_point Scheduler<Interface>::last
 		return EventClockT::now();
 		//return timespecNow(); //an alternative is to not use timespecNow, but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
 	} else {
-		return timespecToTimepoint<EventClockT::time_point>(this->eventQueue.rbegin()->time());
+		return this->eventQueue.rbegin()->time();
 	}
 }
 
@@ -317,8 +321,8 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 		Event evt = *iter;
 		auto mapped = schedAdjuster.adjust(evt.time());
-		auto now = timespecNow();
-		LOGV("Scheduler executing event. original->mapped time, now, buffer: %ld.%08lu -> %ld.%08lu, %ld.%08lu. sz: %zu\n", evt.time().tv_sec, evt.time().tv_nsec, mapped.tv_sec, mapped.tv_nsec, now.tv_sec, now.tv_nsec, eventQueue.size());
+		auto now = EventClockT::now(); //timespecNow();
+		LOGV("Scheduler executing event. original->mapped time, now, buffer: %ld -> %ld.%08lu, %ld. sz: %zu\n", evt.time().time_since_epoch().count(), mapped.tv_sec, mapped.tv_nsec, now.time_since_epoch().count(), eventQueue.size());
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.
@@ -337,11 +341,11 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			//dir = (nsLow ^ for)
 			if (evt.direction() == StepForward) {
 				//next event will be StepBackward, or refresh this event if there is no off-duty.
-				nextPwm = Event(timespecToTimepoint<EventClockT::time_point>(evt.time()), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
+				nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
 				nextPwm.offsetNano(pwm.nsHigh);
 			} else {
 				//next event will be StepForward, or refresh this event if there is no on-duty.
-				nextPwm = Event(timespecToTimepoint<EventClockT::time_point>(evt.time()), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
+				nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
 				nextPwm.offsetNano(pwm.nsLow);
 			}
 			this->orderedInsert(nextPwm, INSERT_FRONT);
