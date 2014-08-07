@@ -107,7 +107,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			lastSlope = 1;
 		}
 		//timespec adjust(const timespec &t) const {
-		timespec adjust(EventClockT::time_point tp) const {
+		EventClockT::time_point adjust(EventClockT::time_point tp) const {
 			auto t = timepointToTimespec(tp);
 			//SHOULD work precisely with x0, y0 = (0, 0)
 			float s_s0 = timespecToFloat(timespecSub(t, lastSchedTime)); //s-s0
@@ -121,7 +121,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			if (timespecLt(ret, t)) {
 				LOGV("SchedAdjuster::adjust adjusted into the past!\n");
 			}
-			return ret;
+			return timespecToTimepoint<EventClockT::time_point>(ret);
 		}
 		//call this when the event scheduled at time t is actually run.
 		//void update(const timespec &t) {
@@ -322,7 +322,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		Event evt = *iter;
 		auto mapped = schedAdjuster.adjust(evt.time());
 		auto now = EventClockT::now(); //timespecNow();
-		LOGV("Scheduler executing event. original->mapped time, now, buffer: %ld -> %ld.%08lu, %ld. sz: %zu\n", evt.time().time_since_epoch().count(), mapped.tv_sec, mapped.tv_nsec, now.time_since_epoch().count(), eventQueue.size());
+		LOGV("Scheduler executing event. original->mapped time, now, buffer: %ld -> %ld, %ld. sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.
@@ -357,25 +357,32 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event *evt) const {
 	//need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
-	auto MS = durationToTimespec(MAX_SLEEP);
-	timespec sleepUntil = timespecAdd(timespecNow(), MS);
+	//auto MS = durationToTimespec(MAX_SLEEP);
+	//timespec sleepUntil = timespecAdd(timespecNow(), MS);
+	auto sleepUntil = EventClockT::now() + MAX_SLEEP;
 	if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
-		struct timespec evtTime = schedAdjuster.adjust(evt->time());
-		sleepUntil = timespecMin(sleepUntil, evtTime);
+		//struct timespec evtTime = schedAdjuster.adjust(evt->time());
+		//sleepUntil = timespecMin(sleepUntil, evtTime);
+		auto evtTime = schedAdjuster.adjust(evt->time());
+		sleepUntil = std::min(sleepUntil, evtTime);
 	}
 	//LOGV("Scheduler::sleepUntilEvent: %ld.%08lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
-	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &sleepUntil, NULL); //sleep to event time.
+	timespec tsSleepUntil = timepointToTimespec(sleepUntil);
+	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &tsSleepUntil, NULL); //sleep to event time.
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
-	timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000}); //20000 = 20 uSec
-	return timespecLt(schedAdjuster.adjust(evt.time()), thresh);
+	//timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000}); //20000 = 20 uSec
+	//return timespecLt(schedAdjuster.adjust(evt.time()), thresh);
+	auto thresh = EventClockT::now() + std::chrono::microseconds(20);
+	return schedAdjuster.adjust(evt.time()) < thresh;
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventTime(const Event &evt) const {
 	//return !timespecLt(timespecNow(), evt.time());
 	//return !timespecLt(timespecNow(), schedAdjuster.adjust(evt.time()));
-	return timespecLte(schedAdjuster.adjust(evt.time()), timespecNow());
+	//return timespecLte(schedAdjuster.adjust(evt.time()), timespecNow());
+	return schedAdjuster.adjust(evt.time()) < EventClockT::now();
 }
 
 #endif

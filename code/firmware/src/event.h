@@ -32,7 +32,6 @@
 };*/
 
 class Event {
-	//struct timespec _time;
 	EventClockT::time_point _time;
 	AxisIdType _stepperNum;
 	bool _isForward;
@@ -40,16 +39,13 @@ class Event {
 		static const AxisIdType NULL_STEPPER_ID = 255;
 		AxisIdType stepperId() const;
 		StepDirection direction() const;
-		//timespec time() const;
 		EventClockT::time_point time() const;
 		//bool isTime() const;
 		bool isNull() const;
 		Event() : _time(), _stepperNum(NULL_STEPPER_ID) {}
-		//Event(const timespec &t, AxisIdType stepperNum, StepDirection dir);
 		Event(EventClockT::time_point t, AxisIdType stepperNum, StepDirection dir);
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		
-		//void offset(const struct timespec& offset);
 		void offset(const EventClockT::duration &offset);
 		void offsetNano(unsigned nsec); //must be less than 1 second.
 		bool operator<(const Event &other) const;
