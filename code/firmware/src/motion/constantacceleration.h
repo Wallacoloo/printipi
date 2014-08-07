@@ -1,10 +1,7 @@
 #ifndef MOTION_CONSTANTACCELERATION_H
 #define MOTION_CONSTANTACCELERATION_H
 
-/* Canceled.
-  Implementation is non-trivial; requires solving the roots of a polynomial of degree N+1.
-  Therefore, only constant-acceleration is trivial.
-*/
+
 
 #include "accelerationprofile.h"
 
