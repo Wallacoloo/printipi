@@ -32,9 +32,9 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 	private:
 		float M0; //initial coordinate of THIS axis.
 		int sTotal;
-		float x0, y0, z0;
-		float vx, vy, vz;
-		float v2; //squared velocity.
+		//float x0, y0, z0;
+		//float vx, vy, vz;
+		//float v2; //squared velocity.
 		float inv_v2;
 		float vz_over_v2;
 		float _almostTerm1; //used for caching & reducing computational complexity inside nextStep()
@@ -54,30 +54,30 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 			 //vx(vx), vy(vy), vz(vz),
 			 //v2(vx*vx + vy*vy + vz*vz), 
 			 inv_v2(1/(vx*vx + vy*vy + vz*vz)),
-			 vz_over_v2(vz/v2) {
+			 vz_over_v2(vz*inv_v2) {
 			 	static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
 			 	this->time = 0; //this may NOT be zero-initialized by parent.
-				float e_;
+				float x0, y0, z0, e_;
 				//CoordMap::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
-				std::tie(this->x0, this->y0, this->z0, e_) = CoordMap::xyzeFromMechanical(curPos);
+				std::tie(x0, y0, z0, e_) = CoordMap::xyzeFromMechanical(curPos);
 				//precompute as much as possible:
 				_almostRootParamV2S = 2*M0 - 2*z0;
 				if (AxisIdx == 0) {
-					_almostTerm1 = 1/v2*(r()*vy - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
+					_almostTerm1 = inv_v2*(r()*vy - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
 					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
 					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 + 2*M0*s - 2*M0*z0 + s*s - 2*s*z0 + z0*z0);
 					//rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0) - v2*s*(2*M0 + s - 2*z0);
-					_almostRootParam = -1/v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0);
+					_almostRootParam = -inv_v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0);
 					//_almostRootParamV2S = 2*M0 - 2*z0; // (...+s)*-1/v2*s
 				} else if (AxisIdx == 1) { 
-					_almostTerm1 = 1/v2*(r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
+					_almostTerm1 = inv_v2*(r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
 					//rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-					_almostRootParam = -1/v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
+					_almostRootParam = -inv_v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
 					//_almostRootParamV2S = 2*M0 - 2*z0;
 				} else if (AxisIdx == 2) {
-					_almostTerm1 = 1/v2*(-r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
+					_almostTerm1 = inv_v2*(-r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
 					//rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-					_almostRootParam = -1/v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
+					_almostRootParam = -inv_v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
 					//_almostRootParamV2S = 2*M0 - 2*z0;
 				}
 			}
