@@ -25,6 +25,7 @@ endif
 BUILDROOT=../build
 DEBUGDIR=$(BUILDROOT)/debug
 RELEASEDIR=$(BUILDROOT)/release
+PROFILEDIR=$(BUILDROOT)/prof
 MINSIZEDIR=$(BUILDROOT)/minsize
 NAME=kossel-firmware
 
@@ -39,6 +40,9 @@ debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
 release: LDFLAGS+= $(LTOFLAG)
 release: $(RELEASEDIR)/$(NAME)
+profile: CFLAGS+= -O3 -DDRUNNING_IN_VM $(LTOFLAG) $(ARCHFLAGS)
+profile: LDFLAGS+= $(LTOFLAG)
+profile: $(PROFILEDIR)/$(NAME)
 #defining NDEBUG removes assertions.
 minsize: CFLAGS+= -DNDEBUG -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections $(LTOFLAG) $(ARCHFLAGS)
 minsize: LDFLAGS+= $(LTOFLAG)
@@ -57,6 +61,9 @@ $(DEBUGDIR)/%.o: %.cpp %.d $(DEBUGDIR)/%.dir
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 $(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
+	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
+	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
+$(PROFILEDIR)/%.o: %.cpp $(PROFILEDIR)/%.dir
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
@@ -81,12 +88,14 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 #Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.
 .SECONDARY:
 
-.PHONY: clean cleandebug cleanrelease cleanminsize debug release minsize
+.PHONY: clean cleandebug cleanrelease cleanprofile cleanminsize debug release profile minsize
 cleandebug:
 	rm -rf $(DEBUGDIR)
 cleanrelease:
 	rm -rf $(RELEASEDIR)
+cleanprofile:
+	rm -rf $(PROFILEDIR)
 cleanminsize:
 	rm -rf $(MINSIZEDIR)
-clean: cleandebug cleanrelease cleanminsize
+clean: cleandebug cleanrelease cleanprofile cleanminsize
 	rm -rf $(BUILDROOT)/$(NAME)
