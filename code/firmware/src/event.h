@@ -32,7 +32,8 @@
 };*/
 
 class Event {
-	struct timespec _time;
+	//struct timespec _time;
+	EventClockT::time_point _time;
 	AxisIdType _stepperNum;
 	bool _isForward;
 	public:
@@ -42,7 +43,7 @@ class Event {
 		const struct timespec& time() const;
 		//bool isTime() const;
 		bool isNull() const;
-		Event() : _time{0, 0}, _stepperNum(NULL_STEPPER_ID) {}
+		Event() : _time(), _stepperNum(NULL_STEPPER_ID) {}
 		Event(const timespec &t, AxisIdType stepperNum, StepDirection dir);
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		
