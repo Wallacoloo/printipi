@@ -129,15 +129,17 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		//call this when the event scheduled at time t is actually run.
 		//void update(const timespec &t) {
 		void update(EventClockT::time_point tp) {
-			auto t = timepointToTimespec(tp);
+			//auto t = timepointToTimespec(tp);
 			//SHOULD work reasonably with x0, y0 = (0, 0)
-			timespec y0 = timepointToTimespec(lastRealTime.get());
-			if (timespecGt(timespecSub(timespecNow(), y0), timespec{0, 30000000})) {
+			//timespec y0 = timepointToTimespec(lastRealTime.get());
+			auto y0 = lastRealTime.get();
+			//if (timespecGt(timespecSub(timespecNow(), y0), timespec{0, 30000000})) {
+			if (EventClockT::now()-y0 > std::chrono::nanoseconds(30000000)) {
 			//if (timespecGt(timespecSub(t, lastSchedTime), timespec{0, 50000000}) {
 				//only sample every few ms, to mitigate Events scheduled on top of eachother.
-				const timespec &y1 = timepointToTimespec(lastRealTime.clock());
+				auto y1 = lastRealTime.clock();
 				//the +X.XXX is to prevent a division-by-zero, and to minimize the effect that small sched errors have on the timeline:
-				auto avgSlope = (timespecToFloat(timespecSub(y1, y0))+0.030) / (0.030+timespecToFloat(timespecSub(t, timepointToTimespec(lastSchedTime))));
+				auto avgSlope = (std::chrono::duration_cast<std::chrono::duration<float> >(y1 - y0).count()+0.030) / (0.030+std::chrono::duration_cast<std::chrono::duration<float> >(tp-lastSchedTime).count());
 				lastSlope = std::min(RUNNING_IN_VM ? 1. : 20., 2.*avgSlope- lastSlope); //set a minimum for the speed that can be run at.
 				lastSchedTime = tp;
 			}
@@ -325,7 +327,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		Event evt = *iter;
 		auto mapped = schedAdjuster.adjust(evt.time());
 		auto now = EventClockT::now(); //timespecNow();
-		LOGV("Scheduler executing event. original->mapped time, now, buffer: %ld -> %ld, %ld. sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
+		LOGV("Scheduler executing event. original->mapped time, now, buffer: %lld -> %lld, %lld. sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.
