@@ -9,7 +9,7 @@
  */
 
 #include <cstdint> //for uint8_t
-
+#include "boilerplate/chronoclockposix.h"
 //allow for generation of code that still works in high-latency enviroments, like valgrind
 #ifdef DRUNNING_IN_VM
 	#define RUNNING_IN_VM 1
