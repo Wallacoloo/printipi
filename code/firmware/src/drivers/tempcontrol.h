@@ -38,9 +38,13 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 	float _destTemp;
 	float _lastTemp;
 	bool _isReading;
-	struct timespec _nextReadTime;
+	//struct timespec _nextReadTime;
+	EventClockT::time_point _nextReadTime;
 	public:
-		TempControl() : IODriver(this), _destTemp(-300), _lastTemp(-300), _isReading(false), _nextReadTime(timespecNow()) {
+		TempControl() : IODriver(this), _destTemp(-300), _lastTemp(-300), _isReading(false),
+		 // _nextReadTime(timespecNow())
+		 _nextReadTime(EventClockT::now())
+		  {
 		}
 		//register as the correct device type:
 		bool isHotend() const {
@@ -80,9 +84,12 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 					return true; //need more cpu time.
 				}
 			} else {
-				const struct timespec& now = timepointToTimespec(_intervalTimer.clock());
-				if (timespecLt(_nextReadTime, now)) { //time for another read
-					_nextReadTime = timespecAdd(now, durationToTimespec(_readInterval));
+				//const struct timespec& now = timepointToTimespec(_intervalTimer.clock());
+				auto now = _intervalTimer.clock();
+				//if (timespecLt(_nextReadTime, now)) { //time for another read
+				if (_nextReadTime < now) {
+					//_nextReadTime = timespecAdd(now, durationToTimespec(_readInterval));
+					_nextReadTime += _readInterval;
 					_therm.startRead();
 					_isReading = true;
 					return true; //more cpu time needed.
