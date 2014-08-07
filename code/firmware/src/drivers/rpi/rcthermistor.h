@@ -10,6 +10,7 @@
 #include <time.h> //for timespec
 #include <cmath>
 #include "common/timeutil.h" //for timespecSub, etc
+#include "common/typesettings.h"
 #include "common/mathutil.h" //for CtoK, etc
 #include "common/logging.h"
 
@@ -24,20 +25,21 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 	static constexpr float T0 = mathutil::CtoK(T0_C); //convert to Kelvin
 	static constexpr float R0 = R0_OHMS; //measured resistance of thermistor at T0
 	static constexpr float B = BETA; //describes how thermistor changes resistance over the temperature range.
-	struct timespec _startReadTime, _endReadTime;
+	//struct timespec _startReadTime, _endReadTime;
+	EventClockT::time_point _startReadTime, _endReadTime;
 	public:
 		RCThermistor() {
 			initIO();
 		}
 		void startRead() {
 			bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_INPT);
-			_startReadTime = timespecNow();
+			_startReadTime = EventClockT::now(); //timespecNow();
 		}
 		bool isReady() {
 			if (bcm2835_gpio_lev(PIN)) { //wait for pin to go LOW.
 				return false;
 			} else {
-				_endReadTime = timespecNow();
+				_endReadTime = EventClockT::now(); //timespecNow();
 				//prepare IOs for the next read (ie. drain the capacitor that was charged during reading)
 				bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_OUTP);
 				bcm2835_gpio_set(PIN); //output high to drain the capacitor
@@ -45,9 +47,10 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 			}
 		}
 		float value() const {
-			struct timespec tDelta;
-			tDelta = timespecSub(_endReadTime, _startReadTime);
-			float duration = timespecToFloat(tDelta);
+			//struct timespec tDelta;
+			//tDelta = timespecSub(_endReadTime, _startReadTime);
+			//float duration = timespecToFloat(tDelta);
+			float duration = std::chrono::duration_cast<std::chrono::duration<float> >(_endReadTime - _startReadTime).count();
 			LOGV("time to read resistor: %f\n", duration);
 			//now try to guess the resistance:
 			float resistance = guessRFromTime(duration);

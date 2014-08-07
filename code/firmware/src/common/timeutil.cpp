@@ -1,6 +1,6 @@
 #include "timeutil.h"
 
-timespec timespecNow() {
+/*timespec timespecNow() {
 	struct timespec curTime;
 	clock_gettime(CLOCK_MONOTONIC, &curTime);
 	return curTime;
@@ -49,4 +49,4 @@ timespec floatToTimespec(float f) {
 	long sec = (long)f;
 	long nsec = (f-sec)*1000000000;
 	return timespec({sec, nsec});
-}
+}*/
