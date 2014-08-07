@@ -11,7 +11,7 @@
  */
 
 #include "drivers/iodriver.h"
-#include "common/timeutil.h"
+//#include "common/timeutil.h"
 #include "filters/nofilter.h"
 #include "intervaltimer.h"
 #include "common/typesettings.h"
@@ -28,8 +28,6 @@ enum TempControlType {
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
 	static const std::chrono::microseconds _intervalThresh;
 	static const std::chrono::microseconds _readInterval;
-	//static const struct timespec _intervalThresh; //drop thermistor read if the IOs aren't serviced regularly enough.
-	//static const struct timespec _readInterval; //how often to read the thermistor
 	IntervalTimer _intervalTimer;
 	Heater _heater;
 	Thermistor _therm;
@@ -38,11 +36,9 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 	float _destTemp;
 	float _lastTemp;
 	bool _isReading;
-	//struct timespec _nextReadTime;
 	EventClockT::time_point _nextReadTime;
 	public:
 		TempControl() : IODriver(this), _destTemp(-300), _lastTemp(-300), _isReading(false),
-		 // _nextReadTime(timespecNow())
 		 _nextReadTime(EventClockT::now())
 		  {
 		}
@@ -70,7 +66,7 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 			//LOGV("TempControl::onIdleCpu()\n");
 			if (_isReading) {
 				if (_therm.isReady()) {
-					_isReading = false; //timespecToTimepoint<EventClockT::time_point>(
+					_isReading = false;
 					if (_intervalTimer.clockCmp(_intervalThresh) > 0) { //too much latency in reading sample; restart.
 						LOGV("Thermistor sample dropped\n");
 						return true; //restart read.
@@ -84,11 +80,8 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 					return true; //need more cpu time.
 				}
 			} else {
-				//const struct timespec& now = timepointToTimespec(_intervalTimer.clock());
 				auto now = _intervalTimer.clock();
-				//if (timespecLt(_nextReadTime, now)) { //time for another read
 				if (_nextReadTime < now) {
-					//_nextReadTime = timespecAdd(now, durationToTimespec(_readInterval));
 					_nextReadTime += _readInterval;
 					_therm.startRead();
 					_isReading = true;
@@ -110,13 +103,10 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 
 #if RUNNING_IN_VM
 	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh(2000000); //high latency for valgrind
-	//template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 2000000}; //high latency for valgrind
 #else
 	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh(40000);
-	//template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 40000}; //use 40000 for debug, 2000000 for valgrind.
 #endif
 
-//template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{3, 0};
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval(3000000);
 
 }
