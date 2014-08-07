@@ -13,6 +13,7 @@
  */
 
 
+#include <cassert> //for assert
 #include <set>
 //#include <thread> //for this_thread.sleep
 //#include <time.h> //for timespec
@@ -182,12 +183,13 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 template <typename Interface> void Scheduler<Interface>::queue(const Event& evt) {
 	//LOGV("Scheduler::queue\n");
 	//while (this->eventQueue.size() >= this->bufferSize) {
-	while (!isRoomInBuffer()) {
+	/*while (!isRoomInBuffer()) {
 		//yield();
 		yield(true);
-	}
+	}*/
+	assert(isRoomInBuffer());
 	this->orderedInsert(evt, INSERT_BACK);
-	yield(); //fast yield. Not really necessary if the earlier yield statement was ever reached.
+	//yield(); //fast yield. Not really necessary if the earlier yield statement was ever reached.
 }
 
 template <typename Interface> void Scheduler<Interface>::orderedInsert(const Event &evt, InsertHint insertHint) {

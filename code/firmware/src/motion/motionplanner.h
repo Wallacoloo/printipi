@@ -1,5 +1,5 @@
-#ifndef MOTIONPLANNER_H
-#define MOTIONPLANNER_H
+#ifndef MOTION_MOTIONPLANNER_H
+#define MOTION_MOTIONPLANNER_H
 
 #include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
