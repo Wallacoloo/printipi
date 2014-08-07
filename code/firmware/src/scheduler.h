@@ -156,7 +156,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		Scheduler(Interface interface);
 		//Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
 		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
-		struct timespec lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
+		EventClockT::time_point lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
 		void setBufferSize(unsigned size);
 		void setBufferSizeToDefault();
 		unsigned getBufferSize() const;
@@ -221,7 +221,7 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 	} else { //have to schedule:
 		LOGV("Scheduler::schedPwm: queueing\n");
 		pwmInfo[idx] = p;
-		Event evt(lastSchedTime(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
+		Event evt(timepointToTimespec(lastSchedTime()), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
 		setBufferSize(getBufferSize()+1); //Make some room for this event.
 		this->queue(evt);
 	}
@@ -235,13 +235,14 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
 	}
 }
 
-template <typename Interface> struct timespec Scheduler<Interface>::lastSchedTime() const {
+template <typename Interface> EventClockT::time_point Scheduler<Interface>::lastSchedTime() const {
 	//TODO: Note, this method, as-is, is const!
 	if (this->eventQueue.empty()) {
 		const_cast<Scheduler<Interface>*>(this)->schedAdjuster.reset(); //we have no events; no need to preserve *their* reference times, so reset for simplicity.
-		return timespecNow(); //an alternative is to not use timespecNow, but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
+		return EventClockT::now();
+		//return timespecNow(); //an alternative is to not use timespecNow, but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
 	} else {
-		return this->eventQueue.rbegin()->time();
+		return timespecToTimepoint<EventClockT::time_point>(this->eventQueue.rbegin()->time());
 	}
 }
 
