@@ -40,9 +40,12 @@ template <typename T> timespec timepointToTimespec(const T& timepoint) {
 	auto abs = timepoint.time_since_epoch(); //clock's epoch, not 1970.
 	return durationToTimespec(abs);
 }
-
+std::chrono::nanoseconds timespecToDuration(const timespec &ts) {
+	return std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec);
+}
 template <typename T> T timespecToTimepoint(const timespec &ts) {
-	auto asDuration = std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec);
+	auto asDuration = timespecToDuration(ts);
 	return T(asDuration);
 }
+
 #endif
