@@ -22,7 +22,25 @@ class IntervalTimer {
 		//const timespec& clock();
 		//const timespec& get() const;
 		//int clockCmp(const timespec &cmp, int dflt=0);
-		int clockCmp(const EventClockT::time_point &cmp, int dflt=0);
+		//int clockCmp(const EventClockT::time_point &cmp, int dflt=0);
+		template <typename DurT> int clockCmp(const DurT &cmp, int dflt=0) {
+			int ret;
+			EventClockT::time_point now = EventClockT::now();
+			if (_last == EventClockT::time_point()) { //no last time
+				ret = dflt;
+			} else {
+				auto duration = now - _last;
+				ret = duration > cmp ? 1 : (duration < cmp ? -1 : 0);
+			}
+			//timespec now = timespecNow();
+			//if (_last.tv_sec == 0 && _last.tv_nsec == 0) { //no last time
+			//	ret = dflt;
+			//} else {
+			//	ret = timespecCmp(timespecSub(now, _last), cmp);
+			//}
+			_last = now;
+			return ret;
+		}
 };
 
 

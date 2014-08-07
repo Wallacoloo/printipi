@@ -9,6 +9,7 @@
  */
 
 #include <time.h>
+#include <chrono>
 
 timespec timespecNow();
 timespec timespecAdd(const struct timespec &a, const struct timespec &b);
