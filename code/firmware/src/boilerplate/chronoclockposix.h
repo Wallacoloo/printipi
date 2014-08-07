@@ -10,12 +10,12 @@
 #include <chrono>
 #include "common/timeutil.h"
 
-class PosixClock {
+class ChronoClockPosix {
 	public:
 		typedef std::chrono::nanoseconds duration;
 		typedef duration::rep rep;
 		typedef duration::period period;
-		typedef std::chrono::time_point<PosixClock> time_point;
+		typedef std::chrono::time_point<ChronoClockPosix> time_point;
 		static const bool is_steady = true;
 		inline static time_point now() noexcept {
 			struct timespec tnow = timespecNow();

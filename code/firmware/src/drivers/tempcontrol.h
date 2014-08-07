@@ -65,7 +65,7 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 			if (_isReading) {
 				if (_therm.isReady()) {
 					_isReading = false;
-					if (_intervalTimer.clockCmp(_intervalThresh) > 0) { //too much latency in reading sample; restart.
+					if (_intervalTimer.clockCmp(timespecToTimepoint<EventClockT::time_point>(_intervalThresh)) > 0) { //too much latency in reading sample; restart.
 						LOGV("Thermistor sample dropped\n");
 						return true; //restart read.
 					} else {
@@ -78,7 +78,7 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 					return true; //need more cpu time.
 				}
 			} else {
-				const struct timespec& now = _intervalTimer.clock();
+				const struct timespec& now = timepointToTimespec(_intervalTimer.clock());
 				if (timespecLt(_nextReadTime, now)) { //time for another read
 					_nextReadTime = timespecAdd(now, _readInterval);
 					_therm.startRead();

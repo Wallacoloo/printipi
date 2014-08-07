@@ -115,7 +115,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			} else { //stabilized:
 				offset = (1.-lastSlope)*(1.-lastSlope)/-4/a + s_s0;
 			}
-			timespec ret = timespecAdd(lastRealTime.get(), floatToTimespec(offset));
+			timespec ret = timespecAdd(timepointToTimespec(lastRealTime.get()), floatToTimespec(offset));
 			if (timespecLt(ret, t)) {
 				LOGV("SchedAdjuster::adjust adjusted into the past!\n");
 			}
@@ -124,11 +124,11 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		//call this when the event scheduled at time t is actually run.
 		void update(const timespec &t) {
 			//SHOULD work reasonably with x0, y0 = (0, 0)
-			timespec y0 = lastRealTime.get();
+			timespec y0 = timepointToTimespec(lastRealTime.get());
 			if (timespecGt(timespecSub(timespecNow(), y0), timespec{0, 30000000})) {
 			//if (timespecGt(timespecSub(t, lastSchedTime), timespec{0, 50000000}) {
 				//only sample every few ms, to mitigate Events scheduled on top of eachother.
-				const timespec &y1 = lastRealTime.clock();
+				const timespec &y1 = timepointToTimespec(lastRealTime.clock());
 				//the +X.XXX is to prevent a division-by-zero, and to minimize the effect that small sched errors have on the timeline:
 				auto avgSlope = (timespecToFloat(timespecSub(y1, y0))+0.030) / (0.030+timespecToFloat(timespecSub(t, lastSchedTime)));
 				lastSlope = std::min(RUNNING_IN_VM ? 1. : 20., 2.*avgSlope- lastSlope); //set a minimum for the speed that can be run at.
