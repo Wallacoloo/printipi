@@ -8,14 +8,6 @@ GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\
 LOGFLAGS=-DDNO_LOG_M105
 PROFFLAGS=
 #LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
-MACHINE=Kossel
-MACHINE_PATH=drivers/machines/$(shell echo $(MACHINE) | tr A-Z a-z).h
-CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"'
-#CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
-#CFLAGS+= -fassociateive-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
-LD=ld
-LDFLAGS=
-LIBS=-lrt
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
@@ -23,6 +15,14 @@ else #gcc < 4.7, or non-gcc compiler
 	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
+MACHINE=Kossel
+MACHINE_PATH=drivers/machines/$(shell echo $(MACHINE) | tr A-Z a-z).h
+CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"'
+#CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
+#CFLAGS+= -fassociateive-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
+LD=ld
+LDFLAGS= $(LTOFLAG)
+LIBS=-lrt
 BUILDROOT=../build
 DEBUGDIR=$(BUILDROOT)/debug
 RELEASEDIR=$(BUILDROOT)/release
@@ -36,17 +36,14 @@ all: debug
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
-debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer $(ARCHFLAGS)
+debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3 $(LTOFLAG) $(ARCHFLAGS)
-release: LDFLAGS+= $(LTOFLAG)
+release: CFLAGS+= -O3
 release: $(RELEASEDIR)/$(NAME)
-profile: CFLAGS+= -O3 -DDRUNNING_IN_VM $(LTOFLAG) $(ARCHFLAGS)
-profile: LDFLAGS+= $(LTOFLAG)
+profile: CFLAGS+= -O3 -DDRUNNING_IN_VM
 profile: $(PROFILEDIR)/$(NAME)
 #defining NDEBUG removes assertions.
-minsize: CFLAGS+= -DNDEBUG -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections $(LTOFLAG) $(ARCHFLAGS)
-minsize: LDFLAGS+= $(LTOFLAG)
+minsize: CFLAGS+= -DNDEBUG -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections
 minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)
