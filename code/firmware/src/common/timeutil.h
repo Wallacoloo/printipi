@@ -34,7 +34,7 @@ timespec floatToTimespec(float f);
 template <typename T> timespec durationToTimespec(const T& abs) {
 	auto sec = std::chrono::duration_cast<std::chrono::seconds>(abs);
 	auto nsec = abs-sec;
-	return timespec{sec.count(), nsec.count()};
+	return timespec{(time_t)sec.count(), (long int)nsec.count()};
 }
 template <typename T> timespec timepointToTimespec(const T& timepoint) {
 	auto abs = timepoint.time_since_epoch(); //clock's epoch, not 1970.
