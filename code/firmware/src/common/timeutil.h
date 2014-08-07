@@ -31,12 +31,16 @@ inline bool timespecGt(const struct timespec &a, const struct timespec &b) {
 }
 float timespecToFloat(const struct timespec &a);
 timespec floatToTimespec(float f);
-template <typename T> timespec timepointToTimespec(const T& timepoint) {
-	auto abs = timepoint.time_since_epoch(); //clock's epoch, not 1970.
+template <typename T> timespec durationToTimespec(const T& abs) {
 	auto sec = std::chrono::duration_cast<std::chrono::seconds>(abs);
 	auto nsec = abs-sec;
 	return timespec{sec.count(), nsec.count()};
 }
+template <typename T> timespec timepointToTimespec(const T& timepoint) {
+	auto abs = timepoint.time_since_epoch(); //clock's epoch, not 1970.
+	return durationToTimespec(abs);
+}
+
 template <typename T> T timespecToTimepoint(const timespec &ts) {
 	auto asDuration = std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec);
 	return T(asDuration);
