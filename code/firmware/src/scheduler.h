@@ -97,20 +97,21 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		//static constexpr float a = -5.0;
 		static constexpr float a = -12.0;
 		IntervalTimer lastRealTime;
-		timespec lastSchedTime;
+		//timespec lastSchedTime;
+		EventClockT::time_point lastSchedTime;
 		float lastSlope;
-		SchedAdjuster() : lastSchedTime({0, 0}), lastSlope(1) {}
+		SchedAdjuster() : lastSchedTime(), lastSlope(1) {}
 		/* Reset() should destroy any offset, so that adjust(time.now()) gives time.now() */
 		void reset() {
 			lastRealTime.reset();
-			lastSchedTime = {0, 0};
+			lastSchedTime = EventClockT::time_point();
 			lastSlope = 1;
 		}
 		//timespec adjust(const timespec &t) const {
 		EventClockT::time_point adjust(EventClockT::time_point tp) const {
 			auto t = timepointToTimespec(tp);
 			//SHOULD work precisely with x0, y0 = (0, 0)
-			float s_s0 = timespecToFloat(timespecSub(t, lastSchedTime)); //s-s0
+			float s_s0 = timespecToFloat(timespecSub(t, timepointToTimespec(lastSchedTime))); //s-s0
 			float offset;
 			if (s_s0 < (1.-lastSlope)/2./a) { //acclerating:
 				offset = a*s_s0*s_s0 + lastSlope*s_s0;
@@ -134,9 +135,9 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 				//only sample every few ms, to mitigate Events scheduled on top of eachother.
 				const timespec &y1 = timepointToTimespec(lastRealTime.clock());
 				//the +X.XXX is to prevent a division-by-zero, and to minimize the effect that small sched errors have on the timeline:
-				auto avgSlope = (timespecToFloat(timespecSub(y1, y0))+0.030) / (0.030+timespecToFloat(timespecSub(t, lastSchedTime)));
+				auto avgSlope = (timespecToFloat(timespecSub(y1, y0))+0.030) / (0.030+timespecToFloat(timespecSub(t, timepointToTimespec(lastSchedTime))));
 				lastSlope = std::min(RUNNING_IN_VM ? 1. : 20., 2.*avgSlope- lastSlope); //set a minimum for the speed that can be run at.
-				lastSchedTime = t;
+				lastSchedTime = tp;
 			}
 		}
 	};
