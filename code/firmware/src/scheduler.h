@@ -97,7 +97,6 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		//static constexpr float a = -5.0;
 		static constexpr float a = -12.0;
 		IntervalTimer lastRealTime;
-		//timespec lastSchedTime;
 		EventClockT::time_point lastSchedTime;
 		float lastSlope;
 		SchedAdjuster() : lastSchedTime(), lastSlope(1) {}
@@ -107,11 +106,8 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			lastSchedTime = EventClockT::time_point();
 			lastSlope = 1;
 		}
-		//timespec adjust(const timespec &t) const {
 		EventClockT::time_point adjust(EventClockT::time_point tp) const {
 			//SHOULD work precisely with x0, y0 = (0, 0)
-			//float s_s0 = timespecToFloat(timespecSub(t, timepointToTimespec(lastSchedTime))); //s-s0
-			//float s_s0 = timespecToFloat(t);
 			float s_s0 = std::chrono::duration_cast<std::chrono::duration<float> >(tp - lastSchedTime).count();
 			float offset;
 			if (s_s0 < (1.-lastSlope)/2./a) { //acclerating:
@@ -119,7 +115,6 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			} else { //stabilized:
 				offset = (1.-lastSlope)*(1.-lastSlope)/-4/a + s_s0;
 			}
-			//timespec ret = timespecAdd(timepointToTimespec(lastRealTime.get()), floatToTimespec(offset));
 			EventClockT::time_point ret(lastRealTime.get() + std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(offset)));
 			if (ret < tp) {
 				LOGV("SchedAdjuster::adjust adjusted into the past!\n");
@@ -127,15 +122,10 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			return ret;
 		}
 		//call this when the event scheduled at time t is actually run.
-		//void update(const timespec &t) {
 		void update(EventClockT::time_point tp) {
-			//auto t = timepointToTimespec(tp);
 			//SHOULD work reasonably with x0, y0 = (0, 0)
-			//timespec y0 = timepointToTimespec(lastRealTime.get());
 			auto y0 = lastRealTime.get();
-			//if (timespecGt(timespecSub(timespecNow(), y0), timespec{0, 30000000})) {
-			if (EventClockT::now()-y0 > std::chrono::nanoseconds(30000000)) {
-			//if (timespecGt(timespecSub(t, lastSchedTime), timespec{0, 50000000}) {
+			if (EventClockT::now()-y0 > std::chrono::milliseconds(50)) {
 				//only sample every few ms, to mitigate Events scheduled on top of eachother.
 				auto y1 = lastRealTime.clock();
 				//the +X.XXX is to prevent a division-by-zero, and to minimize the effect that small sched errors have on the timeline:
@@ -145,8 +135,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			}
 		}
 	};
-	//static const struct timespec MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
-	static const EventClockT::duration MAX_SLEEP;
+	static const EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
 	typedef std::multiset<Event> EventQueueType;
 	Interface interface;
 	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
@@ -180,7 +169,6 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		bool isEventTime(const Event &evt) const;
 };
 
-//template <typename Interface> const struct timespec Scheduler<Interface>::MAX_SLEEP{0, 40000000};
 template <typename Interface> const EventClockT::duration Scheduler<Interface>::MAX_SLEEP(std::chrono::duration_cast<EventClockT::duration>(std::chrono::milliseconds(40)));
 
 
@@ -249,8 +237,7 @@ template <typename Interface> EventClockT::time_point Scheduler<Interface>::last
 	//TODO: Note, this method, as-is, is const!
 	if (this->eventQueue.empty()) {
 		const_cast<Scheduler<Interface>*>(this)->schedAdjuster.reset(); //we have no events; no need to preserve *their* reference times, so reset for simplicity.
-		return EventClockT::now();
-		//return timespecNow(); //an alternative is to not use timespecNow, but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
+		return EventClockT::now(); //an alternative is to not use ::now(), but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
 	} else {
 		return this->eventQueue.rbegin()->time();
 	}
@@ -326,7 +313,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 		Event evt = *iter;
 		auto mapped = schedAdjuster.adjust(evt.time());
-		auto now = EventClockT::now(); //timespecNow();
+		auto now = EventClockT::now();
 		LOGV("Scheduler executing event. original->mapped time, now, buffer: %lld -> %lld, %lld. sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
@@ -362,12 +349,8 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event *evt) const {
 	//need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
-	//auto MS = durationToTimespec(MAX_SLEEP);
-	//timespec sleepUntil = timespecAdd(timespecNow(), MS);
 	auto sleepUntil = EventClockT::now() + MAX_SLEEP;
 	if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
-		//struct timespec evtTime = schedAdjuster.adjust(evt->time());
-		//sleepUntil = timespecMin(sleepUntil, evtTime);
 		auto evtTime = schedAdjuster.adjust(evt->time());
 		sleepUntil = std::min(sleepUntil, evtTime);
 	}
@@ -377,17 +360,12 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const E
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
-	//timespec thresh = timespecAdd(timespecNow(), timespec{0, 20000}); //20000 = 20 uSec
-	//return timespecLt(schedAdjuster.adjust(evt.time()), thresh);
 	auto thresh = EventClockT::now() + std::chrono::microseconds(20);
-	return schedAdjuster.adjust(evt.time()) < thresh;
+	return schedAdjuster.adjust(evt.time()) <= thresh;
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventTime(const Event &evt) const {
-	//return !timespecLt(timespecNow(), evt.time());
-	//return !timespecLt(timespecNow(), schedAdjuster.adjust(evt.time()));
-	//return timespecLte(schedAdjuster.adjust(evt.time()), timespecNow());
-	return schedAdjuster.adjust(evt.time()) < EventClockT::now();
+	return schedAdjuster.adjust(evt.time()) <= EventClockT::now();
 }
 
 #endif
