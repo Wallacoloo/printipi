@@ -26,7 +26,8 @@ enum TempControlType {
 };
 
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
-	static const struct timespec _intervalThresh; //drop thermistor read if the IOs aren't serviced regularly enough.
+	static const std::chrono::microseconds _intervalThresh;
+	//static const struct timespec _intervalThresh; //drop thermistor read if the IOs aren't serviced regularly enough.
 	static const struct timespec _readInterval; //how often to read the thermistor
 	IntervalTimer _intervalTimer;
 	Heater _heater;
@@ -64,8 +65,8 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 			//LOGV("TempControl::onIdleCpu()\n");
 			if (_isReading) {
 				if (_therm.isReady()) {
-					_isReading = false;
-					if (_intervalTimer.clockCmp(timespecToTimepoint<EventClockT::time_point>(_intervalThresh)) > 0) { //too much latency in reading sample; restart.
+					_isReading = false; //timespecToTimepoint<EventClockT::time_point>(
+					if (_intervalTimer.clockCmp(_intervalThresh) > 0) { //too much latency in reading sample; restart.
 						LOGV("Thermistor sample dropped\n");
 						return true; //restart read.
 					} else {
@@ -100,9 +101,11 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 };
 
 #if RUNNING_IN_VM
-	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 2000000}; //high latency for valgrind
+	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh(2000000); //high latency for valgrind
+	//template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 2000000}; //high latency for valgrind
 #else
-	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 40000}; //use 40000 for debug, 2000000 for valgrind.
+	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh(40000);
+	//template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh{0, 40000}; //use 40000 for debug, 2000000 for valgrind.
 #endif
 
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const struct timespec TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval{3, 0};
