@@ -9,7 +9,9 @@
  */
 
 #include <cstdint> //for uint8_t
+//define a clock type
 #include "boilerplate/chronoclockposix.h"
+typedef ChronoClockPosix EventClockT;
 //allow for generation of code that still works in high-latency enviroments, like valgrind
 #ifdef DRUNNING_IN_VM
 	#define RUNNING_IN_VM 1

@@ -36,7 +36,7 @@ all: debug
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
-debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer
+debug: CFLAGS+=-O1 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3
 release: $(RELEASEDIR)/$(NAME)
