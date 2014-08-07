@@ -56,9 +56,9 @@ template <uint8_t STEPPIN, uint8_t DIRPIN, typename Enabler=NullEnabler> class A
 		void cycleStepPin() {
 			//LOGV("cycling pin %i\n", DIRPIN);
 			bcm2835_gpio_write(STEPPIN, HIGH); 
-			bcm2835_delayMicroseconds(2);
+			bcm2835_delayMicroseconds(2); //delayMicroseconds(n) can delay anywhere from (n-1) to n. Need to delay 2 uS to get minimum of 1 uS. Note, this is a waste of 700-1400 cycles.
 			bcm2835_gpio_write(STEPPIN, LOW); //note: may need a (SHORT!) delay here.
-			bcm2835_delayMicroseconds(1);
+			//bcm2835_delayMicroseconds(1);
 		}
 };
 
