@@ -18,7 +18,8 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 		std::array<int, CoordMapT::numAxis()> _destMechanicalPos;
 		AxisStepperTypes _iters;
 		typename drv::AxisStepper::GetHomeStepperTypes<AxisStepperTypes>::HomeStepperTypes _homeIters;
-		timespec _baseTime;
+		//timespec _baseTime;
+		EventClockT::duration _baseTime;
 		float _duration;
 		float _maxVel;
 		MotionType _motionType;
@@ -59,7 +60,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			return e;
 		}
 		void moveTo(const timespec &baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
-			this->_baseTime = baseTime;
+			this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
 			float curX, curY, curZ, curE;
 			std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 			
@@ -92,7 +93,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 
 		void homeEndstops(const timespec &baseTime, float maxVelXyz) {
 			drv::AxisStepper::initAxisHomeSteppers(_homeIters, maxVelXyz);
-			this->_baseTime = baseTime;
+			this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
 			this->_maxVel = maxVelXyz;
 			this->_duration = NAN;
 			this->_motionType = MotionHome;
