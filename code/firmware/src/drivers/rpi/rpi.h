@@ -6,6 +6,14 @@ namespace rpi {
 
 void initIO();
 
+//allow to initialize RPi via instantiation of a class.
+//Useful for static initializers:
+struct InitRpiType {
+	inline InitRpiType() {
+		initIO();
+	}
+};
+
 }
 }
 

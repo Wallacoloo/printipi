@@ -4,7 +4,17 @@
 SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 CXX=g++
+#Check if using gcc >= 4.7; Then we can use -flto flag. 4.6 and lower support lto, but have errors.
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
+#Check if we are compiling ON a raspberry pi. Ideally, we would check if the compilation target is a raspberry pi, but this is difficult.
+#If the target arch is raspberry pi, then we can use direct access to the system clock, rather than kernel calls (faster)
+#TARGET_RPI := $(shell expr `grep -o BCM2708 /proc/cpuinfo` == BCM2708)
+#ifeq "$(shell expr `grep -o buildd /proc/version`)" "buildd"
+ifeq "$(shell expr `grep -o BCM2708 /proc/cpuinfo`)" "BCM2708"
+	TARGET_RPI := 1
+else
+	TARGET_RPI := 0
+endif
 LOGFLAGS=-DDNO_LOG_M105
 PROFFLAGS=
 #LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
@@ -17,8 +27,9 @@ else #gcc < 4.7, or non-gcc compiler
 endif
 MACHINE=Kossel
 MACHINE_PATH=drivers/machines/$(shell echo $(MACHINE) | tr A-Z a-z).h
-CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"'
-#CFLAGS=-std=c++0x -Og -g -flto -fsanitize=address -fno-omit-frame-pointer #Use c++0x for gcc <= 4.6, not c++11
+#gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
+#the bcm2835 library has some pedantic errors, so use f=-fpermissive
+CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI)
 #CFLAGS+= -fassociateive-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
 LD=ld
 LDFLAGS= $(LTOFLAG)
@@ -38,7 +49,7 @@ all: debug
 # -fsanitize=address (gcc 4.8)
 debug: CFLAGS+=-O1 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3
+release: CFLAGS+= -O3 -fomit-frame-pointer
 release: $(RELEASEDIR)/$(NAME)
 profile: CFLAGS+= -O3 -DDRUNNING_IN_VM
 profile: $(PROFILEDIR)/$(NAME)
