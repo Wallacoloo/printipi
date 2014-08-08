@@ -23,10 +23,11 @@
 
 #include "coordmap.h"
 #include "common/logging.h"
+#include "common/matrix.h"
 
 namespace drv {
 
-template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT> class LinearDeltaCoordMap : public CoordMap {
+template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT, typename Transform=matr::Identity3> class LinearDeltaCoordMap : public CoordMap {
 	static constexpr std::size_t AIdx = 0;
 	static constexpr std::size_t BIdx = 1;
 	static constexpr std::size_t CIdx = 2;
@@ -44,6 +45,9 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsi
         }
 		static constexpr std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) {
 			return std::array<int, 4>({{(int)(h*STEPS_MM), (int)(h*STEPS_MM), (int)(h*STEPS_MM), cur[3]}});
+		}
+		static std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) {
+			return Transform::transform(xyz);
 		}
 		static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
 			float e = mech[EIdx]*MM_STEPS_EXT;
