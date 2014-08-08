@@ -13,7 +13,7 @@
 #include "drivers/iodriver.h"
 //#include "common/timeutil.h"
 #include "filters/nofilter.h"
-#include "intervaltimer.h"
+#include "common/intervaltimer.h"
 #include "common/typesettings.h"
 
 namespace drv {

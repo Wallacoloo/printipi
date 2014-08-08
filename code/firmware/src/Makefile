@@ -88,10 +88,10 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/common/common.a: %/common/logging.o %/common/timeutil.o
+%/common/common.a: %/common/intervaltimer.o %/common/logging.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/rest.a: %/argparse.o %/event.o %/intervaltimer.o  %/main.o %/scheduler.o 
+%/rest.a: %/argparse.o %/event.o %/main.o %/scheduler.o 
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 #Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.

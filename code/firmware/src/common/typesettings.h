@@ -1,5 +1,5 @@
-#ifndef TYPESETTINGS_H
-#define TYPESETTINGS_H
+#ifndef COMMON_TYPESETTINGS_H
+#define COMMON_TYPESETTINGS_H
 
 /* 
  * Printipi/typesettings.h
