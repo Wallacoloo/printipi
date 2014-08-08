@@ -1,5 +1,5 @@
-#ifndef INTERVALTIMER_H
-#define INTERVALTIMER_H
+#ifndef COMMON_INTERVALTIMER_H
+#define COMMON_INTERVALTIMER_H
 
 /* 
  * Printipi/gparse/com.h

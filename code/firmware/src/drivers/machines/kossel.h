@@ -2,7 +2,7 @@
 #define DRIVERS_KOSSEL_H
 
 
-#include "pid.h"
+#include "common/pid.h"
 #include "filters/lowpassfilter.h"
 //#include "motion/exponentialacceleration.h"
 #include "motion/constantacceleration.h"
@@ -102,10 +102,8 @@ class Kossel : public Driver {
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
 		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-		//typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> _Fan;
 		typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 0> _HotendOut;
-		//typedef TempControl<_HotendOut, _Thermistor> _HotendController;
     public:
         //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
@@ -117,7 +115,6 @@ class Kossel : public Driver {
         	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
         	rpi::A4988<RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, _StepperEn>, //E coord
         	_Fan,
-        	//_HotendController,
         	//12000, 3000, 1000 gives osc of ~3 min (20C-80C). Converges.
         	//20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.
         	//12000,  600, 1200 (50C->130C). Peaks 22C above target. Underdamped. 5 mins to converge

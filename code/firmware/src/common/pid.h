@@ -1,5 +1,5 @@
-#ifndef PID_H
-#define PID_H
+#ifndef COMMON_PID_H
+#define COMMON_PID_H
 
 /* 
  * Printipi/pid.h
@@ -10,7 +10,7 @@
  * Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
  */
 
-#include "common/timeutil.h" //for timespec*
+//#include "common/timeutil.h" //for timespec*
 #include "common/typesettings.h" //for EventClockT
 
 template <int P1000000, int I1000000=0, int D1000000=0> class PID {

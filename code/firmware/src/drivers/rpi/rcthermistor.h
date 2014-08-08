@@ -9,8 +9,8 @@
 
 #include <time.h> //for timespec
 #include <cmath>
-#include "common/timeutil.h" //for timespecSub, etc
-#include "common/typesettings.h"
+//#include "common/timeutil.h" //for timespecSub, etc
+#include "common/typesettings.h" //for EventClockT
 #include "common/mathutil.h" //for CtoK, etc
 #include "common/logging.h"
 
