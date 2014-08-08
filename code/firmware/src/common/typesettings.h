@@ -10,8 +10,15 @@
 
 #include <cstdint> //for uint8_t
 //define a clock type
-#include "boilerplate/chronoclockposix.h"
-typedef ChronoClockPosix EventClockT;
+#if DTARGET_RPI == 1
+	#define TARGET_RPI
+	//use a lower-latency clock available on the rpi:
+	#include "drivers/rpi/chronoclockrpi.h"
+	typedef drv::rpi::ChronoClockRpi EventClockT;
+#else
+	#include "boilerplate/chronoclockposix.h"
+	typedef ChronoClockPosix EventClockT;
+#endif
 //allow for generation of code that still works in high-latency enviroments, like valgrind
 #ifdef DRUNNING_IN_VM
 	#define RUNNING_IN_VM 1
