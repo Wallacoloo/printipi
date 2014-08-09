@@ -81,6 +81,7 @@
  *  Add a way to set a lower-bound on fan speed - either in the Machine driver, or the Fan driver itself.
  *    Also default fan speed for init.
  *  Add state to AcellerationProfiles
+ *  make Sched::PwmInfo times use the same resolution as EventClockT (to avoid divisions by 1000 when offsetting events).
 */
 
 #include <string>

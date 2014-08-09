@@ -56,7 +56,7 @@ class Event {
 		
 		template <typename DurationT> void offset(const DurationT offset) {
 			//EventClockT::duration
-			this->_time += offset;
+			this->_time += std::chrono::duration_cast<EventClockT::duration>(offset);
 		}
 		//void offsetNano(unsigned nsec); //must be less than 1 second.
 		inline bool operator<(const Event &other) const {
