@@ -54,6 +54,7 @@ template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoE
 	public:
 		typedef LinearHomeStepper<STEPS_PER_METER, EndstopT> HomeStepperT;
 		static constexpr float GET_COORD(float x, float y, float z, float e) {
+			static_assert(CoordType==COORD_X || CoordType==COORD_Y || CoordType==COORD_Z || CoordType==COORD_E, "CoordType can only be x, y, z, or e");
 			return CoordType==COORD_X ? x : \
 				  (CoordType==COORD_Y ? y : \
 				  (CoordType==COORD_Z ? z : 
