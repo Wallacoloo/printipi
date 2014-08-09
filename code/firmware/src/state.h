@@ -22,6 +22,7 @@
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
 #include <array>
+#include <inttypes.h> //for PRId64
 //#include <atomic>
 //#include <memory> //for unique_ptr
 //#include <utility> //for std::pair
@@ -275,7 +276,7 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 
 template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 	//handle an event from the scheduler.
-	LOGV("State::handleEvent(time, idx, dir): %lld, %i, %i\n", evt.time().time_since_epoch().count(), evt.stepperId(), evt.direction()==StepForward);
+	LOGV("State::handleEvent(time, idx, dir): %" PRId64 ", %i, %i\n", evt.time().time_since_epoch().count(), evt.stepperId(), evt.direction()==StepForward);
 	if (evt.direction() == StepForward) {
 		drv::IODriver::selectAndStepForward(this->ioDrivers, evt.stepperId());
 	} else {
