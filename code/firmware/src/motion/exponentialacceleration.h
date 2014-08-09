@@ -6,8 +6,14 @@
 
 template <int MaxAccel1000> class ExponentialAcceleration : public AccelerationProfile {
 	static constexpr float maxAccel() { return MaxAccel1000 / 1000.; }
+	float moveDuration;
+	float Vmax;
 	public:
-		float transform(float time, float moveDuration, float Vmax) {
+		void begin(float moveDuration, float Vmax) {
+			this->moveDuration = moveDuration;
+			this->Vmax = Vmax;
+		}
+		float transform(float time) {
 			//float Amax = this->driver.maxAccel();
 			float Amax = maxAccel();
 			float V0 = std::min(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax

@@ -8,7 +8,7 @@ struct AccelerationProfile {
 };
 
 struct NoAcceleration : public AccelerationProfile {
-	float transform(float inp, float /*moveDuration*/, float /*Vmax*/) { return inp; }
+	float transform(float inp) { return inp; }
 };
 
 
