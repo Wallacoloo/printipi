@@ -13,10 +13,12 @@
 //#include "common/timeutil.h" //for timespec*
 #include "common/typesettings.h" //for EventClockT
 
-template <int P1000000, int I1000000=0, int D1000000=0> class PID {
+template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000000, int ITermMin1000000=-ITermMax1000000> class PID {
 	static constexpr float P = P1000000 / 1000000.;
 	static constexpr float I = I1000000 / 1000000.;
 	static constexpr float D = D1000000 / 1000000.;
+	static constexpr float IMax = ITermMax1000000 / 1000000. / I;
+	static constexpr float IMin = ITermMin1000000 / 1000000. / I;
 	float errorI;
 	float lastError;
 	//struct timespec lastTime;
@@ -27,7 +29,7 @@ template <int P1000000, int I1000000=0, int D1000000=0> class PID {
 		Returns a recalculated output */
 		float feed(float error) {
 			float deltaT = refreshTime();
-			errorI += error*deltaT;
+			errorI = std::max(IMin, std::min(IMax, errorI+error*deltaT)); //clamp the integral error term.
 			float errorD = (error-lastError)/deltaT;
 			return P*error + I*errorI + D*errorD;
 		}

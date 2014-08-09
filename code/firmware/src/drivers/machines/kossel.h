@@ -39,7 +39,8 @@
 
 #define R1000 111000
 #define L1000 221000
-#define H1000 467100
+//#define H1000 467100
+#define H1000 467060
 #define STEPS_M 6265*4
 #define STEPS_M_EXT 10000*8
 
@@ -120,9 +121,12 @@ class Kossel : public Driver {
         /*typedef matr::Matrix3Static<999999489, -1020, 1010098,
 -1020, 999997959, 2020196,
 -1010098, -2020196, 999997449, 1000000000> LevelingT;*/
-		typedef matr::Matrix3Static<999999000, 999, -1414138, 
+		/*typedef matr::Matrix3Static<999999000, 999, -1414138, 
 999, 999999000, 1414138, 
-1414138, -1414138, 999998000, 1000000000> LevelingT;
+1414138, -1414138, 999998000, 1000000000> LevelingT;*/
+		typedef matr::Matrix3Static<999998347, 1285, -1818176, 
+1285, 999999000, 1414137, 
+1818176, -1414137, 999997347, 1000000000> LevelingT;
 
         typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, STEPS_M, STEPS_M_EXT, LevelingT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
@@ -136,7 +140,7 @@ class Kossel : public Driver {
         	//20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.
         	//12000,  600, 1200 (50C->130C). Peaks 22C above target. Underdamped. 5 mins to converge
         	//18000,  300, 1000 (40C->130C). Overdamped. 4.5 minutes to reach target (& is stabilized when it gets there)
-        	TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 300, 1000>, LowPassFilter<3000> >,
+        	TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000>, LowPassFilter<3000> >,
         	_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;

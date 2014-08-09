@@ -27,8 +27,6 @@
  * *Prevent calling exit() from within an atexit handler
  *  Prevent stepping when endstop is triggered.
  *  Add max/min bounds for each axis
- * *Add acceleration
- * *Add IO deactivation upon exit
  * *Add enable pin
  * *Account for PWM pins when setting Scheduler queue size.
  *  Add (configurable) absolute PWM limits to hotend, etc.
