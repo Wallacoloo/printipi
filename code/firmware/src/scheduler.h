@@ -22,6 +22,7 @@
 #include <vector>
 //#include <atomic>
 #include <tuple>
+#include <inttypes.h> //for PRId64
 #include "event.h"
 #include "common/logging.h"
 //#include "common/timeutil.h"
@@ -314,7 +315,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		Event evt = *iter;
 		auto mapped = schedAdjuster.adjust(evt.time());
 		auto now = EventClockT::now();
-		LOGV("Scheduler executing event. original->mapped time, now, buffer: %lld -> %lld, %lld. sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
+		LOGV("Scheduler executing event. original->mapped time, now, buffer: %" PRId64 " -> %" PRId64 ", %" PRId64 ". sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
 		//this->eventQueue.erase(eventQueue.begin());
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		//The error: eventQueue got flooded with stepper #5 PWM events.
