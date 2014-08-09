@@ -54,7 +54,7 @@ class Event {
 		Event(EventClockT::time_point t, AxisIdType stepperNum, StepDirection dir) : _time(t), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		
-		template <typename DurationT> void offset(const DurationT &offset) {
+		template <typename DurationT> void offset(const DurationT offset) {
 			//EventClockT::duration
 			this->_time += offset;
 		}
