@@ -1,10 +1,8 @@
-#NOTE: compiling with g++-4.7.2 may lead to some runtime errors in the scheduler!
-
 #directory containing this makefile:
 SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 CXX=g++
-#Check if using gcc >= 4.7; Then we can use -flto flag. 4.6 and lower support lto, but have errors.
+#Check if using gcc >= 4.7; Then we can use -flto flag. 4.6 and lower support lto, but have errors (specifically when "functional" is included)
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
 #Check if we are compiling ON a raspberry pi. Ideally, we would check if the compilation target is a raspberry pi, but this is difficult.
 #If the target arch is raspberry pi, then we can use direct access to the system clock, rather than kernel calls (faster)

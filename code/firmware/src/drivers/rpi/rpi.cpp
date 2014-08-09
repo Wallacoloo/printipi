@@ -2,7 +2,7 @@
 #include "bcm2835.h"
 
 //#include <cstdlib> //for atexit
-#include "scheduler.h"
+#include "scheduler.h" //for SchedulerBase::registerExitHandler
 #include "common/logging.h"
 
 namespace drv {
