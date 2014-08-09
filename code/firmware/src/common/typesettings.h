@@ -9,6 +9,7 @@
  */
 
 #include <cstdint> //for uint8_t
+#include <inttypes.h> //for PRId64
 //define a clock type
 #if DTARGET_RPI == 1
 	#define TARGET_RPI //provide a user-usable macro
@@ -34,6 +35,10 @@
 	#define RUNNING_IN_VM 1
 #else
 	#define RUNNING_IN_VM 0
+#endif
+
+#ifndef PRId64
+	#define PRId64 "lld"
 #endif
 
 typedef uint8_t AxisIdType;

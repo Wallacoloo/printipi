@@ -22,7 +22,6 @@
 #include <vector>
 //#include <atomic>
 #include <tuple>
-#include <inttypes.h> //for PRId64
 #include "event.h"
 #include "common/logging.h"
 //#include "common/timeutil.h"
