@@ -81,7 +81,8 @@
  *  Add state to AcellerationProfiles
  *  make Sched::PwmInfo times use the same resolution as EventClockT (to avoid divisions by 1000 when offsetting events).
 */
-
+#define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
+#include "common/typesettings.h" //check types
 #include <string>
 #include <sys/mman.h> //for mlockall
 #include "common/logging.h"
