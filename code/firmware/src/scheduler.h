@@ -334,11 +334,13 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			if (evt.direction() == StepForward) {
 				//next event will be StepBackward, or refresh this event if there is no off-duty.
 				nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
-				nextPwm.offsetNano(pwm.nsHigh);
+				//nextPwm.offsetNano(pwm.nsHigh);
+				nextPwm.offset(std::chrono::nanoseconds(pwm.nsHigh));
 			} else {
 				//next event will be StepForward, or refresh this event if there is no on-duty.
 				nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
-				nextPwm.offsetNano(pwm.nsLow);
+				//nextPwm.offsetNano(pwm.nsLow);
+				nextPwm.offset(std::chrono::nanoseconds(pwm.nsLow));
 			}
 			this->orderedInsert(nextPwm, INSERT_FRONT);
 		}

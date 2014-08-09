@@ -27,7 +27,7 @@
 
 namespace drv {
 
-template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT, typename Transform=matr::Identity3> class LinearDeltaCoordMap : public CoordMap {
+template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT, typename Transform=matr::Identity3Static> class LinearDeltaCoordMap : public CoordMap {
 	static constexpr std::size_t AIdx = 0;
 	static constexpr std::size_t BIdx = 1;
 	static constexpr std::size_t CIdx = 2;

@@ -37,19 +37,34 @@ class Event {
 	bool _isForward;
 	public:
 		static const AxisIdType NULL_STEPPER_ID = 255;
-		AxisIdType stepperId() const;
-		StepDirection direction() const;
-		EventClockT::time_point time() const;
+		inline AxisIdType stepperId() const {
+			return this->_stepperNum;
+		}
+		inline StepDirection direction() const {
+			return this->_isForward ? StepForward : StepBackward;
+		}
+		inline EventClockT::time_point time() const {
+			return _time;
+		}
 		//bool isTime() const;
-		bool isNull() const;
+		inline bool isNull() const {
+			return this->stepperId() == NULL_STEPPER_ID;
+		}
 		Event() : _time(), _stepperNum(NULL_STEPPER_ID) {}
-		Event(EventClockT::time_point t, AxisIdType stepperNum, StepDirection dir);
+		Event(EventClockT::time_point t, AxisIdType stepperNum, StepDirection dir) : _time(t), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
 		static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
 		
-		void offset(const EventClockT::duration &offset);
-		void offsetNano(unsigned nsec); //must be less than 1 second.
-		bool operator<(const Event &other) const;
-		bool operator>(const Event &other) const;
+		template <typename DurationT> void offset(const DurationT &offset) {
+			//EventClockT::duration
+			this->_time += offset;
+		}
+		//void offsetNano(unsigned nsec); //must be less than 1 second.
+		inline bool operator<(const Event &other) const {
+			return this->time() < other.time();
+		}
+		inline bool operator>(const Event &other) const {
+			return this->time() > other.time();
+		}
 		
 };
 

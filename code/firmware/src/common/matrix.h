@@ -1,23 +1,31 @@
 #ifndef COMMON_MATRIX_H
 #define COMMON_MATRIX_H
 
+/*
+ * In general, it is difficult to apply static operations to matrixes (add, mul, etc at compile-time).
+ * There is this library for templated floats: http://www.edwardrosten.com/code/fp_template.html
+ *   But it claims a mere 8 FLOPS during compilation (opteron 2.6)
+ * So it's probably best to do everything at runtime. A smart compiler may still be able to optimize it.
+ * Plus, with auto bed-leveling, that's all done at runtime anyway.
+ */
+
 #include <tuple>
 
 namespace matr {
 
 
-template <int A00_1000, int A01_1000, int A02_1000,
-          int A10_1000, int A11_1000, int A12_1000,
-          int A20_1000, int A21_1000, int A22_1000> class Matrix3 {
-    static constexpr float A00() { return A00_1000 / 1000.; }
-    static constexpr float A01() { return A01_1000 / 1000.; }
-    static constexpr float A02() { return A02_1000 / 1000.; }
-    static constexpr float A10() { return A10_1000 / 1000.; }
-    static constexpr float A11() { return A11_1000 / 1000.; }
-    static constexpr float A12() { return A12_1000 / 1000.; }
-    static constexpr float A20() { return A20_1000 / 1000.; }
-    static constexpr float A21() { return A21_1000 / 1000.; }
-    static constexpr float A22() { return A22_1000 / 1000.; }
+template <int A00_, int A01_, int A02_,
+          int A10_, int A11_, int A12_,
+          int A20_, int A21_, int A22_, int Denom=1> class Matrix3Static {
+    static constexpr float A00() { return float(A00_) / Denom; }
+    static constexpr float A01() { return float(A01_) / Denom; }
+    static constexpr float A02() { return float(A02_) / Denom; }
+    static constexpr float A10() { return float(A10_) / Denom; }
+    static constexpr float A11() { return float(A11_) / Denom; }
+    static constexpr float A12() { return float(A12_) / Denom; }
+    static constexpr float A20() { return float(A20_) / Denom; }
+    static constexpr float A21() { return float(A21_) / Denom; }
+    static constexpr float A22() { return float(A22_) / Denom; }
 	public:
 		static constexpr std::tuple<float, float, float> transform(const std::tuple<float, float, float> &xyz) {
 			//float x, y, z;
@@ -32,8 +40,13 @@ template <int A00_1000, int A01_1000, int A02_1000,
 		}
 };
 
-typedef Matrix3<1000, 0, 0,   0, 1000, 0,   0, 0, 1000> Identity3;
+typedef Matrix3Static<1, 0, 0,   0, 1, 0,   0, 0, 1> Identity3Static;
 
+
+/*struct Matrix3 {
+	std::array<std::array<float, 3>, 3> coeffs; //index as [row][col]
+	
+};*/
 
 }
 #endif
