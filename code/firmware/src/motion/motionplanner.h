@@ -87,6 +87,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			this->_maxVel = maxVelXyz;
 			this->_duration = minDuration;
 			this->_motionType = MotionMove;
+			this->_accel.begin(_duration, _maxVel);
 			//this->scheduleAxisSteppers(baseTime, _iters, minDuration, true, maxVelXyz);
 			//std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 			//LOGD("MotionPlanner::moveTo wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
@@ -100,6 +101,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			this->_maxVel = maxVelXyz;
 			this->_duration = NAN;
 			this->_motionType = MotionHome;
+			this->_accel.begin(NAN, _maxVel);
 		}
 };
 
