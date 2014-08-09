@@ -8,7 +8,7 @@ GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\
 #If the target arch is raspberry pi, then we can use direct access to the system clock, rather than kernel calls (faster)
 #TARGET_RPI := $(shell expr `grep -o BCM2708 /proc/cpuinfo` == BCM2708)
 #ifeq "$(shell expr `grep -o buildd /proc/version`)" "buildd"
-ifeq "$(shell expr `grep -o BCM2708 /proc/cpuinfo`)" "BCM2708"
+ifeq "$(shell grep -o BCM2708 /proc/cpuinfo)" "BCM2708"
 	TARGET_RPI := 1
 else
 	TARGET_RPI := 0
