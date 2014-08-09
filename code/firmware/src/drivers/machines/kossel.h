@@ -107,6 +107,7 @@ class Kossel : public Driver {
     public:
         //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
+        //typedef matr::Matrix3Static<> LevelingT;
         typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, STEPS_M, STEPS_M_EXT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
