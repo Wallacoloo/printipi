@@ -21,10 +21,17 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 		//timespec _baseTime;
 		EventClockT::duration _baseTime;
 		float _duration;
-		float _maxVel;
+		//float _maxVel;
 		MotionType _motionType;
 	public:
-		MotionPlanner() : _accel(), _destMechanicalPos(), _iters(), _homeIters(), _baseTime(), _duration(NAN), _maxVel(0), _motionType(MotionNone) {}
+		MotionPlanner() : 
+			_accel(), 
+			_destMechanicalPos(), 
+			_iters(), _homeIters(), 
+			_baseTime(), 
+			_duration(NAN),
+			//_maxVel(0), 
+			_motionType(MotionNone) {}
 		/* isReadyForNextMove: returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems) */
 		bool readyForNextMove() const {
 			//Note: for now, there isn't actually buffering.
@@ -47,7 +54,8 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 				return Event();
 			}
 			//float transformedTime = accelerate ? transformEventTime(s.time, duration, maxVel) : s.time;
-			float transformedTime = _accel.transform(s.time, _duration, _maxVel);
+			//float transformedTime = _accel.transform(s.time, _duration, _maxVel);
+			float transformedTime = _accel.transform(s.time);
 			LOGV("Step transformed time: %f\n", transformedTime);
 			Event e = s.getEvent(transformedTime);
 			e.offset(_baseTime);
@@ -84,10 +92,10 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 			LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
 			drv::AxisStepper::initAxisSteppers(_iters, _destMechanicalPos, vx, vy, vz, velE);
-			this->_maxVel = maxVelXyz;
+			//this->_maxVel = maxVelXyz;
 			this->_duration = minDuration;
 			this->_motionType = MotionMove;
-			this->_accel.begin(_duration, _maxVel);
+			this->_accel.begin(_duration, maxVelXyz);
 			//this->scheduleAxisSteppers(baseTime, _iters, minDuration, true, maxVelXyz);
 			//std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 			//LOGD("MotionPlanner::moveTo wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
@@ -98,10 +106,10 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			drv::AxisStepper::initAxisHomeSteppers(_homeIters, maxVelXyz);
 			//this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
 			this->_baseTime = baseTime.time_since_epoch();
-			this->_maxVel = maxVelXyz;
+			//this->_maxVel = maxVelXyz;
 			this->_duration = NAN;
 			this->_motionType = MotionHome;
-			this->_accel.begin(NAN, _maxVel);
+			this->_accel.begin(NAN, maxVelXyz);
 		}
 };
 
