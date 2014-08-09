@@ -3,12 +3,12 @@
 
 
 struct AccelerationProfile {
+	void begin(float /*moveDuration*/, float /*Vmax*/) {}
 	//float transform(float inp, float moveDuration, float Vmax);
 };
 
-class NoAcceleration : public AccelerationProfile {
-	public:
-		float transform(float inp, float /*moveDuration*/, float /*Vmax*/) { return inp; }
+struct NoAcceleration : public AccelerationProfile {
+	float transform(float inp, float /*moveDuration*/, float /*Vmax*/) { return inp; }
 };
 
 

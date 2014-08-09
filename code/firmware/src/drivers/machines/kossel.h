@@ -120,9 +120,9 @@ class Kossel : public Driver {
         /*typedef matr::Matrix3Static<999999489, -1020, 1010098,
 -1020, 999997959, 2020196,
 -1010098, -2020196, 999997449, 1000000000> LevelingT;*/
-		typedef matr::Matrix3Static<1000000000, 0, 0, 
-0, 999998347, 1818178, 
-0, -1818178, 999998347, 1000000000> LevelingT;
+		typedef matr::Matrix3Static<999999265, 1101, -1212118, 
+1101, 999998347, 1818177, 
+1212118, -1818177, 999997612, 1000000000> LevelingT;
 
         typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, STEPS_M, STEPS_M_EXT, LevelingT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;

@@ -8,6 +8,7 @@
 template <int Accel1000> class ConstantAcceleration : public AccelerationProfile {
 	static constexpr float a() { return Accel1000 / 1000.; }
 	public:
+		//void begin
 		float transform(float time, float moveDuration, float Vmax) {
 			if (time < Vmax/2/a()) { //accelerating
 				return std::sqrt(2*Vmax/a()*time);
