@@ -297,7 +297,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 				if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
 					return;
 				} else { //retain control if the event is near, or if the queue must be emptied.
-					this->sleepUntilEvent(&*iter);
+					this->sleepUntilEvent(&*iter); //&*iter turns iter into Event*
 					//break;
 				}
 			}
