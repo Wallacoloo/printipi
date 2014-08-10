@@ -1,7 +1,15 @@
 #ifndef MOTION_CONSTANTACCELERATION_H
 #define MOTION_CONSTANTACCELERATION_H
 
-
+/* 
+ * Printipi/motion/constantacceleration.h
+ * (c) 2014 Colin Wallace
+ *
+ * ConstantAcceleration is an implementation of motion/AccelerationProfile in which 
+ *  v(t) = {at [if at < vmax], vmax [if t < duration-accelTime], vmax - a(t-t1) [if t > duration-accelTime] }
+ *
+ * Polynomial acceleration profiles turn out to be non-trivial, so only constant, linear, and quadratic acceleration have a closed-form solution (above that requires solving the roots of an n+1 degree polynomial. Event just linear acceleration requires solving a degree 3 polynomial.
+ */
 
 #include "accelerationprofile.h"
 #include "common/logging.h"
