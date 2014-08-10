@@ -1,6 +1,15 @@
 #ifndef COMMON_MATRIX_H
 #define COMMON_MATRIX_H
 
+/* 
+ * Printipi/common/matrix.h
+ * (c) 2014 Colin Wallace
+ *
+ * This file exposes classes and templates used to construct 3x3 matrices.
+ * Matrices are useful in applying linear transformations. Notably, they can be used to adjust coordinates to a different coordinate-space in order to account for an unlevel bed.
+ */
+
+
 /*
  * In general, it is difficult to apply static operations to matrixes (add, mul, etc at compile-time).
  * There is this library for templated floats: http://www.edwardrosten.com/code/fp_template.html

@@ -2,7 +2,7 @@
 #define COMMON_LOGGING_H
 
 /* 
- * Printipi/logging.h
+ * Printipi/common/logging.h
  * (c) 2014 Colin Wallace
  *
  * This file provides some functions that allow for logging information to stdout.

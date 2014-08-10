@@ -2,7 +2,7 @@
 #define COMMON_INTERVALTIMER_H
 
 /* 
- * Printipi/gparse/com.h
+ * Printipi/common/intervaltimer.h
  * (c) 2014 Colin Wallace
  *
  * IntervalTimer provides a way to clock the time between two events (or between calls to a recurring event).
