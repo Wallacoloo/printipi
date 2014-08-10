@@ -39,15 +39,15 @@
 
 #define R1000 111000
 #define L1000 221000
-//#define H1000 467100
-#define H1000 467060
+#define H1000 467100
+//#define H1000 467060
 #define STEPS_M 6265*4
 #define STEPS_M_EXT 10000*8
 
 #define MAX_ACCEL1000 600000
 //Can reach 160mm/sec at full-stepping (haven't tested the boundaries)
 //75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
-#define MAX_MOVE_RATE 60
+#define MAX_MOVE_RATE 45
 #define HOME_RATE 10
 #define MAX_EXT_RATE 12
 
@@ -124,9 +124,9 @@ class Kossel : public Driver {
 		/*typedef matr::Matrix3Static<999999000, 999, -1414138, 
 999, 999999000, 1414138, 
 1414138, -1414138, 999998000, 1000000000> LevelingT;*/
-		typedef matr::Matrix3Static<999998347, 1285, -1818176, 
-1285, 999999000, 1414137, 
-1818176, -1414137, 999997347, 1000000000> LevelingT;
+		typedef matr::Matrix3Static<999997530, 1122, -2222215, 
+1122, 999999489, 1010098, 
+2222215, -1010098, 999997020, 1000000000> LevelingT;
 
         typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, STEPS_M, STEPS_M_EXT, LevelingT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
