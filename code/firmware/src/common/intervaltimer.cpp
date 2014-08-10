@@ -3,20 +3,20 @@
 
 //IntervalTimer::IntervalTimer() : _last({0, 0}) {
 //}
-IntervalTimer::IntervalTimer() : _last() {
-}
-void IntervalTimer::reset() {
+/*IntervalTimer::IntervalTimer() : _last() {
+}*/
+/*void IntervalTimer::reset() {
 	//_last = {0, 0};
 	_last = EventClockT::time_point();
-}
-const EventClockT::time_point& IntervalTimer::clock() {
+}*/
+/*const EventClockT::time_point& IntervalTimer::clock() {
 	//_last = timespecNow();
 	_last = EventClockT::now();
 	return _last;
-}
-const EventClockT::time_point& IntervalTimer::get() const {
+}*/
+/*const EventClockT::time_point& IntervalTimer::get() const {
 	return _last;
-}
+}*/
 /*int IntervalTimer::clockCmp(const EventClockT::time_point &cmp, int dflt) {
 	//return -1 if elapsed time is < cmp, +1 if > cmp, 0 if == cmp
 	int ret;
