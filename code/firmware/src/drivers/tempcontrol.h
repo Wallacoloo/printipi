@@ -80,6 +80,7 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 					_intervalTimer.clock();
 					if (_therm.timeSinceStartRead() > _maxRead) {
 						LOG("Thermistor read error\n");
+						_isReading = false;
 						return false;
 					} else {
 						return true; //need more cpu time.
