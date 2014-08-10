@@ -2,7 +2,7 @@
 #define BOILERPLATE_THISTHREADSLEEPPOSIX_H
 
 /*
- * std::this_thread::sleep_until may be having issues when using custom clocks. Try this as a workaround.
+ * std::this_thread::sleep_until may be having issues when using custom clocks. Try this as a workaround if using Posix.
 */
 
 #include <chrono>

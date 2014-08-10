@@ -22,12 +22,12 @@ template <int Accel1000> class ConstantAcceleration : public AccelerationProfile
 	float twiceVmax_a;
 	public:
 		void begin(float moveDuration, float Vmax) {
-			moveDuration = moveDuration;
-			tmax1 = Vmax/2/a();
-			tmax2 = std::isnan(moveDuration) ? INFINITY : moveDuration - Vmax/2/a();
-			tmax1 = std::min(tmax1, tmax2); //for really short movements, we may not be able to fully accelerate.
-			tbase3 = moveDuration + Vmax/a(); //TODO: is this the true tbase3 for short movements?
-			twiceVmax_a = 2*Vmax/a();
+			this->moveDuration = moveDuration;
+			this->tmax1 = Vmax/2/a();
+			this->tmax2 = std::isnan(moveDuration) ? INFINITY : moveDuration - Vmax/2/a();
+			this->tmax1 = std::min(tmax1, tmax2); //for really short movements, we may not be able to fully accelerate.
+			this->tbase3 = moveDuration + Vmax/a(); //TODO: is this the true tbase3 for short movements?
+			this->twiceVmax_a = 2*Vmax/a();
 			LOG("Accel::begin dur, Vmax: %f, %f\n", moveDuration, Vmax);
 			LOG("Accel::begin tmax1, tmax2, tbase3, twiceVmax_a: %f, %f, %f, %f\n", tmax1, tmax2, tbase3, twiceVmax_a);
 		}
