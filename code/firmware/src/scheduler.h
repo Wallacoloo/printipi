@@ -111,7 +111,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			//SHOULD work precisely with x0, y0 = (0, 0)
 			float s_s0 = std::chrono::duration_cast<std::chrono::duration<float> >(tp - lastSchedTime).count();
 			float offset;
-			if (s_s0 < (1.-lastSlope)/2./a) { //acclerating:
+			if (s_s0 < (1.-lastSlope)/2./a) { //accelerating:
 				offset = a*s_s0*s_s0 + lastSlope*s_s0;
 			} else { //stabilized:
 				offset = (1.-lastSlope)*(1.-lastSlope)/-4/a + s_s0;
@@ -299,7 +299,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					return;
 				} else { //retain control if the event is near, or if the queue must be emptied.
 					this->sleepUntilEvent(&*iter); //&*iter turns iter into Event*
-					//break;
+					//break; //don't break because sleepUntilEvent won't always do the full sleep
 				}
 			}
 		}
