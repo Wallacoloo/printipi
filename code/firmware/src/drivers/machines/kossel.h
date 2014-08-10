@@ -39,8 +39,8 @@
 
 #define R1000 111000
 #define L1000 221000
-#define H1000 467100
-//#define H1000 467260
+//#define H1000 467100
+#define H1000 466700
 #define STEPS_M 6265*4
 #define STEPS_M_EXT 10000*8
 
