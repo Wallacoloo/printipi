@@ -63,7 +63,6 @@ template <typename Drv> class State {
 		typedef typename Drv::AxisStepperTypes AxisStepperTypes;
 	};
 	typedef Scheduler<SchedInterface> SchedType;
-	//std::atomic<bool> _isDeadOrDying; //for thread destruction upon death.
 	PositionMode _positionMode; // = POS_ABSOLUTE;
 	PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
 	LengthUnit unitMode; // = UNIT_MM;
@@ -71,7 +70,7 @@ template <typename Drv> class State {
 	float _destEPrimitive;
 	float _destMoveRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
-	//std::array<int, Drv::CoordMapT::numAxis()> _destMechanicalPos; //number of steps for each stepper motor.
+	bool _isHomed;
 	gparse::Com &com;
 	SchedType scheduler;
 	MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
@@ -143,7 +142,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDea
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
-	//_destMechanicalPos(), 
+	_isHomed(false),
 	com(com), 
 	scheduler(SchedInterface(*this)),
 	driver(drv)
