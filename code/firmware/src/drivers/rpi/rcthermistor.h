@@ -46,6 +46,10 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 				return true;
 			}
 		}
+		EventClockT::duration timeSinceStartRead() const {
+			return EventClockT::now() - _startReadTime;
+		}
+		
 		float value() const {
 			//struct timespec tDelta;
 			//tDelta = timespecSub(_endReadTime, _startReadTime);
