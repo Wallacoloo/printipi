@@ -45,7 +45,7 @@
 #define STEPS_M_EXT 10000*8
 
 //#define MAX_ACCEL1000 600000
-#define MAX_ACCEL1000 300000
+#define MAX_ACCEL1000 50000
 //Can reach 160mm/sec at full-stepping (haven't tested the boundaries)
 //75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
 #define MAX_MOVE_RATE 45
