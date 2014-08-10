@@ -20,6 +20,8 @@
 	#endif
 	#include "drivers/rpi/chronoclockrpi.h"
 	typedef drv::rpi::ChronoClockRpi EventClockT;
+	#include "boilerplate/thisthreadsleepposix.h"
+	typedef ThisThreadSleepPosix SleepT;
 #else
 	#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
 		//use special posix clock
@@ -28,6 +30,8 @@
 		#endif
 		#include "boilerplate/chronoclockposix.h"
 		typedef ChronoClockPosix EventClockT;
+		#include "boilerplate/thisthreadsleepposix.h"
+		typedef ThisThreadSleepPosix SleepT;
 	#else
 		//use C++11 steady_clock. Hope it exists and is functional!
 		#ifdef COMPILING_MAIN
@@ -35,6 +39,8 @@
 		#endif
 		#include <chrono>
 		typedef std::chrono::steady_clock EventClockT;
+		#include <thread>
+		typedef std::this_thead SleepT;
 	#endif
 #endif
 //allow for generation of code that still works in high-latency enviroments, like valgrind
