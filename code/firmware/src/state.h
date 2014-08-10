@@ -320,6 +320,9 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 	//gparse::Command resp;
 	if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
 		//LOGW("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
+		if (!_isHomed && driver.doHomeBeforeFirstMovement()) {
+			this->homeEndstops();
+		}
 		if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
 			return gparse::Command::Null;
 		}
@@ -559,6 +562,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 template <typename Drv> void State<Drv>::homeEndstops() {
 	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
 	motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
+	this->_isHomed = true;
 }
 
 /* State utility class for setting the fan rate (State::setFanRate).
