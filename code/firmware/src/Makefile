@@ -49,7 +49,7 @@ debug: CFLAGS+=-O1 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
 release: CFLAGS+= -O3 -fomit-frame-pointer
 release: $(RELEASEDIR)/$(NAME)
-profile: CFLAGS+= -O3 -DDRUNNING_IN_VM
+profile: CFLAGS+= -O3 -DDRUNNING_IN_VM -pg
 profile: $(PROFILEDIR)/$(NAME)
 #defining NDEBUG removes assertions.
 minsize: CFLAGS+= -DNDEBUG -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections

@@ -23,34 +23,34 @@
 
 #if DO_LOG == 1
 
-#define LOGE(format, args...) \
-	if (logging::isInfoEnabled()) { \
-		fprintf(stderr, format, ## args); \
-	}
-#define LOGW(format, args...) \
-	if (logging::isInfoEnabled()) { \
-		printf(format, ## args); \
-	}
-#define LOG(format, args...) \
-	if (logging::isInfoEnabled()) { \
-		printf(format, ## args); \
-	}
-#define LOGD(format, args...) \
-	if (logging::isVerboseEnabled()) { \
-		printf(format, ## args); \
-	}
-#define LOGV(format, args...) \
-	if (logging::isVerboseEnabled()) { \
-		printf(format, ## args); \
-	}
+	#define LOGE(format, args...) \
+		if (logging::isInfoEnabled()) { \
+			fprintf(stderr, format, ## args); \
+		}
+	#define LOGW(format, args...) \
+		if (logging::isInfoEnabled()) { \
+			printf(format, ## args); \
+		}
+	#define LOG(format, args...) \
+		if (logging::isInfoEnabled()) { \
+			printf(format, ## args); \
+		}
+	#define LOGD(format, args...) \
+		if (logging::isVerboseEnabled()) { \
+			printf(format, ## args); \
+		}
+	#define LOGV(format, args...) \
+		if (logging::isVerboseEnabled()) { \
+			printf(format, ## args); \
+		}
 	
 #else
 
-#define LOGE(format, args...) {}
-#define LOGW(format, args...) {}
-#define LOG(format, args...) {}
-#define LOGD(format, args...) {}
-#define LOGV(format, args...) {}
+	#define LOGE(format, args...) {}
+	#define LOGW(format, args...) {}
+	#define LOG(format, args...) {}
+	#define LOGD(format, args...) {}
+	#define LOGV(format, args...) {}
 
 #endif
 	
@@ -58,7 +58,7 @@ namespace logging {
 
 #if DO_LOG == 1
 
-bool isInfoEnabled();
+bool isInfoEnabled(); //primarily used for debugging
 bool isVerboseEnabled();
 void disable();
 void enableVerbose();
