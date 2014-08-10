@@ -1,6 +1,16 @@
 #ifndef MOTION_MOTIONPLANNER_H
 #define MOTION_MOTIONPLANNER_H
 
+/* 
+ * Printipi/motion/motionplanner.h
+ * (c) 2014 Colin Wallace
+ *
+ * MotionPlanner takes commands from the State (mainly those caused by G1 and G28) and resolved the move into a path via interfacing with a CoordMap, AxisSteppers, and an AccelerationProfile.
+ * Once a path is planned, State can call MotionPlanner.nextStep() and be given data in the form of an Event, which can be passed on to a Scheduler.
+ * 
+ * Interface must have 2 public typedefs: CoordMapT and AxisStepperTypes. These are often provided by the machine driver.
+ */
+
 #include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
 
