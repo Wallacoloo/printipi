@@ -2,10 +2,11 @@
 #define COMMON_TYPESETTINGS_H
 
 /* 
- * Printipi/typesettings.h
+ * Printipi/common/typesettings.h
  * (c) 2014 Colin Wallace
  *
  * This file contains typedefs and enums for types used throughout the program.
+ * It also processes some command-line based build settings (defines).
  */
 
 #include <cstdint> //for uint8_t

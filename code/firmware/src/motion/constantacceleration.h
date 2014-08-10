@@ -9,8 +9,8 @@ template <int Accel1000> class ConstantAcceleration : public AccelerationProfile
 	static constexpr float a() { return Accel1000 / 1000.; }
 	float moveDuration;
 	float tmax1, tmax2;
-	float twiceVmax_a;
 	float tbase3;
+	float twiceVmax_a;
 	public:
 		void begin(float moveDuration, float Vmax) {
 			moveDuration = moveDuration;

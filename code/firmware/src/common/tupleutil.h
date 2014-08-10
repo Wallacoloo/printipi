@@ -2,7 +2,7 @@
 #define COMMON_TUPLEUTIL_H
 
 /* 
- * Printipi//mathutil.h
+ * Printipi/common/tupleutil.h
  * (c) 2014 Colin Wallace
  *
  * This file provides utilities for manipulating tuples.

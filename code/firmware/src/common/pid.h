@@ -2,7 +2,7 @@
 #define COMMON_PID_H
 
 /* 
- * Printipi/pid.h
+ * Printipi/common/pid.h
  * (c) 2014 Colin Wallace
  *
  * http://en.wikipedia.org/wiki/PID_controller
