@@ -156,6 +156,23 @@ long getAvgCostOfGetTime(int n=40) {
 	return sum/n;
 }
 
+long costOfSleep() {
+	struct timespec t1, t2;
+	clock_gettime(CLOCK_MONOTONIC, &t1);
+	clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t1, NULL);
+	clock_gettime(CLOCK_MONOTONIC, &t2);
+	timespec_sub(&t2, &t1);
+	return timespec_to_nano(&t2);
+}
+
+long getAvgCostOfSleep(int n=40) {
+	long sum = 0;
+	for (int i=0; i<n; ++i) {
+		sum += costOfSleep();
+	}
+	return sum/n;
+}
+
 int main(int argc, char** argv) {
 	struct timespec a, b;
 	a.tv_sec = 0;
@@ -166,6 +183,7 @@ int main(int argc, char** argv) {
     getClockInfo();
     avgCostOfGetTime = getAvgCostOfGetTime();
     printf("Average cost of gettime: %lu\n", avgCostOfGetTime);
+    printf("Average cost of sleep: %lu\n", getAvgCostOfSleep());
     testNanoSleep();
     for (int i=0; i<40; ++i) {
         //printf("%ld, \n", testSleepPrecision());
