@@ -28,6 +28,7 @@ enum TempControlType {
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
 	static const std::chrono::microseconds _intervalThresh;
 	static const std::chrono::microseconds _readInterval;
+	static const std::chrono::microseconds _maxRead;
 	IntervalTimer _intervalTimer;
 	Heater _heater;
 	Thermistor _therm;
@@ -77,7 +78,12 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 					}
 				} else {
 					_intervalTimer.clock();
-					return true; //need more cpu time.
+					if (_therm.timeSinceStartRead() > _maxRead) {
+						LOG("Thermistor read error\n");
+						return false;
+					} else {
+						return true; //need more cpu time.
+					}
 				}
 			} else {
 				auto now = _intervalTimer.clock();
@@ -108,6 +114,7 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 #endif
 
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval(3000000);
+template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_maxRead(1000000);
 
 }
 #endif

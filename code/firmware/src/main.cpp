@@ -78,8 +78,9 @@
  * *Optimize steppers
  *  Add a way to set a lower-bound on fan speed - either in the Machine driver, or the Fan driver itself.
  *    Also default fan speed for init.
- *  Add state to AcellerationProfiles
+ * *Add state to AcellerationProfiles
  *  make Sched::PwmInfo times use the same resolution as EventClockT (to avoid divisions by 1000 when offsetting events).
+ *  Prevent rcthermistor from using 100% cpu when it errors.
 */
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
