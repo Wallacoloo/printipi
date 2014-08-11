@@ -138,7 +138,7 @@ template <typename Drv> class State {
 
 
 template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDeadOrDying(false), 
-	: _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_UNDEFINED),  
+	: _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
 	unitMode(UNIT_MM), 
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
@@ -160,7 +160,8 @@ template <typename Drv> void State<Drv>::setPositionMode(PositionMode mode) {
 }
 
 template <typename Drv> PositionMode State<Drv>::extruderPosMode() const {
-	return this->_extruderPosMode == POS_UNDEFINED ? positionMode() : this->_extruderPosMode;
+	//return this->_extruderPosMode == POS_UNDEFINED ? positionMode() : this->_extruderPosMode;
+	return this->_extruderPosMode;
 }
 template <typename Drv> void State<Drv>::setExtruderPosMode(PositionMode mode) {
 	this->_extruderPosMode = mode;
