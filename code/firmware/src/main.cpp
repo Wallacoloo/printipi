@@ -45,7 +45,7 @@
  * *Put copywrite at head of every file.
  * *NO: Replace certain template parameters (eg STEPS_MM_1000 with std::ratio)
  *    Not worth it; will make code more difficult to read.
- *  Add way to define which driver to use without modifying code.
+ * *Add way to define which driver to use without modifying code.
  * *Migrate to std::chrono::high_resolution_clock instead of timespec (http://www.cplusplus.com/reference/chrono/high_resolution_clock/)
  *    the clock types aren't defined in gcc-4.6.3, and, while defined in gcc-4.7, they behave incorrectly on arm!
  *    and/or use the Pi's timer directly (performance) http://mindplusplus.wordpress.com/2013/05/21/accessing-the-raspberry-pis-1mhz-timer/
@@ -81,7 +81,7 @@
  * *Add state to AcellerationProfiles
  *  make Sched::PwmInfo times use the same resolution as EventClockT (to avoid divisions by 1000 when offsetting events).
  * *Prevent rcthermistor from using 100% cpu when it errors.
- *  Fix relative extruder movements
+ * *Fix relative extruder movements
 */
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
