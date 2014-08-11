@@ -78,11 +78,14 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			return e;
 		}
 		void moveTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
+			if (!CoordMapT::numAxis()) {
+				return; //Sanity check. Algorithms only work for machines with atleast 1 axis.
+			}
 			//this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
 			this->_baseTime = baseTime.time_since_epoch();
 			float curX, curY, curZ, curE;
 			std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
-			//std::tie(x, y, z) = CoordMapT::applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
+			std::tie(x, y, z) = CoordMapT::applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
 			
 			float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
 			float dist = sqrt(distSq);
