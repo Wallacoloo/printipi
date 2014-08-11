@@ -91,6 +91,7 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 	
 %/rest.a: %/argparse.o %/event.o %/main.o %/scheduler.o 
 	$(LD) -r $^ -o $@ $(LDFLAGS)
+%/main.cpp: $(MACHINE_PATH)
 	
 #Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.
 .SECONDARY:
