@@ -45,10 +45,11 @@
 #define STEPS_M_EXT 10000*8
 
 #define MAX_ACCEL1000 300000
-//Can reach 160mm/sec at full-stepping (haven't tested the boundaries)
+//Can reach 160mm/sec at full-stepping (haven't tested the limits)
 //75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
+//90mm/sec uses 75% cpu at quarter-stepping (optimized - Aug 10)
 //#define MAX_MOVE_RATE 45
-#define MAX_MOVE_RATE 90
+#define MAX_MOVE_RATE 60
 #define HOME_RATE 10
 //#define MAX_EXT_RATE 12
 #define MAX_EXT_RATE 24
@@ -129,9 +130,9 @@ class KosselPi : public Driver {
 		/*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
 1836, 999999586, 909083, 
 4040369, -909083, 999991424, 1000000000> _BedLevelT;*/
-		typedef matr::Matrix3Static<999948988, 0, 10100494, 
+		typedef matr::Matrix3Static<999948988, 0, -10100494, 
 0, 1000000000, 0, 
--10100494, 0, 999948988, 1000000000> _BedLevelT;
+10100494, 0, 999948988, 1000000000> _BedLevelT;
     public:
         //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
