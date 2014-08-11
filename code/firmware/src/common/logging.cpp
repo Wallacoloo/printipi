@@ -8,7 +8,7 @@ bool _info = true;
 bool _debug = false;
 bool _verbose = false;
 
-bool isInfoEnabled() {
+/*bool isInfoEnabled() {
 	return _info;
 }
 bool isDebugEnabled() {
@@ -31,7 +31,7 @@ void enableDebug() {
 void enableVerbose() {
 	_verbose = true;
 	LOG("verbose logging enabled\n");
-}
+}*/
 
 #else
 

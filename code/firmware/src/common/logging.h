@@ -58,12 +58,41 @@ namespace logging {
 
 #if DO_LOG == 1
 
-bool isInfoEnabled(); //primarily used for debugging
+extern bool _info;
+extern bool _debug;
+extern bool _verbose;
+
+inline bool isInfoEnabled() {
+	return _info;
+}
+inline bool isDebugEnabled() {
+	return _debug;
+}
+inline bool isVerboseEnabled() {
+	return _verbose;
+}
+
+inline void disable() {
+	_info = false;
+	_debug = false;
+	_verbose = false;
+}
+
+inline void enableDebug() {
+	_debug = true;
+	LOG("debug logging enabled\n");
+}
+inline void enableVerbose() {
+	_verbose = true;
+	LOG("verbose logging enabled\n");
+}
+
+/*bool isInfoEnabled(); //primarily used for debugging
 bool isDebugEnabled();
 bool isVerboseEnabled();
 void disable();
 void enableVerbose();
-void enableDebug();
+void enableDebug();*/
 
 #else
 
