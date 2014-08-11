@@ -372,9 +372,11 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		return gparse::Command::OK;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
+		setExtruderPosMode(POS_ABSOLUTE);
 		return gparse::Command::OK;
 	} else if (cmd.isG91()) { //set g-code coordinates to relative
 		setPositionMode(POS_RELATIVE);
+		setExtruderPosMode(POS_RELATIVE);
 		return gparse::Command::OK;
 	} else if (cmd.isG92()) { //set current position = 0
 		//LOG("Warning (gparse/state.h): OP_G92 (set current position as reference to zero) not tested\n");
