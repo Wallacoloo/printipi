@@ -82,6 +82,7 @@
  *  make Sched::PwmInfo times use the same resolution as EventClockT (to avoid divisions by 1000 when offsetting events).
  * *Prevent rcthermistor from using 100% cpu when it errors.
  * *Fix relative extruder movements
+ *  Fix low-pass filter
 */
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
