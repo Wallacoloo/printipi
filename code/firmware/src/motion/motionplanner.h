@@ -61,6 +61,10 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 				if (isHoming) {
 					_destMechanicalPos = CoordMapT::getHomePosition(_destMechanicalPos);
 				}
+				float x, y, z, e;
+				std::tie(x, y, z, e) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
+				LOGD("MotionPlanner::moveTo Got (x,y,z,e) %f, %f, %f, %f\n", x, y, z, e);
+				LOGD("MotionPlanner _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
 				_motionType = MotionNone; //motion is over.
 				return Event();
 			}
@@ -104,7 +108,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			float vz = (z-curZ)/minDuration;
 			LOGD("MotionPlanner::moveTo (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
 			LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
-			LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
+			//LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
 			drv::AxisStepper::initAxisSteppers(_iters, _destMechanicalPos, vx, vy, vz, velE);
 			//this->_maxVel = maxVelXyz;
 			this->_duration = minDuration;

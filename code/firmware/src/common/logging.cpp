@@ -5,10 +5,14 @@ namespace logging {
 #if DO_LOG == 1
 
 bool _info = true;
+bool _debug = false;
 bool _verbose = false;
 
 bool isInfoEnabled() {
 	return _info;
+}
+bool isDebugEnabled() {
+	return _debug;
 }
 bool isVerboseEnabled() {
 	return _verbose;
@@ -16,12 +20,17 @@ bool isVerboseEnabled() {
 
 void disable() {
 	_info = false;
+	_debug = false;
 	_verbose = false;
 }
 
+void enableDebug() {
+	_debug = true;
+	LOG("debug logging enabled\n");
+}
 void enableVerbose() {
 	_verbose = true;
-	LOGV("verbose logging enabled\n");
+	LOG("verbose logging enabled\n");
 }
 
 #else

@@ -36,7 +36,7 @@
 			printf(format, ## args); \
 		}
 	#define LOGD(format, args...) \
-		if (logging::isVerboseEnabled()) { \
+		if (logging::isDebugEnabled()) { \
 			printf(format, ## args); \
 		}
 	#define LOGV(format, args...) \
@@ -59,9 +59,11 @@ namespace logging {
 #if DO_LOG == 1
 
 bool isInfoEnabled(); //primarily used for debugging
+bool isDebugEnabled();
 bool isVerboseEnabled();
 void disable();
 void enableVerbose();
+void enableDebug();
 
 #else
 
@@ -71,9 +73,13 @@ inline bool isInfoEnabled() {
 inline bool isVerboseEnabled() {
 	return false;
 }
+inline bool isDebugEnabled() {
+	return false;
+}
 
 inline void disable() {}
 inline void enableVerbose() {}
+inline void enableDebug() {}
 
 #endif
 

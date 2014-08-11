@@ -115,6 +115,9 @@ int main_(int argc, char** argv) {
 	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
     }
+    if (argparse::cmdOptionExists(argv, argv+argc, "--debug")) {
+    	logging::enableDebug();
+    }
     if (argparse::cmdOptionExists(argv, argv+argc, "--verbose")) {
     	logging::enableVerbose();
     }
