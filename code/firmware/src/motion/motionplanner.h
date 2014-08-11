@@ -24,6 +24,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 	private:
 		typedef typename Interface::CoordMapT CoordMapT;
 		typedef typename Interface::AxisStepperTypes AxisStepperTypes;
+		CoordMapT _coordMapper;
 		AccelProfile _accel;
 		std::array<int, CoordMapT::numAxis()> _destMechanicalPos;
 		AxisStepperTypes _iters;
