@@ -17,8 +17,8 @@ template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000
 	static constexpr float P = P1000000 / 1000000.;
 	static constexpr float I = I1000000 / 1000000.;
 	static constexpr float D = D1000000 / 1000000.;
-	static constexpr float IMax = ITermMax1000000 / 1000000. / I;
-	static constexpr float IMin = ITermMin1000000 / 1000000. / I;
+	static constexpr float IMax() { return ITermMax1000000 / 1000000. / (I1000000 / 1000000.); }
+	static constexpr float IMin() { return ITermMin1000000 / 1000000. / (I1000000 / 1000000.); }
 	float errorI;
 	float lastError;
 	//struct timespec lastTime;
@@ -29,7 +29,7 @@ template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000
 		Returns a recalculated output */
 		float feed(float error) {
 			float deltaT = refreshTime();
-			errorI = std::max(IMin, std::min(IMax, errorI+error*deltaT)); //clamp the integral error term.
+			errorI = std::max(IMin(), std::min(IMax(), errorI+error*deltaT)); //clamp the integral error term.
 			float errorD = (error-lastError)/deltaT;
 			return P*error + I*errorI + D*errorD;
 		}
