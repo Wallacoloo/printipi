@@ -23,7 +23,7 @@ else #gcc < 4.7, or non-gcc compiler
 	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
-MACHINE=Kossel
+MACHINE=KosselPi
 MACHINE_PATH=drivers/machines/$(shell echo $(MACHINE) | tr A-Z a-z).h
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 #the bcm2835 library has some pedantic errors, so use f=-fpermissive

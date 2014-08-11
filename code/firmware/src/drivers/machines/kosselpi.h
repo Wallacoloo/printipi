@@ -1,5 +1,5 @@
-#ifndef DRIVERS_KOSSEL_H
-#define DRIVERS_KOSSEL_H
+#ifndef DRIVERS_KOSSELPI_H
+#define DRIVERS_KOSSELPI_H
 
 
 #include "common/pid.h"
@@ -97,7 +97,7 @@
 */
 namespace drv {
 
-class Kossel : public Driver {
+class KosselPi : public Driver {
 	private:
 		typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_16, 0> _StepperEn; //enable pin is LOW for on, HIGH for off
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
@@ -106,10 +106,7 @@ class Kossel : public Driver {
 		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 0> _HotendOut;
-    public:
-        //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
-        typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
-        //typedef matr::Identity3Static LevelingT;
+		//typedef matr::Identity3Static LevelingT;
         //typedef matr::Matrix3Static<999948990, 0         , 10100490,
         //                                    0, 1000000000, 0,
         //                            -10100490, 0         , 999948990, 1000000000 > LevelingT;
@@ -128,11 +125,17 @@ class Kossel : public Driver {
 		/*typedef matr::Matrix3Static<999995408, 1530, -3030287, 
 1530, 999999489, 1010095, 
 3030287, -1010095, 999994898, 1000000000> LevelingT;*/
-		typedef matr::Matrix3Static<999991837, 1836, -4040369, 
+		/*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
 1836, 999999586, 909083, 
-4040369, -909083, 999991424, 1000000000> LevelingT;
+4040369, -909083, 999991424, 1000000000> _BedLevelT;*/
+		typedef matr::Matrix3Static<999948988, 0, 10100494, 
+0, 1000000000, 0, 
+-10100494, 0, 999948988, 1000000000> _BedLevelT;
+    public:
+        //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
+        typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
 
-        typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, STEPS_M, STEPS_M_EXT, LevelingT> CoordMapT;
+        typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
         	rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //A tower
