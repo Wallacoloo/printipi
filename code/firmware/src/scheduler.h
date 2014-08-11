@@ -120,7 +120,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			if (ret < tp) {
 				LOGV("SchedAdjuster::adjust adjusted into the past!\n");
 			}
-			LOGV("SchedAdjuster::adjust, (a, lastSlope), s_s0[b-a], offset: (%f, %f) %f[%llu-%llu], %f\n, ", a, lastSlope, s_s0, tp.time_since_epoch().count(), lastSchedTime.time_since_epoch().count(), offset);
+			LOGV("SchedAdjuster::adjust, (a, lastSlope), s_s0[b-a], offset[a->m]: (%f, %f) %f[%llu-%llu], %f[%llu->%llu]\n", a, lastSlope, s_s0, tp.time_since_epoch().count(), lastSchedTime.time_since_epoch().count(), offset, tp.time_since_epoch().count(), ret.time_since_epoch().count());
 			return ret;
 		}
 		//call this when the event scheduled at time t is actually run.
