@@ -120,7 +120,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 			if (ret < tp) {
 				LOGV("SchedAdjuster::adjust adjusted into the past!\n");
 			}
-			LOGV("SchedAdjuster::adjust, a, lastSlope, s_s0, offset: (%f, %f) %f, %f\n, ", a, lastSlope, s_s0, offset);
+			LOGV("SchedAdjuster::adjust, a, lastSlope, s_s0 (%llu-%llu), offset: (%f, %f) %f, %f\n, ", a, lastSlope, s_s0, tp.time_since_epoch().count(), lastSchedTime.time_since_epoch().count(), offset);
 			return ret;
 		}
 		//call this when the event scheduled at time t is actually run.
@@ -132,7 +132,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 				auto y1 = lastRealTime.clock();
 				//the +X.XXX is to prevent a division-by-zero, and to minimize the effect that small sched errors have on the timeline:
 				auto avgSlope = (std::chrono::duration_cast<std::chrono::duration<float> >(y1 - y0).count()+0.030) / (0.030+std::chrono::duration_cast<std::chrono::duration<float> >(tp-lastSchedTime).count());
-				lastSlope = std::min(RUNNING_IN_VM ? 1. : 20., 2.*avgSlope - lastSlope); //set a minimum for the speed that can be run at.
+				lastSlope = std::max(1., std::min(RUNNING_IN_VM ? 1. : 20., 2.*avgSlope - lastSlope)); //set a minimum for the speed that can be run at. The max(1,...) is because avgSlope can be smaller than the actual value due to the +0.030 on top and bottom.
 				lastSchedTime = tp;
 			}
 		}
