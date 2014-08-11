@@ -1,6 +1,17 @@
 #ifndef MOTION_EXPONENTIALACCELERATION_H
 #define MOTION_EXPONENTIALACCELERATION_H
 
+/* 
+ * Printipi/motion/exponentialacceleration.h
+ * (c) 2014 Colin Wallace
+ *
+ * ExponentialAcceleration is an implementation of motion/AccelerationProfile in which 
+ * v(t) = f(e^t)
+ * This has the possibility to have no instantaneous acceleration, or even impulse.
+ * Unfortunately, the current version has v(0) != 0 (so there is instantaneous velocity), and is computationally expensive.
+ * For those reasons, I recommend against using this acceleration implementation until it is improved.
+ */
+
 #include "accelerationprofile.h"
 #include <algorithm> //min, isfinite
 
