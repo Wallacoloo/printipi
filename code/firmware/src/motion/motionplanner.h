@@ -91,7 +91,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			float curX, curY, curZ, curE;
 			std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
 			std::tie(x, y, z) = CoordMapT::applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
-			
+			std::tie(x, y, z, e) = CoordMapT::bound(std::make_tuple(x, y, z, e));
 			float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
 			float dist = sqrt(distSq);
 			float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
