@@ -108,7 +108,7 @@ class KosselPi : public Driver {
 		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 0> _HotendOut;
-		typedef matr::Identity3Static _BedLevelT;
+		//typedef matr::Identity3Static _BedLevelT;
 		/*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
 1836, 999999586, 909083, 
 4040369, -909083, 999991424, 1000000000> _BedLevelT;*/
@@ -118,6 +118,9 @@ class KosselPi : public Driver {
 		/*typedef matr::Matrix3Static<999987246, 0, -5050440, 
 0, 1000000000, 0, 
 5050440, 0, 999987246, 1000000000> _BedLevelT;*/
+		typedef matr::Matrix3Static<999997959, 0, -2020197, 
+0, 1000000000, 0, 
+2020197, 0, 999997959, 1000000000> _BedLevelT;
     public:
         //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
