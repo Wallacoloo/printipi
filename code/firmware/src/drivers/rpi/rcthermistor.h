@@ -17,7 +17,7 @@
 namespace drv {
 namespace rpi {
 
-template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV, unsigned T0_C, unsigned R0_OHMS, unsigned BETA, unsigned MIN_R=0, unsigned MAX_R=R0_OHMS*2> class RCThermistor {
+template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV, unsigned T0_C, unsigned R0_OHMS, unsigned BETA, unsigned MIN_R=0, unsigned MAX_R=R0_OHMS*2> class RCThermistor {
 	static constexpr float C = C_PICO * 1.0e-12;
 	static constexpr float Vcc = VCC_mV/1000.;
 	static constexpr float Va = V_TOGGLE_mV/1000.;
@@ -26,23 +26,27 @@ template <uint8_t PIN, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsign
 	static constexpr float R0 = R0_OHMS; //measured resistance of thermistor at T0
 	static constexpr float B = BETA; //describes how thermistor changes resistance over the temperature range.
 	//struct timespec _startReadTime, _endReadTime;
+	Pin pin;
 	EventClockT::time_point _startReadTime, _endReadTime;
 	public:
 		RCThermistor() {
-			initIO();
+			//initIO();
 		}
 		void startRead() {
-			bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_INPT);
+			//bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_INPT);
+			pin.makeDigitalInput();
 			_startReadTime = EventClockT::now(); //timespecNow();
 		}
 		bool isReady() {
-			if (bcm2835_gpio_lev(PIN)) { //wait for pin to go LOW.
+			//if (bcm2835_gpio_lev(PIN)) { //wait for pin to go LOW.
+			if (pin.digitalRead() == IoHigh) { //capacitor is still discharging; not ready.
 				return false;
 			} else {
 				_endReadTime = EventClockT::now(); //timespecNow();
 				//prepare IOs for the next read (ie. drain the capacitor that was charged during reading)
-				bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_OUTP);
-				bcm2835_gpio_set(PIN); //output high to drain the capacitor
+				pin.makeDigitalOutput(IoHigh); //output high to drain the capacitor
+				//bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_OUTP);
+				//bcm2835_gpio_set(PIN); //output high to drain the capacitor
 				return true;
 			}
 		}
