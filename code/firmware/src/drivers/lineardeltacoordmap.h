@@ -28,18 +28,19 @@
 
 namespace drv {
 
-template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsigned STEPS_M_EXT, typename Transform=matr::Identity3Static> class LinearDeltaCoordMap : public CoordMap {
+template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned BUILDRAD1000, unsigned STEPS_M, unsigned STEPS_M_EXT, typename Transform=matr::Identity3Static> class LinearDeltaCoordMap : public CoordMap {
 	static constexpr std::size_t AIdx = 0;
 	static constexpr std::size_t BIdx = 1;
 	static constexpr std::size_t CIdx = 2;
 	static constexpr std::size_t EIdx = 3;
 	static constexpr float MIN_Z() { return -2; }//useful to be able to go a little under z=0 when tuning.
-	static constexpr float r = R1000 / 1000.;
-	static constexpr float L = L1000 / 1000.;
-	static constexpr float h = H1000 / 1000.;
-	static constexpr float STEPS_MM = STEPS_M / 1000.;
+	static constexpr float r = R1000 / 1000.f;
+	static constexpr float L = L1000 / 1000.f;
+	static constexpr float h = H1000 / 1000.f;
+	static constexpr float buildrad = BUILDRAD1000 / 1000.f;
+	static constexpr float STEPS_MM = STEPS_M / 1000.f;
 	static constexpr float MM_STEPS = 1. / STEPS_MM;
-	static constexpr float STEPS_MM_EXT = STEPS_M_EXT / 1000.;
+	static constexpr float STEPS_MM_EXT = STEPS_M_EXT / 1000.f;
 	static constexpr float MM_STEPS_EXT = 1. / STEPS_MM_EXT;
 	//Transform transform;
 	public:
@@ -55,8 +56,15 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsi
 		static std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) {
 			//bound z:
 			float z = std::max(MIN_Z(), std::min((float)((h+sqrt(L*L-r*r))*STEPS_MM), std::get<2>(xyze)));
+			float x = std::get<0>(xyze);
+			float y = std::get<1>(xyze);
+			if (x*x + y*y > buildrad*buildrad) { //bring x, y onto the platform.
+				float ratio = std::sqrt(buildrad*buildrad / (x*x + y*y));
+				x *= ratio;
+				y *= ratio;
+			}
 			//to-do: force x & y to be on the platform.
-			return std::make_tuple(std::get<0>(xyze), std::get<1>(xyze), z, std::get<3>(xyze));
+			return std::make_tuple(x, y, z, std::get<3>(xyze));
 		}
 		static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
 			float e = mech[EIdx]*MM_STEPS_EXT;
