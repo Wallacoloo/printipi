@@ -33,10 +33,11 @@ MACHINE_PATH=drivers/machines/$(shell echo $(MACHINE) | tr A-Z a-z).h
 #fno-math-errno allows gcc to forget about setting the global ERRNO for math routines like sqrt when passed a negative number. This allows inlining of the sqrt function, and I don't THINK errno is read by any glibc code.
 #fmerge-all-constants allows eg a const float and a const array item with same binary value to share the same address. *may* cause issues with recursive functions?
 #-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
-UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno
+UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 #the bcm2835 library has some pedantic errors, so use f=-fpermissive
-CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(UNSAFEOPT) $(PROFFLAGS) $(LTOFLAG) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI)
+CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS)  $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI)
+MAINCFLAGS=#-fwhole-program
 #CFLAGS+= -fassociateive-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
 LD=ld
 LDFLAGS= $(LTOFLAG)
@@ -56,7 +57,7 @@ all: debug
 # -fsanitize=address (gcc 4.8)
 debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3 -ggdb3 -fno-omit-frame-pointer -fomit-frame-pointer
+release: CFLAGS+= -O3 -ggdb3 -fomit-frame-pointer
 release: $(RELEASEDIR)/$(NAME)
 profile: CFLAGS+= -O3 -DDRUNNING_IN_VM -pg
 profile: $(PROFILEDIR)/$(NAME)
@@ -67,8 +68,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)
 	
 %/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
-	@echo $(GCC_GTEQ_470)
-	$(CXX) $^ -o $@ $(CFLAGS) $(LIBS)
+	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)
 	
 %.dir:

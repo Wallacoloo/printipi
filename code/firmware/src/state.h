@@ -51,13 +51,13 @@ template <typename Drv> class State {
 			_state.handleEvent(evt);
 		}
 		bool onIdleCpu() {
-			return _state.satisfyIOs();
+			return _state.onIdleCpu();
 		}
 		static constexpr std::size_t numIoDrivers() {
 			return std::tuple_size<typename Drv::IODriverTypes>::value;
 		}
 	};
-	//The MotionInterface needs certain information about the physical machine, so we provide that without exposing all of Drv:
+	//The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:
 	struct MotionInterface {
 		typedef typename Drv::CoordMapT CoordMapT;
 		typedef typename Drv::AxisStepperTypes AxisStepperTypes;
@@ -119,7 +119,7 @@ template <typename Drv> class State {
 		/* Processes the event immediately, eg stepping a stepper motor */
 		void handleEvent(const Event &evt);
 		/* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
-		bool satisfyIOs();
+		bool onIdleCpu();
 		void eventLoop();
 		/* execute the GCode on a Driver object that supports a well-defined interface.
 		 * returns a Command to send back to the host. */
@@ -283,7 +283,7 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 		drv::IODriver::selectAndStepBackward(this->ioDrivers, evt.stepperId());
 	}
 }
-template <typename Drv> bool State<Drv>::satisfyIOs() {
+template <typename Drv> bool State<Drv>::onIdleCpu() {
 	/*if (!_isExecutingGCode && com.tendCom()) {
 		_isExecutingGCode = true;
 		com.reply(execute(com.getCommand()));

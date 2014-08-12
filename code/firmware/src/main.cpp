@@ -83,8 +83,8 @@
  * *Prevent rcthermistor from using 100% cpu when it errors.
  * *Fix relative extruder movements
  *  Fix low-pass filter
- *  Make NaN checks explicit
- *  Bound coordinates
+ * *Make NaN checks explicit
+ * *Bound coordinates
 */
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
