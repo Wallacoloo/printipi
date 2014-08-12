@@ -128,9 +128,12 @@ class KosselPi : public Driver {
 		/*typedef matr::Matrix3Static<999989669, 1147, -4545407, 
 1147, 999999872, 505045, 
 4545407, -505045, 999989542, 1000000000> _BedLevelT; //[-0.0045, 0.0005, 0.99]*/
-		typedef matr::Matrix3Static<999975003, 1785, -7070529, 
+		/*typedef matr::Matrix3Static<999975003, 1785, -7070529, 
 1785, 999999872, 505037, 
-7070529, -505037, 999974875, 1000000000> _BedLevelT; //[-0.007, 0.0005, 0.99]
+7070529, -505037, 999974875, 1000000000> _BedLevelT; //[-0.007, 0.0005, 0.99]*/
+		typedef matr::Matrix3Static<999975003, 5356, -7070522, 
+5356, 999998852, 1515111, 
+7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
     public:
         //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
