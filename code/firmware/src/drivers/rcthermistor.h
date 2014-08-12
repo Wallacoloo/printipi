@@ -1,11 +1,10 @@
-#ifndef DRIVERS_RPI_RCTHERMISTOR_H
-#define DRIVERS_RPI_RCTHERMISTOR_H
+#ifndef DRIVERS_RCTHERMISTOR_H
+#define DRIVERS_RCTHERMISTOR_H
 
 /* This file provides code to approximate a temperature via first determining the resistance of a thermistor (resistor that varies its resistance according to temperature) via only a digital IO pin.
  * The raspberry pi doesn't have any ADC pins, so we must use the method outlined here: http://www.robotshop.com/media/files/pdf/RCtime_App_Note.pdf
  */
  
-#include "drivers/rpi/rpi.h"
 
 #include <time.h> //for timespec
 #include <cmath>
@@ -15,7 +14,6 @@
 #include "common/logging.h"
 
 namespace drv {
-namespace rpi {
 
 template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV, unsigned T0_C, unsigned R0_OHMS, unsigned BETA, unsigned MIN_R=0, unsigned MAX_R=R0_OHMS*2> class RCThermistor {
 	static constexpr float C = C_PICO * 1.0e-12;
@@ -98,7 +96,6 @@ template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsig
 };
 
 
-}
 }
 
 #endif
