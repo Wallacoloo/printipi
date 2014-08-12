@@ -10,6 +10,7 @@
 #include "drivers/axisstepper.h"
 #include "drivers/linearstepper.h"
 #include "drivers/lineardeltastepper.h"
+#include "drivers/rpi/rpiiopin.h"
 #include "drivers/rpi/a4988.h"
 #include "drivers/rpi/sn754410.h"
 #include "drivers/linearcoordmap.h"
@@ -141,10 +142,14 @@ class KosselPi : public Driver {
         typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
-        	rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //A tower
-        	rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21, _StepperEn>, //B tower
-        	rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
-        	rpi::A4988<RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, _StepperEn>, //E coord
+        	//rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //A tower
+        	//rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21, _StepperEn>, //B tower
+        	//rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
+        	//rpi::A4988<RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, _StepperEn>, //E coord
+        	rpi::A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_22>, rpi::RpiIoPin<RPI_V2_GPIO_P1_23>, _StepperEn>,
+        	rpi::A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_19>, rpi::RpiIoPin<RPI_V2_GPIO_P1_21>, _StepperEn>,
+        	rpi::A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_13>, rpi::RpiIoPin<RPI_V2_GPIO_P1_15>, _StepperEn>,
+        	rpi::A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_03>, rpi::RpiIoPin<RPI_V2_GPIO_P1_05>, _StepperEn>,
         	_Fan,
         	//12000, 3000, 1000 gives osc of ~3 min (20C-80C). Converges.
         	//20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.

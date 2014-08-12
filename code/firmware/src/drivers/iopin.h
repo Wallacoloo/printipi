@@ -18,6 +18,9 @@ struct IoPin {
 	inline void digitalWrite(IoLevel /*lev*/) {}
 };
 
+//default implementation of IoPin (does nothing):
+struct NoPin : public IoPin {
+};
 
 }
 #endif

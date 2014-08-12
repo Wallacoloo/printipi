@@ -14,21 +14,26 @@
 #include <cstdint> //for uint8_t
 
 #include "rpi.h"
-#include "bcm2835.h"
+//#include "bcm2835.h"
 #include "drivers/iodriver.h"
 #include "drivers/enabledisabledriver.h"
 #include "common/logging.h"
+#include "drivers/iopin.h"
 
 namespace drv {
 namespace rpi {
 
-template <uint8_t STEPPIN, uint8_t DIRPIN, typename Enabler=NullEnabler> class A4988 : public IODriver {
+template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEnabler> class A4988 : public IODriver {
 	//Enabler enabler;
+	StepPin stepPin;
+	DirPin dirPin;
 	public:
 		A4988() : IODriver(this) {
-			initIO();
-			bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_OUTP); //configure these pins as output
-			bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_OUTP);
+			//initIO();
+			//bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_OUTP); //configure these pins as output
+			//bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_OUTP);
+			stepPin.makeDigitalOutput(IoLow);
+			dirPin.makeDigitalOutput(IoLow);
 			Enabler::enable();
 		}
 		//A4988 is directed by putting a direction on the DIRPIN, and then
@@ -45,19 +50,23 @@ template <uint8_t STEPPIN, uint8_t DIRPIN, typename Enabler=NullEnabler> class A
 			Enabler::disable();
 		}
 		void stepForward() {
-			bcm2835_gpio_write(DIRPIN, HIGH); //set direction as forward
+			dirPin.digitalWrite(IoHigh);
+			//bcm2835_gpio_write(DIRPIN, HIGH); //set direction as forward
 			cycleStepPin();
 		}
 		void stepBackward() {
-			bcm2835_gpio_write(DIRPIN, LOW); //set direction as backward
+			dirPin.digitalWrite(IoLow);
+			//bcm2835_gpio_write(DIRPIN, LOW); //set direction as backward
 			cycleStepPin();
 		}
 	private:
 		void cycleStepPin() {
 			//LOGV("cycling pin %i\n", DIRPIN);
-			bcm2835_gpio_write(STEPPIN, HIGH); 
+			stepPin.digitalWrite(IoHigh);
+			//bcm2835_gpio_write(STEPPIN, HIGH); 
 			bcm2835_delayMicroseconds(2); //delayMicroseconds(n) can delay anywhere from (n-1) to n. Need to delay 2 uS to get minimum of 1 uS. Note, this is a waste of 700-1400 cycles.
-			bcm2835_gpio_write(STEPPIN, LOW); //note: may need a (SHORT!) delay here.
+			stepPin.digitalWrite(IoLow);
+			//bcm2835_gpio_write(STEPPIN, LOW); //note: may need a (SHORT!) delay here.
 			//bcm2835_delayMicroseconds(1);
 		}
 };
