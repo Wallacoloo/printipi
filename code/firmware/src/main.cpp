@@ -25,14 +25,17 @@
  *
  * *Run valgrind to hunt for uninitialized variables
  * *Prevent calling exit() from within an atexit handler
- *  Prevent stepping when endstop is triggered.
- *  Add max/min bounds for each axis
+ * *Prevent stepping when endstop is triggered.
+ *    NO: this is achieved better by bounding the axis/coordinates.
+ *      The only use for this is really when homing, to allow buffering.
  * *Add enable pin
  * *Account for PWM pins when setting Scheduler queue size.
  *  Add (configurable) absolute PWM limits to hotend, etc.
  * *Make CoordMapT, etc return tuples instead of using writebacks
- *  Reset I part of PID control when target changes
- *  Allow M105, etc to instantly return the temperature
+ * *NO: Reset I part of PID control when target changes
+ *    instead, put a maximum limit on I.
+ * *Allow M105, etc to instantly return the temperature
+ *    Sort-of accomplished - a fresh command can be parsed while still waiting for the previous one to be completed.
  * *Drop temperature readings when thread has been interrupted.
  *    Best done by checking time since last call, due to future merging of sched thread with serial reading
  * *Add ability to put steppers to rest upon idle
@@ -53,18 +56,20 @@
  *  *use std::chrono::steady_clock in the case that we aren't on Linux (else ChronoClockPosix)
  *    Perhaps make it configurable, eg as in http://stackoverflow.com/a/11485388/216292 (use std chrono, and also implement that interface for the pi)
  *  Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
+ *  Look into putting the scheduler (or entire program) into a kernel module
  *  Optimize gcode parser.
  *    opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
- *    Can also use one single string for entire command an array of char* to mark the delimiters.
+ *    Can also use one single string for entire command and array of char* to mark the delimiters.
  *    Could consider using a parser generator (yacc, bison, etc)
  *    Smoothie has a separate gcode parser: https://github.com/Smoothieware/Smoothieware/tree/edge/src/modules/communication/utils
  *      though it's not much better than this one.
- *  Make gcode parser handle empty lines
+ *  Make gcode parser handle empty lines and comments
  *  rename IODriver::stepForward/backward
  *  Add ability to configure the power-on coordinates, or default to homing before any commands.
  *  Optimize PID values
  * *Fix short-circuit operators in onIdleCpu
  *  Refactor the "enabler" system.
+ *  Make IO Pin an interface (hardware abstraction), and then drivers can work with an IO pin across MANY different hardware systems, not just the Pi.
  * *Auto-find the hotend, rather than calling on the kossel driver.
  * *Move ioDrivers instantiation into the State.
  * *Prevent long sleeps in Scheduler when the next event is far off.
