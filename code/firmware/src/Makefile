@@ -31,6 +31,8 @@ MACHINE_PATH=drivers/machines/$(shell echo $(MACHINE) | tr A-Z a-z).h
 #fsingle-precision-constant allows math involving literals to avoid promotion to double (eg x += 0.1 becomes c += 0.1f) (But this causes compile errors in glibc)
 #fassociative-math allows x*y + z*y to become (x+z)*y. Also x+1 == y becomes x == y-1
 #fno-math-errno allows gcc to forget about setting the global ERRNO for math routines like sqrt when passed a negative number. This allows inlining of the sqrt function, and I don't THINK errno is read by any glibc code.
+#fmerge-all-constants allows eg a const float and a const array item with same binary value to share the same address. *may* cause issues with recursive functions?
+#-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 #the bcm2835 library has some pedantic errors, so use f=-fpermissive
@@ -59,7 +61,7 @@ release: $(RELEASEDIR)/$(NAME)
 profile: CFLAGS+= -O3 -DDRUNNING_IN_VM -pg
 profile: $(PROFILEDIR)/$(NAME)
 #defining NDEBUG removes assertions.
-minsize: CFLAGS+= -DNDEBUG -Os -s -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections
+minsize: CFLAGS+= -DNDEBUG -Os -s -fmerge-all-constants -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections
 minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)
