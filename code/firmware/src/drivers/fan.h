@@ -16,15 +16,17 @@ namespace drv {
 template <typename Driver> class Fan : public IODriver {
 	Driver driver;
 	public:
-		Fan() : IODriver(this) {}
+		Fan() : IODriver(this) {
+			driver.makeDigitalOutput(IoLow);
+		}
 		constexpr bool isFan() { return true; }
 		//constexpr float fanPwmPeriod() { return 0.1; }
 		//forward output control:
 		void stepForward() {
-			driver.stepForward();
+			driver.digitalWrite(IoHigh);
 		}
 		void stepBackward() {
-			driver.stepBackward();
+			driver.digitalWrite(IoLow);
 		}
 };
 

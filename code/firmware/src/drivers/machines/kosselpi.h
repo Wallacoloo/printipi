@@ -109,7 +109,8 @@ class KosselPi : public Driver {
 		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
 		//typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef RCThermistor<rpi::RpiIoPin<RPI_V2_GPIO_P1_07>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-		typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
+		//typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
+		typedef Fan<rpi::RpiIoPin<RPI_V2_GPIO_P1_08> > _Fan;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 0> _HotendOut;
 		//typedef matr::Identity3Static _BedLevelT;
 		/*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
