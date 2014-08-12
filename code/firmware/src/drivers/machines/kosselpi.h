@@ -18,7 +18,7 @@
 #include "drivers/rpi/onepinenabler.h"
 //#include "drivers/rpi/leverendstop.h"
 #include "drivers/rcthermistor.h"
-#include "drivers/rpi/onepiniodriver.h"
+//#include "drivers/rpi/onepiniodriver.h"
 #include "drivers/tempcontrol.h"
 #include "drivers/fan.h"
 #include <tuple>
