@@ -104,9 +104,12 @@ namespace drv {
 class KosselPi : public Driver {
 	private:
 		typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_16, 0> _StepperEn; //enable pin is LOW for on, HIGH for off
-		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
-		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
-		typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
+		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
+		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
+		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
+		typedef rpi::LeverEndstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_18, BCM2835_GPIO_PUD_DOWN> > > _EndstopA; //endstop is triggered on HIGH
+		typedef rpi::LeverEndstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_24, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
+		typedef rpi::LeverEndstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_26, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
 		//typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef RCThermistor<rpi::RpiIoPin<RPI_V2_GPIO_P1_07>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		//typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
