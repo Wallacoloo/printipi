@@ -49,6 +49,12 @@ enum InsertHint {
 	INSERT_BACK
 };
 
+//Scheduler::Interface::onIdleCpu can be called with a flag indicating (roughly) how long it's been since it was last called.
+enum OnIdleCpuIntervalT {
+	OnIdleCpuIntervalShort,
+	OnIdleCpuIntervalWide
+};
+
 struct PwmInfo {
 	unsigned nsHigh;
 	unsigned nsLow;
@@ -293,20 +299,24 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//Event evt = *this->eventQueue.begin();
 		//do NOT pop the event here, because it might not be handled this time around.
 		//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
+		OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
 		while (!eventQueue.empty() && !isEventTime(*eventQueue.cbegin())) {
-			if (!interface.onIdleCpu()) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
+			if (!interface.onIdleCpu(intervalT)) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
 				EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 				if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
 					return;
 				} else { //retain control if the event is near, or if the queue must be emptied.
 					this->sleepUntilEvent(&*iter); //&*iter turns iter into Event*
 					//break; //don't break because sleepUntilEvent won't always do the full sleep
+					intervalT = OnIdleCpuIntervalWide;
 				}
+			} else {
+				intervalT = OnIdleCpuIntervalShort;
 			}
 		}
 		//in the case that all events were consumed, or there were none to begin with, satisfy the idle cpu functions:
 		if (eventQueue.empty()) {
-			if (interface.onIdleCpu()) { //loop is implied by the outer while(1)
+			if (interface.onIdleCpu(intervalT)) { //loop is implied by the outer while(1)
 				continue;
 			} else {
 				return;

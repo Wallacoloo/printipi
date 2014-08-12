@@ -50,8 +50,8 @@ template <typename Drv> class State {
 		void onEvent(const Event& evt) {
 			_state.handleEvent(evt);
 		}
-		bool onIdleCpu() {
-			return _state.onIdleCpu();
+		bool onIdleCpu(OnIdleCpuIntervalT interval) {
+			return _state.onIdleCpu(interval);
 		}
 		static constexpr std::size_t numIoDrivers() {
 			return std::tuple_size<typename Drv::IODriverTypes>::value;
@@ -119,7 +119,7 @@ template <typename Drv> class State {
 		/* Processes the event immediately, eg stepping a stepper motor */
 		void handleEvent(const Event &evt);
 		/* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
-		bool onIdleCpu();
+		bool onIdleCpu(OnIdleCpuIntervalT interval);
 		void eventLoop();
 		/* execute the GCode on a Driver object that supports a well-defined interface.
 		 * returns a Command to send back to the host. */
@@ -283,13 +283,15 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
 		drv::IODriver::selectAndStepBackward(this->ioDrivers, evt.stepperId());
 	}
 }
-template <typename Drv> bool State<Drv>::onIdleCpu() {
+template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
 	/*if (!_isExecutingGCode && com.tendCom()) {
 		_isExecutingGCode = true;
 		com.reply(execute(com.getCommand()));
 		_isExecutingGCode = false;
 	}*/
-	if (com.tendCom()) {
+	//Only check the communications periodically because calling execute(com.getCommand()) DOES add up.
+	//One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
+	if (interval == OnIdleCpuIntervalWide && com.tendCom()) {
 		//note: may want to optimize this; once there is a pending command, this involves a lot of extra work.
 		gparse::Command resp = execute(com.getCommand());
 		if (!resp.empty()) { //returning Command::Null means we're not ready to handle the command.
