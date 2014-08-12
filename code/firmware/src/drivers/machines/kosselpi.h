@@ -16,7 +16,7 @@
 #include "drivers/linearcoordmap.h"
 #include "drivers/lineardeltacoordmap.h"
 #include "drivers/rpi/onepinenabler.h"
-#include "drivers/rpi/leverendstop.h"
+//#include "drivers/rpi/leverendstop.h"
 #include "drivers/rcthermistor.h"
 #include "drivers/rpi/onepiniodriver.h"
 #include "drivers/tempcontrol.h"
@@ -107,9 +107,9 @@ class KosselPi : public Driver {
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
-		typedef rpi::LeverEndstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_18, BCM2835_GPIO_PUD_DOWN> > > _EndstopA; //endstop is triggered on HIGH
-		typedef rpi::LeverEndstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_24, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
-		typedef rpi::LeverEndstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_26, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_18, BCM2835_GPIO_PUD_DOWN> > > _EndstopA; //endstop is triggered on HIGH
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_24, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_26, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
 		//typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef RCThermistor<rpi::RpiIoPin<RPI_V2_GPIO_P1_07>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		//typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;

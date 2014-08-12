@@ -8,27 +8,38 @@
  * Endstops are queriable switches placed at the axis limits.
  * They typically represent a "known" point to which the device can be homed upon initiailization,
  *   or a point beyond which the device should not be pushed.
- *
- * Note: Endstop is an interface, and not an implementation.
- * An implementation is needed for each physical endstop - X axis, Y axis, etc.
- * These implementations must provide the functions outlined further down in the header.
  */
 
 #include "iodriver.h"
+#include "iopin.h"
 
 namespace drv {
 
-class Endstop : public IODriver {
-	public:
-		template <typename ThisT> Endstop(ThisT *_this) : IODriver(_this) {}
-		inline static bool isTriggered() { return false; }
-};
 
-//default implementation for an axis which doesn't have an endstop.
-class EndstopNoExist : public Endstop {
+template <typename Pin> class Endstop : public IODriver {
+	static Pin pin;
 	public:
-		EndstopNoExist() : Endstop(this) {}
+		Endstop() : IODriver(this) {
+			//initIO();
+			//bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_INPT);
+			//bcm2835_gpio_set_pud(Pin, PullUpDown);
+			pin.makeDigitalInput();
+		}
+		static bool isTriggered() {
+			//uint8_t raw = bcm2835_gpio_lev(Pin);
+			//bool t = raw == ValueTriggered;
+			bool t = pin.digitalRead() == IoHigh;
+			//LOGV("LeverEndstop: %i is %i (bool: %i)\n", Pin, raw, t);
+			/*raw = bcm2835_gpio_lev(Pin);
+			t = raw == ValueTriggered;
+			LOGV("LeverEndstop: %i is %i (bool: %i)\n", Pin, raw, t);*/
+			return t;
+		}
 };
+template <typename Pin> Pin Endstop<Pin>::pin;
+
+//default Endstop implementation which always acts as if untriggered:
+typedef Endstop<NoPin> EndstopNoExist;
 
 }
 #endif
