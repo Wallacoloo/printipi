@@ -28,8 +28,8 @@ template <int Accel1000> class ConstantAcceleration : public AccelerationProfile
 			this->tmax1 = std::min(tmax1, tmax2); //for really short movements, we may not be able to fully accelerate.
 			this->tbase3 = moveDuration + Vmax/a(); //TODO: is this the true tbase3 for short movements?
 			this->twiceVmax_a = 2*Vmax/a();
-			LOG("Accel::begin dur, Vmax: %f, %f\n", moveDuration, Vmax);
-			LOG("Accel::begin tmax1, tmax2, tbase3, twiceVmax_a: %f, %f, %f, %f\n", tmax1, tmax2, tbase3, twiceVmax_a);
+			LOGD("Accel::begin dur, Vmax: %f, %f\n", moveDuration, Vmax);
+			LOGD("Accel::begin tmax1, tmax2, tbase3, twiceVmax_a: %f, %f, %f, %f\n", tmax1, tmax2, tbase3, twiceVmax_a);
 		}
 		//float transform(float time, float moveDuration, float Vmax) {
 		float transform(float time) {

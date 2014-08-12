@@ -41,7 +41,7 @@ NAME=kossel-firmware
 
 all: debug
 
--include $(wildcard *.d **/*.d) #include auto-generated dependencies
+-include $(wildcard *.d */*.d */*/*.d) #include auto-generated dependencies
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
@@ -107,4 +107,4 @@ cleanminsize:
 	rm -rf $(MINSIZEDIR)
 clean: cleandebug cleanrelease cleanprofile cleanminsize
 	rm -rf $(BUILDROOT)/$(NAME)
-	rm -rf $(wildcard *.d **/*.d)
+	rm -rf $(wildcard *.d */*.d */*/*.d)
