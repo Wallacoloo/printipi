@@ -47,7 +47,7 @@ all: debug
 # -fsanitize=address (gcc 4.8)
 debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
-release: CFLAGS+= -O3 -fomit-frame-pointer
+release: CFLAGS+= -O3 -ggdb3 -fno-omit-frame-pointer -fomit-frame-pointer
 release: $(RELEASEDIR)/$(NAME)
 profile: CFLAGS+= -O3 -DDRUNNING_IN_VM -pg
 profile: $(PROFILEDIR)/$(NAME)
