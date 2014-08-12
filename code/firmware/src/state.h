@@ -438,7 +438,12 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		setFanRate(0);
 		return gparse::Command::OK;
 	} else if (cmd.isM109()) { //set extruder temperature to S param and wait.
-		LOGW("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not implemented\n");
+		LOGW("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
+		bool hasS;
+		float t = cmd.getS(hasS);
+		if (hasS) {
+			drv::IODriver::setHotendTemp(ioDrivers, t);
+		}
 		return gparse::Command::OK;
 	} else if (cmd.isM110()) { //set current line number
 		return gparse::Command::OK;

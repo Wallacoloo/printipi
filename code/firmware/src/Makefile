@@ -25,9 +25,15 @@ else #gcc < 4.7, or non-gcc compiler
 endif
 MACHINE=KosselPi
 MACHINE_PATH=drivers/machines/$(shell echo $(MACHINE) | tr A-Z a-z).h
+#fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
+#fno-signed-zeros lets gcc treat -0.0 the same as +0.0
+#freciprocal-math turns division-by-constant into multiplication-by-constant
+#fsingle-precision-constant allows math involving literals to avoid promotion to double (eg x += 0.1 becomes c += 0.1f) (But this causes compile errors in glibc)
+#fassociative-math allows x*y + z*y to become (x+z)*y. Also x+1 == y becomes x == y-1
+UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 #the bcm2835 library has some pedantic errors, so use f=-fpermissive
-CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI)
+CFLAGS=-std=c++0x -pthread -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(UNSAFEOPT) $(PROFFLAGS) $(LTOFLAG) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI)
 #CFLAGS+= -fassociateive-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
 LD=ld
 LDFLAGS= $(LTOFLAG)
