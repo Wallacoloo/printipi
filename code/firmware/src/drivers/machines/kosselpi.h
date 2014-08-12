@@ -12,10 +12,11 @@
 #include "drivers/lineardeltastepper.h"
 #include "drivers/rpi/rpiiopin.h"
 #include "drivers/a4988.h"
-#include "drivers/rpi/sn754410.h"
+//#include "drivers/rpi/sn754410.h"
 #include "drivers/linearcoordmap.h"
 #include "drivers/lineardeltacoordmap.h"
-#include "drivers/rpi/onepinenabler.h"
+#include "drivers/enabledisabledriver.h"
+//#include "drivers/rpi/onepinenabler.h"
 //#include "drivers/rpi/leverendstop.h"
 #include "drivers/rcthermistor.h"
 //#include "drivers/rpi/onepiniodriver.h"
@@ -103,7 +104,8 @@ namespace drv {
 
 class KosselPi : public Driver {
 	private:
-		typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_16, 0> _StepperEn; //enable pin is LOW for on, HIGH for off
+		//typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_16, 0> _StepperEn; //enable pin is LOW for on, HIGH for off
+		typedef EnableDisableDriver<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_16> > > _StepperEn;
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;

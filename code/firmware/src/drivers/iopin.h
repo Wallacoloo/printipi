@@ -21,7 +21,7 @@ struct IoPin {
 //easy way to proxy reads/writes, but invert them (eg Inverted<IoPin>.digitalWrite(IoHigh) really calls IoPin.digitalWrite(IoLow), etc)
 template <typename Pin, bool InvertWrite=true, bool InvertRead=true> class InvertedPin : public IoPin {
 	Pin _pin;
-	IoLevel invertLev(IoLevel lev, bool doInvert) {
+	IoLevel invertLev(IoLevel lev, bool doInvert) const {
 		return doInvert ? (lev == IoHigh ? IoLow : IoHigh) : lev;
 	}
 	public:

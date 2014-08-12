@@ -17,7 +17,7 @@
 
 namespace drv {
 
-class EnableDisableDriver : public IODriver {
+/*class EnableDisableDriver : public IODriver {
 	public:
 		template <typename ThisT> EnableDisableDriver(ThisT *_this) : IODriver(_this) {}
 		inline static void enable() {
@@ -31,9 +31,26 @@ class EnableDisableDriver : public IODriver {
 //Default implementation for a device that cannot be enabled/disabled.
 struct NullEnabler : public EnableDisableDriver {
 	NullEnabler() : EnableDisableDriver(this) {}
+};*/
+
+template <typename Pin> class EnableDisableDriver : public IODriver {
+	static Pin pin;
+	public:
+		EnableDisableDriver() : IODriver(this) {
+			pin.makeDigitalOutput(IoLow);
+		}
+		inline static void enable() {
+			pin.digitalWrite(IoHigh);
+		}
+		inline static void disable() {
+			pin.digitalWrite(IoLow);
+		}
 };
+template <typename Pin> Pin EnableDisableDriver<Pin>::pin;
+
+//Default implementation for a device that cannot be enabled/disabled.
+typedef EnableDisableDriver<NoPin> NullEnabler;
 
 
 }
-
 #endif
