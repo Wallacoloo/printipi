@@ -40,8 +40,8 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 	EventClockT::time_point _nextReadTime;
 	public:
 		TempControl() : IODriver(this), _destTemp(-300), _lastTemp(-300), _isReading(false),
-		 _nextReadTime(EventClockT::now())
-		  {
+		 _nextReadTime(EventClockT::now()) {
+			_heater.makeDigitalOutput(IoLow);
 		}
 		//register as the correct device type:
 		bool isHotend() const {
@@ -52,10 +52,12 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
 		}
 		//route output commands to the heater:
 		void stepForward() {
-			_heater.stepForward();
+			_heater.digitalWrite(IoHigh);
+			//_heater.stepForward();
 		}
 		void stepBackward() {
-			_heater.stepBackward();
+			_heater.digitalWrite(IoLow);
+			//_heater.stepBackward();
 		}
 		void setTargetTemperature(CelciusType t) {
 			_destTemp = t;
