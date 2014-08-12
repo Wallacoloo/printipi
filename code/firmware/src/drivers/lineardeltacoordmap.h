@@ -24,6 +24,7 @@
 #include "coordmap.h"
 #include "common/logging.h"
 #include "common/matrix.h"
+#include <tuple>
 
 namespace drv {
 
@@ -49,6 +50,12 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsi
 		}
 		static std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) {
 			return Transform::transform(xyz);
+		}
+		static std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) {
+			//bound z:
+			float z = std::max(0.f, std::min((float)((h+sqrt(L*L-r*r))*STEPS_MM), std::get<2>(xyze)));
+			//to-do: force x & y to be on the platform.
+			return std::make_tuple(std::get<0>(xyze), std::get<1>(xyze), z, std::get<3>(xyze));
 		}
 		static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
 			float e = mech[EIdx]*MM_STEPS_EXT;
