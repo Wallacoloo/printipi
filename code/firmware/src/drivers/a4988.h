@@ -1,5 +1,5 @@
-#ifndef DRIVERS_RPI_A4988
-#define DRIVERS_RPI_A4988
+#ifndef DRIVERS_A4988
+#define DRIVERS_A4988
 
 /*
  * The A4988 is a current-chopping stepper motor driver IC.
@@ -13,15 +13,12 @@
 
 #include <cstdint> //for uint8_t
 
-#include "rpi.h"
-//#include "bcm2835.h"
 #include "drivers/iodriver.h"
 #include "drivers/enabledisabledriver.h"
 #include "common/logging.h"
 #include "drivers/iopin.h"
 
 namespace drv {
-namespace rpi {
 
 template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEnabler> class A4988 : public IODriver {
 	//Enabler enabler;
@@ -72,7 +69,6 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEn
 };
 
 
-}
 }
 
 #endif
