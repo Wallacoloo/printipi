@@ -33,6 +33,7 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsi
 	static constexpr std::size_t BIdx = 1;
 	static constexpr std::size_t CIdx = 2;
 	static constexpr std::size_t EIdx = 3;
+	static constexpr float MIN_Z() { return -2; }//useful to be able to go a little under z=0 when tuning.
 	static constexpr float r = R1000 / 1000.;
 	static constexpr float L = L1000 / 1000.;
 	static constexpr float h = H1000 / 1000.;
@@ -53,7 +54,7 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned STEPS_M, unsi
 		}
 		static std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) {
 			//bound z:
-			float z = std::max(0.f, std::min((float)((h+sqrt(L*L-r*r))*STEPS_MM), std::get<2>(xyze)));
+			float z = std::max(MIN_Z(), std::min((float)((h+sqrt(L*L-r*r))*STEPS_MM), std::get<2>(xyze)));
 			//to-do: force x & y to be on the platform.
 			return std::make_tuple(std::get<0>(xyze), std::get<1>(xyze), z, std::get<3>(xyze));
 		}
