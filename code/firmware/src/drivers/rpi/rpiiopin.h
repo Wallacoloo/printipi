@@ -8,20 +8,21 @@
 namespace drv {
 namespace rpi {
 
-template <uint8_t PinIdx> class RpiIoPin : public IoPin {
+template <uint8_t PinIdx, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class RpiIoPin : public IoPin {
 	public:
 		RpiIoPin() {
 			initIO();
 		}
 		void makeDigitalOutput(IoLevel lev) {
 			bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_OUTP); //configure this pin as output
+			bcm2835_gpio_set_pud(PinIdx, PullUpDown);
 			digitalWrite(lev);
 		}
 		void makeDigitalInput() {
 			bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_INPT); //configure this pin as input
 		}
 		IoLevel digitalRead() const {
-			return bcm2835_gpio_lev(PinIdx) ? IoHigh : IoLow;
+			return bcm2835_gpio_lev(PinIdx) == HIGH ? IoHigh : IoLow;
 		}
 		void digitalWrite(IoLevel lev) {
 			bcm2835_gpio_write(PinIdx, lev == IoHigh ? HIGH : LOW);
