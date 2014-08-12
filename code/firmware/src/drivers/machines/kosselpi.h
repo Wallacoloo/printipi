@@ -108,34 +108,16 @@ class KosselPi : public Driver {
 		typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
 		typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 0> _HotendOut;
-		//typedef matr::Identity3Static LevelingT;
-        //typedef matr::Matrix3Static<999948990, 0         , 10100490,
-        //                                    0, 1000000000, 0,
-        //                            -10100490, 0         , 999948990, 1000000000 > LevelingT;
-        //typedef matr::Matrix3Static<999997960,          0,    202020,
-        //                                    0, 1000000000,         0,
-        //                              -202020,          0, 999997960, 1000000000 > LevelingT;
-        //typedef matr::Matrix3Static<1000000000,          0,         0,
-        //                                     0,  999997960,    202020,
-        //                                     0,    -202020, 999997960, 1000000000 > LevelingT;
-        /*typedef matr::Matrix3Static<999999489, -1020, 1010098,
--1020, 999997959, 2020196,
--1010098, -2020196, 999997449, 1000000000> LevelingT;*/
-		/*typedef matr::Matrix3Static<999999000, 999, -1414138, 
-999, 999999000, 1414138, 
-1414138, -1414138, 999998000, 1000000000> LevelingT;*/
-		/*typedef matr::Matrix3Static<999995408, 1530, -3030287, 
-1530, 999999489, 1010095, 
-3030287, -1010095, 999994898, 1000000000> LevelingT;*/
+		typedef matr::Identity3Static _BedLevelT;
 		/*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
 1836, 999999586, 909083, 
 4040369, -909083, 999991424, 1000000000> _BedLevelT;*/
 		/*typedef matr::Matrix3Static<999948988, 0, -10100494, 
 0, 1000000000, 0, 
 10100494, 0, 999948988, 1000000000> _BedLevelT;*/
-		typedef matr::Matrix3Static<999987246, 0, -5050440, 
+		/*typedef matr::Matrix3Static<999987246, 0, -5050440, 
 0, 1000000000, 0, 
-5050440, 0, 999987246, 1000000000> _BedLevelT;
+5050440, 0, 999987246, 1000000000> _BedLevelT;*/
     public:
         //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
