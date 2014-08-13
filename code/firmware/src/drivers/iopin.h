@@ -11,16 +11,17 @@ enum IoLevel {
 };
 
 template <typename ThisT, IoLevel lev=IoLow> class IoPinOnExit {
-	IoPinOnExit() {
-		//LOG("IoPinOnExit init\n");
-		printf("IoPinOnExit init\n");
-		SchedulerBase::registerExitHandler((void(*)())&deactivate, SCHED_IO_EXIT_LEVEL);
-	}
 	static void deactivate() {
 		LOGV("IoPinOnExit::deactivate\n");
 		ThisT pin;
 		pin.digitalWrite(lev);
 	}
+	public:
+		IoPinOnExit() {
+			//LOG("IoPinOnExit init\n");
+			printf("IoPinOnExit init\n");
+			SchedulerBase::registerExitHandler((void(*)())&deactivate, SCHED_IO_EXIT_LEVEL);
+		}
 };
 
 //IoPin defines the interface for a GPIO pin, as well as default implementations of each function in case they aren't supported by the actual driver. Each microcontroller platform should provide its own IoPin implementation that inherits from this class.
