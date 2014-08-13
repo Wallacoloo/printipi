@@ -47,12 +47,14 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
 		void lockAxis() {
 			//Enabler::enable();
 			//enabler.enable();
-			enablePin.makeDigitalOutput(IoHigh); //enable.
+			//enablePin.makeDigitalOutput(IoHigh); //enable.
+			enablePin.digitalWrite(IoHigh);
 		}
 		void unlockAxis() {
 			//Enabler::disable();
 			//enabler.disable();
-			enablePin.makeDigitalOutput(IoLow); //disable.
+			//enablePin.makeDigitalOutput(IoLow); //disable.
+			enablePin.digitalWrite(IoLow);
 		}
 		void stepForward() {
 			dirPin.digitalWrite(IoHigh);
