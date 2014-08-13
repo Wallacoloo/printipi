@@ -12,7 +12,8 @@ enum IoLevel {
 
 template <typename ThisT, IoLevel lev=IoLow> class IoPinOnExit {
 	IoPinOnExit() {
-		LOG("IoPinOnExit init\n");
+		//LOG("IoPinOnExit init\n");
+		printf("IoPinOnExit init\n");
 		SchedulerBase::registerExitHandler((void(*)())&deactivate, SCHED_IO_EXIT_LEVEL);
 	}
 	static void deactivate() {
