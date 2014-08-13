@@ -7,10 +7,6 @@
  * 
  * Provides an interface for controlling an ENABLE pin on an IC.
  * Possible use-case: disabling stepper drivers when inactive, and re-enabling them when active.
- *
- * Note: EnableDisableDriver is an interface, and not an implementation.
- * An implementation is needed for each device to be enabled - eg the fan.
- * These implementations must provide the functions outlined further down in the header.
  */
 
 #include "common/logging.h"

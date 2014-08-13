@@ -1,6 +1,14 @@
 #ifndef DRIVERS_RPI_RPIIOPIN_H
 #define DRIVERS_RPI_RPIIOPIN_H
 
+/* 
+ * Printipi/drivers/rpi/rpiiopin.h
+ * (c) 2014 Colin Wallace
+ * 
+ * Implementation of src/drivers/iopin.h suitable for the RaspberryPi.
+ * Used to pass pin-assignment information to other IODrivers, like telling the fan how to drive its pin, etc.
+ */
+
 #include "drivers/iopin.h" //for IoPin
 #include "drivers/rpi/rpi.h" //for initIO
 #include "bcm2835.h" //for bcm2835_*

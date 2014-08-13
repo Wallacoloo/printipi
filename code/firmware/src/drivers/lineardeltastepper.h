@@ -82,7 +82,6 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
 				}
 			}
 		void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
-			//TODO: compiler probably can't optimize this well since it probably won't be able to allocate more space on the object to hold semi-constants.
 			//Therefore, we should cache values calculatable at init-time, like all of the second-half on rootParam.
 			term1 = _almostTerm1 + vz_over_v2*s;
 			rootParam = term1*term1 + _almostRootParam - inv_v2*s*(_almostRootParamV2S + s);
