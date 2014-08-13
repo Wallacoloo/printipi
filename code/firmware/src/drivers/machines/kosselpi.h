@@ -163,8 +163,8 @@ class KosselPi : public Driver {
         	//20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.
         	//12000,  600, 1200 (50C->130C). Peaks 22C above target. Underdamped. 5 mins to converge
         	//18000,  300, 1000 (40C->130C). Overdamped. 4.5 minutes to reach target (& is stabilized when it gets there)
-        	TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000, 1000000>, LowPassFilter<3000> >,
-        	_EndstopA, _EndstopB, _EndstopC
+        	TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000, 1000000>, LowPassFilter<3000> >
+        	//_EndstopA, _EndstopB, _EndstopC
         	> IODriverTypes;
         //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         inline float defaultMoveRate() const { //in mm/sec

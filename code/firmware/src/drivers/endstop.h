@@ -17,7 +17,7 @@ namespace drv {
 
 
 template <typename Pin> class Endstop : public IODriver {
-	static Pin pin;
+	Pin pin;
 	public:
 		Endstop() : IODriver(this) {
 			//initIO();
@@ -25,7 +25,7 @@ template <typename Pin> class Endstop : public IODriver {
 			//bcm2835_gpio_set_pud(Pin, PullUpDown);
 			pin.makeDigitalInput();
 		}
-		static bool isTriggered() {
+		bool isTriggered() {
 			//uint8_t raw = bcm2835_gpio_lev(Pin);
 			//bool t = raw == ValueTriggered;
 			bool t = pin.digitalRead() == IoHigh;
@@ -36,7 +36,7 @@ template <typename Pin> class Endstop : public IODriver {
 			return t;
 		}
 };
-template <typename Pin> Pin Endstop<Pin>::pin;
+//template <typename Pin> Pin Endstop<Pin>::pin;
 
 //default Endstop implementation which always acts as if untriggered:
 typedef Endstop<NoPin> EndstopNoExist;
