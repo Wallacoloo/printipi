@@ -18,8 +18,7 @@ template <typename ThisT, IoLevel lev=IoLow> class IoPinOnExit {
 	}
 	public:
 		IoPinOnExit() {
-			//LOG("IoPinOnExit init\n");
-			printf("IoPinOnExit init\n");
+			LOGV("IoPinOnExit init\n");
 			SchedulerBase::registerExitHandler((void(*)())&deactivate, SCHED_IO_EXIT_LEVEL);
 		}
 };

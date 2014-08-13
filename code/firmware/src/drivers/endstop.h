@@ -19,7 +19,7 @@ namespace drv {
 template <typename Pin> class Endstop : public IODriver {
 	Pin pin;
 	public:
-		Endstop() : IODriver(this) {
+		Endstop() : IODriver() {
 			//initIO();
 			//bcm2835_gpio_fsel(Pin, BCM2835_GPIO_FSEL_INPT);
 			//bcm2835_gpio_set_pud(Pin, PullUpDown);

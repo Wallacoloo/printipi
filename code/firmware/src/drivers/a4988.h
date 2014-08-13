@@ -25,7 +25,7 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEn
 	StepPin stepPin;
 	DirPin dirPin;
 	public:
-		A4988() : IODriver(this) {
+		A4988() : IODriver() {
 			//initIO();
 			//bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_OUTP); //configure these pins as output
 			//bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_OUTP);
