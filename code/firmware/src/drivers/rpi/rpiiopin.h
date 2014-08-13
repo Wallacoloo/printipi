@@ -17,7 +17,7 @@ namespace drv {
 namespace rpi {
 
 template <uint8_t PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class RpiIoPin : public IoPin {
-	static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit;
+	static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit();
 	//InitRpiType _initRpi;
 	public:
 		RpiIoPin() {
