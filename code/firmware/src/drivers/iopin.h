@@ -59,8 +59,7 @@ template <typename Pin, bool InvertWrite=true, bool InvertRead=true> class Inver
 };
 
 //default implementation of IoPin (does nothing):
-struct NoPin : public IoPin {
-};
+struct NoPin : public IoPin { };
 
 }
 #endif

@@ -29,6 +29,7 @@ template <typename Pin> class Endstop : public IODriver {
 			//uint8_t raw = bcm2835_gpio_lev(Pin);
 			//bool t = raw == ValueTriggered;
 			bool t = pin.digitalRead() == IoHigh;
+			LOGV("LeverEndstop is %i\n", t);
 			//LOGV("LeverEndstop: %i is %i (bool: %i)\n", Pin, raw, t);
 			/*raw = bcm2835_gpio_lev(Pin);
 			t = raw == ValueTriggered;
