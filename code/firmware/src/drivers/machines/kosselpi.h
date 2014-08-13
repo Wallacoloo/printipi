@@ -105,19 +105,19 @@ namespace drv {
 class KosselPi : public Driver {
 	private:
 		//typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_16, 0> _StepperEn; //enable pin is LOW for on, HIGH for off
-		typedef EnableDisableDriver<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_16> > > _StepperEn;
+		typedef EnableDisableDriver<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_16, IoHigh> > > _StepperEn;
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
-		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_18, BCM2835_GPIO_PUD_DOWN> > > _EndstopA; //endstop is triggered on HIGH
-		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_24, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
-		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_26, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_18, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopA; //endstop is triggered on HIGH
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_24, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_26, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
 		//typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef RCThermistor<rpi::RpiIoPin<RPI_V2_GPIO_P1_07>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		//typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
-		typedef Fan<rpi::RpiIoPin<RPI_V2_GPIO_P1_08> > _Fan;
+		typedef Fan<rpi::RpiIoPin<RPI_V2_GPIO_P1_08, IoLow> > _Fan;
 		//typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 0> _HotendOut;
-		typedef InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_10> > _HotendOut;
+		typedef InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_10, IoHigh> > _HotendOut;
 		//typedef matr::Identity3Static _BedLevelT;
 		/*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
 1836, 999999586, 909083, 
