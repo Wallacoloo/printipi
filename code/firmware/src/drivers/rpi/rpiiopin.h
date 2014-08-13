@@ -21,7 +21,7 @@ template <uint8_t PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpDown=BC
 	public:
 		RpiIoPin() {
 			initIO();
-			static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit;
+			static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit; //register deactivation of IO pin upon exit.
 		}
 		void makeDigitalOutput(IoLevel lev) {
 			bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_OUTP); //configure this pin as output
