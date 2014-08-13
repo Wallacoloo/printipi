@@ -21,7 +21,7 @@
 namespace drv {
 
 template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEnabler> class A4988 : public IODriver {
-	//Enabler enabler;
+	Enabler enabler;
 	StepPin stepPin;
 	DirPin dirPin;
 	public:
@@ -31,20 +31,24 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEn
 			//bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_OUTP);
 			stepPin.makeDigitalOutput(IoLow);
 			dirPin.makeDigitalOutput(IoLow);
-			Enabler::enable();
+			//Enabler::enable();
+			enabler.enable();
 		}
 		//A4988 is directed by putting a direction on the DIRPIN, and then
 		//sending a pulse on the STEPPIN.
-		static void deactivate() {
+		/*static void deactivate() {
 			Enabler::disable(); //will be called directly on the Enabler.
+			//enabler.disable();
 			//bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_INPT); //unmount pins.
 			//bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_INPT);
-		}
+		}*/
 		void lockAxis() {
-			Enabler::enable();
+			//Enabler::enable();
+			enabler.enable();
 		}
 		void unlockAxis() {
-			Enabler::disable();
+			//Enabler::disable();
+			enabler.disable();
 		}
 		void stepForward() {
 			dirPin.digitalWrite(IoHigh);
