@@ -31,20 +31,21 @@ namespace drv {
 
 class IODriver {
 	public:
-		template <typename ThisT> IODriver(const ThisT * /* _this */) {
+		//template <typename ThisT> IODriver(const ThisT * /* _this */) {
 			//TODO: only register an exit handler if ThisT::deactivate is non-empty
 			//can do this with C++ "SFINAE"
 			//if (IODriverInfo<ThisT>::HasDeactivateMethod) {
 				//Scheduler::registerExitHandler((void(*)())&ThisT::deactivate);
 			//}
-			SchedulerBase::registerExitHandler((void(*)())&ThisT::deactivate, SCHED_IO_EXIT_LEVEL);
-		}
+		//	SchedulerBase::registerExitHandler((void(*)())&ThisT::deactivate, SCHED_IO_EXIT_LEVEL);
+		//}
+		inline IODriver() {}
 		//for a (stepper) motor, advance +/- 1 step:
 		inline void stepForward() {} //OVERRIDE THIS
 		inline void stepBackward() {} //OVERRIDE THIS
 		/*deactivate: called at program exit.
 		safely deactivate any IOs, including motors, heaters, etc.*/
-		inline static void deactivate() {} //OVERRIDE THIS
+		//inline static void deactivate() {} //OVERRIDE THIS
 		/* called by M17; Enable/power all stepper motors */
 		inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
 		/* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */

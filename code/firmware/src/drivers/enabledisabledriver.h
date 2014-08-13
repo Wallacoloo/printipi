@@ -16,7 +16,7 @@ namespace drv {
 template <typename Pin> class EnableDisableDriver : public IODriver {
 	Pin pin;
 	public:
-		EnableDisableDriver() : IODriver(this) {
+		EnableDisableDriver() : IODriver() {
 			pin.makeDigitalOutput(IoLow);
 		}
 		inline void enable() {

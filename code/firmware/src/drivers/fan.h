@@ -16,7 +16,7 @@ namespace drv {
 template <typename Driver> class Fan : public IODriver {
 	Driver driver;
 	public:
-		Fan() : IODriver(this) {
+		Fan() : IODriver() {
 			driver.makeDigitalOutput(IoLow);
 		}
 		constexpr bool isFan() { return true; }

@@ -34,8 +34,9 @@ template <uint8_t A1, uint8_t A2, uint8_t B1, uint8_t B2, typename Enabler=NullE
 		//shifted             001  010  011  100  101  110  111  000
 		//shifted             111  000  001  010  011  100  101  110
 		//notice the alternating set, clr, set clr
-		SN754410() : IODriver(this), index(0) {
+		SN754410() : IODriver(), index(0) {
 			initIO();
+			SchedulerBase::registerExitHandler((void(*)())&deactivate, SCHED_IO_EXIT_LEVEL);
 			bcm2835_gpio_fsel(A1, BCM2835_GPIO_FSEL_OUTP); //configure these pins as output
 			bcm2835_gpio_fsel(A2, BCM2835_GPIO_FSEL_OUTP);
 			bcm2835_gpio_fsel(B1, BCM2835_GPIO_FSEL_OUTP); 
