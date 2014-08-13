@@ -14,14 +14,15 @@
 #include <cstdint> //for uint8_t
 
 #include "drivers/iodriver.h"
-#include "drivers/enabledisabledriver.h"
+//#include "drivers/enabledisabledriver.h"
+#include "drivers/iopin.h" //for NoPin
 #include "common/logging.h"
 #include "drivers/iopin.h"
 
 namespace drv {
 
-template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEnabler> class A4988 : public IODriver {
-	Enabler enabler;
+template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPin> class A4988 : public IODriver {
+	EnablePin enablePin;
 	StepPin stepPin;
 	DirPin dirPin;
 	public:
@@ -32,7 +33,8 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEn
 			stepPin.makeDigitalOutput(IoLow);
 			dirPin.makeDigitalOutput(IoLow);
 			//Enabler::enable();
-			enabler.enable();
+			//enabler.enable();
+			enablePin.makeDigitalOutput(IoHigh); //enable.
 		}
 		//A4988 is directed by putting a direction on the DIRPIN, and then
 		//sending a pulse on the STEPPIN.
@@ -44,11 +46,13 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename Enabler=NullEn
 		}*/
 		void lockAxis() {
 			//Enabler::enable();
-			enabler.enable();
+			//enabler.enable();
+			enablePin.makeDigitalOutput(IoHigh); //enable.
 		}
 		void unlockAxis() {
 			//Enabler::disable();
-			enabler.disable();
+			//enabler.disable();
+			enablePin.makeDigitalOutput(IoLow); //disable.
 		}
 		void stepForward() {
 			dirPin.digitalWrite(IoHigh);
