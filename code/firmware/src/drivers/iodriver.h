@@ -44,7 +44,7 @@ class IODriver {
 		inline void stepBackward() {} //OVERRIDE THIS
 		/*deactivate: called at program exit.
 		safely deactivate any IOs, including motors, heaters, etc.*/
-		inline void deactivate() {} //OVERRIDE THIS
+		inline static void deactivate() {} //OVERRIDE THIS
 		/* called by M17; Enable/power all stepper motors */
 		inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
 		/* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */

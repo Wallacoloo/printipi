@@ -186,10 +186,6 @@ class KosselPi : public Driver {
         inline bool doHomeBeforeFirstMovement() const {
         	return true; //if we get a G1 before the first G28, then yes - we want to home first!
         }
-        /*inline float clampExtrusionRate(float rate) const {
-        	//need to cover both the positive (extruding) and negative (retracting) possibilities.
-        	return std::max((float)-MAX_EXT_RATE, std::min(rate, (float)MAX_EXT_RATE));
-        }*/
 };
 
 }
