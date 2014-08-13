@@ -1,6 +1,8 @@
 #ifndef DRIVERS_IOPIN_H
 #define DRIVERS_IOPIN_H
 
+#include "common/logging.h"
+
 namespace drv {
 
 enum IoLevel {
@@ -13,6 +15,7 @@ template <typename ThisT, IoLevel lev=IoLow> class IoPinOnExit {
 		SchedulerBase::registerExitHandler((void(*)())&deactivate, SCHED_IO_EXIT_LEVEL);
 	}
 	static void deactivate() {
+		LOGV("IoPinOnExit::deactivate\n");
 		ThisT pin;
 		pin.digitalWrite(lev);
 	}
