@@ -8,7 +8,21 @@ enum IoLevel {
 	IoHigh = 1
 };
 
+template <typename ThisT, IoLevel lev=IoLow> class IoPinOnExit {
+	IoPinOnExit() {
+		SchedulerBase::registerExitHandler((void(*)())&deactivate, SCHED_IO_EXIT_LEVEL);
+	}
+	static void deactivate() {
+		ThisT pin;
+		pin.digitalWrite(lev);
+	}
+};
+
+//IoPin defines the interface for a GPIO pin, as well as default implementations of each function in case they aren't supported by the actual driver. Each microcontroller platform should provide its own IoPin implementation that inherits from this class.
 struct IoPin {
+	//template <typename ThisT> IODriver(const ThisT * /* _this */) {
+	//	SchedulerBase::registerExitHandler((void(*)())&ThisT::digitalWrite, SCHED_IO_EXIT_LEVEL);
+	//}
 	//configure the pin as an output. Many microcontrollers have GPIOs. Before writing an output value to them, they must first be configured as an output. But we also want the initial state of the pin to be defined, if possible.
 	inline void makeDigitalOutput(IoLevel /*lev*/) {}
 	//configure the pin to be an input
