@@ -19,7 +19,7 @@
 namespace drv {
 
 template <int STEPS_M, typename EndstopT> class LinearHomeStepper : public AxisStepper {
-	EndstopT _endstop;
+	EndstopT endstop;
 	float timePerStep;
 	static constexpr float STEPS_MM = STEPS_M / 1000.;
 	public:
@@ -32,7 +32,7 @@ template <int STEPS_M, typename EndstopT> class LinearHomeStepper : public AxisS
 		
 		void _nextStep() {
 			//if (EndstopT::isTriggered()) {
-			if (_endstop.isTriggered()) {
+			if (endstop.isTriggered()) {
 				this->time = NAN; //at endstop; no more steps.
 			} else {
 				this->time += timePerStep;
