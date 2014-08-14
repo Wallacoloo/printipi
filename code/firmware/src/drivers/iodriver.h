@@ -99,22 +99,23 @@ template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers,
 
 //IODriver::callIdleCpuHandlers helper functions:
 
-template <typename TupleT, std::size_t myIdx, typename ...Args> struct IODriver__onIdleCpu {
+template <typename TupleT, std::size_t myIdxPlusOne, typename ...Args> struct IODriver__onIdleCpu {
 	bool operator()(TupleT &drivers, Args... args) {
-		bool prev = IODriver__onIdleCpu<TupleT, myIdx-1, Args...>()(drivers, args...);
-		bool cur = std::get<myIdx>(drivers).onIdleCpu(args...); //EXPLICITLY CALCULATE THIS SEPARATELY TO PREVENT SHORT-CIRCUIT OPERATIONS
+		bool prev = IODriver__onIdleCpu<TupleT, myIdxPlusOne-1, Args...>()(drivers, args...);
+		bool cur = std::get<myIdxPlusOne-1>(drivers).onIdleCpu(args...); //EXPLICITLY CALCULATE THIS SEPARATELY TO PREVENT SHORT-CIRCUIT OPERATIONS
 		return prev || cur; //return true if ANY objects need future servicing.
 	}
 };
 
 template <typename TupleT, typename ...Args> struct IODriver__onIdleCpu<TupleT, 0, Args...> {
-	bool operator()(TupleT &drivers, Args... args) {
-		return std::get<0>(drivers).onIdleCpu(args...);
+	bool operator()(TupleT &, Args...) {
+		//return std::get<0>(drivers).onIdleCpu(args...);
+		return false; //no more objects need cpu time.
 	}
 };
 
 template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
-	return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value-1, Args...>()(drivers, args...);
+	return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value, Args...>()(drivers, args...);
 }
 
 //IODriver::lockAllAxis helper functions:
