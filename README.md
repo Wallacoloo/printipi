@@ -17,7 +17,7 @@ Currently, only a limited set of gcode commands are supported. Namely, testing h
 Usage
 ========
 
-To compile Printipi, navigate to code/firmware/src and type 'make MACHINE=<machine> <mode>`, where <machine> is the C++ classname of the machine contained under src/drivers/machines, eg 'KosselPi', and <mode> is either debug, release, profile, or minsize. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
+To compile Printipi, navigate to code/firmware/src and type 'make MACHINE=\<machine\> \<mode\>`, where \<machine\> is the C++ classname of the machine contained under src/drivers/machines, eg 'KosselPi', and \<mode\> is either debug, release, profile, or minsize. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
 
 The firmware can either be called with no arguments, in which case it will take gcode commands from the standard input (useful for testing & debugging). Or, you can provide the path to a gcode file (note that gcode parsing is currently limited. Comments aren't understood, for example). The provided file can be **any** file-like object, including device-files. This allows one to pass eg /dev/ttyAMA0 to take commands from the serial port.
 
