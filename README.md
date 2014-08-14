@@ -17,7 +17,7 @@ Currently, only a limited set of gcode commands are supported. Namely, testing h
 Compiling
 ========
 
-To compile Printipi, navigate to code/firmware/src and type `make MACHINE=\<machine\> \<mode\>`, where \<machine\> is the C++ classname of the machine contained under src/drivers/machines, eg 'KosselPi', and \<mode\> is either debug, release, profile, or minsize. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
+To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <mode>`, where \<machine\> is the C++ classname of the machine contained under src/drivers/machines, eg 'KosselPi', and \<mode\> is either debug, release, profile, or minsize. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
 
 Usage
 ========
