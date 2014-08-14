@@ -12,6 +12,8 @@ Limitations
 
 Printipi currently runs entirely in userland. While this makes development and usage trivial, timing suffers. By running under a high priority & locking memory to prevent page-swaps, it can still print successfully. Effort has also been made towards recovering from missed steps. A kossel-style printer can currently move at about 90 mm/sec @ 1/4 stepping without skipping (and using about 75% cpu).
 
+Currently, only a limited set of gcode commands are supported. Namely, testing has been done using Cura for slicing. Furthermore, all comments must first be stripped from the input.
+
 Usage
 ========
 
@@ -30,3 +32,5 @@ The Future
 The short-to-midterm goals for Printipi are mostly optimization-based. Although running in userland is nice, it would be better to move at least the timing-critical sections into a kernel module. It may also be possible to make use of the DMA channels in the Raspberry Pi to achieve greater step-rates and sub-microsecond precise timings.
 
 More effort will also be put into the motion planning system, which currently has no concept of curves and thus forces a full deceleration to 0 at each join in the path.
+
+Lastly, it will be necessary to redesign the gcode parser to support comments & parse more efficiently.
