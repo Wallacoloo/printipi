@@ -90,8 +90,9 @@
  *  Fix low-pass filter
  * *Make NaN checks explicit
  * *Bound coordinates
- *  Make Endstop not be a static class
- *  Make EnableDisableDriver not be a static class
+ * *Make Endstop not be a static class
+ * *Make EnableDisableDriver not be a static class
+ *  Extrusions should not force axis to be homed.
 */
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.

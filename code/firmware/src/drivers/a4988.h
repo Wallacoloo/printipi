@@ -34,16 +34,8 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
 			dirPin.makeDigitalOutput(IoLow);
 			//Enabler::enable();
 			//enabler.enable();
-			enablePin.makeDigitalOutput(IoHigh); //enable.
+			enablePin.makeDigitalOutput(IoHigh); //set as output and enable.
 		}
-		//A4988 is directed by putting a direction on the DIRPIN, and then
-		//sending a pulse on the STEPPIN.
-		/*static void deactivate() {
-			Enabler::disable(); //will be called directly on the Enabler.
-			//enabler.disable();
-			//bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_INPT); //unmount pins.
-			//bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_INPT);
-		}*/
 		void lockAxis() {
 			//Enabler::enable();
 			//enabler.enable();
@@ -67,6 +59,8 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
 			cycleStepPin();
 		}
 	private:
+		//A4988 is directed by putting a direction on the DIRPIN, and then
+		//sending a pulse on the STEPPIN.
 		void cycleStepPin() {
 			//LOGV("cycling pin %i\n", DIRPIN);
 			stepPin.digitalWrite(IoHigh);
