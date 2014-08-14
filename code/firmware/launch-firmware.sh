@@ -5,4 +5,4 @@ sudo ln -s $(pwd)/tty3dpm /dev/ttyUSB3dp
 #Octoprint needs to be able to read from its tty:
 sudo chmod +r ./tty3dpm ./tty3dps
 #need sudo for io control. #nice -15
-sudo nice -15 ./build/kossel-firmware ./tty3dps $@
+sudo nice -15 ./build/printipi ./tty3dps $@

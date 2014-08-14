@@ -24,7 +24,8 @@ else #gcc < 4.7, or non-gcc compiler
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
 MACHINE=KosselPi
-MACHINE_PATH=drivers/machines/$(shell echo $(MACHINE) | tr A-Z a-z).h
+LOWERMACHINE=$(shell echo $(MACHINE) | tr A-Z a-z)
+MACHINE_PATH=drivers/machines/$(LOWERMACHINE).h
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
@@ -47,7 +48,8 @@ DEBUGDIR=$(BUILDROOT)/debug
 RELEASEDIR=$(BUILDROOT)/release
 PROFILEDIR=$(BUILDROOT)/prof
 MINSIZEDIR=$(BUILDROOT)/minsize
-NAME=kossel-firmware
+NAME=printipi-$(LOWERMACHINE)
+NAMELINK=printipi #this will become a symbolic link to the actual binary
 
 all: debug
 
@@ -70,6 +72,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 %/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)
+	ln -f -s $(BUILDROOT)/$(NAME) $(BUILDROOT)/$(NAMELINK)
 	
 %.dir:
 	@mkdir -p $(@D)
