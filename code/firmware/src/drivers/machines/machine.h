@@ -1,11 +1,9 @@
 #ifndef DRIVERS_MACHINES_MACHINE_H
 #define DRIVERS_MACHINES_MACHINE_H
 
-#include "drivers/driver.h"
-
 namespace drv {
 
-class Machine : public Driver {
+class Machine {
 	public:
 		inline float defaultMoveRate() const { //in mm/sec
         	return 0;

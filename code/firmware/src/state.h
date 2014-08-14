@@ -35,7 +35,6 @@
 #include "scheduler.h"
 #include "motion/motionplanner.h"
 #include "motion/exponentialacceleration.h"
-#include "drivers/driver.h"
 #include "common/mathutil.h"
 #include "drivers/axisstepper.h"
 #include "drivers/iodriver.h"
