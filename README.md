@@ -7,6 +7,14 @@ Although called Printipi, it is capable of running on other boards than the Rasp
 
 Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of #defines. Instead, each machine type gets its own file under src/drivers/machines and exposes its coordinate system and peripherals through public typedefs.
 
+License
+========
+
+With the exception of certain files*, Printipi is licensed under the MIT license. This means that you are free to use, modify, distribute, and sublicense the code as you see fit. While you are not obligated to do so by the license, it would be appreciated that you share any improvements you make (eg make a public fork on github containing your modifications and then submit a pull request to have it merged with the master branch).
+
+*firmware/src/drivers/rpi/bcm2835.c and firmware/src/drivers/rpi/bcm2835.h are (c) Mike McCauley
+*util/rotation_matrix.py is (c) Edward d'Auvergne and provided here only for convenience
+
 Limitations
 ========
 
@@ -17,7 +25,7 @@ Currently, only a limited set of gcode commands are supported. Namely, testing h
 Compiling
 ========
 
-To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <mode>`, where \<machine\> is the C++ classname of the machine contained under src/drivers/machines, eg 'KosselPi', and \<mode\> is either debug, release, profile, or minsize. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
+To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi`, and `<target>` is either debug, release, profile, or minsize. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
 
 Usage
 ========
