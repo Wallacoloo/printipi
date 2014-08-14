@@ -25,7 +25,9 @@ Currently, only a limited set of gcode commands are supported. Namely, testing h
 Compiling
 ========
 
-**Prereqs**: gcc >= 4.6 or another compiler with support for C++11
+**Prereqs**: gcc >= 4.6 or another compiler with support for C++11  
+gcc >= 4.7 is highly recommended because of the benefits gained from link-time optimization, which isn't supported in gcc 4.6 when using C++11  
+gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get install g++-4.7` and to use it over the system's gcc, compile with `make CXX=g++-4.7`
 
 To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi`, and `<target>` is either debug, release, profile, or minsize. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
 
