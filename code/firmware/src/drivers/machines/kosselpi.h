@@ -6,7 +6,7 @@
 #include "common/filters/lowpassfilter.h"
 //#include "motion/exponentialacceleration.h"
 #include "motion/constantacceleration.h"
-#include "drivers/driver.h"
+#include "drivers/machines/machine.h"
 #include "drivers/axisstepper.h"
 #include "drivers/linearstepper.h"
 #include "drivers/lineardeltastepper.h"
@@ -102,7 +102,7 @@
 */
 namespace drv {
 
-class KosselPi : public Driver {
+class KosselPi : public Machine {
 	private:
 		//typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_16, 0> _StepperEn; //enable pin is LOW for on, HIGH for off
 		//typedef EnableDisableDriver<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_16, IoHigh> > > _StepperEn;
