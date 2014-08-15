@@ -31,6 +31,7 @@
 #include "common/logging.h"
 #include "gparse/command.h"
 #include "gparse/com.h"
+#include "gparse/response.h"
 #include "event.h"
 #include "scheduler.h"
 #include "motion/motionplanner.h"
@@ -122,7 +123,7 @@ template <typename Drv> class State {
 		void eventLoop();
 		/* execute the GCode on a Driver object that supports a well-defined interface.
 		 * returns a Command to send back to the host. */
-		gparse::Command execute(gparse::Command const& cmd);
+		gparse::Response execute(gparse::Command const& cmd);
 		/* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
 		void queueMovement(float x, float y, float z, float e);
 		/* Home to the endstops. Does not return until endstops have been reached. */
@@ -292,9 +293,16 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
 	//One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
 	if (interval == OnIdleCpuIntervalWide && com.tendCom()) {
 		//note: may want to optimize this; once there is a pending command, this involves a lot of extra work.
-		gparse::Command resp = execute(com.getCommand());
-		if (!resp.empty()) { //returning Command::Null means we're not ready to handle the command.
-			com.reply(resp);
+		auto cmd = com.getCommand();
+		//auto x = gparse::Response(gparse::ResponseOk);
+		//gparse::Command resp = execute(cmd);
+		gparse::Response resp = execute(cmd);
+		if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
+		    if (!NO_LOG_M105 || !cmd.isM105()) {
+				LOG("command: %s\n", cmd.toGCode().c_str());
+		        LOG("response: %s", resp.toString().c_str());
+	        }
+	        com.reply(resp);
 		}
 	}
 	bool motionNeedsCpu = false;
@@ -317,7 +325,7 @@ template <typename Drv> void State<Drv>::eventLoop() {
 	this->scheduler.eventLoop();
 }
 
-template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command const& cmd) {
+template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command const& cmd) {
 	std::string opcode = cmd.getOpcode();
 	//gparse::Command resp;
 	if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
@@ -326,7 +334,7 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 			this->homeEndstops();
 		}
 		if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
-			return gparse::Command::Null;
+			return gparse::Response::Null;
 		}
 	    bool hasX, hasY, hasZ, hasE;
 	    bool hasF;
@@ -348,16 +356,16 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 			this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
 		}
 		this->queueMovement(x, y, z, e);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
 		setUnitMode(UNIT_IN);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isG21()) { //g-code coordinates will now be interpreted as millimeters.
 		setUnitMode(UNIT_MM);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isG28()) { //home to end-stops / zero coordinates
 		if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
-			return gparse::Command::Null;
+			return gparse::Response::Null;
 		}
 		this->homeEndstops();
 		/*bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
@@ -371,15 +379,15 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		float newZ = homeZ ? 0 : destZPrimitive();
 		float curE = destEPrimitive();
 		//this->queueMovement(newX, newY, newZ, curE);*/
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isG90()) { //set g-code coordinates to absolute
 		setPositionMode(POS_ABSOLUTE);
 		setExtruderPosMode(POS_ABSOLUTE);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isG91()) { //set g-code coordinates to relative
 		setPositionMode(POS_RELATIVE);
 		setExtruderPosMode(POS_RELATIVE);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isG92()) { //set current position = 0
 		//LOG("Warning (gparse/state.h): OP_G92 (set current position as reference to zero) not tested\n");
 		float actualX, actualY, actualZ, actualE;
@@ -393,33 +401,33 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 			actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : destEPrimitive() - _hostZeroE; //_hostZeroE;
 		}
 		setHostZeroPos(actualX, actualY, actualZ, actualE);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM17()) { //enable all stepper motors
 		LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not tested\n");
 		drv::IODriver::lockAllAxis(this->ioDrivers);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM18()) { //allow stepper motors to move 'freely'
 		LOGW("Warning (gparse/state.h): OP_M18 (disable stepper motors) not tested\n");
 		drv::IODriver::unlockAllAxis(this->ioDrivers);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM21()) { //initialize SD card (nothing to do).
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM82()) { //set extruder absolute mode
 		setExtruderPosMode(POS_ABSOLUTE);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM83()) { //set extruder relative mode
 		setExtruderPosMode(POS_RELATIVE);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM84()) { //stop idle hold: relax all motors.
 		LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM104()) { //set hotend temperature and return immediately.
 		bool hasS;
 		float t = cmd.getS(hasS);
 		if (hasS) {
 			drv::IODriver::setHotendTemp(ioDrivers, t);
 		}
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM105()) { //get temperature, in C
 		//CelciusType t=DEFAULT_HOTEND_TEMP(), b=DEFAULT_BED_TEMP(); //a temperature < absolute zero means no reading available.
 		//driver.getTemperature(t, b);
@@ -427,17 +435,17 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		//std::tie(t, b) = driver.getTemperature();
 		t = drv::IODriver::getHotendTemp(ioDrivers);
 		b = drv::IODriver::getBedTemp(ioDrivers);
-		return gparse::Command("ok T:" + std::to_string(t) + " B:" + std::to_string(b));
+		return gparse::Response(gparse::ResponseOk, "T:" + std::to_string(t) + " B:" + std::to_string(b));
 	} else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
 		float s = cmd.getS(1.0); //PWM duty cycle
 		if (s > 1) { //host thinks we're working from 0 to 255
 			s = s/256.0; //TODO: move this logic into cmd.getSNorm()
 		}
 		setFanRate(s);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM107()) { //set fan = off.
 		setFanRate(0);
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM109()) { //set extruder temperature to S param and wait.
 		LOGW("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
 		bool hasS;
@@ -445,11 +453,11 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		if (hasS) {
 			drv::IODriver::setHotendTemp(ioDrivers, t);
 		}
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM110()) { //set current line number
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM117()) { //print message
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isM140()) { //set BED temp and return immediately.
 		LOGW("Warning (gparse/state.h): OP_M140 (set bed temp) is untested\n");
 		bool hasS;
@@ -457,10 +465,10 @@ template <typename Drv> gparse::Command State<Drv>::execute(gparse::Command cons
 		if (hasS) {
 			drv::IODriver::setBedTemp(ioDrivers, t);
 		}
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else if (cmd.isTxxx()) { //set tool number
 		LOGW("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
-		return gparse::Command::OK;
+		return gparse::Response::Ok;
 	} else {
 		throw std::runtime_error(std::string("unrecognized gcode opcode: '") + cmd.getOpcode() + "'");
 	}

@@ -95,7 +95,7 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 %/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/rpi/rpi.a
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
-%/gparse/gparse.a: %/gparse/com.o %/gparse/command.o
+%/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 %/common/common.a: %/common/intervaltimer.o %/common/logging.o
