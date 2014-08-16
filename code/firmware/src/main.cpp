@@ -93,6 +93,8 @@
  * *Make Endstop not be a static class
  * *Make EnableDisableDriver not be a static class
  *  Extrusions should not force axis to be homed.
+ *  Recognize when opening gcode file, and open as read-only (ie don't write 'ok' responses into it)
+ *  Use the std:: file interface, rather than Linux file handlers.
 */
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
@@ -120,7 +122,9 @@ void printUsage(char* cmd) {
 
 int main_(int argc, char** argv) {
 	char defaultSerialFile[] = "/dev/stdin";
-	char* serialFileName;
+	char defaultOutFile[] = "/dev/null";
+	char* serialFileName; //file which Com reads from
+	char* outFile = defaultOutFile; //file which Com posts responses 
 	SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
 	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
     	logging::disable();
@@ -138,9 +142,11 @@ int main_(int argc, char** argv) {
     if (argc < 2 || argv[1][0] == '-') { //if no arguments, or if first argument (and therefore all args) is an option
         //printUsage(argv[0]);
         serialFileName = defaultSerialFile;
-        //return 1;
     } else {
     	serialFileName = argv[1];
+    	if (argc >2 && argv[2][0] != '-') { //second argument is for the output file
+    	    outFile = argv[2];
+    	}
     }
     
     //prevent page-swaps to increase performace:
@@ -151,7 +157,7 @@ int main_(int argc, char** argv) {
     
     //Open the serial device:
     LOG("Serial file: %s\n", serialFileName);
-    gparse::Com com = gparse::Com(std::string(serialFileName));
+    gparse::Com com = gparse::Com(std::string(serialFileName), std::string(outFile));
     
     //instantiate main driver:
     typedef drv::MACHINE MachineT;
