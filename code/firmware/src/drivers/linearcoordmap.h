@@ -30,7 +30,10 @@ template <typename Transform=matr::Identity3Static> class LinearCoordMap : publi
 		static std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) {
 			return Transform::transform(xyz);
 		}
-		static void xyzeFromMechanical(const std::array<int, 4> &mech) {
+		static std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) {
+			return xyze; //no bounding.
+		}
+		static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
 			return std::make_tuple(mech[xIdx], mech[yIdx], mech[zIdx], mech[eIdx]);
 		}
 

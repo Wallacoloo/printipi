@@ -11,26 +11,26 @@
 
 #include <tuple>
 
-template <typename TupleT, std::size_t Idx, typename Func, typename ...Args> struct __callOnAll {
+template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename ...Args> struct __callOnAll {
 	void operator()(TupleT &t, Func &f, Args... args) {
-		__callOnAll<TupleT, Idx-1, Func, Args...>()(t, f, args...); //call on all previous indices
-		f(Idx, std::get<Idx>(t), args...); //call on our index.
+		__callOnAll<TupleT, IdxPlusOne-1, Func, Args...>()(t, f, args...); //call on all previous indices
+		f(IdxPlusOne-1, std::get<IdxPlusOne-1>(t), args...); //call on our index.
 	}
 };
 
 template <typename TupleT, typename Func, typename ...Args> struct __callOnAll<TupleT, 0, Func, Args...> {
 	//handle the base recursion case.
-	void operator()(TupleT &t, Func &f, Args... args) {
-		f(0, std::get<0>(t), args...);
+	void operator()(TupleT &, Func &, Args... ) {
+		//f(0, std::get<0>(t), args...);
 	}
 };
 
 template <typename TupleT, typename Func, typename ...Args> void callOnAll(TupleT &t, Func f, Args... args) {
-	__callOnAll<TupleT, std::tuple_size<TupleT>::value-1, Func, Args...>()(t, f, args...);
+	__callOnAll<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, args...);
 };
 //This second version allows to pass a function object by pointer, so that can perhaps be modified.
 template <typename TupleT, typename Func, typename ...Args> void callOnAll(TupleT &t, Func *f, Args... args) {
-	__callOnAll<TupleT, std::tuple_size<TupleT>::value-1, Func, Args...>()(t, *f, args...);
+	__callOnAll<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, *f, args...);
 };
 
 #endif

@@ -92,10 +92,10 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 %/drivers/rpi/rpi.a: %/drivers/rpi/bcm2835.o %/drivers/rpi/rpi.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/driver.o %/drivers/rpi/rpi.a
+%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/rpi/rpi.a
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
-%/gparse/gparse.a: %/gparse/com.o %/gparse/command.o
+%/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 %/common/common.a: %/common/intervaltimer.o %/common/logging.o

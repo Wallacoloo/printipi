@@ -1,0 +1,3 @@
+[submodule "code/firmware/src/gparse"]
+	path = code/firmware/src/gparse
+	url = https://github.com/Wallacoloo/gparse.git

@@ -24,11 +24,12 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 	private:
 		typedef typename Interface::CoordMapT CoordMapT;
 		typedef typename Interface::AxisStepperTypes AxisStepperTypes;
+		typedef typename drv::AxisStepper::GetHomeStepperTypes<AxisStepperTypes>::HomeStepperTypes HomeStepperTypes;
 		CoordMapT _coordMapper;
 		AccelProfile _accel;
 		std::array<int, CoordMapT::numAxis()> _destMechanicalPos;
 		AxisStepperTypes _iters;
-		typename drv::AxisStepper::GetHomeStepperTypes<AxisStepperTypes>::HomeStepperTypes _homeIters;
+		HomeStepperTypes _homeIters;
 		//timespec _baseTime;
 		EventClockT::duration _baseTime;
 		float _duration;
@@ -48,12 +49,8 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			//Note: for now, there isn't actually buffering.
 			return _motionType == MotionNone;
 		}
-		Event nextStep() {
-			if (_motionType == MotionNone) {
-				return Event();
-			}
-			bool isHoming = _motionType == MotionHome;
-			drv::AxisStepper& s = isHoming ? drv::AxisStepper::getNextTime(_homeIters) : drv::AxisStepper::getNextTime(_iters);
+	private:
+		Event _nextStep(drv::AxisStepper &s, bool isHoming) {
 			LOGV("MotionPlanner::nextStep() is: %i at %g of %g\n", s.index(), s.time, _duration);
 			//if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
 			if (s.time > _duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
@@ -82,8 +79,39 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			}
 			return e;
 		}
+		//black magic to get nextStep to work when either AxisStepperTypes or HomeStepperTypes have length 0:
+		//If they are length zero, then _nextStep* just returns an empty event and a compilation error is avoided.
+		//Otherwise, the templated function is called, and _nextStep is run as usual:
+		template <bool T> Event _nextStepHoming(std::integral_constant<bool, T> ) {
+			return _nextStep(drv::AxisStepper::getNextTime(_homeIters), true);
+		}
+		Event _nextStepHoming(std::false_type ) {
+			return Event();
+		}
+		template <bool T> Event _nextStepMoving(std::integral_constant<bool, T> ) {
+			return _nextStep(drv::AxisStepper::getNextTime(_iters), false);
+		}
+		Event _nextStepMoving(std::false_type ) {
+			return Event();
+		}
+	public:
+		Event nextStep() {
+			if (_motionType == MotionNone) {
+				return Event(); //no next step; return a null Event
+			}
+			bool isHoming = _motionType == MotionHome;
+			if ((isHoming && std::tuple_size<HomeStepperTypes>::value == 0) || (!isHoming && std::tuple_size<AxisStepperTypes>::value == 0)) {
+				return Event(); //sanity checks. Should get optimized away on most machines.
+			}
+			if (isHoming) {
+				return _nextStepHoming(std::integral_constant<bool, std::tuple_size<HomeStepperTypes>::value != 0>());
+			} else {
+				return _nextStepMoving(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
+			}
+		}
 		void moveTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
-			if (!CoordMapT::numAxis()) {
+			//if (!CoordMapT::numAxis()) {
+			if (std::tuple_size<AxisStepperTypes>::value == 0) {
 				return; //Sanity check. Algorithms only work for machines with atleast 1 axis.
 			}
 			//this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
@@ -121,6 +149,9 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 		}
 
 		void homeEndstops(EventClockT::time_point baseTime, float maxVelXyz) {
+			if (std::tuple_size<HomeStepperTypes>::value == 0) {
+				return; //Sanity check. Algorithms only work for machines with atleast 1 axis.
+			}
 			drv::AxisStepper::initAxisHomeSteppers(_homeIters, maxVelXyz);
 			//this->_baseTime = timespecToTimepoint<EventClockT::time_point>(baseTime).time_since_epoch();
 			this->_baseTime = baseTime.time_since_epoch();
