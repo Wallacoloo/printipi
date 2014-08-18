@@ -52,9 +52,10 @@
 //Can reach 160mm/sec at full-stepping (haven't tested the limits)
 //75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
 //90mm/sec uses 75% cpu at quarter-stepping (optimized - Aug 10)
+//70mm/sec uses 50-55% cpu at quarter-stepping, but results in missed steps (Aug 17)
 //#define MAX_MOVE_RATE 45
 //#define MAX_MOVE_RATE 60
-#define MAX_MOVE_RATE 70
+#define MAX_MOVE_RATE 50
 #define HOME_RATE 10
 //#define MAX_EXT_RATE 12
 //#define MAX_EXT_RATE 24
