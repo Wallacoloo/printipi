@@ -385,7 +385,7 @@ set_pwm(int channel, float width)
 
 /*
  * What we need to do here is:
- *   First DMA command turns on the pins that are >0
+ *   First DMA command turns on the pins that are >0 (PWM?)
  *   All the other packets turn off the pins that are not used
  *
  * For the cpb packets (The DMA control packet)
@@ -633,7 +633,7 @@ init_channel_pwm(void)
 		channel_pwm[i] = 0;
 }
 
-static void
+/*static void
 go_go_go(void)
 {
 	FILE *fp;
@@ -653,14 +653,14 @@ go_go_go(void)
 		//fprintf(stderr, "[%d]%s", n, lineptr);
 		n = sscanf(lineptr, "%d=%f%c", &servo, &value, &nl);
 		if (n !=3 || nl != '\n') {
-			//fprintf(stderr, "Bad input: %s", lineptr);
-      n = sscanf(lineptr, "release %d", &servo);
-      if (n != 1 || nl != '\n') {
-        fprintf(stderr, "Bad input: %s", lineptr);
-      } else {
-        // Release Pin from pin2gpio array if the release command is received.
-        release_pwm(servo);
-      }
+            //fprintf(stderr, "Bad input: %s", lineptr);
+            n = sscanf(lineptr, "release %d", &servo);
+            if (n != 1 || nl != '\n') {
+              fprintf(stderr, "Bad input: %s", lineptr);
+            } else {
+              // Release Pin from pin2gpio array if the release command is received.
+              release_pwm(servo);
+            }
 		} else if (servo < 0){ // removed servo validation against CHANNEL_NUM no longer needed since now we used real GPIO names
 			fprintf(stderr, "Invalid channel number %d\n", servo);
 		} else if (value < 0 || value > 1) {
@@ -669,7 +669,7 @@ go_go_go(void)
 			set_pwm(servo, value);
 		}
 	}
-}
+}*/
 
 void
 parseargs(int argc, char **argv)
@@ -780,7 +780,11 @@ main(int argc, char **argv)
 	//if (daemon(0,1) < 0)
 	//	fatal("pi-blaster: Failed to daemonize process: %m\n");
 
-	go_go_go();
+	//go_go_go();
+	
+	set_pwm(4, 0.5);
+	
+	while (1) { pause(); }
 
 	return 0;
 }
