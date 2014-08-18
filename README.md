@@ -5,7 +5,12 @@ Printipi is a software package designed to bring 3d printing to the Raspberry Pi
 
 Although called Printipi, it is capable of running on other boards than the Raspberry Pi provided that the compiler supports C++11. One need only reproduce the functionality of the 25 lines contained in src/drivers/rpi/rpiiopin.h (which explains how to read or write an IO pin) for their device.
 
-Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of #defines. Instead, each machine type gets its own file under src/drivers/machines and exposes its coordinate system and peripherals through public typedefs.
+Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/drivers/machines that exposes its coordinate system and peripherals through a handful of public member functions and typedefs. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
+
+Demos
+========
+
+Printipi powering a Mini Kossel: http://youtu.be/g4UD5MRas3E  
 
 License
 ========
@@ -29,10 +34,10 @@ Compiling
 gcc >= 4.7 is highly recommended because of the benefits gained from link-time optimization, which isn't supported in gcc 4.6 when using C++11  
 gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get install g++-4.7` and to use it over the system's gcc, compile with `make CXX=g++-4.7`
 
-First, get the sources: `git clone --recursive https://github.com/Wallacoloo/printipi`  
+First, get the sources: `git clone --recursive https://github.com/Wallacoloo/printipi.git`  
 The recursive flag is required due to the use of git submodules inside the project.
 
-To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi`, and `<target>` is either debug, release, profile, or minsize. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
+To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi` or the `Example` machine, and `<target>` is either debug, release, profile, or minsize. Both are case-sensitive. A binary will be produced under code/firmware/build with the same name as your machine. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./kosselpi'.
 
 Usage
 ========
@@ -51,6 +56,6 @@ The Future
 
 The short-to-midterm goals for Printipi are mostly optimization-based. Although running in userland is nice, it would be better to move at least the timing-critical sections into a kernel module. It may also be possible to make use of the DMA channels in the Raspberry Pi to achieve greater step-rates and sub-microsecond precise timings.
 
-More effort will also be put into the motion planning system, which currently has no concept of curves and thus forces a full deceleration to 0 at each join in the path.
+More effort will also be put into the motion planning system, which currently has no concept of curves and thus forces a full deceleration to 0 at each joint in the path.
 
-Lastly, it will be necessary to redesign the gcode parser to support comments & parse more efficiently.
+Lastly, it will be necessary to make the gcode parser properly handle transmission errors.
