@@ -59,7 +59,7 @@
 //#define MAX_MOVE_RATE 60
 //#define MAX_MOVE_RATE 50
 #define HOME_RATE 10
-#define MAX_EXT_RATE 12
+#define MAX_EXT_RATE 50
 //#define MAX_EXT_RATE 24
 //#define MAX_EXT_RATE 60
 
