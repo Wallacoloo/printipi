@@ -206,6 +206,7 @@ udelay(int us)
 	nanosleep(&ts, NULL);
 }
 
+//call to exit cleanly (but return an error code):
 static void
 terminate(int dummy)
 {
@@ -223,6 +224,7 @@ terminate(int dummy)
 	exit(1);
 }
 
+//call function to abort with an error message:
 static void
 fatal(char *fmt, ...)
 {
@@ -775,8 +777,8 @@ main(int argc, char **argv)
 	if (chmod(DEVFILE, 0666) < 0)
 		fatal("pi-blaster: Failed to set permissions on %s: %m\n", DEVFILE);
 
-	if (daemon(0,1) < 0)
-		fatal("pi-blaster: Failed to daemonize process: %m\n");
+	//if (daemon(0,1) < 0)
+	//	fatal("pi-blaster: Failed to daemonize process: %m\n");
 
 	go_go_go();
 
