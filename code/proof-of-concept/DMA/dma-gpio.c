@@ -50,10 +50,38 @@
 //...
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
-//Note: DMA channels are connected directly to peripherals, so physical addresses should be used.
+//Note: DMA channels are connected directly to peripherals, so physical (bus?) addresses should be used.
 
-//DMA Control Block
-struct DmaCb {
+struct DmaChannelHeader {
+    uint32_t CS; //Control and Status
+        //31    RESET; set to 1 to reset DMA
+        //30    ABORT; set to 1 to abort current DMA control block (next one will be loaded & continue)
+        //29    DISDEBUG; set to 1 and DMA won't be paused when debug signal is sent
+        //28    WAIT_FOR_OUTSTANDING_WRITES; set to 1 and DMA will wait until peripheral says all writes have gone through before loading next CB
+        //24-74 reserved
+        //20-23 PANIC_PRIORITY; 0 is lowest priority
+        //16-19 PRIORITY; bus scheduling priority. 0 is lowest
+        //9-15  reserved
+        //8     ERROR; read as 1 when error is encountered. error can be found in DEBUG register.
+        //7     reserved
+        //6     WAITING_FOR_OUTSTANDING_WRITES; read as 1 when waiting for outstanding writes
+        //5     DREQ_STOPS_DMA; read as 1 if DREQ is currently preventing DMA
+        //4     PAUSED; read as 1 if DMA is paused
+        //3     DREQ; copy of the data request signal from the peripheral, if DREQ is enabled. reads as 1 if data is being requested, else 0
+        //2     INT; set when current CB ends and its INTEN=1. Write a 1 to this register to clear it
+        //1     END; set when the transfer defined by current CB is complete. Write 1 to clear.
+        //0     ACTIVE; write 1 to activate DMA (load the CB before hand)
+    uint32_t CONBLK_AD; //Control Block Address
+    uint32_t TI; //transfer information; see DmaControlBlock.TI for description
+    uint32_t SOURCE_AD; //Source address
+    uint32_t DEST_AD; //Destination address
+    uint32_t TXFR_LEN; //transfer length.
+    uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
+    uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
+    uint32_t DEBUG; //controls debug settings
+};
+
+struct DmaControlBlock {
     uint32_t TI; //transfer information
         //31:27 unused
         //26    NO_WIDE_BURSTS
@@ -73,13 +101,38 @@ struct DmaCb {
         //1     TDMODE; set to 1 to enable 2D mode
         //0     INTEN;  set to 1 to generate an interrupt upon completion
     uint32_t SOURCE_AD; //Source address
-    uint32_t DEST_AD; //Dest address
+    uint32_t DEST_AD; //Destination address
     uint32_t TXFR_LEN; //transfer length.
     uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
     uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     uint32_t _reserved[2];
 };
 
+//allocate a page & simultaneously determine its physical address.
+//vAddr and pAddr are essentially passed by-reference.
+//this allows for:
+//void *virt, *phys;
+//getRealMemPage(&virt, &phys)
+//now, virt[N] exists for 0 <= N < 4096,
+//  and phys+N is the physical address for virt[N] (right?)
+//taken from http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
+void getRealMemPage(void** vAddr, void** pAddr) {
+    void* a = valloc(4096); //allocate one page of RAM
+
+    ((int*)a)[0] = 1;  // use page to force allocation.
+
+    mlock(a, 4096);  // lock into ram.
+
+    *vAddr = a;  // yay - we know the virtual address
+
+    //unsigned long long frameinfo;
+    uint64_t frameinfo;
+    int fp = open("/proc/self/pagemap", 'r');
+    lseek(fp, ((int)a)/4096*8, SEEK_SET);
+    read(fp, &frameinfo, sizeof(frameinfo));
+
+    *pAddr = (void*)((int)(frameinfo*4096));
+}
 
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
     ///dev/mem behaves as a file. We need to map that file into memory:
@@ -95,6 +148,10 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
 }
 
 int main() {
+    //First, we need to obtain the virtual base-address of our program:
+    //void *virtbase = mmap(NULL, NUM_PAGES * PAGE_SIZE, PROT_READ|PROT_WRITE,
+	//		MAP_SHARED|MAP_ANONYMOUS|MAP_NORESERVE|MAP_LOCKED,
+	//		-1, 0);
     //First, open the linux device, /dev/mem
     //dev/mem provides access to the physical memory of the entire processor+ram
     //This is needed because Linux uses virtual memory, thus the process's memory at 0x00000000 will NOT have the same contents as the physical memory at 0x00000000
@@ -114,7 +171,7 @@ int main() {
     *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     
     //configure DMA:
-    struct DmaCb cb1;
+    //struct DmaCb cb1;
     
     return 0;
 }
