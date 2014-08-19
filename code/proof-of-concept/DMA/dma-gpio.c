@@ -42,7 +42,26 @@
 //GPCLR acts the same way as GPSET, but clears the pin instead.
 #define GPLEV0    0x20200034 //GPIO Pin Level. There are 2 of these (32 bits each)
 
+#define DMA_BASE 0x20207000
+#define DMACH0   0x20207000
+#define DMACH1   0x20207100
+#define DMACH2   0x20207200
+#define DMACH3   0x20207300
+//...
+//Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
+//DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
+//Note: DMA channels are connected directly to peripherals, so physical addresses should be used.
 
+
+volatile uint32_t* mapPeripheral(int memfd, int addr) {
+    void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
+    //now, *mapped = memory at physical address of addr.
+    if (mapped == MAP_FAILED) {
+        printf("failed to map memory (did you remember to run as root?)\n");
+        exit(1);
+    }
+    return (volatile uint32_t*)mapped;
+}
 
 int main() {
     //First, open the linux device, /dev/mem
@@ -54,17 +73,13 @@ int main() {
         exit(1);
     }
     ///dev/mem behaves as a file. We need to map that file into memory:
-    void *gpioBaseMem = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE,
-        MAP_SHARED,
-        memfd, GPIO_BASE);
+    volatile uint32_t *gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
+    volatile uint32_t *dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
     //now, *gpioBaseMem = memory at physical address of GPIO_BASE.
-    if (gpioBaseMem == MAP_FAILED) {
-        printf("failed to map memory (did you remember to run as root?)\n");
-        exit(1);
-    }
     //now set our pin (#4) as an output:
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0 - GPIO_BASE);
-    *fselAddr = (*fselAddr) | (1 << (3*4));
-    //*(volatile uint32_t *)(gpioBaseMem + GPFSEL0 - GPIO_BASE) = 1 << (3*4);
+    uint32_t fselMask = 0x7 << (3*4); //bitmask for the 3 bits that control pin 4
+    uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
+    *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     return 0;
 }
