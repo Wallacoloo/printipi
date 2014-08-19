@@ -171,12 +171,28 @@ int main() {
     *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     
     //configure DMA:
-    void *virtPage, *physPage;
-    getRealMemPage(&virtPage, &physPage);
-    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtPage; //dedicate the first 8 bytes of this page to holding the cb.
+    //allocate 1 page for the source and 1 page for the destination:
+    void *virtSrcPage, *physSrcPage;
+    getRealMemPage(&virtSrcPage, &physSrcPage);
+    void *virtDestPage, *physDestPage;
+    getRealMemPage(&virtDestPage, &physDestPage);
+    //write a few bytes to the source page:
+    uint32_t *srcArray = (uint32_t*)virtSrcPage;
+    srcArray[0] = 0;
+    srcArray[1] = 1;
+    srcArray[2] = 2;
+    srcArray[3] = 3;
+    //allocate 1 page for the control blocks
+    void *virtCbPage, *physCbPage;
+    getRealMemPage(&virtCbPage, &physCbPage);
+    //dedicate the first 8 bytes of this page to holding the cb.
+    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
+    cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
+    cb1->DEST_AD = (uint32_t)physDestPage;
+    cb1->TXFR_LEN = 16; //transfer 16 bytes
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
-    dmaHeader->CONBLK_AD = (uint32_t)physPage;
+    dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     return 0;
 }
