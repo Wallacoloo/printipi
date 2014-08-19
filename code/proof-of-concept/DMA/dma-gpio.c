@@ -42,11 +42,11 @@
 //GPCLR acts the same way as GPSET, but clears the pin instead.
 #define GPLEV0    0x20200034 //GPIO Pin Level. There are 2 of these (32 bits each)
 
-#define DMA_BASE 0x20207000
-#define DMACH0   0x20207000
-#define DMACH1   0x20207100
-#define DMACH2   0x20207200
-#define DMACH3   0x20207300
+#define DMA_BASE 0x20007000
+#define DMACH0   0x20007000
+#define DMACH1   0x20007100
+#define DMACH2   0x20007200
+#define DMACH3   0x20007300
 //...
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
@@ -220,11 +220,17 @@ int main() {
     cb1->TXFR_LEN = 12; //transfer 12 bytes
     printf("destination was initially: %s\n", (char*)virtDestPage);
     //enable DMA channel:
-    writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 2, 1 << 2);
-    volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
+    writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
+    volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3 - DMA_BASE);
+    printf("dmaHeader reads: "); printMem(dmaHeader, 32);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
     printf("dmaHeader reads: "); printMem(dmaHeader, 32);
+    printf("physCbPage: %p or %u (%08x)\n", physCbPage, (uint32_t)physCbPage, (uint32_t)physCbPage);
+    printf("dmaHeader addr: %p, %p\n", dmaHeader, &(dmaHeader->CONBLK_AD));
+    *(dmaBaseMem + DMACH3 - DMA_BASE + 1) = (uint32_t)physCbPage;
+     *(dmaBaseMem + DMACH3 - DMA_BASE + 1) = (uint32_t)physCbPage;
+    printf("dmaHeader reads: "); printMem(dmaBaseMem + DMACH3 - DMA_BASE, 32);
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     
     sleep(1); //give time for copy to happen
