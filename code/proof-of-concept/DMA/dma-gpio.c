@@ -158,7 +158,7 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
 
 void printMem(void *begin, void *end) {
     while (begin < end) {
-        printf("%x", *(char*)begin);
+        printf("%02x ", *((char*)begin));
         ++begin;
     }
     printf("\n");
