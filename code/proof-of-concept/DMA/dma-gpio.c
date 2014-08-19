@@ -171,7 +171,8 @@ int main() {
     *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     
     //configure DMA:
-    //struct DmaCb cb1;
-    
+    //struct DmaControlBlock cb1;
+    volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
+    dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     return 0;
 }
