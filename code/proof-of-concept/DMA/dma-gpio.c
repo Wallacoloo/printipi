@@ -16,6 +16,7 @@
 #include <stdio.h> //for printf
 #include <stdlib.h> //for exit
 #include <fcntl.h> //for file opening
+#include <stdint.h> //for uint32_t
  
 
 #define GPIO_BASE 0x20200000 //base address of the GPIO control registers.
@@ -62,6 +63,6 @@ int main() {
         exit(1);
     }
     //now set our pin (#4) as an output:
-    *(gpioBaseMem + GPFSEL0 - GPIO_BASE) = 1 << (3*4);
+    *(volatile uint32_t *)(gpioBaseMem + GPFSEL0 - GPIO_BASE) = 1 << (3*4);
     return 0;
 }
