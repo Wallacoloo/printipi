@@ -56,6 +56,9 @@
 //flags used in the DmaChannelHeader struct:
 #define DMA_CS_RESET (1<<31)
 #define DMA_CS_ACTIVE (1<<0)
+#define DMA_DEBUG_READ_ERROR (1<<2)
+#define DMA_DEBUG_FIFO_ERROR (1<<1)
+#define DMA_DEBUG_READ_LAST_NOT_SET_ERROR (1<<0)
 
 //flags used in the DmaControlBlock struct:
 #define DMA_CB_TI_DEST_INC (1<<4)
@@ -242,8 +245,8 @@ int main() {
     //configure the DMA header to point to our control block:
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3 - DMA_BASE);
     dmaHeader->CS = DMA_CS_RESET; //make sure to disable dma first.
-    sleep(1);
-    dmaHeader->DEBUG = 7; // clear debug error flags
+    sleep(1); //give time for the reset command to be handled.
+    dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage; //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
