@@ -147,6 +147,13 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     return (volatile uint32_t*)mapped;
 }
 
+void printArray(void *data, int numBytes) {
+    for (int i=0; i<numBytes; ++i) {
+        printf("%c", *((char*)(data+i)));
+    }
+    printf("\n");
+}
+
 int main() {
     //First, we need to obtain the virtual base-address of our program:
     //void *virtbase = mmap(NULL, NUM_PAGES * PAGE_SIZE, PROT_READ|PROT_WRITE,
@@ -194,5 +201,8 @@ int main() {
     dmaHeader->CS = 0x0; //make sure to disable dma first.
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
+    
+    sleep(1); //give time for copy to happen
+    printArray(virtDestPage, 16);
     return 0;
 }
