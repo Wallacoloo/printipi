@@ -147,13 +147,6 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     return (volatile uint32_t*)mapped;
 }
 
-void printArray(void *data, int numBytes) {
-    for (int i=0; i<numBytes; ++i) {
-        printf("%c", *((char*)(data+i)));
-    }
-    printf("\n");
-}
-
 int main() {
     //First, we need to obtain the virtual base-address of our program:
     //void *virtbase = mmap(NULL, NUM_PAGES * PAGE_SIZE, PROT_READ|PROT_WRITE,
@@ -184,11 +177,19 @@ int main() {
     void *virtDestPage, *physDestPage;
     getRealMemPage(&virtDestPage, &physDestPage);
     //write a few bytes to the source page:
-    uint32_t *srcArray = (uint32_t*)virtSrcPage;
-    srcArray[0] = 0;
-    srcArray[1] = 1;
-    srcArray[2] = 2;
-    srcArray[3] = 3;
+    char *srcArray = (uint32_t*)virtSrcPage;
+    srcArray[0]  = 'h';
+    srcArray[1]  = 'e';
+    srcArray[2]  = 'l';
+    srcArray[3]  = 'l';
+    srcArray[4]  = 'o';
+    srcArray[5]  = ' ';
+    srcArray[6]  = 'w';
+    srcArray[7]  = 'o';
+    srcArray[8]  = 'r';
+    srcArray[9]  = 'l';
+    srcArray[10] = 'd';
+    srcArray[11] =  0; //null terminator used for printf call.
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
     getRealMemPage(&virtCbPage, &physCbPage);
@@ -196,13 +197,13 @@ int main() {
     struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     cb1->DEST_AD = (uint32_t)physDestPage;
-    cb1->TXFR_LEN = 16; //transfer 16 bytes
+    cb1->TXFR_LEN = 12; //transfer 12 bytes
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     
     sleep(1); //give time for copy to happen
-    printArray(virtDestPage, 16);
+    printf("destination reads: %s\n", physDestPage);
     return 0;
 }
