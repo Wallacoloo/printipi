@@ -34,8 +34,6 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
-static char VERSION[] = "0.1.0";
-
 // Created new known_pins with raspberry pi list of pins
 // to compare against the param received.
 static uint8_t known_pins[] = {
@@ -60,8 +58,6 @@ static uint8_t pin2gpio[8];
 // Set num of possible PWM channels based on the known pins size.
 #define NUM_CHANNELS    (sizeof(known_pins)/sizeof(known_pins[0]))
 
-#define DEVFILE			"/dev/pi-blaster"
-
 #define PAGE_SIZE		4096
 #define PAGE_SHIFT		12
 
@@ -81,8 +77,8 @@ static uint8_t pin2gpio[8];
 #define NUM_PAGES		((NUM_CBS * 32 + NUM_SAMPLES * 4 + \
 					PAGE_SIZE - 1) >> PAGE_SHIFT)
 
-#define DMA_BASE		0x20007000
-#define DMA_LEN			0x24
+#define DMA_BASE		0x20007000 //address of DMA channel 0 (0x7E007000 in docs, but 0x7E000000 is mapped to 0x20000000?)
+#define DMA_LEN			0x24 //number of bytes in the DMA channel header (ignoring the last 8 bytes, which are reserved)
 #define PWM_BASE		0x2020C000
 #define PWM_LEN			0x28
 #define CLK_BASE	        0x20101000
@@ -149,7 +145,7 @@ static uint8_t pin2gpio[8];
 typedef struct {
 	uint32_t info, src, dst, length,
 		 stride, next, pad[2];
-} dma_cb_t;
+} dma_cb_t; //DMA control-block.
 
 struct ctl {
 	uint32_t sample[NUM_SAMPLES];
@@ -163,7 +159,8 @@ typedef struct {
 
 page_map_t *page_map;
 
-static uint8_t *virtbase;
+static uint8_t *virtbase; //pointer to memory-mapped region of physical address space.
+//Thus *virtbase = memory at physical address 0x00000000. This mapping is necessary to access physical memory addresses behind Linux's memory management (see http://raspberrypi.stackexchange.com/questions/600/how-does-memory-mapped-i-o-addressing-work)
 
 static volatile uint32_t *pwm_reg;
 static volatile uint32_t *pcm_reg;
@@ -172,7 +169,7 @@ static volatile uint32_t *dma_reg;
 static volatile uint32_t *gpio_reg;
 
 static int delay_hw = DELAY_VIA_PWM;
-static int invert_mode = 0;
+//static int invert_mode = 0;
 
 static float channel_pwm[NUM_CHANNELS];
 
@@ -220,7 +217,7 @@ terminate(int dummy)
 		dma_reg[DMA_CS] = DMA_RESET;
 		udelay(10);
 	}
-	unlink(DEVFILE);
+	//unlink(DEVFILE);
 	exit(1);
 }
 
@@ -286,7 +283,8 @@ set_pin2gpio(int pin, float width){
   for (i = 0; i < NUM_CHANNELS; i++) {
     if (pin2gpio[i] == pin || pin2gpio[i] == 0) {
       if (pin2gpio[i] == 0) {
-        gpio_set(pin, invert_mode);
+        //gpio_set(pin, invert_mode);
+        gpio_set(pin, 0);
         gpio_set_mode(pin, GPIO_MODE_OUT);
       }
       pin2gpio[i] = pin;
@@ -411,10 +409,10 @@ update_pwm()
 	int i, j;
 	/* First we turn on the channels that need to be on */
 	/*   Take the first DMA Packet and set it's target to start pulse */
-	if (invert_mode)
-		ctl->cb[0].dst = phys_gpclr0;
-	else
-		ctl->cb[0].dst = phys_gpset0;
+	//if (invert_mode)
+	//	ctl->cb[0].dst = phys_gpclr0;
+	//else
+	ctl->cb[0].dst = phys_gpset0;
 
 	/*   Now create a mask of all the pins that should be on */
 	mask = 0;
@@ -429,10 +427,10 @@ update_pwm()
 
 	/* Now we go through all the samples and turn the pins off when needed */
 	for (j = 1; j < NUM_SAMPLES; j++) {
-		if (invert_mode)
-			ctl->cb[j*2].dst = phys_gpset0;
-		else
-			ctl->cb[j*2].dst = phys_gpclr0;
+		//if (invert_mode)
+		//	ctl->cb[j*2].dst = phys_gpset0;
+		//else
+		ctl->cb[j*2].dst = phys_gpclr0;
 		mask = 0;
 		for (i = 0; i < NUM_CHANNELS; i++) {
       // Check the pin2gpio pin has been set to avoid locking all of them as PWM.
@@ -530,10 +528,10 @@ init_ctrl_data(void)
 		/* First DMA command */
 		cbp->info = DMA_NO_WIDE_BURSTS | DMA_WAIT_RESP;
 		cbp->src = mem_virt_to_phys(ctl->sample + i);
-		if (invert_mode)
-			cbp->dst = phys_gpset0;
-		else
-			cbp->dst = phys_gpclr0;
+		//if (invert_mode)
+		//	cbp->dst = phys_gpset0;
+		//else
+		cbp->dst = phys_gpclr0;
 		cbp->length = 4;
 		cbp->stride = 0;
 		cbp->next = mem_virt_to_phys(cbp + 1);
@@ -671,7 +669,7 @@ go_go_go(void)
 	}
 }*/
 
-void
+/*void
 parseargs(int argc, char **argv)
 {
 	int index;
@@ -698,7 +696,7 @@ parseargs(int argc, char **argv)
 		switch (c)
 		{
 		case 0:
-			/* handle flag options (array's 3rd field non-0) */
+			// handle flag options (array's 3rd field non-0)
 			break;
 
 		case 'h':
@@ -724,19 +722,19 @@ parseargs(int argc, char **argv)
 			exit(-1);
 
 		case '?':
-			/* getopt_long already reported error? */
+			// getopt_long already reported error?
 			exit(-1);
 
 		default:
 			exit(-1);
 		}
 	}
-}
+}*/
 
 int
 main(int argc, char **argv)
 {
-	parseargs(argc, argv);
+	//parseargs(argc, argv);
 
 	printf("Using hardware:                 %5s\n", delay_hw == DELAY_VIA_PWM ? "PWM" : "PCM");
 	printf("Number of channels:             %5d\n", NUM_CHANNELS);
@@ -753,6 +751,11 @@ main(int argc, char **argv)
 	clk_reg = map_peripheral(CLK_BASE, CLK_LEN);
 	gpio_reg = map_peripheral(GPIO_BASE, GPIO_LEN);
 
+    //Linux uses a memory manager that makes our virtual address 0 != physical address 0.
+    //Therefore, if we want to access a physical address, we have to map it into our virtual address space.
+    //the following mmap will map physical address 0 (The last argument) to the returned value, virtbase.
+    //This way, *virtbase == physical(0x00000000)
+    //and virtbase[0x20000000] == physical(0x20000000)
 	virtbase = mmap(NULL, NUM_PAGES * PAGE_SIZE, PROT_READ|PROT_WRITE,
 			MAP_SHARED|MAP_ANONYMOUS|MAP_NORESERVE|MAP_LOCKED,
 			-1, 0);
@@ -766,16 +769,16 @@ main(int argc, char **argv)
 	init_ctrl_data();
 	init_hardware();
 	init_channel_pwm();
-  // Init pin2gpio array with 0/false values to avoid locking all of them as PWM.
+    // Init pin2gpio array with 0/false values to avoid locking all of them as PWM.
 	init_pin2gpio();
-  // Only calls update_pwm after ctrl_data calculates the pin mask to unlock all pins on start.
-  init_pwm();
+    // Only calls update_pwm after ctrl_data calculates the pin mask to unlock all pins on start.
+    init_pwm();
 
-	unlink(DEVFILE);
-	if (mkfifo(DEVFILE, 0666) < 0)
-		fatal("pi-blaster: Failed to create %s: %m\n", DEVFILE);
-	if (chmod(DEVFILE, 0666) < 0)
-		fatal("pi-blaster: Failed to set permissions on %s: %m\n", DEVFILE);
+	//unlink(DEVFILE);
+	//if (mkfifo(DEVFILE, 0666) < 0)
+	//	fatal("pi-blaster: Failed to create %s: %m\n", DEVFILE);
+	//if (chmod(DEVFILE, 0666) < 0)
+	//	fatal("pi-blaster: Failed to set permissions on %s: %m\n", DEVFILE);
 
 	//if (daemon(0,1) < 0)
 	//	fatal("pi-blaster: Failed to daemonize process: %m\n");
