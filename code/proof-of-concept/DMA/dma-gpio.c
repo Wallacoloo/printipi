@@ -140,6 +140,7 @@ void getRealMemPage(void** vAddr, void** pAddr) {
     read(fp, &frameinfo, sizeof(frameinfo));
 
     *pAddr = (void*)((int)(frameinfo*4096));
+    printf("realmem virtual to phys: %08x -> %08x\n", *vAddr, *pAddr);
 }
 
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
