@@ -1,14 +1,32 @@
-/* (C) 2014 Colin Wallace
- * MIT License
- */
+/* This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
 /*
  * processor documentation is at: http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
  * pg 38 for DMA
- * pg 89 for gpio
- *
- * The general idea is to have a buffer of N blocks, where each block is the same size as the gpio registers, 
- *   and have the DMA module continually copying the data in this buffer into those registers.
- * In this way, we can have (say) 32 blocks, and then be able to buffer the next 32 IO frames.
  */
  
 #include <sys/mman.h> //for mmap
@@ -17,32 +35,12 @@
 #include <stdlib.h> //for exit
 #include <fcntl.h> //for file opening
 #include <stdint.h> //for uint32_t
- 
 
-#define GPIO_BASE 0x20200000 //base address of the GPIO control registers.
 #define PAGE_SIZE 4096 //mmap maps pages of memory, so we must give it multiples of this size
-#define GPFSEL0   0x20200000 //gpio function select. There are 6 of these (32 bit registers)
-#define GPFSEL1   0x20200004
-#define GPFSEL2   0x20200008
-#define GPFSEL3   0x2020000c
-#define GPFSEL4   0x20200010
-#define GPFSEL5   0x20200014
-//bits 2-0 of GPFSEL0: set to 000 to make Pin 0 an output. 001 is an input. Other combinations represent alternate functions
-//bits 3-5 are for pin 1.
-//...
-//bits 27-29 are for pin 9.
-//GPFSEL1 repeats, but bits 2-0 are Pin 10, 27-29 are pin 19.
-//...
-#define GPSET0    0x2020001C //GPIO Pin Output Set. There are 2 of these (32 bit registers)
-//writing a '1' to bit N of GPSET0 makes that pin HIGH.
-//writing a '0' has no effect.
-//GPSET0[0-31] maps to pins 0-31
-//GPSET1[0-21] maps to pins 32-53
-#define GPCLR0    0x20200028 //GPIO Pin Output Clear. There are 2 of these (32 bits each)
-//GPCLR acts the same way as GPSET, but clears the pin instead.
-#define GPLEV0    0x20200034 //GPIO Pin Level. There are 2 of these (32 bits each)
 
+//physical addresses for the DMA peripherals, as found in the processor documentation:
 #define DMA_BASE 0x20007000
+//DMA Channel register sets (format of these registers is found in DmaChannelHeader struct):
 #define DMACH0   0x20007000
 #define DMACH1   0x20007100
 #define DMACH2   0x20007200
@@ -50,7 +48,7 @@
 //...
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
-//Note: DMA channels are connected directly to peripherals, so physical (bus?) addresses should be used.
+//Note: DMA channels are connected directly to peripherals, so physical addresses should be used (affects control block's SOURCE, DEST and NEXTCONBK addresses).
 #define DMAENABLE 0x20007ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
 
 //flags used in the DmaChannelHeader struct:
@@ -65,6 +63,10 @@
 #define DMA_CB_TI_DEST_INC (1<<4)
 #define DMA_CB_TI_SRC_INC (1<<8)
 
+//set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
+//eg if x = 0b11001100
+//  writeBitmasked(&x, 0b00000110, 0b11110011),
+//  then x now = 0b11001110
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     uint32_t cur = *dest;
     uint32_t new = (cur & (~mask)) | (value & mask);
@@ -111,11 +113,11 @@ struct DmaControlBlock {
         //11    SRC_IGNORE; set to 1 to not perform reads. Used to manually fill caches
         //10    SRC_DREQ; set to 1 to have the DREQ from PERMAP gate requests.
         //9     SRC_WIDTH; set to 1 for 128-bit moves, 0 for 32-bit moves
-        //8     SRC_INC;   set to 1 to automatically increment the source address after each read (TODO: isn't this kind of pertinent?)
+        //8     SRC_INC;   set to 1 to automatically increment the source address after each read (you'll want this if you're copying a range of memory)
         //7     DEST_IGNORE; set to 1 to not perform writes.
         //6     DEST_DREG; set to 1 to have the DREQ from PERMAP gate *writes*
         //5     DEST_WIDTH; set to 1 for 128-bit moves, 0 for 32-bit moves
-        //4     DEST_INC;   set to 1 to automatically increment the destination address after each read (TODO: isn't this kind of pertinent?)
+        //4     DEST_INC;   set to 1 to automatically increment the destination address after each read (Tyou'll want this if you're copying a range of memory)
         //3     WAIT_RESP; make DMA wait for a response from the peripheral during each write. Ensures multiple writes don't get stacked in the pipeline
         //2     unused (0)
         //1     TDMODE; set to 1 to enable 2D mode
@@ -133,14 +135,14 @@ struct DmaControlBlock {
 //this allows for:
 //void *virt, *phys;
 //getRealMemPage(&virt, &phys)
-//now, virt[N] exists for 0 <= N < 4096,
+//now, virt[N] exists for 0 <= N < PAGE_SIZE,
 //  and phys+N is the physical address for virt[N]
 //taken from http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
 void getRealMemPage(void** vAddr, void** pAddr) {
-    void* a = valloc(4096); //allocate one page of RAM
+    void* a = valloc(PAGE_SIZE); //allocate one page of RAM
 
     ((int*)a)[0] = 1;  // use page to force allocation.
-    mlock(a, 4096);  // lock into ram.
+    mlock(a, PAGE_SIZE);  // lock into ram.
     ((int*)a)[0] = 0; // undo the change we made above.
 
     *vAddr = a;  // yay - we know the virtual address
@@ -148,18 +150,20 @@ void getRealMemPage(void** vAddr, void** pAddr) {
     //Magic to determine the physical address for this page:
     uint64_t frameinfo;
     int fp = open("/proc/self/pagemap", 'r');
-    lseek(fp, ((int)a)/4096*8, SEEK_SET);
+    lseek(fp, ((int)a)/PAGE_SIZE*8, SEEK_SET);
     read(fp, &frameinfo, sizeof(frameinfo));
 
-    *pAddr = (void*)((int)(frameinfo*4096));
+    *pAddr = (void*)((int)(frameinfo*PAGE_SIZE));
     printf("realmem virtual to phys: %p -> %p\n", *vAddr, *pAddr);
 }
 
+//call with virtual address to deallocate a page allocated with getRealMemPage
 void freeRealMemPage(void* vAddr) {
-    munlock(vAddr, 4096);  // unlock ram.
+    munlock(vAddr, PAGE_SIZE);  // unlock ram.
     free(vAddr);
 }
 
+//map a physical address into our virtual address space. memfd is the file descriptor for /dev/mem
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
     ///dev/mem behaves as a file. We need to map that file into memory:
     void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
@@ -173,22 +177,7 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     return (volatile uint32_t*)mapped;
 }
 
-
-void printMem(volatile void *begin, int numChars) {
-    volatile uint32_t *addr = (volatile uint32_t*)begin;
-    volatile uint32_t *end = addr + numChars/4;
-    while (addr < end) {
-        printf("%08x ", *addr);
-        ++addr;
-    }
-    printf("\n");
-}
-
 int main() {
-    //First, we need to obtain the virtual base-address of our program:
-    //void *virtbase = mmap(NULL, NUM_PAGES * PAGE_SIZE, PROT_READ|PROT_WRITE,
-	//		MAP_SHARED|MAP_ANONYMOUS|MAP_NORESERVE|MAP_LOCKED,
-	//		-1, 0);
     //First, open the linux device, /dev/mem
     //dev/mem provides access to the physical memory of the entire processor+ram
     //This is needed because Linux uses virtual memory, thus the process's memory at 0x00000000 will NOT have the same contents as the physical memory at 0x00000000
@@ -198,14 +187,7 @@ int main() {
         exit(1);
     }
     //now map /dev/mem into memory, but only map specific peripheral sections:
-    volatile uint32_t *gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
     volatile uint32_t *dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
-    
-    //now set our pin (#4) as an output:
-    volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0 - GPIO_BASE);
-    uint32_t fselMask = 0x7 << (3*4); //bitmask for the 3 bits that control pin 4
-    uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
-    *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     
     //configure DMA:
     //allocate 1 page for the source and 1 page for the destination:
@@ -213,6 +195,7 @@ int main() {
     getRealMemPage(&virtSrcPage, &physSrcPage);
     void *virtDestPage, *physDestPage;
     getRealMemPage(&virtDestPage, &physDestPage);
+    
     //write a few bytes to the source page:
     char *srcArray = (char*)virtSrcPage;
     srcArray[0]  = 'h';
