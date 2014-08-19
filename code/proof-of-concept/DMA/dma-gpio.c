@@ -198,12 +198,13 @@ int main() {
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     cb1->DEST_AD = (uint32_t)physDestPage;
     cb1->TXFR_LEN = 12; //transfer 12 bytes
+    printf("destination was initially: %s\n", virtDestPage);
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     
     sleep(1); //give time for copy to happen
-    printf("destination reads: %s\n", physDestPage);
+    printf("destination reads: %s\n", virtDestPage);
     return 0;
 }
