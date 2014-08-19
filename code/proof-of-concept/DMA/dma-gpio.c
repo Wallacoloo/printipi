@@ -63,6 +63,8 @@ int main() {
         exit(1);
     }
     //now set our pin (#4) as an output:
-    *(volatile uint32_t *)(gpioBaseMem + GPFSEL0 - GPIO_BASE) = 1 << (3*4);
+    volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0 - GPIO_BASE);
+    *fselAddr = (*fselAddr) | (1 << (3*4));
+    //*(volatile uint32_t *)(gpioBaseMem + GPFSEL0 - GPIO_BASE) = 1 << (3*4);
     return 0;
 }
