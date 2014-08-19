@@ -140,7 +140,7 @@ void getRealMemPage(void** vAddr, void** pAddr) {
     read(fp, &frameinfo, sizeof(frameinfo));
 
     *pAddr = (void*)((int)(frameinfo*4096));
-    printf("realmem virtual to phys: %08x -> %08x\n", *vAddr, *pAddr);
+    printf("realmem virtual to phys: %p -> %p\n", *vAddr, *pAddr);
 }
 
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
@@ -157,10 +157,12 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
 }
 
 
-void printMem(void *begin, void *end) {
-    while (begin < end) {
-        printf("%02x ", *((char*)begin));
-        ++begin;
+void printMem(volatile void *begin, int numChars) {
+    volatile char *addr = (volatile char*)begin;
+    volatile char *end = addr + numChars;
+    while (addr < end) {
+        printf("%02x ", *addr);
+        ++addr;
     }
     printf("\n");
 }
@@ -195,7 +197,7 @@ int main() {
     void *virtDestPage, *physDestPage;
     getRealMemPage(&virtDestPage, &physDestPage);
     //write a few bytes to the source page:
-    char *srcArray = (uint32_t*)virtSrcPage;
+    char *srcArray = (char*)virtSrcPage;
     srcArray[0]  = 'h';
     srcArray[1]  = 'e';
     srcArray[2]  = 'l';
@@ -216,16 +218,16 @@ int main() {
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     cb1->DEST_AD = (uint32_t)physDestPage;
     cb1->TXFR_LEN = 12; //transfer 12 bytes
-    printf("destination was initially: %s\n", virtDestPage);
+    printf("destination was initially: %s\n", (char*)virtDestPage);
     //enable DMA channel:
     writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 2, 1 << 2);
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
-    printf("dmaHeader reads: "); printMem(dmaHeader, dmaHeader+32);
+    printf("dmaHeader reads: "); printMem(dmaHeader, 32);
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     
     sleep(1); //give time for copy to happen
-    printf("destination reads: %s\n", virtDestPage);
+    printf("destination reads: %s\n", (char*)virtDestPage);
     return 0;
 }
