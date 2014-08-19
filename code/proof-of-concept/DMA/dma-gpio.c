@@ -51,6 +51,14 @@
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
 //Note: DMA channels are connected directly to peripherals, so physical (bus?) addresses should be used.
+#define DMAENABLE 0x20207ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
+
+void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
+    uint32_t cur = *dest;
+    uint32_t new = (cur & (~mask)) | (value & mask);
+    *dest = new;
+    *dest = new; //best to be safe 
+}
 
 struct DmaChannelHeader {
     uint32_t CS; //Control and Status
@@ -120,8 +128,8 @@ void getRealMemPage(void** vAddr, void** pAddr) {
     void* a = valloc(4096); //allocate one page of RAM
 
     ((int*)a)[0] = 1;  // use page to force allocation.
-
     mlock(a, 4096);  // lock into ram.
+    ((int*)a)[0] = 0; // reset
 
     *vAddr = a;  // yay - we know the virtual address
 
@@ -199,6 +207,8 @@ int main() {
     cb1->DEST_AD = (uint32_t)physDestPage;
     cb1->TXFR_LEN = 12; //transfer 12 bytes
     printf("destination was initially: %s\n", virtDestPage);
+    //enable DMA channel:
+    writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 2, 1 << 2);
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
