@@ -52,13 +52,44 @@
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
 //Note: DMA channels are connected directly to peripherals, so physical addresses should be used.
 
+//DMA Control Block
+struct DmaCb {
+    uint32_t TI; //transfer information
+        //31:27 unused
+        //26    NO_WIDE_BURSTS
+        //21:25 WAITS; number of cycles to wait between each DMA read/write operation
+        //16:20 PERMAP; peripheral number to be used for DREQ signal (pacing). set to 0 for unpaced DMA.
+        //12:15 BURST_LENGTH
+        //11    SRC_IGNORE; set to 1 to not perform reads. Used to manually fill caches
+        //10    SRC_DREQ; set to 1 to have the DREQ from PERMAP gate requests.
+        //9     SRC_WIDTH; set to 1 for 128-bit moves, 0 for 32-bit moves
+        //8     SRC_INC;   set to 1 to automatically increment the source address after each read (TODO: isn't this kind of pertinent?)
+        //7     DEST_IGNORE; set to 1 to not perform writes.
+        //6     DEST_DREG; set to 1 to have the DREQ from PERMAP gate *writes*
+        //5     DEST_WIDTH
+        //4     DEST_INC
+        //3     WAIT_RESP; make DMA wait for a response from the peripheral during each write. Ensures multiple writes don't get stacked in the pipeline
+        //2     unused (0)
+        //1     TDMODE; set to 1 to enable 2D mode
+        //0     INTEN;  set to 1 to generate an interrupt upon completion
+    uint32_t SOURCE_AD; //Source address
+    uint32_t DEST_AD; //Dest address
+    uint32_t TXFR_LEN; //transfer length.
+    uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
+    uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
+    uint32_t _reserved[2];
+};
+
 
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
+    ///dev/mem behaves as a file. We need to map that file into memory:
     void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
     //now, *mapped = memory at physical address of addr.
     if (mapped == MAP_FAILED) {
         printf("failed to map memory (did you remember to run as root?)\n");
         exit(1);
+    } else {
+        printf("mapped: %p\n", mapped);
     }
     return (volatile uint32_t*)mapped;
 }
@@ -72,14 +103,18 @@ int main() {
         printf("Failed to open /dev/mem (did you remember to run as root?)\n");
         exit(1);
     }
-    ///dev/mem behaves as a file. We need to map that file into memory:
+    //now map /dev/mem into memory, but only map specific peripheral sections:
     volatile uint32_t *gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
     volatile uint32_t *dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
-    //now, *gpioBaseMem = memory at physical address of GPIO_BASE.
+    
     //now set our pin (#4) as an output:
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0 - GPIO_BASE);
     uint32_t fselMask = 0x7 << (3*4); //bitmask for the 3 bits that control pin 4
     uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
     *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
+    
+    //configure DMA:
+    struct DmaCb cb1;
+    
     return 0;
 }
