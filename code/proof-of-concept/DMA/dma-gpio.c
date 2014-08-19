@@ -94,8 +94,8 @@ struct DmaControlBlock {
         //8     SRC_INC;   set to 1 to automatically increment the source address after each read (TODO: isn't this kind of pertinent?)
         //7     DEST_IGNORE; set to 1 to not perform writes.
         //6     DEST_DREG; set to 1 to have the DREQ from PERMAP gate *writes*
-        //5     DEST_WIDTH
-        //4     DEST_INC
+        //5     DEST_WIDTH; set to 1 for 128-bit moves, 0 for 32-bit moves
+        //4     DEST_INC;   set to 1 to automatically increment the destination address after each read (TODO: isn't this kind of pertinent?)
         //3     WAIT_RESP; make DMA wait for a response from the peripheral during each write. Ensures multiple writes don't get stacked in the pipeline
         //2     unused (0)
         //1     TDMODE; set to 1 to enable 2D mode
@@ -171,8 +171,12 @@ int main() {
     *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     
     //configure DMA:
-    //struct DmaControlBlock cb1;
+    void *virtPage, *physPage;
+    getRealMemPage(&virtPage, &physPage);
+    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtPage; //dedicate the first 8 bytes of this page to holding the cb.
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
+    dmaHeader->CS = 0x0; //make sure to disable dma first.
+    dmaHeader->CONBLK_AD = (uint32_t)physPage;
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     return 0;
 }
