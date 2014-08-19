@@ -238,7 +238,7 @@ int main() {
     //configure the DMA header to point to our control block:
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3 - DMA_BASE);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
-    dmaHeader->CONBLK_AD = (uint32_t)cb1;
+    dmaHeader->CONBLK_AD = (uint32_t)physCbPage; //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     
     sleep(1); //give time for copy to happen
