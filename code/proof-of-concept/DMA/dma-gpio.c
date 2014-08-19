@@ -51,7 +51,15 @@
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
 //Note: DMA channels are connected directly to peripherals, so physical (bus?) addresses should be used.
-#define DMAENABLE 0x20207ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
+#define DMAENABLE 0x20007ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
+
+//flags used in the DmaChannelHeader struct:
+#define DMA_CS_RESET (1<<31)
+#define DMA_CS_ACTIVE (1<<0)
+
+//flags used in the DmaControlBlock struct:
+#define DMA_CB_TI_DEST_INC (1<<4)
+#define DMA_CB_TI_SRC_INC (1<<8)
 
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     uint32_t cur = *dest;
@@ -122,18 +130,18 @@ struct DmaControlBlock {
 //void *virt, *phys;
 //getRealMemPage(&virt, &phys)
 //now, virt[N] exists for 0 <= N < 4096,
-//  and phys+N is the physical address for virt[N] (right?)
+//  and phys+N is the physical address for virt[N]
 //taken from http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
 void getRealMemPage(void** vAddr, void** pAddr) {
     void* a = valloc(4096); //allocate one page of RAM
 
     ((int*)a)[0] = 1;  // use page to force allocation.
     mlock(a, 4096);  // lock into ram.
-    ((int*)a)[0] = 0; // reset
+    ((int*)a)[0] = 0; // undo the change we made above.
 
     *vAddr = a;  // yay - we know the virtual address
 
-    //unsigned long long frameinfo;
+    //Magic to determine the physical address for this page:
     uint64_t frameinfo;
     int fp = open("/proc/self/pagemap", 'r');
     lseek(fp, ((int)a)/4096*8, SEEK_SET);
@@ -210,33 +218,36 @@ int main() {
     srcArray[9]  = 'l';
     srcArray[10] = 'd';
     srcArray[11] =  0; //null terminator used for printf call.
+    
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
     getRealMemPage(&virtCbPage, &physCbPage);
+    
     //dedicate the first 8 bytes of this page to holding the cb.
     struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
-    cb1->TI = (1<<4) | (1<<8); //have to reset fields
+    
+    //fill the control block:
+    cb1->TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC; //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address.
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     cb1->DEST_AD = (uint32_t)physDestPage;
     cb1->TXFR_LEN = 12; //transfer 12 bytes
-    cb1->STRIDE = 0;
-    cb1->NEXTCONBK = 0;
-    printf("destination was initially: %s\n", (char*)virtDestPage);
-    //enable DMA channel:
-    //writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
+    cb1->STRIDE = 0; //no 2D stride
+    cb1->NEXTCONBK = 0; //no next control block
+    
+    printf("destination was initially: '%s'\n", (char*)virtDestPage);
+    
+    //enable DMA channel (it's probably already enabled, but we want to be sure):
+    writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
+    
+    //configure the DMA header to point to our control block:
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3 - DMA_BASE);
-    printf("dmaHeader reads: "); printMem(dmaHeader, 32);
-    dmaHeader->CS = 0x0; //make sure to disable dma first.
-    dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
-    printf("dmaHeader reads: "); printMem(dmaHeader, 32);
-    printf("physCbPage: %p or %u (%08x)\n", physCbPage, (uint32_t)physCbPage, (uint32_t)physCbPage);
-    printf("dmaHeader addr: %p, %p\n", dmaHeader, &(dmaHeader->CONBLK_AD));
-    *(dmaBaseMem + DMACH3 - DMA_BASE + 1) = (uint32_t)physCbPage;
-     *(dmaBaseMem + DMACH3 - DMA_BASE + 1) = (uint32_t)physCbPage;
-    printf("dmaHeader reads: "); printMem(dmaBaseMem + DMACH3 - DMA_BASE, 32);
-    dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
+    dmaHeader->CS = DMA_CS_RESET; //make sure to disable dma first.
+    dmaHeader->CONBLK_AD = (uint32_t)physCbPage; //we have to point it to the PHYSICAL address of the control block (cb1)
+    dmaHeader->CS = DMA_CS_RESET | DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
     sleep(1); //give time for copy to happen
-    printf("destination reads: %s\n", (char*)virtDestPage);
+    
+    printf("destination reads: '%s'\n", (char*)virtDestPage);
+    
     return 0;
 }
