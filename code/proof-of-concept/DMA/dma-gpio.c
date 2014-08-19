@@ -215,12 +215,15 @@ int main() {
     getRealMemPage(&virtCbPage, &physCbPage);
     //dedicate the first 8 bytes of this page to holding the cb.
     struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
+    cb1->TI = (1<<4) | (1<<8); //have to reset fields
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     cb1->DEST_AD = (uint32_t)physDestPage;
     cb1->TXFR_LEN = 12; //transfer 12 bytes
+    cb1->STRIDE = 0;
+    cb1->NEXTCONBK = 0;
     printf("destination was initially: %s\n", (char*)virtDestPage);
     //enable DMA channel:
-    writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
+    //writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3 - DMA_BASE);
     printf("dmaHeader reads: "); printMem(dmaHeader, 32);
     dmaHeader->CS = 0x0; //make sure to disable dma first.

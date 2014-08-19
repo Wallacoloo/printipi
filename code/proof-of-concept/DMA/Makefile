@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := 
+CFLAGS := -g
 
 all: pi-blaster dma-gpio
 
