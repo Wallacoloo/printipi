@@ -155,6 +155,15 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     return (volatile uint32_t*)mapped;
 }
 
+
+void printMem(void *begin, void *end) {
+    while (begin < end) {
+        printf("%x", *(char*)begin);
+        ++begin;
+    }
+    printf("\n");
+}
+
 int main() {
     //First, we need to obtain the virtual base-address of our program:
     //void *virtbase = mmap(NULL, NUM_PAGES * PAGE_SIZE, PROT_READ|PROT_WRITE,
@@ -212,6 +221,7 @@ int main() {
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH2 - DMA_BASE);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
+    printf("dmaHeader reads: "); printMem(dmaHeader, dmaHeader+32);
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     
     sleep(1); //give time for copy to happen
