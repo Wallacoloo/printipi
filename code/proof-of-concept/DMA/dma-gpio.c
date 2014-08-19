@@ -51,7 +51,11 @@
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
 //Note: DMA channels are connected directly to peripherals, so physical (bus?) addresses should be used.
-#define DMAENABLE 0x20207ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
+#define DMAENABLE 0x20007ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
+
+//flags used in the DmaControlBlock struct:
+#define DMA_CB_TI_DEST_INC (1<<4)
+#define DMA_CB_TI_SRC_INC (1<<8)
 
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     uint32_t cur = *dest;
@@ -215,25 +219,25 @@ int main() {
     getRealMemPage(&virtCbPage, &physCbPage);
     //dedicate the first 8 bytes of this page to holding the cb.
     struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
-    cb1->TI = (1<<4) | (1<<8); //have to reset fields
+    cb1->TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC;
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     cb1->DEST_AD = (uint32_t)physDestPage;
     cb1->TXFR_LEN = 12; //transfer 12 bytes
-    cb1->STRIDE = 0;
-    cb1->NEXTCONBK = 0;
+    cb1->STRIDE = 0; //no 2D stride
+    cb1->NEXTCONBK = 0; //no next control block
     printf("destination was initially: %s\n", (char*)virtDestPage);
     //enable DMA channel:
-    //writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
+    writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3 - DMA_BASE);
-    printf("dmaHeader reads: "); printMem(dmaHeader, 32);
+    //printf("dmaHeader reads: "); printMem(dmaHeader, 32);
     dmaHeader->CS = 0x0; //make sure to disable dma first.
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage;
-    printf("dmaHeader reads: "); printMem(dmaHeader, 32);
-    printf("physCbPage: %p or %u (%08x)\n", physCbPage, (uint32_t)physCbPage, (uint32_t)physCbPage);
-    printf("dmaHeader addr: %p, %p\n", dmaHeader, &(dmaHeader->CONBLK_AD));
-    *(dmaBaseMem + DMACH3 - DMA_BASE + 1) = (uint32_t)physCbPage;
-     *(dmaBaseMem + DMACH3 - DMA_BASE + 1) = (uint32_t)physCbPage;
-    printf("dmaHeader reads: "); printMem(dmaBaseMem + DMACH3 - DMA_BASE, 32);
+    //printf("dmaHeader reads: "); printMem(dmaHeader, 32);
+    //printf("physCbPage: %p or %u (%08x)\n", physCbPage, (uint32_t)physCbPage, (uint32_t)physCbPage);
+    //printf("dmaHeader addr: %p, %p\n", dmaHeader, &(dmaHeader->CONBLK_AD));
+    //*(dmaBaseMem + DMACH3 - DMA_BASE + 1) = (uint32_t)physCbPage;
+    //*(dmaBaseMem + DMACH3 - DMA_BASE + 1) = (uint32_t)physCbPage;
+    //printf("dmaHeader reads: "); printMem(dmaBaseMem + DMACH3 - DMA_BASE, 32);
     dmaHeader->CS = 0x1; //set active bit, but everything else is 0.
     
     sleep(1); //give time for copy to happen
