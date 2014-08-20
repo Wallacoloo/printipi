@@ -131,10 +131,10 @@ struct DmaControlBlock {
 };
 
 //allocate a page & simultaneously determine its physical address.
-//vAddr and pAddr are essentially passed by-reference.
+//virtAddr and physAddr are essentially passed by-reference.
 //this allows for:
 //void *virt, *phys;
-//getRealMemPage(&virt, &phys)
+//makeVirtPhysPage(&virt, &phys)
 //now, virt[N] exists for 0 <= N < PAGE_SIZE,
 //  and phys+N is the physical address for virt[N]
 //based on http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
@@ -152,7 +152,7 @@ void makeVirtPhysPage(void** virtAddr, void** physAddr) {
     lseek(file, ((uint32_t)*virtAddr)/PAGE_SIZE*8, SEEK_SET);
     read(file, &pageInfo, 8);
 
-    *physAddr = (void*)(pageInfo*PAGE_SIZE);
+    *physAddr = (void*)(uint32_t)(pageInfo*PAGE_SIZE);
     printf("makeVirtPhysPage virtual to phys: %p -> %p\n", *virtAddr, *physAddr);
 }
 

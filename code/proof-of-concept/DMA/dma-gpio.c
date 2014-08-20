@@ -42,7 +42,9 @@
 //GPCLR acts the same way as GPSET, but clears the pin instead.
 #define GPLEV0    0x20200034 //GPIO Pin Level. There are 2 of these (32 bits each)
 
+//physical addresses for the DMA peripherals, as found in the processor documentation:
 #define DMA_BASE 0x20007000
+//DMA Channel register sets (format of these registers is found in DmaChannelHeader struct):
 #define DMACH0   0x20007000
 #define DMACH1   0x20007100
 #define DMACH2   0x20007200
@@ -50,7 +52,7 @@
 //...
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
-//Note: DMA channels are connected directly to peripherals, so physical (bus?) addresses should be used.
+//Note: DMA channels are connected directly to peripherals, so physical addresses should be used (affects control block's SOURCE, DEST and NEXTCONBK addresses).
 #define DMAENABLE 0x20007ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
 
 //flags used in the DmaChannelHeader struct:
@@ -65,6 +67,10 @@
 #define DMA_CB_TI_DEST_INC (1<<4)
 #define DMA_CB_TI_SRC_INC (1<<8)
 
+//set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
+//eg if x = 0b11001100
+//  writeBitmasked(&x, 0b00000110, 0b11110011),
+//  then x now = 0b11001110
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     uint32_t cur = *dest;
     uint32_t new = (cur & (~mask)) | (value & mask);
@@ -111,11 +117,11 @@ struct DmaControlBlock {
         //11    SRC_IGNORE; set to 1 to not perform reads. Used to manually fill caches
         //10    SRC_DREQ; set to 1 to have the DREQ from PERMAP gate requests.
         //9     SRC_WIDTH; set to 1 for 128-bit moves, 0 for 32-bit moves
-        //8     SRC_INC;   set to 1 to automatically increment the source address after each read (TODO: isn't this kind of pertinent?)
+        //8     SRC_INC;   set to 1 to automatically increment the source address after each read (you'll want this if you're copying a range of memory)
         //7     DEST_IGNORE; set to 1 to not perform writes.
         //6     DEST_DREG; set to 1 to have the DREQ from PERMAP gate *writes*
         //5     DEST_WIDTH; set to 1 for 128-bit moves, 0 for 32-bit moves
-        //4     DEST_INC;   set to 1 to automatically increment the destination address after each read (TODO: isn't this kind of pertinent?)
+        //4     DEST_INC;   set to 1 to automatically increment the destination address after each read (Tyou'll want this if you're copying a range of memory)
         //3     WAIT_RESP; make DMA wait for a response from the peripheral during each write. Ensures multiple writes don't get stacked in the pipeline
         //2     unused (0)
         //1     TDMODE; set to 1 to enable 2D mode
@@ -129,37 +135,38 @@ struct DmaControlBlock {
 };
 
 //allocate a page & simultaneously determine its physical address.
-//vAddr and pAddr are essentially passed by-reference.
+//virtAddr and physAddr are essentially passed by-reference.
 //this allows for:
 //void *virt, *phys;
-//getRealMemPage(&virt, &phys)
-//now, virt[N] exists for 0 <= N < 4096,
+//makeVirtPhysPage(&virt, &phys)
+//now, virt[N] exists for 0 <= N < PAGE_SIZE,
 //  and phys+N is the physical address for virt[N]
-//taken from http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
-void getRealMemPage(void** vAddr, void** pAddr) {
-    void* a = valloc(4096); //allocate one page of RAM
+//based on http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
+void makeVirtPhysPage(void** virtAddr, void** physAddr) {
+    *virtAddr = valloc(PAGE_SIZE); //allocate one page of RAM
 
-    ((int*)a)[0] = 1;  // use page to force allocation.
-    mlock(a, 4096);  // lock into ram.
-    ((int*)a)[0] = 0; // undo the change we made above.
-
-    *vAddr = a;  // yay - we know the virtual address
+    //force page into RAM and then lock it ther:
+    ((int*)*virtAddr)[0] = 1;
+    mlock(*virtAddr, PAGE_SIZE);
+    ((int*)*virtAddr)[0] = 0; //undo the change we made above. This way the page should be zero-filled
 
     //Magic to determine the physical address for this page:
-    uint64_t frameinfo;
-    int fp = open("/proc/self/pagemap", 'r');
-    lseek(fp, ((int)a)/4096*8, SEEK_SET);
-    read(fp, &frameinfo, sizeof(frameinfo));
+    uint64_t pageInfo;
+    int file = open("/proc/self/pagemap", 'r');
+    lseek(file, ((uint32_t)*virtAddr)/PAGE_SIZE*8, SEEK_SET);
+    read(file, &pageInfo, 8);
 
-    *pAddr = (void*)((int)(frameinfo*4096));
-    printf("realmem virtual to phys: %p -> %p\n", *vAddr, *pAddr);
+    *physAddr = (void*)(uint32_t)(pageInfo*PAGE_SIZE);
+    printf("makeVirtPhysPage virtual to phys: %p -> %p\n", *virtAddr, *physAddr);
 }
 
-void freeRealMemPage(void* vAddr) {
-    munlock(vAddr, 4096);  // unlock ram.
-    free(vAddr);
+//call with virtual address to deallocate a page allocated with makeVirtPhysPage
+void freeVirtPhysPage(void* virtAddr) {
+    munlock(virtAddr, PAGE_SIZE);
+    free(virtAddr);
 }
 
+//map a physical address into our virtual address space. memfd is the file descriptor for /dev/mem
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
     ///dev/mem behaves as a file. We need to map that file into memory:
     void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
@@ -210,9 +217,10 @@ int main() {
     //configure DMA:
     //allocate 1 page for the source and 1 page for the destination:
     void *virtSrcPage, *physSrcPage;
-    getRealMemPage(&virtSrcPage, &physSrcPage);
+    makeVirtPhysPage(&virtSrcPage, &physSrcPage);
     void *virtDestPage, *physDestPage;
-    getRealMemPage(&virtDestPage, &physDestPage);
+    makeVirtPhysPage(&virtDestPage, &physDestPage);
+    
     //write a few bytes to the source page:
     char *srcArray = (char*)virtSrcPage;
     srcArray[0]  = 'h';
@@ -230,7 +238,7 @@ int main() {
     
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
-    getRealMemPage(&virtCbPage, &physCbPage);
+    makeVirtPhysPage(&virtCbPage, &physCbPage);
     
     //dedicate the first 8 bytes of this page to holding the cb.
     struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
@@ -261,8 +269,8 @@ int main() {
     printf("destination reads: '%s'\n", (char*)virtDestPage);
     
     //cleanup
-    freeRealMemPage(virtCbPage);
-    freeRealMemPage(virtDestPage);
-    freeRealMemPage(virtSrcPage);
+    freeVirtPhysPage(virtCbPage);
+    freeVirtPhysPage(virtDestPage);
+    freeVirtPhysPage(virtSrcPage);
     return 0;
 }
