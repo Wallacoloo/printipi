@@ -138,7 +138,7 @@ struct DmaControlBlock {
 //now, virt[N] exists for 0 <= N < PAGE_SIZE,
 //  and phys+N is the physical address for virt[N]
 //based on http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
-void getRealMemPage(void** virtAddr, void** physAddr) {
+void makeVirtPhysPage(void** virtAddr, void** physAddr) {
     *virtAddr = valloc(PAGE_SIZE); //allocate one page of RAM
 
     //force page into RAM and then lock it ther:
@@ -153,11 +153,11 @@ void getRealMemPage(void** virtAddr, void** physAddr) {
     read(file, &pageInfo, 8);
 
     *physAddr = (void*)(pageInfo*PAGE_SIZE);
-    printf("realmem virtual to phys: %p -> %p\n", *virtAddr, *physAddr);
+    printf("makeVirtPhysPage virtual to phys: %p -> %p\n", *virtAddr, *physAddr);
 }
 
-//call with virtual address to deallocate a page allocated with getRealMemPage
-void freeRealMemPage(void* virtAddr) {
+//call with virtual address to deallocate a page allocated with makeVirtPhysPage
+void freeVirtPhysPage(void* virtAddr) {
     munlock(virtAddr, PAGE_SIZE);
     free(virtAddr);
 }
@@ -191,9 +191,9 @@ int main() {
     //configure DMA:
     //allocate 1 page for the source and 1 page for the destination:
     void *virtSrcPage, *physSrcPage;
-    getRealMemPage(&virtSrcPage, &physSrcPage);
+    makeVirtPhysPage(&virtSrcPage, &physSrcPage);
     void *virtDestPage, *physDestPage;
-    getRealMemPage(&virtDestPage, &physDestPage);
+    makeVirtPhysPage(&virtDestPage, &physDestPage);
     
     //write a few bytes to the source page:
     char *srcArray = (char*)virtSrcPage;
@@ -212,7 +212,7 @@ int main() {
     
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
-    getRealMemPage(&virtCbPage, &physCbPage);
+    makeVirtPhysPage(&virtCbPage, &physCbPage);
     
     //dedicate the first 8 bytes of this page to holding the cb.
     struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
@@ -243,8 +243,8 @@ int main() {
     printf("destination reads: '%s'\n", (char*)virtDestPage);
     
     //cleanup
-    freeRealMemPage(virtCbPage);
-    freeRealMemPage(virtDestPage);
-    freeRealMemPage(virtSrcPage);
+    freeVirtPhysPage(virtCbPage);
+    freeVirtPhysPage(virtDestPage);
+    freeVirtPhysPage(virtSrcPage);
     return 0;
 }
