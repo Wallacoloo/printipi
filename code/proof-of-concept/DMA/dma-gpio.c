@@ -20,37 +20,38 @@
  
 
 #define GPIO_BASE 0x20200000 //base address of the GPIO control registers.
+#define GPIO_BASE_BUS 0x7E200000 //this is the physical bus address of the GPIO module. This is only used when other peripherals directly connected to the bus (like DMA) need to read/write the GPIOs
 #define PAGE_SIZE 4096 //mmap maps pages of memory, so we must give it multiples of this size
-#define GPFSEL0   0x20200000 //gpio function select. There are 6 of these (32 bit registers)
-#define GPFSEL1   0x20200004
-#define GPFSEL2   0x20200008
-#define GPFSEL3   0x2020000c
-#define GPFSEL4   0x20200010
-#define GPFSEL5   0x20200014
+#define GPFSEL0   0x00000000 //gpio function select. There are 6 of these (32 bit registers)
+#define GPFSEL1   0x00000004
+#define GPFSEL2   0x00000008
+#define GPFSEL3   0x0000000c
+#define GPFSEL4   0x00000010
+#define GPFSEL5   0x00000014
 //bits 2-0 of GPFSEL0: set to 000 to make Pin 0 an output. 001 is an input. Other combinations represent alternate functions
 //bits 3-5 are for pin 1.
 //...
 //bits 27-29 are for pin 9.
 //GPFSEL1 repeats, but bits 2-0 are Pin 10, 27-29 are pin 19.
 //...
-#define GPSET0    0x2020001C //GPIO Pin Output Set. There are 2 of these (32 bit registers)
-#define GPSET1    0x20200020
+#define GPSET0    0x0000001C //GPIO Pin Output Set. There are 2 of these (32 bit registers)
+#define GPSET1    0x00000020
 //writing a '1' to bit N of GPSET0 makes that pin HIGH.
 //writing a '0' has no effect.
 //GPSET0[0-31] maps to pins 0-31
 //GPSET1[0-21] maps to pins 32-53
-#define GPCLR0    0x20200028 //GPIO Pin Output Clear. There are 2 of these (32 bits each)
-#define GPCLR1    0x2020002C
+#define GPCLR0    0x00000028 //GPIO Pin Output Clear. There are 2 of these (32 bits each)
+#define GPCLR1    0x0000002C
 //GPCLR acts the same way as GPSET, but clears the pin instead.
-#define GPLEV0    0x20200034 //GPIO Pin Level. There are 2 of these (32 bits each)
+#define GPLEV0    0x00000034 //GPIO Pin Level. There are 2 of these (32 bits each)
 
 //physical addresses for the DMA peripherals, as found in the processor documentation:
 #define DMA_BASE 0x20007000
 //DMA Channel register sets (format of these registers is found in DmaChannelHeader struct):
-#define DMACH0   0x20007000
-#define DMACH1   0x20007100
-#define DMACH2   0x20007200
-#define DMACH3   0x20007300
+#define DMACH0   0x00000000
+#define DMACH1   0x00000100
+#define DMACH2   0x00000200
+#define DMACH3   0x00000300
 //...
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
@@ -211,7 +212,7 @@ int main() {
     volatile uint32_t *dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
     
     //now set our pin (#4) as an output:
-    volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0 - GPIO_BASE);
+    volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0);
     uint32_t fselMask = 0x7 << (3*4); //bitmask for the 3 bits that control pin 4
     uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
     *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
@@ -239,7 +240,7 @@ int main() {
     cb1->TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC; //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address.
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     //cb1->DEST_AD = (uint32_t)physDestPage;
-    cb1->DEST_AD = (uint32_t)(gpioBaseMem + GPSET0 - GPIO_BASE);
+    cb1->DEST_AD = GPIO_BASE_BUS + GPSET0; //(uint32_t)(gpioBaseMem + GPSET0 - GPIO_BASE);
     cb1->TXFR_LEN = 8; //transfer 8 bytes
     cb1->STRIDE = 0; //no 2D stride
     cb1->NEXTCONBK = 0; //no next control block
@@ -250,7 +251,7 @@ int main() {
     writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
     
     //configure the DMA header to point to our control block:
-    volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3 - DMA_BASE);
+    volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3);
     dmaHeader->CS = DMA_CS_RESET; //make sure to disable dma first.
     sleep(1); //give time for the reset command to be handled.
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
