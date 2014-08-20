@@ -34,11 +34,13 @@
 //GPFSEL1 repeats, but bits 2-0 are Pin 10, 27-29 are pin 19.
 //...
 #define GPSET0    0x2020001C //GPIO Pin Output Set. There are 2 of these (32 bit registers)
+#define GPSET1    0x20200020
 //writing a '1' to bit N of GPSET0 makes that pin HIGH.
 //writing a '0' has no effect.
 //GPSET0[0-31] maps to pins 0-31
 //GPSET1[0-21] maps to pins 32-53
 #define GPCLR0    0x20200028 //GPIO Pin Output Clear. There are 2 of these (32 bits each)
+#define GPCLR1    0x2020002C
 //GPCLR acts the same way as GPSET, but clears the pin instead.
 #define GPLEV0    0x20200034 //GPIO Pin Level. There are 2 of these (32 bits each)
 
@@ -222,19 +224,10 @@ int main() {
     makeVirtPhysPage(&virtDestPage, &physDestPage);
     
     //write a few bytes to the source page:
-    char *srcArray = (char*)virtSrcPage;
-    srcArray[0]  = 'h';
-    srcArray[1]  = 'e';
-    srcArray[2]  = 'l';
-    srcArray[3]  = 'l';
-    srcArray[4]  = 'o';
-    srcArray[5]  = ' ';
-    srcArray[6]  = 'w';
-    srcArray[7]  = 'o';
-    srcArray[8]  = 'r';
-    srcArray[9]  = 'l';
-    srcArray[10] = 'd';
-    srcArray[11] =  0; //null terminator used for printf call.
+    uint32_t *srcArray = (uint32_t*)virtSrcPage;
+    srcArray[0]  = 'hell';
+    srcArray[1]  = 'o wo';
+    srcArray[2]  = 'rld\0';
     
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
