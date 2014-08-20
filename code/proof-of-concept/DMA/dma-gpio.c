@@ -225,9 +225,8 @@ int main() {
     
     //write a few bytes to the source page:
     uint32_t *srcArray = (uint32_t*)virtSrcPage;
-    srcArray[0]  = 'hell';
-    srcArray[1]  = 'o wo';
-    srcArray[2]  = 'rld\0';
+    srcArray[0]  = (1 << 4); //set pin 4 ON
+    srcArray[1]  = 0;
     
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
@@ -239,8 +238,9 @@ int main() {
     //fill the control block:
     cb1->TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC; //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address.
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
-    cb1->DEST_AD = (uint32_t)physDestPage;
-    cb1->TXFR_LEN = 12; //transfer 12 bytes
+    //cb1->DEST_AD = (uint32_t)physDestPage;
+    cb1->DEST_AD = (uint32_t)(gpioBaseMem + GPSET0 - GPIO_BASE);
+    cb1->TXFR_LEN = 8; //transfer 8 bytes
     cb1->STRIDE = 0; //no 2D stride
     cb1->NEXTCONBK = 0; //no next control block
     
