@@ -137,30 +137,29 @@ struct DmaControlBlock {
 //getRealMemPage(&virt, &phys)
 //now, virt[N] exists for 0 <= N < PAGE_SIZE,
 //  and phys+N is the physical address for virt[N]
-//taken from http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
-void getRealMemPage(void** vAddr, void** pAddr) {
-    void* a = valloc(PAGE_SIZE); //allocate one page of RAM
+//based on http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
+void getRealMemPage(void** virtAddr, void** physAddr) {
+    *virtAddr = valloc(PAGE_SIZE); //allocate one page of RAM
 
-    ((int*)a)[0] = 1;  // use page to force allocation.
-    mlock(a, PAGE_SIZE);  // lock into ram.
-    ((int*)a)[0] = 0; // undo the change we made above.
-
-    *vAddr = a;  // yay - we know the virtual address
+    //force page into RAM and then lock it ther:
+    ((int*)*virtAddr)[0] = 1;
+    mlock(*virtAddr, PAGE_SIZE);
+    ((int*)*virtAddr)[0] = 0; //undo the change we made above. This way the page should be zero-filled
 
     //Magic to determine the physical address for this page:
-    uint64_t frameinfo;
-    int fp = open("/proc/self/pagemap", 'r');
-    lseek(fp, ((int)a)/PAGE_SIZE*8, SEEK_SET);
-    read(fp, &frameinfo, sizeof(frameinfo));
+    uint64_t pageInfo;
+    int file = open("/proc/self/pagemap", 'r');
+    lseek(file, ((uint32_t)*virtAddr)/PAGE_SIZE*8, SEEK_SET);
+    read(file, &pageInfo, 8);
 
-    *pAddr = (void*)((int)(frameinfo*PAGE_SIZE));
-    printf("realmem virtual to phys: %p -> %p\n", *vAddr, *pAddr);
+    *physAddr = (void*)(pageInfo*PAGE_SIZE);
+    printf("realmem virtual to phys: %p -> %p\n", *virtAddr, *physAddr);
 }
 
 //call with virtual address to deallocate a page allocated with getRealMemPage
-void freeRealMemPage(void* vAddr) {
-    munlock(vAddr, PAGE_SIZE);  // unlock ram.
-    free(vAddr);
+void freeRealMemPage(void* virtAddr) {
+    munlock(virtAddr, PAGE_SIZE);
+    free(virtAddr);
 }
 
 //map a physical address into our virtual address space. memfd is the file descriptor for /dev/mem
