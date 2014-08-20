@@ -217,17 +217,19 @@ int main() {
     uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
     *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     
-    //configure DMA:
-    //allocate 1 page for the source and 1 page for the destination:
+    //configure DMA...
+    //First, allocate 1 page for the source:
     void *virtSrcPage, *physSrcPage;
     makeVirtPhysPage(&virtSrcPage, &physSrcPage);
-    void *virtDestPage, *physDestPage;
-    makeVirtPhysPage(&virtDestPage, &physDestPage);
     
     //write a few bytes to the source page:
     uint32_t *srcArray = (uint32_t*)virtSrcPage;
     srcArray[0]  = (1 << 4); //set pin 4 ON
-    srcArray[1]  = 0;
+    srcArray[1]  = 0; //GPSET1
+    srcArray[2]  = 0; //padding
+    srcArray[3]  = (1 << 4); //set pin 4 OFF
+    srcArray[4]  = 0; //GPCLR1
+    srcArray[5]  = 0; //padding
     
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
@@ -241,11 +243,9 @@ int main() {
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     //cb1->DEST_AD = (uint32_t)physDestPage;
     cb1->DEST_AD = GPIO_BASE_BUS + GPSET0; //(uint32_t)(gpioBaseMem + GPSET0 - GPIO_BASE);
-    cb1->TXFR_LEN = 8; //transfer 8 bytes
+    cb1->TXFR_LEN = 24; //transfer 8 bytes
     cb1->STRIDE = 0; //no 2D stride
-    cb1->NEXTCONBK = 0; //no next control block
-    
-    printf("destination was initially: '%s'\n", (char*)virtDestPage);
+    cb1->NEXTCONBK = (uint32_t)physCbPage; //loop back to this block.
     
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
@@ -258,13 +258,10 @@ int main() {
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage; //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
-    sleep(1); //give time for copy to happen
-    
-    printf("destination reads: '%s'\n", (char*)virtDestPage);
-    
+    //sleep(1); //give time for copy to happen
+    while (1) { pause(); }
     //cleanup
     freeVirtPhysPage(virtCbPage);
-    freeVirtPhysPage(virtDestPage);
     freeVirtPhysPage(virtSrcPage);
     return 0;
 }
