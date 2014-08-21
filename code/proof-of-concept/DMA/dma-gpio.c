@@ -210,8 +210,8 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     return (volatile uint32_t*)mapped;
 }
 
-uint64_t readSysTime(uint32_t *timerBaseMem) {
-    return ((uint64_t)*(timerBaseMem + TIMER_CHI) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO));
+uint64_t readSysTime(volatile uint32_t *timerBaseMem) {
+    return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
 }
 
 
@@ -289,15 +289,17 @@ int main() {
     sleep(1); //give time for the reset command to be handled.
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage; //we have to point it to the PHYSICAL address of the control block (cb1)
+    uint64_t t1 = readSysTime(timerBaseMem);
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
     //sleep(1); //give time for copy to happen
     //while (1) { pause(); }
     while (dmaHeader->CS & DMA_CS_ACTIVE) {} //wait for DMA transfer to complete.
+    uint64_t t2 = readSysTime(timerBaseMem);
     //cleanup
     freeVirtPhysPage(virtCbPage);
     freeVirtPhysPage(virtSrcPage);
-    printf("system time: %lu\n", readSysTime(timerBaseMem));
-    printf("system time: %lu\n", readSysTime(timerBaseMem));
+    printf("system time: %llu\n", t1);
+    printf("system time: %llu\n", t2);
     return 0;
 }
