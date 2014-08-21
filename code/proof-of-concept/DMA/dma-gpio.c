@@ -4,11 +4,26 @@
 /*
  * processor documentation is at: http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
  * pg 38 for DMA
+ * pg 61 for DMA DREQ PERMAP
  * pg 89 for gpio
+ *
+ * A few annotations for GPIO/DMA/PWM are available here: https://github.com/626Pilot/RaspberryPi-NeoPixel-WS2812/blob/master/ws2812-RPi.c
  *
  * The general idea is to have a buffer of N blocks, where each block is the same size as the gpio registers, 
  *   and have the DMA module continually copying the data in this buffer into those registers.
  * In this way, we can have (say) 32 blocks, and then be able to buffer the next 32 IO frames.
+ *
+ * How is DMA transfer rate controlled?
+ * We can use the DREQ (data request) feature.
+ *   PWM supports a configurable data consumption clock (defaults to 100MHz)
+ *   PWM (and SPI, PCM) can fire a DREQ signal any time its fifo falls below a certain point.
+ *   But we are never filling the FIFO, so DREQ would be permanently high.
+ *   Could feed PWM with dummy data, and use 2 DMA channels (one to PWM, one to GPIO, both gated), but the write-time to GPIOs may vary from the PWM, so gating may be improper
+ * Or we can use the WAITS portion of the CB header. This allows up to 31 cycle delay -> ~25MHz?
+ *   This may be the best option. Will have to manually determine timing characteristics though.
+ *
+ * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
+ *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
  */
  
 #include <sys/mman.h> //for mmap
@@ -67,8 +82,16 @@
 #define DMA_DEBUG_READ_LAST_NOT_SET_ERROR (1<<0)
 
 //flags used in the DmaControlBlock struct:
-#define DMA_CB_TI_DEST_INC (1<<4)
-#define DMA_CB_TI_SRC_INC (1<<8)
+#define DMA_CB_TI_DEST_INC    (1<<4)
+#define DMA_CB_TI_DEST_DREQ   (1<<6)
+#define DMA_CB_TI_SRC_INC     (1<<8)
+#define DMA_CB_TI_SRC_DREQ    (1<<10)
+#define DMA_CB_TI_PERMAP_NONE (0<<16)
+#define DMA_CB_TI_PERMAP_DSI  (1<<16)
+//... (more found on page 61 of BCM2835 pdf
+#define DMA_CB_TI_PERMAP_PWM  (5<<16)
+//...
+#define DMA_CB_TI_NO_WIDE_BURSTS (1<<26)
 
 //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
 //eg if x = 0b11001100
@@ -82,7 +105,7 @@ void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
 }
 
 struct DmaChannelHeader {
-    uint32_t CS; //Control and Status
+    volatile uint32_t CS; //Control and Status
         //31    RESET; set to 1 to reset DMA
         //30    ABORT; set to 1 to abort current DMA control block (next one will be loaded & continue)
         //29    DISDEBUG; set to 1 and DMA won't be paused when debug signal is sent
@@ -100,14 +123,14 @@ struct DmaChannelHeader {
         //2     INT; set when current CB ends and its INTEN=1. Write a 1 to this register to clear it
         //1     END; set when the transfer defined by current CB is complete. Write 1 to clear.
         //0     ACTIVE; write 1 to activate DMA (load the CB before hand)
-    uint32_t CONBLK_AD; //Control Block Address
-    uint32_t TI; //transfer information; see DmaControlBlock.TI for description
-    uint32_t SOURCE_AD; //Source address
-    uint32_t DEST_AD; //Destination address
-    uint32_t TXFR_LEN; //transfer length.
-    uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
-    uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
-    uint32_t DEBUG; //controls debug settings
+    volatile uint32_t CONBLK_AD; //Control Block Address
+    volatile uint32_t TI; //transfer information; see DmaControlBlock.TI for description
+    volatile uint32_t SOURCE_AD; //Source address
+    volatile uint32_t DEST_AD; //Destination address
+    volatile uint32_t TXFR_LEN; //transfer length.
+    volatile uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
+    volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
+    volatile uint32_t DEBUG; //controls debug settings
 };
 
 struct DmaControlBlock {
@@ -122,18 +145,18 @@ struct DmaControlBlock {
         //9     SRC_WIDTH; set to 1 for 128-bit moves, 0 for 32-bit moves
         //8     SRC_INC;   set to 1 to automatically increment the source address after each read (you'll want this if you're copying a range of memory)
         //7     DEST_IGNORE; set to 1 to not perform writes.
-        //6     DEST_DREG; set to 1 to have the DREQ from PERMAP gate *writes*
+        //6     DEST_DREQ; set to 1 to have the DREQ from PERMAP gate *writes*
         //5     DEST_WIDTH; set to 1 for 128-bit moves, 0 for 32-bit moves
         //4     DEST_INC;   set to 1 to automatically increment the destination address after each read (Tyou'll want this if you're copying a range of memory)
         //3     WAIT_RESP; make DMA wait for a response from the peripheral during each write. Ensures multiple writes don't get stacked in the pipeline
         //2     unused (0)
         //1     TDMODE; set to 1 to enable 2D mode
         //0     INTEN;  set to 1 to generate an interrupt upon completion
-    uint32_t SOURCE_AD; //Source address
-    uint32_t DEST_AD; //Destination address
-    uint32_t TXFR_LEN; //transfer length.
-    uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
-    uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
+    volatile uint32_t SOURCE_AD; //Source address
+    volatile uint32_t DEST_AD; //Destination address
+    volatile uint32_t TXFR_LEN; //transfer length.
+    volatile uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
+    volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     uint32_t _reserved[2];
 };
 
@@ -239,13 +262,14 @@ int main() {
     struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
     
     //fill the control block:
-    cb1->TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC; //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address.
+    //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
+    cb1->TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
-    //cb1->DEST_AD = (uint32_t)physDestPage;
-    cb1->DEST_AD = GPIO_BASE_BUS + GPSET0; //(uint32_t)(gpioBaseMem + GPSET0 - GPIO_BASE);
-    cb1->TXFR_LEN = 24; //transfer 8 bytes
+    cb1->DEST_AD = GPIO_BASE_BUS + GPSET0;
+    cb1->TXFR_LEN = 24; //number of bytes to transfer
     cb1->STRIDE = 0; //no 2D stride
-    cb1->NEXTCONBK = (uint32_t)physCbPage; //loop back to this block.
+    //cb1->NEXTCONBK = (uint32_t)physCbPage; //loop back to this block.
+    cb1->NEXTCONBK = 0; //end block.
     
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
@@ -259,7 +283,8 @@ int main() {
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
     //sleep(1); //give time for copy to happen
-    while (1) { pause(); }
+    //while (1) { pause(); }
+    while (dmaHeader->CS & DMA_CS_ACTIVE) {} //wait for DMA transfer to complete.
     //cleanup
     freeVirtPhysPage(virtCbPage);
     freeVirtPhysPage(virtSrcPage);
