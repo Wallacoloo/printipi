@@ -75,7 +75,7 @@
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
 //Note: DMA channels are connected directly to peripherals, so physical addresses should be used (affects control block's SOURCE, DEST and NEXTCONBK addresses).
-#define DMAENABLE 0x00007ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
+#define DMAENABLE 0x00000ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
 
 //flags used in the DmaChannelHeader struct:
 #define DMA_CS_RESET (1<<31)
@@ -211,7 +211,7 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
 }
 
 uint64_t readSysTime(uint32_t *timerBaseMem) {
-    return *(timerBaseMem + TIMER_CLO) + ((uint64_t)*(timerBaseMem + TIMER_CHI) << 32);
+    return ((uint64_t)*(timerBaseMem + TIMER_CHI) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO));
 }
 
 
