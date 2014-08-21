@@ -32,6 +32,10 @@
 #include <stdlib.h> //for exit
 #include <fcntl.h> //for file opening
 #include <stdint.h> //for uint32_t
+
+#define TIMER_BASE   0x20003000
+#define TIMER_CLO    0x00000004 //lower 32-bits of 1 MHz timer
+#define TIMER_CHI    0x00000008 //upper 32-bits
  
 
 #define GPIO_BASE 0x20200000 //base address of the GPIO control registers.
@@ -71,7 +75,7 @@
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
 //Note: DMA channels are connected directly to peripherals, so physical addresses should be used (affects control block's SOURCE, DEST and NEXTCONBK addresses).
-#define DMAENABLE 0x20007ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
+#define DMAENABLE 0x00007ff0 //bit 0 should be set to 1 to enable channel 0. bit 1 enables channel 1, etc.
 
 //flags used in the DmaChannelHeader struct:
 #define DMA_CS_RESET (1<<31)
@@ -206,6 +210,10 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     return (volatile uint32_t*)mapped;
 }
 
+uint64_t readSysTime(uint32_t *timerBaseMem) {
+    return *(timerBaseMem + TIMER_CLO) + ((uint64_t)*(timerBaseMem + TIMER_CHI) << 32);
+}
+
 
 void printMem(volatile void *begin, int numChars) {
     volatile uint32_t *addr = (volatile uint32_t*)begin;
@@ -233,6 +241,7 @@ int main() {
     //now map /dev/mem into memory, but only map specific peripheral sections:
     volatile uint32_t *gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
     volatile uint32_t *dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
+    volatile uint32_t *timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
     
     //now set our pin (#4) as an output:
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0);
@@ -272,7 +281,7 @@ int main() {
     cb1->NEXTCONBK = 0; //end block.
     
     //enable DMA channel (it's probably already enabled, but we want to be sure):
-    writeBitmasked(dmaBaseMem + DMAENABLE - DMA_BASE, 1 << 3, 1 << 3);
+    writeBitmasked(dmaBaseMem + DMAENABLE, 1 << 3, 1 << 3);
     
     //configure the DMA header to point to our control block:
     volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3);
@@ -288,5 +297,7 @@ int main() {
     //cleanup
     freeVirtPhysPage(virtCbPage);
     freeVirtPhysPage(virtSrcPage);
+    printf("system time: %lu\n", readSysTime(timerBaseMem));
+    printf("system time: %lu\n", readSysTime(timerBaseMem));
     return 0;
 }
