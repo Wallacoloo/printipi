@@ -20,7 +20,12 @@
  *   But we are never filling the FIFO, so DREQ would be permanently high.
  *   Could feed PWM with dummy data, and use 2 DMA channels (one to PWM, one to GPIO, both gated), but the write-time to GPIOs may vary from the PWM, so gating may be improper
  * Or we can use the WAITS portion of the CB header. This allows up to 31 cycle delay -> ~25MHz?
- *   This may be the best option. Will have to manually determine timing characteristics though.
+ *   Will have to manually determine timing characteristics though.
+ * Or use 2 dma channels:
+ *   Have one sending the data into PWM, which is DREQ limited
+ *   Have another copying from PWM Fifo to GPIOs at a non-limited rate. This is peripheral -> peripheral, so I think it will have its own data bus.
+ *     Unfortunately, the destination can only be one word. Luckily, we have 2 PWM channels - one for setting & one for clearing GPIOs. All gpios that are broken out into the header are in the first register (I think)
+ *     
  *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
  *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
@@ -268,7 +273,8 @@ int main() {
     makeVirtPhysPage(&virtCbPage, &physCbPage);
     
     //dedicate the first 8 bytes of this page to holding the cb.
-    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
+    struct DmaControlBlock *cbPwmToGpio = (struct DmaControlBlock*)virtCbPage;
+    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)(virtCbPage+8);
     
     //fill the control block:
     //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
@@ -288,18 +294,18 @@ int main() {
     dmaHeader->CS = DMA_CS_RESET; //make sure to disable dma first.
     sleep(1); //give time for the reset command to be handled.
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    dmaHeader->CONBLK_AD = (uint32_t)physCbPage; //we have to point it to the PHYSICAL address of the control block (cb1)
-    uint64_t t1 = readSysTime(timerBaseMem);
+    dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage);; //we have to point it to the PHYSICAL address of the control block (cb1)
+    //uint64_t t1 = readSysTime(timerBaseMem);
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
     //sleep(1); //give time for copy to happen
     //while (1) { pause(); }
     while (dmaHeader->CS & DMA_CS_ACTIVE) {} //wait for DMA transfer to complete.
-    uint64_t t2 = readSysTime(timerBaseMem);
+    //uint64_t t2 = readSysTime(timerBaseMem);
     //cleanup
     freeVirtPhysPage(virtCbPage);
     freeVirtPhysPage(virtSrcPage);
-    printf("system time: %llu\n", t1);
-    printf("system time: %llu\n", t2);
+    //printf("system time: %llu\n", t1);
+    //printf("system time: %llu\n", t2);
     return 0;
 }
