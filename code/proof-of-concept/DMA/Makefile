@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -g
+CFLAGS := -g -std=c99
 
 all: pi-blaster dma-gpio dma-example
 

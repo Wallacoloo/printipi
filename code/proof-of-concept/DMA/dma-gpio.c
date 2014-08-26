@@ -350,25 +350,26 @@ int main() {
     srcArray[0]  = (1 << 4); //set pin 4 ON
     srcArray[1]  = 0; //GPSET1
     srcArray[2]  = 0; //padding
-    srcArray[3]  = (1 << 4); //set pin 4 OFF
+    //srcArray[3]  = (1 << 4); //set pin 4 OFF
+    srcArray[3]  = 0; //GPCLR0
     srcArray[4]  = 0; //GPCLR1
     srcArray[5]  = 0; //padding
     
-    srcArray[6]  = (1 << 4); //set pin 4 ON
-    srcArray[7]  = 0; //GPSET1
-    srcArray[8]  = 0; //padding
-    srcArray[9]  = 0; //GPCLR0
-    srcArray[10] = 0; //GPCLR1
-    srcArray[11] = 0; //padding
+    srcArray[64*6+0]  = 0; //GPSET0
+    srcArray[64*6+1]  = 0; //GPSET1
+    srcArray[64*6+2]  = 0; //padding
+    srcArray[64*6+3]  = (1 << 4); //GPCLR0
+    srcArray[64*6+4] = 0; //GPCLR1
+    srcArray[64*6+5] = 0; //padding
     
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
     makeVirtPhysPage(&virtCbPage, &physCbPage);
     
     //dedicate the first 8 bytes of this page to holding the cb.
-    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
-    struct DmaControlBlock *cb2 = (struct DmaControlBlock*)(virtCbPage+1*DMA_CONTROL_BLOCK_ALIGNMENT);
-    struct DmaControlBlock *cb3 = (struct DmaControlBlock*)(virtCbPage+2*DMA_CONTROL_BLOCK_ALIGNMENT);
+    //struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
+    //struct DmaControlBlock *cb2 = (struct DmaControlBlock*)(virtCbPage+1*DMA_CONTROL_BLOCK_ALIGNMENT);
+    //struct DmaControlBlock *cb3 = (struct DmaControlBlock*)(virtCbPage+2*DMA_CONTROL_BLOCK_ALIGNMENT);
     struct PwmHeader *pwmHeader = (struct PwmHeader*)(pwmBaseMem);
     
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
@@ -378,7 +379,24 @@ int main() {
     
     //fill the control block:
     //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
-    cb1->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
+    struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
+    int maxIdx = PAGE_SIZE/DMA_CONTROL_BLOCK_ALIGNMENT;
+    for (int i=0; i<maxIdx; i += 2) {
+        cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
+        cbArr[i].SOURCE_AD = (uint32_t)(physSrcPage + i*24);
+        cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
+        cbArr[i].TXFR_LEN = 24;
+        cbArr[i].STRIDE = 0;
+        cbArr[i].NEXTCONBK = &cbArr[i+1]; //&(cbPage[(i+1)%maxIdx]);
+        
+        cbArr[i+1].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
+        cbArr[i+1].SOURCE_AD = (uint32_t)physSrcPage;
+        cbArr[i+1].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
+        cbArr[i+1].TXFR_LEN = 4;
+        cbArr[i+1].STRIDE = 0;
+        cbArr[i+1].NEXTCONBK = &(cbArr[(i+2)%maxIdx]);
+    }
+    /*cb1->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     cb1->DEST_AD = GPIO_BASE_BUS + GPSET0;
     cb1->TXFR_LEN = 24; //number of bytes to transfer
@@ -401,7 +419,7 @@ int main() {
     cb3->DEST_AD = GPIO_BASE_BUS + GPSET0;
     cb3->TXFR_LEN = 24; //number of bytes to transfer
     cb3->STRIDE = 0; //no 2D stride
-    cb3->NEXTCONBK = 0; //end block.
+    cb3->NEXTCONBK = 0; //end block.*/
     
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << 3, 1 << 3);
@@ -411,7 +429,7 @@ int main() {
     dmaHeader->CS = DMA_CS_RESET; //make sure to disable dma first.
     sleep(1); //give time for the reset command to be handled.
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
+    dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     //uint64_t t1 = readSysTime(timerBaseMem);
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
