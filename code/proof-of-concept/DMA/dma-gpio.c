@@ -354,13 +354,21 @@ int main() {
     srcArray[4]  = 0; //GPCLR1
     srcArray[5]  = 0; //padding
     
+    srcArray[6]  = (1 << 4); //set pin 4 ON
+    srcArray[7]  = 0; //GPSET1
+    srcArray[8]  = 0; //padding
+    srcArray[9]  = 0; //GPCLR0
+    srcArray[10] = 0; //GPCLR1
+    srcArray[11] = 0; //padding
+    
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
     makeVirtPhysPage(&virtCbPage, &physCbPage);
     
     //dedicate the first 8 bytes of this page to holding the cb.
     struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
-    struct DmaControlBlock *cb2 = (struct DmaControlBlock*)(virtCbPage+DMA_CONTROL_BLOCK_ALIGNMENT);
+    struct DmaControlBlock *cb2 = (struct DmaControlBlock*)(virtCbPage+1*DMA_CONTROL_BLOCK_ALIGNMENT);
+    struct DmaControlBlock *cb3 = (struct DmaControlBlock*)(virtCbPage+2*DMA_CONTROL_BLOCK_ALIGNMENT);
     struct PwmHeader *pwmHeader = (struct PwmHeader*)(pwmBaseMem);
     
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
@@ -386,6 +394,14 @@ int main() {
     cb2->STRIDE = 0; //no 2D stride
     cb2->NEXTCONBK = 0; //no next block.
     //cb2->NEXTCONBK = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage); //loop back to first block.
+    cb2->NEXTCONBK = (uint32_t)physCbPage + ((void*)cb3 - virtCbPage);
+    
+    cb3->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
+    cb3->SOURCE_AD = (uint32_t)(physSrcPage+24); //set source and destination DMA address
+    cb3->DEST_AD = GPIO_BASE_BUS + GPSET0;
+    cb3->TXFR_LEN = 24; //number of bytes to transfer
+    cb3->STRIDE = 0; //no 2D stride
+    cb3->NEXTCONBK = 0; //end block.
     
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << 3, 1 << 3);
