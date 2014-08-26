@@ -373,7 +373,11 @@ int main() {
     //struct DmaControlBlock *cb3 = (struct DmaControlBlock*)(virtCbPage+2*DMA_CONTROL_BLOCK_ALIGNMENT);
     struct PwmHeader *pwmHeader = (struct PwmHeader*)(pwmBaseMem);
     
+    pwmHeader->CTL = PWM_CTL_CLRFIFO; //clear pwm
+    sleep(1);
+    
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
+    sleep(1);
     pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(7) | PWM_DMAC_PANIC(7);
     pwmHeader->RNG1 = 32; //32-bit output periods (used only for timing purposes)
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
@@ -443,6 +447,7 @@ int main() {
     
     //sleep(1); //give time for copy to happen
     //while (1) { pause(); }
+    printf("DMA Active\n");
     while (dmaHeader->CS & DMA_CS_ACTIVE) {} //wait for DMA transfer to complete.
     //uint64_t t2 = readSysTime(timerBaseMem);
     //cleanup
