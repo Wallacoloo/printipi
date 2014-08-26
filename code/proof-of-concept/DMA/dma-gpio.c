@@ -102,6 +102,9 @@
 //...
 #define DMA_CB_TI_NO_WIDE_BURSTS (1<<26)
 
+//Dma Control Blocks must be located at addresses that are multiples of 32 bytes
+#define DMA_CONTROL_BLOCK_ALIGNMENT 32 
+
 //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
 //eg if x = 0b11001100
 //  writeBitmasked(&x, 0b00000110, 0b11110011),
@@ -274,7 +277,7 @@ int main() {
     
     //dedicate the first 8 bytes of this page to holding the cb.
     struct DmaControlBlock *cbPwmToGpio = (struct DmaControlBlock*)virtCbPage;
-    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)(virtCbPage+8);
+    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)(virtCbPage+DMA_CONTROL_BLOCK_ALIGNMENT);
     
     //fill the control block:
     //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
@@ -294,7 +297,7 @@ int main() {
     dmaHeader->CS = DMA_CS_RESET; //make sure to disable dma first.
     sleep(1); //give time for the reset command to be handled.
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage);; //we have to point it to the PHYSICAL address of the control block (cb1)
+    dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     //uint64_t t1 = readSysTime(timerBaseMem);
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
