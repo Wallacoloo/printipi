@@ -387,14 +387,15 @@ int main() {
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
         cbArr[i].TXFR_LEN = 24;
         cbArr[i].STRIDE = 0;
-        cbArr[i].NEXTCONBK = &cbArr[i+1]; //&(cbPage[(i+1)%maxIdx]);
+        cbArr[i].NEXTCONBK = (uint32_t)physCbPage + ((void*)&cbArr[i+1] - virtCbPage);
         
         cbArr[i+1].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i+1].SOURCE_AD = (uint32_t)physSrcPage;
         cbArr[i+1].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i+1].TXFR_LEN = 4;
         cbArr[i+1].STRIDE = 0;
-        cbArr[i+1].NEXTCONBK = &(cbArr[(i+2)%maxIdx]);
+        //cbArr[i+1].NEXTCONBK = &(cbArr[(i+2)%maxIdx]);
+        cbArr[i+1].NEXTCONBK = (uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
     }
     /*cb1->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
