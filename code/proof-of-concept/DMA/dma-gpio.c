@@ -6,6 +6,9 @@
  * pg 38 for DMA
  * pg 61 for DMA DREQ PERMAP
  * pg 89 for gpio
+ * pg 119 for PCM
+ * pg 138 for PWM
+ * pg 172 for timer info
  *
  * A few annotations for GPIO/DMA/PWM are available here: https://github.com/626Pilot/RaspberryPi-NeoPixel-WS2812/blob/master/ws2812-RPi.c
  *
@@ -24,8 +27,12 @@
  * Or use 2 dma channels:
  *   Have one sending the data into PWM, which is DREQ limited
  *   Have another copying from PWM Fifo to GPIOs at a non-limited rate. This is peripheral -> peripheral, so I think it will have its own data bus.
- *     Unfortunately, the destination can only be one word. Luckily, we have 2 PWM channels - one for setting & one for clearing GPIOs. All gpios that are broken out into the header are in the first register (I think)
- *     
+ *     Unfortunately, the destination can only be one word. Luckily, we have 2 PWM channels - one for setting & one for clearing GPIOs. All gpios that are broken out into the header are in the first register (verified)
+ *   Sadly, it appears that the PWM FIFO cannot be read from. One can read the current PWM output, but only if the FIFO is disabled, in which case the DREQ is too.
+ *
+ **Or use 1 dma channel, but additionally write to a dreq-able peripheral (PWM):
+ *   By using control-blocks, one can copy a word to the GPIOs, then have the next CB copy a word to the PWM fifo, and repeat
+ *   By having BOTH control-blocks be dreq-limited by the PWM's dreq, they can BOTH be rate-limited.
  *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
  *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
@@ -105,6 +112,35 @@
 //Dma Control Blocks must be located at addresses that are multiples of 32 bytes
 #define DMA_CONTROL_BLOCK_ALIGNMENT 32 
 
+#define PWM_BASE 0x2020C000
+#define PWM_BASE_BUS 0x7E20C000
+#define PWM_CTL  0x00000000 //control register
+#define PWM_STA  0x00000004 //status register
+#define PWM_DMAC 0x00000008 //DMA control register
+#define PWM_RNG1 0x00000010 //channel 1 range register (# output bits to use per sample)
+#define PWM_DAT1 0x00000014 //channel 1 data
+#define PWM_FIF1 0x00000018 //channel 1 fifo (write to this register to queue an output)
+#define PWM_RNG2 0x00000020 //channel 2 range register
+#define PWM_DAT2 0x00000024 //channel 2 data
+
+#define PWM_CTL_USEFIFO2 (1<<13)
+#define PWM_CTL_REPEATEMPTY2 (1<<10)
+#define PWM_CTL_ENABLE2 (1<<8)
+#define PWM_CTL_CLRFIFO (1<<6)
+#define PWM_CTL_USEFIFO1 (1<<5)
+#define PWM_CTL_REPEATEMPTY1 (1<<2)
+#define PWM_CTL_ENABLE1 (1<<0)
+
+#define PWM_STA_BUSERR (1<<8)
+#define PWM_STA_GAPERRS (0xf << 4)
+#define PWM_STA_FIFOREADERR (1<<3)
+#define PWM_STA_FIFOWRITEERR (1<<2)
+#define PWM_STA_ERRS PWM_STA_BUSERR | PWM_STA_GAPERRS | PWM_STA_FIFOREADERR | PWM_STA_FIFOWRITEERR
+
+#define PWM_DMAC_EN (1<<31)
+#define PWM_DMAC_PANIC(P) ((P&0xff)<<8)
+#define PWM_DMAC_DREQ(D) ((D&0xff)<<0)
+
 //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
 //eg if x = 0b11001100
 //  writeBitmasked(&x, 0b00000110, 0b11110011),
@@ -170,6 +206,52 @@ struct DmaControlBlock {
     volatile uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
     volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     uint32_t _reserved[2];
+};
+
+struct PwmHeader {
+    volatile uint32_t CTL;  // 0x00000000 //control register
+        //16-31 reserved
+        //15 MSEN2 (0: PWM algorithm, 1:M/S transmission used)
+        //14 reserved
+        //13 USEF2 (0: data register is used for transmission, 1: FIFO is used for transmission)
+        //12 POLA2 (0: 0=low, 1=high. 1: 0=high, 1=low (inversion))
+        //11 SBIT2; defines the state of the output when no transmission is in place
+        //10 RPTL2; 0: transmission interrupts when FIFO is empty. 1: last data in FIFO is retransmitted when FIFO is empty
+        //9  MODE2; 0: PWM mode. 1: serializer mode
+        //8  PWMEN2; 0: channel is disabled. 1: channel is enabled
+        //7  MSEN1;
+        //6  CLRF1; writing a 1 to this bit clears the channel 1 (and channel 2?) fifo
+        //5  USEF1;
+        //4  POLA1;
+        //3  SBIT1;
+        //2  RPTL1;
+        //1  MODE1;
+        //0  PWMEN1;   
+    volatile uint32_t STA;  // 0x00000004 //status register
+        //13-31 reserved
+        //9-12 STA1-4; indicates whether each channel is transmitting
+        //8    BERR; Bus Error Flag. Write 1 to clear
+        //4-7  GAPO1-4; Gap Occured Flag. Write 1 to clear
+        //3    RERR1; Fifo Read Error Flag (attempt to read empty fifo). Write 1 to clear
+        //2    WERR1; Fifo Write Error Flag (attempt to write to full fifo). Write 1 to clear
+        //1    EMPT1; Reads as 1 if fifo is empty
+        //0    FULL1; Reads as 1 if fifo is full
+    volatile uint32_t DMAC; // 0x00000008 //DMA control register
+        //31   ENAB; set to 1 to enable DMA
+        //16-30 reserved
+        //8-15 PANIC; DMA threshold for panic signal
+        //0-7  DREQ;  DMA threshold for DREQ signal
+    uint32_t _padding1;
+    volatile uint32_t RNG1; // 0x00000010 //channel 1 range register (# output bits to use per sample)
+        //0-31 PWM_RNGi; #of bits to modulate PWM. (eg if PWM_RNGi=1024, then each 32-bit sample sent through the FIFO will be modulated into 1024 bits.)
+    volatile uint32_t DAT1; // 0x00000014 //channel 1 data
+        //0-31 PWM_DATi; Stores the 32-bit data to be sent to the PWM controller ONLY WHEN USEFi=0 (FIFO is disabled)
+    volatile uint32_t FIF1; // 0x00000018 //channel 1 fifo (write to this register to queue an output)
+        //writing to this register will queue a sample into the fifo. If 2 channels are enabled, then each even sample (0-indexed) is sent to channel 1, and odd samples are sent to channel 2. WRITE-ONLY
+    uint32_t _padding2;
+    volatile uint32_t RNG2; // 0x00000020 //channel 2 range register
+    volatile uint32_t DAT2; // 0x00000024 //channel 2 data
+        //0-31 PWM_DATi; Stores the 32-bit data to be sent to the PWM controller ONLY WHEN USEFi=1 (FIFO is enabled). TODO: Typo???
 };
 
 //allocate a page & simultaneously determine its physical address.
@@ -249,6 +331,7 @@ int main() {
     //now map /dev/mem into memory, but only map specific peripheral sections:
     volatile uint32_t *gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
     volatile uint32_t *dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
+    volatile uint32_t *pwmBaseMem = mapPeripheral(memfd, PWM_BASE);
     volatile uint32_t *timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
     
     //now set our pin (#4) as an output:
@@ -276,8 +359,14 @@ int main() {
     makeVirtPhysPage(&virtCbPage, &physCbPage);
     
     //dedicate the first 8 bytes of this page to holding the cb.
-    struct DmaControlBlock *cbPwmToGpio = (struct DmaControlBlock*)virtCbPage;
-    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)(virtCbPage+DMA_CONTROL_BLOCK_ALIGNMENT);
+    struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
+    struct DmaControlBlock *cb2 = (struct DmaControlBlock*)(virtCbPage+DMA_CONTROL_BLOCK_ALIGNMENT);
+    struct PwmHeader *pwmHeader = (struct PwmHeader*)(pwmBaseMem);
+    
+    pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
+    pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(7) | PWM_DMAC_PANIC(7);
+    pwmHeader->RNG1 = 32; //32-bit output periods (used only for timing purposes)
+    pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
     //fill the control block:
     //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
@@ -287,7 +376,15 @@ int main() {
     cb1->TXFR_LEN = 24; //number of bytes to transfer
     cb1->STRIDE = 0; //no 2D stride
     //cb1->NEXTCONBK = (uint32_t)physCbPage; //loop back to this block.
-    cb1->NEXTCONBK = 0; //end block.
+    //cb1->NEXTCONBK = 0; //end block.
+    cb1->NEXTCONBK = (uint32_t)(physCbPage + ((void*)cb2-virtCbPage)); //next block is control-block #2
+    
+    cb2->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
+    cb2->SOURCE_AD = (uint32_t)physSrcPage; //can write junk into PWM, so just use an address that's likely to be cached already
+    cb2->DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
+    cb2->TXFR_LEN = 4; //just one sample
+    cb2->STRIDE = 0; //no 2D stride
+    cb2->NEXTCONBK = 0; //no next block.
     
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << 3, 1 << 3);
