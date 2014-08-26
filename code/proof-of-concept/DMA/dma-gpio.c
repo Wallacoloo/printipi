@@ -384,7 +384,8 @@ int main() {
     cb2->DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
     cb2->TXFR_LEN = 4; //just one sample
     cb2->STRIDE = 0; //no 2D stride
-    cb2->NEXTCONBK = 0; //no next block.
+    //cb2->NEXTCONBK = 0; //no next block.
+    cb2->NEXTCONBK = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage); //loop back to first block.
     
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << 3, 1 << 3);
