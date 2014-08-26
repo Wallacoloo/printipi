@@ -370,7 +370,7 @@ int main() {
     
     //fill the control block:
     //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
-    cb1->TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
+    cb1->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
     cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
     cb1->DEST_AD = GPIO_BASE_BUS + GPSET0;
     cb1->TXFR_LEN = 24; //number of bytes to transfer
@@ -384,8 +384,8 @@ int main() {
     cb2->DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
     cb2->TXFR_LEN = 4; //just one sample
     cb2->STRIDE = 0; //no 2D stride
-    //cb2->NEXTCONBK = 0; //no next block.
-    cb2->NEXTCONBK = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage); //loop back to first block.
+    cb2->NEXTCONBK = 0; //no next block.
+    //cb2->NEXTCONBK = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage); //loop back to first block.
     
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << 3, 1 << 3);
