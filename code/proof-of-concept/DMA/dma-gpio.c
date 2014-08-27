@@ -421,7 +421,7 @@ int main() {
     int maxIdx = PAGE_SIZE/DMA_CONTROL_BLOCK_ALIGNMENT;
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
     for (int i=0; i<maxIdx; i += 2) {
-        cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
+        cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i].SOURCE_AD = (uint32_t)(physSrcPage + i/2*24);
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
         cbArr[i].TXFR_LEN = 24;
