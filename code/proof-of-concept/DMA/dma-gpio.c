@@ -198,6 +198,16 @@ struct DmaChannelHeader {
     volatile uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
     volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     volatile uint32_t DEBUG; //controls debug settings
+        //29-31 unused
+        //28    LITE
+        //25-27 VERSION
+        //16-24 DMA_STATE (dma engine state machine)
+        //8-15  DMA_ID    (AXI bus id)
+        //4-7   OUTSTANDING_WRITES
+        //3     unused
+        //2     READ_ERROR
+        //1     WRITE_ERROR
+        //0     READ_LAST_NOT_SET_ERROR
 };
 void logDmaChannelHeader(struct DmaChannelHeader *h) {
     printf("Dma Ch Header:\n CS: 0x%08x\n CONBLK_AD: 0x%08x\n TI: 0x%08x\n SOURCE_AD: 0x%08x\n DEST_AD: 0x%08x\n TXFR_LEN: %u\n STRIDE: 0x%08x\n NEXTCONBK: 0x%08x\n DEBUG: 0x%08x\n", h->CS, h->CONBLK_AD, h->TI, h->SOURCE_AD, h->DEST_AD, h->TXFR_LEN, h->STRIDE, h->NEXTCONBK, h->DEBUG);
@@ -393,7 +403,7 @@ int main() {
     //uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
     // *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     //set gpio 18 as alt (for pwm):
-    writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8)); //causes error!
+    writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
     
     //configure DMA...
     //First, allocate 1 page for the source:
@@ -421,11 +431,11 @@ int main() {
     void *virtCbPage, *physCbPage;
     makeVirtPhysPage(&virtCbPage, &physCbPage);
     
-    *(uint32_t*)(clockBaseMem + PWMCLK_CNTL) = 0x5A000006; // Source=PLLD (500MHz)
+    *(clockBaseMem + PWMCLK_CNTL/4) = 0x5A000006; // Source=PLLD (500MHz)
     udelay(100);
-    *(uint32_t*)(clockBaseMem + PWMCLK_DIV) = 0x5A000000 | (50<<12); // set pwm div to 50, giving 10MHz
+    *(clockBaseMem + PWMCLK_DIV/4) = 0x5A000000 | (50<<12); // set pwm div to 50, giving 10MHz
     udelay(100);
-    *(uint32_t*)(clockBaseMem + PWMCLK_CNTL) = 0x5A000016; // Source=PLLD and enable
+    *(clockBaseMem + PWMCLK_CNTL/4) = 0x5A000016; // Source=PLLD and enable
     
     //dedicate the first 8 bytes of this page to holding the cb.
     //struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
@@ -435,10 +445,10 @@ int main() {
     
     pwmHeader->DMAC = 0; //disable DMA
     pwmHeader->CTL |= PWM_CTL_CLRFIFO; //clear pwm
-    sleep(1);
+    udelay(100);
     
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
-    sleep(1);
+    udelay(100);
     
     pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(7) | PWM_DMAC_PANIC(7);
     pwmHeader->RNG1 = 32; //32-bit output periods (used only for timing purposes)
@@ -512,8 +522,6 @@ int main() {
     //uint64_t t1 = readSysTime(timerBaseMem);
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
-    //sleep(1); //give time for copy to happen
-    //while (1) { pause(); }
     printf("DMA Active\n");
     while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
