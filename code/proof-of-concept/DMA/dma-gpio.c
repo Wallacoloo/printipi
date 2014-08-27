@@ -439,6 +439,7 @@ int main() {
     
     //configure the DMA header to point to our control block:
     struct DmaChannelHeader *dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH3);
+    logDmaChannelHeader(dmaHeader);
     //abort previous DMA:
     dmaHeader->NEXTCONBK = 0;
     dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
