@@ -41,9 +41,11 @@
 #include <sys/mman.h> //for mmap
 #include <unistd.h> //for NULL
 #include <stdio.h> //for printf
-#include <stdlib.h> //for exit
+#include <stdlib.h> //for exit, valloc
+#include <malloc.h> //some implementations declare valloc inside malloc.h
 #include <fcntl.h> //for file opening
 #include <stdint.h> //for uint32_t
+#include <string.h> //for memset
 
 #define TIMER_BASE   0x20003000
 #define TIMER_CLO    0x00000004 //lower 32-bits of 1 MHz timer
