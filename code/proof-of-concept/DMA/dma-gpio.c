@@ -80,11 +80,12 @@
 
 //physical addresses for the DMA peripherals, as found in the processor documentation:
 #define DMA_BASE 0x20007000
+#define DMACH(n) (0x100*n)
 //DMA Channel register sets (format of these registers is found in DmaChannelHeader struct):
-#define DMACH0   0x00000000
-#define DMACH1   0x00000100
-#define DMACH2   0x00000200
-#define DMACH3   0x00000300
+//#define DMACH0   0x00000000
+//#define DMACH1   0x00000100
+//#define DMACH2   0x00000200
+//#define DMACH3   0x00000300
 //...
 //Each DMA channel has some associated registers, but only CS (control and status), CONBLK_AD (control block address), and DEBUG are writeable
 //DMA is started by writing address of the first Control Block to the DMA channel's CONBLK_AD register and then setting the ACTIVE bit inside the CS register (bit 0)
@@ -434,11 +435,12 @@ int main() {
     cb3->STRIDE = 0; //no 2D stride
     cb3->NEXTCONBK = 0; //end block.*/
     
+    int dmaCh = 3;
     //enable DMA channel (it's probably already enabled, but we want to be sure):
-    writeBitmasked(dmaBaseMem + DMAENABLE, 1 << 3, 1 << 3);
+    writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
     
     //configure the DMA header to point to our control block:
-    struct DmaChannelHeader *dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH3);
+    struct DmaChannelHeader *dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh));
     logDmaChannelHeader(dmaHeader);
     //abort previous DMA:
     dmaHeader->NEXTCONBK = 0;
