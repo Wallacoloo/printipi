@@ -269,7 +269,8 @@ void makeVirtPhysPage(void** virtAddr, void** physAddr) {
     //force page into RAM and then lock it ther:
     ((int*)*virtAddr)[0] = 1;
     mlock(*virtAddr, PAGE_SIZE);
-    ((int*)*virtAddr)[0] = 0; //undo the change we made above. This way the page should be zero-filled
+    //((int*)*virtAddr)[0] = 0; //undo the change we made above. This way the page should be zero-filled
+    memset(*virtAddr, 0, PAGE_SIZE);
 
     //Magic to determine the physical address for this page:
     uint64_t pageInfo;
