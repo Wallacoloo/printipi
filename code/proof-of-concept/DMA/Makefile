@@ -1,5 +1,7 @@
 CC := gcc
-CFLAGS := -g -std=c99
+#CFLAGS := -g -std=c99
+#CFLAGS := -g -std=c11
+CFLAGS := -g -std=gnu99
 
 all: pi-blaster dma-gpio dma-example
 

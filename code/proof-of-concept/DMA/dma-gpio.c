@@ -39,6 +39,8 @@
  */
  
 #include <sys/mman.h> //for mmap
+#include <sys/time.h> //for timespec
+#include <time.h> //for timespec / nanosleep (need -std=gnu99)
 #include <unistd.h> //for NULL
 #include <stdio.h> //for printf
 #include <stdlib.h> //for exit, valloc
@@ -146,6 +148,11 @@
 #define PWM_DMAC_PANIC(P) ((P&0xff)<<8)
 #define PWM_DMAC_DREQ(D) ((D&0xff)<<0)
 
+//The following is undocumented :( Taken from https://github.com/metachris/raspberrypi-pwm/blob/master/rpio-pwm/rpio_pwm.c
+#define CLOCK_BASE 0x20101000
+#define PWMCLK_CNTL 160
+#define PWMCLK_DIV 164
+
 //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
 //eg if x = 0b11001100
 //  writeBitmasked(&x, 0b00000110, 0b11110011),
@@ -155,6 +162,12 @@ void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     uint32_t new = (cur & (~mask)) | (value & mask);
     *dest = new;
     *dest = new; //best to be safe 
+}
+
+//sleep for N microseconds. N must be < 1 second:
+void udelay(int us) {
+    struct timespec ts = {0, us*1000};
+    nanosleep(&ts, NULL);
 }
 
 struct DmaChannelHeader {
@@ -172,7 +185,7 @@ struct DmaChannelHeader {
         //6     WAITING_FOR_OUTSTANDING_WRITES; read as 1 when waiting for outstanding writes
         //5     DREQ_STOPS_DMA; read as 1 if DREQ is currently preventing DMA
         //4     PAUSED; read as 1 if DMA is paused
-        //3     DREQ; copy of the data request signal from the peripheral, if DREQ is enabled. reads as 1 if data is being requested, else 0
+        //3     DREQ; copy of the data request signal from the peripheral, if DREQ is enabled. reads as 1 if data is being requested (or PERMAP=0), else 0
         //2     INT; set when current CB ends and its INTEN=1. Write a 1 to this register to clear it
         //1     END; set when the transfer defined by current CB is complete. Write 1 to clear.
         //0     ACTIVE; write 1 to activate DMA (load the CB before hand)
@@ -342,6 +355,7 @@ int main() {
     volatile uint32_t *dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
     volatile uint32_t *pwmBaseMem = mapPeripheral(memfd, PWM_BASE);
     volatile uint32_t *timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
+    volatile uint32_t *clockBaseMem = mapPeripheral(memfd, CLOCK_BASE);
     
     //now set our pin (#4) as an output:
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0);
@@ -376,6 +390,12 @@ int main() {
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
     makeVirtPhysPage(&virtCbPage, &physCbPage);
+    
+    *(uint32_t*)(clockBaseMem + PWMCLK_CNTL) = 0x5A000006; // Source=PLLD (500MHz)
+    udelay(100);
+    *(uint32_t*)(clockBaseMem + PWMCLK_DIV) = 0x5A000000 | (50<<12); // set pwm div to 50, giving 10MHz
+    udelay(100);
+    *(uint32_t*)(clockBaseMem + PWMCLK_CNTL) = 0x5A000016; // Source=PLLD and enable
     
     //dedicate the first 8 bytes of this page to holding the cb.
     //struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
@@ -449,14 +469,15 @@ int main() {
     //abort previous DMA:
     dmaHeader->NEXTCONBK = 0;
     dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
-    sleep(1); //give time for the abort command to be handled.
+    udelay(100); //give time for the abort command to be handled.
     
     dmaHeader->CS = DMA_CS_RESET;
-    sleep(1);
+    udelay(100);
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
+    dmaHeader->CONBLK_AD = 0;
+    //dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     //uint64_t t1 = readSysTime(timerBaseMem);
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
