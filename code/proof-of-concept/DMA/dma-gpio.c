@@ -358,13 +358,13 @@ int main() {
     volatile uint32_t *clockBaseMem = mapPeripheral(memfd, CLOCK_BASE);
     
     //now set our pin (#4) as an output:
-    volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0);
+    volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4);
     writeBitmasked(fselAddr, 0x7 << (3*4), 0x1 << (3*4));
     //uint32_t fselMask = 0x7 << (3*4); //bitmask for the 3 bits that control pin 4
     //uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
-    //*fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
+    // *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     //set gpio 18 as alt (for pwm):
-    //writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1), 0x7 << (3*8), 0x5 << (3*8)); //causes error!
+    writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8)); //causes error!
     
     //configure DMA...
     //First, allocate 1 page for the source:
