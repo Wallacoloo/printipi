@@ -183,6 +183,9 @@ struct DmaChannelHeader {
     volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     volatile uint32_t DEBUG; //controls debug settings
 };
+void logDmaChannelHeader(struct DmaChannelHeader *h) {
+    printf("Dma Ch Header... CS: %08x\n CONBLK_AD: %08x\n TI: %08x\n SOURCE_AD: %08x\n DEST_AD: %08x\n TXFR_LEN: %u\n STRIDE: %08x\n NEXTCONBK: %08x\n DEBUG: %08x\n");
+}
 
 struct DmaControlBlock {
     uint32_t TI; //transfer information
@@ -434,7 +437,7 @@ int main() {
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << 3, 1 << 3);
     
     //configure the DMA header to point to our control block:
-    volatile struct DmaChannelHeader *dmaHeader = (volatile struct DmaChannelHeader*)(dmaBaseMem + DMACH3);
+    struct DmaChannelHeader *dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH3);
     //abort previous DMA:
     dmaHeader->CONBLK_AD = 0;
     dmaHeader->CS = DMA_CS_ABORT; //make sure to disable dma first.
@@ -451,7 +454,9 @@ int main() {
     //sleep(1); //give time for copy to happen
     //while (1) { pause(); }
     printf("DMA Active\n");
-    while (dmaHeader->CS & DMA_CS_ACTIVE) {} //wait for DMA transfer to complete.
+    while (dmaHeader->CS & DMA_CS_ACTIVE) {
+        logDmaChannelHeader(dmaHeader);
+    } //wait for DMA transfer to complete.
     //uint64_t t2 = readSysTime(timerBaseMem);
     //cleanup
     freeVirtPhysPage(virtCbPage);
