@@ -184,7 +184,7 @@ struct DmaChannelHeader {
     volatile uint32_t DEBUG; //controls debug settings
 };
 void logDmaChannelHeader(struct DmaChannelHeader *h) {
-    printf("Dma Ch Header... CS: %08x\n CONBLK_AD: %08x\n TI: %08x\n SOURCE_AD: %08x\n DEST_AD: %08x\n TXFR_LEN: %u\n STRIDE: %08x\n NEXTCONBK: %08x\n DEBUG: %08x\n");
+    printf("Dma Ch Header:\n CS: 0x%08x\n CONBLK_AD: 0x%08x\n TI: 0x%08x\n SOURCE_AD: 0x%08x\n DEST_AD: 0x%08x\n TXFR_LEN: %u\n STRIDE: 0x%08x\n NEXTCONBK: 0x%08x\n DEBUG: 0x%08x\n", h->CS, h->CONBLK_AD, h->TI, h->SOURCE_AD, h->DEST_AD, h->TXFR_LEN, h->STRIDE, h->NEXTCONBK, h->DEBUG);
 }
 
 struct DmaControlBlock {
@@ -439,7 +439,7 @@ int main() {
     //configure the DMA header to point to our control block:
     struct DmaChannelHeader *dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH3);
     //abort previous DMA:
-    dmaHeader->CONBLK_AD = 0;
+    dmaHeader->NEXTCONBK = 0;
     dmaHeader->CS = DMA_CS_ABORT; //make sure to disable dma first.
     sleep(1); //give time for the abort command to be handled.
     
