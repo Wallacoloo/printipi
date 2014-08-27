@@ -41,6 +41,7 @@
 #include <sys/mman.h> //for mmap
 #include <sys/time.h> //for timespec
 #include <time.h> //for timespec / nanosleep (need -std=gnu99)
+#include <signal.h> //for sigaction
 #include <unistd.h> //for NULL
 #include <stdio.h> //for printf
 #include <stdlib.h> //for exit, valloc
@@ -337,6 +338,28 @@ void printMem(volatile void *begin, int numChars) {
     printf("\n");
 }
 
+volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
+struct DmaChannelHeader *dmaHeader;
+
+void cleanup(int sig) {
+    // Shut down the DMA controller
+    if(dmaHeader) {
+        //CLRBIT(dma_reg[DMA_CS], DMA_CS_ACTIVE);
+        writeBitmasked(&dmaHeader->CS, DMA_CS_ACTIVE, 0);
+        usleep(100);
+        //SETBIT(dma_reg[DMA_CS], DMA_CS_RESET);
+        writeBitmasked(&dmaHeader->CS, DMA_CS_RESET, DMA_CS_RESET);
+        //usleep(100);
+    }
+    // Shut down PWM
+    /*if(pwm_reg) {
+        CLRBIT(pwm_reg[PWM_CTL], PWM_CTL_PWEN1);
+        usleep(100);
+        pwm_reg[PWM_CTL] = (1 << PWM_CTL_CLRF1);
+    }*/
+    exit(1);
+}
+
 int main() {
     //First, we need to obtain the virtual base-address of our program:
     //void *virtbase = mmap(NULL, NUM_PAGES * PAGE_SIZE, PROT_READ|PROT_WRITE,
@@ -345,17 +368,23 @@ int main() {
     //First, open the linux device, /dev/mem
     //dev/mem provides access to the physical memory of the entire processor+ram
     //This is needed because Linux uses virtual memory, thus the process's memory at 0x00000000 will NOT have the same contents as the physical memory at 0x00000000
+    for (int i = 0; i < 64; i++) { //catch all shutdown signals to kill the DMA engine:
+        struct sigaction sa;
+        memset(&sa, 0, sizeof(sa));
+        sa.sa_handler = cleanup;
+        sigaction(i, &sa, NULL);
+    }
     int memfd = open("/dev/mem", O_RDWR | O_SYNC);
     if (memfd < 0) {
         printf("Failed to open /dev/mem (did you remember to run as root?)\n");
         exit(1);
     }
     //now map /dev/mem into memory, but only map specific peripheral sections:
-    volatile uint32_t *gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
-    volatile uint32_t *dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
-    volatile uint32_t *pwmBaseMem = mapPeripheral(memfd, PWM_BASE);
-    volatile uint32_t *timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
-    volatile uint32_t *clockBaseMem = mapPeripheral(memfd, CLOCK_BASE);
+    gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
+    dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
+    pwmBaseMem = mapPeripheral(memfd, PWM_BASE);
+    timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
+    clockBaseMem = mapPeripheral(memfd, CLOCK_BASE);
     
     //now set our pin (#4) as an output:
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4);
@@ -466,7 +495,7 @@ int main() {
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
     
     //configure the DMA header to point to our control block:
-    struct DmaChannelHeader *dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh));
+    dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh));
     logDmaChannelHeader(dmaHeader);
     //abort previous DMA:
     dmaHeader->NEXTCONBK = 0;
