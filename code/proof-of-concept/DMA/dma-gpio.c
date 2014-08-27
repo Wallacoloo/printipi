@@ -381,12 +381,12 @@ int main() {
     srcArray[4]  = 0; //GPCLR1
     srcArray[5]  = 0; //padding
     
-    srcArray[64*6+0]  = 0; //GPSET0
-    srcArray[64*6+1]  = 0; //GPSET1
-    srcArray[64*6+2]  = 0; //padding
-    srcArray[64*6+3]  = (1 << 4); //GPCLR0
-    srcArray[64*6+4] = 0; //GPCLR1
-    srcArray[64*6+5] = 0; //padding
+    srcArray[32*6+0]  = 0; //GPSET0
+    srcArray[32*6+1]  = 0; //GPSET1
+    srcArray[32*6+2]  = 0; //padding
+    srcArray[32*6+3]  = (1 << 4); //GPCLR0
+    srcArray[32*6+4] = 0; //GPCLR1
+    srcArray[32*6+5] = 0; //padding
     
     //allocate 1 page for the control blocks
     void *virtCbPage, *physCbPage;
@@ -419,6 +419,7 @@ int main() {
     //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
     int maxIdx = PAGE_SIZE/DMA_CONTROL_BLOCK_ALIGNMENT;
+    printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
     for (int i=0; i<maxIdx; i += 2) {
         cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i].SOURCE_AD = (uint32_t)(physSrcPage + i/2*24);
