@@ -478,8 +478,8 @@ int main() {
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    dmaHeader->CONBLK_AD = 0;
-    //dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
+    //dmaHeader->CONBLK_AD = 0;
+    dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     //uint64_t t1 = readSysTime(timerBaseMem);
     dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
     
