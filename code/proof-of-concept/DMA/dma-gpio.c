@@ -348,6 +348,8 @@ int main() {
     uint32_t fselMask = 0x7 << (3*4); //bitmask for the 3 bits that control pin 4
     uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
     *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
+    //set gpio 18 as alt (for pwm):
+    writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1), 0x7 << (3*8), 0x5 << (3*8));
     
     //configure DMA...
     //First, allocate 1 page for the source:
@@ -381,11 +383,13 @@ int main() {
     //struct DmaControlBlock *cb3 = (struct DmaControlBlock*)(virtCbPage+2*DMA_CONTROL_BLOCK_ALIGNMENT);
     struct PwmHeader *pwmHeader = (struct PwmHeader*)(pwmBaseMem);
     
-    pwmHeader->CTL = PWM_CTL_CLRFIFO; //clear pwm
+    pwmHeader->DMAC = 0; //disable DMA
+    pwmHeader->CTL |= PWM_CTL_CLRFIFO; //clear pwm
     sleep(1);
     
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
     sleep(1);
+    
     pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(7) | PWM_DMAC_PANIC(7);
     pwmHeader->RNG1 = 32; //32-bit output periods (used only for timing purposes)
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
