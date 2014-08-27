@@ -94,6 +94,7 @@
 //flags used in the DmaChannelHeader struct:
 #define DMA_CS_RESET (1<<31)
 #define DMA_CS_ABORT (1<<30)
+#define DMA_CS_END (1<<1)
 #define DMA_CS_ACTIVE (1<<0)
 
 #define DMA_DEBUG_READ_ERROR (1<<2)
@@ -440,12 +441,13 @@ int main() {
     struct DmaChannelHeader *dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH3);
     //abort previous DMA:
     dmaHeader->NEXTCONBK = 0;
-    dmaHeader->CS = DMA_CS_ABORT; //make sure to disable dma first.
+    dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
     sleep(1); //give time for the abort command to be handled.
     
     dmaHeader->CS = DMA_CS_RESET;
     sleep(1);
     
+    writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     dmaHeader->CONBLK_AD = (uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     //uint64_t t1 = readSysTime(timerBaseMem);
