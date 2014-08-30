@@ -293,32 +293,7 @@ struct PwmHeader {
         //0-31 PWM_DATi; Stores the 32-bit data to be sent to the PWM controller ONLY WHEN USEFi=1 (FIFO is enabled). TODO: Typo???
 };
 
-//allocate a page & simultaneously determine its physical address.
-//virtAddr and physAddr are essentially passed by-reference.
-//this allows for:
-//void *virt, *phys;
-//makeVirtPhysPage(&virt, &phys)
-//now, virt[N] exists for 0 <= N < PAGE_SIZE,
-//  and phys+N is the physical address for virt[N]
-//based on http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
-/*void makeVirtPhysPage(void** virtAddr, void** physAddr) {
-    *virtAddr = valloc(PAGE_SIZE); //allocate one page of RAM
-
-    //force page into RAM and then lock it ther:
-    ((int*)*virtAddr)[0] = 1;
-    mlock(*virtAddr, PAGE_SIZE);
-    //((int*)*virtAddr)[0] = 0; //undo the change we made above. This way the page should be zero-filled
-    memset(*virtAddr, 0, PAGE_SIZE);
-
-    //Magic to determine the physical address for this page:
-    uint64_t pageInfo;
-    int file = open("/proc/self/pagemap", 'r');
-    lseek(file, ((uint32_t)*virtAddr)/PAGE_SIZE*8, SEEK_SET);
-    read(file, &pageInfo, 8);
-
-    *physAddr = (void*)(uint32_t)(pageInfo*PAGE_SIZE);
-    printf("makeVirtPhysPage virtual to phys: %p -> %p\n", *virtAddr, *physAddr);
-}*/
+//allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
     void* mem = valloc(size);
     mlock(mem, size);
@@ -326,7 +301,7 @@ void* makeLockedMem(size_t size) {
     return mem;
 }
 
-//void freeVirtPhysPage(void* virtAddr) {
+//free memory allocated with makeLockedMem
 void freeLockedMem(void* mem, size_t size) {
     munlock(mem, size);
     free(mem);
@@ -376,7 +351,7 @@ void printMem(volatile void *begin, int numChars) {
 volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
 struct DmaChannelHeader *dmaHeader;
 
-void cleanup(int sig) {
+void cleanup() {
     printf("Cleanup\n");
     // Shut down the DMA controller
     if(dmaHeader) {
@@ -393,23 +368,24 @@ void cleanup(int sig) {
         usleep(100);
         pwm_reg[PWM_CTL] = (1 << PWM_CTL_CLRF1);
     }*/
+}
+
+void cleanupAndExit(int sig) {
+    cleanup();
     exit(1);
 }
 
 int main() {
-    //First, we need to obtain the virtual base-address of our program:
-    //void *virtbase = mmap(NULL, NUM_PAGES * PAGE_SIZE, PROT_READ|PROT_WRITE,
-	//		MAP_SHARED|MAP_ANONYMOUS|MAP_NORESERVE|MAP_LOCKED,
-	//		-1, 0);
-    //First, open the linux device, /dev/mem
-    //dev/mem provides access to the physical memory of the entire processor+ram
-    //This is needed because Linux uses virtual memory, thus the process's memory at 0x00000000 will NOT have the same contents as the physical memory at 0x00000000
+    //emergency clean-up:
     for (int i = 0; i < 64; i++) { //catch all shutdown signals to kill the DMA engine:
         struct sigaction sa;
         memset(&sa, 0, sizeof(sa));
-        sa.sa_handler = cleanup;
+        sa.sa_handler = cleanupAndExit;
         sigaction(i, &sa, NULL);
     }
+    //First, open the linux device, /dev/mem
+    //dev/mem provides access to the physical memory of the entire processor+ram
+    //This is needed because Linux uses virtual memory, thus the process's memory at 0x00000000 will NOT have the same contents as the physical memory at 0x00000000
     int memfd = open("/dev/mem", O_RDWR | O_SYNC);
     if (memfd < 0) {
         printf("Failed to open /dev/mem (did you remember to run as root?)\n");
@@ -425,17 +401,12 @@ int main() {
     //now set our pin (#4) as an output:
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4);
     writeBitmasked(fselAddr, 0x7 << (3*4), 0x1 << (3*4));
-    //uint32_t fselMask = 0x7 << (3*4); //bitmask for the 3 bits that control pin 4
-    //uint32_t fselValue = 0x1 << (3*4); //value that we want to give the above bitmask (0b001 = set mode to output)
-    // *fselAddr = ((*fselAddr) & ~fselMask) | fselValue; //set pin 4 to be an output.
     //set gpio 18 as alt (for pwm):
     writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
     
     //configure DMA...
-    //First, allocate 1 page for the source:
-    //void *virtSrcPage, *physSrcPage;
-    //makeVirtPhysPage(&virtSrcPage, &physSrcPage);
-    size_t numSrcBlocks = 64;
+    //First, allocate memory for the source:
+    size_t numSrcBlocks = 1024; //We want apx 1M blocks/sec.
     size_t srcPageBytes = numSrcBlocks*24;
     void *virtSrcPage = makeLockedMem(srcPageBytes);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
@@ -458,9 +429,7 @@ int main() {
     srcArray[numSrcBlocks/2*6+4] = 0; //GPCLR1
     srcArray[numSrcBlocks/2*6+5] = 0; //padding
     
-    //allocate 1 page for the control blocks
-    //void *virtCbPage, *physCbPage;
-    //makeVirtPhysPage(&virtCbPage, &physCbPage);
+    //allocate memory for the control blocks
     size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 2; //2 cbs for each source block
     void *virtCbPage = makeLockedMem(cbPageBytes);
     
@@ -508,30 +477,6 @@ int main() {
         //cbArr[i+1].NEXTCONBK = &(cbArr[(i+2)%maxIdx]);
         cbArr[i+1].NEXTCONBK = virtToPhys(cbArr + (i+2)%maxIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
     }
-    /*cb1->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
-    cb1->SOURCE_AD = (uint32_t)physSrcPage; //set source and destination DMA address
-    cb1->DEST_AD = GPIO_BASE_BUS + GPSET0;
-    cb1->TXFR_LEN = 24; //number of bytes to transfer
-    cb1->STRIDE = 0; //no 2D stride
-    //cb1->NEXTCONBK = (uint32_t)physCbPage; //loop back to this block.
-    //cb1->NEXTCONBK = 0; //end block.
-    cb1->NEXTCONBK = (uint32_t)(physCbPage + ((void*)cb2-virtCbPage)); //next block is control-block #2
-    
-    cb2->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
-    cb2->SOURCE_AD = (uint32_t)physSrcPage; //can write junk into PWM, so just use an address that's likely to be cached already
-    cb2->DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
-    cb2->TXFR_LEN = 4; //just one sample
-    cb2->STRIDE = 0; //no 2D stride
-    cb2->NEXTCONBK = 0; //no next block.
-    //cb2->NEXTCONBK = (uint32_t)physCbPage + ((void*)cb1 - virtCbPage); //loop back to first block.
-    cb2->NEXTCONBK = (uint32_t)physCbPage + ((void*)cb3 - virtCbPage);
-    
-    cb3->TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS; 
-    cb3->SOURCE_AD = (uint32_t)(physSrcPage+24); //set source and destination DMA address
-    cb3->DEST_AD = GPIO_BASE_BUS + GPSET0;
-    cb3->TXFR_LEN = 24; //number of bytes to transfer
-    cb3->STRIDE = 0; //no 2D stride
-    cb3->NEXTCONBK = 0; //end block.*/
     
     int dmaCh = 3;
     //enable DMA channel (it's probably already enabled, but we want to be sure):
@@ -563,6 +508,7 @@ int main() {
     //cleanup
     //freeVirtPhysPage(virtCbPage);
     //freeVirtPhysPage(virtSrcPage);
+    cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
     freeLockedMem(virtSrcPage, srcPageBytes);
     //printf("system time: %llu\n", t1);
