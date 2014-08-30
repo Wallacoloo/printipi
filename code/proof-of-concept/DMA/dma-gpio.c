@@ -12,6 +12,7 @@
  *
  * A few annotations for GPIO/DMA/PWM are available here: https://github.com/626Pilot/RaspberryPi-NeoPixel-WS2812/blob/master/ws2812-RPi.c
  *   https://github.com/metachris/raspberrypi-pwm/blob/master/rpio-pwm/rpio_pwm.c
+ *   https://github.com/richardghirst/PiBits/blob/master/ServoBlaster/user/servod.c
  *
  * The general idea is to have a buffer of N blocks, where each block is the same size as the gpio registers, 
  *   and have the DMA module continually copying the data in this buffer into those registers.
@@ -349,8 +350,9 @@ void* makeLockedMem(size_t size) {
     }
     mlock(mem, size);
     for (int i=0; i<size; i+=PAGE_SIZE) {
-        *(int*)(mem+i) = 0; //force into ram
+        *(int*)(mem+i) = 1; //force into ram
     }
+    memset(mem, 0, size);
     return mem;
 }
 
