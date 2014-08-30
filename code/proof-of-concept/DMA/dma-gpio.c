@@ -468,6 +468,7 @@ int main() {
     srcArray[numSrcBlocks/2*8+7] = 0; //padding
     
     //allocate memory for the control blocks
+    printf("sizeof(struct DmaControlBlock): %i\n", sizeof(struct DmaControlBlock));
     size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 2; //2 cbs for each source block
     void *virtCbPage = makeLockedMem(cbPageBytes);
     
@@ -495,7 +496,6 @@ int main() {
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
     //fill the control blocks:
-    //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
     int maxIdx = cbPageBytes/DMA_CONTROL_BLOCK_ALIGNMENT;
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
