@@ -330,7 +330,7 @@ void* makeLockedMem(size_t size) {
     memset(mem, 0, size); //need to zero memory, plus the pages won't have a physical address until they are used.
     mlock(mem, size); //note: mlock only ensures that the memory is always present in physical ram. It may be moved to a new physical address even after being locked!
     return mem;*/
-    return mmap(
+    void *mem = mmap(
         NULL,   //let kernel place memory where it wants
         size,   //length
         PROT_WRITE | PROT_READ, //ask for read and write permissions to memory
@@ -340,6 +340,14 @@ void* makeLockedMem(size_t size) {
         MAP_LOCKED, //lock into *virtual* ram. Physical ram may still change!
         -1,	// File descriptor
     0); //no offset into file (file doesn't exist).
+    if (mem == MAP_FAILED) {
+        printf("makeLockedMem failed\n");
+        exit(1);
+    } else if (((uintptr_t)mem) & (PAGE_SIZE-1)) {
+        printf("mmap not page-aligned: %p\n", mem);
+        exit(1);
+    }
+    return mem;
 }
 
 //free memory allocated with makeLockedMem
