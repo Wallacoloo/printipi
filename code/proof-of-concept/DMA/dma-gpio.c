@@ -42,6 +42,30 @@
  *     3.move byte to PWM (paced via DREQ)
  *   These are largely redundant; it may be possible to use less memory (each cb uses 32 bytes of memory)
  *
+ * Problem: each "frame" is currently 6 words (but the last word is padding), and 1 PAGE_SIZE is not an integer multiple of 6*4
+ *   Thus, the very last frame on each page cannot be used with DMA. Because of this, too, the virtual addressing of each frame is messed up - we must skip one frame per page.
+ *   One solution is to append 2 more pad words to each frame (so that it is 8 words in length). This fixes all issues, but increases ram usage and potentially cache problems (L2 is 128KB). However, since data reads are sequential, even if all data doesn't fit in cache, it will be prefetched.
+ *   Another solution is to decrease frame size to 4 words, and use 2 control blocks for each frame (thus eliminating the 1-byte padding in the center). This will have an even LARGER impact on ram usage - effectively using 20 words/frame vs current 14 words/frame & alternative 16words/frame
+ *   Another solution is to directly mix src data with CB data. Each CB has 2 words of padding, and a data frame is 5 words, and each CB must be aligned to 8 words. Therefore, the following is possible, assuming each frame requires 3 CBs:
+ *     CB1.1(padded) | CB1.2(padded) | CB1.3(padded) | CB2.1(padded) | CB2.2(padded) | CB2.3(unpadded) | SRC(5) | SRC(5) <- uses 56 words per 2 frames 
+ *     HOWEVER, PAGE_SIZE is not an integral multiple of 56 words
+ *     Although, 1 of those CBs (the one which zeros the previous source) could be shared amongst multiple frames - that is, only zero every, say, 4 frames. The effect is:
+ *      *32 words for 1 frame  grouped (5  src words - 2 means pad to 8 words for src)
+ *       48 words for 2 frames grouped (10 src words - 2 means pad to 8 words for src)
+ *       72 words for 3 frames grouped (15 src words - 2 means pad to 16 words for src)
+ *       96 words for 4 frames grouped (20 src words - 2 means pad to 24 words for src)
+ *       112 words for 5 frames grouped(25 src words - 2 means pad to 24 words for src)
+ *       136 words for 6 frames grouped(30 src words - 2 means pad to 32 words for src)
+ *       160 words for 7 frames grouped(35 src words - 2 means pad to 40 words for src)
+ *       176 words for 8 frames grouped(40 src words - 2 means pad to 40 words for src)
+ *       200 words for 9 frames grouped(45 src words - 2 means pad to 48 words for src)
+ *       216 words for 10frames grouped(50 src words - 2 means pad to 48 words for src)
+ *       240 words for 11frames grouped(55 src words - 2 means pad to 56 words for src)
+ *       264 words for 12frames grouped(60 src words - 2 means pad to 64 words for src)
+ *    ...432 words for 20frames grouped(100src words - 2 means pad to 104 words for src)
+ *   ...*512 words for 24frames grouped(120src words - 2 means pad to 120 words for src)
+ *     As can be seen, this still requires extra padding. Could do 128 words for 5 frames, or 256 words for 11 frames (23.3 words/frame), and that requires funky math.
+ *     The 24 frame option would work OK. 24 is a relatively easy number to work with, and 21.3 words/frame (limit is 21 words/frame)
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
  *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
  *
@@ -417,7 +441,7 @@ int main() {
     //configure DMA...
     //First, allocate memory for the source:
     size_t numSrcBlocks = 1024; //We want apx 1M blocks/sec.
-    size_t srcPageBytes = numSrcBlocks*24;
+    size_t srcPageBytes = numSrcBlocks*32;
     void *virtSrcPage = makeLockedMem(srcPageBytes);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
     printf("mappedPhysSrcPage+11: %p\n", virtToPhys(virtSrcPage+11));
@@ -431,13 +455,17 @@ int main() {
     srcArray[3]  = 0; //GPCLR0
     srcArray[4]  = 0; //GPCLR1
     srcArray[5]  = 0; //padding
+    srcArray[6]  = 0; //padding
+    srcArray[7]  = 0; //padding
     
-    srcArray[numSrcBlocks/2*6+0]  = 0; //GPSET0
-    srcArray[numSrcBlocks/2*6+1]  = 0; //GPSET1
-    srcArray[numSrcBlocks/2*6+2]  = 0; //padding
-    srcArray[numSrcBlocks/2*6+3]  = (1 << 4); //GPCLR0
-    srcArray[numSrcBlocks/2*6+4] = 0; //GPCLR1
-    srcArray[numSrcBlocks/2*6+5] = 0; //padding
+    srcArray[numSrcBlocks/2*8+0]  = 0; //GPSET0
+    srcArray[numSrcBlocks/2*8+1]  = 0; //GPSET1
+    srcArray[numSrcBlocks/2*8+2]  = 0; //padding
+    srcArray[numSrcBlocks/2*8+3]  = (1 << 4); //GPCLR0
+    srcArray[numSrcBlocks/2*8+4] = 0; //GPCLR1
+    srcArray[numSrcBlocks/2*8+5] = 0; //padding
+    srcArray[numSrcBlocks/2*8+6] = 0; //padding
+    srcArray[numSrcBlocks/2*8+7] = 0; //padding
     
     //allocate memory for the control blocks
     size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 2; //2 cbs for each source block
@@ -473,9 +501,9 @@ int main() {
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
     for (int i=0; i<maxIdx; i += 2) {
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
-        cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/2*24); //(uint32_t)(physSrcPage + i/2*24);
+        cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/2*32); //(uint32_t)(physSrcPage + i/2*24);
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
-        cbArr[i].TXFR_LEN = 24;
+        cbArr[i].TXFR_LEN = 32;
         cbArr[i].STRIDE = 0;
         cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1); //(uint32_t)physCbPage + ((void*)&cbArr[i+1] - virtCbPage);
         
