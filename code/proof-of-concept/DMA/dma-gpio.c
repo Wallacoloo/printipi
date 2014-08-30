@@ -352,7 +352,9 @@ void* makeLockedMem(size_t size) {
     for (int i=0; i<size; i+=PAGE_SIZE) {
         *(int*)(mem+i) = 1; //force into ram
     }
+    mlock(mem, size);
     memset(mem, 0, size);
+    mlock(mem, size);
     return mem;
 }
 
@@ -475,7 +477,6 @@ int main() {
     size_t srcPageBytes = numSrcBlocks*32;
     void *virtSrcPage = makeLockedMem(srcPageBytes);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
-    printf("mappedPhysSrcPage+11: %p\n", virtToPhys(virtSrcPage+11));
     
     //write a few bytes to the source page:
     uint32_t *srcArray = (uint32_t*)virtSrcPage;
