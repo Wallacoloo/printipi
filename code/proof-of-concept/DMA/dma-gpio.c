@@ -35,6 +35,13 @@
  *   By using control-blocks, one can copy a word to the GPIOs, then have the next CB copy a word to the PWM fifo, and repeat
  *   By having BOTH control-blocks be dreq-limited by the PWM's dreq, they can BOTH be rate-limited.
  *
+ * DMA Control Block layout:
+ *   repeat #srcBlock times:
+ *     1.copy srcBlock to gpios
+ *     2.zero srcBlock
+ *     3.move byte to PWM (paced via DREQ)
+ *   These are largely redundant; it may be possible to use less memory (each cb uses 32 bytes of memory)
+ *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
  *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
  *
@@ -375,6 +382,8 @@ void cleanupAndExit(int sig) {
     exit(1);
 }
 
+uint32_t zeros32[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
 int main() {
     //emergency clean-up:
     for (int i = 0; i < 64; i++) { //catch all shutdown signals to kill the DMA engine:
@@ -456,7 +465,7 @@ int main() {
     pwmHeader->RNG1 = 32; //32-bit output periods (used only for timing purposes)
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
-    //fill the control block:
+    //fill the control blocks:
     //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
     int maxIdx = cbPageBytes/DMA_CONTROL_BLOCK_ALIGNMENT;
@@ -470,11 +479,10 @@ int main() {
         cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1); //(uint32_t)physCbPage + ((void*)&cbArr[i+1] - virtCbPage);
         
         cbArr[i+1].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
-        cbArr[i+1].SOURCE_AD = virtToPhys(virtSrcPage); //(uint32_t)physSrcPage;
+        cbArr[i+1].SOURCE_AD = virtToPhys(zeros32); //(uint32_t)physSrcPage;
         cbArr[i+1].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i+1].TXFR_LEN = 4;
         cbArr[i+1].STRIDE = 0;
-        //cbArr[i+1].NEXTCONBK = &(cbArr[(i+2)%maxIdx]);
         cbArr[i+1].NEXTCONBK = virtToPhys(cbArr + (i+2)%maxIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
     }
     
