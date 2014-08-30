@@ -347,6 +347,9 @@ void* makeLockedMem(size_t size) {
         printf("mmap not page-aligned: %p\n", mem);
         exit(1);
     }
+    for (int i=0; i<size; i+=PAGE_SIZE) {
+        *(int*)(mem+i) = 0; //force into ram
+    }
     return mem;
 }
 
