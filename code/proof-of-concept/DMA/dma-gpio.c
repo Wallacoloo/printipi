@@ -532,24 +532,27 @@ int main() {
     int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
     printf("virt cb base: 0x%08x\n", virtToPhys(cbArr));
-    for (int i=0; i<maxIdx; i += 2) {
-        cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
-        cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/2*32); //(uint32_t)(physSrcPage + i/2*24);
-        cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
-        cbArr[i].TXFR_LEN = 32;
-        cbArr[i].STRIDE = 0;
-        cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1); //(uint32_t)physCbPage + ((void*)&cbArr[i+1] - virtCbPage);
-        
-        cbArr[i+1].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
-        cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
-        cbArr[i+1].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
-        cbArr[i+1].TXFR_LEN = 4;
-        cbArr[i+1].STRIDE = 0;
-        int nextIdx = i+2 < maxIdx ? i+2 : 0;
-        cbArr[i+1].NEXTCONBK = virtToPhys(cbArr + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
-        printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
+    for (int _x=0; ; ++_x) {
+        for (int i=0; i<maxIdx; i += 2) {
+            cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
+            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/2*32); //(uint32_t)(physSrcPage + i/2*24);
+            cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
+            cbArr[i].TXFR_LEN = 32;
+            cbArr[i].STRIDE = 0;
+            cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1); //(uint32_t)physCbPage + ((void*)&cbArr[i+1] - virtCbPage);
+            
+            cbArr[i+1].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
+            cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
+            cbArr[i+1].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
+            cbArr[i+1].TXFR_LEN = 4;
+            cbArr[i+1].STRIDE = 0;
+            int nextIdx = i+2 < maxIdx ? i+2 : 0;
+            cbArr[i+1].NEXTCONBK = virtToPhys(cbArr + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+            printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
+        }
+        printf("virt cb base: 0x%08x\n", virtToPhys(cbArr));
+        sleep(1);
     }
-    printf("virt cb base: 0x%08x\n", virtToPhys(cbArr));
     int dmaCh = 3;
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
