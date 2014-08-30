@@ -302,7 +302,7 @@ struct PwmHeader {
 
 //allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
-    void* mem = valloc(size);
+    void* mem = valloc(size); //memory returned by valloc is not zero'd
     mlock(mem, size);
     memset(mem, 0, size);
     return mem;
@@ -412,7 +412,7 @@ int main() {
     writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
     
     //Often need to copy zeros with DMA. This array can be the source. Needs to all lie on one page
-    void *zerosPage = valloc(PAGE_SIZE);
+    void *zerosPage = makeLockedMem(PAGE_SIZE);
     
     //configure DMA...
     //First, allocate memory for the source:
