@@ -326,16 +326,27 @@ struct PwmHeader {
 
 //allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
-    void* mem = valloc(size); //memory returned by valloc is not zero'd
+    /*void* mem = valloc(size); //memory returned by valloc is not zero'd
     memset(mem, 0, size); //need to zero memory, plus the pages won't have a physical address until they are used.
-    mlock(mem, size);
-    return mem;
+    mlock(mem, size); //note: mlock only ensures that the memory is always present in physical ram. It may be moved to a new physical address even after being locked!
+    return mem;*/
+    return mmap(
+        NULL,   //let kernel place memory where it wants
+        size,   //length
+        PROT_WRITE | PROT_READ, //ask for read and write permissions to memory
+        MAP_SHARED | 
+        MAP_ANONYMOUS | //no underlying file; initialize to 0
+        MAP_NORESERVE | //don't reserve swap space
+        MAP_LOCKED, //lock into *virtual* ram. Physical ram may still change!
+        -1,	// File descriptor
+    0); //no offset into file (file doesn't exist).
 }
 
 //free memory allocated with makeLockedMem
 void freeLockedMem(void* mem, size_t size) {
-    munlock(mem, size);
-    free(mem);
+    //munlock(mem, size);
+    //free(mem);
+    munmap(mem, size);
 }
 uintptr_t virtToPhys(void* virt) {
     uintptr_t pgNum = (uintptr_t)(virt)/PAGE_SIZE;
@@ -353,6 +364,12 @@ uintptr_t virtToPhys(void* virt) {
 //map a physical address into our virtual address space. memfd is the file descriptor for /dev/mem
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
     ///dev/mem behaves as a file. We need to map that file into memory:
+    //NULL = virtual address is chosen by kernel.
+    //PAGE_SIZE = map 1 page.
+    //PROT_READ|PROT_WRITE means give us read and write privelages to the memory
+    //MAP_SHARED means updates to the mapped memory should be written back to the file & shared with other processes
+    //memfd = /dev/mem file descriptor
+    //addr = offset in file to map
     void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
     //now, *mapped = memory at physical address of addr.
     if (mapped == MAP_FAILED) {
