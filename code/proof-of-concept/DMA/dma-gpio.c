@@ -301,7 +301,7 @@ struct PwmHeader {
 //now, virt[N] exists for 0 <= N < PAGE_SIZE,
 //  and phys+N is the physical address for virt[N]
 //based on http://www.raspians.com/turning-the-raspberry-pi-into-an-fm-transmitter/
-void makeVirtPhysPage(void** virtAddr, void** physAddr) {
+/*void makeVirtPhysPage(void** virtAddr, void** physAddr) {
     *virtAddr = valloc(PAGE_SIZE); //allocate one page of RAM
 
     //force page into RAM and then lock it ther:
@@ -318,12 +318,18 @@ void makeVirtPhysPage(void** virtAddr, void** physAddr) {
 
     *physAddr = (void*)(uint32_t)(pageInfo*PAGE_SIZE);
     printf("makeVirtPhysPage virtual to phys: %p -> %p\n", *virtAddr, *physAddr);
+}*/
+void* makeLockedMem(size_t size) {
+    void* mem = valloc(size);
+    mlock(mem, size);
+    memset(mem, 0, size);
+    return mem;
 }
 
-//call with virtual address to deallocate a page allocated with makeVirtPhysPage
-void freeVirtPhysPage(void* virtAddr) {
-    munlock(virtAddr, PAGE_SIZE);
-    free(virtAddr);
+//void freeVirtPhysPage(void* virtAddr) {
+void freeLockedMem(void* mem, size_t size) {
+    munlock(mem, size);
+    free(mem);
 }
 uintptr_t virtToPhys(void* virt) {
     uintptr_t pgNum = (uintptr_t)(virt)/PAGE_SIZE;
@@ -427,8 +433,9 @@ int main() {
     
     //configure DMA...
     //First, allocate 1 page for the source:
-    void *virtSrcPage, *physSrcPage;
-    makeVirtPhysPage(&virtSrcPage, &physSrcPage);
+    //void *virtSrcPage, *physSrcPage;
+    //makeVirtPhysPage(&virtSrcPage, &physSrcPage);
+    void *virtSrcPage = makeLockedMem(PAGE_SIZE);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
     printf("mappedPhysSrcPage+11: %p\n", virtToPhys(virtSrcPage+11));
     
@@ -450,8 +457,9 @@ int main() {
     srcArray[32*6+5] = 0; //padding
     
     //allocate 1 page for the control blocks
-    void *virtCbPage, *physCbPage;
-    makeVirtPhysPage(&virtCbPage, &physCbPage);
+    //void *virtCbPage, *physCbPage;
+    //makeVirtPhysPage(&virtCbPage, &physCbPage);
+    void *virtCbPage = makeLockedMem(PAGE_SIZE);
     
     *(clockBaseMem + PWMCLK_CNTL/4) = 0x5A000006; // Source=PLLD (500MHz)
     udelay(100);
@@ -490,7 +498,7 @@ int main() {
         cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1); //(uint32_t)physCbPage + ((void*)&cbArr[i+1] - virtCbPage);
         
         cbArr[i+1].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
-        cbArr[i+1].SOURCE_AD = (uint32_t)physSrcPage;
+        cbArr[i+1].SOURCE_AD = virtToPhys(virtSrcPage); //(uint32_t)physSrcPage;
         cbArr[i+1].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i+1].TXFR_LEN = 4;
         cbArr[i+1].STRIDE = 0;
@@ -550,8 +558,10 @@ int main() {
     } //wait for DMA transfer to complete.
     //uint64_t t2 = readSysTime(timerBaseMem);
     //cleanup
-    freeVirtPhysPage(virtCbPage);
-    freeVirtPhysPage(virtSrcPage);
+    //freeVirtPhysPage(virtCbPage);
+    //freeVirtPhysPage(virtSrcPage);
+    freeLockedMem(virtCbPage, PAGE_SIZE);
+    freeLockedMem(virtSrcPage, PAGE_SIZE);
     //printf("system time: %llu\n", t1);
     //printf("system time: %llu\n", t2);
     return 0;
