@@ -327,8 +327,8 @@ struct PwmHeader {
 //allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
     void* mem = valloc(size); //memory returned by valloc is not zero'd
+    memset(mem, 0, size); //need to zero memory, plus the pages won't have a physical address until they are used.
     mlock(mem, size);
-    memset(mem, 0, size);
     return mem;
 }
 
