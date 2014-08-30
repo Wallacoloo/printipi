@@ -461,7 +461,7 @@ int main() {
     //allocate 1 page for the control blocks
     //void *virtCbPage, *physCbPage;
     //makeVirtPhysPage(&virtCbPage, &physCbPage);
-    size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock);
+    size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 2; //2 cbs for each source block
     void *virtCbPage = makeLockedMem(cbPageBytes);
     
     *(clockBaseMem + PWMCLK_CNTL/4) = 0x5A000006; // Source=PLLD (500MHz)
