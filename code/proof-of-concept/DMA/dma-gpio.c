@@ -435,7 +435,9 @@ int main() {
     //First, allocate 1 page for the source:
     //void *virtSrcPage, *physSrcPage;
     //makeVirtPhysPage(&virtSrcPage, &physSrcPage);
-    void *virtSrcPage = makeLockedMem(PAGE_SIZE);
+    size_t numSrcBlocks = 64;
+    size_t srcPageBytes = numSrcBlocks*24;
+    void *virtSrcPage = makeLockedMem(srcPageBytes);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
     printf("mappedPhysSrcPage+11: %p\n", virtToPhys(virtSrcPage+11));
     
@@ -449,17 +451,18 @@ int main() {
     srcArray[4]  = 0; //GPCLR1
     srcArray[5]  = 0; //padding
     
-    srcArray[32*6+0]  = 0; //GPSET0
-    srcArray[32*6+1]  = 0; //GPSET1
-    srcArray[32*6+2]  = 0; //padding
-    srcArray[32*6+3]  = (1 << 4); //GPCLR0
-    srcArray[32*6+4] = 0; //GPCLR1
-    srcArray[32*6+5] = 0; //padding
+    srcArray[numSrcBlocks/2*6+0]  = 0; //GPSET0
+    srcArray[numSrcBlocks/2*6+1]  = 0; //GPSET1
+    srcArray[numSrcBlocks/2*6+2]  = 0; //padding
+    srcArray[numSrcBlocks/2*6+3]  = (1 << 4); //GPCLR0
+    srcArray[numSrcBlocks/2*6+4] = 0; //GPCLR1
+    srcArray[numSrcBlocks/2*6+5] = 0; //padding
     
     //allocate 1 page for the control blocks
     //void *virtCbPage, *physCbPage;
     //makeVirtPhysPage(&virtCbPage, &physCbPage);
-    void *virtCbPage = makeLockedMem(PAGE_SIZE);
+    size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock);
+    void *virtCbPage = makeLockedMem(cbPageBytes);
     
     *(clockBaseMem + PWMCLK_CNTL/4) = 0x5A000006; // Source=PLLD (500MHz)
     udelay(100);
@@ -487,7 +490,7 @@ int main() {
     //fill the control block:
     //after each 4-byte copy, we want to increment the source and destination address of the copy, otherwise we'll be copying to the same address:
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
-    int maxIdx = PAGE_SIZE/DMA_CONTROL_BLOCK_ALIGNMENT;
+    int maxIdx = cbPageBytes/DMA_CONTROL_BLOCK_ALIGNMENT;
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
     for (int i=0; i<maxIdx; i += 2) {
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
@@ -560,8 +563,8 @@ int main() {
     //cleanup
     //freeVirtPhysPage(virtCbPage);
     //freeVirtPhysPage(virtSrcPage);
-    freeLockedMem(virtCbPage, PAGE_SIZE);
-    freeLockedMem(virtSrcPage, PAGE_SIZE);
+    freeLockedMem(virtCbPage, cbPageBytes);
+    freeLockedMem(virtSrcPage, srcPageBytes);
     //printf("system time: %llu\n", t1);
     //printf("system time: %llu\n", t2);
     return 0;
