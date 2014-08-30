@@ -11,6 +11,7 @@
  * pg 172 for timer info
  *
  * A few annotations for GPIO/DMA/PWM are available here: https://github.com/626Pilot/RaspberryPi-NeoPixel-WS2812/blob/master/ws2812-RPi.c
+ *   https://github.com/metachris/raspberrypi-pwm/blob/master/rpio-pwm/rpio_pwm.c
  *
  * The general idea is to have a buffer of N blocks, where each block is the same size as the gpio registers, 
  *   and have the DMA module continually copying the data in this buffer into those registers.
@@ -36,6 +37,12 @@
  *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
  *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
+ *
+ * Printipi discussions:
+ *   http://forums.reprap.org/read.php?2,396157
+ *   https://groups.google.com/forum/#!searchin/deltabot/wallacoloo|sort:relevance/deltabot/JQNpmnlYYUc/_6V6SYcOGMUJ
+ *   http://youtube.com/watch?v=g4UD5MRas3E
+ *   (referenced) http://3dprintboard.com/showthread.php?5121-MOD-t-may-make-3D-printing-commonplace
  */
  
 #include <sys/mman.h> //for mmap
@@ -318,6 +325,18 @@ void freeVirtPhysPage(void* virtAddr) {
     munlock(virtAddr, PAGE_SIZE);
     free(virtAddr);
 }
+uintptr_t virtToPhys(void* virt) {
+    uintptr_t pgNum = (uintptr_t)(virt)/PAGE_SIZE;
+    int byteOffsetFromPage = (uintptr_t)(virt)%PAGE_SIZE;
+    uint64_t physPage;
+    //pagemap is a uint64_t array where the index represents the virtual page number and the value at that index represents the physical page number.
+    //So if virtual address is 0x1000000, read the value at *array* index 0x1000000/PAGE_SIZE and multiply that by PAGE_SIZE to get the physical address.
+    //because files are bytestreams, one must explicitly multiply each byte index by 8 to treat it as a uint64_t array.
+    int file = open("/proc/self/pagemap", 'r');
+    lseek(file, pgNum*8, SEEK_SET);
+    read(file, &physPage, 8);
+    return (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
+}
 
 //map a physical address into our virtual address space. memfd is the file descriptor for /dev/mem
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
@@ -352,6 +371,7 @@ volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockB
 struct DmaChannelHeader *dmaHeader;
 
 void cleanup(int sig) {
+    printf("Cleanup\n");
     // Shut down the DMA controller
     if(dmaHeader) {
         //CLRBIT(dma_reg[DMA_CS], DMA_CS_ACTIVE);
@@ -409,6 +429,8 @@ int main() {
     //First, allocate 1 page for the source:
     void *virtSrcPage, *physSrcPage;
     makeVirtPhysPage(&virtSrcPage, &physSrcPage);
+    printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
+    printf("mappedPhysSrcPage+11: %p\n", virtToPhys(virtSrcPage+11));
     
     //write a few bytes to the source page:
     uint32_t *srcArray = (uint32_t*)virtSrcPage;
