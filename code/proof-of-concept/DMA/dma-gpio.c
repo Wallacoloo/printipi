@@ -485,6 +485,7 @@ int main() {
         cbArr[i+1].TXFR_LEN = 4;
         cbArr[i+1].STRIDE = 0;
         cbArr[i+1].NEXTCONBK = virtToPhys(cbArr + (i+2)%maxIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+        printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
     }
     
     int dmaCh = 3;
