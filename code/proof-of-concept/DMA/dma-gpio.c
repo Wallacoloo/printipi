@@ -382,8 +382,6 @@ void cleanupAndExit(int sig) {
     exit(1);
 }
 
-uint32_t zeros32[8] = {0, 0, 0, 0, 0, 0, 0, 0};
-
 int main() {
     //emergency clean-up:
     for (int i = 0; i < 64; i++) { //catch all shutdown signals to kill the DMA engine:
@@ -412,6 +410,9 @@ int main() {
     writeBitmasked(fselAddr, 0x7 << (3*4), 0x1 << (3*4));
     //set gpio 18 as alt (for pwm):
     writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
+    
+    //Often need to copy zeros with DMA. This array can be the source. Needs to all lie on one page
+    void *zerosPage = valloc(PAGE_SIZE);
     
     //configure DMA...
     //First, allocate memory for the source:
@@ -479,7 +480,7 @@ int main() {
         cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1); //(uint32_t)physCbPage + ((void*)&cbArr[i+1] - virtCbPage);
         
         cbArr[i+1].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
-        cbArr[i+1].SOURCE_AD = virtToPhys(zeros32); //(uint32_t)physSrcPage;
+        cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
         cbArr[i+1].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i+1].TXFR_LEN = 4;
         cbArr[i+1].STRIDE = 0;
@@ -519,6 +520,7 @@ int main() {
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
     freeLockedMem(virtSrcPage, srcPageBytes);
+    freeLockedMem(zerosPage, PAGE_SIZE);
     //printf("system time: %llu\n", t1);
     //printf("system time: %llu\n", t2);
     return 0;
