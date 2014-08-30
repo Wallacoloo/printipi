@@ -497,7 +497,7 @@ int main() {
     
     //fill the control blocks:
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
-    int maxIdx = cbPageBytes/DMA_CONTROL_BLOCK_ALIGNMENT;
+    int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
     for (int i=0; i<maxIdx; i += 2) {
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
