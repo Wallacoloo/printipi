@@ -600,7 +600,7 @@ int main() {
             //clear buffer
             cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
             cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage);
-            cbArr[i+1].DEST_AD = cbArr[i].SOURCE_AD;
+            cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/2*32);
             cbArr[i+1].TXFR_LEN = 32;
             cbArr[i+1].STRIDE = 0;
             cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2);
@@ -639,7 +639,7 @@ int main() {
     //dmaHeader->CONBLK_AD = 0;
     dmaHeader->CONBLK_AD = virtToPhys(cbArr); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     //uint64_t t1 = readSysTime(timerBaseMem);
-    dmaHeader->CS = DMA_CS_PRIORITY(6) | DMA_CS_PANIC_PRIORITY(6) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
+    dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
     printf("DMA Active\n");
     while (dmaHeader->CS & DMA_CS_ACTIVE) {
