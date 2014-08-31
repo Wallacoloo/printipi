@@ -557,7 +557,7 @@ int main() {
     int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
     printf("virt cb[%i] -> phys: 0x%08x\n", 0, virtToPhys((void*)cbArr));
-    for (int _x=0; ; ++_x) {
+    //for (int _x=0; ; ++_x) {
         for (int i=0; i<maxIdx; i += 2) {
             cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
             cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/2*32); //(uint32_t)(physSrcPage + i/2*24);
@@ -578,8 +578,8 @@ int main() {
         for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
             printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr));
         }
-        sleep(1);
-    }
+    //    sleep(1);
+    //}
     int dmaCh = 3;
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
