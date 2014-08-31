@@ -380,7 +380,7 @@ uintptr_t virtToPhys(void* virt) {
     close(file);
     physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
     uintptr_t mapped = (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
-    printf("virtToPhys 0x%08x -> 0x%08x\n", virt, mapped);
+    //printf("virtToPhys 0x%08x -> 0x%08x\n", virt, mapped);
     return mapped;
 }
 
@@ -526,7 +526,7 @@ int main() {
     
     //configure DMA...
     //First, allocate memory for the source:
-    size_t numSrcBlocks = 1024; //We want apx 1M blocks/sec.
+    size_t numSrcBlocks = 8192; //We want apx 1M blocks/sec.
     size_t srcPageBytes = numSrcBlocks*32;
     void *virtSrcPage = makeLockedMem(srcPageBytes);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
