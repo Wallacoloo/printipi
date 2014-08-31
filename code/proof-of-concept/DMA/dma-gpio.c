@@ -355,6 +355,9 @@ void* makeLockedMem(size_t size) {
     mlock(mem, size);
     memset(mem, 0, size);
     mlock(mem, size);
+    for (int i=0; i<size; i+=4) {
+        *(int*)(mem+i) = i; //force into ram
+    }
     return mem;
 }
 
