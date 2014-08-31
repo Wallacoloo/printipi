@@ -515,9 +515,10 @@ int main() {
     timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
     clockBaseMem = mapPeripheral(memfd, CLOCK_BASE);
     
+    int outPin = 4;
     //now set our pin (#4) as an output:
-    volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4);
-    writeBitmasked(fselAddr, 0x7 << (3*4), 0x1 << (3*4));
+    volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + outPin/10);
+    writeBitmasked(fselAddr, 0x7 << (3*(outPin%10)), 0x1 << (3*(outPin%10)));
     //set gpio 18 as alt (for pwm):
     writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
     
@@ -533,10 +534,10 @@ int main() {
     
     //write a few bytes to the source page:
     uint32_t *srcArray = (uint32_t*)virtSrcPage;
-    srcArray[0]  = (1 << 4); //set pin 4 ON
+    srcArray[0]  = (1 << outPin); //set pin 4 ON
     srcArray[1]  = 0; //GPSET1
     srcArray[2]  = 0; //padding
-    //srcArray[3]  = (1 << 4); //set pin 4 OFF
+    //srcArray[3]  = (1 << outPin); //set pin 4 OFF
     srcArray[3]  = 0; //GPCLR0
     srcArray[4]  = 0; //GPCLR1
     srcArray[5]  = 0; //padding
@@ -546,7 +547,7 @@ int main() {
     srcArray[numSrcBlocks/2*8+0]  = 0; //GPSET0
     srcArray[numSrcBlocks/2*8+1]  = 0; //GPSET1
     srcArray[numSrcBlocks/2*8+2]  = 0; //padding
-    srcArray[numSrcBlocks/2*8+3]  = (1 << 4); //GPCLR0
+    srcArray[numSrcBlocks/2*8+3]  = (1 << outPin); //GPCLR0
     srcArray[numSrcBlocks/2*8+4] = 0; //GPCLR1
     srcArray[numSrcBlocks/2*8+5] = 0; //padding
     srcArray[numSrcBlocks/2*8+6] = 0; //padding
