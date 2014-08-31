@@ -325,12 +325,20 @@ struct PwmHeader {
         //0-31 PWM_DATi; Stores the 32-bit data to be sent to the PWM controller ONLY WHEN USEFi=1 (FIFO is enabled). TODO: Typo???
 };
 
+size_t ceilToPage(size_t size) {
+    if (size & ~(PAGE_SIZE-1)) { //round up to nearest page-size
+        size += PAGE_SIZE - (size & ~(PAGE_SIZE-1));
+    }
+    return size;
+}
+
 //allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
     /*void* mem = valloc(size); //memory returned by valloc is not zero'd
     memset(mem, 0, size); //need to zero memory, plus the pages won't have a physical address until they are used.
     mlock(mem, size); //note: mlock only ensures that the memory is always present in physical ram. It may be moved to a new physical address even after being locked!
     return mem;*/
+    size = ceilToPage(size);
     void *mem = mmap(
         NULL,   //let kernel place memory where it wants
         size,   //length
@@ -363,6 +371,7 @@ void* makeLockedMem(size_t size) {
 
 //free memory allocated with makeLockedMem
 void freeLockedMem(void* mem, size_t size) {
+    size = ceilToPage(size);
     //munlock(mem, size);
     //free(mem);
     munmap(mem, size);
