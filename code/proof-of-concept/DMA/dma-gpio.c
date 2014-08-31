@@ -88,6 +88,7 @@
 #include <fcntl.h> //for file opening
 #include <stdint.h> //for uint32_t
 #include <string.h> //for memset
+#include <errno.h> //for errno
 
 #define TIMER_BASE   0x20003000
 #define TIMER_CLO    0x00000004 //lower 32-bits of 1 MHz timer
@@ -340,13 +341,19 @@ uintptr_t virtToPhys(void* virt) {
     //So if virtual address is 0x1000000, read the value at *array* index 0x1000000/PAGE_SIZE and multiply that by PAGE_SIZE to get the physical address.
     //because files are bytestreams, one must explicitly multiply each byte index by 8 to treat it as a uint64_t array.
     int file = open("/proc/self/pagemap", 'r');
-    lseek(file, pgNum*8, SEEK_SET);
+    int err = lseek(file, pgNum*8, SEEK_SET);
+    if (err != pgNum*8) {
+        printf("WARNING: virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
+    }
     read(file, &physPage, 8);
     if (!physPage & (1ull<<63)) {
         printf("WARNING: virtToPhys %p has no physical address\n", virt);
     }
+    close(file);
     physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
-    return (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
+    uintptr_t mapped = (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
+    printf("virtToPhys 0x%08x -> 0x%08x\n", virt, mapped);
+    return mapped;
 }
 
 //allocate some memory and lock it so that its physical address will never change
@@ -373,16 +380,17 @@ void* makeLockedMem(size_t size) {
         printf("mmap not page-aligned: %p\n", mem);
         exit(1);
     }
-    mlock(mem, size);
+    //mlock(mem, size);
     for (int i=0; i<size; i+=PAGE_SIZE) {
         *(int*)(mem+i) = 1; //force into ram
     }
-    mlock(mem, size);
+    //mlock(mem, size);
     memset(mem, 0, size);
-    mlock(mem, size);
+    //mlock(mem, size);
     for (int i=0; i<size; i+=4) {
         *(int*)(mem+i) = i; //force into ram
     }
+    mlock(mem, size);
     return mem;
 }
 
@@ -567,7 +575,7 @@ int main() {
             cbArr[i+1].NEXTCONBK = virtToPhys(cbArr + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
             printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
         }
-        for (int i=0; i<maxIdx; i+=PAGE_SIZE) {
+        for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
             printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr));
         }
         sleep(1);
