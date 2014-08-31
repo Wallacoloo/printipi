@@ -557,27 +557,15 @@ int main() {
     srcArray[numSrcBlocks/2*8+6] = 0; //padding
     srcArray[numSrcBlocks/2*8+7] = 0; //padding
     
-    //allocate memory for the control blocks
-    printf("sizeof(struct DmaControlBlock): %i\n", sizeof(struct DmaControlBlock));
-    size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 2; //2 cbs for each source block
-    void *virtCbPage = makeLockedMem(cbPageBytes);
-    
+    //configure PWM clock:
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | ((*(clockBaseMem + CM_PWMCTL/4))&(~CM_PWMCTL_ENAB)); //disable clock
     do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY); //wait for clock to deactivate
     *(clockBaseMem + CM_PWMDIV/4) = CM_PWMDIV_PASSWD | CM_PWMDIV_DIVI(50); //configure clock divider (running at 500MHz undivided)
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD; //source 500MHz base clock, no MASH.
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD | CM_PWMCTL_ENAB; //enable clock
     do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY == 0); //wait for clock to activate
-    //*(clockBaseMem + CM_PWMCTL/4) = 0x5A000006; // Source=PLLD (500MHz)
-    //udelay(100);
-    //*(clockBaseMem + CM_PWMDIV/4) = 0x5A000000 | (50<<12); // set pwm div to 50, giving 10MHz
-    //udelay(100);
-    //*(clockBaseMem + CM_PWMCTL/4) = 0x5A000016; // Source=PLLD and enable
     
-    //dedicate the first 8 bytes of this page to holding the cb.
-    //struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
-    //struct DmaControlBlock *cb2 = (struct DmaControlBlock*)(virtCbPage+1*DMA_CONTROL_BLOCK_ALIGNMENT);
-    //struct DmaControlBlock *cb3 = (struct DmaControlBlock*)(virtCbPage+2*DMA_CONTROL_BLOCK_ALIGNMENT);
+    //configure rest of PWM:
     struct PwmHeader *pwmHeader = (struct PwmHeader*)(pwmBaseMem);
     
     pwmHeader->DMAC = 0; //disable DMA
@@ -591,28 +579,40 @@ int main() {
     pwmHeader->RNG1 = 10; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
+    //allocate memory for the control blocks
+    printf("sizeof(struct DmaControlBlock): %i\n", sizeof(struct DmaControlBlock));
+    size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 3; //3 cbs for each source block
+    void *virtCbPage = makeLockedMem(cbPageBytes);
     //fill the control blocks:
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
     int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
-    printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
+    printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, numSrcBlocks);
     printf("virt cb[%i] -> phys: 0x%08x\n", 0, virtToPhys((void*)cbArr));
     //for (int _x=0; ; ++_x) {
-        for (int i=0; i<maxIdx; i += 2) {
+        for (int i=0; i<maxIdx; i += 3) {
+            //copy buffer to GPIOs
             cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/2*32); //(uint32_t)(physSrcPage + i/2*24);
+            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/2*32);
             cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
             cbArr[i].TXFR_LEN = 32;
             cbArr[i].STRIDE = 0;
-            cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1); //(uint32_t)physCbPage + ((void*)&cbArr[i+1] - virtCbPage);
-            
-            cbArr[i+1].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
-            cbArr[i+1].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
-            cbArr[i+1].TXFR_LEN = 4;
+            cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1);
+            //clear buffer
+            cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
+            cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage);
+            cbArr[i+1].DEST_AD = cbArr[i].SOURCE_AD;
+            cbArr[i+1].TXFR_LEN = 32;
             cbArr[i+1].STRIDE = 0;
-            int nextIdx = i+2 < maxIdx ? i+2 : 0;
-            cbArr[i+1].NEXTCONBK = virtToPhys(cbArr + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
-            printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
+            cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2);
+            //pace DMA through PWM
+            cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
+            cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
+            cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
+            cbArr[i+2].TXFR_LEN = 4;
+            cbArr[i+2].STRIDE = 0;
+            int nextIdx = i+3 < maxIdx ? i+3 : 0;
+            cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+            //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
         }
         for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
             printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr));
