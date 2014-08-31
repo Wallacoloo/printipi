@@ -274,7 +274,7 @@ struct DmaControlBlock {
     volatile uint32_t SOURCE_AD; //Source address
     volatile uint32_t DEST_AD; //Destination address
     volatile uint32_t TXFR_LEN; //transfer length.
-    volatile uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
+    volatile uint32_t STRIDE; //2D Mode Stride (amount to increment/decrement src/dest after each 1d copy when in 2d mode). Only used if TI.TDMODE = 1
     volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     uint32_t _reserved[2];
 };
@@ -342,10 +342,10 @@ uintptr_t virtToPhys(void* virt) {
     int file = open("/proc/self/pagemap", 'r');
     lseek(file, pgNum*8, SEEK_SET);
     read(file, &physPage, 8);
-    if (!physPage & (1ul<<63)) {
+    if (!physPage & (1ull<<63)) {
         printf("WARNING: virtToPhys %p has no physical address\n", virt);
     }
-    physPage = physPage & ~(0x1fful << 55); //bits 55-63 are flags.
+    physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
     return (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
 }
 
@@ -548,7 +548,7 @@ int main() {
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
     int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, maxIdx/2);
-    printf("virt cb base: 0x%08x\n", virtToPhys(cbArr));
+    printf("virt cb[%i] -> phys: 0x%08x\n", 0, virtToPhys((void*)cbArr));
     for (int _x=0; ; ++_x) {
         for (int i=0; i<maxIdx; i += 2) {
             cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
@@ -567,7 +567,9 @@ int main() {
             cbArr[i+1].NEXTCONBK = virtToPhys(cbArr + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
             printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
         }
-        printf("virt cb base: 0x%08x\n", virtToPhys(cbArr));
+        for (int i=0; i<maxIdx; i+=PAGE_SIZE) {
+            printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr));
+        }
         sleep(1);
     }
     int dmaCh = 3;
