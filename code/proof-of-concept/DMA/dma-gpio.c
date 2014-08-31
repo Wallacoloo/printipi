@@ -9,6 +9,7 @@
  * pg 119 for PCM
  * pg 138 for PWM
  * pg 172 for timer info
+ * Addendum is http://www.scribd.com/doc/127599939/BCM2835-Audio-clocks
  *
  * A few annotations for GPIO/DMA/PWM are available here: https://github.com/626Pilot/RaspberryPi-NeoPixel-WS2812/blob/master/ws2812-RPi.c
  *   https://github.com/metachris/raspberrypi-pwm/blob/master/rpio-pwm/rpio_pwm.c
@@ -35,6 +36,9 @@
  **Or use 1 dma channel, but additionally write to a dreq-able peripheral (PWM):
  *   By using control-blocks, one can copy a word to the GPIOs, then have the next CB copy a word to the PWM fifo, and repeat
  *   By having BOTH control-blocks be dreq-limited by the PWM's dreq, they can BOTH be rate-limited.
+ *   PWM clock works as so: 500MHz / clock_div = PWM_BITRATE (note: bitrate!)
+ *     PWM_BITRATE / PWM_RNG1 = #of FIFO writes/sec
+ *     Max PWM_BITRATE = 25MHz
  *
  * DMA Control Block layout:
  *   repeat #srcBlock times:
@@ -123,7 +127,7 @@
 
 //physical addresses for the DMA peripherals, as found in the processor documentation:
 #define DMA_BASE 0x20007000
-#define DMACH(n) (0x100*n)
+#define DMACH(n) (0x100*(n))
 //DMA Channel register sets (format of these registers is found in DmaChannelHeader struct):
 //#define DMACH0   0x00000000
 //#define DMACH1   0x00000100
@@ -186,13 +190,40 @@
 #define PWM_STA_ERRS PWM_STA_BUSERR | PWM_STA_GAPERRS | PWM_STA_FIFOREADERR | PWM_STA_FIFOWRITEERR
 
 #define PWM_DMAC_EN (1<<31)
-#define PWM_DMAC_PANIC(P) ((P&0xff)<<8)
-#define PWM_DMAC_DREQ(D) ((D&0xff)<<0)
+#define PWM_DMAC_PANIC(P) (((P)&0xff)<<8)
+#define PWM_DMAC_DREQ(D) (((D)&0xff)<<0)
 
 //The following is undocumented :( Taken from https://github.com/metachris/raspberrypi-pwm/blob/master/rpio-pwm/rpio_pwm.c
 #define CLOCK_BASE 0x20101000
-#define PWMCLK_CNTL 160
-#define PWMCLK_DIV 164
+//#define PWMCLK_CNTL 160
+//#define PWMCLK_DIV 164
+
+#define CM_PWMCTL 0xa0
+#define CM_PWMDIV 0xa4
+//each write to CM_PWMTL and CM_PWMDIV requires the password to be written:
+#define CM_PWMCTL_PASSWD 0x5a000000
+#define CM_PWMDIV_PASSWD 0x5a000000
+//MASH is used to achieve fractional clock dividers by introducing artificial jitter.
+//if you want constant frequency (even if it may not be at 100% CORRECT frequency), use MASH0
+//if clock divisor is integral, then there's no need to use MASH, and anything above MASH1 can introduce jitter.
+#define CM_PWMCTL_MASH(x) (((x)&0x3) << 9)
+#define CM_PWMCTL_MASH0 CM_PWMTRL_MASH(0)
+#define CM_PWMCTL_MASH1 CM_PWMTRL_MASH(1)
+#define CM_PWMCTL_MASH2 CM_PWMTRL_MASH(2)
+#define CM_PWMCTL_MASH3 CM_PWMTRL_MASH(3)
+#define CM_PWMCTL_FLIP (1<<8) //use to inverse clock polarity
+#define CM_PWMCTL_BUSY (1<<7) //read-only flag that indicates clock generator is running.
+#define CM_PWMCTL_KILL (1<<5) //write a 1 to stop & reset clock generator. USED FOR DEBUG ONLY
+#define CM_PWMCTL_ENAB (1<<4) //gracefully stop/start clock generator. BUSY flag will go low once clock is off.
+#define CM_PWMCTL_SRC(x) ((x)&0xf) //clock source. 0=gnd. 1=oscillator. 2-3=debug. 4=PLLA per. 5=PLLC per. 6=PLLD per. 7=HDMI aux. 8-15=GND
+#define CM_PWMCTL_SRC_OSC CM_PWMCTL_SRC(1)
+#define CM_PWMCTL_SRC_PLLA CM_PWMCTL_SRC(4)
+#define CM_PWMCTL_SRC_PLLC CM_PWMCTL_SRC(5)
+#define CM_PWMCTL_SRC_PLLD CM_PWMCTL_SRC(6)
+
+//max clock divisor is 4095
+#define CM_PWMDIV_DIVI(x) (((x)&0xfff) << 12)
+#define CM_PWMDIV_DIVF(x) ((x)&0xfff)
 
 //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
 //eg if x = 0b11001100
@@ -529,11 +560,17 @@ int main() {
     size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 2; //2 cbs for each source block
     void *virtCbPage = makeLockedMem(cbPageBytes);
     
-    *(clockBaseMem + PWMCLK_CNTL/4) = 0x5A000006; // Source=PLLD (500MHz)
-    udelay(100);
-    *(clockBaseMem + PWMCLK_DIV/4) = 0x5A000000 | (50<<12); // set pwm div to 50, giving 10MHz
-    udelay(100);
-    *(clockBaseMem + PWMCLK_CNTL/4) = 0x5A000016; // Source=PLLD and enable
+    *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | ((*(clockBaseMem + CM_PWMCTL/4))&(~CM_PWMCTL_ENAB)); //disable clock
+    do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY); //wait for clock to deactivate
+    *(clockBaseMem + CM_PWMDIV/4) = CM_PWMDIV_PASSWD | CM_PWMDIV_DIVI(50); //configure clock divider (running at 500MHz undivided)
+    *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD; //source 500MHz base clock, no MASH.
+    *(clockBaseMem + CM_PWMCTL/4) = *(clockBaseMem + CM_PWMCTL/4) | CM_PWMCTL_ENAB; //enable clock
+    do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY == 0); //wait for clock to activate
+    //*(clockBaseMem + CM_PWMCTL/4) = 0x5A000006; // Source=PLLD (500MHz)
+    //udelay(100);
+    //*(clockBaseMem + CM_PWMDIV/4) = 0x5A000000 | (50<<12); // set pwm div to 50, giving 10MHz
+    //udelay(100);
+    //*(clockBaseMem + CM_PWMCTL/4) = 0x5A000016; // Source=PLLD and enable
     
     //dedicate the first 8 bytes of this page to holding the cb.
     //struct DmaControlBlock *cb1 = (struct DmaControlBlock*)virtCbPage;
@@ -549,7 +586,7 @@ int main() {
     udelay(100);
     
     pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(7) | PWM_DMAC_PANIC(7);
-    pwmHeader->RNG1 = 32; //32-bit output periods (used only for timing purposes)
+    pwmHeader->RNG1 = 10; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
     //fill the control blocks:
