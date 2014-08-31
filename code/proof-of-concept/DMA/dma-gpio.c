@@ -142,6 +142,10 @@
 //flags used in the DmaChannelHeader struct:
 #define DMA_CS_RESET (1<<31)
 #define DMA_CS_ABORT (1<<30)
+#define DMA_CS_PRIORITY(x) ((x)&0xf << 16) //higher priority DMA transfers are serviced first, it would appear
+#define DMA_CS_PRIORITY_MAX DMA_CS_PRIORITY(7)
+#define DMA_CS_PANIC_PRIORITY(x) ((x)&0xf << 20)
+#define DMA_CS_PANIC_PRIORITY_MAX DMA_CS_PANIC_PRIORITY(7)
 #define DMA_CS_END (1<<1)
 #define DMA_CS_ACTIVE (1<<0)
 
@@ -635,7 +639,7 @@ int main() {
     //dmaHeader->CONBLK_AD = 0;
     dmaHeader->CONBLK_AD = virtToPhys(cbArr); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     //uint64_t t1 = readSysTime(timerBaseMem);
-    dmaHeader->CS = DMA_CS_ACTIVE; //set active bit, but everything else is 0.
+    dmaHeader->CS = DMA_CS_PRIORITY(6) | DMA_CS_PANIC_PRIORITY(6) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
     printf("DMA Active\n");
     while (dmaHeader->CS & DMA_CS_ACTIVE) {
