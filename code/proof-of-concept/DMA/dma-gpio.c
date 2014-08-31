@@ -326,8 +326,8 @@ struct PwmHeader {
 };
 
 size_t ceilToPage(size_t size) {
-    if (size & ~(PAGE_SIZE-1)) { //round up to nearest page-size
-        size += PAGE_SIZE - (size & ~(PAGE_SIZE-1));
+    if (size & (PAGE_SIZE-1)) { //round up to nearest page-size
+        size += PAGE_SIZE - (size & (PAGE_SIZE-1));
     }
     return size;
 }
