@@ -519,8 +519,8 @@ int main() {
     timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
     clockBaseMem = mapPeripheral(memfd, CLOCK_BASE);
     
-    int outPin = 4;
-    //now set our pin (#4) as an output:
+    int outPin = 10;
+    //now set our pin as an output:
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + outPin/10);
     writeBitmasked(fselAddr, 0x7 << (3*(outPin%10)), 0x1 << (3*(outPin%10)));
     //set gpio 18 as alt (for pwm):
