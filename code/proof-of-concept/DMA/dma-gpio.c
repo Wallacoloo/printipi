@@ -193,11 +193,8 @@
 #define PWM_DMAC_PANIC(P) (((P)&0xff)<<8)
 #define PWM_DMAC_DREQ(D) (((D)&0xff)<<0)
 
-//The following is undocumented :( Taken from https://github.com/metachris/raspberrypi-pwm/blob/master/rpio-pwm/rpio_pwm.c
+//The following is undocumented :( Taken from http://www.scribd.com/doc/127599939/BCM2835-Audio-clocks
 #define CLOCK_BASE 0x20101000
-//#define PWMCLK_CNTL 160
-//#define PWMCLK_DIV 164
-
 #define CM_PWMCTL 0xa0
 #define CM_PWMDIV 0xa4
 //each write to CM_PWMTL and CM_PWMDIV requires the password to be written:
@@ -564,7 +561,7 @@ int main() {
     do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY); //wait for clock to deactivate
     *(clockBaseMem + CM_PWMDIV/4) = CM_PWMDIV_PASSWD | CM_PWMDIV_DIVI(50); //configure clock divider (running at 500MHz undivided)
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD; //source 500MHz base clock, no MASH.
-    *(clockBaseMem + CM_PWMCTL/4) = *(clockBaseMem + CM_PWMCTL/4) | CM_PWMCTL_ENAB; //enable clock
+    *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD | CM_PWMCTL_ENAB; //enable clock
     do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY == 0); //wait for clock to activate
     //*(clockBaseMem + CM_PWMCTL/4) = 0x5A000006; // Source=PLLD (500MHz)
     //udelay(100);
