@@ -592,7 +592,7 @@ int main() {
         for (int i=0; i<maxIdx; i += 3) {
             //copy buffer to GPIOs
             cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/2*32);
+            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32);
             cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
             cbArr[i].TXFR_LEN = 32;
             cbArr[i].STRIDE = 0;
@@ -600,7 +600,7 @@ int main() {
             //clear buffer
             cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
             cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage);
-            cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/2*32);
+            cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*32);
             cbArr[i+1].TXFR_LEN = 32;
             cbArr[i+1].STRIDE = 0;
             cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2);
