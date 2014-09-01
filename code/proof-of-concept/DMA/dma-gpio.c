@@ -638,17 +638,12 @@ int main() {
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     //dmaHeader->CONBLK_AD = 0;
     dmaHeader->CONBLK_AD = virtToPhys(cbArr); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
-    //uint64_t t1 = readSysTime(timerBaseMem);
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
     printf("DMA Active\n");
     while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
     } //wait for DMA transfer to complete.
-    //uint64_t t2 = readSysTime(timerBaseMem);
-    //cleanup
-    //freeVirtPhysPage(virtCbPage);
-    //freeVirtPhysPage(virtSrcPage);
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
     freeLockedMem(virtSrcPage, srcPageBytes);
