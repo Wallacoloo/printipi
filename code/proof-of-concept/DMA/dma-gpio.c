@@ -94,6 +94,9 @@
 #include <string.h> //for memset
 #include <errno.h> //for errno
 
+//config settings:
+#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
+
 #define TIMER_BASE   0x20003000
 #define TIMER_CLO    0x00000004 //lower 32-bits of 1 MHz timer
 #define TIMER_CHI    0x00000008 //upper 32-bits
@@ -496,6 +499,36 @@ void cleanupAndExit(int sig) {
     exit(1);
 }
 
+uint64_t clockMicros() {
+    struct timespec tnow;
+    clock_gettime(CLOCK_MONOTONIC, &tnow);
+    return (tnow.tv_nsec/1000) + ((uint64_t)1000000)*((uint64_t)tnow.tv_sec);
+}
+void sleepUntilMicros(uint64_t micros) {
+    while (micros - clockMicros() > 0) { //clock_nanosleep can be interrupted, hence the while loop.
+        struct timespec t;
+        t.tv_sec = micros/1000000;
+        t.tv_nsec = (micros - t.tv_sec*1000000)*1000;
+        clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
+    }
+}
+
+void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaChannelHeader* dmaHeader) {
+    //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
+    sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
+    uint64_t curTime1, curTime2;
+    uint32_t curBlock;
+    //get the current source index at the current time.
+    //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
+    do {
+        curTime1 = clockMicros();
+        curBlock = dmaHeader->CONBLK_AD;
+        curTime2 = clockMicros();
+    } while (curTime2-curTime1 > 1); //allow 1 uS variability.
+    //Time to queue the command:
+    printf("Queueing: 0x%08x\n", curBlock);
+}
+
 int main() {
     //emergency clean-up:
     for (int i = 0; i < 64; i++) { //catch all shutdown signals to kill the DMA engine:
@@ -531,7 +564,7 @@ int main() {
     
     //configure DMA...
     //First, allocate memory for the source:
-    size_t numSrcBlocks = 8192; //We want apx 1M blocks/sec.
+    size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
     size_t srcPageBytes = numSrcBlocks*32;
     void *virtSrcPage = makeLockedMem(srcPageBytes);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
@@ -641,9 +674,13 @@ int main() {
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
     printf("DMA Active\n");
-    while (dmaHeader->CS & DMA_CS_ACTIVE) {
+    /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
-    } //wait for DMA transfer to complete.
+    } //wait for DMA transfer to complete.*/
+    uint64_t startTime = clockMicros();
+    for (int i=0; ; ++i) {
+        queue(outPin, i%2, startTime + 500000*i, srcArray, dmaHeader);
+    }
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
     freeLockedMem(virtSrcPage, srcPageBytes);
