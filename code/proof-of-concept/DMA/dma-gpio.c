@@ -77,6 +77,7 @@
  *    dma header points to the physical CONBLOCK_AD. This can be linked to the virtual source address via a map.
  *    OR: STRIDE register is unused in 1D mode. Could write the src index that this block is linked to in that register. But then we can't use stride feature.
  *      Rather, we can't use the stride feature on ONE cb per frame. So, use stride on the buffer->GPIO cb, and use the stride register to indicate index on the zeros-copy and the PWM cb. Can tell which CB we're looking at based on the 2DEN flag. If we're looking at the buffer->GPIO cb, then instead look at NEXTCON_BK
+ *    NOTE: if 2d stride is disabled, it appears that the DMA engine doesn't even load the STRIDE register (it's read as garbage). It may PERHAPS display the last loaded word.
  *    Note: unused fields are read as "Don't care", meaning we can't use them to store user-data.
  *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
@@ -165,16 +166,24 @@
 #define DMA_DEBUG_READ_LAST_NOT_SET_ERROR (1<<0)
 
 //flags used in the DmaControlBlock struct:
-#define DMA_CB_TI_DEST_INC    (1<<4)
-#define DMA_CB_TI_DEST_DREQ   (1<<6)
-#define DMA_CB_TI_SRC_INC     (1<<8)
-#define DMA_CB_TI_SRC_DREQ    (1<<10)
+#define DMA_CB_TI_NO_WIDE_BURSTS (1<<26)
 #define DMA_CB_TI_PERMAP_NONE (0<<16)
 #define DMA_CB_TI_PERMAP_DSI  (1<<16)
 //... (more found on page 61 of BCM2835 pdf
 #define DMA_CB_TI_PERMAP_PWM  (5<<16)
 //...
-#define DMA_CB_TI_NO_WIDE_BURSTS (1<<26)
+#define DMA_CB_TI_SRC_DREQ    (1<<10)
+#define DMA_CB_TI_SRC_INC     (1<<8)
+#define DMA_CB_TI_DEST_DREQ   (1<<6)
+#define DMA_CB_TI_DEST_INC    (1<<4)
+#define DMA_CB_TI_TDMODE      (1<<1)
+
+
+#define DMA_CB_TXFR_LEN_YLENGTH(y) (((y)&0x4fff) << 16)
+#define DMA_CB_TXFR_LEN_XLENGTH(x) ((x)&0xffff)
+#define DMA_CB_STRIDE_D_STRIDE(x)  (((x)&0xffff) << 16)
+#define DMA_CB_STRIDE_S_STRIDE(x)  ((x)&0xffff)
+
 
 //Dma Control Blocks must be located at addresses that are multiples of 32 bytes
 #define DMA_CONTROL_BLOCK_ALIGNMENT 32 
@@ -318,7 +327,13 @@ struct DmaControlBlock {
     volatile uint32_t SOURCE_AD; //Source address
     volatile uint32_t DEST_AD; //Destination address
     volatile uint32_t TXFR_LEN; //transfer length.
+        //in 2D mode, TXFR_LEN is separated into two half-words to indicate Y transfers of length X, and STRIDE is added to the src/dest address after each transfer of length X.
+        //30:31 unused
+        //16-29 YLENGTH
+        //0-15  XLENGTH
     volatile uint32_t STRIDE; //2D Mode Stride (amount to increment/decrement src/dest after each 1d copy when in 2d mode). Only used if TI.TDMODE = 1
+        //16-31 D_STRIDE; signed (2's complement) byte increment/decrement to apply to destination addr after each XLENGTH transfer
+        //0-15  S_STRIDE; signed (2's complement) byte increment/decrement to apply to source addr after each XLENGTH transfer
     volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     uint32_t _reserved[2];
 };
@@ -661,18 +676,19 @@ int main() {
     //for (int _x=0; ; ++_x) {
         for (int i=0; i<maxIdx; i += 3) {
             //copy buffer to GPIOs
-            cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
+            cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
             cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
             cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
-            cbArr[i].TXFR_LEN = 32;
-            cbArr[i].STRIDE = i/3; //0;
+            cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(0) | DMA_CB_TXFR_LEN_XLENGTH(32);
+            //cbArr[i].TXFR_LEN = 32;
+            cbArr[i].STRIDE = 0;
             cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
             //clear buffer
             cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
             cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
             cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
             cbArr[i+1].TXFR_LEN = 32;
-            cbArr[i+1].STRIDE = i/3; //0;
+            cbArr[i+1].STRIDE = 0;
             cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
             //pace DMA through PWM
             cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
@@ -680,7 +696,7 @@ int main() {
             cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
             cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
             cbArr[i+2].TXFR_LEN = 4;
-            cbArr[i+2].STRIDE = i/3; //0;
+            cbArr[i+2].STRIDE = 0;
             int nextIdx = i+3 < maxIdx ? i+3 : 0;
             cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
             //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
