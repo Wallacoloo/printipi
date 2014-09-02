@@ -338,6 +338,10 @@ struct DmaControlBlock {
     uint32_t _reserved[2];
 };
 
+void logDmaControlBlock(struct DmaControlBlock *b) {
+    printf("Dma Control Block:\n TI: 0x%08x\n SOURCE_AD: 0x%08x\n DEST_AD: 0x%08x\n TXFR_LEN: 0x%08x\n STRIDE: 0x%08x\n NEXTCONBK: 0x%08x\n unused: 0x%08x %08x\n", b->TI, b->SOURCE_AD, b->DEST_AD, b->TXFR_LEN, b->STRIDE, b->NEXTCONBK, b->_reserved[0], b->_reserved[1]);
+}
+
 struct PwmHeader {
     volatile uint32_t CTL;  // 0x00000000 //control register
         //16-31 reserved
@@ -704,6 +708,7 @@ int main() {
             cbArr[i+2].STRIDE = 0;
             int nextIdx = i+3 < maxIdx ? i+3 : 0;
             cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+            logDmaControlBlock(cbArr+i);
             //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
         }
         for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
