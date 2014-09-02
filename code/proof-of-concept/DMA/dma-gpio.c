@@ -391,6 +391,18 @@ uintptr_t virtToPhys(void* virt) {
     return mapped;
 }
 
+void* physToVirt(uintptr_t phys, void* virtPageStart, void* virtPageEnd) {
+    void* page = (void*)(((uintptr_t)virtPageStart) &~(PAGE_SIZE-1));
+    uint32_t physPage = phys &~(PAGE_SIZE-1);
+    uint32_t byteOffsetFromPage = phys & (PAGE_SIZE-1);
+    for(; page < virtPageEnd; page += PAGE_SIZE) { //iterate through all pages in set and see if they map to the same page which the physical address is on
+        if (virtToPhys(page) == physPage) {
+            return page + byteOffsetFromPage;
+        }
+    }
+    return NULL;
+}
+
 //allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
     /*void* mem = valloc(size); //memory returned by valloc is not zero'd
@@ -505,7 +517,7 @@ uint64_t clockMicros() {
     return (tnow.tv_nsec/1000) + ((uint64_t)1000000)*((uint64_t)tnow.tv_sec);
 }
 void sleepUntilMicros(uint64_t micros) {
-    while (micros - clockMicros() > 0) { //clock_nanosleep can be interrupted, hence the while loop.
+    while (micros > clockMicros()) { //clock_nanosleep can be interrupted, hence the while loop.
         struct timespec t;
         t.tv_sec = micros/1000000;
         t.tv_nsec = (micros - t.tv_sec*1000000)*1000;
@@ -513,7 +525,7 @@ void sleepUntilMicros(uint64_t micros) {
     }
 }
 
-void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaChannelHeader* dmaHeader) {
+void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaControlBlock* cbArr, struct DmaChannelHeader* dmaHeader) {
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
     uint64_t curTime1, curTime2;
@@ -526,7 +538,8 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCha
         curTime2 = clockMicros();
     } while (curTime2-curTime1 > 1); //allow 1 uS variability.
     //Time to queue the command:
-    printf("Queueing: 0x%08x\n", curBlock);
+    void* virtBlock = physToVirt(curBlock, cbArr, cbArr+3*SOURCE_BUFFER_FRAMES);
+    printf("Queueing: 0x%08x-> 0x%08x\n", curBlock, virtBlock);
 }
 
 int main() {
@@ -679,7 +692,7 @@ int main() {
     } //wait for DMA transfer to complete.*/
     uint64_t startTime = clockMicros();
     for (int i=0; ; ++i) {
-        queue(outPin, i%2, startTime + 500000*i, srcArray, dmaHeader);
+        queue(outPin, i%2, startTime + 500000*i, srcArray, cbArr, dmaHeader);
     }
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
