@@ -76,6 +76,7 @@
  *  How to determine the current source word being processed?
  *    dma header points to the physical CONBLOCK_AD. This can be linked to the virtual source address via a map.
  *    OR: STRIDE register is unused in 1D mode. Could write the src index that this block is linked to in that register. But then we can't use stride feature.
+ *      Rather, we can't use the stride feature on ONE cb per frame. So, use stride on the buffer->GPIO cb, and use the stride register to indicate index on the zeros-copy and the PWM cb. Can tell which CB we're looking at based on the 2DEN flag. If we're looking at the buffer->GPIO cb, then instead look at NEXTCON_BK
  *    Note: unused fields are read as "Don't care", meaning we can't use them to store user-data.
  *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
@@ -543,7 +544,6 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
         curBlock = dmaHeader->CONBLK_AD;
         curTime2 = clockMicros();
     } while (curTime2-curTime1 > 1); //allow 1 uS variability.
-    //Time to queue the command:
     struct DmaControlBlock *virtBlock = (struct DmaControlBlock*)physToVirt(curBlock, cbArr, cbArr+3*SOURCE_BUFFER_FRAMES, pagemapfd);
     uint32_t physSrcAddr;
     if (virtBlock->SOURCE_AD == virtToPhys(zerosPage, pagemapfd)) {
@@ -552,8 +552,10 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
         physSrcAddr = virtBlock->SOURCE_AD;
     }
     void *virtSrcAddr = physToVirt(physSrcAddr, srcArray, srcArray+SOURCE_BUFFER_FRAMES*8, pagemapfd);
+    //Calculate the current index being handled and the desired one to modify:
     int srcIdx = (virtSrcAddr - (void*)srcArray)/4/8;
     int newIdx = (srcIdx + (micros - curTime2))%SOURCE_BUFFER_FRAMES;
+    //Now queue the command:
     if (mode == 0) { //turn output off
         srcArray[newIdx*8 + (pin>31) + 3] |= 1 << (pin%32);
     } else { //turn output on
@@ -663,14 +665,14 @@ int main() {
             cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
             cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
             cbArr[i].TXFR_LEN = 32;
-            cbArr[i].STRIDE = 0;
+            cbArr[i].STRIDE = i/3; //0;
             cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
             //clear buffer
             cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
             cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
             cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
             cbArr[i+1].TXFR_LEN = 32;
-            cbArr[i+1].STRIDE = 0;
+            cbArr[i+1].STRIDE = i/3; //0;
             cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
             //pace DMA through PWM
             cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
@@ -678,7 +680,7 @@ int main() {
             cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
             cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
             cbArr[i+2].TXFR_LEN = 4;
-            cbArr[i+2].STRIDE = 0;
+            cbArr[i+2].STRIDE = i/3; //0;
             int nextIdx = i+3 < maxIdx ? i+3 : 0;
             cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
             //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
@@ -710,9 +712,9 @@ int main() {
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
     printf("DMA Active\n");
-    /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
+    while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
-    } //wait for DMA transfer to complete.*/
+    } //wait for DMA transfer to complete.
     uint64_t startTime = clockMicros();
     for (int i=0; ; ++i) {
         queue(outPin, i%2, startTime + 5000*i, srcArray, cbArr, zerosPage, dmaHeader, pagemapfd);
