@@ -679,7 +679,7 @@ int main() {
             cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
             cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
             cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
-            cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(0) | DMA_CB_TXFR_LEN_XLENGTH(32);
+            cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(32);
             //cbArr[i].TXFR_LEN = 32;
             cbArr[i].STRIDE = 0;
             cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
