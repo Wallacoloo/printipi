@@ -525,7 +525,7 @@ void sleepUntilMicros(uint64_t micros) {
     }
 }
 
-void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaControlBlock* cbArr, struct DmaChannelHeader* dmaHeader) {
+void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaControlBlock* cbArr, void* zerosPage, struct DmaChannelHeader* dmaHeader) {
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
     uint64_t curTime1, curTime2;
@@ -538,8 +538,15 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
         curTime2 = clockMicros();
     } while (curTime2-curTime1 > 1); //allow 1 uS variability.
     //Time to queue the command:
-    void* virtBlock = physToVirt(curBlock, cbArr, cbArr+3*SOURCE_BUFFER_FRAMES);
-    printf("Queueing: 0x%08x-> 0x%08x\n", curBlock, virtBlock);
+    struct DmaControlBlock *virtBlock = (struct DmaControlBlock*)physToVirt(curBlock, cbArr, cbArr+3*SOURCE_BUFFER_FRAMES);
+    uint32_t physSrcAddr;
+    if (virtBlock->SOURCE_AD == virtToPhys(zerosPage)) {
+        physSrcAddr = virtBlock->DEST_AD;
+    } else {
+        physSrcAddr = virtBlock->SOURCE_AD;
+    }
+    void *virtSrcAddr = physToVirt(physSrcAddr, srcArray, srcArray+SOURCE_BUFFER_FRAMES*8);
+    printf("Queueing: 0x%08x-> 0x%08x (0x%08x)\n", curBlock, virtBlock, virtSrcAddr);
 }
 
 int main() {
@@ -652,7 +659,8 @@ int main() {
             cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2);
             //pace DMA through PWM
             cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
+            //cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
+            cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
             cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
             cbArr[i+2].TXFR_LEN = 4;
             cbArr[i+2].STRIDE = 0;
@@ -692,7 +700,7 @@ int main() {
     } //wait for DMA transfer to complete.*/
     uint64_t startTime = clockMicros();
     for (int i=0; ; ++i) {
-        queue(outPin, i%2, startTime + 500000*i, srcArray, cbArr, dmaHeader);
+        queue(outPin, i%2, startTime + 500000*i, srcArray, cbArr, zerosPage, dmaHeader);
     }
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
