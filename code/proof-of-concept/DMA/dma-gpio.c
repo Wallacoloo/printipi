@@ -71,6 +71,13 @@
  *   ...*512 words for 24frames grouped(120src words - 2 means pad to 120 words for src)
  *     As can be seen, this still requires extra padding. Could do 128 words for 5 frames, or 256 words for 11 frames (23.3 words/frame), and that requires funky math.
  *     The 24 frame option would work OK. 24 is a relatively easy number to work with, and 21.3 words/frame (limit is 21 words/frame)
+ *    Another solution is to use the 2D stride functionality. The source frame is really 4 words and the destination is really 2 words, a 1 word gap, and then the other 2 words. Thus 2d stride can be used to skip over that one word gap.
+ *
+ *  How to determine the current source word being processed?
+ *    dma header points to the physical CONBLOCK_AD. This can be linked to the virtual source address via a map.
+ *    OR: STRIDE register is unused in 1D mode. Could write the src index that this block is linked to in that register. But then we can't use stride feature.
+ *    Note: unused fields are read as "Don't care", meaning we can't use them to store user-data.
+ *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
  *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
  *
@@ -368,35 +375,35 @@ size_t ceilToPage(size_t size) {
     return size;
 }
 
-uintptr_t virtToPhys(void* virt) {
+uintptr_t virtToPhys(void* virt, int pagemapfd) {
     uintptr_t pgNum = (uintptr_t)(virt)/PAGE_SIZE;
     int byteOffsetFromPage = (uintptr_t)(virt)%PAGE_SIZE;
     uint64_t physPage;
     //pagemap is a uint64_t array where the index represents the virtual page number and the value at that index represents the physical page number.
     //So if virtual address is 0x1000000, read the value at *array* index 0x1000000/PAGE_SIZE and multiply that by PAGE_SIZE to get the physical address.
     //because files are bytestreams, one must explicitly multiply each byte index by 8 to treat it as a uint64_t array.
-    int file = open("/proc/self/pagemap", 'r');
-    int err = lseek(file, pgNum*8, SEEK_SET);
+    //int file = open("/proc/self/pagemap", 'r');
+    int err = lseek(pagemapfd, pgNum*8, SEEK_SET);
     if (err != pgNum*8) {
         printf("WARNING: virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
     }
-    read(file, &physPage, 8);
+    read(pagemapfd, &physPage, 8);
     if (!physPage & (1ull<<63)) {
         printf("WARNING: virtToPhys %p has no physical address\n", virt);
     }
-    close(file);
+    //close(file);
     physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
     uintptr_t mapped = (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
     //printf("virtToPhys 0x%08x -> 0x%08x\n", virt, mapped);
     return mapped;
 }
 
-void* physToVirt(uintptr_t phys, void* virtPageStart, void* virtPageEnd) {
+void* physToVirt(uintptr_t phys, void* virtPageStart, void* virtPageEnd, int pagemapfd) {
     void* page = (void*)(((uintptr_t)virtPageStart) &~(PAGE_SIZE-1));
     uint32_t physPage = phys &~(PAGE_SIZE-1);
     uint32_t byteOffsetFromPage = phys & (PAGE_SIZE-1);
     for(; page < virtPageEnd; page += PAGE_SIZE) { //iterate through all pages in set and see if they map to the same page which the physical address is on
-        if (virtToPhys(page) == physPage) {
+        if (virtToPhys(page, pagemapfd) == physPage) {
             return page + byteOffsetFromPage;
         }
     }
@@ -484,8 +491,7 @@ void printMem(volatile void *begin, int numChars) {
     printf("\n");
 }
 
-volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
-struct DmaChannelHeader *dmaHeader;
+struct DmaChannelHeader *dmaHeader; //must be global for cleanup()
 
 void cleanup() {
     printf("Cleanup\n");
@@ -525,7 +531,7 @@ void sleepUntilMicros(uint64_t micros) {
     }
 }
 
-void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaControlBlock* cbArr, void* zerosPage, struct DmaChannelHeader* dmaHeader) {
+void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaControlBlock* cbArr, void* zerosPage, struct DmaChannelHeader* dmaHeader, int pagemapfd) {
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
     uint64_t curTime1, curTime2;
@@ -538,14 +544,14 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
         curTime2 = clockMicros();
     } while (curTime2-curTime1 > 1); //allow 1 uS variability.
     //Time to queue the command:
-    struct DmaControlBlock *virtBlock = (struct DmaControlBlock*)physToVirt(curBlock, cbArr, cbArr+3*SOURCE_BUFFER_FRAMES);
+    struct DmaControlBlock *virtBlock = (struct DmaControlBlock*)physToVirt(curBlock, cbArr, cbArr+3*SOURCE_BUFFER_FRAMES, pagemapfd);
     uint32_t physSrcAddr;
-    if (virtBlock->SOURCE_AD == virtToPhys(zerosPage)) {
+    if (virtBlock->SOURCE_AD == virtToPhys(zerosPage, pagemapfd)) {
         physSrcAddr = virtBlock->DEST_AD;
     } else {
         physSrcAddr = virtBlock->SOURCE_AD;
     }
-    void *virtSrcAddr = physToVirt(physSrcAddr, srcArray, srcArray+SOURCE_BUFFER_FRAMES*8);
+    void *virtSrcAddr = physToVirt(physSrcAddr, srcArray, srcArray+SOURCE_BUFFER_FRAMES*8, pagemapfd);
     int srcIdx = (virtSrcAddr - (void*)srcArray)/4/8;
     int newIdx = (srcIdx + (micros - curTime2))%SOURCE_BUFFER_FRAMES;
     if (mode == 0) { //turn output off
@@ -557,6 +563,7 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
 }
 
 int main() {
+    volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
     //emergency clean-up:
     for (int i = 0; i < 64; i++) { //catch all shutdown signals to kill the DMA engine:
         struct sigaction sa;
@@ -572,6 +579,7 @@ int main() {
         printf("Failed to open /dev/mem (did you remember to run as root?)\n");
         exit(1);
     }
+    int pagemapfd = open("/proc/self/pagemap", 'r');
     //now map /dev/mem into memory, but only map specific peripheral sections:
     gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
     dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
@@ -594,7 +602,7 @@ int main() {
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
     size_t srcPageBytes = numSrcBlocks*32;
     void *virtSrcPage = makeLockedMem(srcPageBytes);
-    printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
+    printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage, pagemapfd));
     
     //write a few bytes to the source page:
     uint32_t *srcArray = (uint32_t*)virtSrcPage;
@@ -647,36 +655,36 @@ int main() {
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
     int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, numSrcBlocks);
-    printf("virt cb[%i] -> phys: 0x%08x\n", 0, virtToPhys((void*)cbArr));
+    printf("virt cb[%i] -> phys: 0x%08x\n", 0, virtToPhys((void*)cbArr, pagemapfd));
     //for (int _x=0; ; ++_x) {
         for (int i=0; i<maxIdx; i += 3) {
             //copy buffer to GPIOs
             cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32);
+            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
             cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
             cbArr[i].TXFR_LEN = 32;
             cbArr[i].STRIDE = 0;
-            cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1);
+            cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
             //clear buffer
             cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage);
-            cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*32);
+            cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
+            cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
             cbArr[i+1].TXFR_LEN = 32;
             cbArr[i+1].STRIDE = 0;
-            cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2);
+            cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
             //pace DMA through PWM
             cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
             //cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
-            cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
+            cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
             cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
             cbArr[i+2].TXFR_LEN = 4;
             cbArr[i+2].STRIDE = 0;
             int nextIdx = i+3 < maxIdx ? i+3 : 0;
-            cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+            cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
             //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
         }
         for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
-            printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr));
+            printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
         }
     //    sleep(1);
     //}
@@ -698,7 +706,7 @@ int main() {
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     //dmaHeader->CONBLK_AD = 0;
-    dmaHeader->CONBLK_AD = virtToPhys(cbArr); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
+    dmaHeader->CONBLK_AD = virtToPhys(cbArr, pagemapfd); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
     printf("DMA Active\n");
@@ -707,12 +715,14 @@ int main() {
     } //wait for DMA transfer to complete.*/
     uint64_t startTime = clockMicros();
     for (int i=0; ; ++i) {
-        queue(outPin, i%2, startTime + 5000*i, srcArray, cbArr, zerosPage, dmaHeader);
+        queue(outPin, i%2, startTime + 5000*i, srcArray, cbArr, zerosPage, dmaHeader, pagemapfd);
     }
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
     freeLockedMem(virtSrcPage, srcPageBytes);
     freeLockedMem(zerosPage, PAGE_SIZE);
+    close(pagemapfd);
+    close(memfd);
     //printf("system time: %llu\n", t1);
     //printf("system time: %llu\n", t2);
     return 0;
