@@ -553,7 +553,7 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
     } else { //turn output on
         srcArray[newIdx*8 + (pin>31) + 0] |= 1 << (pin%32);
     }
-    printf("Queueing: 0x%08x-> 0x%08x (0x%08x; %i->%i)\n", curBlock, virtBlock, virtSrcAddr, srcIdx, newIdx);
+    //printf("Queueing: 0x%08x-> 0x%08x (0x%08x; %i->%i)\n", curBlock, virtBlock, virtSrcAddr, srcIdx, newIdx);
 }
 
 int main() {
@@ -707,7 +707,7 @@ int main() {
     } //wait for DMA transfer to complete.*/
     uint64_t startTime = clockMicros();
     for (int i=0; ; ++i) {
-        queue(outPin, i%2, startTime + 500000*i, srcArray, cbArr, zerosPage, dmaHeader);
+        queue(outPin, i%2, startTime + 5000*i, srcArray, cbArr, zerosPage, dmaHeader);
     }
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
