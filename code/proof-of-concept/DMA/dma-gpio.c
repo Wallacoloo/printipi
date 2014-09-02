@@ -546,7 +546,8 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
         physSrcAddr = virtBlock->SOURCE_AD;
     }
     void *virtSrcAddr = physToVirt(physSrcAddr, srcArray, srcArray+SOURCE_BUFFER_FRAMES*8);
-    printf("Queueing: 0x%08x-> 0x%08x (0x%08x)\n", curBlock, virtBlock, virtSrcAddr);
+    int srcIdx = (virtSrcAddr - (void*)srcArray)/4;
+    printf("Queueing: 0x%08x-> 0x%08x (0x%08x; %i)\n", curBlock, virtBlock, virtSrcAddr, srcIdx);
 }
 
 int main() {
