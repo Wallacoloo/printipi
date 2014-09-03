@@ -625,7 +625,7 @@ int main() {
         printf("Failed to open /dev/mem (did you remember to run as root?)\n");
         exit(1);
     }
-    int pagemapfd = open("/proc/self/pagemap", 'r');
+    int pagemapfd = open("/proc/self/pagemap", O_RDONLY);
     //now map /dev/mem into memory, but only map specific peripheral sections:
     gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
     dmaBaseMem = mapPeripheral(memfd, DMA_BASE);
@@ -717,7 +717,7 @@ int main() {
             //cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
             //cbArr[i].STRIDE = i/3; //0;
             cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
-            cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(12) | DMA_CB_STRIDE_S_STRIDE(8);
+            cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
             cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
             //clear buffer
             //cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
