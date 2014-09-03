@@ -411,19 +411,17 @@ uintptr_t virtToPhys(void* virt, int pagemapfd) {
     uintptr_t pgNum = (uintptr_t)(virt)/PAGE_SIZE;
     int byteOffsetFromPage = (uintptr_t)(virt)%PAGE_SIZE;
     uint64_t physPage;
-    //pagemap is a uint64_t array where the index represents the virtual page number and the value at that index represents the physical page number.
+    ///proc/self/pagemap is a uint64_t array where the index represents the virtual page number and the value at that index represents the physical page number.
     //So if virtual address is 0x1000000, read the value at *array* index 0x1000000/PAGE_SIZE and multiply that by PAGE_SIZE to get the physical address.
     //because files are bytestreams, one must explicitly multiply each byte index by 8 to treat it as a uint64_t array.
-    //int file = open("/proc/self/pagemap", 'r');
     int err = lseek(pagemapfd, pgNum*8, SEEK_SET);
     if (err != pgNum*8) {
         printf("WARNING: virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
     }
     read(pagemapfd, &physPage, 8);
-    if (!physPage & (1ull<<63)) {
+    if (!physPage & (1ull<<63)) { //bit 63 is set to 1 if the page is present in ram
         printf("WARNING: virtToPhys %p has no physical address\n", virt);
     }
-    //close(file);
     physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
     uintptr_t mapped = (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
     //printf("virtToPhys 0x%08x -> 0x%08x\n", virt, mapped);
@@ -466,16 +464,11 @@ void* makeLockedMem(size_t size) {
         printf("mmap not page-aligned: %p\n", mem);
         exit(1);
     }
-    //mlock(mem, size);
+    /*//mlock(mem, size);
     for (int i=0; i<size; i+=PAGE_SIZE) {
         *(int*)(mem+i) = 1; //force into ram
-    }
-    //mlock(mem, size);
-    memset(mem, 0, size);
-    //mlock(mem, size);
-    /*for (int i=0; i<size; i+=4) {
-        *(int*)(mem+i) = i; //force into ram
     }*/
+    memset(mem, 0, size);
     mlock(mem, size);
     return mem;
 }
