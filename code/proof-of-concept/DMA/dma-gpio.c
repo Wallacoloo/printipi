@@ -556,7 +556,7 @@ void sleepUntilMicros(uint64_t micros) {
     }
 }
 
-void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray, struct DmaControlBlock* cbArr, void* zerosPage, struct DmaChannelHeader* dmaHeader, int pagemapfd) {
+void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray, struct DmaControlBlock* cbArr, volatile uint32_t* timerBaseMem, struct DmaChannelHeader* dmaHeader, int pagemapfd) {
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
     /*uint64_t curTime1, curTime2;
@@ -584,9 +584,11 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray,
     int srcIdx;
     uint64_t curTime1, curTime2;
     do {
-        curTime1 = clockMicros();
+        //curTime1 = clockMicros();
+        curTime1 = readSysTime(timerBaseMem);
         srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
-        curTime2 = clockMicros();
+        //curTime2 = clockMicros();
+        curTime2 = readSysTime(timerBaseMem);
     } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     int newIdx = (srcIdx + (micros - curTime2))%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
@@ -765,9 +767,9 @@ int main() {
     /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
     } //wait for DMA transfer to complete.*/
-    uint64_t startTime = clockMicros();
+    uint64_t startTime = readSysTime(timerBaseMem); //clockMicros();
     for (int i=0; ; ++i) {
-        queue(outPin, i%2, startTime + 1000*i, srcArray, cbArr, zerosPage, dmaHeader, pagemapfd);
+        queue(outPin, i%2, startTime + 1000*i, srcArray, cbArr, timerBaseMem, dmaHeader, pagemapfd);
     }
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
