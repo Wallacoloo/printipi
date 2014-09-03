@@ -555,12 +555,13 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
     uint64_t curTime1, curTime2;
-    uint32_t curBlock;
+    uint32_t curBlock, curStride;
     //get the current source index at the current time.
     //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
     do {
         curTime1 = clockMicros();
         curBlock = dmaHeader->CONBLK_AD;
+        curStride = dmaHeader->STRIDE;
         curTime2 = clockMicros();
     } while (curTime2-curTime1 > 1); //allow 1 uS variability.
     struct DmaControlBlock *virtBlock = (struct DmaControlBlock*)physToVirt(curBlock, cbArr, cbArr+3*SOURCE_BUFFER_FRAMES, pagemapfd);
@@ -580,7 +581,7 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
     } else { //turn output on
         srcArray[newIdx*8 + (pin>31) + 0] |= 1 << (pin%32);
     }
-    //printf("Queueing: 0x%08x-> 0x%08x (0x%08x; %i->%i)\n", curBlock, virtBlock, virtSrcAddr, srcIdx, newIdx);
+    printf("Queueing: 0x%08x-> 0x%08x (0x%08x; %i->%i)\n Stride is 0x%08x, deref 0x%08x\n", curBlock, virtBlock, virtSrcAddr, srcIdx, newIdx, curStride, virtBlock->STRIDE);
 }
 
 int main() {
@@ -738,9 +739,9 @@ int main() {
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
     printf("DMA Active\n");
-    while (dmaHeader->CS & DMA_CS_ACTIVE) {
+    /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
-    } //wait for DMA transfer to complete.
+    } //wait for DMA transfer to complete.*/
     uint64_t startTime = clockMicros();
     for (int i=0; ; ++i) {
         queue(outPin, i%2, startTime + 5000*i, srcArray, cbArr, zerosPage, dmaHeader, pagemapfd);
