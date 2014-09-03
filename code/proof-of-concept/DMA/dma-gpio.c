@@ -248,11 +248,11 @@
 #define CM_PWMDIV_DIVI(x) (((x)&0xfff) << 12)
 #define CM_PWMDIV_DIVF(x) ((x)&0xfff)
 
-//set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
-//eg if x = 0b11001100
-//  writeBitmasked(&x, 0b00000110, 0b11110011),
-//  then x now = 0b11001110
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
+    //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
+    //eg if x = 0b11001100
+    //  writeBitmasked(&x, 0b00000110, 0b11110011),
+    //  then x now = 0b11001110
     uint32_t cur = *dest;
     uint32_t new = (cur & (~mask)) | (value & mask);
     *dest = new;
@@ -393,15 +393,14 @@ struct PwmHeader {
 
 struct GpioBufferBlock {
     //custom structure used for storing the GPIO buffer.
-    //These BufferBlock's are DMA'd into the GPIO memory.
+    //These BufferBlock's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility
     uint32_t gpset[2];
-    //uint32_t _pad1; //gpio memory has a gap of 1 word between gpset registers and gpclr registers
     uint32_t gpclr[2];
-    //uint32_t _pad2[3]; //This struct must not span multiple pages, so we need padding to make the page size an integer multiple of this struct size.
 };
 
 size_t ceilToPage(size_t size) {
-    if (size & (PAGE_SIZE-1)) { //round up to nearest page-size
+    //round up to nearest page-size multiple
+    if (size & (PAGE_SIZE-1)) {
         size += PAGE_SIZE - (size & (PAGE_SIZE-1));
     }
     return size;
@@ -464,11 +463,7 @@ void* makeLockedMem(size_t size) {
         printf("mmap not page-aligned: %p\n", mem);
         exit(1);
     }
-    /*//mlock(mem, size);
-    for (int i=0; i<size; i+=PAGE_SIZE) {
-        *(int*)(mem+i) = 1; //force into ram
-    }*/
-    memset(mem, 0, size);
+    memset(mem, 0, size); //simultaneously zero the pages and force them into memory
     mlock(mem, size);
     return mem;
 }
@@ -506,28 +501,15 @@ uint64_t readSysTime(volatile uint32_t *timerBaseMem) {
 }
 
 
-void printMem(volatile void *begin, int numChars) {
-    volatile uint32_t *addr = (volatile uint32_t*)begin;
-    volatile uint32_t *end = addr + numChars/4;
-    while (addr < end) {
-        printf("%08x ", *addr);
-        ++addr;
-    }
-    printf("\n");
-}
-
 struct DmaChannelHeader *dmaHeader; //must be global for cleanup()
 
 void cleanup() {
     printf("Cleanup\n");
-    // Shut down the DMA controller
+    //disable DMA. Otherwise, it will continue to run in the background, potentially overwriting future user data.
     if(dmaHeader) {
-        //CLRBIT(dma_reg[DMA_CS], DMA_CS_ACTIVE);
         writeBitmasked(&dmaHeader->CS, DMA_CS_ACTIVE, 0);
         usleep(100);
-        //SETBIT(dma_reg[DMA_CS], DMA_CS_RESET);
         writeBitmasked(&dmaHeader->CS, DMA_CS_RESET, DMA_CS_RESET);
-        //usleep(100);
     }
     // Shut down PWM
     /*if(pwm_reg) {
@@ -556,29 +538,9 @@ void sleepUntilMicros(uint64_t micros) {
     }
 }
 
-void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray, struct DmaControlBlock* cbArr, volatile uint32_t* timerBaseMem, struct DmaChannelHeader* dmaHeader, int pagemapfd) {
+void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray, volatile uint32_t* timerBaseMem, struct DmaChannelHeader* dmaHeader) {
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
-    /*uint64_t curTime1, curTime2;
-    uint32_t curBlock, curStride;
-    //get the current source index at the current time.
-    //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
-    do {
-        curTime1 = clockMicros();
-        curBlock = dmaHeader->CONBLK_AD;
-        curStride = dmaHeader->STRIDE;
-        curTime2 = clockMicros();
-    } while (curTime2-curTime1 > 1); //allow 1 uS variability.
-    struct DmaControlBlock *virtBlock = (struct DmaControlBlock*)physToVirt(curBlock, cbArr, cbArr+3*SOURCE_BUFFER_FRAMES, pagemapfd);
-    uint32_t physSrcAddr;
-    if (virtBlock->SOURCE_AD == virtToPhys(zerosPage, pagemapfd)) {
-        physSrcAddr = virtBlock->DEST_AD;
-    } else {
-        physSrcAddr = virtBlock->SOURCE_AD;
-    }
-    void *virtSrcAddr = physToVirt(physSrcAddr, srcArray, srcArray+SOURCE_BUFFER_FRAMES*8, pagemapfd);
-    //Calculate the current index being handled and the desired one to modify:
-    int srcIdx = (virtSrcAddr - (void*)srcArray)/4/8;*/
     //get the current source index at the current time.
     //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
     int srcIdx;
@@ -593,14 +555,11 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray,
     int newIdx = (srcIdx + (micros - curTime2))%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
     if (mode == 0) { //turn output off
-        //srcArray[newIdx*8 + (pin>31) + 3] |= 1 << (pin%32);
         srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
     } else { //turn output on
-        //srcArray[newIdx*8 + (pin>31) + 0] |= 1 << (pin%32);
         srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
     }
-    //printf("Queueing: 0x%08x-> 0x%08x (0x%08x; %i->%i)\n Stride is 0x%08x, deref 0x%08x\n", curBlock, virtBlock, virtSrcAddr, srcIdx, newIdx, curStride, virtBlock->STRIDE);
-    printf("Queuing: %i->%i\n", srcIdx, newIdx);
+    //printf("Queuing: %i->%i\n", srcIdx, newIdx);
 }
 
 int main() {
@@ -642,33 +601,14 @@ int main() {
     //configure DMA...
     //First, allocate memory for the source:
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
-    size_t srcPageBytes = numSrcBlocks*32;
+    size_t srcPageBytes = numSrcBlocks*sizeof(struct GpioBufferBlock);
     void *virtSrcPage = makeLockedMem(srcPageBytes);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage, pagemapfd));
     
-    //write a few bytes to the source page:
-    /*uint32_t *srcArray = (uint32_t*)virtSrcPage;
-    srcArray[0]  = (1 << outPin); //set pin 4 ON
-    srcArray[1]  = 0; //GPSET1
-    srcArray[2]  = 0; //padding
-    //srcArray[3]  = (1 << outPin); //set pin 4 OFF
-    srcArray[3]  = 0; //GPCLR0
-    srcArray[4]  = 0; //GPCLR1
-    srcArray[5]  = 0; //padding
-    srcArray[6]  = 0; //padding
-    srcArray[7]  = 0; //padding
-    
-    srcArray[numSrcBlocks/2*8+0]  = 0; //GPSET0
-    srcArray[numSrcBlocks/2*8+1]  = 0; //GPSET1
-    srcArray[numSrcBlocks/2*8+2]  = 0; //padding
-    srcArray[numSrcBlocks/2*8+3]  = (1 << outPin); //GPCLR0
-    srcArray[numSrcBlocks/2*8+4] = 0; //GPCLR1
-    srcArray[numSrcBlocks/2*8+5] = 0; //padding
-    srcArray[numSrcBlocks/2*8+6] = 0; //padding
-    srcArray[numSrcBlocks/2*8+7] = 0; //padding*/
+    //cast virtSrcPage to a GpioBufferBlock array:
     struct GpioBufferBlock *srcArray = (struct GpioBufferBlock*)virtSrcPage;
-    srcArray[0].gpset[0] = (1 << outPin); //set pin ON
-    srcArray[numSrcBlocks/2].gpclr[0] = (1 << outPin); //set pin OFF;
+    //srcArray[0].gpset[0] = (1 << outPin); //set pin ON
+    //srcArray[numSrcBlocks/2].gpclr[0] = (1 << outPin); //set pin OFF;
     
     //configure PWM clock:
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | ((*(clockBaseMem + CM_PWMCTL/4))&(~CM_PWMCTL_ENAB)); //disable clock
@@ -701,47 +641,44 @@ int main() {
     int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
     printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, numSrcBlocks);
     printf("virt cb[%i] -> phys: 0x%08x\n", 0, virtToPhys((void*)cbArr, pagemapfd));
-    //for (int _x=0; ; ++_x) {
-        for (int i=0; i<maxIdx; i += 3) {
-            //copy buffer to GPIOs
-            //cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
-            cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
-            //cbArr[i].TXFR_LEN = 32;
-            //cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
-            //cbArr[i].STRIDE = i/3; //0;
-            cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
-            cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
-            cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
-            //clear buffer
-            //cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-            cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
-            cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
-            //cbArr[i+1].TXFR_LEN = 32;
-            cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
-            cbArr[i+1].STRIDE = i/3; //0;
-            cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
-            //pace DMA through PWM
-            //cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
-            cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-            //cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
-            cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
-            cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
-            //cbArr[i+2].TXFR_LEN = 4;
-            cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
-            cbArr[i+2].STRIDE = i/3; //0;
-            int nextIdx = i+3 < maxIdx ? i+3 : 0;
-            cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
-            //logDmaControlBlock(cbArr+i);
-            //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
-        }
-        for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
-            printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
-        }
-    //    sleep(1);
-    //}
+    for (int i=0; i<maxIdx; i += 3) {
+        //copy buffer to GPIOs
+        //cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
+        cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
+        cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
+        cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
+        //cbArr[i].TXFR_LEN = 32;
+        //cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
+        //cbArr[i].STRIDE = i/3; //0;
+        cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
+        cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
+        cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
+        //clear buffer
+        //cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
+        cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
+        cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
+        cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
+        //cbArr[i+1].TXFR_LEN = 32;
+        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
+        cbArr[i+1].STRIDE = i/3; //0;
+        cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
+        //pace DMA through PWM
+        //cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
+        cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
+        //cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
+        cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
+        cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
+        //cbArr[i+2].TXFR_LEN = 4;
+        cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
+        cbArr[i+2].STRIDE = i/3; //0;
+        int nextIdx = i+3 < maxIdx ? i+3 : 0;
+        cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+        //logDmaControlBlock(cbArr+i);
+        //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
+    }
+    for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
+        printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
+    }
     int dmaCh = 3;
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
@@ -759,7 +696,6 @@ int main() {
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    //dmaHeader->CONBLK_AD = 0;
     dmaHeader->CONBLK_AD = virtToPhys(cbArr, pagemapfd); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
@@ -769,7 +705,7 @@ int main() {
     } //wait for DMA transfer to complete.*/
     uint64_t startTime = readSysTime(timerBaseMem); //clockMicros();
     for (int i=0; ; ++i) {
-        queue(outPin, i%2, startTime + 1000*i, srcArray, cbArr, timerBaseMem, dmaHeader, pagemapfd);
+        queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
     }
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
@@ -777,7 +713,5 @@ int main() {
     freeLockedMem(zerosPage, PAGE_SIZE);
     close(pagemapfd);
     close(memfd);
-    //printf("system time: %llu\n", t1);
-    //printf("system time: %llu\n", t2);
     return 0;
 }
