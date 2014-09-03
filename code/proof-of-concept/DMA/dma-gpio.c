@@ -265,6 +265,7 @@ void udelay(int us) {
 }
 
 struct DmaChannelHeader {
+    //Note: dma channels 7-15 are 'LITE' dma engines (or is it 8-15?), with reduced performance & functionality.
     volatile uint32_t CS; //Control and Status
         //31    RESET; set to 1 to reset DMA
         //30    ABORT; set to 1 to abort current DMA control block (next one will be loaded & continue)
@@ -287,8 +288,8 @@ struct DmaChannelHeader {
     volatile uint32_t TI; //transfer information; see DmaControlBlock.TI for description
     volatile uint32_t SOURCE_AD; //Source address
     volatile uint32_t DEST_AD; //Destination address
-    volatile uint32_t TXFR_LEN; //transfer length.
-    volatile uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1
+    volatile uint32_t TXFR_LEN; //transfer length. ONLY THE LOWER 16 BITS ARE USED IN LITE DMA ENGINES
+    volatile uint32_t STRIDE; //2D Mode Stride. Only used if TI.TDMODE = 1. NOT AVAILABLE IN LITE DMA ENGINES
     volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     volatile uint32_t DEBUG; //controls debug settings
         //29-31 unused
@@ -723,7 +724,7 @@ int main() {
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
     
     //configure the DMA header to point to our control block:
-    dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh));
+    dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh)/4); //must divide by 4, as dmaBaseMem is uint32_t*
     logDmaChannelHeader(dmaHeader);
     //abort previous DMA:
     dmaHeader->NEXTCONBK = 0;
