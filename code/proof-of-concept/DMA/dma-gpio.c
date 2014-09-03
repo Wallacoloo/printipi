@@ -390,6 +390,15 @@ struct PwmHeader {
         //0-31 PWM_DATi; Stores the 32-bit data to be sent to the PWM controller ONLY WHEN USEFi=1 (FIFO is enabled). TODO: Typo???
 };
 
+struct GpioBufferBlock {
+    //custom structure used for storing the GPIO buffer.
+    //These BufferBlock's are DMA'd into the GPIO memory.
+    uint32_t gpset[2];
+    uint32_t _pad1; //gpio memory has a gap of 1 word between gpset registers and gpclr registers
+    uint32_t gpclr[2];
+    uint32_t _pad2[3]; //This struct must not span multiple pages, so we need padding to make the page size an integer multiple of this struct size.
+};
+
 size_t ceilToPage(size_t size) {
     if (size & (PAGE_SIZE-1)) { //round up to nearest page-size
         size += PAGE_SIZE - (size & (PAGE_SIZE-1));
@@ -553,7 +562,7 @@ void sleepUntilMicros(uint64_t micros) {
     }
 }
 
-void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaControlBlock* cbArr, void* zerosPage, struct DmaChannelHeader* dmaHeader, int pagemapfd) {
+void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray, struct DmaControlBlock* cbArr, void* zerosPage, struct DmaChannelHeader* dmaHeader, int pagemapfd) {
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
     /*uint64_t curTime1, curTime2;
@@ -588,9 +597,11 @@ void queue(int pin, int mode, uint64_t micros, uint32_t* srcArray, struct DmaCon
     int newIdx = (srcIdx + (micros - curTime2))%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
     if (mode == 0) { //turn output off
-        srcArray[newIdx*8 + (pin>31) + 3] |= 1 << (pin%32);
+        //srcArray[newIdx*8 + (pin>31) + 3] |= 1 << (pin%32);
+        srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
     } else { //turn output on
-        srcArray[newIdx*8 + (pin>31) + 0] |= 1 << (pin%32);
+        //srcArray[newIdx*8 + (pin>31) + 0] |= 1 << (pin%32);
+        srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
     }
     //printf("Queueing: 0x%08x-> 0x%08x (0x%08x; %i->%i)\n Stride is 0x%08x, deref 0x%08x\n", curBlock, virtBlock, virtSrcAddr, srcIdx, newIdx, curStride, virtBlock->STRIDE);
     printf("Queuing: %i->%i\n", srcIdx, newIdx);
@@ -626,7 +637,8 @@ int main() {
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + outPin/10);
     writeBitmasked(fselAddr, 0x7 << (3*(outPin%10)), 0x1 << (3*(outPin%10)));
     //set gpio 18 as alt (for pwm):
-    writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
+    //Note: PWM pacing still works, even with no physical outputs.
+    //writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
     
     //Often need to copy zeros with DMA. This array can be the source. Needs to all lie on one page
     void *zerosPage = makeLockedMem(PAGE_SIZE);
@@ -639,7 +651,7 @@ int main() {
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage, pagemapfd));
     
     //write a few bytes to the source page:
-    uint32_t *srcArray = (uint32_t*)virtSrcPage;
+    /*uint32_t *srcArray = (uint32_t*)virtSrcPage;
     srcArray[0]  = (1 << outPin); //set pin 4 ON
     srcArray[1]  = 0; //GPSET1
     srcArray[2]  = 0; //padding
@@ -657,7 +669,10 @@ int main() {
     srcArray[numSrcBlocks/2*8+4] = 0; //GPCLR1
     srcArray[numSrcBlocks/2*8+5] = 0; //padding
     srcArray[numSrcBlocks/2*8+6] = 0; //padding
-    srcArray[numSrcBlocks/2*8+7] = 0; //padding
+    srcArray[numSrcBlocks/2*8+7] = 0; //padding*/
+    struct GpioBufferBlock *srcArray = (struct GpioBufferBlock*)virtSrcPage;
+    srcArray[0].gpset[0] = (1 << outPin); //set pin ON
+    srcArray[numSrcBlocks/2].gpclr[0] = (1 << outPin); //set pin OFF;
     
     //configure PWM clock:
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | ((*(clockBaseMem + CM_PWMCTL/4))&(~CM_PWMCTL_ENAB)); //disable clock
@@ -677,7 +692,7 @@ int main() {
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
     udelay(100);
     
-    pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(7) | PWM_DMAC_PANIC(7);
+    pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(15) | PWM_DMAC_PANIC(15); //DREQ is activated at queue < 15
     pwmHeader->RNG1 = 10; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
@@ -756,7 +771,7 @@ int main() {
     } //wait for DMA transfer to complete.*/
     uint64_t startTime = clockMicros();
     for (int i=0; ; ++i) {
-        queue(outPin, i%2, startTime + 5000*i, srcArray, cbArr, zerosPage, dmaHeader, pagemapfd);
+        queue(outPin, i%2, startTime + 1000*i, srcArray, cbArr, zerosPage, dmaHeader, pagemapfd);
     }
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
