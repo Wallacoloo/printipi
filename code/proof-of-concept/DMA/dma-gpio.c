@@ -179,7 +179,8 @@
 #define DMA_CB_TI_TDMODE      (1<<1)
 
 
-#define DMA_CB_TXFR_LEN_YLENGTH(y) (((y)&0x4fff) << 16)
+//https://dev.openwrt.org/browser/trunk/target/linux/brcm2708/patches-3.10/0070-bcm2708_fb-DMA-acceleration-for-fb_copyarea.patch?rev=39770 says that YLENGTH should actually be written as # of copies *MINUS ONE*
+#define DMA_CB_TXFR_LEN_YLENGTH(y) (((y-1)&0x4fff) << 16)
 #define DMA_CB_TXFR_LEN_XLENGTH(x) ((x)&0xffff)
 #define DMA_CB_STRIDE_D_STRIDE(x)  (((x)&0xffff) << 16)
 #define DMA_CB_STRIDE_S_STRIDE(x)  ((x)&0xffff)
