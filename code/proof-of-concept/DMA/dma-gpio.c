@@ -395,9 +395,9 @@ struct GpioBufferBlock {
     //custom structure used for storing the GPIO buffer.
     //These BufferBlock's are DMA'd into the GPIO memory.
     uint32_t gpset[2];
-    uint32_t _pad1; //gpio memory has a gap of 1 word between gpset registers and gpclr registers
+    //uint32_t _pad1; //gpio memory has a gap of 1 word between gpset registers and gpclr registers
     uint32_t gpclr[2];
-    uint32_t _pad2[3]; //This struct must not span multiple pages, so we need padding to make the page size an integer multiple of this struct size.
+    //uint32_t _pad2[3]; //This struct must not span multiple pages, so we need padding to make the page size an integer multiple of this struct size.
 };
 
 size_t ceilToPage(size_t size) {
@@ -714,8 +714,10 @@ int main() {
             cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
             cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
             //cbArr[i].TXFR_LEN = 32;
-            cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
-            cbArr[i].STRIDE = i/3; //0;
+            //cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
+            //cbArr[i].STRIDE = i/3; //0;
+            cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
+            cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(12) | DMA_CB_STRIDE_S_STRIDE(8);
             cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
             //clear buffer
             //cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
