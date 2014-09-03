@@ -709,7 +709,7 @@ int main() {
             cbArr[i+2].STRIDE = 0;
             int nextIdx = i+3 < maxIdx ? i+3 : 0;
             cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
-            logDmaControlBlock(cbArr+i);
+            //logDmaControlBlock(cbArr+i);
             //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
         }
         for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
