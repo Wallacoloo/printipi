@@ -105,6 +105,7 @@
 
 //config settings:
 #define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
+#define FRAMES_PER_SEC 1000000
 
 #define TIMER_BASE   0x20003000
 #define TIMER_CLO    0x00000004 //lower 32-bits of 1 MHz timer
@@ -391,9 +392,9 @@ struct PwmHeader {
         //0-31 PWM_DATi; Stores the 32-bit data to be sent to the PWM controller ONLY WHEN USEFi=1 (FIFO is enabled). TODO: Typo???
 };
 
-struct GpioBufferBlock {
+struct GpioBufferFrame {
     //custom structure used for storing the GPIO buffer.
-    //These BufferBlock's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility
+    //These BufferFrame's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility
     uint32_t gpset[2];
     uint32_t gpclr[2];
 };
@@ -511,12 +512,7 @@ void cleanup() {
         usleep(100);
         writeBitmasked(&dmaHeader->CS, DMA_CS_RESET, DMA_CS_RESET);
     }
-    // Shut down PWM
-    /*if(pwm_reg) {
-        CLRBIT(pwm_reg[PWM_CTL], PWM_CTL_PWEN1);
-        usleep(100);
-        pwm_reg[PWM_CTL] = (1 << PWM_CTL_CLRF1);
-    }*/
+    //could also disable PWM, but that's not imperative.
 }
 
 void cleanupAndExit(int sig) {
@@ -529,30 +525,39 @@ uint64_t clockMicros() {
     clock_gettime(CLOCK_MONOTONIC, &tnow);
     return (tnow.tv_nsec/1000) + ((uint64_t)1000000)*((uint64_t)tnow.tv_sec);
 }
-void sleepUntilMicros(uint64_t micros) {
-    while (micros > clockMicros()) { //clock_nanosleep can be interrupted, hence the while loop.
+void sleepUntilMicros(uint64_t micros, volatile uint32_t* timerBaseMem) {
+    /*while (micros > clockMicros()) { //clock_nanosleep can be interrupted, hence the while loop.
         struct timespec t;
         t.tv_sec = micros/1000000;
         t.tv_nsec = (micros - t.tv_sec*1000000)*1000;
         clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
+    }*/
+    //Note: cannot use clock_nanosleep with an absolute time, as the process clock may differ from the RPi clock.
+    //this function doesn't need to be super precise, so we can tolerate interrupts.
+    //Therefore, we can use a relative sleep:
+    uint64_t cur = readSysTime(timerBaseMem);
+    if (micros > cur) { //avoid overflow caused by unsigned arithmetic
+        uint64_t dur = micros - cur;
+        struct timespec t;
+        t.tv_sec = dur/1000000;
+        t.tv_nsec = (dur - t.tv_sec*1000000)*1000;
+        nanosleep(&t, NULL);
     }
 }
 
-void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray, volatile uint32_t* timerBaseMem, struct DmaChannelHeader* dmaHeader) {
+void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray, volatile uint32_t* timerBaseMem, struct DmaChannelHeader* dmaHeader) {
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
-    sleepUntilMicros(micros-SOURCE_BUFFER_FRAMES);
-    //get the current source index at the current time.
+    sleepUntilMicros(micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC, timerBaseMem);
+    //get the current source index at the current time:
     //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
     int srcIdx;
     uint64_t curTime1, curTime2;
     do {
-        //curTime1 = clockMicros();
         curTime1 = readSysTime(timerBaseMem);
         srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
-        //curTime2 = clockMicros();
         curTime2 = readSysTime(timerBaseMem);
     } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
-    int newIdx = (srcIdx + (micros - curTime2))%SOURCE_BUFFER_FRAMES;
+    int newIdx = (srcIdx + (micros - curTime2)*FRAMES_PER_SEC/1000000)%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
     if (mode == 0) { //turn output off
         srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
@@ -601,12 +606,12 @@ int main() {
     //configure DMA...
     //First, allocate memory for the source:
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
-    size_t srcPageBytes = numSrcBlocks*sizeof(struct GpioBufferBlock);
+    size_t srcPageBytes = numSrcBlocks*sizeof(struct GpioBufferFrame);
     void *virtSrcPage = makeLockedMem(srcPageBytes);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage, pagemapfd));
     
-    //cast virtSrcPage to a GpioBufferBlock array:
-    struct GpioBufferBlock *srcArray = (struct GpioBufferBlock*)virtSrcPage;
+    //cast virtSrcPage to a GpioBufferFrame array:
+    struct GpioBufferFrame *srcArray = (struct GpioBufferFrame*)virtSrcPage;
     //srcArray[0].gpset[0] = (1 << outPin); //set pin ON
     //srcArray[numSrcBlocks/2].gpclr[0] = (1 << outPin); //set pin OFF;
     
@@ -645,10 +650,10 @@ int main() {
         //copy buffer to GPIOs
         //cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
+        cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
         //cbArr[i].TXFR_LEN = 32;
-        //cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
+        //cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         //cbArr[i].STRIDE = i/3; //0;
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
         cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
@@ -657,16 +662,16 @@ int main() {
         //cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
-        cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
+        cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
         //cbArr[i+1].TXFR_LEN = 32;
-        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
+        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+1].STRIDE = i/3; //0;
         cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
         //pace DMA through PWM
         //cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         //cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
-        cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
+        cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
         cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         //cbArr[i+2].TXFR_LEN = 4;
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
