@@ -249,23 +249,6 @@
 #define CM_PWMDIV_DIVI(x) (((x)&0xfff) << 12)
 #define CM_PWMDIV_DIVF(x) ((x)&0xfff)
 
-void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
-    //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
-    //eg if x = 0b11001100
-    //  writeBitmasked(&x, 0b00000110, 0b11110011),
-    //  then x now = 0b11001110
-    uint32_t cur = *dest;
-    uint32_t new = (cur & (~mask)) | (value & mask);
-    *dest = new;
-    *dest = new; //best to be safe 
-}
-
-//sleep for N microseconds. N must be < 1 second:
-void udelay(int us) {
-    struct timespec ts = {0, us*1000};
-    nanosleep(&ts, NULL);
-}
-
 struct DmaChannelHeader {
     //Note: dma channels 7-15 are 'LITE' dma engines (or is it 8-15?), with reduced performance & functionality.
     volatile uint32_t CS; //Control and Status
@@ -399,6 +382,29 @@ struct GpioBufferFrame {
     uint32_t gpclr[2];
 };
 
+struct DmaChannelHeader *dmaHeader; //must be global for cleanup()
+
+void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
+    //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
+    //eg if x = 0b11001100
+    //  writeBitmasked(&x, 0b00000110, 0b11110011),
+    //  then x now = 0b11001110
+    uint32_t cur = *dest;
+    uint32_t new = (cur & (~mask)) | (value & mask);
+    *dest = new;
+    *dest = new; //best to be safe 
+}
+
+uint64_t readSysTime(volatile uint32_t *timerBaseMem) {
+    return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
+}
+
+//sleep for N microseconds. N must be < 1 second:
+void udelay(int us) {
+    struct timespec ts = {0, us*1000};
+    nanosleep(&ts, NULL);
+}
+
 size_t ceilToPage(size_t size) {
     //round up to nearest page-size multiple
     if (size & (PAGE_SIZE-1)) {
@@ -442,10 +448,7 @@ void* physToVirt(uintptr_t phys, void* virtPageStart, void* virtPageEnd, int pag
 
 //allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
-    /*void* mem = valloc(size); //memory returned by valloc is not zero'd
-    memset(mem, 0, size); //need to zero memory, plus the pages won't have a physical address until they are used.
-    mlock(mem, size); //note: mlock only ensures that the memory is always present in physical ram. It may be moved to a new physical address even after being locked!
-    return mem;*/
+    //void* mem = valloc(size); //memory returned by valloc is not zero'd
     size = ceilToPage(size);
     void *mem = mmap(
         NULL,   //let kernel place memory where it wants
@@ -497,12 +500,6 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     return (volatile uint32_t*)mapped;
 }
 
-uint64_t readSysTime(volatile uint32_t *timerBaseMem) {
-    return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
-}
-
-
-struct DmaChannelHeader *dmaHeader; //must be global for cleanup()
 
 void cleanup() {
     printf("Cleanup\n");
@@ -520,18 +517,7 @@ void cleanupAndExit(int sig) {
     exit(1);
 }
 
-uint64_t clockMicros() {
-    struct timespec tnow;
-    clock_gettime(CLOCK_MONOTONIC, &tnow);
-    return (tnow.tv_nsec/1000) + ((uint64_t)1000000)*((uint64_t)tnow.tv_sec);
-}
 void sleepUntilMicros(uint64_t micros, volatile uint32_t* timerBaseMem) {
-    /*while (micros > clockMicros()) { //clock_nanosleep can be interrupted, hence the while loop.
-        struct timespec t;
-        t.tv_sec = micros/1000000;
-        t.tv_nsec = (micros - t.tv_sec*1000000)*1000;
-        clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &t, NULL);
-    }*/
     //Note: cannot use clock_nanosleep with an absolute time, as the process clock may differ from the RPi clock.
     //this function doesn't need to be super precise, so we can tolerate interrupts.
     //Therefore, we can use a relative sleep:
@@ -648,38 +634,28 @@ int main() {
     printf("virt cb[%i] -> phys: 0x%08x\n", 0, virtToPhys((void*)cbArr, pagemapfd));
     for (int i=0; i<maxIdx; i += 3) {
         //copy buffer to GPIOs
-        //cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
-        //cbArr[i].TXFR_LEN = 32;
-        //cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
-        //cbArr[i].STRIDE = i/3; //0;
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
         cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
         cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
         //clear buffer
-        //cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
         cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
-        //cbArr[i+1].TXFR_LEN = 32;
         cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+1].STRIDE = i/3; //0;
         cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
         //pace DMA through PWM
-        //cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
         cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        //cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
-        cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
+        cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage, pagemapfd); //The data written doesn't matter, but 0 is a 'clean' number and unlikely to cause significant damage anywhere
         cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
-        //cbArr[i+2].TXFR_LEN = 4;
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
         cbArr[i+2].STRIDE = i/3; //0;
         int nextIdx = i+3 < maxIdx ? i+3 : 0;
         cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
         //logDmaControlBlock(cbArr+i);
-        //printf("ADDR: %p, SOURCE_AD: 0x%08x, NEXTCONBK: 0x%08x\n  ADDR: %p, NEXTCONBK: 0x%08x\n", cbArr+i, cbArr[i].SOURCE_AD, cbArr[i].NEXTCONBK, cbArr+i+1, cbArr[i+1].NEXTCONBK);
     }
     for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
         printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
@@ -708,7 +684,7 @@ int main() {
     /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
     } //wait for DMA transfer to complete.*/
-    uint64_t startTime = readSysTime(timerBaseMem); //clockMicros();
+    uint64_t startTime = readSysTime(timerBaseMem);
     for (int i=0; ; ++i) {
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
     }
