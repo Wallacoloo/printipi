@@ -182,6 +182,7 @@
 //https://dev.openwrt.org/browser/trunk/target/linux/brcm2708/patches-3.10/0070-bcm2708_fb-DMA-acceleration-for-fb_copyarea.patch?rev=39770 says that YLENGTH should actually be written as # of copies *MINUS ONE*
 #define DMA_CB_TXFR_LEN_YLENGTH(y) (((y-1)&0x4fff) << 16)
 #define DMA_CB_TXFR_LEN_XLENGTH(x) ((x)&0xffff)
+#define DMA_CB_TXFR_YLENGTH_MASK (0x4fff << 16)
 #define DMA_CB_STRIDE_D_STRIDE(x)  (((x)&0xffff) << 16)
 #define DMA_CB_STRIDE_S_STRIDE(x)  ((x)&0xffff)
 
@@ -593,7 +594,7 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferBlock* srcArray,
         curTime1 = clockMicros();
         srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
         curTime2 = clockMicros();
-    } while (curTime2-curTime1 > 1); //allow 1 uS variability.
+    } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     int newIdx = (srcIdx + (micros - curTime2))%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
     if (mode == 0) { //turn output off
@@ -710,26 +711,26 @@ int main() {
             //copy buffer to GPIOs
             //cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
             cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
+            cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
             cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
             //cbArr[i].TXFR_LEN = 32;
-            cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(32);
+            cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
             cbArr[i].STRIDE = i/3; //0;
             cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
             //clear buffer
             //cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS;
             cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
             cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
-            cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd);
+            cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd);
             //cbArr[i+1].TXFR_LEN = 32;
-            cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(32);
+            cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferBlock));
             cbArr[i+1].STRIDE = i/3; //0;
             cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
             //pace DMA through PWM
             //cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS;
             cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
             //cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage); //(uint32_t)physSrcPage;
-            cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*32, pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
+            cbArr[i+2].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferBlock), pagemapfd); //The data written doesn't matter, so make it the current src buffer so it is easier to reverse-translate.
             cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
             //cbArr[i+2].TXFR_LEN = 4;
             cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
