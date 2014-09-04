@@ -673,7 +673,7 @@ int main() {
         cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd); //The data written doesn't matter, but using the GPIO source will hopefully bring it into L2 for more deterministic timing of the next control block.
         cbArr[i].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
-        cbArr[i].STRIDE = i/3; //0;
+        cbArr[i].STRIDE = i/3;
         cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1, pagemapfd);
         //copy buffer to GPIOs
         cbArr[i+1].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
@@ -687,7 +687,7 @@ int main() {
         cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd);
         cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
-        cbArr[i+2].STRIDE = i/3; //0;
+        cbArr[i+2].STRIDE = i/3; //might be better to use the NEXT index
         int nextIdx = i+3 < numSrcBlocks*3 ? i+3 : 0; //last block should loop back to the first block
         cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArrCached + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
     }
