@@ -493,6 +493,7 @@ void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd
     munmap(mem, bytes);
     for (int offset=0; offset<bytes; offset += PAGE_SIZE) {
         void *mappedPage = mmap(mem+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys(virtaddr+offset, pagemapfd));
+        memset(mappedPage, 0, PAGE_SIZE); //lock page in place (shouldn't be necessary)
         if (mappedPage != mem+offset) {
             printf("Failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
             exit(1);
