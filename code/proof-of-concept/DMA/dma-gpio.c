@@ -649,8 +649,8 @@ int main() {
     void *virtCbPageCached = makeLockedMem(cbPageBytes);
     void *virtCbPage = makeUncachedMemView(virtCbPageCached, cbPageBytes, memfd, pagemapfd);
     //fill the control blocks:
+    struct DmaControlBlock *cbArrCached = (struct DmaControlBlock*)virtCbPageCached;
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
-    //int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
     printf("#dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
     for (int i=0; i<numSrcBlocks*3; i += 3) {
         //copy buffer to GPIOs
@@ -659,14 +659,14 @@ int main() {
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
         cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
-        cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArr+i+1, pagemapfd);
+        cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1, pagemapfd);
         //clear buffer
         cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+1].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd);
         cbArr[i+1].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
         cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+1].STRIDE = i/3; //0;
-        cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArr+i+2, pagemapfd);
+        cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2, pagemapfd);
         //pace DMA through PWM
         cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd); //The data written doesn't matter, but 0 is a 'clean' number and unlikely to cause significant damage anywhere
@@ -674,7 +674,7 @@ int main() {
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
         cbArr[i+2].STRIDE = i/3; //0;
         int nextIdx = i+3 < numSrcBlocks*3 ? i+3 : 0; //last block should loop back to the first block
-        cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+        cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArrCached + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
     }
     for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
         printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
