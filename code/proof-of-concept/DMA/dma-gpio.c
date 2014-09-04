@@ -487,6 +487,7 @@ void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd
             exit(1);
         }
     }
+    memset(mem, 0, bytes); //Although the cached version might have been reset, those writes might not have made it through.
     return mem;
 }
 
@@ -604,7 +605,8 @@ int main() {
     //writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
     
     //Often need to copy zeros with DMA. This array can be the source. Needs to all lie on one page
-    void *zerosPage = makeLockedMem(PAGE_SIZE);
+    void *zerosPageCached = makeLockedMem(PAGE_SIZE);
+    void *zerosPage = makeUncachedMemView(zerosPageCached, PAGE_SIZE, memfd, pagemapfd);
     
     //configure DMA...
     //First, allocate memory for the source:
@@ -644,7 +646,8 @@ int main() {
     
     //allocate memory for the control blocks
     size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 3; //3 cbs for each source block
-    void *virtCbPage = makeLockedMem(cbPageBytes);
+    void *virtCbPageCached = makeLockedMem(cbPageBytes);
+    void *virtCbPage = makeUncachedMemView(virtCbPageCached, cbPageBytes, memfd, pagemapfd);
     //fill the control blocks:
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
     //int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
@@ -656,22 +659,22 @@ int main() {
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
         cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
-        cbArr[i].NEXTCONBK = virtToPhys(cbArr+i+1, pagemapfd);
+        cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArr+i+1, pagemapfd);
         //clear buffer
         cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
+        cbArr[i+1].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd);
         cbArr[i+1].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
         cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+1].STRIDE = i/3; //0;
-        cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
+        cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArr+i+2, pagemapfd);
         //pace DMA through PWM
         cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+2].SOURCE_AD = virtToPhys(zerosPage, pagemapfd); //The data written doesn't matter, but 0 is a 'clean' number and unlikely to cause significant damage anywhere
+        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd); //The data written doesn't matter, but 0 is a 'clean' number and unlikely to cause significant damage anywhere
         cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
         cbArr[i+2].STRIDE = i/3; //0;
         int nextIdx = i+3 < numSrcBlocks*3 ? i+3 : 0; //last block should loop back to the first block
-        cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+        cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
     }
     for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
         printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
