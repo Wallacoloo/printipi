@@ -293,7 +293,7 @@ void logDmaChannelHeader(struct DmaChannelHeader *h) {
 }
 
 struct DmaControlBlock {
-    uint32_t TI; //transfer information
+    volatile uint32_t TI; //transfer information
         //31:27 unused
         //26    NO_WIDE_BURSTS
         //21:25 WAITS; number of cycles to wait between each DMA read/write operation
@@ -695,7 +695,7 @@ int main() {
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    dmaHeader->CONBLK_AD = virtToPhys(cbArr, pagemapfd); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
+    dmaHeader->CONBLK_AD = virtToUncachedPhys(cbArr, pagemapfd); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
     
     printf("DMA Active\n");
@@ -706,6 +706,7 @@ int main() {
     for (int i=0; ; ++i) { //generate the output sequence:
         //this just toggles outPin every few us:
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
+        logDmaChannelHeader(dmaHeader);
     }
     //Exit routine:
     cleanup();
