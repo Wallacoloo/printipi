@@ -21,6 +21,8 @@
  *   0x80000000 - L2 cache only
  *   0xc0000000 - direct uncached
  *
+ * Useful DMA timings, etc: http://www.raspberrypi.org/forums/viewtopic.php?f=37&t=7696&start=50
+ *
  * The general idea is to have a buffer of N blocks, where each block is the same size as the gpio registers, 
  *   and have the DMA module continually copying the data in this buffer into those registers.
  * In this way, we can have (say) 32 blocks, and then be able to buffer the next 32 IO frames.
@@ -45,6 +47,7 @@
  *   PWM clock works as so: 500MHz / clock_div = PWM_BITRATE (note: bitrate!)
  *     PWM_BITRATE / PWM_RNG1 = #of FIFO writes/sec
  *     Max PWM_BITRATE = 25MHz
+ *   Also, dest_addr = 0x7e20b000 // the testbus interface which is a dump peripheral that goes nowhere (http://www.raspberrypi.org/forums/viewtopic.php?f=37&t=7696&start=25 )
  *
  * DMA Control Block layout:
  *   repeat #srcBlock times:
@@ -88,6 +91,12 @@
  *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
  *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
+ * http://www.raspberrypi.org/forums/viewtopic.php?f=37&t=7696&start=25
+ *   Says it's possible to get access to a 250MHz clock.
+ * How to make DMA more consistent (ie reduce bus contention?):
+ *   disable interrupts 1 uS before any 'real' transaction, enable them afterwards
+ *   Make sure dummy writes DON'T READ FROM RAM (ie, use src_ignore = 1)
+ *   boot with disable_pvt=1 (prevents gpu from halting everything to check ram twice per second) in config.txt
  *
  * Printipi discussions:
  *   http://forums.reprap.org/read.php?2,396157
@@ -659,25 +668,25 @@ int main() {
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
     printf("#dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
     for (int i=0; i<numSrcBlocks*3; i += 3) {
-        //copy buffer to GPIOs
-        cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
-        cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
-        cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
-        cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
-        cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1, pagemapfd);
-        //clear buffer
-        cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+1].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd);
-        cbArr[i+1].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
-        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
-        cbArr[i+1].STRIDE = i/3; //0;
-        cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2, pagemapfd);
         //pace DMA through PWM
-        cbArr[i+2].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd); //The data written doesn't matter, but 0 is a 'clean' number and unlikely to cause significant damage anywhere
-        cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
-        cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
+        cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
+        cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd); //The data written doesn't matter, but using the GPIO source will hopefully bring it into L2 for more deterministic timing of the next control block.
+        cbArr[i].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
+        cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
+        cbArr[i].STRIDE = i/3; //0;
+        cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1, pagemapfd);
+        //copy buffer to GPIOs
+        cbArr[i+1].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
+        cbArr[i+1].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
+        cbArr[i+1].DEST_AD = GPIO_BASE_BUS + GPSET0;
+        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
+        cbArr[i+1].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
+        cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2, pagemapfd);
+        //clear buffer (TODO: investigate using a 4-word copy ("burst") )
+        cbArr[i+2].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
+        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd);
+        cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
+        cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+2].STRIDE = i/3; //0;
         int nextIdx = i+3 < numSrcBlocks*3 ? i+3 : 0; //last block should loop back to the first block
         cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArrCached + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
@@ -712,7 +721,7 @@ int main() {
     for (int i=0; ; ++i) { //generate the output sequence:
         //this just toggles outPin every few us:
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
-        logDmaChannelHeader(dmaHeader);
+        //logDmaChannelHeader(dmaHeader);
     }
     //Exit routine:
     cleanup();
