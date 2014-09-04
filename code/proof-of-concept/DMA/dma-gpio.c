@@ -676,7 +676,7 @@ int main() {
     for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
         printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
     }
-    int dmaCh = 3;
+    int dmaCh = 5; //Channels 1,3,6 and 7 are reserved for the GPU. Various sources indicate that channels 0 and 2 are also used by the system (source: http://virtualfloppy.blogspot.com/2014/01/dma-support-at-last.html )
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
     
