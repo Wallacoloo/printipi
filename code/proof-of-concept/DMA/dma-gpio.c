@@ -400,10 +400,10 @@ uint64_t readSysTime(volatile uint32_t *timerBaseMem) {
 }
 
 //sleep for N microseconds. N must be < 1 second:
-void udelay(int us) {
+/*void udelay(int us) {
     struct timespec ts = {0, us*1000};
     nanosleep(&ts, NULL);
-}
+}*/
 
 size_t ceilToPage(size_t size) {
     //round up to nearest page-size multiple
@@ -490,11 +490,11 @@ void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd
         -1,	// File descriptor
     0); //no offset into file (file doesn't exist).
     //now, free the virtual memory and immediately remap it to the physical addresses used in virtaddr
-    munmap(mem, bytes);
+    munmap(mem, bytes); //Might not be necessary; MAP_FIXED indicates it can map an already-used page
     for (int offset=0; offset<bytes; offset += PAGE_SIZE) {
         void *mappedPage = mmap(mem+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys(virtaddr+offset, pagemapfd));
-        memset(mappedPage, 0, PAGE_SIZE); //lock page in place (shouldn't be necessary)
-        mlock(mappedPage, PAGE_SIZE);
+        //memset(mappedPage, 0, PAGE_SIZE); //lock page in place (shouldn't be necessary)
+        //mlock(mappedPage, PAGE_SIZE);
         if (mappedPage != mem+offset) {
             printf("Failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
             exit(1);
@@ -547,7 +547,7 @@ void sleepUntilMicros(uint64_t micros, volatile uint32_t* timerBaseMem) {
     uint64_t cur = readSysTime(timerBaseMem);
     if (micros > cur) { //avoid overflow caused by unsigned arithmetic
         uint64_t dur = micros - cur;
-        //usleep(dur);
+        //usleep(dur); //nope, causes problems!
         struct timespec t;
         t.tv_sec = dur/1000000;
         t.tv_nsec = (dur - t.tv_sec*1000000)*1000;
@@ -643,10 +643,10 @@ int main() {
     
     pwmHeader->DMAC = 0; //disable DMA
     pwmHeader->CTL |= PWM_CTL_CLRFIFO; //clear pwm
-    udelay(100);
+    usleep(100);
     
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
-    udelay(100);
+    usleep(100);
     
     pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(15) | PWM_DMAC_PANIC(15); //DREQ is activated at queue < 15
     pwmHeader->RNG1 = 10; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
@@ -698,10 +698,10 @@ int main() {
     //abort any previous DMA:
     dmaHeader->NEXTCONBK = 0;
     dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
-    udelay(100); //give time for the abort command to be handled.
+    usleep(100); //give time for the abort command to be handled.
     
     dmaHeader->CS = DMA_CS_RESET;
-    udelay(100);
+    usleep(100);
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
