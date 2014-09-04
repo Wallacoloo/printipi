@@ -399,12 +399,6 @@ uint64_t readSysTime(volatile uint32_t *timerBaseMem) {
     return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
 }
 
-//sleep for N microseconds. N must be < 1 second:
-/*void udelay(int us) {
-    struct timespec ts = {0, us*1000};
-    nanosleep(&ts, NULL);
-}*/
-
 size_t ceilToPage(size_t size) {
     //round up to nearest page-size multiple
     if (size & (PAGE_SIZE-1)) {
@@ -430,7 +424,6 @@ uintptr_t virtToPhys(void* virt, int pagemapfd) {
     }
     physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
     uintptr_t mapped = (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
-    //printf("virtToPhys 0x%08x -> 0x%08x\n", virt, mapped);
     return mapped;
 }
 
@@ -456,9 +449,6 @@ void* makeLockedMem(size_t size) {
     if (mem == MAP_FAILED) {
         printf("makeLockedMem failed\n");
         exit(1);
-    } else if (((uintptr_t)mem) & (PAGE_SIZE-1)) {
-        printf("mmap not page-aligned: %p\n", mem);
-        exit(1);
     }
     memset(mem, 0, size); //simultaneously zero the pages and force them into memory
     mlock(mem, size);
@@ -468,17 +458,16 @@ void* makeLockedMem(size_t size) {
 //free memory allocated with makeLockedMem
 void freeLockedMem(void* mem, size_t size) {
     size = ceilToPage(size);
-    //munlock(mem, size);
-    //free(mem);
+    munlock(mem, size);
     munmap(mem, size);
 }
 
 void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd) {
     //by default, writing to any virtual address will go through the CPU cache.
-    //this function will return a pointer that behaves the same as virtaddr, but bypasses the CPU cache (note that because of this, the returned pointer and original pointer should not be used in conjunction, else cache-related inconsistencies will arise)
-    //Note: The original memory should not be unmapped during the lifetime of the uncached version, as then the Kernel won't know that our process still owns the physical memory.
+    //this function will return a pointer that behaves the same as virtaddr, but bypasses the CPU L1 cache (note that because of this, the returned pointer and original pointer should not be used in conjunction, else cache-related inconsistencies will arise)
+    //Note: The original memory should not be unmapped during the lifetime of the uncached version, as then the OS won't know that our process still owns the physical memory.
     bytes = ceilToPage(bytes);
-    //first, just allocate enough *virtual* memory for the operation:
+    //first, just allocate enough *virtual* memory for the operation. This is done so that we can do the later mapping to a contiguous range of virtual memory:
     void *mem = mmap(
         NULL,   //let kernel place memory where it wants
         bytes,   //length
@@ -493,9 +482,7 @@ void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd
     munmap(mem, bytes); //Might not be necessary; MAP_FIXED indicates it can map an already-used page
     for (int offset=0; offset<bytes; offset += PAGE_SIZE) {
         void *mappedPage = mmap(mem+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys(virtaddr+offset, pagemapfd));
-        //memset(mappedPage, 0, PAGE_SIZE); //lock page in place (shouldn't be necessary)
-        //mlock(mappedPage, PAGE_SIZE);
-        if (mappedPage != mem+offset) {
+        if (mappedPage != mem+offset) { //We need these mappings to be contiguous over virtual memory (in order to replicate the virtaddr array), so we must ensure that the address we requested from mmap was actually used.
             printf("Failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
             exit(1);
         }
@@ -506,9 +493,9 @@ void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd
 //map a physical address into our virtual address space. memfd is the file descriptor for /dev/mem
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
     ///dev/mem behaves as a file. We need to map that file into memory:
-    //NULL = virtual address is chosen by kernel.
+    //NULL = virtual address of mapping is chosen by kernel.
     //PAGE_SIZE = map 1 page.
-    //PROT_READ|PROT_WRITE means give us read and write privelages to the memory
+    //PROT_READ|PROT_WRITE means give us read and write priveliges to the memory
     //MAP_SHARED means updates to the mapped memory should be written back to the file & shared with other processes
     //memfd = /dev/mem file descriptor
     //addr = offset in file to map
@@ -556,6 +543,7 @@ void sleepUntilMicros(uint64_t micros, volatile uint32_t* timerBaseMem) {
 }
 
 void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray, volatile uint32_t* timerBaseMem, struct DmaChannelHeader* dmaHeader) {
+    //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     sleepUntilMicros(micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC, timerBaseMem);
     //get the current source index at the current time:
@@ -570,20 +558,22 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
         srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
         curTime2 = readSysTime(timerBaseMem);
     } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
-    int newIdx = (srcIdx + (micros - curTime2)*FRAMES_PER_SEC/1000000)%SOURCE_BUFFER_FRAMES;
+    //calculate the frame# at which to place the event:
+    int usecFromNow = micros - curTime2;
+    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000;
+    int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
     if (mode == 0) { //turn output off
         srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
     } else { //turn output on
         srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
     }
-    //printf("Queuing: %i->%i\n", srcIdx, newIdx);
 }
 
 int main() {
     volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
     //emergency clean-up:
-    for (int i = 0; i < 64; i++) { //catch all shutdown signals to kill the DMA engine:
+    for (int i = 0; i < 64; i++) { //catch all signals (like ctrl+c, ctrl+z, ...) to ensure DMA is disabled
         struct sigaction sa;
         memset(&sa, 0, sizeof(sa));
         sa.sa_handler = cleanupAndExit;
@@ -653,15 +643,13 @@ int main() {
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
     //allocate memory for the control blocks
-    printf("sizeof(struct DmaControlBlock): %i\n", sizeof(struct DmaControlBlock));
     size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 3; //3 cbs for each source block
     void *virtCbPage = makeLockedMem(cbPageBytes);
     //fill the control blocks:
     struct DmaControlBlock *cbArr = (struct DmaControlBlock*)virtCbPage;
-    int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
-    printf("#dma blocks: %i, #src blocks: %i\n", maxIdx, numSrcBlocks);
-    printf("virt cb[%i] -> phys: 0x%08x\n", 0, virtToPhys((void*)cbArr, pagemapfd));
-    for (int i=0; i<maxIdx; i += 3) {
+    //int maxIdx = cbPageBytes/sizeof(struct DmaControlBlock);
+    printf("#dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
+    for (int i=0; i<numSrcBlocks*3; i += 3) {
         //copy buffer to GPIOs
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
@@ -682,9 +670,8 @@ int main() {
         cbArr[i+2].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
         cbArr[i+2].STRIDE = i/3; //0;
-        int nextIdx = i+3 < maxIdx ? i+3 : 0;
+        int nextIdx = i+3 < numSrcBlocks*3 ? i+3 : 0; //last block should loop back to the first block
         cbArr[i+2].NEXTCONBK = virtToPhys(cbArr + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
-        //logDmaControlBlock(cbArr+i);
     }
     for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
         printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
@@ -717,6 +704,7 @@ int main() {
         //this just toggles outPin every few us:
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
     }
+    //Exit routine:
     cleanup();
     freeLockedMem(virtCbPage, cbPageBytes);
     freeLockedMem(virtSrcPage, srcPageBytes);
