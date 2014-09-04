@@ -473,7 +473,7 @@ void freeLockedMem(void* mem, size_t size) {
     munmap(mem, size);
 }
 
-void* makeUncachedMemView(void* virtaddr, size_t bytes, int pagemapfd, int memfd) {
+void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd) {
     //by default, writing to any virtual address will go through the CPU cache.
     //this function will return a pointer that behaves the same as virtaddr, but bypasses the CPU cache (note that because of this, the returned pointer and original pointer should not be used in conjunction, else cache-related inconsistencies will arise)
     bytes = ceilToPage(bytes);
@@ -617,7 +617,8 @@ int main() {
     //First, allocate memory for the source:
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
     size_t srcPageBytes = numSrcBlocks*sizeof(struct GpioBufferFrame);
-    void *virtSrcPage = makeLockedMem(srcPageBytes);
+    void *virtSrcPageCached = makeLockedMem(srcPageBytes);
+    void *virtSrcPage = makeUncachedMemView(virtSrcPageCached, srcPageBytes, memfd, pagemapfd);
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage, pagemapfd));
     
     //cast virtSrcPage to a GpioBufferFrame array:
