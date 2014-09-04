@@ -435,7 +435,7 @@ uintptr_t virtToPhys(void* virt, int pagemapfd) {
 }
 
 uintptr_t virtToUncachedPhys(void *virt, int pagemapfd) {
-    return virtToPhys(virt, pagemapfd) | 0x40000000; //bus address of the ram is 0x40000000. With this binary-or, writes to the returned address will bypass the CPU cache.
+    return virtToPhys(virt, pagemapfd) | 0x40000000; //bus address of the ram is 0x40000000. With this binary-or, writes to the returned address will bypass the CPU (L1) cache, but not the L2 cache. 0xc0000000 should be the base address if L2 must also be bypassed. However, the DMA engine is aware of L2 cache - just not the L1 cache (source: http://en.wikibooks.org/wiki/Aros/Platforms/Arm_Raspberry_Pi_support#Framebuffer )
 }
 
 
@@ -476,6 +476,7 @@ void freeLockedMem(void* mem, size_t size) {
 void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd) {
     //by default, writing to any virtual address will go through the CPU cache.
     //this function will return a pointer that behaves the same as virtaddr, but bypasses the CPU cache (note that because of this, the returned pointer and original pointer should not be used in conjunction, else cache-related inconsistencies will arise)
+    //Note: The original memory should not be unmapped during the lifetime of the uncached version, as then the Kernel won't know that our process still owns the physical memory.
     bytes = ceilToPage(bytes);
     //first, just allocate enough *virtual* memory for the operation:
     void *mem = mmap(
@@ -660,7 +661,7 @@ int main() {
     for (int i=0; i<maxIdx; i += 3) {
         //copy buffer to GPIOs
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i].SOURCE_AD = virtToUncachedPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
+        cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArray + i/3, pagemapfd);
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
         cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
@@ -668,7 +669,7 @@ int main() {
         //clear buffer
         cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
-        cbArr[i+1].DEST_AD = virtToUncachedPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
+        cbArr[i+1].DEST_AD = virtToUncachedPhys(srcArray + i/3, pagemapfd);
         cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+1].STRIDE = i/3; //0;
         cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
