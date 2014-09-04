@@ -15,6 +15,12 @@
  *   https://github.com/metachris/raspberrypi-pwm/blob/master/rpio-pwm/rpio_pwm.c
  *   https://github.com/richardghirst/PiBits/blob/master/ServoBlaster/user/servod.c
  *
+ * Cache info can be found here: http://www.freelists.org/post/raspi-internals/caches,18
+ *   0x00000000 - L1 & L2 cache
+ *   0x40000000 - L2 cache coherent (ie L1 writes are propagated to L2?)
+ *   0x80000000 - L2 cache only
+ *   0xc0000000 - direct uncached
+ *
  * The general idea is to have a buffer of N blocks, where each block is the same size as the gpio registers, 
  *   and have the DMA module continually copying the data in this buffer into those registers.
  * In this way, we can have (say) 32 blocks, and then be able to buffer the next 32 IO frames.
