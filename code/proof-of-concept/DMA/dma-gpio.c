@@ -97,7 +97,7 @@
 #include <unistd.h> //for NULL
 #include <stdio.h> //for printf
 #include <stdlib.h> //for exit, valloc
-#include <malloc.h> //some implementations declare valloc inside malloc.h
+//#include <malloc.h> //some implementations declare valloc inside malloc.h
 #include <fcntl.h> //for file opening
 #include <stdint.h> //for uint32_t
 #include <string.h> //for memset
@@ -105,7 +105,7 @@
 
 //config settings:
 #define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
-#define FRAMES_PER_SEC 1000000
+#define FRAMES_PER_SEC 1000000 //Note that this number is currently hard-coded in the form of clock settings. Changing this without changing the clock settings will cause problems
 
 #define TIMER_BASE   0x20003000
 #define TIMER_CLO    0x00000004 //lower 32-bits of 1 MHz timer
@@ -434,17 +434,10 @@ uintptr_t virtToPhys(void* virt, int pagemapfd) {
     return mapped;
 }
 
-void* physToVirt(uintptr_t phys, void* virtPageStart, void* virtPageEnd, int pagemapfd) {
-    void* page = (void*)(((uintptr_t)virtPageStart) &~(PAGE_SIZE-1));
-    uint32_t physPage = phys &~(PAGE_SIZE-1);
-    uint32_t byteOffsetFromPage = phys & (PAGE_SIZE-1);
-    for(; page < virtPageEnd; page += PAGE_SIZE) { //iterate through all pages in set and see if they map to the same page which the physical address is on
-        if (virtToPhys(page, pagemapfd) == physPage) {
-            return page + byteOffsetFromPage;
-        }
-    }
-    return NULL;
+uintptr_t virtToUncachedPhys(void *virt, int pagemapfd) {
+    return virtToPhys(virt, pagemapfd) | 0x40000000; //bus address of the ram is 0x40000000. With this binary-or, writes to the returned address will bypass the CPU cache.
 }
+
 
 //allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
@@ -478,6 +471,33 @@ void freeLockedMem(void* mem, size_t size) {
     //munlock(mem, size);
     //free(mem);
     munmap(mem, size);
+}
+
+void* makeUncachedMemView(void* virtaddr, size_t bytes, int pagemapfd, int memfd) {
+    //by default, writing to any virtual address will go through the CPU cache.
+    //this function will return a pointer that behaves the same as virtaddr, but bypasses the CPU cache (note that because of this, the returned pointer and original pointer should not be used in conjunction, else cache-related inconsistencies will arise)
+    bytes = ceilToPage(bytes);
+    //first, just allocate enough *virtual* memory for the operation:
+    void *mem = mmap(
+        NULL,   //let kernel place memory where it wants
+        bytes,   //length
+        PROT_WRITE | PROT_READ, //ask for read and write permissions to memory
+        MAP_SHARED | 
+        MAP_ANONYMOUS | //no underlying file; initialize to 0
+        MAP_NORESERVE | //don't reserve swap space
+        MAP_LOCKED, //lock into *virtual* ram. Physical ram may still change!
+        -1,	// File descriptor
+    0); //no offset into file (file doesn't exist).
+    //now, free the virtual memory and immediately remap it to the physical addresses used in virtaddr
+    munmap(mem, bytes);
+    for (int offset=0; offset<bytes; offset += PAGE_SIZE) {
+        void *mappedPage = mmap(mem+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys(virtaddr+offset, pagemapfd));
+        if (mappedPage != mem+offset) {
+            printf("Failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
+            exit(1);
+        }
+    }
+    return mem;
 }
 
 //map a physical address into our virtual address space. memfd is the file descriptor for /dev/mem
@@ -524,6 +544,7 @@ void sleepUntilMicros(uint64_t micros, volatile uint32_t* timerBaseMem) {
     uint64_t cur = readSysTime(timerBaseMem);
     if (micros > cur) { //avoid overflow caused by unsigned arithmetic
         uint64_t dur = micros - cur;
+        //usleep(dur);
         struct timespec t;
         t.tv_sec = dur/1000000;
         t.tv_nsec = (dur - t.tv_sec*1000000)*1000;
@@ -536,6 +557,9 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
     sleepUntilMicros(micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC, timerBaseMem);
     //get the current source index at the current time:
     //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
+    //Note: getting the curTime & srcIdx don't have to be done for every call to queue - it could be done eg just once per buffer.
+    //  It should be calculated regularly though, to counter clock drift & DMA imprecisions.
+    //  It is done in this function only for simplicity
     int srcIdx;
     uint64_t curTime1, curTime2;
     do {
@@ -635,7 +659,7 @@ int main() {
     for (int i=0; i<maxIdx; i += 3) {
         //copy buffer to GPIOs
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i].SOURCE_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
+        cbArr[i].SOURCE_AD = virtToUncachedPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
         cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
@@ -643,7 +667,7 @@ int main() {
         //clear buffer
         cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
-        cbArr[i+1].DEST_AD = virtToPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
+        cbArr[i+1].DEST_AD = virtToUncachedPhys(virtSrcPage + i/3*sizeof(struct GpioBufferFrame), pagemapfd);
         cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+1].STRIDE = i/3; //0;
         cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
@@ -666,8 +690,7 @@ int main() {
     
     //configure the DMA header to point to our control block:
     dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh)/4); //must divide by 4, as dmaBaseMem is uint32_t*
-    logDmaChannelHeader(dmaHeader);
-    //abort previous DMA:
+    //abort any previous DMA:
     dmaHeader->NEXTCONBK = 0;
     dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
     udelay(100); //give time for the abort command to be handled.
@@ -685,7 +708,8 @@ int main() {
         logDmaChannelHeader(dmaHeader);
     } //wait for DMA transfer to complete.*/
     uint64_t startTime = readSysTime(timerBaseMem);
-    for (int i=0; ; ++i) {
+    for (int i=0; ; ++i) { //generate the output sequence:
+        //this just toggles outPin every few us:
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
     }
     cleanup();
