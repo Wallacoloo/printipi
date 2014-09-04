@@ -625,7 +625,8 @@ int main() {
     printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage, pagemapfd));
     
     //cast virtSrcPage to a GpioBufferFrame array:
-    struct GpioBufferFrame *srcArray = (struct GpioBufferFrame*)virtSrcPage;
+    struct GpioBufferFrame *srcArray = (struct GpioBufferFrame*)virtSrcPage; //Note: calling virtToPhys on srcArray will return NULL. Use srcArrayCached for that.
+    struct GpioBufferFrame *srcArrayCached = (struct GpioBufferFrame*)virtSrcPageCached;
     //srcArray[0].gpset[0] = (1 << outPin); //set pin ON
     //srcArray[numSrcBlocks/2].gpclr[0] = (1 << outPin); //set pin OFF;
     
@@ -663,7 +664,7 @@ int main() {
     for (int i=0; i<maxIdx; i += 3) {
         //copy buffer to GPIOs
         cbArr[i].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArray + i/3, pagemapfd);
+        cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
         cbArr[i].DEST_AD = GPIO_BASE_BUS + GPSET0;
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
         cbArr[i].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
@@ -671,7 +672,7 @@ int main() {
         //clear buffer
         cbArr[i+1].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+1].SOURCE_AD = virtToPhys(zerosPage, pagemapfd);
-        cbArr[i+1].DEST_AD = virtToUncachedPhys(srcArray + i/3, pagemapfd);
+        cbArr[i+1].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
         cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+1].STRIDE = i/3; //0;
         cbArr[i+1].NEXTCONBK = virtToPhys(cbArr+i+2, pagemapfd);
