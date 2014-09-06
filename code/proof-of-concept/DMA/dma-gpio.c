@@ -119,7 +119,7 @@
 #include <errno.h> //for errno
 
 //config settings:
-#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
+#define SOURCE_BUFFER_FRAMES 256 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
 #define FRAMES_PER_SEC 1000000 //Note that this number is currently hard-coded in the form of clock settings. Changing this without changing the clock settings will cause problems
 
 #define TIMER_BASE   0x20003000
