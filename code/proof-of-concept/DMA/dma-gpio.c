@@ -170,6 +170,7 @@
 //flags used in the DmaChannelHeader struct:
 #define DMA_CS_RESET (1<<31)
 #define DMA_CS_ABORT (1<<30)
+#define DMA_CS_DISDEBUG (1<<28) //DMA will not stop when debug signal is asserted
 #define DMA_CS_PRIORITY(x) ((x)&0xf << 16) //higher priority DMA transfers are serviced first, it would appear
 #define DMA_CS_PRIORITY_MAX DMA_CS_PRIORITY(7)
 #define DMA_CS_PANIC_PRIORITY(x) ((x)&0xf << 20)
@@ -674,7 +675,7 @@ int main() {
         cbArr[i].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
         cbArr[i].STRIDE = i/3;
-        cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1, pagemapfd);
+        cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1, pagemapfd); //have to use the cached version because the uncached version isn't listed in pagemap(?)
         //copy buffer to GPIOs
         cbArr[i+1].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+1].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
@@ -703,7 +704,10 @@ int main() {
     //Raspberry Pi occassionally crashes using channel 4 or 5.
     //Happens independent of disable_pvt
     //Triggered by network activity?
-    int dmaCh = 4; 
+    //Dma Ch 5: breaks in about 0.5-1.0 seconds
+    //Dma Ch 4: breaks in about 5-6 seconds (server was pinged)
+    //Dma Ch 2: breaks in about 9 seconds
+    int dmaCh = 5; 
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
     
@@ -720,7 +724,8 @@ int main() {
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     dmaHeader->CONBLK_AD = virtToUncachedPhys(cbArr, pagemapfd); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
-    dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_ACTIVE; //activate DMA. high priority (max is 7)
+    dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG; //high priority (max is 7)
+    dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
     
     printf("DMA Active\n");
     /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
@@ -730,7 +735,7 @@ int main() {
     for (int i=0; ; ++i) { //generate the output sequence:
         //this just toggles outPin every few us:
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
-        //logDmaChannelHeader(dmaHeader);
+        logDmaChannelHeader(dmaHeader);
     }
     //Exit routine:
     cleanup();
