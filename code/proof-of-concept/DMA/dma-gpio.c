@@ -693,7 +693,7 @@ int main() {
         cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArrCached + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
     }
     for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
-        printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
+        printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArrCached, pagemapfd));
     }
     //source: http://virtualfloppy.blogspot.com/2014/01/dma-support-at-last.html
     //cat /sys/module/dma/parameters/dmachans gives a bitmask of DMA channels that are not used by GPU. Results: ch 1, 3, 6, 7 are reserved.
