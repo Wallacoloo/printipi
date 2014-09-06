@@ -684,7 +684,7 @@ int main() {
         cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2, pagemapfd);
         //clear buffer (TODO: investigate using a 4-word copy ("burst") )
         cbArr[i+2].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPage, pagemapfd);
+        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPageCached, pagemapfd);
         cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3, pagemapfd);
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+2].STRIDE = i/3; //might be better to use the NEXT index
@@ -694,7 +694,16 @@ int main() {
     for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
         printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArr, pagemapfd));
     }
-    int dmaCh = 5; //Channels 1,3,6 and 7 are reserved for the GPU. Various sources indicate that channels 0 and 2 are also used by the system (source: http://virtualfloppy.blogspot.com/2014/01/dma-support-at-last.html )
+    //source: http://virtualfloppy.blogspot.com/2014/01/dma-support-at-last.html
+    //cat /sys/module/dma/parameters/dmachans gives a bitmask of DMA channels that are not used by GPU. Results: ch 1, 3, 6, 7 are reserved.
+    //dmesg | grep "DMA"; results: Ch 2 is used by SDHC host
+    //ch 0 is known to be used for graphics acceleration
+    //Thus, applications can use ch 4, 5, or the LITE channels @ 8 and beyond.
+    //If using LITE channels, then we can't use the STRIDE feature, so that narrows it down to ch 4 and ch 5.
+    //Raspberry Pi occassionally crashes using channel 4 or 5.
+    //Happens independent of disable_pvt
+    //Triggered by network activity?
+    int dmaCh = 4; 
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
     
