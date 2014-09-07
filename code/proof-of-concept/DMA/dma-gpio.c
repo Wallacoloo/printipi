@@ -117,12 +117,13 @@
 #include <stdint.h> //for uint32_t
 #include <string.h> //for memset
 #include <errno.h> //for errno
+#include <pthread.h> //for pthread_setschedparam
 
 //config settings:
 #define PWM_FIFO_SIZE 1
 #define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
 #define FRAMES_PER_SEC 1000000 //Note that this number is currently hard-coded in the form of clock settings. Changing this without changing the clock settings will cause problems
-
+#define SCHED_PRIORITY 30 //Linux scheduler priority. Higher is better
 
 
 #define TIMER_BASE   0x20003000
@@ -404,6 +405,15 @@ struct GpioBufferFrame {
 
 struct DmaChannelHeader *dmaHeader; //must be global for cleanup()
 
+void setSchedPriority(int priority) {
+    struct sched_param sp; 
+	sp.sched_priority=priority; 
+	int ret;
+	if (ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp)) {
+		printf("Warning: pthread_setschedparam (increase thread priority) returned non-zero: %i\n", ret);
+	}
+}
+
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
     //eg if x = 0b11001100
@@ -415,9 +425,6 @@ void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     *dest = new; //best to be safe 
 }
 
-int max(int a, int b) {
-    return a > b ? a : b;
-}
 
 uint64_t readSysTime(volatile uint32_t *timerBaseMem) {
     return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
@@ -614,6 +621,7 @@ int main() {
         sa.sa_handler = cleanupAndExit;
         sigaction(i, &sa, NULL);
     }
+    setSchedPriority(SCHED_PRIORITY);
     //First, open the linux device, /dev/mem
     //dev/mem provides access to the physical memory of the entire processor+ram
     //This is needed because Linux uses virtual memory, thus the process's memory at 0x00000000 will NOT have the same contents as the physical memory at 0x00000000
