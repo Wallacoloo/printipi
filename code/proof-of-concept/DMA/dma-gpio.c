@@ -119,8 +119,11 @@
 #include <errno.h> //for errno
 
 //config settings:
+#define PWM_FIFO_SIZE 1
 #define SOURCE_BUFFER_FRAMES 1024 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
 #define FRAMES_PER_SEC 1000000 //Note that this number is currently hard-coded in the form of clock settings. Changing this without changing the clock settings will cause problems
+
+
 
 #define TIMER_BASE   0x20003000
 #define TIMER_CLO    0x00000004 //lower 32-bits of 1 MHz timer
@@ -583,7 +586,11 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
     } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //calculate the frame# at which to place the event:
     int usecFromNow = micros - curTime2;
-    int framesFromNow = max(10, usecFromNow*FRAMES_PER_SEC/1000000); //Not safe to schedule less than ~10uS into the future.
+    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; 
+    if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future.
+        printf("Warning: behind schedule\n");
+        framesFromNow = 10;
+    }
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
     if (mode == 0) { //turn output off
@@ -662,7 +669,7 @@ int main() {
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
     usleep(100);
     
-    pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(15) | PWM_DMAC_PANIC(15); //DREQ is activated at queue < 15
+    pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(PWM_FIFO_SIZE) | PWM_DMAC_PANIC(PWM_FIFO_SIZE); //DREQ is activated at queue < 15
     pwmHeader->RNG1 = 10; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
