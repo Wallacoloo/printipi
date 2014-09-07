@@ -542,6 +542,7 @@ void cleanup() {
 
 void cleanupAndExit(int sig) {
     cleanup();
+    printf("Exiting with error code 1\n");
     exit(1);
 }
 
@@ -744,6 +745,7 @@ int main() {
     }
     //Exit routine:
     cleanup();
+    printf("Exiting cleanly:\n");
     freeLockedMem(virtCbPage, cbPageBytes);
     freeLockedMem(virtSrcPage, srcPageBytes);
     freeLockedMem(zerosPage, PAGE_SIZE);
