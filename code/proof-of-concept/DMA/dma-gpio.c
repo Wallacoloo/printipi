@@ -592,7 +592,7 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
     int usecFromNow = micros - curTime2;
     int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; 
     if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future.
-        printf("Warning: behind schedule: %i (tries: %i) (sleep %llu -> %llu (want %llu))\n", framesFromNow, tries, callTime, awakeTime, micros);
+        printf("Warning: behind schedule: %i (%i) (tries: %i) (sleep %llu -> %llu (want %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, micros);
         framesFromNow = 10;
     }
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
