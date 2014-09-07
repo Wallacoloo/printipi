@@ -9,7 +9,7 @@ pi-blaster: pi-blaster.c
 	$(CC) -I. -Wall -pedantic -o pi-blaster pi-blaster.c
 	
 dma-gpio: dma-gpio.c
-	$(CC) $(CFLAGS) -O2 -o dma-gpio dma-gpio.c -lrt
+	$(CC) $(CFLAGS) -O2 -o dma-gpio dma-gpio.c -lrt 
 	
 dma-example: dma-example.c
 	$(CC) $(CFLAGS) -o dma-example dma-example.c

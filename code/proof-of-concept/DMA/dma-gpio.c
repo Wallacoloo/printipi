@@ -412,6 +412,10 @@ void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     *dest = new; //best to be safe 
 }
 
+int max(int a, int b) {
+    return a > b ? a : b;
+}
+
 uint64_t readSysTime(volatile uint32_t *timerBaseMem) {
     return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
 }
@@ -579,7 +583,7 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
     } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //calculate the frame# at which to place the event:
     int usecFromNow = micros - curTime2;
-    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000;
+    int framesFromNow = max(10, usecFromNow*FRAMES_PER_SEC/1000000); //Not safe to schedule less than ~10uS into the future.
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
     if (mode == 0) { //turn output off
@@ -738,7 +742,7 @@ int main() {
     /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
     } //wait for DMA transfer to complete.*/
-    for (int i=0; ; ++i) { //generate the output sequence:
+    for (int i=1; ; ++i) { //generate the output sequence:
         //logDmaChannelHeader(dmaHeader);
         //this just toggles outPin every few us:
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
