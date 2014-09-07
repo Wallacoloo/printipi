@@ -4,7 +4,13 @@
  *
  * main is the program's main entry point.
  * main handles command line arguments, and instantiates the serial communications, State, and machine-specific driver.
- * Currently, the driver type must set explicitly further down in the file
+ * Driver type is passed into this compilation unit as a command-line argument (gcc -DMACHINE=...)
+ *
+ * Printipi discussions:
+ *   http://forums.reprap.org/read.php?2,396157
+ *   https://groups.google.com/forum/#!searchin/deltabot/wallacoloo|sort:relevance/deltabot/JQNpmnlYYUc/_6V6SYcOGMUJ
+ *   http://youtube.com/watch?v=g4UD5MRas3E
+ *   (referenced) http://3dprintboard.com/showthread.php?5121-MOD-t-may-make-3D-printing-commonplace
  */
  
 //Note: this file is great for debugging with gdb: https://gist.githubusercontent.com/skyscribe/3978082/raw/e8a0c8daec409e24b29f7c14cf74140a43a9278c/.gdbinit

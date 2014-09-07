@@ -97,12 +97,6 @@
  *   disable interrupts 1 uS before any 'real' transaction, enable them afterwards
  *   Make sure dummy writes DON'T READ FROM RAM (ie, use src_ignore = 1)
  *   boot with disable_pvt=1 (prevents gpu from halting everything to adjust ram refresh rate twice per second) in /boot/cmdline.txt. Does this affect system stability?
- *
- * Printipi discussions:
- *   http://forums.reprap.org/read.php?2,396157
- *   https://groups.google.com/forum/#!searchin/deltabot/wallacoloo|sort:relevance/deltabot/JQNpmnlYYUc/_6V6SYcOGMUJ
- *   http://youtube.com/watch?v=g4UD5MRas3E
- *   (referenced) http://3dprintboard.com/showthread.php?5121-MOD-t-may-make-3D-printing-commonplace
  */
  
 #include <sys/mman.h> //for mmap
@@ -120,7 +114,7 @@
 #include <pthread.h> //for pthread_setschedparam
 
 //config settings:
-#define PWM_FIFO_SIZE 1
+#define PWM_FIFO_SIZE 1 //The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.
 #define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms. Using a power-of-two is a good idea as it simplifies some of the arithmetic (modulus operations)
 #define FRAMES_PER_SEC 1000000 //Note that this number is currently hard-coded in the form of clock settings. Changing this without changing the clock settings will cause problems
 #define SCHED_PRIORITY 30 //Linux scheduler priority. Higher = more realtime
