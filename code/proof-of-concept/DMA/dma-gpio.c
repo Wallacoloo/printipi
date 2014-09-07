@@ -90,13 +90,13 @@
  *    Note: unused fields are read as "Don't care", meaning we can't use them to store user-data.
  *
  * http://www.raspberrypi.org/forums/viewtopic.php?f=44&t=26907
- *   Says gpu halts all DMA for 16us every 500ms. Bypassable.
+ *   Says gpu halts all DMA for 16us every 500ms. To bypass, add 'disable_pvt=1' to /boot/cmdline.txt
  * http://www.raspberrypi.org/forums/viewtopic.php?f=37&t=7696&start=25
  *   Says it's possible to get access to a 250MHz clock.
  * How to make DMA more consistent (ie reduce bus contention?):
  *   disable interrupts 1 uS before any 'real' transaction, enable them afterwards
  *   Make sure dummy writes DON'T READ FROM RAM (ie, use src_ignore = 1)
- *   boot with disable_pvt=1 (prevents gpu from halting everything to check ram twice per second) in config.txt
+ *   boot with disable_pvt=1 (prevents gpu from halting everything to adjust ram refresh rate twice per second) in /boot/cmdline.txt. Does this affect system stability?
  *
  * Printipi discussions:
  *   http://forums.reprap.org/read.php?2,396157
@@ -424,7 +424,7 @@ void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     uint32_t cur = *dest;
     uint32_t new = (cur & (~mask)) | (value & mask);
     *dest = new;
-    *dest = new; //best to be safe 
+    *dest = new; //best to be safe when crossing memory boundaries
 }
 
 
