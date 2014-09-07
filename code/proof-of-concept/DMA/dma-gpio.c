@@ -121,9 +121,9 @@
 
 //config settings:
 #define PWM_FIFO_SIZE 1
-#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
+#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms. Using a power-of-two is a good idea as it simplifies some of the arithmetic (modulus operations)
 #define FRAMES_PER_SEC 1000000 //Note that this number is currently hard-coded in the form of clock settings. Changing this without changing the clock settings will cause problems
-#define SCHED_PRIORITY 30 //Linux scheduler priority. Higher is better
+#define SCHED_PRIORITY 30 //Linux scheduler priority. Higher = more realtime
 
 
 #define TIMER_BASE   0x20003000
@@ -406,6 +406,8 @@ struct GpioBufferFrame {
 struct DmaChannelHeader *dmaHeader; //must be global for cleanup()
 
 void setSchedPriority(int priority) {
+    //In order to get the best timing at a decent queue size, we want the kernel to avoid interrupting us for long durations.
+    //This is done by giving our process a high priority. Note, must run as super-user for this to work.
     struct sched_param sp; 
 	sp.sched_priority=priority; 
 	int ret;
@@ -522,6 +524,12 @@ void* makeUncachedMemView(void* virtaddr, size_t bytes, int memfd, int pagemapfd
     return mem;
 }
 
+//free memory allocated with makeLockedMem
+void freeUncachedMemView(void* mem, size_t size) {
+    size = ceilToPage(size);
+    munmap(mem, size);
+}
+
 //map a physical address into our virtual address space. memfd is the file descriptor for /dev/mem
 volatile uint32_t* mapPeripheral(int memfd, int addr) {
     ///dev/mem behaves as a file. We need to map that file into memory:
@@ -578,14 +586,15 @@ void sleepUntilMicros(uint64_t micros, volatile uint32_t* timerBaseMem) {
 void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray, volatile uint32_t* timerBaseMem, struct DmaChannelHeader* dmaHeader) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
-    uint64_t callTime = readSysTime(timerBaseMem);
+    uint64_t callTime = readSysTime(timerBaseMem); //only used for debugging
     uint64_t desiredTime = micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC;
     sleepUntilMicros(desiredTime, timerBaseMem);
-    uint64_t awakeTime = readSysTime(timerBaseMem);
+    uint64_t awakeTime = readSysTime(timerBaseMem); //only used for debugging
+    
     //get the current source index at the current time:
     //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
     //Note: getting the curTime & srcIdx don't have to be done for every call to queue - it could be done eg just once per buffer.
-    //  It should be calculated regularly though, to counter clock drift & DMA imprecisions.
+    //  It should be calculated regularly though, to counter clock drift & PWM FIFO underflows
     //  It is done in this function only for simplicity
     int srcIdx;
     uint64_t curTime1, curTime2;
@@ -598,9 +607,9 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
     } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //calculate the frame# at which to place the event:
     int usecFromNow = micros - curTime2;
-    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; 
-    if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future.
-        printf("Warning: behind schedule: %i (%i) (tries: %i) (sleep %llu -> %llu (want %llu)) (curTime1: %llu, curTime2: %llu)\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime, curTime1, curTime2);
+    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; //Note: may cause overflow if FRAMES_PER_SECOND is not a multiple of 1000000 or if optimizations are COMPLETELY disabled.
+    if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future (note: should be operating on usecFromNow, not framesFromNow)
+        printf("Warning: behind schedule: %i (%i) (tries: %i) (sleep %llu -> %llu (wanted %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime);
         framesFromNow = 10;
     }
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
@@ -642,9 +651,7 @@ int main() {
     //now set our pin as an output:
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + outPin/10);
     writeBitmasked(fselAddr, 0x7 << (3*(outPin%10)), 0x1 << (3*(outPin%10)));
-    //set gpio 18 as alt (for pwm):
-    //Note: PWM pacing still works, even with no physical outputs.
-    //writeBitmasked((volatile uint32_t*)(gpioBaseMem + GPFSEL1/4), 0x7 << (3*8), 0x5 << (3*8));
+    //Note: PWM pacing still works, even with no physical outputs, so we don't need to set gpio pin 18 to its alternate function.
     
     //Often need to copy zeros with DMA. This array can be the source. Needs to all lie on one page
     void *zerosPageCached = makeLockedMem(PAGE_SIZE);
@@ -682,7 +689,7 @@ int main() {
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
     usleep(100);
     
-    pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(PWM_FIFO_SIZE) | PWM_DMAC_PANIC(PWM_FIFO_SIZE); //DREQ is activated at queue < 15
+    pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(PWM_FIFO_SIZE) | PWM_DMAC_PANIC(PWM_FIFO_SIZE); //DREQ is activated at queue < PWM_FIFO_SIZE
     pwmHeader->RNG1 = 10; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
     
@@ -727,12 +734,6 @@ int main() {
     //ch 0 is known to be used for graphics acceleration
     //Thus, applications can use ch 4, 5, or the LITE channels @ 8 and beyond.
     //If using LITE channels, then we can't use the STRIDE feature, so that narrows it down to ch 4 and ch 5.
-    //Raspberry Pi occassionally crashes using channel 4 or 5.
-    //Happens independent of disable_pvt
-    //Triggered by network activity?
-    //Dma Ch 5: breaks in about 0.5-1.0 seconds
-    //Dma Ch 4: breaks in about 5-6 seconds (server was pinged)
-    //Dma Ch 2: breaks in about 9 seconds
     int dmaCh = 5; 
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
@@ -770,9 +771,12 @@ int main() {
     //Exit routine:
     cleanup();
     printf("Exiting cleanly:\n");
-    freeLockedMem(virtCbPage, cbPageBytes);
-    freeLockedMem(virtSrcPage, srcPageBytes);
-    freeLockedMem(zerosPage, PAGE_SIZE);
+    freeUncachedMemView(virtCbPage, cbPageBytes);
+    freeLockedMem(virtCbPageCached, cbPageBytes);
+    freeUncachedMemView(virtSrcPage, srcPageBytes);
+    freeLockedMem(virtSrcPageCached, srcPageBytes);
+    freeUncachedMemView(zerosPage, PAGE_SIZE);
+    freeLockedMem(zerosPageCached, PAGE_SIZE);
     close(pagemapfd);
     close(memfd);
     return 0;
