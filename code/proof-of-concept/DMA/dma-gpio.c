@@ -267,11 +267,12 @@
 
 struct DmaChannelHeader {
     //Note: dma channels 7-15 are 'LITE' dma engines (or is it 8-15?), with reduced performance & functionality.
+    //Note: only CS, CONBLK_AD and DEBUG are directly writeable
     volatile uint32_t CS; //Control and Status
         //31    RESET; set to 1 to reset DMA
         //30    ABORT; set to 1 to abort current DMA control block (next one will be loaded & continue)
         //29    DISDEBUG; set to 1 and DMA won't be paused when debug signal is sent
-        //28    WAIT_FOR_OUTSTANDING_WRITES; set to 1 and DMA will wait until peripheral says all writes have gone through before loading next CB
+        //28    WAIT_FOR_OUTSTANDING_WRITES(0x10000000); set to 1 and DMA will wait until peripheral says all writes have gone through before loading next CB
         //24-74 reserved
         //20-23 PANIC_PRIORITY; 0 is lowest priority
         //16-19 PRIORITY; bus scheduling priority. 0 is lowest
@@ -279,12 +280,12 @@ struct DmaChannelHeader {
         //8     ERROR; read as 1 when error is encountered. error can be found in DEBUG register.
         //7     reserved
         //6     WAITING_FOR_OUTSTANDING_WRITES; read as 1 when waiting for outstanding writes
-        //5     DREQ_STOPS_DMA; read as 1 if DREQ is currently preventing DMA
-        //4     PAUSED; read as 1 if DMA is paused
+        //5     DREQ_STOPS_DMA(0x20); read as 1 if DREQ is currently preventing DMA
+        //4     PAUSED(0x10); read as 1 if DMA is paused
         //3     DREQ; copy of the data request signal from the peripheral, if DREQ is enabled. reads as 1 if data is being requested (or PERMAP=0), else 0
         //2     INT; set when current CB ends and its INTEN=1. Write a 1 to this register to clear it
         //1     END; set when the transfer defined by current CB is complete. Write 1 to clear.
-        //0     ACTIVE; write 1 to activate DMA (load the CB before hand)
+        //0     ACTIVE(0x01); write 1 to activate DMA (load the CB before hand)
     volatile uint32_t CONBLK_AD; //Control Block Address
     volatile uint32_t TI; //transfer information; see DmaControlBlock.TI for description
     volatile uint32_t SOURCE_AD; //Source address
@@ -294,7 +295,7 @@ struct DmaChannelHeader {
     volatile uint32_t NEXTCONBK; //Next control block. Must be 256-bit aligned (32 bytes; 8 words)
     volatile uint32_t DEBUG; //controls debug settings
         //29-31 unused
-        //28    LITE
+        //28    LITE (0x10000000)
         //25-27 VERSION
         //16-24 DMA_STATE (dma engine state machine)
         //8-15  DMA_ID    (AXI bus id)
@@ -313,7 +314,7 @@ struct DmaControlBlock {
         //31:27 unused
         //26    NO_WIDE_BURSTS
         //21:25 WAITS; number of cycles to wait between each DMA read/write operation
-        //16:20 PERMAP; peripheral number to be used for DREQ signal (pacing). set to 0 for unpaced DMA.
+        //16:20 PERMAP(0x000Y0000); peripheral number to be used for DREQ signal (pacing). set to 0 for unpaced DMA.
         //12:15 BURST_LENGTH
         //11    SRC_IGNORE; set to 1 to not perform reads. Used to manually fill caches
         //10    SRC_DREQ; set to 1 to have the DREQ from PERMAP gate requests.
@@ -716,7 +717,7 @@ int main() {
     printf("Previous DMA header:\n");
     logDmaChannelHeader(dmaHeader);
     //abort any previous DMA:
-    dmaHeader->NEXTCONBK = 0;
+    //dmaHeader->NEXTCONBK = 0; //NEXTCONBK is read-only.
     dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
     usleep(100); //give time for the abort command to be handled.
     
@@ -725,15 +726,17 @@ int main() {
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    dmaHeader->CONBLK_AD = virtToUncachedPhys(cbArr, pagemapfd); //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
+    uint32_t firstAddr = virtToUncachedPhys(cbArr, pagemapfd);
+    printf("starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
+    dmaHeader->CONBLK_AD = firstAddr; //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG; //high priority (max is 7)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
     
-    /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
-        logDmaChannelHeader(dmaHeader);
-    } //wait for DMA transfer to complete.*/
     uint64_t startTime = readSysTime(timerBaseMem);
     printf("DMA Active @ %llu uSec\n", startTime);
+    while (dmaHeader->CS & DMA_CS_ACTIVE) {
+        logDmaChannelHeader(dmaHeader);
+    } //wait for DMA transfer to complete.*/
     for (int i=0; ; ++i) { //generate the output sequence:
         logDmaChannelHeader(dmaHeader);
         //this just toggles outPin every few us:
