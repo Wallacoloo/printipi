@@ -694,7 +694,7 @@ int main() {
         cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArrCached + nextIdx, pagemapfd); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
     }
     for (int i=0; i<cbPageBytes; i+=PAGE_SIZE) {
-        printf("virt cb[%i] -> phys: 0x%08x\n", i, virtToPhys(i+(void*)cbArrCached, pagemapfd));
+        printf("virt cb[%i] -> phys: 0x%08x (0x%08x)\n", i, virtToPhys(i+(void*)cbArrCached, pagemapfd), virtToUncachedPhys(i+(void*)cbArrCached, pagemapfd));
     }
     //source: http://virtualfloppy.blogspot.com/2014/01/dma-support-at-last.html
     //cat /sys/module/dma/parameters/dmachans gives a bitmask of DMA channels that are not used by GPU. Results: ch 1, 3, 6, 7 are reserved.
@@ -726,7 +726,7 @@ int main() {
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    uint32_t firstAddr = virtToUncachedPhys(cbArr, pagemapfd);
+    uint32_t firstAddr = virtToUncachedPhys(cbArrCached, pagemapfd);
     printf("starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
     dmaHeader->CONBLK_AD = firstAddr; //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG; //high priority (max is 7)
