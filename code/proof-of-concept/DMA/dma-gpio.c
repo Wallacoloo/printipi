@@ -579,16 +579,18 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
     //  It is done in this function only for simplicity
     int srcIdx;
     uint64_t curTime1, curTime2;
+    int tries=0;
     do {
         curTime1 = readSysTime(timerBaseMem);
         srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
         curTime2 = readSysTime(timerBaseMem);
+        ++tries;
     } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //calculate the frame# at which to place the event:
     int usecFromNow = micros - curTime2;
     int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; 
     if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future.
-        printf("Warning: behind schedule\n");
+        printf("Warning: behind schedule: %i (tries: %i)\n", framesFromNow, tries);
         framesFromNow = 10;
     }
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
