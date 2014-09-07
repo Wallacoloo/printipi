@@ -542,7 +542,7 @@ void cleanup() {
 
 void cleanupAndExit(int sig) {
     cleanup();
-    printf("Exiting with error code 1\n");
+    printf("Exiting with error; caught signal: %i\n", sig);
     exit(1);
 }
 
