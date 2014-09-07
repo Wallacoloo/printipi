@@ -572,7 +572,8 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     uint64_t callTime = readSysTime(timerBaseMem);
-    sleepUntilMicros(micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC, timerBaseMem);
+    uint64_t desiredTime = micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC;
+    sleepUntilMicros(desiredTime, timerBaseMem);
     uint64_t awakeTime = readSysTime(timerBaseMem);
     //get the current source index at the current time:
     //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
@@ -592,7 +593,7 @@ void queue(int pin, int mode, uint64_t micros, struct GpioBufferFrame* srcArray,
     int usecFromNow = micros - curTime2;
     int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; 
     if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future.
-        printf("Warning: behind schedule: %i (%i) (tries: %i) (sleep %llu -> %llu (want %llu)) (curTime1: %llu, curTime2: %llu)\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, micros, curTime1, curTime2);
+        printf("Warning: behind schedule: %i (%i) (tries: %i) (sleep %llu -> %llu (want %llu)) (curTime1: %llu, curTime2: %llu)\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime, curTime1, curTime2);
         framesFromNow = 10;
     }
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
