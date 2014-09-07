@@ -713,6 +713,8 @@ int main() {
     
     //configure the DMA header to point to our control block:
     dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh)/4); //must divide by 4, as dmaBaseMem is uint32_t*
+    printf("Previous DMA header:\n");
+    logDmaChannelHeader(dmaHeader);
     //abort any previous DMA:
     dmaHeader->NEXTCONBK = 0;
     dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
@@ -727,15 +729,15 @@ int main() {
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG; //high priority (max is 7)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
     
-    printf("DMA Active\n");
     /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
     } //wait for DMA transfer to complete.*/
     uint64_t startTime = readSysTime(timerBaseMem);
+    printf("DMA Active @ %llu uSec\n", startTime);
     for (int i=0; ; ++i) { //generate the output sequence:
+        logDmaChannelHeader(dmaHeader);
         //this just toggles outPin every few us:
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
-        logDmaChannelHeader(dmaHeader);
     }
     //Exit routine:
     cleanup();
