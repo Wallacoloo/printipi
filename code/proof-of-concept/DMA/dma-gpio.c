@@ -119,7 +119,7 @@
 #include <errno.h> //for errno
 
 //config settings:
-#define SOURCE_BUFFER_FRAMES 256 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
+#define SOURCE_BUFFER_FRAMES 1024 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 framse is 1 ms
 #define FRAMES_PER_SEC 1000000 //Note that this number is currently hard-coded in the form of clock settings. Changing this without changing the clock settings will cause problems
 
 #define TIMER_BASE   0x20003000
@@ -734,11 +734,11 @@ int main() {
     
     uint64_t startTime = readSysTime(timerBaseMem);
     printf("DMA Active @ %llu uSec\n", startTime);
-    while (dmaHeader->CS & DMA_CS_ACTIVE) {
+    /*while (dmaHeader->CS & DMA_CS_ACTIVE) {
         logDmaChannelHeader(dmaHeader);
     } //wait for DMA transfer to complete.*/
     for (int i=0; ; ++i) { //generate the output sequence:
-        logDmaChannelHeader(dmaHeader);
+        //logDmaChannelHeader(dmaHeader);
         //this just toggles outPin every few us:
         queue(outPin, i%2, startTime + 1000*i, srcArray, timerBaseMem, dmaHeader);
     }
