@@ -662,8 +662,6 @@ int main() {
     //cast virtSrcPage to a GpioBufferFrame array:
     struct GpioBufferFrame *srcArray = (struct GpioBufferFrame*)virtSrcPage; //Note: calling virtToPhys on srcArray will return NULL. Use srcArrayCached for that.
     struct GpioBufferFrame *srcArrayCached = (struct GpioBufferFrame*)virtSrcPageCached;
-    //srcArray[0].gpset[0] = (1 << outPin); //set pin ON
-    //srcArray[numSrcBlocks/2].gpclr[0] = (1 << outPin); //set pin OFF;
     
     //configure PWM clock:
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | ((*(clockBaseMem + CM_PWMCTL/4))&(~CM_PWMCTL_ENAB)); //disable clock
