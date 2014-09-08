@@ -24,6 +24,8 @@
 	typedef ChronoClockPosix EventClockT;
 	#include "boilerplate/thisthreadsleepposix.h"
 	typedef ThisThreadSleepPosix SleepT;
+	#include "drivers/rpi/dmascheduler.h"
+	typedef drv::rpi::DmaScheduler SchedulerHardwareInterface;
 #else
 	#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
 		//use special posix clock
