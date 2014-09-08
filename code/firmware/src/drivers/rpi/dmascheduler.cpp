@@ -247,6 +247,58 @@ void DmaScheduler::initDma() {
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
 }
 
+void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
+    //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
+    //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
+    uint64_t callTime = readSysTime(); //only used for debugging
+    uint64_t desiredTime = micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC;
+    sleepUntilMicros(desiredTime);
+    uint64_t awakeTime = readSysTime(); //only used for debugging
+    
+    //get the current source index at the current time:
+    //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
+    //Note: getting the curTime & srcIdx don't have to be done for every call to queue - it could be done eg just once per buffer.
+    //  It should be calculated regularly though, to counter clock drift & PWM FIFO underflows
+    //  It is done in this function only for simplicity
+    int srcIdx;
+    uint64_t curTime1, curTime2;
+    int tries=0;
+    do {
+        curTime1 = readSysTime();
+        srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
+        curTime2 = readSysTime();
+        ++tries;
+    } while (curTime2-curTime1 > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
+    //calculate the frame# at which to place the event:
+    int usecFromNow = micros - curTime2;
+    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; //Note: may cause overflow if FRAMES_PER_SECOND is not a multiple of 1000000 or if optimizations are COMPLETELY disabled.
+    if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future (note: should be operating on usecFromNow, not framesFromNow)
+        printf("Warning: behind schedule: %i (%i) (tries: %i) (sleep %llu -> %llu (wanted %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime);
+        framesFromNow = 10;
+    }
+    int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
+    //Now queue the command:
+    if (mode == 0) { //turn output off
+        srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
+    } else { //turn output on
+        srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
+    }
+}
+
+void DmaScheduler::sleepUntilMicros(uint64_t micros) const {
+    //Note: cannot use clock_nanosleep with an absolute time, as the process clock may differ from the RPi clock.
+    //this function doesn't need to be super precise, so we can tolerate interrupts.
+    //Therefore, we can use a relative sleep:
+    uint64_t cur = readSysTime();
+    if (micros > cur) { //avoid overflow caused by unsigned arithmetic
+        uint64_t dur = micros - cur;
+        //usleep(dur); //nope, causes problems!
+        struct timespec t;
+        t.tv_sec = dur/1000000;
+        t.tv_nsec = (dur - t.tv_sec*1000000)*1000;
+        nanosleep(&t, NULL);
+    }
+}
 
 }
 }

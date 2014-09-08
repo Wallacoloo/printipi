@@ -423,6 +423,11 @@ class DmaScheduler {
         uintptr_t virtToUncachedPhys(void *virt) const;
         void initPwm();
         void initDma();
+        void queue(int pin, int mode, uint64_t micros);
+        inline uint64_t readSysTime() const {
+            return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
+        }
+        void sleepUntilMicros(uint64_t micros) const;
 };
 
 }
