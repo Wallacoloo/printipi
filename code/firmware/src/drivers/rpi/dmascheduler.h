@@ -404,7 +404,7 @@ void freeLockedMem(void* mem, size_t size);
 class DmaScheduler {
     int dmaCh;
     int memfd, pagemapfd;
-    DmaChannelHeader *dmaHeader;
+    static DmaChannelHeader *dmaHeader; //must be static for cleanup() function
     volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
     void *zerosPageCached, *zerosPage;
     void *virtSrcPageCached, *virtSrcPage;
@@ -413,6 +413,7 @@ class DmaScheduler {
     DmaControlBlock *cbArrCached, *cbArr;
     public:
         DmaScheduler();
+        static void cleanup();
     private:
         void makeMaps();
         //map a physical address into our virtual address space.

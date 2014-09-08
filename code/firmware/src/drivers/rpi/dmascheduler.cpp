@@ -1,8 +1,13 @@
 #include "dmascheduler.h"
 
+#include "schedulerbase.h"
+
 
 namespace drv {
 namespace rpi {
+
+//initialize static variables:
+DmaChannelHeader *DmaScheduler::dmaHeader(0);
 
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
@@ -56,10 +61,22 @@ void freeLockedMem(void* mem, size_t size) {
 
 DmaScheduler::DmaScheduler() {
     dmaCh = 5;
+    SchedulerBase::registerExitHandler(&cleanup, SCHED_IO_EXIT_LEVEL);
     makeMaps();
     initSrcAndControlBlocks();
     initPwm();
     initDma();
+}
+
+void DmaScheduler::cleanup() {
+    printf("DmaScheduler::cleanup\n");
+    //disable DMA. Otherwise, it will continue to run in the background, potentially overwriting future user data.
+    if(dmaHeader) {
+        writeBitmasked(&dmaHeader->CS, DMA_CS_ACTIVE, 0);
+        usleep(100);
+        writeBitmasked(&dmaHeader->CS, DMA_CS_RESET, DMA_CS_RESET);
+    }
+    //could also disable PWM, but that's not imperative.
 }
 
 void DmaScheduler::makeMaps() {
