@@ -101,7 +101,7 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 %/common/common.a: %/common/intervaltimer.o %/common/logging.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/rest.a: %/argparse.o %/event.o %/main.o %/scheduler.o 
+%/rest.a: %/argparse.o %/event.o %/main.o %/schedulerbase.o 
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 %/main.cpp: $(MACHINE_PATH)
 	

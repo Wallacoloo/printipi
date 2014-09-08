@@ -1,10 +1,11 @@
-#include "scheduler.h"
+#include "schedulerbase.h"
 
 //#include <pthread.h> //for pthread_setschedparam
 //#include <time.h> //for clock_nanosleep
 #include <signal.h> //for sigaction signal handlers
 #include <cstdlib> //for atexit
 #include <stdexcept> //for runtime_error
+#include "common/logging.h"
 
 std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> SchedulerBase::exitHandlers;
 //std::atomic<bool> SchedulerBase::isExiting(false);

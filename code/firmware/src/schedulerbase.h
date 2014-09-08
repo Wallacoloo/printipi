@@ -1,6 +1,10 @@
 #ifndef SCHEDULERBASE_H
 #define SCHEDULERBASE_H
 
+#include <algorithm> //for std::min
+#include <array>
+#include <vector>
+
 #ifndef SCHED_PRIORITY
 	#define SCHED_PRIORITY 30
 #endif
@@ -13,6 +17,8 @@
 #endif
 #define SCHED_IO_EXIT_LEVEL 0
 #define SCHED_MEM_EXIT_LEVEL 1
+
+class Event; //forward declaration to avoid inclusion of event.h (as event.h includes typesettings.h, which may include this file)
 
 //When queueing an event, one may hint that it is either near or far away, and this may give a performance boost to the container.
 enum InsertHint {
@@ -33,10 +39,10 @@ struct PwmInfo {
 	PwmInfo(float duty, float period) : 
 		nsHigh(std::min(999999999, std::max(0, (int)(duty*period*1000000000)))), //clamp the times to >= 0 and <= 1
 		nsLow(std::min(999999999, std::max(0, (int)((1-duty)*period*1000000000)))) {}
-	float period() const {
+	inline float period() const {
 		return nsHigh + nsLow;
 	}
-	bool isNonNull() const {
+	inline bool isNonNull() const {
 		return nsHigh || nsLow;
 	}
 };
@@ -58,10 +64,10 @@ class SchedulerBase {
 and pass it as a template argument to the Scheduler<Interface> type. */
 struct DefaultSchedulerInterface {
 	void onEvent(const Event& /*evt*/) { }
-	bool onIdleCpu() {
+	inline bool onIdleCpu() {
 		return false; //no more cpu needed
 	}
-	static constexpr std::size_t numIoDrivers() {
+	inline static constexpr std::size_t numIoDrivers() {
 		return 0; //no IoDrivers;
 	}
 	struct HardwareInterface {
