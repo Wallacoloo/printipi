@@ -224,7 +224,7 @@ void DmaScheduler::initPwm() {
 
 void DmaScheduler::initDma() {
     //enable DMA channel (it's probably already enabled, but we want to be sure):
-    writeBitmasked(dmaBaseMem + DMAENABLE, 1 << dmaCh, 1 << dmaCh);
+    writeBitmasked(dmaBaseMem + DMAENABLE/4, 1 << dmaCh, 1 << dmaCh);
     
     //configure the DMA header to point to our control block:
     dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh)/4); //must divide by 4, as dmaBaseMem is uint32_t*
