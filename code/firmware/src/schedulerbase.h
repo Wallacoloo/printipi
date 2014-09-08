@@ -70,8 +70,9 @@ struct DefaultSchedulerInterface {
 	inline static constexpr std::size_t numIoDrivers() {
 		return 0; //no IoDrivers;
 	}
-	struct HardwareInterface {
+	struct HardwareScheduler {
 	};
+	HardwareScheduler hardwareScheduler;
 };
 
 #endif

@@ -45,6 +45,7 @@
 template <typename Drv> class State {
 	//The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
 	struct SchedInterface {
+	    SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
 		State<Drv>& _state;
 		SchedInterface(State<Drv> &state) : _state(state) {}
 		void onEvent(const Event& evt) {

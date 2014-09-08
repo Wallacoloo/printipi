@@ -25,7 +25,7 @@
 	#include "boilerplate/thisthreadsleepposix.h"
 	typedef ThisThreadSleepPosix SleepT;
 	#include "drivers/rpi/dmascheduler.h"
-	typedef drv::rpi::DmaScheduler SchedulerHardwareInterface;
+	typedef drv::rpi::DmaScheduler SchedInterfaceHardwareScheduler;
 #else
 	#if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
 		//use special posix clock
@@ -36,6 +36,8 @@
 		typedef ChronoClockPosix EventClockT;
 		#include "boilerplate/thisthreadsleepposix.h"
 		typedef ThisThreadSleepPosix SleepT;
+		#include "schedulerbase.h"
+		typedef DefaultSchedulerInterface::HardwareScheduler SchedInterfaceHardwareScheduler;
 	#else
 		//use C++11 steady_clock. Hope it exists and is functional!
 		#ifdef COMPILING_MAIN
@@ -45,6 +47,8 @@
 		typedef std::chrono::steady_clock EventClockT;
 		#include <thread>
 		typedef std::this_thead SleepT;
+		#include "schedulerbase.h"
+		typedef DefaultSchedulerInterface::HardwareScheduler SchedInterfaceHardwareScheduler;
 	#endif
 #endif
 //allow for generation of code that still works in high-latency enviroments, like valgrind
