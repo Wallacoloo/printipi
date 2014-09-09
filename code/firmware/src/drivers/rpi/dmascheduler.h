@@ -101,8 +101,9 @@
  
 #include <stdint.h> //for uint32_t
 #include <string.h> //for size_t, memset
+#include <chrono> //for std::chrono::microseconds
 
-#include "common/typesettings.h" //for EventClockT
+//#include "common/typesettings.h" //for EventClockT
 
 //config settings:
 #define PWM_FIFO_SIZE 1 //The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.
@@ -409,8 +410,8 @@ class DmaScheduler {
             //yes; this driver is capable of writing to output pins
             return true;
         }
-        inline EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
-            return EventClockT::time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
+        template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
+            return EventClockT_time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
         }
     private:
         void makeMaps();
