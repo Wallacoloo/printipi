@@ -255,7 +255,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 				    if (interface.hardwareScheduler.canWriteOutputs() && interface.isEventOutputSequenceable(*iter)) {
 				        auto schedTime = interface.hardwareScheduler.schedTime(iter->time());
 				        auto maxSleep = EventClockT::now() + MAX_SLEEP;
-				        if (maxSleep > schedTime) {
+				        if (maxSleep < schedTime) {
 	                        SleepT::sleep_until(maxSleep);
 	                    } else {
 	                        SleepT::sleep_until(schedTime);
