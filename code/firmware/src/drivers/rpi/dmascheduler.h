@@ -99,19 +99,10 @@
  *   boot with disable_pvt=1 (prevents gpu from halting everything to adjust ram refresh rate twice per second) in /boot/cmdline.txt. Does this affect system stability?
  */
  
-#include <sys/mman.h> //for mmap
-#include <sys/time.h> //for timespec
-#include <time.h> //for timespec / nanosleep (need -std=gnu99)
-#include <signal.h> //for sigaction
-#include <unistd.h> //for NULL
-#include <stdio.h> //for printf
-#include <stdlib.h> //for exit, valloc
+
 //#include <malloc.h> //some implementations declare valloc inside malloc.h
-#include <fcntl.h> //for file opening
 #include <stdint.h> //for uint32_t
-#include <string.h> //for memset
-#include <errno.h> //for errno
-#include <pthread.h> //for pthread_setschedparam
+#include <string.h> //for size_t, memset
 
 //config settings:
 #define PWM_FIFO_SIZE 1 //The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.

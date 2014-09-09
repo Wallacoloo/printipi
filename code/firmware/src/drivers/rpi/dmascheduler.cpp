@@ -1,6 +1,17 @@
 #include "dmascheduler.h"
 
+#include <sys/mman.h> //for mmap
+#include <sys/time.h> //for timespec
+#include <time.h> //for timespec / nanosleep (need -std=gnu99)
+#include <signal.h> //for sigaction
+#include <unistd.h> //for NULL
+//#include <stdio.h> //for printf
+#include <stdlib.h> //for exit, valloc
+#include <fcntl.h> //for file opening
+#include <errno.h> //for errno
+#include <pthread.h> //for pthread_setschedparam
 #include "schedulerbase.h"
+#include "common/logging.h"
 
 
 namespace drv {
@@ -43,7 +54,7 @@ void* makeLockedMem(size_t size) {
         -1,	// File descriptor
     0); //no offset into file (file doesn't exist).
     if (mem == MAP_FAILED) {
-        printf("makeLockedMem failed\n");
+        LOGE("dmascheduler.cpp: makeLockedMem failed\n");
         exit(1);
     }
     memset(mem, 0, size); //simultaneously zero the pages and force them into memory
@@ -69,7 +80,7 @@ DmaScheduler::DmaScheduler() {
 }
 
 void DmaScheduler::cleanup() {
-    printf("DmaScheduler::cleanup\n");
+    LOG("DmaScheduler::cleanup\n");
     //disable DMA. Otherwise, it will continue to run in the background, potentially overwriting future user data.
     if(dmaHeader) {
         writeBitmasked(&dmaHeader->CS, DMA_CS_ACTIVE, 0);
@@ -82,7 +93,7 @@ void DmaScheduler::cleanup() {
 void DmaScheduler::makeMaps() {
     memfd = open("/dev/mem", O_RDWR | O_SYNC);
     if (memfd < 0) {
-        printf("Failed to open /dev/mem (did you remember to run as root?)\n");
+        LOGE("Failed to open /dev/mem (did you remember to run as root?)\n");
         exit(1);
     }
     pagemapfd = open("/proc/self/pagemap", O_RDONLY);
@@ -104,10 +115,10 @@ volatile uint32_t* DmaScheduler::mapPeripheral(int addr) const {
     void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
     //now, *mapped = memory at physical address of addr.
     if (mapped == MAP_FAILED) {
-        printf("failed to map memory (did you remember to run as root?)\n");
+        LOGE("DmaScheduler::mapPeripheral failed to map memory (did you remember to run as root?)\n");
         exit(1);
     } else {
-        printf("mapped: %p\n", mapped);
+        LOGV("DmaScheduler::mapPeripheral mapped: %p\n", mapped);
     }
     return (volatile uint32_t*)mapped;
 }
@@ -123,7 +134,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
     size_t srcPageBytes = numSrcBlocks*sizeof(struct GpioBufferFrame);
     virtSrcPageCached = makeLockedMem(srcPageBytes);
     virtSrcPage = makeUncachedMemView(virtSrcPageCached, srcPageBytes);
-    printf("mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
+    LOGV("DmaScheduler::initSrcAndControlBlocks mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
     
     //cast virtSrcPage to a GpioBufferFrame array:
     srcArray = (struct GpioBufferFrame*)virtSrcPage; //Note: calling virtToPhys on srcArray will return NULL. Use srcArrayCached for that.
@@ -136,7 +147,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
     //fill the control blocks:
     cbArrCached = (struct DmaControlBlock*)virtCbPageCached;
     cbArr = (struct DmaControlBlock*)virtCbPage;
-    printf("#dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
+    LOG("DmaScheduler::initSrcAndControlBlocks: #dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
     for (unsigned int i=0; i<numSrcBlocks*3; i += 3) {
         //pace DMA through PWM
         cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
@@ -184,7 +195,7 @@ void* DmaScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
     for (unsigned int offset=0; offset<bytes; offset += PAGE_SIZE) {
         void *mappedPage = mmap(mem+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys(virtaddr+offset));
         if (mappedPage != mem+offset) { //We need these mappings to be contiguous over virtual memory (in order to replicate the virtaddr array), so we must ensure that the address we requested from mmap was actually used.
-            printf("Failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
+            LOGE("DmaScheduler::makeUncachedMemView: failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
             exit(1);
         }
     }
@@ -201,11 +212,11 @@ uintptr_t DmaScheduler::virtToPhys(void* virt) const {
     //because files are bytestreams, one must explicitly multiply each byte index by 8 to treat it as a uint64_t array.
     int err = lseek(pagemapfd, pgNum*8, SEEK_SET);
     if (err != pgNum*8) {
-        printf("WARNING: virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
+        LOGW("WARNING: DmaScheduler::virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
     }
     read(pagemapfd, &physPage, 8);
     if (!physPage & (1ull<<63)) { //bit 63 is set to 1 if the page is present in ram
-        printf("WARNING: virtToPhys %p has no physical address\n", virt);
+        LOGW("WARNING: DmaScheduler::virtToPhys %p has no physical address\n", virt);
     }
     physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
     uintptr_t mapped = (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
@@ -245,7 +256,7 @@ void DmaScheduler::initDma() {
     
     //configure the DMA header to point to our control block:
     dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh)/4); //must divide by 4, as dmaBaseMem is uint32_t*
-    printf("Previous DMA header:\n");
+    //LOGV("Previous DMA header:\n");
     //logDmaChannelHeader(dmaHeader);
     //abort any previous DMA:
     //dmaHeader->NEXTCONBK = 0; //NEXTCONBK is read-only.
@@ -258,7 +269,7 @@ void DmaScheduler::initDma() {
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     uint32_t firstAddr = virtToUncachedPhys(cbArrCached);
-    printf("starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
+    LOG("DmaScheduler::initDma: starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
     dmaHeader->CONBLK_AD = firstAddr; //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG; //high priority (max is 7)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
@@ -290,7 +301,7 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     int usecFromNow = micros - curTime2;
     int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; //Note: may cause overflow if FRAMES_PER_SECOND is not a multiple of 1000000 or if optimizations are COMPLETELY disabled.
     if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future (note: should be operating on usecFromNow, not framesFromNow)
-        printf("Warning: behind schedule: %i (%i) (tries: %i) (sleep %llu -> %llu (wanted %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime);
+        LOGW("Warning: DmaScheduler behind schedule: %i (%i) (tries: %i) (sleep %llu -> %llu (wanted %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime);
         framesFromNow = 10;
     }
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
