@@ -246,6 +246,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//do NOT pop the event here, because it might not be handled this time around.
 		//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
 		OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
+		bool handledInHardware = false;
 		while (!eventQueue.empty() && !isEventTime(*eventQueue.cbegin())) {
 			if (!interface.onIdleCpu(intervalT)) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
 				EventQueueType::const_iterator iter = this->eventQueue.cbegin();
@@ -260,6 +261,8 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 	                    } else {
 	                        SleepT::sleep_until(schedTime);
 	                        LOG("Event is being scheduled in hardware\n");
+	                        handledInHardware = true;
+	                        break;
 	                    }
 				    } else {
 					    this->sleepUntilEvent(&*iter); //&*iter turns iter into Event*
@@ -281,16 +284,18 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		}
 		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 		Event evt = *iter;
-		auto mapped = schedAdjuster.adjust(evt.time());
-		auto now = EventClockT::now();
-		LOGV("Scheduler executing event. original->mapped time, now, buffer: %" PRId64 " -> %" PRId64 ", %" PRId64 ". sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
-		//this->eventQueue.erase(eventQueue.begin());
-		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
-		//The error: eventQueue got flooded with stepper #5 PWM events.
-		//  They somehow got duplicated, likely by a failure to erase the *correct* previous pwm event.
-		//  this should be fixed by saving the iter and erasing it.
-		schedAdjuster.update(evt.time());
-		interface.onEvent(evt);
+		if (!handledInHardware) { //relay the event to our interface if it wasn't able to be handled in hardware:
+		    auto mapped = schedAdjuster.adjust(evt.time());
+		    auto now = EventClockT::now();
+		    LOGV("Scheduler executing event. original->mapped time, now, buffer: %" PRId64 " -> %" PRId64 ", %" PRId64 ". sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
+		    //this->eventQueue.erase(eventQueue.begin());
+		    this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
+		    //The error: eventQueue got flooded with stepper #5 PWM events.
+		    //  They somehow got duplicated, likely by a failure to erase the *correct* previous pwm event.
+		    //  this should be fixed by saving the iter and erasing it.
+		    schedAdjuster.update(evt.time());
+		    interface.onEvent(evt);
+		}
 		
 		//manage PWM events:
 		const PwmInfo &pwm = pwmInfo[evt.stepperId()];

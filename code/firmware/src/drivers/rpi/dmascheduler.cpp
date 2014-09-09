@@ -133,7 +133,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
     size_t srcPageBytes = numSrcBlocks*sizeof(struct GpioBufferFrame);
     virtSrcPageCached = makeLockedMem(srcPageBytes);
     virtSrcPage = makeUncachedMemView(virtSrcPageCached, srcPageBytes);
-    LOGV("DmaScheduler::initSrcAndControlBlocks mappedPhysSrcPage: %p\n", virtToPhys(virtSrcPage));
+    LOGV("DmaScheduler::initSrcAndControlBlocks mappedPhysSrcPage: %08x\n", virtToPhys(virtSrcPage));
     
     //cast virtSrcPage to a GpioBufferFrame array:
     srcArray = (struct GpioBufferFrame*)virtSrcPage; //Note: calling virtToPhys on srcArray will return NULL. Use srcArrayCached for that.
