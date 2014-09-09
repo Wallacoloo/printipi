@@ -253,7 +253,14 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 					return;
 				} else { //retain control if the event is near, or if the queue must be emptied.
 				    if (interface.hardwareScheduler.canWriteOutputs() && interface.isEventOutputSequenceable(*iter)) {
-				        LOG("Event is being scheduled in hardware\n");
+				        auto schedTime = interface.hardwareScheduler.schedTime(iter->time());
+				        auto maxSleep = EventClockT::now() + MAX_SLEEP;
+				        if (maxSleep > schedTime) {
+	                        SleepT::sleep_until(maxSleep);
+	                    } else {
+	                        SleepT::sleep_until(schedTime);
+	                        LOG("Event is being scheduled in hardware\n");
+	                    }
 				    } else {
 					    this->sleepUntilEvent(&*iter); //&*iter turns iter into Event*
 					    //break; //don't break because sleepUntilEvent won't always do the full sleep

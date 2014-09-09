@@ -6,7 +6,7 @@
 #include <signal.h> //for sigaction
 #include <unistd.h> //for NULL
 //#include <stdio.h> //for printf
-#include <stdlib.h> //for exit, valloc
+#include <stdlib.h> //for exit
 #include <fcntl.h> //for file opening
 #include <errno.h> //for errno
 #include <pthread.h> //for pthread_setschedparam
@@ -41,7 +41,6 @@ size_t ceilToPage(size_t size) {
 
 //allocate some memory and lock it so that its physical address will never change
 void* makeLockedMem(size_t size) {
-    //void* mem = valloc(size); //memory returned by valloc is not zero'd
     size = ceilToPage(size);
     void *mem = mmap(
         NULL,   //let kernel place memory where it wants

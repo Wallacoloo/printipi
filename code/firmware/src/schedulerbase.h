@@ -5,6 +5,8 @@
 #include <array>
 #include <vector>
 
+//#include "common/typesettings.h" //for EventClockT (no! circular include!)
+
 #ifndef SCHED_PRIORITY
 	#define SCHED_PRIORITY 30
 #endif
@@ -78,6 +80,11 @@ struct DefaultSchedulerInterface {
 	    inline bool canWriteOutputs() const {
 	        //No, this default interface is not capable of writing output pins
 	        return false;
+	    }
+	    template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
+	        //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.
+	        //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support the EventClockT::time_point defined in common/typesettings.h
+	        return evtTime;
 	    }
 	};
 	HardwareScheduler hardwareScheduler;
