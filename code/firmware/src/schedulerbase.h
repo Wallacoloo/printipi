@@ -71,6 +71,10 @@ struct DefaultSchedulerInterface {
 		return 0; //no IoDrivers;
 	}
 	struct HardwareScheduler {
+	    inline bool canWriteOutputs() const {
+	        //No, this default interface is not capable of writing output pins
+	        return false;
+	    }
 	};
 	HardwareScheduler hardwareScheduler;
 };

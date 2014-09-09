@@ -414,10 +414,13 @@ class DmaScheduler {
     public:
         DmaScheduler();
         static void cleanup();
+        inline bool canWriteOutputs() const {
+            //yes; this driver is capable of writing to output pins
+            return true;
+        }
     private:
         void makeMaps();
-        //map a physical address into our virtual address space.
-        volatile uint32_t* mapPeripheral(int addr) const;
+        volatile uint32_t* mapPeripheral(int addr) const; //map a physical address into our virtual address space.
         void initSrcAndControlBlocks();
         void* makeUncachedMemView(void* virtaddr, size_t bytes) const;
         uintptr_t virtToPhys(void* virt) const;
