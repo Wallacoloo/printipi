@@ -63,12 +63,16 @@ class SchedulerBase {
 /* A Scheduler is useless without an interface. In order to use a scheduler, implement a class with the following methods
 and pass it as a template argument to the Scheduler<Interface> type. */
 struct DefaultSchedulerInterface {
-	void onEvent(const Event& /*evt*/) { }
+	void onEvent(const Event&) { }
 	inline bool onIdleCpu() {
 		return false; //no more cpu needed
 	}
 	inline static constexpr std::size_t numIoDrivers() {
 		return 0; //no IoDrivers;
+	}
+	inline bool isEventOutputSequenceable(const Event&) {
+	    //We don't know which device this Event is for, so we can't know if it can be split into an array of [(pin, mode, time), ...] (or something similar) describing how to toggle pins.
+	    return false;
 	}
 	struct HardwareScheduler {
 	    inline bool canWriteOutputs() const {

@@ -57,6 +57,9 @@ template <typename Drv> class State {
 		static constexpr std::size_t numIoDrivers() {
 			return std::tuple_size<typename Drv::IODriverTypes>::value;
 		}
+		bool isEventOutputSequenceable(const Event& evt) {
+		    return drv::IODriver::isEventOutputSequenceable(_state.ioDrivers, evt);
+	    }
 	};
 	//The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:
 	struct MotionInterface {
