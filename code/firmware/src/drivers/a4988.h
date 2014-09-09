@@ -58,6 +58,9 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
 			//bcm2835_gpio_write(DIRPIN, LOW); //set direction as backward
 			cycleStepPin();
 		}
+		bool canWriteOutputs() const {
+		    return true;
+		}
 	private:
 		//A4988 is directed by putting a direction on the DIRPIN, and then
 		//sending a pulse on the STEPPIN.
