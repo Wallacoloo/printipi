@@ -5,6 +5,8 @@
 #include <array>
 #include <vector>
 
+#include "outputevent.h"
+
 //#include "common/typesettings.h" //for EventClockT (no! circular include!)
 
 #ifndef SCHED_PRIORITY
@@ -75,6 +77,9 @@ struct DefaultSchedulerInterface {
 	inline bool isEventOutputSequenceable(const Event&) {
 	    //We don't know which device this Event is for, so we can't know if it can be split into an array of [(pin, mode, time), ...] (or something similar) describing how to toggle pins.
 	    return false;
+	}
+	inline std::vector<OutputEvent> getEventOutputSequence(const Event&) {
+	    return std::vector<OutputEvent>();
 	}
 	struct HardwareScheduler {
 	    inline bool canWriteOutputs() const {

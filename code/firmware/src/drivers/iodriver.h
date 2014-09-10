@@ -43,6 +43,7 @@ class IODriver {
 		inline IODriver() {}
 		//for a (stepper) motor, advance +/- 1 step:
 		inline bool isEventOutputSequenceable(const Event &) { return false; } //OVERRIDE THIS
+		std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS if isEventOutputSequenceable returns true.
 		inline void stepForward() {} //OVERRIDE THIS
 		inline void stepBackward() {} //OVERRIDE THIS
 		/*deactivate: called at program exit.
@@ -56,7 +57,7 @@ class IODriver {
 		inline float fanPwmPeriod() const { return 0.2; }
 		inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
 		inline bool isHeatedBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
-		inline void setTargetTemperature(CelciusType /*temp*/) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
+		inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
 		inline CelciusType getMeasuredTemperature() const { return -300; } //OVERRIDE THIS (hotends / beds only)
 		/* called when the scheduler has extra time,
 		Can be used to check the status of inputs, etc.
