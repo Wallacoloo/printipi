@@ -104,6 +104,7 @@
 #include <chrono> //for std::chrono::microseconds
 
 //#include "common/typesettings.h" //for EventClockT
+#include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
 
 //config settings:
 #define PWM_FIFO_SIZE 1 //The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.
@@ -412,6 +413,9 @@ class DmaScheduler {
         }
         template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
             return EventClockT_time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
+        }
+        inline void queue(const OutputEvent &evt) {
+            queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
         }
     private:
         void makeMaps();

@@ -262,6 +262,9 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 	                        SleepT::sleep_until(schedTime);
 	                        LOG("Event is being scheduled in hardware\n");
 	                        std::vector<OutputEvent> outputs = interface.getEventOutputSequence(*iter);
+	                        for (const OutputEvent &out : outputs) {
+	                            interface.hardwareScheduler.queue(out);
+	                        }
 	                        handledInHardware = true;
 	                        break;
 	                    }
