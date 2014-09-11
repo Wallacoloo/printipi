@@ -348,7 +348,8 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const E
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
 	auto thresh = EventClockT::now() + std::chrono::microseconds(20);
-	return schedAdjuster.adjust(evt.time()) <= thresh;
+	//return schedAdjuster.adjust(evt.time()) <= thresh;
+	return interface.hardwareScheduler.schedTime(schedAdjuster.adjust(evt.time())) <= thresh;
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventTime(const Event &evt) const {
