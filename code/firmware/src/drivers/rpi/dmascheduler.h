@@ -389,7 +389,7 @@ struct GpioBufferFrame {
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value);
 size_t ceilToPage(size_t size);
 //allocate some memory and lock it so that its physical address will never change
-void* makeLockedMem(size_t size);
+uint8_t* makeLockedMem(size_t size);
 //free memory allocated with makeLockedMem
 void freeLockedMem(void* mem, size_t size);
 
@@ -421,7 +421,7 @@ class DmaScheduler {
         void makeMaps();
         volatile uint32_t* mapPeripheral(int addr) const; //map a physical address into our virtual address space.
         void initSrcAndControlBlocks();
-        void* makeUncachedMemView(void* virtaddr, size_t bytes) const;
+        uint8_t* makeUncachedMemView(void* virtaddr, size_t bytes) const;
         uintptr_t virtToPhys(void* virt) const;
         uintptr_t virtToUncachedPhys(void *virt) const;
         void initPwm();

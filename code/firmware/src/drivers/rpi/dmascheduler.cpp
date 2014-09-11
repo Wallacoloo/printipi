@@ -43,7 +43,7 @@ size_t ceilToPage(size_t size) {
 }
 
 //allocate some memory and lock it so that its physical address will never change
-void* makeLockedMem(size_t size) {
+uint8_t* makeLockedMem(size_t size) {
     size = ceilToPage(size);
     void *mem = mmap(
         NULL,   //let kernel place memory where it wants
@@ -61,7 +61,7 @@ void* makeLockedMem(size_t size) {
     }
     memset(mem, 0, size); //simultaneously zero the pages and force them into memory
     mlock(mem, size);
-    return mem;
+    return (uint8_t*)mem;
 }
 
 //free memory allocated with makeLockedMem
@@ -176,7 +176,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
     }
 }
 
-void* DmaScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
+uint8_t* DmaScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
     //by default, writing to any virtual address will go through the CPU cache.
     //this function will return a pointer that behaves the same as virtaddr, but bypasses the CPU L1 cache (note that because of this, the returned pointer and original pointer should not be used in conjunction, else cache-related inconsistencies will arise)
     //Note: The original memory should not be unmapped during the lifetime of the uncached version, as then the OS won't know that our process still owns the physical memory.
@@ -192,21 +192,23 @@ void* DmaScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
         MAP_LOCKED, //lock into *virtual* ram. Physical ram may still change!
         -1,	// File descriptor
     0); //no offset into file (file doesn't exist).
+    uint8_t *memBytes = (uint8_t*)mem;
     //now, free the virtual memory and immediately remap it to the physical addresses used in virtaddr
     munmap(mem, bytes); //Might not be necessary; MAP_FIXED indicates it can map an already-used page
     for (unsigned int offset=0; offset<bytes; offset += PAGE_SIZE) {
-        void *mappedPage = mmap(mem+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys(virtaddr+offset));
-        if (mappedPage != mem+offset) { //We need these mappings to be contiguous over virtual memory (in order to replicate the virtaddr array), so we must ensure that the address we requested from mmap was actually used.
+        void *mappedPage = mmap(memBytes+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys((uint8_t*)virtaddr+offset));
+        if (mappedPage != memBytes+offset) { //We need these mappings to be contiguous over virtual memory (in order to replicate the virtaddr array), so we must ensure that the address we requested from mmap was actually used.
             LOGE("DmaScheduler::makeUncachedMemView: failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
             exit(1);
         }
     }
     memset(mem, 0, bytes); //Although the cached version might have been reset, those writes might not have made it through.
-    return mem;
+    return memBytes;
 }
 
 uintptr_t DmaScheduler::virtToPhys(void* virt) const {
-    uintptr_t pgNum = (uintptr_t)(virt)/PAGE_SIZE;
+    //uintptr_t pgNum = (uintptr_t)(virt)/PAGE_SIZE;
+    int pgNum = (uintptr_t)(virt)/PAGE_SIZE;
     int byteOffsetFromPage = (uintptr_t)(virt)%PAGE_SIZE;
     uint64_t physPage;
     ///proc/self/pagemap is a uint64_t array where the index represents the virtual page number and the value at that index represents the physical page number.
