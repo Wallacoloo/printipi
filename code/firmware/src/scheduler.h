@@ -245,7 +245,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//Event evt = *this->eventQueue.begin();
 		//do NOT pop the event here, because it might not be handled this time around.
 		//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
-		LOGW("Sched::yield called at %llu for event at %llu", EventClockT::now().time_since_epoch().count(), eventQueue.cbegin()->time().time_since_epoch().count());
+		LOGW("Sched::yield called at %llu for event at %llu\n", EventClockT::now().time_since_epoch().count(), eventQueue.cbegin()->time().time_since_epoch().count());
 		OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
 		//bool handledInHardware = false;
 		while (!eventQueue.empty() && !isEventTime(*eventQueue.cbegin())) {
