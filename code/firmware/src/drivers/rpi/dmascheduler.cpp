@@ -2,7 +2,7 @@
 
 #include <sys/mman.h> //for mmap
 #include <sys/time.h> //for timespec
-#include <time.h> //for timespec / nanosleep (need -std=gnu99)
+#include <time.h> //for timespec / nanosleep / usleep (need -std=gnu99)
 #include <signal.h> //for sigaction
 #include <unistd.h> //for NULL
 //#include <stdio.h> //for printf
@@ -10,9 +10,11 @@
 #include <fcntl.h> //for file opening
 #include <errno.h> //for errno
 #include <pthread.h> //for pthread_setschedparam
+#include <chrono>
 
 #include "schedulerbase.h"
 #include "common/logging.h"
+#include "common/typesettings/clocks.h"
 
 
 namespace drv {
@@ -280,7 +282,8 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     uint64_t callTime = readSysTime(); //only used for debugging
     uint64_t desiredTime = micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC;
-    sleepUntilMicros(desiredTime);
+    //sleepUntilMicros(desiredTime);
+    SleepT::sleep_until(std::chrono::time_point<std::chrono::microseconds>(std::chrono::microseconds(micros)));
     uint64_t awakeTime = readSysTime(); //only used for debugging
     
     //get the current source index at the current time:
@@ -313,7 +316,7 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     }
 }
 
-void DmaScheduler::sleepUntilMicros(uint64_t micros) const {
+/*void DmaScheduler::sleepUntilMicros(uint64_t micros) const {
     //Note: cannot use clock_nanosleep with an absolute time, as the process clock may differ from the RPi clock.
     //this function doesn't need to be super precise, so we can tolerate interrupts.
     //Therefore, we can use a relative sleep:
@@ -326,7 +329,7 @@ void DmaScheduler::sleepUntilMicros(uint64_t micros) const {
         t.tv_nsec = (dur - t.tv_sec*1000000)*1000;
         nanosleep(&t, NULL);
     }
-}
+}*/
 
 }
 }
