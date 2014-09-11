@@ -246,33 +246,16 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//do NOT pop the event here, because it might not be handled this time around.
 		//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
 		OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
-		bool handledInHardware = false;
+		//bool handledInHardware = false;
 		while (!eventQueue.empty() && !isEventTime(*eventQueue.cbegin())) {
 			if (!interface.onIdleCpu(intervalT)) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
 				EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 				if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
 					return;
 				} else { //retain control if the event is near, or if the queue must be emptied.
-				    if (interface.hardwareScheduler.canWriteOutputs() && interface.isEventOutputSequenceable(*iter)) {
-				        auto schedTime = interface.hardwareScheduler.schedTime(iter->time());
-				        auto maxSleep = EventClockT::now() + MAX_SLEEP;
-				        if (maxSleep < schedTime) {
-	                        SleepT::sleep_until(maxSleep);
-	                    } else {
-	                        SleepT::sleep_until(schedTime);
-	                        LOGV("Event is being scheduled in hardware\n");
-	                        std::vector<OutputEvent> outputs = interface.getEventOutputSequence(*iter);
-	                        for (const OutputEvent &out : outputs) {
-	                            interface.hardwareScheduler.queue(out);
-	                        }
-	                        handledInHardware = true;
-	                        break;
-	                    }
-				    } else {
-					    this->sleepUntilEvent(&*iter); //&*iter turns iter into Event*
-					    //break; //don't break because sleepUntilEvent won't always do the full sleep
-					    intervalT = OnIdleCpuIntervalWide;
-					}
+				    this->sleepUntilEvent(&*iter); //&*iter turns iter into Event*
+				    //break; //don't break because sleepUntilEvent won't always do the full sleep
+				    intervalT = OnIdleCpuIntervalWide;
 				}
 			} else {
 				intervalT = OnIdleCpuIntervalShort;
@@ -289,7 +272,22 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
 		Event evt = *iter;
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
-		if (!handledInHardware) { //relay the event to our interface if it wasn't able to be handled in hardware:
+		if (interface.hardwareScheduler.canWriteOutputs() && interface.isEventOutputSequenceable(evt)) {
+	        auto schedTime = interface.hardwareScheduler.schedTime(evt.time());
+	        auto maxSleep = EventClockT::now() + MAX_SLEEP;
+	        if (maxSleep < schedTime) {
+                SleepT::sleep_until(maxSleep);
+            } else {
+                SleepT::sleep_until(schedTime);
+                LOGV("Event is being scheduled in hardware\n");
+                std::vector<OutputEvent> outputs = interface.getEventOutputSequence(evt);
+                for (const OutputEvent &out : outputs) {
+                    interface.hardwareScheduler.queue(out);
+                }
+                //handledInHardware = true;
+                //break;
+            }
+	    } else { //relay the event to our interface if it wasn't able to be handled in hardware:
 		    auto mapped = schedAdjuster.adjust(evt.time());
 		    auto now = EventClockT::now();
 		    LOGV("Scheduler executing event. original->mapped time, now, buffer: %" PRId64 " -> %" PRId64 ", %" PRId64 ". sz: %zu\n", evt.time().time_since_epoch().count(), mapped.time_since_epoch().count(), now.time_since_epoch().count(), eventQueue.size());
@@ -332,7 +330,8 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const E
 	bool doSureSleep = false;
 	auto sleepUntil = EventClockT::now() + MAX_SLEEP;
 	if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
-		auto evtTime = schedAdjuster.adjust(evt->time());
+		//auto evtTime = schedAdjuster.adjust(evt->time());
+		auto evtTime = interface.hardwareScheduler.schedTime(schedAdjuster.adjust(evt->time()));
 		if (evtTime < sleepUntil) {
 			sleepUntil = evtTime;
 			doSureSleep = true;
@@ -353,7 +352,8 @@ template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventTime(const Event &evt) const {
-	return schedAdjuster.adjust(evt.time()) <= EventClockT::now();
+	//return schedAdjuster.adjust(evt.time()) <= EventClockT::now();
+	return interface.hardwareScheduler.schedTime(schedAdjuster.adjust(evt.time())) <= EventClockT::now();
 }
 
 #endif
