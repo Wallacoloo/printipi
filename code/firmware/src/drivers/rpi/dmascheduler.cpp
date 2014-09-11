@@ -307,9 +307,9 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //calculate the frame# at which to place the event:
     uint64_t usecFromNow = micros - std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count();
     int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; //Note: may cause overflow if FRAMES_PER_SECOND is not a multiple of 1000000 or if optimizations are COMPLETELY disabled.
-    if (framesFromNow < 10) { //Not safe to schedule less than ~10uS into the future (note: should be operating on usecFromNow, not framesFromNow)
+    if (framesFromNow < 20) { //Not safe to schedule less than ~10uS into the future (note: should be operating on usecFromNow, not framesFromNow)
         LOGW("Warning: DmaScheduler behind schedule: %i (%llu) (tries: %i) (sleep %llu -> %llu (wanted %llu for %llu now is %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime, micros, curTime2.time_since_epoch().count());
-        framesFromNow = 10;
+        framesFromNow = 20;
     }
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
     //Now queue the command:

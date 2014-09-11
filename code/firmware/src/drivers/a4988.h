@@ -72,11 +72,9 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
 	            OutputEvent(evt.time()+std::chrono::microseconds(3), stepPin.id(), IoLow)}};
 	    }*/
 	    std::vector<OutputEvent> getEventOutputSequence(const Event &evt) {
-	        //std::vector<OutputEvent> v;
-	        //return v;
 	        return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
-	            OutputEvent(evt.time()+std::chrono::microseconds(1), stepPin.id(), IoHigh),
-	            OutputEvent(evt.time()+std::chrono::microseconds(3), stepPin.id(), IoLow)}};
+	            OutputEvent(evt.time(), stepPin.id(), IoLow),
+	            OutputEvent(evt.time()+std::chrono::microseconds(10), stepPin.id(), IoHigh)}}; //It's the low->high transition that triggers the step.
 	    }
 	private:
 		//A4988 is directed by putting a direction on the DIRPIN, and then
