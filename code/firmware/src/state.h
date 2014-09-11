@@ -321,13 +321,13 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
 		}
 	}
 	bool motionNeedsCpu = false;
-	if (scheduler.isRoomInBuffer()) {
+	if (scheduler.isRoomInBuffer()) { 
 		//LOGV("State::satisfyIOs, sched has buffer room\n");
-		Event evt;
+		Event evt; //check to see if motionPlanner has another event ready
 		if (!(evt = motionPlanner.nextStep()).isNull()) {
 			this->scheduler.queue(evt);
 			motionNeedsCpu = scheduler.isRoomInBuffer();
-		} else {
+		} else { //counter buffer changes set in homing
 			this->scheduler.setBufferSizeToDefault();
 		}
 	}
