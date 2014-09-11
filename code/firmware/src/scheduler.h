@@ -245,7 +245,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//Event evt = *this->eventQueue.begin();
 		//do NOT pop the event here, because it might not be handled this time around.
 		//it's possible for onIdleCpu to call Scheduler.yield(), in which case another instantiation of this call could have already handled the event we're looking at. Therefore we need to be checking the most up-to-date event each time around.
-		LOGW("Sched::yield called at %llu for event at %llu\n", EventClockT::now().time_since_epoch().count(), eventQueue.cbegin()->time().time_since_epoch().count());
+		//LOGV("Sched::yield called at %llu for event at %llu\n", EventClockT::now().time_since_epoch().count(), eventQueue.cbegin()->time().time_since_epoch().count());
 		OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
 		//bool handledInHardware = false;
 		while (!eventQueue.empty() && !isEventTime(*eventQueue.cbegin())) {
@@ -274,7 +274,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		Event evt = *iter;
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		if (interface.hardwareScheduler.canWriteOutputs() && interface.isEventOutputSequenceable(evt)) {
-		    LOGV("Event is being scheduled in hardware\n");
+		    //LOGV("Event is being scheduled in hardware\n");
 	        std::vector<OutputEvent> outputs = interface.getEventOutputSequence(evt);
 	        //auto schedTime = interface.hardwareScheduler.schedTime(evt.time());
             //SleepT::sleep_until(schedTime);
