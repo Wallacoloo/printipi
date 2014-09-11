@@ -36,7 +36,7 @@ struct NullSchedAdjuster {
     EventClockT::time_point adjust(EventClockT::time_point tp) const {
         return tp;
     }
-    void update(EventClockT::time_point tp) {}
+    void update(EventClockT::time_point) {}
 };
 
 struct SchedAdjusterAccel {
@@ -260,7 +260,7 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 	                        SleepT::sleep_until(maxSleep);
 	                    } else {
 	                        SleepT::sleep_until(schedTime);
-	                        LOG("Event is being scheduled in hardware\n");
+	                        LOGV("Event is being scheduled in hardware\n");
 	                        std::vector<OutputEvent> outputs = interface.getEventOutputSequence(*iter);
 	                        for (const OutputEvent &out : outputs) {
 	                            interface.hardwareScheduler.queue(out);

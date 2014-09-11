@@ -73,13 +73,13 @@
 #define THERM_BETA 3950
 
 /*Used IOs:
-  3
-  5
+  (3 -input broken; output functional)
+  (5 -input boken; output functional)
   7
-  8
-  10
-  (11)
-  (12)
+  (8 -input finicky; output functional)
+  (10-input finicky; output functional)
+  (11-input&output broken)
+  (12-input&output broken)
   13
   15
   16
@@ -88,8 +88,8 @@
   21
   22
   23
-  24
-  26
+  (24-input broken; output functional)
+  (26-input broken; output functional)
 */
 /* Calibrating:
   as y leaves 0 to +side, z increases (should stay level)
@@ -117,8 +117,8 @@ class KosselPi : public Machine {
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
 		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_18, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopA; //endstop is triggered on HIGH
-		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_24, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
-		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_26, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_13, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_15, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
 		//typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		typedef RCThermistor<rpi::RpiIoPin<RPI_V2_GPIO_P1_07>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		//typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
@@ -163,7 +163,7 @@ class KosselPi : public Machine {
         	//rpi::A4988<RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, _StepperEn>, //E coord
         	A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_22>, rpi::RpiIoPin<RPI_V2_GPIO_P1_23>, _StepperEn>,
         	A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_19>, rpi::RpiIoPin<RPI_V2_GPIO_P1_21>, _StepperEn>,
-        	A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_13>, rpi::RpiIoPin<RPI_V2_GPIO_P1_15>, _StepperEn>,
+        	A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_24>, rpi::RpiIoPin<RPI_V2_GPIO_P1_26>, _StepperEn>,
         	A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_03>, rpi::RpiIoPin<RPI_V2_GPIO_P1_05>, _StepperEn>,
         	_Fan,
         	//12000, 3000, 1000 gives osc of ~3 min (20C-80C). Converges.
