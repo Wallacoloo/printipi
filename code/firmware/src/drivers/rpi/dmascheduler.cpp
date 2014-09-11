@@ -280,11 +280,13 @@ void DmaScheduler::initDma() {
 void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
-    uint64_t callTime = readSysTime(); //only used for debugging
+    //uint64_t callTime = readSysTime(); //only used for debugging
+    uint64_t callTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count();
     uint64_t desiredTime = micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC;
     //sleepUntilMicros(desiredTime);
     SleepT::sleep_until(std::chrono::time_point<std::chrono::microseconds>(std::chrono::microseconds(micros)));
-    uint64_t awakeTime = readSysTime(); //only used for debugging
+    //uint64_t awakeTime = readSysTime(); //only used for debugging
+    uint64_t awakeTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count();
     
     //get the current source index at the current time:
     //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
