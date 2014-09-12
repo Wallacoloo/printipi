@@ -74,7 +74,7 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
 	    std::vector<OutputEvent> getEventOutputSequence(const Event &evt) {
 	        return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
 	            OutputEvent(evt.time(), stepPin.id(), IoLow),
-	            OutputEvent(evt.time()+std::chrono::microseconds(10), stepPin.id(), IoHigh)}}; //It's the low->high transition that triggers the step.
+	            OutputEvent(evt.time()+std::chrono::microseconds(20), stepPin.id(), IoHigh)}}; //It's the low->high transition that triggers the step. NOTE: documentation says only 1 uS delay is necessary, but < 15 causes consistent problems. May be DMA scheduling
 	    }
 	private:
 		//A4988 is directed by putting a direction on the DIRPIN, and then
