@@ -116,9 +116,6 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		//Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
 		void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
 		EventClockT::time_point lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
-		void setBufferSize(unsigned size);
-		void setBufferSizeToDefault();
-		unsigned getBufferSize() const;
 		bool isRoomInBuffer() const;
 		unsigned numActivePwmChannels() const;
 		void eventLoop();
@@ -127,6 +124,9 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		void sleepUntilEvent(const Event *evt) const;
 		bool isEventNear(const Event &evt) const;
 		bool isEventTime(const Event &evt) const;
+		void setBufferSize(unsigned size);
+		void setBufferSizeToDefault();
+		unsigned getBufferSize() const;
 };
 
 //template <typename Interface> const EventClockT::duration Scheduler<Interface>::MAX_SLEEP(std::chrono::duration_cast<EventClockT::duration>(std::chrono::milliseconds(40)));

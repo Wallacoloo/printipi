@@ -332,7 +332,6 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
 			    _lastMotionPlannedTime = evt.time();
 			    motionNeedsCpu = scheduler.isRoomInBuffer();
 		    } else { //counter buffer changes set in homing
-			    this->scheduler.setBufferSizeToDefault();
 			    this->scheduler.setDefaultMaxSleep();
 		    }
 		}
@@ -598,7 +597,6 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
-	//this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
 	this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
 	motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
 	this->_isHomed = true;
