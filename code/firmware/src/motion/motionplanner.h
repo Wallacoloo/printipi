@@ -95,6 +95,9 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
 			return Event();
 		}
 	public:
+	    bool isHoming() const {
+	        return _motionType == MotionHome;
+	    }
 		Event nextStep() {
 			if (_motionType == MotionNone) {
 				return Event(); //no next step; return a null Event

@@ -86,6 +86,7 @@ template <typename Drv> class State {
 	float _destMoveRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	bool _isHomed;
+	EventClockT::time_point _lastMotionPlannedTime;
 	gparse::Com &com;
 	SchedType scheduler;
 	MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
@@ -158,6 +159,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDea
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
 	_isHomed(false),
+	_lastMotionPlannedTime(std::chrono::seconds(0)), 
 	com(com), 
 	scheduler(SchedInterface(*this)),
 	driver(drv)
@@ -324,11 +326,14 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
 	if (scheduler.isRoomInBuffer()) { 
 		//LOGV("State::satisfyIOs, sched has buffer room\n");
 		Event evt; //check to see if motionPlanner has another event ready
-		if (!(evt = motionPlanner.nextStep()).isNull()) {
-			this->scheduler.queue(evt);
-			motionNeedsCpu = scheduler.isRoomInBuffer();
-		} else { //counter buffer changes set in homing
-			this->scheduler.setBufferSizeToDefault();
+		if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
+		    if (!(evt = motionPlanner.nextStep()).isNull()) {
+			    this->scheduler.queue(evt);
+			    _lastMotionPlannedTime = evt.time();
+			    motionNeedsCpu = scheduler.isRoomInBuffer();
+		    } else { //counter buffer changes set in homing
+			    this->scheduler.setBufferSizeToDefault();
+		    }
 		}
 	}
 	bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
@@ -592,7 +597,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
-	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
+	//this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
 	motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
 	this->_isHomed = true;
 }
