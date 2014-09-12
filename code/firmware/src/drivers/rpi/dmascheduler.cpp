@@ -305,11 +305,11 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
         ++tries;
     } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //calculate the frame# at which to place the event:
-    int64_t usecFromNow = micros - std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count(); //need signed; could be in past
+    int64_t usecFromNow = (int64_t)micros - (int64_t)std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count(); //need signed; could be in past
     int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; //Note: may cause overflow if FRAMES_PER_SECOND is not a multiple of 1000000 or if optimizations are COMPLETELY disabled.
     if (framesFromNow < 20) { //Not safe to schedule less than ~10uS into the future (note: should be operating on usecFromNow, not framesFromNow)
         //LOGW("Warning: DmaScheduler behind schedule: %i (%llu) (tries: %i) (sleep %llu -> %llu (wanted %llu for %llu now is %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime, micros, curTime2.time_since_epoch().count());
-        LOGW("Warning: DmaScheduler behind schedule: %i (%llu) (tries: %i) (wanted %llu for %llu now is %llu)\n", framesFromNow, usecFromNow, tries, desiredTime, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count());
+        LOGW("Warning: DmaScheduler behind schedule: %i (%lli) (tries: %i) (wanted %llu for %llu now is %llu)\n", framesFromNow, usecFromNow, tries, desiredTime, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count());
         framesFromNow = 20;
     }
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
