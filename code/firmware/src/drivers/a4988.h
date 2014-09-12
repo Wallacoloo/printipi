@@ -12,12 +12,16 @@
 */
 
 #include <cstdint> //for uint8_t
+#include <array>
+#include <chrono>
 
 #include "drivers/iodriver.h"
 //#include "drivers/enabledisabledriver.h"
 #include "drivers/iopin.h" //for NoPin
 #include "common/logging.h"
 #include "drivers/iopin.h"
+#include "outputevent.h"
+#include "event.h"
 
 namespace drv {
 
@@ -58,6 +62,15 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
 			//bcm2835_gpio_write(DIRPIN, LOW); //set direction as backward
 			cycleStepPin();
 		}
+		bool isEventOutputSequenceable(const Event&) {
+	        //Both stepForward and stepBackward events are sequenceable.
+	        return true;
+	    }
+	    std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {
+	        return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
+	            OutputEvent(evt.time(), stepPin.id(), IoLow),
+	            OutputEvent(evt.time()+std::chrono::microseconds(20), stepPin.id(), IoHigh)}}; //It's the low->high transition that triggers the step. NOTE: documentation says only 1 uS delay is necessary, but < 15 causes consistent problems. May be DMA scheduling
+	    }
 	private:
 		//A4988 is directed by putting a direction on the DIRPIN, and then
 		//sending a pulse on the STEPPIN.

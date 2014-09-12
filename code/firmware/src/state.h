@@ -41,22 +41,49 @@
 #include "drivers/iodriver.h"
 #include "common/typesettings.h"
 #include "common/tupleutil.h"
+#include "outputevent.h"
 
 template <typename Drv> class State {
-	//The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
+    //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
 	struct SchedInterface {
-		State<Drv>& _state;
-		SchedInterface(State<Drv> &state) : _state(state) {}
-		void onEvent(const Event& evt) {
-			_state.handleEvent(evt);
-		}
-		bool onIdleCpu(OnIdleCpuIntervalT interval) {
-			return _state.onIdleCpu(interval);
-		}
-		static constexpr std::size_t numIoDrivers() {
-			return std::tuple_size<typename Drv::IODriverTypes>::value;
-		}
-	};
+	    private:
+	        State<Drv>& _state;
+	    public:
+            //SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
+            DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
+            SchedInterface(State<Drv> &state) : _state(state) {}
+            void onEvent(const Event& evt) {
+                _state.handleEvent(evt);
+            }
+            bool onIdleCpu(OnIdleCpuIntervalT interval) {
+                return _state.onIdleCpu(interval);
+            }
+            static constexpr std::size_t numIoDrivers() {
+                return std::tuple_size<typename Drv::IODriverTypes>::value;
+            }
+            bool isEventOutputSequenceable(const Event& evt) {
+                return drv::IODriver::isEventOutputSequenceable(_state.ioDrivers, evt);
+            }
+            /*struct __getEventOutputSequence {
+                template <typename T> std::vector<OutputEvent> operator()(T &driver, const Event &evt) {
+                    return driver.getEventOutputSequence(evt);
+                }
+            };
+            std::vector<OutputEvent> getEventOutputSequence(const Event &evt) {
+                return tupleCallOnIndex(_state.ioDrivers, __getEventOutputSequence(), evt.stepperId(), evt);
+            }*/
+            struct __iterEventOutputSequence {
+                template <typename T, typename Func> void operator()(T &driver, const Event &evt, Func &f) {
+                    auto a = driver.getEventOutputSequence(evt);
+                    for (auto &&outputEvt : a) {
+                        f(outputEvt);
+                    }
+                }
+            };
+            template <typename Func> void iterEventOutputSequence(const Event &evt, Func f) {
+                return tupleCallOnIndex(_state.ioDrivers, __iterEventOutputSequence(), evt.stepperId(), evt, f);
+            }
+    };
 	//The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:
 	struct MotionInterface {
 		typedef typename Drv::CoordMapT CoordMapT;
@@ -71,6 +98,7 @@ template <typename Drv> class State {
 	float _destMoveRatePrimitive;
 	float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
 	bool _isHomed;
+	EventClockT::time_point _lastMotionPlannedTime;
 	gparse::Com &com;
 	SchedType scheduler;
 	MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
@@ -143,6 +171,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDea
 	_destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
 	_hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
 	_isHomed(false),
+	_lastMotionPlannedTime(std::chrono::seconds(0)), 
 	com(com), 
 	scheduler(SchedInterface(*this)),
 	driver(drv)
@@ -306,14 +335,17 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
 		}
 	}
 	bool motionNeedsCpu = false;
-	if (scheduler.isRoomInBuffer()) {
+	if (scheduler.isRoomInBuffer()) { 
 		//LOGV("State::satisfyIOs, sched has buffer room\n");
-		Event evt;
-		if (!(evt = motionPlanner.nextStep()).isNull()) {
-			this->scheduler.queue(evt);
-			motionNeedsCpu = scheduler.isRoomInBuffer();
-		} else {
-			this->scheduler.setBufferSizeToDefault();
+		Event evt; //check to see if motionPlanner has another event ready
+		if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
+		    if (!(evt = motionPlanner.nextStep()).isNull()) {
+			    this->scheduler.queue(evt);
+			    _lastMotionPlannedTime = evt.time();
+			    motionNeedsCpu = scheduler.isRoomInBuffer();
+		    } else { //counter buffer changes set in homing
+			    this->scheduler.setDefaultMaxSleep();
+		    }
 		}
 	}
 	bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
@@ -577,7 +609,7 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
-	this->scheduler.setBufferSize(this->scheduler.numActivePwmChannels()+1);
+	this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
 	motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
 	this->_isHomed = true;
 }

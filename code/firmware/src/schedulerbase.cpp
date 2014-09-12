@@ -1,13 +1,14 @@
-#include "scheduler.h"
+#include "schedulerbase.h"
 
 //#include <pthread.h> //for pthread_setschedparam
 //#include <time.h> //for clock_nanosleep
 #include <signal.h> //for sigaction signal handlers
 #include <cstdlib> //for atexit
 #include <stdexcept> //for runtime_error
+#include "common/logging.h"
 
+//initialize static variables:
 std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> SchedulerBase::exitHandlers;
-//std::atomic<bool> SchedulerBase::isExiting(false);
 bool SchedulerBase::isExiting(false);
 
 void ctrlCOrZHandler(int s){
@@ -21,7 +22,6 @@ void segfaultHandler(int /*signal*/, siginfo_t *si, void */*arg*/) {
 }
 
 void SchedulerBase::callExitHandlers() {
-	//if (!isExiting.exchange(true)) { //try setting isExiting to true. If it was previously false, then call the exit handlers:
 	if (!isExiting) {
 		isExiting = true;
 		LOG("Exiting\n");
@@ -58,6 +58,5 @@ void SchedulerBase::registerExitHandler(void (*handler)(), unsigned level) {
 		throw std::runtime_error("Tried to register an exit handler at too high of a level");
 	}
 	exitHandlers[level].push_back(handler);
-	//std::atexit(handler);
 }
 
