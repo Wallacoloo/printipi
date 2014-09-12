@@ -57,12 +57,16 @@ all: debug
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
+debug: TARGET=debug
 debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
+release: TARGET=release
 release: CFLAGS+= -O3 -ggdb3 -fomit-frame-pointer
 release: $(RELEASEDIR)/$(NAME)
+profile: TARGET=profile
 profile: CFLAGS+= -O3 -DDRUNNING_IN_VM -pg
 profile: $(PROFILEDIR)/$(NAME)
+minsize: TARGET=minsize
 #defining NDEBUG removes assertions.
 minsize: CFLAGS+= -DNDEBUG -Os -s -fmerge-all-constants -fomit-frame-pointer -ffunction-sections -fdata-sections -Wl,--gc-sections
 minsize: LOGFLAGS+= -DDNO_LOGGING
@@ -71,8 +75,8 @@ minsize: $(MINSIZEDIR)/$(NAME)
 	
 %/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
-	cp $@ $(BUILDROOT)/$(NAME)
-	ln -f -s $(BUILDROOT)/$(NAME) $(BUILDROOT)/$(NAMELINK)
+	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
+	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
 	
 %.dir:
 	@mkdir -p $(@D)

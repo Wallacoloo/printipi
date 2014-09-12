@@ -44,34 +44,35 @@
 #include "outputevent.h"
 
 template <typename Drv> class State {
-	//The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
+    //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
 	struct SchedInterface {
-	    SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
-		State<Drv>& _state;
-		SchedInterface(State<Drv> &state) : _state(state) {}
-		void onEvent(const Event& evt) {
-			_state.handleEvent(evt);
-		}
-		bool onIdleCpu(OnIdleCpuIntervalT interval) {
-			return _state.onIdleCpu(interval);
-		}
-		static constexpr std::size_t numIoDrivers() {
-			return std::tuple_size<typename Drv::IODriverTypes>::value;
-		}
-		bool isEventOutputSequenceable(const Event& evt) {
-		    return drv::IODriver::isEventOutputSequenceable(_state.ioDrivers, evt);
-	    }
-	    struct __getEventOutputSequence {
-	        template <typename T> std::vector<OutputEvent> operator()(T &driver, const Event &evt) {
-		        //return std::vector<OutputEvent>();
-		        return driver.getEventOutputSequence(evt);
-	        }
-        };
-	    std::vector<OutputEvent> getEventOutputSequence(const Event &evt) {
-	        //return std::vector<OutputEvent>();
-	        return tupleCallOnIndex(_state.ioDrivers, __getEventOutputSequence(), evt.stepperId(), evt);
-	    }
-	};
+	    private:
+	        State<Drv>& _state;
+	    public:
+            SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
+            //DefaultSchedulerInterface hardwareScheduler;
+            SchedInterface(State<Drv> &state) : _state(state) {}
+            void onEvent(const Event& evt) {
+                _state.handleEvent(evt);
+            }
+            bool onIdleCpu(OnIdleCpuIntervalT interval) {
+                return _state.onIdleCpu(interval);
+            }
+            static constexpr std::size_t numIoDrivers() {
+                return std::tuple_size<typename Drv::IODriverTypes>::value;
+            }
+            bool isEventOutputSequenceable(const Event& evt) {
+                return drv::IODriver::isEventOutputSequenceable(_state.ioDrivers, evt);
+            }
+            struct __getEventOutputSequence {
+                template <typename T> std::vector<OutputEvent> operator()(T &driver, const Event &evt) {
+                    return driver.getEventOutputSequence(evt);
+                }
+            };
+            std::vector<OutputEvent> getEventOutputSequence(const Event &evt) {
+                return tupleCallOnIndex(_state.ioDrivers, __getEventOutputSequence(), evt.stepperId(), evt);
+            }
+    };
 	//The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:
 	struct MotionInterface {
 		typedef typename Drv::CoordMapT CoordMapT;
