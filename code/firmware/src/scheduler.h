@@ -89,7 +89,7 @@ struct SchedAdjusterAccel {
 
 template <typename Interface=DefaultSchedulerInterface> class Scheduler : public SchedulerBase {
 	typedef NullSchedAdjuster SchedAdjuster;
-	static const EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
+	EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
 	typedef std::multiset<Event> EventQueueType;
 	Interface interface;
 	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
@@ -105,6 +105,12 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		inline void schedPwm(AxisIdType idx, float duty) {
 			PwmInfo pi(duty, pwmInfo[idx].period());
 			schedPwm(idx, pi);
+		}
+		template <typename T> void setMaxSleep(T duration) {
+		    MAX_SLEEP = std::chrono::duration_cast<EventClockT::duration>(duration);
+		}
+		inline void setDefaultMaxSleep() {
+		    setMaxSleep(std::chrono::milliseconds(40));
 		}
 		Scheduler(Interface interface);
 		//Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
@@ -123,12 +129,13 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		bool isEventTime(const Event &evt) const;
 };
 
-template <typename Interface> const EventClockT::duration Scheduler<Interface>::MAX_SLEEP(std::chrono::duration_cast<EventClockT::duration>(std::chrono::milliseconds(40)));
+//template <typename Interface> const EventClockT::duration Scheduler<Interface>::MAX_SLEEP(std::chrono::duration_cast<EventClockT::duration>(std::chrono::milliseconds(40)));
 
 
 template <typename Interface> Scheduler<Interface>::Scheduler(Interface interface) 
 	: interface(interface),bufferSize(SCHED_CAPACITY) {
 	//clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //initialize to current time.
+	setDefaultMaxSleep();
 }
 
 
