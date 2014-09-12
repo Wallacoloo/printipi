@@ -49,8 +49,8 @@ template <typename Drv> class State {
 	    private:
 	        State<Drv>& _state;
 	    public:
-            //SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
-            DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
+            SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
+            //DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
             SchedInterface(State<Drv> &state) : _state(state) {}
             void onEvent(const Event& evt) {
                 _state.handleEvent(evt);

@@ -234,7 +234,7 @@ void DmaScheduler::initPwm() {
     //configure PWM clock:
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | ((*(clockBaseMem + CM_PWMCTL/4))&(~CM_PWMCTL_ENAB)); //disable clock
     do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY); //wait for clock to deactivate
-    *(clockBaseMem + CM_PWMDIV/4) = CM_PWMDIV_PASSWD | CM_PWMDIV_DIVI(50); //configure clock divider (running at 500MHz undivided)
+    *(clockBaseMem + CM_PWMDIV/4) = CM_PWMDIV_PASSWD | CM_PWMDIV_DIVI(CLOCK_DIV); //configure clock divider (running at 500MHz undivided)
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD; //source 500MHz base clock, no MASH.
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD | CM_PWMCTL_ENAB; //enable clock
     do {} while ((*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY) == 0); //wait for clock to activate
@@ -250,7 +250,7 @@ void DmaScheduler::initPwm() {
     usleep(100);
     
     pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(PWM_FIFO_SIZE) | PWM_DMAC_PANIC(PWM_FIFO_SIZE); //DREQ is activated at queue < PWM_FIFO_SIZE
-    pwmHeader->RNG1 = 10; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
+    pwmHeader->RNG1 = BITS_PER_CLOCK; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
 }
 
@@ -280,12 +280,12 @@ void DmaScheduler::initDma() {
 }
 
 
-//int64_t _lastTimeAtFrame0;
+int64_t _lastTimeAtFrame0;
 void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     //uint64_t callTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count(); //only used for debugging
-    uint64_t desiredTime = micros - FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
+    uint64_t desiredTime = micros - FRAME_TO_USEC(SOURCE_BUFFER_FRAMES*15/16); //multiple by 15/16 to allow for a small amount of DMA variablitiy / clock drift
     SleepT::sleep_until(std::chrono::time_point<std::chrono::microseconds>(std::chrono::microseconds(desiredTime)));
     //uint64_t awakeTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count(); //only used for debugging
     
@@ -306,9 +306,9 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
         ++tries;
     } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
-    //int64_t curTimeAtFrame0 = curTime2 - FRAME_TO_USEC(srcIdx);
-    //printf("Timing diff: %lli\n", (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES));
-    //_lastTimeAtFrame0 = curTimeAtFrame0;
+    int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
+    LOGV("Timing diff: %lli\n", (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES));
+    _lastTimeAtFrame0 = curTimeAtFrame0;
     //if timing diff is positive, then then curTimeAtFrame0 > _lastTimeAtFrame0
     //curTime2 - srcIdx2 > curTime1 - srcIdx1
     //curTime2 - curTime2 > srcIdx2 - srcIdx1
