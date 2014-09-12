@@ -66,12 +66,7 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
 	        //Both stepForward and stepBackward events are sequenceable.
 	        return true;
 	    }
-	    /*std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {
-	        return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
-	            OutputEvent(evt.time()+std::chrono::microseconds(1), stepPin.id(), IoHigh),
-	            OutputEvent(evt.time()+std::chrono::microseconds(3), stepPin.id(), IoLow)}};
-	    }*/
-	    std::vector<OutputEvent> getEventOutputSequence(const Event &evt) {
+	    std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {
 	        return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
 	            OutputEvent(evt.time(), stepPin.id(), IoLow),
 	            OutputEvent(evt.time()+std::chrono::microseconds(20), stepPin.id(), IoHigh)}}; //It's the low->high transition that triggers the step. NOTE: documentation says only 1 uS delay is necessary, but < 15 causes consistent problems. May be DMA scheduling
