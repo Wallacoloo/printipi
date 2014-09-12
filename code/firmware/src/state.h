@@ -49,8 +49,8 @@ template <typename Drv> class State {
 	    private:
 	        State<Drv>& _state;
 	    public:
-            SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
-            //DefaultSchedulerInterface hardwareScheduler;
+            //SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
+            DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
             SchedInterface(State<Drv> &state) : _state(state) {}
             void onEvent(const Event& evt) {
                 _state.handleEvent(evt);
@@ -64,14 +64,14 @@ template <typename Drv> class State {
             bool isEventOutputSequenceable(const Event& evt) {
                 return drv::IODriver::isEventOutputSequenceable(_state.ioDrivers, evt);
             }
-            struct __getEventOutputSequence {
+            /*struct __getEventOutputSequence {
                 template <typename T> std::vector<OutputEvent> operator()(T &driver, const Event &evt) {
                     return driver.getEventOutputSequence(evt);
                 }
             };
             std::vector<OutputEvent> getEventOutputSequence(const Event &evt) {
                 return tupleCallOnIndex(_state.ioDrivers, __getEventOutputSequence(), evt.stepperId(), evt);
-            }
+            }*/
             struct __iterEventOutputSequence {
                 template <typename T, typename Func> void operator()(T &driver, const Event &evt, Func &f) {
                     auto a = driver.getEventOutputSequence(evt);
