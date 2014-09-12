@@ -282,12 +282,14 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
 		if (interface.hardwareScheduler.canWriteOutputs() && interface.isEventOutputSequenceable(evt)) {
 		    //LOGV("Event is being scheduled in hardware\n");
-	        std::vector<OutputEvent> outputs = interface.getEventOutputSequence(evt);
+	        /*std::vector<OutputEvent> outputs = interface.getEventOutputSequence(evt);
 	        //auto schedTime = interface.hardwareScheduler.schedTime(evt.time());
             //SleepT::sleep_until(schedTime);
             for (const OutputEvent &out : outputs) {
                 interface.hardwareScheduler.queue(out);
-            }
+            }*/
+            //interface.sequenceEvent(evt,
+            interface.iterEventOutputSequence(evt, [this](const OutputEvent &out) {this->interface.hardwareScheduler.queue(out); });
 	    } else { //relay the event to our interface if it wasn't able to be handled in hardware:
 		    auto mapped = schedAdjuster.adjust(evt.time());
 		    auto now = EventClockT::now();

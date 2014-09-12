@@ -306,12 +306,13 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //calculate the frame# at which to place the event:
     int64_t usecFromNow = (int64_t)micros - (int64_t)std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count(); //need signed; could be in past
-    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; //Note: may cause overflow if FRAMES_PER_SECOND is not a multiple of 1000000 or if optimizations are COMPLETELY disabled.
-    if (framesFromNow < 20) { //Not safe to schedule less than ~10uS into the future (note: should be operating on usecFromNow, not framesFromNow)
+     if (usecFromNow < 20) { //Not safe to schedule less than ~10uS into the future
         //LOGW("Warning: DmaScheduler behind schedule: %i (%llu) (tries: %i) (sleep %llu -> %llu (wanted %llu for %llu now is %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime, micros, curTime2.time_since_epoch().count());
-        LOGW("DmaScheduler behind schedule: %lli uSec (tries: %i) (event at %llu; got %llu)\n", usecFromNow, tries, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count());
-        framesFromNow = 20;
+        LOGV("DmaScheduler behind schedule: %lli uSec (tries: %i) (event at %llu; got %llu)\n", usecFromNow, tries, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count()); //Note: have to use verbose logging, otherwise the log message will slow the app down and cause even more scheduling woes.
+        usecFromNow = 20;
     }
+    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; //Note: may cause overflow if FRAMES_PER_SECOND is not a multiple of 1000000 or if optimizations are COMPLETELY disabled.
+   
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
     if (mode == 0) { //turn output off
@@ -320,21 +321,5 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
         srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
     }
 }
-
-/*void DmaScheduler::sleepUntilMicros(uint64_t micros) const {
-    //Note: cannot use clock_nanosleep with an absolute time, as the process clock may differ from the RPi clock.
-    //this function doesn't need to be super precise, so we can tolerate interrupts.
-    //Therefore, we can use a relative sleep:
-    uint64_t cur = readSysTime();
-    if (micros > cur) { //avoid overflow caused by unsigned arithmetic
-        uint64_t dur = micros - cur;
-        //usleep(dur); //nope, causes problems!
-        struct timespec t;
-        t.tv_sec = dur/1000000;
-        t.tv_nsec = (dur - t.tv_sec*1000000)*1000;
-        nanosleep(&t, NULL);
-    }
-}*/
-
 }
 }

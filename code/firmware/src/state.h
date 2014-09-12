@@ -72,6 +72,17 @@ template <typename Drv> class State {
             std::vector<OutputEvent> getEventOutputSequence(const Event &evt) {
                 return tupleCallOnIndex(_state.ioDrivers, __getEventOutputSequence(), evt.stepperId(), evt);
             }
+            struct __iterEventOutputSequence {
+                template <typename T, typename Func> void operator()(T &driver, const Event &evt, Func &f) {
+                    auto a = driver.getEventOutputSequence(evt);
+                    for (auto &&outputEvt : a) {
+                        f(outputEvt);
+                    }
+                }
+            };
+            template <typename Func> void iterEventOutputSequence(const Event &evt, Func f) {
+                return tupleCallOnIndex(_state.ioDrivers, __iterEventOutputSequence(), evt.stepperId(), evt, f);
+            }
     };
 	//The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:
 	struct MotionInterface {
