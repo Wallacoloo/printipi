@@ -125,11 +125,7 @@ volatile uint32_t* DmaScheduler::mapPeripheral(int addr) const {
     return (volatile uint32_t*)mapped;
 }
 
-void DmaScheduler::initSrcAndControlBlocks() {
-    //Often need to copy zeros with DMA. This array can be the source. Needs to all lie on one page
-    zerosPageCached = makeLockedMem(PAGE_SIZE);
-    zerosPage = makeUncachedMemView(zerosPageCached, PAGE_SIZE);
-    
+void DmaScheduler::initSrcAndControlBlocks() {    
     //configure DMA...
     //First, allocate memory for the source:
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
@@ -149,6 +145,13 @@ void DmaScheduler::initSrcAndControlBlocks() {
     //fill the control blocks:
     cbArrCached = (struct DmaControlBlock*)virtCbPageCached;
     cbArr = (struct DmaControlBlock*)virtCbPage;
+    
+    //Allocate memory for the default src outputs (used in PWM, defaults to zeros)
+    virtSrcClrPageCached = makeLockedMem(PAGE_SIZE);
+    virtSrcClrPage = makeUncachedMemView(virtSrcClrPageCached, PAGE_SIZE);
+    srcClrArray = (struct GpioBufferFrame*)virtSrcClrPage;
+    srcClrArrayCached = (struct GpioBufferFrame*)virtSrcClrPageCached;
+    
     LOG("DmaScheduler::initSrcAndControlBlocks: #dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
     for (unsigned int i=0; i<numSrcBlocks*3; i += 3) {
         //pace DMA through PWM
@@ -167,7 +170,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
         cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2);
         //clear buffer (TODO: investigate using a 4-word copy ("burst") )
         cbArr[i+2].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPageCached);
+        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(virtSrcClrPageCached);
         cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3);
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+2].STRIDE = i/3; //might be better to use the NEXT index
@@ -298,10 +301,8 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     EventClockT::time_point curTime1, curTime2;
     int tries=0;
     do {
-        //curTime1 = readSysTime();
         curTime1 = EventClockT::now();
         srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
-        //curTime2 = readSysTime();
         curTime2 = EventClockT::now();
         ++tries;
     } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
@@ -331,5 +332,37 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
         srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
     }
 }
+
+void DmaScheduler::queuePwm(int pin, float ratio) {
+    //PWM is achieved through changing the values that each source frame is reset to.
+    //the way to choose which frames are '1' and which are '0' is like so:
+    //  Keep a counter, which is set to 0.
+    //  each frame, increment it by ratio.
+    //  if it exceeds 1, then set that output to '1' and subtract 1 from the counter. Else, set the output to 0.
+    //  Example(r=0.4):   frame | counter | output
+    //                    0     | 0.4     | 0
+    //                    1     | 0.8     | 0
+    //                    2     | 1.2->0.2| 1
+    //                    3     | 0.6     | 0
+    //                    4     | 1.0->0.0| 1
+    //                 ... cycle repeats
+    //  PWM cycle length (resolution) can be set easily to any number which is a divisor of the buffer length.
+    //  For simplicity, the original code will use a cycle length equal to the buffer length.
+    float counter;
+    for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
+        counter += ratio;
+        if (counter >= 1.f) {
+            counter -= 1;
+            //set output to '1'
+            srcClrArray[idx].writeGpSet(pin, 1); //do set
+            srcClrArray[idx].writeGpClr(pin, 0); //don't clear
+        } else {
+            //set output to '0'
+            srcClrArray[idx].writeGpClr(pin, 1); //do clear
+            srcClrArray[idx].writeGpSet(pin, 0); //don't set
+        }
+    }
+}
+
 }
 }

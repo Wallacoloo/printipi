@@ -393,13 +393,6 @@ struct PwmHeader {
         //0-31 PWM_DATi; Stores the 32-bit data to be sent to the PWM controller ONLY WHEN USEFi=1 (FIFO is enabled). TODO: Typo???
 };
 
-struct GpioBufferFrame {
-    //custom structure used for storing the GPIO buffer.
-    //These BufferFrame's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility
-    uint32_t gpset[2];
-    uint32_t gpclr[2];
-};
-
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value);
 size_t ceilToPage(size_t size);
 //allocate some memory and lock it so that its physical address will never change
@@ -407,16 +400,36 @@ uint8_t* makeLockedMem(size_t size);
 //free memory allocated with makeLockedMem
 void freeLockedMem(void* mem, size_t size);
 
+struct GpioBufferFrame {
+    //custom structure used for storing the GPIO buffer.
+    //These BufferFrame's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility
+    uint32_t gpset[2];
+    uint32_t gpclr[2];
+    inline uint32_t* gpsetForPin(int pin) const {
+        return &gpset[pin>31];
+    }
+    inline uint32_t* gpclrForPin(int pin) const {
+        return &gpclr[pin>31];
+    }
+    inline void writeGpSet(int pin, bool val) {
+        writeBitmasked(gpsetForPin(pin), 1<<(pin%32), val<<(pin%32));
+    }
+    inline void writeGpClr(int pin, bool val) {
+        writeBitmasked(gpclrForPin(pin), 1<<(pin%32), val<<(pin%32));
+    }
+};
+
 
 class DmaScheduler {
     int dmaCh;
     int memfd, pagemapfd;
     static DmaChannelHeader *dmaHeader; //must be static for cleanup() function
     volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
-    void *zerosPageCached, *zerosPage;
+    void *virtSrcClrPageCached, *virtSrcClrPage;
     void *virtSrcPageCached, *virtSrcPage;
     void *virtCbPageCached, *virtCbPage;
     GpioBufferFrame *srcArrayCached, *srcArray;
+    GpioBufferFrame *srcClrArrayCached, *srcClrArray;
     DmaControlBlock *cbArrCached, *cbArr;
     public:
         DmaScheduler();
@@ -431,6 +444,7 @@ class DmaScheduler {
         inline void queue(const OutputEvent &evt) {
             queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
         }
+        void queuePwm(int pin, float ratio);
     private:
         void makeMaps();
         volatile uint32_t* mapPeripheral(int addr) const; //map a physical address into our virtual address space.
@@ -441,9 +455,9 @@ class DmaScheduler {
         void initPwm();
         void initDma();
         void queue(int pin, int mode, uint64_t micros);
-        inline uint64_t readSysTime() const {
+        /*inline uint64_t readSysTime() const {
             return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
-        }
+        }*/
         void sleepUntilMicros(uint64_t micros) const;
 };
 
