@@ -147,7 +147,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
     cbArr = (struct DmaControlBlock*)virtCbPage;
     
     //Allocate memory for the default src outputs (used in PWM, defaults to zeros)
-    virtSrcClrPageCached = makeLockedMem(PAGE_SIZE);
+    virtSrcClrPageCached = makeLockedMem(cbPageBytes);
     virtSrcClrPage = makeUncachedMemView(virtSrcClrPageCached, PAGE_SIZE);
     srcClrArray = (struct GpioBufferFrame*)virtSrcClrPage;
     srcClrArrayCached = (struct GpioBufferFrame*)virtSrcClrPageCached;

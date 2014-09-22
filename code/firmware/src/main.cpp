@@ -61,15 +61,16 @@
  *      Since we have IO access, may as well use bcm2835_st_read() for faster clocking.
  *  *use std::chrono::steady_clock in the case that we aren't on Linux (else ChronoClockPosix)
  *    Perhaps make it configurable, eg as in http://stackoverflow.com/a/11485388/216292 (use std chrono, and also implement that interface for the pi)
- *  Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
- *  Look into putting the scheduler (or entire program) into a kernel module
+ * *Look into using DMA for more precise and accurate scheduling (see info in hotend_control.txt)
+ * *NO: Look into putting the scheduler (or entire program) into a kernel module
+ *    Dma will get more precise timings than even a kernel module. Although technically, DMA in a kernel module would be safer than userland dma (fewer channel conflicts)
  *  Optimize gcode parser.
- *    opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
+ *   *opcodes are conveniently 4 bytes (eg M123). Can fit in one int for direct comparisons, instead of string comparisons.
  *    Can also use one single string for entire command and array of char* to mark the delimiters.
  *    Could consider using a parser generator (yacc, bison, etc)
  *    Smoothie has a separate gcode parser: https://github.com/Smoothieware/Smoothieware/tree/edge/src/modules/communication/utils
  *      though it's not much better than this one.
- *  Make gcode parser handle empty lines and comments
+ * *Make gcode parser handle empty lines and comments
  *  rename IODriver::stepForward/backward
  *  Add ability to configure the power-on coordinates, or default to homing before any commands.
  *  Optimize PID values
@@ -98,9 +99,10 @@
  * *Bound coordinates
  * *Make Endstop not be a static class
  * *Make EnableDisableDriver not be a static class
- *  Extrusions should not force axis to be homed.
+ *  Extruding should not force axis to be homed.
  *  Recognize when opening gcode file, and open as read-only (ie don't write 'ok' responses into it)
  *  Use the std:: file interface, rather than Linux file handlers.
+ *  Have scheduler only schedule (ordered) output events, rather than preserving normal events too.
 */
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
