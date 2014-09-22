@@ -103,6 +103,8 @@
  *  Recognize when opening gcode file, and open as read-only (ie don't write 'ok' responses into it)
  *  Use the std:: file interface, rather than Linux file handlers.
  *  Have scheduler only schedule (ordered) output events, rather than preserving normal events too.
+ *  Avoid accessing scheduler::interface.hardwareScheduler directly. Calls should be proxied by the interface itself.
+ *  Speed up DMA init by caching physical addresses
 */
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
