@@ -170,7 +170,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
         cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2);
         //clear buffer (TODO: investigate using a 4-word copy ("burst") )
         cbArr[i+2].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(srcClrArrayCached+i);
+        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(srcClrArrayCached+i/3);
         cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3);
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+2].STRIDE = i/3; //might be better to use the NEXT index
