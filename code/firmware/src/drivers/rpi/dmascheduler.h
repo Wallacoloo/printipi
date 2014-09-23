@@ -405,10 +405,10 @@ struct GpioBufferFrame {
     //These BufferFrame's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility
     uint32_t gpset[2];
     uint32_t gpclr[2];
-    inline uint32_t* gpsetForPin(int pin) const {
+    inline uint32_t* gpsetForPin(int pin) {
         return &gpset[pin>31];
     }
-    inline uint32_t* gpclrForPin(int pin) const {
+    inline uint32_t* gpclrForPin(int pin) {
         return &gpclr[pin>31];
     }
     inline void writeGpSet(int pin, bool val) {
