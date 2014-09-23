@@ -175,14 +175,20 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
 	LOGV("Scheduler::schedPwm: %i, %u, %u. Current: %u, %u\n", idx, p.nsHigh, p.nsLow, pwmInfo[idx].nsHigh, pwmInfo[idx].nsLow);
-	if (pwmInfo[idx].isNonNull()) { //already scheduled and running. Just update times.
-		pwmInfo[idx] = p; //note: purposely redundant with below; must check isNonNull() before modifying the pwmInfo.
-	} else { //have to schedule:
-		LOGV("Scheduler::schedPwm: queueing\n");
-		pwmInfo[idx] = p;
-		Event evt(lastSchedTime(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
-		setBufferSize(getBufferSize()+1); //Make some room for this event.
-		this->queue(evt);
+	if (interface.canDoPwm(idx) && interface.hardwareScheduler.canDoPwm(idx)) { //hardware support for PWM
+	    LOGV("Scheduler::schedPwm: using hardware pwm support\n");
+	    //interface.hardwareScheduler.queuePwm(idx, p.dutyCycle());
+	    interface.iterPwmPins(idx, p.dutyCycle(), [this](int pin, float duty) {this->interface.hardwareScheduler.queuePwm(pin, duty); });
+	} else { //soft PWM
+	    if (pwmInfo[idx].isNonNull()) { //already scheduled and running. Just update times.
+		    pwmInfo[idx] = p; //note: purposely redundant with below; must check isNonNull() before modifying the pwmInfo.
+	    } else { //have to schedule:
+		    LOGV("Scheduler::schedPwm: queueing\n");
+		    pwmInfo[idx] = p;
+		    Event evt(lastSchedTime(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
+		    setBufferSize(getBufferSize()+1); //Make some room for this event.
+		    this->queue(evt);
+	    }
 	}
 }
 

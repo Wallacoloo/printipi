@@ -11,6 +11,8 @@
  
 #include "iodriver.h"
 
+#include <tuple>
+
 namespace drv {
 
 template <typename Driver> class Fan : public IODriver {
@@ -20,7 +22,6 @@ template <typename Driver> class Fan : public IODriver {
 			driver.makeDigitalOutput(IoLow);
 		}
 		constexpr bool isFan() { return true; }
-		//constexpr float fanPwmPeriod() { return 0.1; }
 		//forward output control:
 		void stepForward() {
 			driver.digitalWrite(IoHigh);
@@ -28,6 +29,12 @@ template <typename Driver> class Fan : public IODriver {
 		void stepBackward() {
 			driver.digitalWrite(IoLow);
 		}
+		bool canDoPwm() const {
+		    return true;
+		}
+		Driver& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
+	        return driver;
+	    }
 };
 
 }

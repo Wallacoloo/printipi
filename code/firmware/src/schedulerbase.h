@@ -46,6 +46,9 @@ struct PwmInfo {
 	inline float period() const {
 		return nsHigh + nsLow;
 	}
+	inline float dutyCycle() const {
+	    return (float)nsHigh / period();
+	}
 	inline bool isNonNull() const {
 		return nsHigh || nsLow;
 	}
@@ -88,6 +91,12 @@ struct DefaultSchedulerInterface {
 	    }
 	    void queue(const OutputEvent &) {
 	        //add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary
+	    }
+	    inline bool canDoPwm(int pin) const {
+	        return false;
+	    }
+	    inline void queuePwm(int pin, float ratio) {
+	        //Set the given pin to a pwm duty-cycle of `ratio`. Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
 	    }
 	    template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
 	        //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.

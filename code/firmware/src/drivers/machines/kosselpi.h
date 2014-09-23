@@ -73,23 +73,43 @@
 #define THERM_BETA 3950
 
 /*Used IOs:
-  (3 -input broken; output functional)
-  (5 -input boken; output functional)
-  7
+  (1 -3.3v)
+  (2 -5.0v)
+  (3 -input unusable (internally tied to 3.3v via 1.8kOhm); output functional)
+  (4 -5.0v)
+  (5 -input unusable (internally tied to 3.3v via 1.8kOhm); output functional)
+  (6 -GND)
+  (7 -input&output broken)
   (8 -input finicky; output functional)
+  (9 -GND)
   (10-input finicky; output functional)
   (11-input&output broken)
   (12-input&output broken)
   13
+  (14-GND)
   15
   16
+  (17-3.3v)
   18
   19
+  (20-GND)
   21
   22
   23
   (24-input broken; output functional)
+  (25-GND)
   (26-input broken; output functional)
+  
+P5 layout:
+  P5-01 is, from the back of the board with GPIOs on the top, the upper-right pin.
+  P5-01 = +5V
+  P5-02 = +3.3V
+  P5-03 = GPIO28
+  P5-04 = GPIO29
+  P5-05 = GPIO30
+  P5-06 = GPIO31
+  P5-07 = GND
+  P5-08 = GND
 */
 /* Calibrating:
   as y leaves 0 to +side, z increases (should stay level)
@@ -117,10 +137,10 @@ class KosselPi : public Machine {
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
 		//typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
 		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_18, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopA; //endstop is triggered on HIGH
-		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_13, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
+		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P5_03, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
 		typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_15, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
 		//typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-		typedef RCThermistor<rpi::RpiIoPin<RPI_V2_GPIO_P1_07>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
+		typedef RCThermistor<rpi::RpiIoPin<RPI_V2_GPIO_P1_13>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
 		//typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
 		typedef Fan<rpi::RpiIoPin<RPI_V2_GPIO_P1_08, IoLow> > _Fan;
 		//typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 0> _HotendOut;

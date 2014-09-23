@@ -125,11 +125,7 @@ volatile uint32_t* DmaScheduler::mapPeripheral(int addr) const {
     return (volatile uint32_t*)mapped;
 }
 
-void DmaScheduler::initSrcAndControlBlocks() {
-    //Often need to copy zeros with DMA. This array can be the source. Needs to all lie on one page
-    zerosPageCached = makeLockedMem(PAGE_SIZE);
-    zerosPage = makeUncachedMemView(zerosPageCached, PAGE_SIZE);
-    
+void DmaScheduler::initSrcAndControlBlocks() {    
     //configure DMA...
     //First, allocate memory for the source:
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
@@ -149,6 +145,13 @@ void DmaScheduler::initSrcAndControlBlocks() {
     //fill the control blocks:
     cbArrCached = (struct DmaControlBlock*)virtCbPageCached;
     cbArr = (struct DmaControlBlock*)virtCbPage;
+    
+    //Allocate memory for the default src outputs (used in PWM, defaults to zeros)
+    virtSrcClrPageCached = makeLockedMem(srcPageBytes);
+    virtSrcClrPage = makeUncachedMemView(virtSrcClrPageCached, srcPageBytes);
+    srcClrArray = (struct GpioBufferFrame*)virtSrcClrPage;
+    srcClrArrayCached = (struct GpioBufferFrame*)virtSrcClrPageCached;
+    
     LOG("DmaScheduler::initSrcAndControlBlocks: #dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
     for (unsigned int i=0; i<numSrcBlocks*3; i += 3) {
         //pace DMA through PWM
@@ -167,7 +170,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
         cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2);
         //clear buffer (TODO: investigate using a 4-word copy ("burst") )
         cbArr[i+2].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(zerosPageCached);
+        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(srcClrArrayCached+i/3);
         cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3);
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+2].STRIDE = i/3; //might be better to use the NEXT index
@@ -234,7 +237,7 @@ void DmaScheduler::initPwm() {
     //configure PWM clock:
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | ((*(clockBaseMem + CM_PWMCTL/4))&(~CM_PWMCTL_ENAB)); //disable clock
     do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY); //wait for clock to deactivate
-    *(clockBaseMem + CM_PWMDIV/4) = CM_PWMDIV_PASSWD | CM_PWMDIV_DIVI(50); //configure clock divider (running at 500MHz undivided)
+    *(clockBaseMem + CM_PWMDIV/4) = CM_PWMDIV_PASSWD | CM_PWMDIV_DIVI(CLOCK_DIV); //configure clock divider (running at 500MHz undivided)
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD; //source 500MHz base clock, no MASH.
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | CM_PWMCTL_SRC_PLLD | CM_PWMCTL_ENAB; //enable clock
     do {} while ((*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY) == 0); //wait for clock to activate
@@ -250,7 +253,7 @@ void DmaScheduler::initPwm() {
     usleep(100);
     
     pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(PWM_FIFO_SIZE) | PWM_DMAC_PANIC(PWM_FIFO_SIZE); //DREQ is activated at queue < PWM_FIFO_SIZE
-    pwmHeader->RNG1 = 10; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
+    pwmHeader->RNG1 = BITS_PER_CLOCK; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
 }
 
@@ -279,12 +282,13 @@ void DmaScheduler::initDma() {
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
 }
 
+
+int64_t _lastTimeAtFrame0;
 void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     //uint64_t callTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count(); //only used for debugging
-    uint64_t desiredTime = micros-((uint64_t)SOURCE_BUFFER_FRAMES)*1000000/FRAMES_PER_SEC;
-    //sleepUntilMicros(desiredTime);
+    uint64_t desiredTime = micros - FRAME_TO_USEC(SOURCE_BUFFER_FRAMES*15/16); //multiple by 15/16 to allow for a small amount of DMA variablitiy / clock drift
     SleepT::sleep_until(std::chrono::time_point<std::chrono::microseconds>(std::chrono::microseconds(desiredTime)));
     //uint64_t awakeTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count(); //only used for debugging
     
@@ -297,13 +301,20 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     EventClockT::time_point curTime1, curTime2;
     int tries=0;
     do {
-        //curTime1 = readSysTime();
         curTime1 = EventClockT::now();
         srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
-        //curTime2 = readSysTime();
         curTime2 = EventClockT::now();
         ++tries;
     } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
+    //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
+    int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
+    LOGV("Timing diff: %lli\n", (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES));
+    _lastTimeAtFrame0 = curTimeAtFrame0;
+    //if timing diff is positive, then then curTimeAtFrame0 > _lastTimeAtFrame0
+    //curTime2 - srcIdx2 > curTime1 - srcIdx1
+    //curTime2 - curTime2 > srcIdx2 - srcIdx1
+    //more uS have elapsed than frames; DMA cannot keep up
+
     //calculate the frame# at which to place the event:
     int64_t usecFromNow = (int64_t)micros - (int64_t)std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count(); //need signed; could be in past
      if (usecFromNow < 20) { //Not safe to schedule less than ~10uS into the future
@@ -311,7 +322,7 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
         LOGV("DmaScheduler behind schedule: %lli uSec (tries: %i) (event at %llu; got %llu)\n", usecFromNow, tries, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count()); //Note: have to use verbose logging, otherwise the log message will slow the app down and cause even more scheduling woes.
         usecFromNow = 20;
     }
-    int framesFromNow = usecFromNow*FRAMES_PER_SEC/1000000; //Note: may cause overflow if FRAMES_PER_SECOND is not a multiple of 1000000 or if optimizations are COMPLETELY disabled.
+    int framesFromNow = USEC_TO_FRAME(usecFromNow);
    
     int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
     //Now queue the command:
@@ -321,5 +332,37 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
         srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
     }
 }
+
+void DmaScheduler::queuePwm(int pin, float ratio) {
+    //PWM is achieved through changing the values that each source frame is reset to.
+    //the way to choose which frames are '1' and which are '0' is like so:
+    //  Keep a counter, which is set to 0.
+    //  each frame, increment it by ratio.
+    //  if it exceeds 1, then set that output to '1' and subtract 1 from the counter. Else, set the output to 0.
+    //  Example(r=0.4):   frame | counter | output
+    //                    0     | 0.4     | 0
+    //                    1     | 0.8     | 0
+    //                    2     | 1.2->0.2| 1
+    //                    3     | 0.6     | 0
+    //                    4     | 1.0->0.0| 1
+    //                 ... cycle repeats
+    //  PWM cycle length (resolution) can be set easily to any number which is a divisor of the buffer length.
+    //  For simplicity, the original code will use a cycle length equal to the buffer length.
+    float counter;
+    for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
+        counter += ratio;
+        if (counter >= 1.f) {
+            counter -= 1;
+            //set output to '1'
+            srcClrArray[idx].writeGpSet(pin, 1); //do set
+            srcClrArray[idx].writeGpClr(pin, 0); //don't clear
+        } else {
+            //set output to '0'
+            srcClrArray[idx].writeGpClr(pin, 1); //do clear
+            srcClrArray[idx].writeGpSet(pin, 0); //don't set
+        }
+    }
+}
+
 }
 }

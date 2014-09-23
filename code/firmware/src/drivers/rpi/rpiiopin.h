@@ -16,15 +16,18 @@
 namespace drv {
 namespace rpi {
 
-template <uint8_t PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class RpiIoPin : public IoPin {
+template <GpioPinIdType PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class RpiIoPin : public IoPin {
 	//InitRpiType _initRpi;
 	public:
 		RpiIoPin() {
 			initIO();
 			static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit; //register deactivation of IO pin upon exit.
 		}
-		int id() const {
+		GpioPinIdType id() const {
 		    return PinIdx;
+		}
+		bool areWritesInverted() const {
+		    return false;
 		}
 		void makeDigitalOutput(IoLevel lev) {
 			bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_OUTP); //configure this pin as output
