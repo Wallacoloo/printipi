@@ -421,16 +421,30 @@ struct GpioBufferFrame {
 
 
 class DmaScheduler {
+    struct DmaMem {
+        //Memory used in DMA must bypass the CPU L1 cache, so we keep a L1-cached view & an L2-cache-coherent view
+        void *virtL1;
+        void *virtL2Coherent;
+        std::size_t numPages;
+        uintptr_t *pageMap;
+        uintptr_t physAddrAtByteOffset(std::size_t bytes) const;
+        uintptr_t virtToPhys(void *virt) const;
+        inline DmaMem() {}
+        DmaMem(const DmaScheduler &sched, std::size_t numBytes);
+    };
     int dmaCh;
     int memfd, pagemapfd;
     static DmaChannelHeader *dmaHeader; //must be static for cleanup() function
     volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
-    void *virtSrcClrPageCached, *virtSrcClrPage;
-    void *virtSrcPageCached, *virtSrcPage;
-    void *virtCbPageCached, *virtCbPage;
-    GpioBufferFrame *srcArrayCached, *srcArray;
-    GpioBufferFrame *srcClrArrayCached, *srcClrArray;
-    DmaControlBlock *cbArrCached, *cbArr;
+    //void *virtSrcClrPageCached, *virtSrcClrPage;
+    DmaMem srcClrMem;
+    DmaMem srcMem;
+    DmaMem cbMem;
+    //void *virtSrcPageCached, *virtSrcPage;
+    //void *virtCbPageCached, *virtCbPage;
+    GpioBufferFrame *srcArray;
+    GpioBufferFrame *srcClrArray;
+    DmaControlBlock *cbArr;
     public:
         DmaScheduler();
         static void cleanup();
