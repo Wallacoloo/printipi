@@ -9,38 +9,38 @@ bool _debug = false;
 bool _verbose = false;
 
 /*bool isInfoEnabled() {
-	return _info;
+    return _info;
 }
 bool isDebugEnabled() {
-	return _debug;
+    return _debug;
 }
 bool isVerboseEnabled() {
-	return _verbose;
+    return _verbose;
 }
 
 void disable() {
-	_info = false;
-	_debug = false;
-	_verbose = false;
+    _info = false;
+    _debug = false;
+    _verbose = false;
 }
 
 void enableDebug() {
-	_debug = true;
-	LOG("debug logging enabled\n");
+    _debug = true;
+    LOG("debug logging enabled\n");
 }
 void enableVerbose() {
-	_verbose = true;
-	LOG("verbose logging enabled\n");
+    _verbose = true;
+    LOG("verbose logging enabled\n");
 }*/
 
 #else
 
 //already defined in header.
 /*bool isInfoEnabled() {
-	return false;
+    return false;
 }
 bool isVerboseEnabled() {
-	return false;
+    return false;
 }
 
 void disable() {}

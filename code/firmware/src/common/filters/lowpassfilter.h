@@ -21,17 +21,17 @@
 */
 
 template <unsigned RAD_SEC_1000> class LowPassFilter {
-	static constexpr float RC() { return RAD_SEC_1000/1000.; }
-	//for now, just assume that the time between samples is a steady 1 second.
-	static constexpr float a() { return 1 / (RC() + 1); }
-	float _last;
-	public:
-		LowPassFilter() : _last(0) {}
-		float feed(float inp) {
-			_last = _last + a()*(inp - _last);
-			return _last;
-			//return inp;
-		}
+    static constexpr float RC() { return RAD_SEC_1000/1000.; }
+    //for now, just assume that the time between samples is a steady 1 second.
+    static constexpr float a() { return 1 / (RC() + 1); }
+    float _last;
+    public:
+        LowPassFilter() : _last(0) {}
+        float feed(float inp) {
+            _last = _last + a()*(inp - _last);
+            return _last;
+            //return inp;
+        }
 };
 
 

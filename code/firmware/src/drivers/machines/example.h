@@ -9,11 +9,11 @@
 namespace drv {
 
 class Example : public Machine {
-	public:
-		typedef ConstantAcceleration<500*1000> AccelerationProfileT;
-		typedef LinearCoordMap<> CoordMapT;
-		typedef std::tuple<> AxisStepperTypes;
-		typedef std::tuple<> IODriverTypes;
+    public:
+        typedef ConstantAcceleration<500*1000> AccelerationProfileT;
+        typedef LinearCoordMap<> CoordMapT;
+        typedef std::tuple<> AxisStepperTypes;
+        typedef std::tuple<> IODriverTypes;
 };
 
 

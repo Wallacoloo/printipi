@@ -18,11 +18,11 @@
 namespace drv {
 
 class CoordMap {
-	public:
-		//static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, N>&);
-		//constexpr static std::size_t numAxis();
-		//return the home position, in cartesian coordinates:
-		//static constexpr std::array<int, 4> getHomePosition(const std::array<int, 4> &cur)
+    public:
+        //static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, N>&);
+        //constexpr static std::size_t numAxis();
+        //return the home position, in cartesian coordinates:
+        //static constexpr std::array<int, 4> getHomePosition(const std::array<int, 4> &cur)
 };
 
 }

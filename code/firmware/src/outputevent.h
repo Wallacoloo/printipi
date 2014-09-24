@@ -15,27 +15,27 @@
 
 class OutputEvent {
     EventClockT::time_point _time;
-	GpioPinIdType _pinId;
-	bool _state; //1=HIGH, 0=LOW
-	public:
-	    OutputEvent(EventClockT::time_point time, GpioPinIdType pinId, bool state) : _time(time), _pinId(pinId), _state(state) {
-	    }
-	    inline EventClockT::time_point time() const {
-	        return _time;
-	    }
-	    inline GpioPinIdType pinId() const {
-	        return _pinId;
-	    }
-	    inline bool state() const {
-	        return _state;
-	    }
-	    //Comparison operators, for sorting
-	    inline bool operator<(const OutputEvent &other) const {
-			return this->time() < other.time();
-		}
-		inline bool operator>(const OutputEvent &other) const {
-			return this->time() > other.time();
-		}
+    GpioPinIdType _pinId;
+    bool _state; //1=HIGH, 0=LOW
+    public:
+        OutputEvent(EventClockT::time_point time, GpioPinIdType pinId, bool state) : _time(time), _pinId(pinId), _state(state) {
+        }
+        inline EventClockT::time_point time() const {
+            return _time;
+        }
+        inline GpioPinIdType pinId() const {
+            return _pinId;
+        }
+        inline bool state() const {
+            return _state;
+        }
+        //Comparison operators, for sorting
+        inline bool operator<(const OutputEvent &other) const {
+            return this->time() < other.time();
+        }
+        inline bool operator>(const OutputEvent &other) const {
+            return this->time() > other.time();
+        }
 };
 
 

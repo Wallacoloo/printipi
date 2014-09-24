@@ -22,99 +22,99 @@ namespace drv {
 //enum passed as template parameter to define the TempControl instance as either controlling a Hotend or a Heated Bed.
 //Functionally, they work the same, but each type responds to different G-codes.
 enum TempControlType {
-	HotendType,
-	HeatedBedType
+    HotendType,
+    HeatedBedType
 };
 
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
-	static const std::chrono::microseconds _intervalThresh;
-	static const std::chrono::microseconds _readInterval;
-	static const std::chrono::microseconds _maxRead;
-	IntervalTimer _intervalTimer;
-	Heater _heater;
-	Thermistor _therm;
-	PID _pid;
-	Filter _filter;
-	float _destTemp;
-	float _lastTemp;
-	bool _isReading;
-	EventClockT::time_point _nextReadTime;
-	public:
-		TempControl() : IODriver(), _destTemp(-300), _lastTemp(-300), _isReading(false),
-		 _nextReadTime(EventClockT::now()) {
-			_heater.makeDigitalOutput(IoLow);
-		}
-		//register as the correct device type:
-		bool isHotend() const {
-			return HotType == HotendType;
-		}
-		bool isHeatedBed() const {
-			return HotType == HeatedBedType;
-		}
-		//route output commands to the heater:
-		void stepForward() {
-			_heater.digitalWrite(IoHigh);
-			//_heater.stepForward();
-		}
-		void stepBackward() {
-			_heater.digitalWrite(IoLow);
-			//_heater.stepBackward();
-		}
-		void setTargetTemperature(CelciusType t) {
-			_destTemp = t;
-		}
-		CelciusType getMeasuredTemperature() const {
-			return _lastTemp;
-		}
-		template <typename Sched> bool onIdleCpu(Sched &sched) {
-			//LOGV("TempControl::onIdleCpu()\n");
-			if (_isReading) {
-				if (_therm.isReady()) {
-					_isReading = false;
-					if (_intervalTimer.clockCmp(_intervalThresh) > 0) { //too much latency in reading sample; restart.
-						LOGV("Thermistor sample dropped\n");
-						return true; //restart read.
-					} else {
-						_lastTemp = _therm.value();
-						updatePwm(sched);
-						return false; //no more cpu needed.
-					}
-				} else {
-					_intervalTimer.clock();
-					if (_therm.timeSinceStartRead() > _maxRead) {
-						LOG("Thermistor read error\n");
-						_isReading = false;
-						return false;
-					} else {
-						return true; //need more cpu time.
-					}
-				}
-			} else {
-				auto now = _intervalTimer.clock();
-				if (_nextReadTime < now) {
-					_nextReadTime += _readInterval;
-					_therm.startRead();
-					_isReading = true;
-					return true; //more cpu time needed.
-				} else { //wait until it's time for another read.
-					return false;
-				}
-			}
-		}
-	private:
-		template <typename Sched> void updatePwm(Sched &sched) {
-			float error = _destTemp - _lastTemp;
-			error = _filter.feed(error);
-			float pwm = _pid.feed(error);
-			LOG("tempcontrol: pwm=%f\n", pwm);
-			sched.schedPwm(DeviceIdx, PwmInfo(pwm, 0.1));
-		}
+    static const std::chrono::microseconds _intervalThresh;
+    static const std::chrono::microseconds _readInterval;
+    static const std::chrono::microseconds _maxRead;
+    IntervalTimer _intervalTimer;
+    Heater _heater;
+    Thermistor _therm;
+    PID _pid;
+    Filter _filter;
+    float _destTemp;
+    float _lastTemp;
+    bool _isReading;
+    EventClockT::time_point _nextReadTime;
+    public:
+        TempControl() : IODriver(), _destTemp(-300), _lastTemp(-300), _isReading(false),
+         _nextReadTime(EventClockT::now()) {
+            _heater.makeDigitalOutput(IoLow);
+        }
+        //register as the correct device type:
+        bool isHotend() const {
+            return HotType == HotendType;
+        }
+        bool isHeatedBed() const {
+            return HotType == HeatedBedType;
+        }
+        //route output commands to the heater:
+        void stepForward() {
+            _heater.digitalWrite(IoHigh);
+            //_heater.stepForward();
+        }
+        void stepBackward() {
+            _heater.digitalWrite(IoLow);
+            //_heater.stepBackward();
+        }
+        void setTargetTemperature(CelciusType t) {
+            _destTemp = t;
+        }
+        CelciusType getMeasuredTemperature() const {
+            return _lastTemp;
+        }
+        template <typename Sched> bool onIdleCpu(Sched &sched) {
+            //LOGV("TempControl::onIdleCpu()\n");
+            if (_isReading) {
+                if (_therm.isReady()) {
+                    _isReading = false;
+                    if (_intervalTimer.clockCmp(_intervalThresh) > 0) { //too much latency in reading sample; restart.
+                        LOGV("Thermistor sample dropped\n");
+                        return true; //restart read.
+                    } else {
+                        _lastTemp = _therm.value();
+                        updatePwm(sched);
+                        return false; //no more cpu needed.
+                    }
+                } else {
+                    _intervalTimer.clock();
+                    if (_therm.timeSinceStartRead() > _maxRead) {
+                        LOG("Thermistor read error\n");
+                        _isReading = false;
+                        return false;
+                    } else {
+                        return true; //need more cpu time.
+                    }
+                }
+            } else {
+                auto now = _intervalTimer.clock();
+                if (_nextReadTime < now) {
+                    _nextReadTime += _readInterval;
+                    _therm.startRead();
+                    _isReading = true;
+                    return true; //more cpu time needed.
+                } else { //wait until it's time for another read.
+                    return false;
+                }
+            }
+        }
+    private:
+        template <typename Sched> void updatePwm(Sched &sched) {
+            float error = _destTemp - _lastTemp;
+            error = _filter.feed(error);
+            float pwm = _pid.feed(error);
+            LOG("tempcontrol: pwm=%f\n", pwm);
+            sched.schedPwm(DeviceIdx, PwmInfo(pwm, 0.1));
+        }
 };
 
 #if RUNNING_IN_VM
-	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh(2000000); //high latency for valgrind
+    template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh(2000000); //high latency for valgrind
 #else
-	template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh(40000);
+    template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_intervalThresh(40000);
 #endif
 
 template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, DeviceIdx, Heater, Thermistor, PID, Filter>::_readInterval(3000000);

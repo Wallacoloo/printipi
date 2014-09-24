@@ -12,31 +12,31 @@
 #include "common/typesettings.h"
 
 class IntervalTimer {
-	//timespec _last;
-	EventClockT::time_point _last;
-	public:
-		IntervalTimer() : _last() {}
-		inline void reset() {
-			_last = EventClockT::time_point();
-		}
-		inline const EventClockT::time_point& clock() {
-			return _last = EventClockT::now();
-		}
-		inline const EventClockT::time_point& get() const {
-			return _last;
-		}
-		template <typename DurT> int clockCmp(const DurT &cmp, int dflt=0) {
-			int ret;
-			EventClockT::time_point now = EventClockT::now();
-			if (_last == EventClockT::time_point()) { //no last time
-				ret = dflt;
-			} else {
-				auto duration = now - _last;
-				ret = duration > cmp ? 1 : (duration < cmp ? -1 : 0);
-			}
-			_last = now;
-			return ret;
-		}
+    //timespec _last;
+    EventClockT::time_point _last;
+    public:
+        IntervalTimer() : _last() {}
+        inline void reset() {
+            _last = EventClockT::time_point();
+        }
+        inline const EventClockT::time_point& clock() {
+            return _last = EventClockT::now();
+        }
+        inline const EventClockT::time_point& get() const {
+            return _last;
+        }
+        template <typename DurT> int clockCmp(const DurT &cmp, int dflt=0) {
+            int ret;
+            EventClockT::time_point now = EventClockT::now();
+            if (_last == EventClockT::time_point()) { //no last time
+                ret = dflt;
+            } else {
+                auto duration = now - _last;
+                ret = duration > cmp ? 1 : (duration < cmp ? -1 : 0);
+            }
+            _last = now;
+            return ret;
+        }
 };
 
 

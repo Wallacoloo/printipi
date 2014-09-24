@@ -3,25 +3,25 @@
 
 
 enum PositionMode {
-	POS_ABSOLUTE,
-	POS_RELATIVE
+    POS_ABSOLUTE,
+    POS_RELATIVE
 };
 
 enum LengthUnit {
-	UNIT_MM,
-	UNIT_IN
+    UNIT_MM,
+    UNIT_IN
 };
 
 enum StepDirection {
-	StepBackward,
-	StepForward
+    StepBackward,
+    StepForward
 };
 
 enum CoordAxis {
-	COORD_X,
-	COORD_Y,
-	COORD_Z,
-	COORD_E
+    COORD_X,
+    COORD_Y,
+    COORD_Z,
+    COORD_E
 };
 
 #endif

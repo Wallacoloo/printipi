@@ -10,9 +10,9 @@
  */
 
 struct NoFilter {
-	inline float feed(float inp) {
-		return inp;
-	}
+    inline float feed(float inp) {
+        return inp;
+    }
 };
 
 

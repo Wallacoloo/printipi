@@ -16,25 +16,25 @@
 namespace drv {
 
 template <typename Driver> class Fan : public IODriver {
-	Driver driver;
-	public:
-		Fan() : IODriver() {
-			driver.makeDigitalOutput(IoLow);
-		}
-		constexpr bool isFan() { return true; }
-		//forward output control:
-		void stepForward() {
-			driver.digitalWrite(IoHigh);
-		}
-		void stepBackward() {
-			driver.digitalWrite(IoLow);
-		}
-		bool canDoPwm() const {
-		    return true;
-		}
-		Driver& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
-	        return driver;
-	    }
+    Driver driver;
+    public:
+        Fan() : IODriver() {
+            driver.makeDigitalOutput(IoLow);
+        }
+        constexpr bool isFan() { return true; }
+        //forward output control:
+        void stepForward() {
+            driver.digitalWrite(IoHigh);
+        }
+        void stepBackward() {
+            driver.digitalWrite(IoLow);
+        }
+        bool canDoPwm() const {
+            return true;
+        }
+        Driver& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
+            return driver;
+        }
 };
 
 }
