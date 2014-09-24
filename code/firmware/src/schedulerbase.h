@@ -92,10 +92,10 @@ struct DefaultSchedulerInterface {
 	    void queue(const OutputEvent &) {
 	        //add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary
 	    }
-	    inline bool canDoPwm(int pin) const {
+	    inline bool canDoPwm(int /*pin*/) const {
 	        return false;
 	    }
-	    inline void queuePwm(int pin, float ratio) {
+	    inline void queuePwm(int /*pin*/, float /*ratio*/) {
 	        //Set the given pin to a pwm duty-cycle of `ratio`. Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
 	    }
 	    template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {

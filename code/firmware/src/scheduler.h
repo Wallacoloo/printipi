@@ -23,6 +23,7 @@
 //#include <atomic>
 #include <tuple>
 #include "event.h"
+#include "outputevent.h"
 #include "common/logging.h"
 //#include "common/timeutil.h"
 #include "common/intervaltimer.h"
@@ -90,17 +91,20 @@ struct SchedAdjusterAccel {
 template <typename Interface=DefaultSchedulerInterface> class Scheduler : public SchedulerBase {
 	typedef NullSchedAdjuster SchedAdjuster;
 	EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
-	typedef std::multiset<Event> EventQueueType;
+	//typedef std::multiset<Event> EventQueueType;
+	typedef std::multiset<OutputEvent> OutputEventQueueType;
 	Interface interface;
 	std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
 	//std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
-	EventQueueType eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
+	//EventQueueType eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
+	OutputEventQueueType outputEventQueue;
 	SchedAdjuster schedAdjuster;
 	unsigned bufferSize;
 	private:
-		void orderedInsert(const Event &evt, InsertHint insertBack=INSERT_BACK);
+		void orderedInsert(const OutputEvent &evt, InsertHint insertBack=INSERT_BACK);
 	public:
 		void queue(const Event &evt);
+		void queue(const OutputEvent &evt);
 		void schedPwm(AxisIdType idx, const PwmInfo &p);
 		inline void schedPwm(AxisIdType idx, float duty) {
 			PwmInfo pi(duty, pwmInfo[idx].period());
@@ -121,9 +125,9 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 		void eventLoop();
 		void yield(bool forceWait=false);
 	private:
-		void sleepUntilEvent(const Event *evt) const;
-		bool isEventNear(const Event &evt) const;
-		bool isEventTime(const Event &evt) const;
+		void sleepUntilEvent(const OutputEvent *evt) const;
+		bool isEventNear(const OutputEvent &evt) const;
+		bool isEventTime(const OutputEvent &evt) const;
 		void setBufferSize(unsigned size);
 		void setBufferSizeToDefault();
 		unsigned getBufferSize() const;
@@ -140,18 +144,20 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 
 
 template <typename Interface> void Scheduler<Interface>::queue(const Event& evt) {
-	//LOGV("Scheduler::queue\n");
-	//while (this->eventQueue.size() >= this->bufferSize) {
-	/*while (!isRoomInBuffer()) {
-		//yield();
-		yield(true);
-	}*/
-	assert(isRoomInBuffer());
-	this->orderedInsert(evt, INSERT_BACK);
-	//yield(); //fast yield. Not really necessary if the earlier yield statement was ever reached.
+	//assert(isRoomInBuffer());
+	//this->orderedInsert(evt, INSERT_BACK);
+	
+	//Turn the event into an output event sequence, and then queue those individual events:
+	assert(interface.isEventOutputSequenceable(evt));
+	interface.iterEventOutputSequence(evt, [this](const OutputEvent &out) {this->queue(out); });
 }
 
-template <typename Interface> void Scheduler<Interface>::orderedInsert(const Event &evt, InsertHint insertHint) {
+template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent &evt) {
+    //assert(isRoomInBuffer());
+	this->orderedInsert(evt, INSERT_BACK);
+}
+
+template <typename Interface> void Scheduler<Interface>::orderedInsert(const OutputEvent &evt, InsertHint insertHint) {
 	//Most inserts will already be ordered (ie the event will occur after all scheduled events)
 	//glibc push_heap will be logarithmic no matter WHAT: https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01051_source.html
 	//it may be beneficial to compare against the previously last element.
@@ -170,7 +176,7 @@ template <typename Interface> void Scheduler<Interface>::orderedInsert(const Eve
 	/*this->eventQueue.push_back(evt);
 	std::push_heap(this->eventQueue.begin(), this->eventQueue.end(), std::greater<Event>());
 	LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u. %i\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec, std::is_heap(eventQueue.begin(), eventQueue.end(), std::greater<Event>()));*/
-	eventQueue.insert(insertHint == INSERT_BACK ? eventQueue.end() : eventQueue.begin(), evt); 
+	outputEventQueue.insert(insertHint == INSERT_BACK ? outputEventQueue.end() : outputEventQueue.begin(), evt); 
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
@@ -202,11 +208,11 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
 
 template <typename Interface> EventClockT::time_point Scheduler<Interface>::lastSchedTime() const {
 	//TODO: Note, this method, as-is, is const!
-	if (this->eventQueue.empty()) {
+	if (this->outputEventQueue.empty()) {
 		const_cast<Scheduler<Interface>*>(this)->schedAdjuster.reset(); //we have no events; no need to preserve *their* reference times, so reset for simplicity.
 		return EventClockT::now(); //an alternative is to not use ::now(), but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
 	} else {
-		return this->eventQueue.rbegin()->time();
+		return this->outputEventQueue.rbegin()->time();
 	}
 }
 
@@ -223,7 +229,7 @@ template <typename Interface> unsigned Scheduler<Interface>::getBufferSize() con
 	return this->bufferSize;
 }
 template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const {
-	return this->eventQueue.size() < this->bufferSize;
+	return this->outputEventQueue.size() < this->bufferSize;
 }
 
 template <typename Interface> unsigned Scheduler<Interface>::numActivePwmChannels() const {
@@ -239,7 +245,7 @@ template <typename Interface> unsigned Scheduler<Interface>::numActivePwmChannel
 template <typename Interface> void Scheduler<Interface>::eventLoop() {
 	while (1) {
 		yield(true);
-		if (eventQueue.empty()) {
+		if (outputEventQueue.empty()) {
 			sleepUntilEvent(NULL);
 			//std::this_thread::sleep_for(std::chrono::milliseconds(40));
 		}
@@ -261,9 +267,9 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		//LOGV("Sched::yield called at %llu for event at %llu\n", EventClockT::now().time_since_epoch().count(), eventQueue.cbegin()->time().time_since_epoch().count());
 		OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
 		//bool handledInHardware = false;
-		while (!eventQueue.empty() && !isEventTime(*eventQueue.cbegin())) {
+		while (!outputEventQueue.empty() && !isEventTime(*outputEventQueue.cbegin())) {
 			if (!interface.onIdleCpu(intervalT)) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
-				EventQueueType::const_iterator iter = this->eventQueue.cbegin();
+				OutputEventQueueType::const_iterator iter = this->outputEventQueue.cbegin();
 				if (!isEventNear(*iter) && !forceWait) { //if the event is far away, then return control to program.
 					return;
 				} else { //retain control if the event is near, or if the queue must be emptied.
@@ -276,25 +282,18 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 			}
 		}
 		//in the case that all events were consumed, or there were none to begin with, satisfy the idle cpu functions:
-		if (eventQueue.empty()) {
+		if (outputEventQueue.empty()) {
 			if (interface.onIdleCpu(intervalT)) { //loop is implied by the outer while(1)
 				continue;
 			} else {
 				return;
 			}
 		}
-		EventQueueType::const_iterator iter = this->eventQueue.cbegin();
-		Event evt = *iter;
-		this->eventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
-		if (interface.hardwareScheduler.canWriteOutputs() && interface.isEventOutputSequenceable(evt)) {
+		OutputEventQueueType::const_iterator iter = this->outputEventQueue.cbegin();
+		OutputEvent evt = *iter;
+		this->outputEventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
+		/*if (interface.hardwareScheduler.canWriteOutputs() && interface.isEventOutputSequenceable(evt)) {
 		    //LOGV("Event is being scheduled in hardware\n");
-	        /*std::vector<OutputEvent> outputs = interface.getEventOutputSequence(evt);
-	        //auto schedTime = interface.hardwareScheduler.schedTime(evt.time());
-            //SleepT::sleep_until(schedTime);
-            for (const OutputEvent &out : outputs) {
-                interface.hardwareScheduler.queue(out);
-            }*/
-            //interface.sequenceEvent(evt,
             interface.iterEventOutputSequence(evt, [this](const OutputEvent &out) {this->interface.hardwareScheduler.queue(out); });
 	    } else { //relay the event to our interface if it wasn't able to be handled in hardware:
 		    auto mapped = schedAdjuster.adjust(evt.time());
@@ -306,15 +305,16 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 		    //  this should be fixed by saving the iter and erasing it.
 		    schedAdjuster.update(evt.time());
 		    interface.onEvent(evt);
-		}
+		}*/
+		interface.hardwareScheduler.queue(evt);
 		
 		//manage PWM events:
-		const PwmInfo &pwm = pwmInfo[evt.stepperId()];
+		/*const PwmInfo &pwm = pwmInfo[evt.stepperId()];
 		if (pwm.isNonNull()) {
 			Event nextPwm;
-			/*         for | back
-			 * nsLow    0     1
-			 * nsHigh   1     0   */
+			//         for | back
+			// nsLow    0     1
+			// nsHigh   1     0 
 			//dir = (nsLow ^ for)
 			if (evt.direction() == StepForward) {
 				//next event will be StepBackward, or refresh this event if there is no off-duty.
@@ -328,13 +328,13 @@ template <typename Interface> void Scheduler<Interface>::yield(bool forceWait) {
 				nextPwm.offset(std::chrono::nanoseconds(pwm.nsLow));
 			}
 			this->orderedInsert(nextPwm, INSERT_FRONT);
-		}
+		}*/
 		//this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
 		forceWait = false; //avoid draining ALL events - just drain the first.
 	}
 }
 
-template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const Event *evt) const {
+template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const OutputEvent *evt) const {
 	//need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
 	bool doSureSleep = false;
 	auto sleepUntil = EventClockT::now() + MAX_SLEEP;
@@ -354,13 +354,13 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const E
 	}
 }
 
-template <typename Interface> bool Scheduler<Interface>::isEventNear(const Event &evt) const {
+template <typename Interface> bool Scheduler<Interface>::isEventNear(const OutputEvent &evt) const {
 	auto thresh = EventClockT::now() + std::chrono::microseconds(20);
 	//return schedAdjuster.adjust(evt.time()) <= thresh;
 	return interface.hardwareScheduler.schedTime(schedAdjuster.adjust(evt.time())) <= thresh;
 }
 
-template <typename Interface> bool Scheduler<Interface>::isEventTime(const Event &evt) const {
+template <typename Interface> bool Scheduler<Interface>::isEventTime(const OutputEvent &evt) const {
 	//return schedAdjuster.adjust(evt.time()) <= EventClockT::now();
 	return interface.hardwareScheduler.schedTime(schedAdjuster.adjust(evt.time())) <= EventClockT::now();
 }

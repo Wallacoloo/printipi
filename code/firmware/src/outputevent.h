@@ -29,6 +29,13 @@ class OutputEvent {
 	    inline bool state() const {
 	        return _state;
 	    }
+	    //Comparison operators, for sorting
+	    inline bool operator<(const OutputEvent &other) const {
+			return this->time() < other.time();
+		}
+		inline bool operator>(const OutputEvent &other) const {
+			return this->time() > other.time();
+		}
 };
 
 
