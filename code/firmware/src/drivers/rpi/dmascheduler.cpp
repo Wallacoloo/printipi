@@ -352,7 +352,14 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
     int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
-    LOGV("Timing diff: %lli\n", (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES));
+    auto timeDiff = (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
+    if (timeDiff > FRAME_TO_USEC(SOURCE_BUFFER_FRAMES)/2) { //wrap-around
+        timeDiff -= FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
+    }
+    LOGV("Timing diff: %lli\n", timeDiff);
+    if (timeDiff > 10) {
+        LOGW("Dma timing is off by > 10 uS: %i us\n", timeDiff);
+    }
     _lastTimeAtFrame0 = curTimeAtFrame0;
     //if timing diff is positive, then then curTimeAtFrame0 > _lastTimeAtFrame0
     //curTime2 - srcIdx2 > curTime1 - srcIdx1
