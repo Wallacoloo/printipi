@@ -13,10 +13,6 @@
 #ifndef SCHED_PRIORITY
     #define SCHED_PRIORITY 30
 #endif
-//really this is the default scheduler buffer size:
-#ifndef SCHED_CAPACITY
-    #define SCHED_CAPACITY 128
-#endif
 #ifndef SCHED_NUM_EXIT_HANDLER_LEVELS
     #define SCHED_NUM_EXIT_HANDLER_LEVELS 2
 #endif
@@ -24,12 +20,6 @@
 #define SCHED_MEM_EXIT_LEVEL 1
 
 class Event; //forward declaration to avoid inclusion of event.h (as event.h includes typesettings.h, which may include this file)
-
-//When queueing an event, one may hint that it is either near or far away, and this may give a performance boost to the container.
-enum InsertHint {
-    INSERT_FRONT,
-    INSERT_BACK
-};
 
 //Scheduler::Interface::onIdleCpu can be called with a flag indicating (roughly) how long it's been since it was last called.
 enum OnIdleCpuIntervalT {
@@ -71,32 +61,44 @@ class SchedulerBase {
 /* A Scheduler is useless without an interface. In order to use a scheduler, implement a class with the following methods
 and pass it as a template argument to the Scheduler<Interface> type. */
 struct DefaultSchedulerInterface {
-    void onEvent(const Event&) { }
-    inline bool onIdleCpu() {
-        return false; //no more cpu needed
-    }
-    inline static constexpr std::size_t numIoDrivers() {
-        return 0; //no IoDrivers;
-    }
-    template <typename Func> void iterEventOutputSequence(const Event &evt, Func f) {
-        assert(false); //DefaultSchedulerInterface cannot iterEventOutputSequence
-    }
-    struct HardwareScheduler {
-        void queue(const OutputEvent &) {
-            //add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary
-            assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queue!
+    public:
+        struct HardwareScheduler {
+            inline void queue(const OutputEvent &) {
+                //add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary
+                assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queue!
+            }
+            inline void queuePwm(int /*pin*/, float /*ratio*/) {
+                //Set the given pin to a pwm duty-cycle of `ratio`. Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
+                assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queuePwm!
+            }
+            template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
+                //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.
+                //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support the EventClockT::time_point defined in common/typesettings.h
+                return evtTime;
+            }
+        };
+    private:
+        HardwareScheduler _hardwareScheduler;
+    public:
+        void onEvent(const Event&) { }
+        inline bool onIdleCpu() {
+            return false; //no more cpu needed
         }
-        inline void queuePwm(int /*pin*/, float /*ratio*/) {
-            //Set the given pin to a pwm duty-cycle of `ratio`. Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
-            assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queuePwm!
+        inline static constexpr std::size_t numIoDrivers() {
+            return 0; //no IoDrivers;
+        }
+        template <typename Func> void iterEventOutputSequence(const Event &evt, Func f) {
+            assert(false); //DefaultSchedulerInterface cannot iterEventOutputSequence
+        }
+        inline void queue(const OutputEvent &evt) {
+            _hardwareScheduler.queue(evt);
+        }
+        inline void queuePwm(int pin, float duty) {
+            _hardwareScheduler.queuePwm(pin, duty);
         }
         template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
-            //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.
-            //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support the EventClockT::time_point defined in common/typesettings.h
-            return evtTime;
+            return _hardwareScheduler.schedTime(evtTime);
         }
-    };
-    HardwareScheduler hardwareScheduler;
 };
 
 #endif

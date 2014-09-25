@@ -48,8 +48,8 @@ template <typename Drv> class State {
     struct SchedInterface {
         private:
             State<Drv>& _state;
+            SchedInterfaceHardwareScheduler _hardwareScheduler; //configured in typesettings.h
         public:
-            SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
             //DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
             SchedInterface(State<Drv> &state) : _state(state) {}
             void onEvent(const Event& evt) {
@@ -80,6 +80,15 @@ template <typename Drv> class State {
             };
             template <typename Func> void iterPwmPins(AxisIdType axis, float dutyCycle, Func f) {
                 return tupleCallOnIndex(_state.ioDrivers, __iterPwmPins(), axis, dutyCycle, f);
+            }
+            inline void queue(const OutputEvent &evt) {
+                _hardwareScheduler.queue(evt);
+            }
+            inline void queuePwm(int pin, float duty) {
+                _hardwareScheduler.queuePwm(pin, duty);
+            }
+            template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
+                return _hardwareScheduler.schedTime(evtTime);
             }
     };
     //The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:

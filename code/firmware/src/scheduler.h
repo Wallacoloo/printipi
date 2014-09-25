@@ -125,14 +125,10 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
         void sleepUntilEvent(const OutputEvent *evt) const;
         bool isEventNear(const OutputEvent &evt) const;
         bool isEventTime(const OutputEvent &evt) const;
-        //void setBufferSize(unsigned size);
-        //void setBufferSizeToDefault();
-        //unsigned getBufferSize() const;
 };
 
 template <typename Interface> Scheduler<Interface>::Scheduler(Interface interface) 
     : interface(interface)
-    //,bufferSize(SCHED_CAPACITY) 
     ,hasActiveEvent(false)
     {
     //clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //initialize to current time.
@@ -188,7 +184,7 @@ template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent
         interface.iterPwmPins(idx, p.dutyCycle(), [this](int pin, float duty) {this->interface.hardwareScheduler.queuePwm(pin, duty); });
 }*/
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float maxPeriod) {
-    interface.iterPwmPins(idx, duty, [this](int pin_, float duty_) {this->interface.hardwareScheduler.queuePwm(pin_, duty_); });
+    interface.iterPwmPins(idx, duty, [this](int pin_, float duty_) {this->interface.queuePwm(pin_, duty_); });
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {
@@ -259,8 +255,8 @@ template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent
     /*OutputEventQueueType::const_iterator iter = this->outputEventQueue.cbegin();
     OutputEvent evt = *iter;
     this->outputEventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
-    interface.hardwareScheduler.queue(evt);*/
-    interface.hardwareScheduler.queue(*evt);
+    interface.queue(evt);*/
+    interface.queue(*evt);
     
     
     //manage PWM events:
@@ -294,7 +290,7 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const O
     auto sleepUntil = EventClockT::now() + MAX_SLEEP;
     if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
         //auto evtTime = schedAdjuster.adjust(evt->time());
-        auto evtTime = interface.hardwareScheduler.schedTime(schedAdjuster.adjust(evt->time()));
+        auto evtTime = interface.schedTime(schedAdjuster.adjust(evt->time()));
         if (evtTime < sleepUntil) {
             sleepUntil = evtTime;
             doSureSleep = true;
@@ -311,12 +307,12 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const O
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const OutputEvent &evt) const {
     auto thresh = EventClockT::now() + std::chrono::microseconds(20);
     //return schedAdjuster.adjust(evt.time()) <= thresh;
-    return interface.hardwareScheduler.schedTime(schedAdjuster.adjust(evt.time())) <= thresh;
+    return interface.schedTime(schedAdjuster.adjust(evt.time())) <= thresh;
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventTime(const OutputEvent &evt) const {
     //return schedAdjuster.adjust(evt.time()) <= EventClockT::now();
-    return interface.hardwareScheduler.schedTime(schedAdjuster.adjust(evt.time())) <= EventClockT::now();
+    return interface.schedTime(schedAdjuster.adjust(evt.time())) <= EventClockT::now();
 }
 
 #endif
