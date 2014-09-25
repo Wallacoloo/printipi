@@ -52,9 +52,6 @@ template <typename Drv> class State {
         public:
             //DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
             SchedInterface(State<Drv> &state) : _state(state) {}
-            void onEvent(const Event& evt) {
-                _state.handleEvent(evt);
-            }
             bool onIdleCpu(OnIdleCpuIntervalT interval) {
                 return _state.onIdleCpu(interval);
             }
@@ -152,7 +149,7 @@ template <typename Drv> class State {
         /* The host can set the current physical position to be a reference to an arbitrary point (like 0) */
         void setHostZeroPos(float x, float y, float z, float e);
         /* Processes the event immediately, eg stepping a stepper motor */
-        void handleEvent(const Event &evt);
+        //void handleEvent(const Event &evt);
         /* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
         bool onIdleCpu(OnIdleCpuIntervalT interval);
         void eventLoop();
@@ -310,7 +307,7 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
     //x = _destXPrimitive - _hostZeroX;
 }
 
-template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
+/*template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
     //handle an event from the scheduler.
     LOGV("State::handleEvent(time, idx, dir): %" PRId64 ", %i, %i\n", evt.time().time_since_epoch().count(), evt.stepperId(), evt.direction()==StepForward);
     if (evt.direction() == StepForward) {
@@ -318,7 +315,7 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
     } else {
         drv::IODriver::selectAndStepBackward(this->ioDrivers, evt.stepperId());
     }
-}
+}*/
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     /*if (!_isExecutingGCode && com.tendCom()) {
         _isExecutingGCode = true;

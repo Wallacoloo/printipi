@@ -81,7 +81,7 @@ DmaScheduler::DmaMem::DmaMem(const DmaScheduler &dmaSched, std::size_t numBytes)
     this->virtL1 = makeLockedMem(numBytes);
     this->virtL2Coherent = dmaSched.makeUncachedMemView(virtL1, numBytes);
     this->pageMap = new uintptr_t[numPages];
-    for (int i=0; i<numPages; ++i) {
+    for (unsigned int i=0; i<numPages; ++i) {
         pageMap[i] = dmaSched.virtToPhys((char*)virtL1 + i*PAGE_SIZE);
     }
 }
@@ -345,12 +345,10 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //  It is done in this function only for simplicity
     int srcIdx;
     EventClockT::time_point curTime1, curTime2;
-    int tries=0;
     do {
         curTime1 = EventClockT::now();
         srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
         curTime2 = EventClockT::now();
-        ++tries;
     } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
     //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
     int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
@@ -365,7 +363,7 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     int64_t usecFromNow = (int64_t)micros - (int64_t)std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count(); //need signed; could be in past
      if (usecFromNow < 20) { //Not safe to schedule less than ~10uS into the future
         //LOGW("Warning: DmaScheduler behind schedule: %i (%llu) (tries: %i) (sleep %llu -> %llu (wanted %llu for %llu now is %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime, micros, curTime2.time_since_epoch().count());
-        LOGV("DmaScheduler behind schedule: %lli uSec (tries: %i) (event at %llu; got %llu)\n", usecFromNow, tries, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count()); //Note: have to use verbose logging, otherwise the log message will slow the app down and cause even more scheduling woes.
+        LOGV("DmaScheduler behind schedule: %lli uSec (event at %llu; got %llu)\n", usecFromNow, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count()); //Note: have to use verbose logging, otherwise the log message will slow the app down and cause even more scheduling woes.
         usecFromNow = 20;
     }
     int framesFromNow = USEC_TO_FRAME(usecFromNow);

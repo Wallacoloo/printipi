@@ -91,22 +91,12 @@ struct SchedAdjusterAccel {
 template <typename Interface=DefaultSchedulerInterface> class Scheduler : public SchedulerBase {
     typedef NullSchedAdjuster SchedAdjuster;
     EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
-    //typedef std::multiset<Event> EventQueueType;
-    //typedef std::multiset<OutputEvent> OutputEventQueueType;
     Interface interface;
-    //std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
-    //std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
-    //EventQueueType eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
-    //OutputEventQueueType outputEventQueue;
     SchedAdjuster schedAdjuster;
-    //unsigned bufferSize;
     bool hasActiveEvent;
-    private:
-        //void orderedInsert(const OutputEvent &evt, InsertHint insertBack=INSERT_BACK);
     public:
         void queue(const Event &evt);
         void queue(const OutputEvent &evt);
-        //void schedPwm(AxisIdType idx, const PwmInfo &p);
         void schedPwm(AxisIdType idx, float duty, float maxPeriod);
         template <typename T> void setMaxSleep(T duration) {
             MAX_SLEEP = std::chrono::duration_cast<EventClockT::duration>(duration);
@@ -148,41 +138,9 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
 }
 
 template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent &evt) {
-    //assert(isRoomInBuffer());
-    //this->orderedInsert(evt, INSERT_BACK);
     this->yield(&evt);
 }
 
-//template <typename Interface> void Scheduler<Interface>::orderedInsert(const OutputEvent &evt, InsertHint insertHint) {
-    //Most inserts will already be ordered (ie the event will occur after all scheduled events)
-    //glibc push_heap will be logarithmic no matter WHAT: https://gcc.gnu.org/onlinedocs/gcc-4.6.3/libstdc++/api/a01051_source.html
-    //it may be beneficial to compare against the previously last element.
-    //if buffer size is 512, then that gives 1 compare instead of 9.
-    //on the other hand, if the buffer is that big, insertion time probably isn't crucial.
-    /*if (this->eventQueue.empty()) {
-        this->eventQueue.push_back(evt);
-    } else { //fetching eventQueue.back() is only valid if the queue is non-empty.
-        const Event &oldBack = this->eventQueue.back();
-        this->eventQueue.push_back(evt);
-        if (timespecLt(evt.time(), oldBack.time())) { //If not already ordered, we must order it.
-            std::push_heap(this->eventQueue.begin(), this->eventQueue.end());
-        }
-    }*/
-    //NOTE: heap is not a sorted collection.
-    /*this->eventQueue.push_back(evt);
-    std::push_heap(this->eventQueue.begin(), this->eventQueue.end(), std::greater<Event>());
-    LOGV("orderedInsert: front().time(), back().time(): %lu.%u, %lu.%u. %i\n", eventQueue.front().time().tv_sec, eventQueue.front().time().tv_nsec, eventQueue.back().time().tv_sec, eventQueue.back().time().tv_nsec, std::is_heap(eventQueue.begin(), eventQueue.end(), std::greater<Event>()));*/
-    //outputEventQueue.insert(insertHint == INSERT_BACK ? outputEventQueue.end() : outputEventQueue.begin(), evt); 
-//}
-
-/*template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
-    LOGV("Scheduler::schedPwm: %i, %u, %u. Current: %u, %u\n", idx, p.nsHigh, p.nsLow, pwmInfo[idx].nsHigh, pwmInfo[idx].nsLow);
-    //assert(interface.canDoPwm(idx));
-    //if (interface.canDoPwm(idx) && interface.hardwareScheduler.canDoPwm(idx)) { //hardware support for PWM
-        //LOGV("Scheduler::schedPwm: using hardware pwm support\n");
-        //interface.hardwareScheduler.queuePwm(idx, p.dutyCycle());
-        interface.iterPwmPins(idx, p.dutyCycle(), [this](int pin, float duty) {this->interface.hardwareScheduler.queuePwm(pin, duty); });
-}*/
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float maxPeriod) {
     interface.iterPwmPins(idx, duty, [this](int pin_, float duty_) {this->interface.queuePwm(pin_, duty_); });
 }
@@ -206,32 +164,14 @@ template <typename Interface> EventClockT::time_point Scheduler<Interface>::last
     return EventClockT::now();
 }
 
-/*template <typename Interface> void Scheduler<Interface>::setBufferSize(unsigned size) {
-    if (size != this->bufferSize) {
-        LOG("Scheduler buffer size set: %u\n", size);
-    }
-    this->bufferSize = size;
-}
-template <typename Interface> void Scheduler<Interface>::setBufferSizeToDefault() {
-    setBufferSize(SCHED_CAPACITY);
-}
-template <typename Interface> unsigned Scheduler<Interface>::getBufferSize() const {
-    return this->bufferSize;
-}*/
 template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const {
     return !hasActiveEvent;
-    //return this->outputEventQueue.size() < this->bufferSize;
 }
 
 
 template <typename Interface> void Scheduler<Interface>::eventLoop() {
     OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
     while (1) {
-        /*yield(NULL);
-        if (outputEventQueue.empty()) {
-            sleepUntilEvent(NULL);
-            //std::this_thread::sleep_for(std::chrono::milliseconds(40));
-        }*/
         if (interface.onIdleCpu(intervalT)) {
             intervalT = OnIdleCpuIntervalShort; //more cpu is needed; no delay
         } else {

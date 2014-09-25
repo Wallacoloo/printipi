@@ -80,7 +80,6 @@ struct DefaultSchedulerInterface {
     private:
         HardwareScheduler _hardwareScheduler;
     public:
-        void onEvent(const Event&) { }
         inline bool onIdleCpu() {
             return false; //no more cpu needed
         }
