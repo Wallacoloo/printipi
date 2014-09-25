@@ -621,7 +621,7 @@ template <typename SchedT> struct State_setFanRate {
     State_setFanRate(SchedT &s, float rate) : sched(s), rate(rate) {}
     template <typename T> void operator()(std::size_t index, const T &f) {
         if (f.isFan()) {
-            sched.schedPwm(index, PwmInfo(rate, f.fanPwmPeriod()));
+            sched.schedPwm(index, rate, f.fanPwmPeriod());
         }
     }
 };

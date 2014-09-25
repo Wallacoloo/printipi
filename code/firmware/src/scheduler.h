@@ -94,7 +94,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
     //typedef std::multiset<Event> EventQueueType;
     //typedef std::multiset<OutputEvent> OutputEventQueueType;
     Interface interface;
-    std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
+    //std::array<PwmInfo, Interface::numIoDrivers()> pwmInfo; 
     //std::deque<Event> eventQueue; //queue is ordered such that the soonest event is the front and the latest event is the back
     //EventQueueType eventQueue; //mutimap is ordered such that begin() is smallest, rbegin() is largest
     //OutputEventQueueType outputEventQueue;
@@ -106,11 +106,8 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
     public:
         void queue(const Event &evt);
         void queue(const OutputEvent &evt);
-        void schedPwm(AxisIdType idx, const PwmInfo &p);
-        inline void schedPwm(AxisIdType idx, float duty) {
-            PwmInfo pi(duty, pwmInfo[idx].period());
-            schedPwm(idx, pi);
-        }
+        //void schedPwm(AxisIdType idx, const PwmInfo &p);
+        void schedPwm(AxisIdType idx, float duty, float maxPeriod);
         template <typename T> void setMaxSleep(T duration) {
             MAX_SLEEP = std::chrono::duration_cast<EventClockT::duration>(duration);
         }
@@ -122,7 +119,6 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
         void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
         EventClockT::time_point lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
         bool isRoomInBuffer() const;
-        unsigned numActivePwmChannels() const;
         void eventLoop();
         void yield(const OutputEvent *evt);
     private:
@@ -133,9 +129,6 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
         //void setBufferSizeToDefault();
         //unsigned getBufferSize() const;
 };
-
-//template <typename Interface> const EventClockT::duration Scheduler<Interface>::MAX_SLEEP(std::chrono::duration_cast<EventClockT::duration>(std::chrono::milliseconds(40)));
-
 
 template <typename Interface> Scheduler<Interface>::Scheduler(Interface interface) 
     : interface(interface)
@@ -186,24 +179,16 @@ template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent
     //outputEventQueue.insert(insertHint == INSERT_BACK ? outputEventQueue.end() : outputEventQueue.begin(), evt); 
 //}
 
-template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
+/*template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
     LOGV("Scheduler::schedPwm: %i, %u, %u. Current: %u, %u\n", idx, p.nsHigh, p.nsLow, pwmInfo[idx].nsHigh, pwmInfo[idx].nsLow);
     //assert(interface.canDoPwm(idx));
     //if (interface.canDoPwm(idx) && interface.hardwareScheduler.canDoPwm(idx)) { //hardware support for PWM
         //LOGV("Scheduler::schedPwm: using hardware pwm support\n");
         //interface.hardwareScheduler.queuePwm(idx, p.dutyCycle());
         interface.iterPwmPins(idx, p.dutyCycle(), [this](int pin, float duty) {this->interface.hardwareScheduler.queuePwm(pin, duty); });
-    /*} else { //soft PWM
-        if (pwmInfo[idx].isNonNull()) { //already scheduled and running. Just update times.
-            pwmInfo[idx] = p; //note: purposely redundant with below; must check isNonNull() before modifying the pwmInfo.
-        } else { //have to schedule:
-            LOGV("Scheduler::schedPwm: queueing\n");
-            pwmInfo[idx] = p;
-            Event evt(lastSchedTime(), idx, p.nsHigh ? StepForward : StepBackward); //if we have any high-time, then start with forward, else backward.
-            setBufferSize(getBufferSize()+1); //Make some room for this event.
-            this->queue(evt);
-        }
-    }*/
+}*/
+template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float maxPeriod) {
+    interface.iterPwmPins(idx, duty, [this](int pin_, float duty_) {this->interface.hardwareScheduler.queuePwm(pin_, duty_); });
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {
@@ -242,15 +227,6 @@ template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const 
     //return this->outputEventQueue.size() < this->bufferSize;
 }
 
-template <typename Interface> unsigned Scheduler<Interface>::numActivePwmChannels() const {
-    unsigned r=0;
-    for (const PwmInfo &p : this->pwmInfo) {
-        if (p.isNonNull()) {
-            r += 1;
-        }
-    }
-    return r;
-}
 
 template <typename Interface> void Scheduler<Interface>::eventLoop() {
     OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;

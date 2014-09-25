@@ -58,6 +58,7 @@ class IODriver {
         inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
         inline float fanPwmPeriod() const { return 0.2; }
+        inline float heaterPwmPeriod() const { return 0.1; }
         inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
         inline bool isHeatedBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
         inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
