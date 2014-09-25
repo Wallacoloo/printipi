@@ -61,9 +61,6 @@ template <typename Drv> class State {
             static constexpr std::size_t numIoDrivers() {
                 return std::tuple_size<typename Drv::IODriverTypes>::value;
             }
-            bool isEventOutputSequenceable(const Event& evt) {
-                return drv::IODriver::isEventOutputSequenceable(_state.ioDrivers, evt);
-            }
             struct __iterEventOutputSequence {
                 template <typename T, typename Func> void operator()(T &driver, const Event &evt, Func &f) {
                     auto a = driver.getEventOutputSequence(evt); //get the output events for this events
@@ -74,9 +71,6 @@ template <typename Drv> class State {
             };
             template <typename Func> void iterEventOutputSequence(const Event &evt, Func f) {
                 return tupleCallOnIndex(_state.ioDrivers, __iterEventOutputSequence(), evt.stepperId(), evt, f);
-            }
-            bool canDoPwm(AxisIdType axis) {
-                return drv::IODriver::canDoPwm(_state.ioDrivers, axis);
             }
             struct __iterPwmPins {
                 template <typename T, typename Func> void operator()(T &driver, float dutyCycle, Func &f) {

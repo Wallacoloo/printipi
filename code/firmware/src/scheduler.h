@@ -152,7 +152,7 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
     //this->orderedInsert(evt, INSERT_BACK);
     
     //Turn the event into an output event sequence, and then queue those individual events:
-    assert(interface.isEventOutputSequenceable(evt));
+    //assert(interface.isEventOutputSequenceable(evt));
     hasActiveEvent = true;
     interface.iterEventOutputSequence(evt, [this](const OutputEvent &out) {this->queue(out); });
     hasActiveEvent = false;
@@ -188,9 +188,9 @@ template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, const PwmInfo &p) {
     LOGV("Scheduler::schedPwm: %i, %u, %u. Current: %u, %u\n", idx, p.nsHigh, p.nsLow, pwmInfo[idx].nsHigh, pwmInfo[idx].nsLow);
-    assert(interface.canDoPwm(idx) && interface.hardwareScheduler.canDoPwm(idx));
+    //assert(interface.canDoPwm(idx));
     //if (interface.canDoPwm(idx) && interface.hardwareScheduler.canDoPwm(idx)) { //hardware support for PWM
-        LOGV("Scheduler::schedPwm: using hardware pwm support\n");
+        //LOGV("Scheduler::schedPwm: using hardware pwm support\n");
         //interface.hardwareScheduler.queuePwm(idx, p.dutyCycle());
         interface.iterPwmPins(idx, p.dutyCycle(), [this](int pin, float duty) {this->interface.hardwareScheduler.queuePwm(pin, duty); });
     /*} else { //soft PWM

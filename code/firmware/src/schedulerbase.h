@@ -4,6 +4,7 @@
 #include <algorithm> //for std::min
 #include <array>
 #include <vector>
+#include <cassert> //for assert
 
 #include "outputevent.h"
 
@@ -77,26 +78,17 @@ struct DefaultSchedulerInterface {
     inline static constexpr std::size_t numIoDrivers() {
         return 0; //no IoDrivers;
     }
-    inline bool isEventOutputSequenceable(const Event&) {
-        //We don't know which device this Event is for, so we can't know if it can be split into an array of [(pin, mode, time), ...] (or something similar) describing how to toggle pins.
-        return false;
-    }
-    inline std::vector<OutputEvent> getEventOutputSequence(const Event&) {
-        return std::vector<OutputEvent>();
+    template <typename Func> void iterEventOutputSequence(const Event &evt, Func f) {
+        assert(false); //DefaultSchedulerInterface cannot iterEventOutputSequence
     }
     struct HardwareScheduler {
-        inline bool canWriteOutputs() const {
-            //No, this default interface is not capable of writing output pins
-            return false;
-        }
         void queue(const OutputEvent &) {
             //add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary
-        }
-        inline bool canDoPwm(int /*pin*/) const {
-            return false;
+            assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queue!
         }
         inline void queuePwm(int /*pin*/, float /*ratio*/) {
             //Set the given pin to a pwm duty-cycle of `ratio`. Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
+            assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queuePwm!
         }
         template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
             //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.
