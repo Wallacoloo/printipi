@@ -102,6 +102,7 @@
 #include <stdint.h> //for uint32_t
 #include <string.h> //for size_t, memset
 #include <chrono> //for std::chrono::microseconds
+//#include <tuple> //for multiple- return types
 
 //#include "common/typesettings.h" //for EventClockT
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
@@ -471,6 +472,7 @@ class DmaScheduler {
         uintptr_t virtToUncachedPhys(void *virt) const;
         void initPwm();
         void initDma();
+        int64_t syncDmaTime();
         void queue(int pin, int mode, uint64_t micros);
         /*inline uint64_t readSysTime() const {
             return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
