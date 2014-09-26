@@ -345,9 +345,9 @@ int64_t DmaScheduler::syncDmaTime() {
     if (timeDiff > FRAME_TO_USEC(SOURCE_BUFFER_FRAMES)/2) { //wrap-around
         timeDiff -= FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
     }
-    LOGV("Timing diff: %lli\n", timeDiff);
+    LOGV("Timing diff: %i\n", timeDiff);
     if (timeDiff > 20) {
-        LOGW("Warning: Dma timing is off by > 10 uS: %i us\n", timeDiff);
+        LOGW("Warning: Dma timing is off by > 20 uS: %i us\n", timeDiff);
     }
     _lastTimeAtFrame0 = curTimeAtFrame0;
     //if timing diff is positive, then then curTimeAtFrame0 > _lastTimeAtFrame0
