@@ -338,8 +338,10 @@ int64_t DmaScheduler::syncDmaTime() {
         _lastDmaSyncedTime = _now;
         int srcIdx;
         EventClockT::time_point curTime1, curTime2;
+        curTime2 = _now;
         do {
-            curTime1 = EventClockT::now();
+            //curTime1 = EventClockT::now();
+            curTime1 = curTime2;
             srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
             curTime2 = EventClockT::now();
         } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
