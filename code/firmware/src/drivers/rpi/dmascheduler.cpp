@@ -333,7 +333,9 @@ int64_t _lastTimeAtFrame0;
 EventClockT::time_point _lastDmaSyncedTime;
 int64_t DmaScheduler::syncDmaTime() {
     //returns the last time that a frame idx=0 occured.
-    if (EventClockT::now() > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally
+    EventClockT::time_point _now = EventClockT::now();
+    if (_now > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally
+        _lastDmaSyncedTime = _now;
         int srcIdx;
         EventClockT::time_point curTime1, curTime2;
         do {
