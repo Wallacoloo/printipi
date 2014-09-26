@@ -446,6 +446,8 @@ class DmaScheduler {
     GpioBufferFrame *srcArray;
     GpioBufferFrame *srcClrArray;
     DmaControlBlock *cbArr;
+    int64_t _lastTimeAtFrame0;
+    EventClockT::time_point _lastDmaSyncedTime;
     public:
         DmaScheduler();
         static void cleanup();

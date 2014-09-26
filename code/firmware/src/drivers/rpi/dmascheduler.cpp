@@ -102,7 +102,9 @@ uintptr_t DmaScheduler::DmaMem::virtToPhys(void *virt) const {
 }
 
 
-DmaScheduler::DmaScheduler() {
+DmaScheduler::DmaScheduler() 
+  : _lastTimeAtFrame0(0)
+  , _lastDmaSyncedTime(std::chrono::seconds(0)) {
     dmaCh = 5;
     SchedulerBase::registerExitHandler(&cleanup, SCHED_IO_EXIT_LEVEL);
     makeMaps();
@@ -328,9 +330,6 @@ void DmaScheduler::initDma() {
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
 }
 
-
-int64_t _lastTimeAtFrame0;
-EventClockT::time_point _lastDmaSyncedTime;
 int64_t DmaScheduler::syncDmaTime() {
     //returns the last time that a frame idx=0 occured.
     EventClockT::time_point _now = EventClockT::now();
