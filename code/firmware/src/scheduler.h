@@ -94,6 +94,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
     Interface interface;
     SchedAdjuster schedAdjuster;
     bool hasActiveEvent;
+    EventClockT::time_point _lastSchedTime;
     public:
         void queue(const Event &evt);
         void queue(const OutputEvent &evt);
@@ -120,6 +121,7 @@ template <typename Interface=DefaultSchedulerInterface> class Scheduler : public
 template <typename Interface> Scheduler<Interface>::Scheduler(Interface interface) 
     : interface(interface)
     ,hasActiveEvent(false)
+    ,_lastSchedTime(EventClockT::now())
     {
     //clock_gettime(CLOCK_MONOTONIC, &(this->lastEventHandledTime)); //initialize to current time.
     setDefaultMaxSleep();
@@ -138,6 +140,7 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
 }
 
 template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent &evt) {
+    _lastSchedTime = evt.time();
     this->yield(&evt);
 }
 
@@ -161,7 +164,9 @@ template <typename Interface> EventClockT::time_point Scheduler<Interface>::last
     } else {
         return this->outputEventQueue.rbegin()->time();
     }*/
-    return EventClockT::now();
+    //return EventClockT::now();
+    auto now = EventClockT::now();
+    return _lastSchedTime < now ? now : _lastSchedTime;
 }
 
 template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const {
