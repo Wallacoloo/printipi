@@ -330,31 +330,34 @@ void DmaScheduler::initDma() {
 
 
 int64_t _lastTimeAtFrame0;
+EventClockT::time_point _lastDmaSyncedTime;
 int64_t DmaScheduler::syncDmaTime() {
     //returns the last time that a frame idx=0 occured.
-    int srcIdx;
-    EventClockT::time_point curTime1, curTime2;
-    do {
-        curTime1 = EventClockT::now();
-        srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
-        curTime2 = EventClockT::now();
-    } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
-    //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
-    int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
-    int timeDiff = (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
-    if (timeDiff > FRAME_TO_USEC(SOURCE_BUFFER_FRAMES)/2) { //wrap-around
-        timeDiff -= FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
+    if (EventClockT::now() > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally
+        int srcIdx;
+        EventClockT::time_point curTime1, curTime2;
+        do {
+            curTime1 = EventClockT::now();
+            srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
+            curTime2 = EventClockT::now();
+        } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
+        //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
+        int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
+        int timeDiff = (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
+        if (timeDiff > FRAME_TO_USEC(SOURCE_BUFFER_FRAMES)/2) { //wrap-around
+            timeDiff -= FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
+        }
+        LOGV("Timing diff: %i\n", timeDiff);
+        if (timeDiff > 20) {
+            LOGW("Warning: Dma timing is off by > 20 uS: %i us\n", timeDiff);
+        }
+        _lastTimeAtFrame0 = curTimeAtFrame0;
+        //if timing diff is positive, then then curTimeAtFrame0 > _lastTimeAtFrame0
+        //curTime2 - srcIdx2 > curTime1 - srcIdx1
+        //curTime2 - curTime2 > srcIdx2 - srcIdx1
+        //more uS have elapsed than frames; DMA cannot keep up
     }
-    LOGV("Timing diff: %i\n", timeDiff);
-    if (timeDiff > 20) {
-        LOGW("Warning: Dma timing is off by > 20 uS: %i us\n", timeDiff);
-    }
-    _lastTimeAtFrame0 = curTimeAtFrame0;
-    //if timing diff is positive, then then curTimeAtFrame0 > _lastTimeAtFrame0
-    //curTime2 - srcIdx2 > curTime1 - srcIdx1
-    //curTime2 - curTime2 > srcIdx2 - srcIdx1
-    //more uS have elapsed than frames; DMA cannot keep up
-    return curTimeAtFrame0;
+    return _lastTimeAtFrame0;
 }
 void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
