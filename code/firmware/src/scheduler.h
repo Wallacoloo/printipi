@@ -134,13 +134,13 @@ template <typename Interface> void Scheduler<Interface>::queue(const Event& evt)
     
     //Turn the event into an output event sequence, and then queue those individual events:
     //assert(interface.isEventOutputSequenceable(evt));
+    _lastSchedTime = evt.time();
     hasActiveEvent = true;
     interface.iterEventOutputSequence(evt, [this](const OutputEvent &out) {this->queue(out); });
     hasActiveEvent = false;
 }
 
 template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent &evt) {
-    _lastSchedTime = evt.time();
     this->yield(&evt);
 }
 
