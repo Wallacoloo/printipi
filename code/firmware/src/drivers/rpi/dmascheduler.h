@@ -461,9 +461,6 @@ class DmaScheduler {
         inline void queue(const OutputEvent &evt) {
             queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
         }
-        inline bool canDoPwm(int pin) const {
-            return true; //Can handle pwm on any pin.
-        }
         void queuePwm(int pin, float ratio);
     private:
         void makeMaps();
