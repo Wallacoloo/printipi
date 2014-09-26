@@ -374,6 +374,10 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     std::tie(curIdx, curTime) = syncDmaTime();*/
     int64_t lastUsecAtFrame0 = syncDmaTime();
     int usecFromFrame0 = micros - lastUsecAtFrame0;
+    if (usecFromFrame0 < 0) { //need this check to prevent newIdx from being negative.
+        LOGW("Warning: clearly missed a step (usecFromFrame0=%i)\n", usecFromFrame0);
+        return; //don't bother to schedule the step at what is now an unknown time!
+    }
     int framesFrom0 = USEC_TO_FRAME(usecFromFrame0);
     int newIdx = framesFrom0%SOURCE_BUFFER_FRAMES;
 
