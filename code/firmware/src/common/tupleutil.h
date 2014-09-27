@@ -36,7 +36,7 @@ template <typename TupleT, typename Func, typename ...Args> void callOnAll(Tuple
 //tupleReduce helper functions:
 
 template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> struct __callOnAllReduce {
-    typename ReducedDefault::type operator()(TupleT &t, Func &f, Reduce &r, ReducedDefault &d, Args... args) {
+    auto operator()(TupleT &t, Func &f, Reduce &r, ReducedDefault &d, Args... args) -> decltype(d()) {
         auto prev = __callOnAllReduce<TupleT, IdxPlusOne-1, Func, Reduce, ReducedDefault, Args...>()(t, f, r, d, args...); //result of all previous items;
         auto cur = f(IdxPlusOne-1, std::get<IdxPlusOne-1>(t), args...); //call on this index.
         return r(prev, cur);
@@ -45,32 +45,19 @@ template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename Reduc
 
 template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> struct __callOnAllReduce<TupleT, 0, Func, Reduce, ReducedDefault, Args...> {
     //handle the base recursion case
-    typename ReducedDefault::type operator()(TupleT &, Func &, Reduce &, ReducedDefault &d, Args... ) {
+    auto operator()(TupleT &, Func &, Reduce &, ReducedDefault &d, Args... ) -> decltype(d()) {
         return d();
     }
 };
 
-template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> typename ReducedDefault::type tupleReduce(TupleT &t, Func f, Reduce r, ReducedDefault d, Args... args) {
+template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> auto tupleReduce(TupleT &t, Func f, Reduce r, ReducedDefault d, Args... args) -> decltype(d()) {
     return __callOnAllReduce<TupleT, std::tuple_size<TupleT>::value, Func, Reduce, ReducedDefault, Args...>()(t, f, r, d, args...);
 }
 
-template <typename T> struct ValueWrapper {
-    //Wraps a value in a struct such that calling the object returns the wrapped value, and the wrapped value is set during construction.
-    //Eg:
-    //ValueWrapper<bool> b(true);
-    //b() //returns true
-    typedef T type;
-    T _data;
-    ValueWrapper() : _data() {}
-    ValueWrapper(const T &t) : _data(t) {}
-    //ValueWrapper(T t) : _data(t) {}
-    //T& operator()() { return _data; }
-    const T& operator()() const { return _data; }
-};
 
 template <typename TupleT, typename Func, typename ...Args> bool tupleReduceLogicalOr(TupleT &t, Func f, Args... args) {
     //default value must be false, otherwise the only value ever returned would be <True>
-    return tupleReduce(t, f, [](bool a, bool b) { return a||b; }, ValueWrapper<bool>(false), args...);
+    return tupleReduce(t, f, [](bool a, bool b) { return a||b; }, false, args...);
 }
 
 //callOnIndex helper functions:
