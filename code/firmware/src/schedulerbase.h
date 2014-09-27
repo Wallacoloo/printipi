@@ -27,29 +27,11 @@ enum OnIdleCpuIntervalT {
     OnIdleCpuIntervalWide
 };
 
-struct PwmInfo {
-    unsigned nsHigh;
-    unsigned nsLow;
-    PwmInfo() : nsHigh(0), nsLow(0) {}
-    PwmInfo(float duty, float period) : 
-        nsHigh(std::min(999999999, std::max(0, (int)(duty*period*1000000000)))), //clamp the times to >= 0 and <= 1
-        nsLow(std::min(999999999, std::max(0, (int)((1-duty)*period*1000000000)))) {}
-    inline float period() const {
-        return nsHigh + nsLow;
-    }
-    inline float dutyCycle() const {
-        return (float)nsHigh / period();
-    }
-    inline bool isNonNull() const {
-        return nsHigh || nsLow;
-    }
-};
-
 /* Base class from which all templated schedulers derive.
 Defines things such as exit handlers */
 class SchedulerBase {
     static std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> exitHandlers;
-    //static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic.
+    //static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic. But we only have one thread.
     static bool isExiting;
     private:
         static void callExitHandlers();
