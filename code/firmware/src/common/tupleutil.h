@@ -41,7 +41,7 @@ template <typename TupleT, typename Func, typename ...Args> void callOnAll(Tuple
 //tupleReduce helper functions:
 
 template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> struct __callOnAllReduce {
-    auto operator()(TupleT &t, Func &f, Reduce &r, ReducedDefault &d, Args... args) -> decltype(d()) {
+    auto operator()(TupleT &t, Func &f, Reduce &r, ReducedDefault d, Args... args) -> decltype(d) {
         auto prev = __callOnAllReduce<TupleT, IdxPlusOne-1, Func, Reduce, ReducedDefault, Args...>()(t, f, r, d, args...); //result of all previous items;
         auto cur = f(IdxPlusOne-1, std::get<IdxPlusOne-1>(t), args...); //call on this index.
         return r(prev, cur);
@@ -50,12 +50,12 @@ template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename Reduc
 
 template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> struct __callOnAllReduce<TupleT, 0, Func, Reduce, ReducedDefault, Args...> {
     //handle the base recursion case
-    auto operator()(TupleT &, Func &, Reduce &, ReducedDefault &d, Args... ) -> decltype(d()) {
-        return d();
+    auto operator()(TupleT &, Func &, Reduce &, ReducedDefault d, Args... ) -> decltype(d) {
+        return d;
     }
 };
 
-template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> auto tupleReduce(TupleT &t, Func f, Reduce r, ReducedDefault d, Args... args) -> decltype(d()) {
+template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> auto tupleReduce(TupleT &t, Func f, Reduce r, ReducedDefault d, Args... args) -> decltype(d) {
     return __callOnAllReduce<TupleT, std::tuple_size<TupleT>::value, Func, Reduce, ReducedDefault, Args...>()(t, f, r, d, args...);
 }
 

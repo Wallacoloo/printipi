@@ -123,7 +123,7 @@ template <typename TupleT> bool IODriver::canDoPwm(TupleT &drivers, AxisIdType a
 
 //IODriver::callIdleCpuHandlers helper functions:
 
-template <typename TupleT, std::size_t myIdxPlusOne, typename ...Args> struct IODriver__onIdleCpu {
+/*template <typename TupleT, std::size_t myIdxPlusOne, typename ...Args> struct IODriver__onIdleCpu {
     bool operator()(TupleT &drivers, Args... args) {
         bool prev = IODriver__onIdleCpu<TupleT, myIdxPlusOne-1, Args...>()(drivers, args...);
         bool cur = std::get<myIdxPlusOne-1>(drivers).onIdleCpu(args...); //EXPLICITLY CALCULATE THIS SEPARATELY TO PREVENT SHORT-CIRCUIT OPERATIONS
@@ -140,6 +140,14 @@ template <typename TupleT, typename ...Args> struct IODriver__onIdleCpu<TupleT, 
 
 template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
     return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value, Args...>()(drivers, args...);
+}*/
+struct IODriver__onIdleCpu {
+    template <typename T, typename ...Args> bool operator()(std::size_t /*index*/, T &driver, Args... args) {
+        return driver.onIdleCpu(args...);
+    }
+};
+template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
+    return tupleReduceLogicalOr(drivers, IODriver__onIdleCpu(), args...);
 }
 
 //IODriver::lockAllAxis helper functions:
