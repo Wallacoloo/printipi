@@ -67,8 +67,8 @@ struct DefaultSchedulerInterface {
                 //add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary
                 assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queue!
             }
-            inline void queuePwm(int /*pin*/, float /*ratio*/) {
-                //Set the given pin to a pwm duty-cycle of `ratio`. Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
+            inline void queuePwm(int /*pin*/, float /*ratio*/, float /*maxPeriod*/) {
+                //Set the given pin to a pwm duty-cycle of `ratio` using a maximum period of maxPeriod (irrelevant if using PCM algorithm). Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
                 assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queuePwm!
             }
             template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
@@ -92,8 +92,8 @@ struct DefaultSchedulerInterface {
         inline void queue(const OutputEvent &evt) {
             _hardwareScheduler.queue(evt);
         }
-        inline void queuePwm(int pin, float duty) {
-            _hardwareScheduler.queuePwm(pin, duty);
+        inline void queuePwm(int pin, float duty, float maxPeriod) {
+            _hardwareScheduler.queuePwm(pin, duty, maxPeriod);
         }
         template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
             return _hardwareScheduler.schedTime(evtTime);

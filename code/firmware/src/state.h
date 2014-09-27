@@ -81,8 +81,8 @@ template <typename Drv> class State {
             inline void queue(const OutputEvent &evt) {
                 _hardwareScheduler.queue(evt);
             }
-            inline void queuePwm(int pin, float duty) {
-                _hardwareScheduler.queuePwm(pin, duty);
+            inline void queuePwm(int pin, float duty, float maxPeriod) {
+                _hardwareScheduler.queuePwm(pin, duty, maxPeriod);
             }
             template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
                 return _hardwareScheduler.schedTime(evtTime);

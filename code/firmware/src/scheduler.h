@@ -145,7 +145,7 @@ template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float maxPeriod) {
-    interface.iterPwmPins(idx, duty, [this](int pin_, float duty_) {this->interface.queuePwm(pin_, duty_); });
+    interface.iterPwmPins(idx, duty, [this, maxPeriod](int pin_, float duty_) {this->interface.queuePwm(pin_, duty_, maxPeriod); }); //note: some physical pins may be inverted, indicating duty must be switched, hence why it occurs as a parameter to the lambda
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {

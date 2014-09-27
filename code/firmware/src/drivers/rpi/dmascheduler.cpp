@@ -409,7 +409,7 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     }
 }
 
-void DmaScheduler::queuePwm(int pin, float ratio) {
+void DmaScheduler::queuePwm(int pin, float ratio, float maxPeriod) {
     //PWM is achieved through changing the values that each source frame is reset to.
     //the way to choose which frames are '1' and which are '0' is like so:
     //  Keep a counter, which is set to 0.

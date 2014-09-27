@@ -461,7 +461,7 @@ class DmaScheduler {
         inline void queue(const OutputEvent &evt) {
             queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
         }
-        void queuePwm(int pin, float ratio);
+        void queuePwm(int pin, float ratio, float maxPeriod);
     private:
         void makeMaps();
         volatile uint32_t* mapPeripheral(int addr) const; //map a physical address into our virtual address space.
