@@ -100,6 +100,7 @@
  * *Make Endstop not be a static class
  * *Make EnableDisableDriver not be a static class
  *  Extruding should not force axis to be homed.
+ *    NO: see https://github.com/Wallacoloo/printipi/issues/13
  *  Recognize when opening gcode file, and open as read-only (ie don't write 'ok' responses into it)
  *  Use the std:: file interface, rather than Linux file handlers.
  * *Have scheduler only schedule (ordered) output events, rather than preserving normal events too.

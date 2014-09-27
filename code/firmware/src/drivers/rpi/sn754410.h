@@ -10,6 +10,8 @@
  * Unfortunately, this driver in its current form uses some gpio addressing tricks that make it raspberry-pi only
 */
 
+#warning "sn754410 is NO LONGER MAINTAINED. It may not work correctly. If you need its functionality, you should consider posting on Github or implement it yourself by referencing the a4988 interface"
+
 #include <cstdint> //for uint8_t
 #include <array>
 

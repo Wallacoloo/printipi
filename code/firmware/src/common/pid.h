@@ -10,7 +10,6 @@
  * Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
  */
 
-//#include "common/timeutil.h" //for timespec*
 #include "common/typesettings.h" //for EventClockT
 
 template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000000, int ITermMin1000000=-ITermMax1000000> class PID {
