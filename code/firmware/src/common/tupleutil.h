@@ -11,6 +11,11 @@
 
 #include <tuple>
 
+struct VoidObject {
+    inline VoidObject() {}
+    inline void operator()() const {};
+};
+
 //callOnAll helper functions:
 
 template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename ...Args> struct __callOnAll {
@@ -28,7 +33,7 @@ template <typename TupleT, typename Func, typename ...Args> struct __callOnAll<T
 template <typename TupleT, typename Func, typename ...Args> void callOnAll(TupleT &t, Func f, Args... args) {
     __callOnAll<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, args...);
 };
-//This second version allows to pass a function object by pointer, so that it can perhaps be modified.
+//This second version allows to pass a function object by pointer, so that it can perhaps be modified. TODO: Maybe just use an auto reference (Func &&f)?
 template <typename TupleT, typename Func, typename ...Args> void callOnAll(TupleT &t, Func *f, Args... args) {
     __callOnAll<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, *f, args...);
 };
@@ -59,6 +64,7 @@ template <typename TupleT, typename Func, typename ...Args> bool tupleReduceLogi
     //default value must be false, otherwise the only value ever returned would be <True>
     return tupleReduce(t, f, [](bool a, bool b) { return a||b; }, false, args...);
 }
+
 
 //callOnIndex helper functions:
 

@@ -24,23 +24,8 @@
 
 namespace drv {
 
-/*template<typename T> struct IODriverInfo {
-    template<typename U, size_t (U::*)() const> struct SFINAE {};
-    template<typename U> static char Test(SFINAE<U, &U::deactivate>*);
-    template<typename U> static int Test(...);
-    static constexpr bool HasDeactivateMethod = sizeof(Test<T>(0)) == sizeof(char);
-};*/
-
 class IODriver {
     public:
-        //template <typename ThisT> IODriver(const ThisT * /* _this */) {
-            //TODO: only register an exit handler if ThisT::deactivate is non-empty
-            //can do this with C++ "SFINAE"
-            //if (IODriverInfo<ThisT>::HasDeactivateMethod) {
-                //Scheduler::registerExitHandler((void(*)())&ThisT::deactivate);
-            //}
-        //  SchedulerBase::registerExitHandler((void(*)())&ThisT::deactivate, SCHED_IO_EXIT_LEVEL);
-        //}
         inline IODriver() {}
         //for a (stepper) motor, advance +/- 1 step:
         inline bool isEventOutputSequenceable(const Event &) { return false; } //OVERRIDE THIS
