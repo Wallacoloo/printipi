@@ -42,7 +42,7 @@ class SchedulerBase {
 
 /* A Scheduler is useless without an interface. In order to use a scheduler, implement a class with the following methods
 and pass it as a template argument to the Scheduler<Interface> type. */
-struct DefaultSchedulerInterface {
+struct NullSchedulerInterface {
     public:
         struct HardwareScheduler {
             inline void queue(const OutputEvent &) {

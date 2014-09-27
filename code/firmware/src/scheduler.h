@@ -15,17 +15,13 @@
 
 #include <cassert> //for assert
 #include <set>
-//#include <thread> //for this_thread::sleep_until
-//#include <time.h> //for timespec
 //#include <chrono> 
 #include <array>
 #include <vector>
-//#include <atomic>
 #include <tuple>
 #include "event.h"
 #include "outputevent.h"
 #include "common/logging.h"
-//#include "common/timeutil.h"
 #include "common/intervaltimer.h"
 #include "common/suresleep.h"
 
@@ -88,7 +84,7 @@ struct SchedAdjusterAccel {
     }
 };
 
-template <typename Interface=DefaultSchedulerInterface> class Scheduler : public SchedulerBase {
+template <typename Interface=NullSchedulerInterface> class Scheduler : public SchedulerBase {
     typedef NullSchedAdjuster SchedAdjuster;
     EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
     Interface interface;

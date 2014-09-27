@@ -7,7 +7,7 @@
     typedef drv::rpi::DmaScheduler SchedInterfaceHardwareScheduler;
 #else
     #include "schedulerbase.h"
-    typedef DefaultSchedulerInterface::HardwareScheduler SchedInterfaceHardwareScheduler;
+    typedef NullSchedulerInterface::HardwareScheduler SchedInterfaceHardwareScheduler;
 #endif
 
 #endif
