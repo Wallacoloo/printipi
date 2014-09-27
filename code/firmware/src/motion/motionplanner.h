@@ -16,7 +16,7 @@
 
 enum MotionType {
     MotionNone,
-    MotionMove,
+    MotionLinear,
     MotionHome
 };
 
@@ -143,7 +143,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             //LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
             drv::AxisStepper::initAxisSteppers(_iters, _destMechanicalPos, vx, vy, vz, velE);
             this->_duration = minDuration;
-            this->_motionType = MotionMove;
+            this->_motionType = MotionLinear;
             this->_accel.begin(minDuration, maxVelXyz);
         }
 
