@@ -12,6 +12,7 @@
 
 #include <string>
 #include <vector>
+#include <array>
 #include <cstdint> //for uint32_t
 #include <cmath> //for NAN
 
@@ -30,9 +31,10 @@ class Command {
     //std::string opcode;
     uint32_t opcodeStr; //opcode still encoded as a 4-character string. MSB=first char, LSB=last char. String is right-adjusted (ie, the MSBs are 0 in the case that opcode isn't full 4 characters).
     std::vector<std::string> pieces; //the command when split on spaces. Eg "G1 X2 Y3" -> ["G1", "X2", "Y3"]
+    std::array<float, 26> arguments; //26 alphabetic possible arguments per Gcode. Case insensitive. Internally, this will default to NaN
     public:
         //initialize the command object from a line of GCode
-        inline Command() : opcodeStr(0) {}
+        inline Command() : opcodeStr(0), arguments({NAN}) {}
         Command(std::string const&);
         inline bool empty() const {
             return opcodeStr == 0;

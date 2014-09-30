@@ -3,9 +3,16 @@
 namespace gparse {
 
 
-Command::Command(std::string const& cmd) : opcodeStr(0) {
+Command::Command(std::string const& cmd) : opcodeStr(0), arguments({NAN}) {
+    //possible GCodes to handle:
+    //N123 M105*nn
+    //G1 X5.2 Y-3.72
+    //G82 X Y
+    // [empty]
+    //G1 ;LALALA
+    //;^_^;
     //initialize the command from a line of GCode
-    std::string piece;
+    std::string::const_iterator argumentStart; //iterator pointing to the first character in the current argument being parsed.
     std::string::const_iterator it=cmd.begin();
     for(; it != cmd.end() && (*it == ' ' || *it == '\t'); ++it) {} //skip leading spaces
     if (cmd[0] == 'N') { //line-number
@@ -16,12 +23,20 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
     }
     //now at the first character of the opcode
     for (; it != cmd.end() && *it != ' ' && *it != '\n' && *it != '\t' && *it != '*' && *it != ';'; ++it) {
-        opcodeStr = (opcodeStr << 8) + *it;
+        opcodeStr = (opcodeStr << 8) + *it; //TODO: case insensitivity
     }
     //now at the first space after opcode or end of cmd or at the '*' character of checksum.
+    for (; it != cmd.end() && (*it == ' ' || *it != '\t')) { //skip spaces
+    }
+    if (it == cmd.end() || *it == '*' || *it == ';' || *it == '\n') { //exit if end of line
+        return;
+    }
+    //now at a LETTER, assuming valid command.
+    char param = *it++;
+    //now at either the end, space, * or ; OR a number.
     //spaces should be handled below.
     //Now split the command on spaces or tabs:
-    for (; it != cmd.end() && *it != ';' && *it != '\n'; ++it) {
+    /*for (; it != cmd.end() && *it != ';' && *it != '\n'; ++it) {
         char chr = *it;
         if (chr == ' ' || chr == '\t' || chr == '*') {
             if (piece.length()) { //allow for multiple spaces between parameters
@@ -37,7 +52,7 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
     }
     if (piece.length()) {
         this->addPiece(piece);
-    }
+    }*/
 }
 
 /*void Command::addPiece(std::string const& piece) {
