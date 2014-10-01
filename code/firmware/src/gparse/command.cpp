@@ -23,17 +23,38 @@ Command::Command(std::string const& cmd) : opcodeStr(0), arguments({NAN}) {
     }
     //now at the first character of the opcode
     for (; it != cmd.end() && *it != ' ' && *it != '\n' && *it != '\t' && *it != '*' && *it != ';'; ++it) {
-        opcodeStr = (opcodeStr << 8) + *it; //TODO: case insensitivity
+        opcodeStr = (opcodeStr << 8) + *it; //TODO: case insensitivity (only first char must be case-insensitive; rest are numbers)
     }
-    //now at the first space after opcode or end of cmd or at the '*' character of checksum.
-    for (; it != cmd.end() && (*it == ' ' || *it != '\t')) { //skip spaces
+    while (true) {
+        //now at the first space after opcode or end of cmd or at the '*' character of checksum.
+        for (; it != cmd.end() && (*it == ' ' || *it != '\t'); ++it) { //skip spaces
+        }
+        if (it == cmd.end() || *it == '*' || *it == ';' || *it == '\n') { //exit if end of line
+            return;
+        }
+        //now at a LETTER, assuming valid command.
+        char param = *it++;
+        //now at either the end, space, * or ; OR a number.
+        float value = 0;
+        if (it != cmd.end() && *it != ' ' && *it != '\t' && *it == '\n' && *it != '*' && *it != ';') { 
+            //Now we are at the first character of a number.
+            //How to parse a float? Can use atof, strtof, or sscanf.
+            //atof is basic, and won't tell how many characters we must advance
+            //strtof will skip whitespace (which is invalid), and tells us how many chars to advance
+            //sscanf is overly heavy, but won't tell how many characters we must advance
+            //ALL THE ABOVE C-FUNCTIONS WORK WITH NULL-TERMINATED STRINGS.
+            //Also, atof, etc, use the locale (so decimal point may be ',', not '.'.
+            //stof can work with c++ strings (no offset), and reports # of chars parsed
+            // '.' separator is the only valid one for gcode (source: http://git.geda-project.org/pcb/commit/?id=6f422eeb5c6a0e0e541b20bfc70fa39a8a2b5af1)
+            char *afterVal;
+            const char *cmdCStr = cmd.c_str();
+            value = strtof(cmdCStr + (it-cmd.begin()), &afterVal); //read a float and set afterVal to point 
+            it += (afterVal-cmdCStr); //advance iterator to past the number.
+        }
+        setArgument(param, value);
+        //now at either space, *, ;, or end.
     }
-    if (it == cmd.end() || *it == '*' || *it == ';' || *it == '\n') { //exit if end of line
-        return;
-    }
-    //now at a LETTER, assuming valid command.
-    char param = *it++;
-    //now at either the end, space, * or ; OR a number.
+    
     //spaces should be handled below.
     //Now split the command on spaces or tabs:
     /*for (; it != cmd.end() && *it != ';' && *it != '\n'; ++it) {
@@ -101,23 +122,31 @@ std::string Command::getOpcode() const {
 
 std::string Command::toGCode() const {
     std::string r=getOpcode();
-    for (std::string const& s : this->pieces) {
+    /*for (std::string const& s : this->pieces) {
         r += ' ';
         r += s;
+    }*/
+    for (char c='A'; c<='Z'; ++c) {
+        if (hasParam(c)) {
+            r += ' ';
+            r += c;
+            r += std::to_string(getFloatParam(c));
+        }
     }
     return r + '\n';
 }
 
 bool Command::hasParam(char label) const {
-    for (const std::string &p : this->pieces) {
+    /*for (const std::string &p : this->pieces) {
         if (p[0] == label) {
             return true;
         }
     }
-    return false;
+    return false;*/
+    return getFloatParam(label) != GPARSE_ARG_NOT_PRESENT;
 }
 
-std::string Command::getStrParam(char label, bool &hasParam) const {
+/*std::string Command::getStrParam(char label, bool &hasParam) const {
     for (const std::string &p : this->pieces) {
         if (p[0] == label) {
             if (p[1] == ':') {
@@ -131,84 +160,20 @@ std::string Command::getStrParam(char label, bool &hasParam) const {
     }
     hasParam = false;
     return "";
-}
+}*/
 /*std::string Command::getStrParam(char label) const {
     bool _ignore;
     return this->getStrParam(label, _ignore);
 }*/
 float Command::getFloatParam(char label, float def, bool &hasParam) const {
-    std::string s = this->getStrParam(label, hasParam);
-    return hasParam ? std::stof(s) : def;
+    float val = arguments[upper(label)-'A'];
+    hasParam = (val != GPARSE_ARG_NOT_PRESENT);
+    if (!hasParam) {
+        val = def;
+    }
+    return val;
+    //std::string s = this->getStrParam(label, hasParam);
+    //return hasParam ? std::stof(s) : def;
 }
-/*float Command::getFloatParam(char label, float def) const {
-    bool _ignore;
-    return this->getFloatParam(label, def, _ignore);
-}
-float Command::getFloatParam(char label, bool &hasParam) const {
-    return this->getFloatParam(label, NAN, hasParam);
-}*/
-
-/*float Command::getX(float def) const {
-    return this->getFloatParam('X', def);
-}
-float Command::getX(bool &hasParam) const {
-    return this->getFloatParam('X', hasParam);
-}
-float Command::getY(float def) const {
-    return this->getFloatParam('Y', def);
-}
-float Command::getY(bool &hasParam) const {
-    return this->getFloatParam('Y', hasParam);
-}
-float Command::getZ(float def) const {
-    return this->getFloatParam('Z', def);
-}
-float Command::getZ(bool &hasParam) const {
-    return this->getFloatParam('Z', hasParam);
-}
-float Command::getE(float def) const {
-    return this->getFloatParam('E', def);
-}
-float Command::getE(bool &hasParam) const {
-    return this->getFloatParam('E', hasParam);
-}
-float Command::getF(float def) const {
-    return this->getFloatParam('F', def);
-}
-float Command::getF(bool &hasParam) const {
-    return this->getFloatParam('F', hasParam);
-}
-float Command::getS(float def) const {
-    return this->getFloatParam('S', def);
-}
-float Command::getS(bool &hasParam) const {
-    return this->getFloatParam('S', hasParam);
-}*/
-
-/*bool Command::hasX() const {
-    return hasParam('X');
-}
-bool Command::hasY() const {
-    return hasParam('Y');
-}
-bool Command::hasZ() const {
-    return hasParam('Z');
-}
-bool Command::hasE() const {
-    return hasParam('E');
-}
-bool Command::hasF() const {
-    return hasParam('F');
-}
-bool Command::hasS() const {
-    return hasParam('S');
-}
-
-bool Command::hasAnyXYZParam() const {
-    return hasX() || hasY() || hasZ();
-}
-bool Command::hasAnyXYZEParam() const {
-    return hasAnyXYZParam() || hasE();
-}*/
 
 }

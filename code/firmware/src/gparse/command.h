@@ -15,6 +15,7 @@
 #include <array>
 #include <cstdint> //for uint32_t
 #include <cmath> //for NAN
+#define GPARSE_ARG_NOT_PRESENT NAN
 
 /*#List of commands on Reprap Wiki:
 cmds = ['G0', 'G1', 'G2', 'G3', 'G4', 'G10', 'G20', 'G21', 'G28', 'G29', 'G30', 'G31', 'G32', 'G90', 'G91', 'G92', 'M0', 'M1', 'M3', 'M4', 'M5', 'M7', 'M8', 'M9', 'M10', 'M11', 'M17', 'M18', 'M20', 'M21', 'M22', 'M23', 'M24', 'M25', 'M26', 'M27', 'M28', 'M29', 'M30', 'M32', 'M40', 'M41', 'M42', 'M43', 'M80', 'M81', 'M82', 'M83', 'M84', 'M92', 'M98', 'M99', 'M103', 'M104', 'M105', 'M106', 'M107', 'M108', 'M109', 'M110', 'M111', 'M112', 'M113', 'M114', 'M115', 'M116', 'M117', 'M118', 'M119', 'M120', 'M121', 'M122', 'M123', 'M124', 'M126', 'M127', 'M128', 'M129', 'M130', 'M131', 'M132', 'M133', 'M134', 'M135', 'M136', 'M140', 'M141', 'M142', 'M143', 'M144', 'M160', 'M190', 'M200', 'M201', 'M202', 'M203', 'M204', 'M205', 'M206', 'M207', 'M208', 'M209', 'M210', 'M220', 'M221', 'M226', 'M227', 'M228', 'M229', 'M230', 'M240', 'M241', 'M245', 'M246', 'M280', 'M300', 'M301', 'M302', 'M303', 'M304', 'M305', 'M400', 'M420', 'M540', 'M550', 'M551', 'M552', 'M553', 'M554', 'M555', 'M556', 'M557', 'M558', 'M559', 'M560', 'M561', 'M562', 'M563', 'M564', 'M565', 'M566', 'M567', 'M568', 'M569', 'M665', 'M906', 'M998', 'M999']
@@ -30,11 +31,11 @@ class Command {
     public:
     //std::string opcode;
     uint32_t opcodeStr; //opcode still encoded as a 4-character string. MSB=first char, LSB=last char. String is right-adjusted (ie, the MSBs are 0 in the case that opcode isn't full 4 characters).
-    std::vector<std::string> pieces; //the command when split on spaces. Eg "G1 X2 Y3" -> ["G1", "X2", "Y3"]
+    //std::vector<std::string> pieces; //the command when split on spaces. Eg "G1 X2 Y3" -> ["G1", "X2", "Y3"]
     std::array<float, 26> arguments; //26 alphabetic possible arguments per Gcode. Case insensitive. Internally, this will default to NaN
     public:
         //initialize the command object from a line of GCode
-        inline Command() : opcodeStr(0), arguments({NAN}) {}
+        inline Command() : opcodeStr(0), arguments({GPARSE_ARG_NOT_PRESENT}) {}
         Command(std::string const&);
         inline bool empty() const {
             return opcodeStr == 0;
@@ -44,11 +45,11 @@ class Command {
         std::string toGCode() const;
         bool hasParam(char label) const;
         
-        std::string getStrParam(char label, bool &hasParam) const;
-        inline std::string getStrParam(char label) const {
+        //std::string getStrParam(char label, bool &hasParam) const; //TODO: Shouldn't be public!
+        /*inline std::string getStrParam(char label) const {
             bool _ignore;
             return getStrParam(label, _ignore);
-        }
+        }*/
         
         float getFloatParam(char label, float def, bool &hasParam) const;
         inline float getFloatParam(char label, float def=NAN) const {
@@ -269,9 +270,20 @@ class Command {
         inline bool isM999() const { return isOpcode(0x4d393939u); }
         inline bool isTxxx() const { return isFirstChar('T'); }
     private:
-        inline void addPiece(std::string const& piece) {
-            this->pieces.push_back(piece);
+        inline char upper(char letter) const {
+            if (letter >= 'a' && letter <= 'z') { //if lowercase
+                letter += ('A' - 'a'); //add the offset between uppercase and lowercase letters for our character set.
+            }
+            return letter;
         }
+        inline void setArgument(char letter, float value) {
+            letter = upper(letter);
+            int index = letter - 'A';
+            this->arguments[index] = value;
+        }
+        /*inline void addPiece(std::string const& piece) {
+            this->pieces.push_back(piece);
+        }*/
         inline bool isOpcode(uint32_t op) const {
             return opcodeStr == op;
         }
