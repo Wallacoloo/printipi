@@ -11,7 +11,7 @@
  */
 
 #include <string>
-#include <vector>
+//#include <vector>
 #include <array>
 #include <cstdint> //for uint32_t
 #include <cmath> //for NAN
@@ -35,21 +35,16 @@ class Command {
     std::array<float, 26> arguments; //26 alphabetic possible arguments per Gcode. Case insensitive. Internally, this will default to NaN
     public:
         //initialize the command object from a line of GCode
-        inline Command() : opcodeStr(0), arguments({GPARSE_ARG_NOT_PRESENT}) {}
+        inline Command() : opcodeStr(0) {
+            arguments.fill(GPARSE_ARG_NOT_PRESENT); //initialize all arguments to default value
+        }
         Command(std::string const&);
         inline bool empty() const {
             return opcodeStr == 0;
-            //return opcode.empty();
         }
         std::string getOpcode() const;
         std::string toGCode() const;
         bool hasParam(char label) const;
-        
-        //std::string getStrParam(char label, bool &hasParam) const; //TODO: Shouldn't be public!
-        /*inline std::string getStrParam(char label) const {
-            bool _ignore;
-            return getStrParam(label, _ignore);
-        }*/
         
         float getFloatParam(char label, float def, bool &hasParam) const;
         inline float getFloatParam(char label, float def=NAN) const {
@@ -281,9 +276,6 @@ class Command {
             int index = letter - 'A';
             this->arguments[index] = value;
         }
-        /*inline void addPiece(std::string const& piece) {
-            this->pieces.push_back(piece);
-        }*/
         inline bool isOpcode(uint32_t op) const {
             return opcodeStr == op;
         }

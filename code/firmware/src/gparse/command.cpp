@@ -3,7 +3,8 @@
 namespace gparse {
 
 
-Command::Command(std::string const& cmd) : opcodeStr(0), arguments({NAN}) {
+Command::Command(std::string const& cmd) : opcodeStr(0) {
+    arguments.fill(GPARSE_ARG_NOT_PRESENT); //initialize all arguments to default value
     //possible GCodes to handle:
     //N123 M105*nn
     //G1 X5.2 Y-3.72
@@ -27,7 +28,7 @@ Command::Command(std::string const& cmd) : opcodeStr(0), arguments({NAN}) {
     }
     while (true) {
         //now at the first space after opcode or end of cmd or at the '*' character of checksum.
-        for (; it != cmd.end() && (*it == ' ' || *it != '\t'); ++it) { //skip spaces
+        for (; it != cmd.end() && (*it == ' ' || *it == '\t'); ++it) { //skip spaces
         }
         if (it == cmd.end() || *it == '*' || *it == ';' || *it == '\n') { //exit if end of line
             return;
@@ -36,7 +37,7 @@ Command::Command(std::string const& cmd) : opcodeStr(0), arguments({NAN}) {
         char param = *it++;
         //now at either the end, space, * or ; OR a number.
         float value = 0;
-        if (it != cmd.end() && *it != ' ' && *it != '\t' && *it == '\n' && *it != '*' && *it != ';') { 
+        if (it != cmd.end() && *it != ' ' && *it != '\t' && *it != '\n' && *it != '*' && *it != ';') { 
             //Now we are at the first character of a number.
             //How to parse a float? Can use atof, strtof, or sscanf.
             //atof is basic, and won't tell how many characters we must advance
@@ -54,31 +55,7 @@ Command::Command(std::string const& cmd) : opcodeStr(0), arguments({NAN}) {
         setArgument(param, value);
         //now at either space, *, ;, or end.
     }
-    
-    //spaces should be handled below.
-    //Now split the command on spaces or tabs:
-    /*for (; it != cmd.end() && *it != ';' && *it != '\n'; ++it) {
-        char chr = *it;
-        if (chr == ' ' || chr == '\t' || chr == '*') {
-            if (piece.length()) { //allow for multiple spaces between parameters
-                this->addPiece(piece);
-                piece = "";
-            }
-            if (chr == '*') { //checksum. Don't verify for now.
-                break;
-            }
-        } else {
-            piece += chr;
-        }
-    }
-    if (piece.length()) {
-        this->addPiece(piece);
-    }*/
 }
-
-/*void Command::addPiece(std::string const& piece) {
-    this->pieces.push_back(piece);
-}*/
 
 bool Command::isFirstChar(char c) const {
             char s[4];
@@ -97,10 +74,6 @@ bool Command::isFirstChar(char c) const {
                    ));
                        
         }
-
-/*bool Command::empty() const {
-    return this->opcode.empty();
-}*/
 
 std::string Command::getOpcode() const {
     //return opcode;
@@ -143,35 +116,19 @@ bool Command::hasParam(char label) const {
         }
     }
     return false;*/
-    return getFloatParam(label) != GPARSE_ARG_NOT_PRESENT;
+    //return arguments[upper(label)-'A'] != GPARSE_ARG_NOT_PRESENT; //BREAKS FOR NAN
+    bool a = arguments[upper(label)-'A'] != GPARSE_ARG_NOT_PRESENT;
+    bool b = (!std::isnan(GPARSE_ARG_NOT_PRESENT) || !std::isnan(arguments[upper(label)-'A']));
+    return a && b;
 }
 
-/*std::string Command::getStrParam(char label, bool &hasParam) const {
-    for (const std::string &p : this->pieces) {
-        if (p[0] == label) {
-            if (p[1] == ':') {
-                hasParam = true;
-                return p.substr(2);
-            } else {
-                hasParam = true;
-                return p.substr(1);
-            }
-        }
-    }
-    hasParam = false;
-    return "";
+/*float Command::getFloatParam(char label) const {
+    return arguments[upper(label)-'A'];
 }*/
-/*std::string Command::getStrParam(char label) const {
-    bool _ignore;
-    return this->getStrParam(label, _ignore);
-}*/
+
 float Command::getFloatParam(char label, float def, bool &hasParam) const {
-    float val = arguments[upper(label)-'A'];
-    hasParam = (val != GPARSE_ARG_NOT_PRESENT);
-    if (!hasParam) {
-        val = def;
-    }
-    return val;
+    hasParam = this->hasParam(label);
+    return hasParam ? arguments[upper(label)-'A'] : def;
     //std::string s = this->getStrParam(label, hasParam);
     //return hasParam ? std::stof(s) : def;
 }
