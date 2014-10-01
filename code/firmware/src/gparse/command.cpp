@@ -49,8 +49,9 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
             // '.' separator is the only valid one for gcode (source: http://git.geda-project.org/pcb/commit/?id=6f422eeb5c6a0e0e541b20bfc70fa39a8a2b5af1)
             char *afterVal;
             const char *cmdCStr = cmd.c_str();
-            value = strtof(cmdCStr + (it-cmd.begin()), &afterVal); //read a float and set afterVal to point 
-            it += (afterVal-cmdCStr); //advance iterator to past the number.
+            const char *floatStart = cmdCStr + (it-cmd.begin());
+            value = strtof(floatStart, &afterVal); //read a float and set afterVal to point 
+            it += (afterVal-floatStart); //advance iterator to past the number.
         }
         setArgument(param, value);
         //now at either space, *, ;, or end.
