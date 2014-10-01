@@ -16,7 +16,7 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
     std::string::const_iterator argumentStart; //iterator pointing to the first character in the current argument being parsed.
     std::string::const_iterator it=cmd.begin();
     for(; it != cmd.end() && (*it == ' ' || *it == '\t'); ++it) {} //skip leading spaces
-    if (cmd[0] == 'N') { //line-number
+    if (cmd[0] == 'N' || cmd[0] == 'n') { //line-number
         do {
             ++it;
         } while (it != cmd.end() && *it != ' ' && *it != '\n' && *it != '\t' && *it != '*' && *it != ';');
@@ -24,7 +24,7 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
     }
     //now at the first character of the opcode
     for (; it != cmd.end() && *it != ' ' && *it != '\n' && *it != '\t' && *it != '*' && *it != ';'; ++it) {
-        opcodeStr = (opcodeStr << 8) + *it; //TODO: case insensitivity (only first char must be case-insensitive; rest are numbers)
+        opcodeStr = (opcodeStr << 8) + upper(*it); //Note: only the first really character needs to be 'upper'd
     }
     while (true) {
         //now at the first space after opcode or end of cmd or at the '*' character of checksum.
