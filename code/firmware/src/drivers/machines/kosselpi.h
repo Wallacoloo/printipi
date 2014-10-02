@@ -22,6 +22,7 @@
 //#include "drivers/rpi/onepiniodriver.h"
 #include "drivers/tempcontrol.h"
 #include "drivers/fan.h"
+#include "drivers/rpi/bcm2835.h" //for pin numberings
 #include <tuple>
 
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)

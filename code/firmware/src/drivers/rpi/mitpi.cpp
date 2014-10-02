@@ -38,7 +38,7 @@
 
 namespace mitpi {
 
-volatile uint32_t *gpioBaseMem;
+volatile uint32_t *gpioBaseMem = NULL;
 
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
@@ -70,6 +70,9 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
 }
 
 void init() {
+    if (gpioBaseMem) {
+        return; //already initialized
+    }
     int memfd = open("/dev/mem", O_RDWR | O_SYNC);
     if (memfd < 0) {
         LOGE("Failed to open /dev/mem (did you remember to run as root?)\n");

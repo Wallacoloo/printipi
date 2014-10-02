@@ -10,9 +10,9 @@
  */
 
 #include "drivers/iopin.h" //for IoPin
-#include "drivers/rpi/rpi.h" //for initIO
+//#include "drivers/rpi/rpi.h" //for initIO
 #include "drivers/rpi/mitpi.h"
-#include "bcm2835.h" //for bcm2835_*
+#include "bcm2835.h" //for bcm2835*
 
 namespace drv {
 namespace rpi {
