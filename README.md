@@ -23,9 +23,10 @@ With the exception of certain files*, Printipi is licensed under the MIT license
 Limitations
 ========
 
-Printipi currently runs entirely in userland. While this makes development and usage trivial, timing suffers. By running under a high priority & locking memory to prevent page-swaps, it can still print successfully. Effort has also been made towards recovering from missed steps. A kossel-style printer can currently move at about 90 mm/sec @ 1/4 stepping without skipping (and using about 75% cpu).
+Printipi currently runs entirely in userland. While this makes development and usage trivial, it makes hardware management less safe. Printipi uses one of the Raspberry Pi's DMA channels in order to achieve precise output timing (2~4uS precision), however if another program tries to access the same DMA channel as Printipi, it **will** lead to errors.  
+Also, very heavy bus contention may degrade timing accuracy. Experiments show 500ksamples/sec (2uS resolution) to be dependable under most operating conditions, except heavy network/disk usage. 250ksamples/sec (4uS resolution) is dependable for at least 1 MB/sec network loads, and is the default mode.
 
-Currently, only a limited set of gcode commands are supported. Namely, testing has been done using Cura for slicing. Furthermore, all comments must first be stripped from the input.
+Currently, only a limited set of gcode commands are supported. Namely, testing has been done using Cura for slicing.
 
 Compiling
 ========
@@ -36,7 +37,7 @@ gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get inst
 
 First, get the sources: `git clone https://github.com/Wallacoloo/printipi.git`  
 
-To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi` or the `Example` machine, and `<target>` is either debug, release, profile, or minsize. Both are case-sensitive. A binary will be produced under code/firmware/build with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg 'sudo ./printipi').
+To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi` or the `Example` machine, and `<target>` is either debug, release, profile, or minsize. Both are case-sensitive. A binary will be produced under code/firmware/build with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg `sudo ./printipi`).
 
 Usage
 ========
@@ -63,8 +64,10 @@ Congratulations, you're now running Printipi!
 The Future
 ========
 
-The short-to-midterm goals for Printipi are mostly optimization-based. DMA has significantly minimized timing issues, but the project needs to be restructured to use it more efficiently.
+The short to midterm goals for Printipi are mostly optimization-based. DMA has significantly minimized timing issues, but more optimizations are needed in order to lower cpu usage & plan paths more rapidly.
 
 More effort will also be put into the motion planning system, which currently has no concept of curves and thus forces a full deceleration to 0 at each joint in the path.
 
 Lastly, it will be necessary to make the gcode parser properly handle transmission errors.
+
+See the issues section for more info.
