@@ -11,6 +11,7 @@
 
 #include "drivers/iopin.h" //for IoPin
 #include "drivers/rpi/rpi.h" //for initIO
+#include "drivers/rpi/mitpi.h"
 #include "bcm2835.h" //for bcm2835_*
 
 namespace drv {
@@ -20,7 +21,8 @@ template <GpioPinIdType PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpD
     //InitRpiType _initRpi;
     public:
         RpiIoPin() {
-            initIO();
+            //initIO();
+            mitpi::init();
             static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit; //register deactivation of IO pin upon exit.
         }
         GpioPinIdType id() const {
@@ -30,23 +32,27 @@ template <GpioPinIdType PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpD
             return false;
         }
         void makeDigitalOutput(IoLevel lev) {
-            bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_OUTP); //configure this pin as output
-            bcm2835_gpio_set_pud(PinIdx, PullUpDown);
+            //bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_OUTP); //configure this pin as output
+            //bcm2835_gpio_set_pud(PinIdx, PullUpDown); //wtf? wrong place for a pull down...
+            mitpi::makeOutput(PinIdx);
             digitalWrite(lev);
         }
         void makeDigitalInput() {
-            bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_INPT); //configure this pin as input
+            //bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_INPT); //configure this pin as input
+            mitpi::makeInput(PinIdx);
+            //TODO: add pullup/down support
         }
         IoLevel digitalRead() const {
-            return bcm2835_gpio_lev(PinIdx) == HIGH ? IoHigh : IoLow;
+            //return bcm2835_gpio_lev(PinIdx) == HIGH ? IoHigh : IoLow;
+            return mitpi::readPinState(PinIdx) ? IoHigh : IoLow;
         }
         void digitalWrite(IoLevel lev) {
-            bcm2835_gpio_write(PinIdx, lev == IoHigh ? HIGH : LOW);
+            //bcm2835_gpio_write(PinIdx, lev == IoHigh ? HIGH : LOW);
+            mitpi::setPinState(PinIdx, lev == IoHigh ? 1 : 0);
         }
 
 };
 
-//template <uint8_t PinIdx, IoLevel Default, bcm2835PUDControl PullUpDown> IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> RpiIoPin<PinIdx, Default, PullUpDown>::_onExit;
 
 }
 }
