@@ -436,13 +436,10 @@ class DmaScheduler {
     int dmaCh;
     int memfd, pagemapfd;
     static DmaChannelHeader *dmaHeader; //must be static for cleanup() function
-    volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
-    //void *virtSrcClrPageCached, *virtSrcClrPage;
+    volatile uint32_t *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
     DmaMem srcClrMem;
     DmaMem srcMem;
     DmaMem cbMem;
-    //void *virtSrcPageCached, *virtSrcPage;
-    //void *virtCbPageCached, *virtCbPage;
     GpioBufferFrame *srcArray;
     GpioBufferFrame *srcClrArray;
     DmaControlBlock *cbArr;

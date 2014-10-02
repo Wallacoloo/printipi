@@ -132,7 +132,7 @@ void DmaScheduler::makeMaps() {
     }
     pagemapfd = open("/proc/self/pagemap", O_RDONLY);
     //now map /dev/mem into memory, but only map specific peripheral sections:
-    gpioBaseMem = mapPeripheral(GPIO_BASE);
+    //gpioBaseMem = mapPeripheral(GPIO_BASE);
     dmaBaseMem = mapPeripheral(DMA_BASE);
     pwmBaseMem = mapPeripheral(PWM_BASE);
     timerBaseMem = mapPeripheral(TIMER_BASE);
