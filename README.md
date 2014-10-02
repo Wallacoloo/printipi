@@ -3,7 +3,7 @@ Printipi
 
 Printipi is a software package designed to bring 3d printing to the Raspberry Pi. It takes on all of the roles generally given to dedicated microcontrollers (interfacing with stepper drivers, temperature control of the hotend, and cooling fans) while also running under an operating system. This means that the same device that is running the firmware can also perform other tasks while printing, such as hosting a web interface like Octoprint.
 
-Although called Printipi, it is capable of running on other boards than the Raspberry Pi provided that the compiler supports C++11. One need only reproduce the functionality of the 25 lines contained in src/drivers/rpi/rpiiopin.h (which explains how to read or write an IO pin) for their device.
+Although called Printipi, it is not necessarily limited to running on the Pi. The `Example` machine can compile and run on most Linux machines, as a proof of concept (it does no electrical I/O), and new machines can be supported by implementing a handful of interfaces (see the section below for more info).
 
 Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/drivers/machines that exposes its coordinate system and peripherals through a handful of public member functions and typedefs. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
 
@@ -41,7 +41,7 @@ To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machi
 Usage
 ========
 
-The firmware can either be called with no arguments, in which case it will take gcode commands from the standard input (useful for testing & debugging). Or, you can provide the path to a gcode file (note that gcode parsing is currently limited. Comments aren't understood, for example). The provided file can be **any** file-like object, including device-files. This allows one to pass eg /dev/ttyAMA0 to take commands from the serial port.
+The firmware can either be called with no arguments, in which case it will take gcode commands from the standard input (useful for testing & debugging). Or, you can provide the path to a gcode file. The provided file can be **any** file-like object, including device-files. This allows one to pass eg `/dev/ttyAMA0` to take commands from the serial port.
 
 Using with Octoprint:
 --------
@@ -49,6 +49,16 @@ Using with Octoprint:
 **Prereqs**: install the program "socat". Eg `sudo apt-get install socat`
 
 Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does in the firmware device. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. 
+
+Supporting Other Architectures
+========
+
+While Printipi is under heavy development, this process may change slightly, but these are the basic steps to supporting new hardware:  
+1. Implement drivers/IoPin. An example implementation is drivers/rpi/RpiIoPin  
+2. Implement the HardwareScheduler interface found in schedulerbase.h and update common/typesettings/schedinterfacehardwarescheduler.h to use your implementation  
+3. Make a new class for your machine in drivers/machines  
+
+Congratulations, you're now running Printipi!
 
 The Future
 ========
