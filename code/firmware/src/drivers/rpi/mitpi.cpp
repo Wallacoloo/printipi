@@ -105,7 +105,7 @@ void setPinState(int pin, bool state) {
     state ? setPinHigh(pin) : setPinLow(pin);
 }
 bool readPinState(int pin) {
-    volatile uint32_t* gpLevAddr = (volatile uint32_t*)(gpioBaseMem + GPLEV0/4 + (pin%32));
+    volatile uint32_t* gpLevAddr = (volatile uint32_t*)(gpioBaseMem + GPLEV0/4 + (pin/32));
     uint32_t value = *gpLevAddr;
     return (value & (1 << (pin & 31))) ? 1 : 0;
 }
