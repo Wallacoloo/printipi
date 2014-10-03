@@ -19,6 +19,9 @@
 #define GPCLR1    0x0000002C
 //GPCLR acts the same way as GPSET, but clears the pin instead.
 #define GPLEV0    0x00000034 //GPIO Pin Level. There are 2 of these (32 bits each)
+#define GPPUD     0x00000094 //GPIO Pull-up/down register. Write 1 for pd, 2 for pu, and then write the PUDCLK
+#define GPPUDCLK0 0x00000098 //GPIO Pull-up/down clock. Have to send a clock signal to the pull-up/down resistors to activate them.
+#define GPPUDCLK1 0x000000a0 //second register for GPPUDCLK (first is for pins 0-31, 2nd for the rest)
 
 
 #include <sys/mman.h> //for mmap
@@ -108,6 +111,17 @@ bool readPinState(int pin) {
     volatile uint32_t* gpLevAddr = (volatile uint32_t*)(gpioBaseMem + GPLEV0/4 + (pin/32));
     uint32_t value = *gpLevAddr;
     return (value & (1 << (pin & 31))) ? 1 : 0;
+}
+
+void setPinPull(int pin, GpioPull pull) {
+    volatile uint32_t *pudAddr = (volatile uint32_t*)(gpioBaseMem + GPPUD/4);
+    volatile uint32_t *pudClkAddr = (volatile uint32_t*)(gpioBaseMem + GPPUDCLK0/4 + pin/32);
+    *pudAddr = pull;
+    //delayUs(10);
+    *pudClkAddr = 1 << (pin & 31);
+    //delayUs(10);
+    *pudAddr = GPIOPULL_NONE;
+    *pudClkAddr = 0;
 }
 
 }

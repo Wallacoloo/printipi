@@ -59,6 +59,13 @@ enum GpioPin {
     V2_GPIO_P5_06  = 31,
 };
 
+enum GpioPull {
+    //Internal pull-up / down resistors
+    GPIOPULL_NONE = 0,
+    GPIOPULL_DOWN = 1,
+    GPIOPULL_UP   = 2,
+};
+
 volatile uint32_t* mapPeripheral(int memfd, int addr);
 
 void init();
@@ -69,6 +76,7 @@ void setPinHigh(int pin);
 void setPinLow(int pin);
 void setPinState(int pin, bool state);
 bool readPinState(int pin);
+void setPinPull(int pin, GpioPull pull);
 
 }
 

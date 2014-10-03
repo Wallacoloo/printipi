@@ -58,6 +58,7 @@
 //70mm/sec uses 50-55% cpu at quarter-stepping, but results in missed steps (Aug 17)
 //30mm/sec uses 55-60% cpu at quarter-stepping (Sept 25, temp=20C)
 //idle uses 8% cpu (Sept 25, temp=20C)
+//30mm/sec uses 60% cpu at quarter-steppeing (Oct 2, temp=20C, thermistor broken)
 #define MAX_MOVE_RATE 30
 //#define MAX_MOVE_RATE 45
 //#define MAX_MOVE_RATE 60
