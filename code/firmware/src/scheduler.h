@@ -24,8 +24,11 @@
 #include "common/logging.h"
 #include "common/intervaltimer.h"
 #include "common/suresleep.h"
+#include "common/typesettings/compileflags.h"
 
-#include <pthread.h> //for pthread_setschedparam
+#if USE_PTHREADS
+    #include <pthread.h> //for pthread_setschedparam
+#endif
 #include "schedulerbase.h"
 
 struct NullSchedAdjuster {
@@ -145,11 +148,15 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {
-    struct sched_param sp; 
-    sp.sched_priority=SCHED_PRIORITY; 
-    if (int ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp)) {
-        LOGW("Warning: pthread_setschedparam (increase thread priority) at scheduler.cpp returned non-zero: %i\n", ret);
-    }
+    #if USE_PTHREADS
+        struct sched_param sp; 
+        sp.sched_priority=SCHED_PRIORITY; 
+        if (int ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp)) {
+            LOGW("Warning: pthread_setschedparam (increase thread priority) at scheduler.cpp returned non-zero: %i\n", ret);
+        } else {
+            LOG("Set pthread sched_priority\n");
+        }
+    #endif
 }
 
 template <typename Interface> EventClockT::time_point Scheduler<Interface>::lastSchedTime() const {

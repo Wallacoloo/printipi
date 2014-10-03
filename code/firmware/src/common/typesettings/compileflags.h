@@ -12,6 +12,7 @@
     #define TARGET_RPI //provide a user-usable macro
 #endif
 
+#define USE_PTHREADS DUSE_PTHREADS
 
 
 #endif

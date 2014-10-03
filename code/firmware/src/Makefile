@@ -6,12 +6,14 @@ CXX=g++
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
 #Check if we are compiling ON a raspberry pi. Ideally, we would check if the compilation target is a raspberry pi, but this is difficult.
 #If the target arch is raspberry pi, then we can use direct access to the system clock, rather than kernel calls (faster)
-#TARGET_RPI := $(shell expr `grep -o BCM2708 /proc/cpuinfo` == BCM2708)
-#ifeq "$(shell expr `grep -o buildd /proc/version`)" "buildd"
 ifeq "$(shell grep -o BCM2708 /proc/cpuinfo)" "BCM2708"
 	TARGET_RPI := 1
 else
 	TARGET_RPI := 0
+endif
+#Allow user to pass USE_PTHREAD=0 for a system that doesn't support pthreads (it's only used for upping the priority)
+ifneq "$(USE_PTHREAD)" "0"
+    USE_PTHREAD := 1
 endif
 LOGFLAGS=-DDNO_LOG_M105
 PROFFLAGS=
@@ -37,7 +39,7 @@ MACHINE_PATH=drivers/machines/$(LOWERMACHINE).h
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 #the bcm2835 library has some pedantic errors, so use f=-fpermissive
-CFLAGS=-std=c++0x -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS)  $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI)
+CFLAGS=-std=c++0x -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS)  $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI) -DDUSE_PTHREAD=$(USE_PTHREAD)
 MAINCFLAGS=#-fwhole-program
 #CFLAGS+= -fassociateive-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
 LD=ld
