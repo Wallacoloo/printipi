@@ -17,7 +17,8 @@
 namespace drv {
 namespace rpi {
 
-template <GpioPinIdType PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class RpiIoPin : public IoPin {
+//template <GpioPinIdType PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class RpiIoPin : public IoPin {
+template <GpioPinIdType PinIdx, IoLevel Default=IoLow, mitpi::GpioPull PullUpDown=mitpi::GPIOPULL_NONE> class RpiIoPin : public IoPin {
     //InitRpiType _initRpi;
     public:
         RpiIoPin() {
@@ -41,6 +42,7 @@ template <GpioPinIdType PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpD
             //bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_INPT); //configure this pin as input
             mitpi::makeInput(PinIdx);
             //TODO: add pullup/down support
+            mitpi::setPinPull(PinIdx, PullUpDown);
         }
         IoLevel digitalRead() const {
             //return bcm2835_gpio_lev(PinIdx) == HIGH ? IoHigh : IoLow;
