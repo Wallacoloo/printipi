@@ -67,7 +67,7 @@ void makeOutput(int pin);
 void makeInput(int pin);
 void setPinHigh(int pin);
 void setPinLow(int pin);
-void setPinState(int pin, int state);
+void setPinState(int pin, bool state);
 bool readPinState(int pin);
 
 }

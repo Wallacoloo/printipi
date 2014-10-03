@@ -91,17 +91,17 @@ void makeInput(int pin) {
 }
 void setPinHigh(int pin) {
     //first, select the appropriate register. The first register controls pins 0-31, the second pins 32-63.
-    volatile uint32_t *gpSetAddr = (volatile uint32_t*)(gpioBaseMem + GPSET0/4 + (pin%32));
+    volatile uint32_t *gpSetAddr = (volatile uint32_t*)(gpioBaseMem + GPSET0/4 + (pin/32));
     //now write a 1 ONLY to our pin. The act of writing a 1 to the address triggers it to be set high.
     *gpSetAddr = 1 << (pin & 31);
 }
 void setPinLow(int pin) {
     //first, select the appropriate register. The first register controls pins 0-31, the second pins 32-63.
-    volatile uint32_t *gpClrAddr = (volatile uint32_t*)(gpioBaseMem + GPCLR0/4 + (pin%32));
+    volatile uint32_t *gpClrAddr = (volatile uint32_t*)(gpioBaseMem + GPCLR0/4 + (pin/32));
     //now write a 1 ONLY to our pin. The act of writing a 1 to the address triggers it to be set high.
     *gpClrAddr = 1 << (pin & 31);
 }
-void setPinState(int pin, int state) {
+void setPinState(int pin, bool state) {
     state ? setPinHigh(pin) : setPinLow(pin);
 }
 bool readPinState(int pin) {
