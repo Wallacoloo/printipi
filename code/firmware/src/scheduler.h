@@ -26,7 +26,7 @@
 #include "common/suresleep.h"
 #include "common/typesettings/compileflags.h"
 
-#if USE_PTHREADS
+#if USE_PTHREAD
     #include <pthread.h> //for pthread_setschedparam
 #endif
 #include "schedulerbase.h"
@@ -148,7 +148,7 @@ template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {
-    #if USE_PTHREADS
+    #if USE_PTHREAD
         struct sched_param sp; 
         sp.sched_priority=SCHED_PRIORITY; 
         if (int ret = pthread_setschedparam(pthread_self(), SCHED_FIFO, &sp)) {
