@@ -16,6 +16,7 @@
 #include "schedulerbase.h"
 #include "common/logging.h"
 #include "common/typesettings/clocks.h"
+#include "common/typesettings/compileflags.h" //for RUNNING_IN_VM
 
 
 namespace drv {
@@ -333,7 +334,7 @@ void DmaScheduler::initDma() {
 int64_t DmaScheduler::syncDmaTime() {
     //returns the last time that a frame idx=0 occured.
     EventClockT::time_point _now = EventClockT::now();
-    if (_now > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally
+    if (_now > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally (every 32.768 ms). 32768 is just a friendly number of about the right magnitude.
         _lastDmaSyncedTime = _now;
         int srcIdx;
         EventClockT::time_point curTime1, curTime2;
@@ -343,7 +344,7 @@ int64_t DmaScheduler::syncDmaTime() {
             curTime1 = curTime2;
             srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
             curTime2 = EventClockT::now();
-        } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
+        } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > (RUNNING_IN_VM ? 250 : 1) || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability, or 50 uS if running in a VM (valgrind)
         //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
         int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
         int timeDiff = (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
