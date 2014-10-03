@@ -77,6 +77,7 @@ void setPinLow(int pin);
 void setPinState(int pin, bool state);
 bool readPinState(int pin);
 void setPinPull(int pin, GpioPull pull);
+void usleep(unsigned int us);
 
 }
 

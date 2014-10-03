@@ -118,12 +118,14 @@ void setPinPull(int pin, GpioPull pull) {
     volatile uint32_t *pudClkAddr = (volatile uint32_t*)(gpioBaseMem + GPPUDCLK0/4 + pin/32);
     *pudAddr = pull;
     usleep(10);
-    //delayUs(10);
     *pudClkAddr = 1 << (pin & 31);
     usleep(10);
-    //delayUs(10);
     *pudAddr = GPIOPULL_NONE;
     *pudClkAddr = 0;
+}
+
+void usleep(unsigned int us) {
+    ::usleep(us);
 }
 
 }

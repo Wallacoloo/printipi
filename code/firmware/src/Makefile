@@ -95,7 +95,7 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-%/drivers/rpi/rpi.a: %/drivers/rpi/bcm2835.o %/drivers/rpi/dmascheduler.o %/drivers/rpi/mitpi.o
+%/drivers/rpi/rpi.a: %/drivers/rpi/dmascheduler.o %/drivers/rpi/mitpi.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 %/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/rpi/rpi.a
