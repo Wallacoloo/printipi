@@ -12,7 +12,12 @@
     #define TARGET_RPI //provide a user-usable macro
 #endif
 
+//pthread isn't required, but can provide higher-elevated thread priority
 #define USE_PTHREAD DUSE_PTHREAD
+
+#ifdef DNO_DMA
+    #define NO_DMA
+#endif
 
 
 #endif
