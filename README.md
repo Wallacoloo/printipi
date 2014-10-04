@@ -50,7 +50,7 @@ Using with Octoprint:
 
 **Prereqs**: install the program "socat". Eg `sudo apt-get install socat`
 
-Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does in the firmware device. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. 
+Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does in the code/firmware folder. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. 
 
 Supporting Other Architectures
 ========
