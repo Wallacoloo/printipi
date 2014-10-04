@@ -27,21 +27,21 @@
 #include <sys/mman.h> //for mmap
 #include <sys/time.h> //for timespec
 #include <time.h> //for timespec / nanosleep / usleep (need -std=gnu99)
-#include <signal.h> //for sigaction
 #include <unistd.h> //for NULL
 //#include <stdio.h> //for printf
 #include <stdlib.h> //for exit
-#include <cassert>
+#include <cassert> //for assert
 #include <fcntl.h> //for file opening
-#include <errno.h> //for errno
-#include <pthread.h> //for pthread_setschedparam
-#include <chrono>
 #include "common/logging.h"
 
 
 namespace mitpi {
 
 volatile uint32_t *gpioBaseMem = NULL;
+
+void assertValidPin(int pin) {
+    assert(pin >= 0 && pin < 64);
+}
 
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
@@ -85,20 +85,24 @@ void init() {
 }
 
 void makeOutput(int pin) {
+    assertValidPin(pin);
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + pin/10);
     writeBitmasked(fselAddr, 0x7 << (3*(pin%10)), 0x1 << (3*(pin%10))); //0b111 is bitmask to select just our pin, 0b001 is mode to make pin an output
 }
 void makeInput(int pin) {
+    assertValidPin(pin);
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + pin/10);
     writeBitmasked(fselAddr, 0x7 << (3*(pin%10)), 0x0 << (3*(pin%10))); //0b111 is bitmask to select just our pin, 0b000 is mode to make pin an input
 }
 void setPinHigh(int pin) {
+    assertValidPin(pin);
     //first, select the appropriate register. The first register controls pins 0-31, the second pins 32-63.
     volatile uint32_t *gpSetAddr = (volatile uint32_t*)(gpioBaseMem + GPSET0/4 + (pin/32));
     //now write a 1 ONLY to our pin. The act of writing a 1 to the address triggers it to be set high.
     *gpSetAddr = 1 << (pin & 31);
 }
 void setPinLow(int pin) {
+    assertValidPin(pin);
     //first, select the appropriate register. The first register controls pins 0-31, the second pins 32-63.
     volatile uint32_t *gpClrAddr = (volatile uint32_t*)(gpioBaseMem + GPCLR0/4 + (pin/32));
     //now write a 1 ONLY to our pin. The act of writing a 1 to the address triggers it to be set high.
@@ -108,12 +112,14 @@ void setPinState(int pin, bool state) {
     state ? setPinHigh(pin) : setPinLow(pin);
 }
 bool readPinState(int pin) {
+    assertValidPin(pin);
     volatile uint32_t* gpLevAddr = (volatile uint32_t*)(gpioBaseMem + GPLEV0/4 + (pin/32));
     uint32_t value = *gpLevAddr;
     return (value & (1 << (pin & 31))) ? 1 : 0;
 }
 
 void setPinPull(int pin, GpioPull pull) {
+    assertValidPin(pin);
     volatile uint32_t *pudAddr = (volatile uint32_t*)(gpioBaseMem + GPPUD/4);
     volatile uint32_t *pudClkAddr = (volatile uint32_t*)(gpioBaseMem + GPPUDCLK0/4 + pin/32);
     *pudAddr = pull;
