@@ -3,6 +3,7 @@
 
 #include "outputevent.h"
 #include "mitpi.h"
+#include "common/typsettings/clocks.h"
 
 namespace rpi {
 
@@ -21,9 +22,8 @@ class DumbHardwareScheduler {
             //assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queuePwm!
             //TODO: implement
         }
-        template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
+        inline EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
             //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.
-            //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support the EventClockT::time_point defined in common/typesettings.h
             return evtTime;
         }
 };

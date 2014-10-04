@@ -425,6 +425,7 @@ void DmaScheduler::queuePwm(int pin, float ratio, float maxPeriod) {
     //                 ... cycle repeats
     //  PWM cycle length (resolution) can be set easily to any number which is a divisor of the buffer length.
     //  For simplicity, the original code will use a cycle length equal to the buffer length.
+    (void)maxPeriod; //unused
     float counter=0;
     for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
         counter += ratio;

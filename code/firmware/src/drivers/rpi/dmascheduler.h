@@ -104,7 +104,7 @@
 #include <chrono> //for std::chrono::microseconds
 //#include <tuple> //for multiple- return types
 
-//#include "common/typesettings.h" //for EventClockT
+#include "common/typesettings/clocks.h" //for EventClockT
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
 
 //config settings:
@@ -452,8 +452,8 @@ class DmaScheduler {
             //yes; this driver is capable of writing to output pins
             return true;
         }
-        template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
-            return EventClockT_time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
+        inline EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
+            return EventClockT::time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
         }
         inline void queue(const OutputEvent &evt) {
             queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
