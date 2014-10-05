@@ -17,7 +17,7 @@ License
 
 With the exception of certain files*, Printipi is licensed under the MIT license. This means that you are free to use, modify, distribute, and sublicense the code as you see fit. While you are not obligated to do so by the license, it would be appreciated that you share any improvements you make (eg make a public fork on github containing your modifications and then submit a pull request to have it merged with the master branch).
 
-*firmware/src/drivers/rpi/bcm2835.c and firmware/src/drivers/rpi/bcm2835.h are (c) Mike McCauley  
+*src/drivers/rpi/bcm2835.c and src/drivers/rpi/bcm2835.h are (c) Mike McCauley  
 *util/rotation_matrix.py is (c) Edward d'Auvergne and provided here only for convenience
 
 Limitations
@@ -40,7 +40,7 @@ gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get inst
 
 First, get the sources: `git clone https://github.com/Wallacoloo/printipi.git`  
 
-To compile Printipi, navigate to code/firmware/src and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi` or the `Example` machine, and `<target>` is either debug, release, profile, or minsize. Both are case-sensitive. A binary will be produced under code/firmware/build with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg `sudo ./printipi`).
+To compile Printipi, navigate to the src directory and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi` or the `Example` machine, and `<target>` is either debug, release, profile, or minsize. Both are case-sensitive. A binary will be produced under build with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg `sudo ./printipi`).
 
 Usage
 ========
@@ -52,7 +52,7 @@ Using with Octoprint:
 
 **Prereqs**: install the program "socat". Eg `sudo apt-get install socat`
 
-Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does in the code/firmware folder. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. 
+Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. 
 
 Supporting Other Architectures
 ========
