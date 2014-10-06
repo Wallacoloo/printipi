@@ -17,25 +17,12 @@
 #include "typesettings/clocks.h"
 #include "typesettings/schedinterfacehardwarescheduler.h"
 
-//allow for generation of code that still works in high-latency enviroments, like valgrind
-#ifdef DRUNNING_IN_VM
-    #define RUNNING_IN_VM 1
-#else
-    #define RUNNING_IN_VM 0
-#endif
-
+#include "typesettings/compileflags.h"
 #ifndef PRId64
     #define PRId64 "lld"
 #endif
 
 #include "typesettings/primitives.h"
 #include "typesettings/enums.h"
-
-template <typename T> StepDirection stepDirFromSign(T dir) {
-    return dir < 0 ? StepBackward : StepForward;
-}
-template <typename T> T stepDirToSigned(StepDirection dir) {
-    return dir == StepBackward ? -1 : 1;
-}
 
 #endif

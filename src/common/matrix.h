@@ -37,11 +37,6 @@ template <int A00_, int A01_, int A02_,
     static constexpr float A22() { return float(A22_) / Denom; }
     public:
         static constexpr std::tuple<float, float, float> transform(const std::tuple<float, float, float> &xyz) {
-            //float x, y, z;
-            //std::tie(x, y, z) = xyz;
-            /*return std::tuple<float, float, float>(A00()*x + A01()*y + A02()*z,
-                                      A10()*x + A11()*y + A12()*z,
-                                      A20()*x + A21()*y + A22()*z);*/
               return std::tuple<float, float, float>(
                   A00()*std::get<0>(xyz) + A01()*std::get<1>(xyz) + A02()*std::get<2>(xyz),
                   A10()*std::get<0>(xyz) + A11()*std::get<1>(xyz) + A12()*std::get<2>(xyz),
@@ -50,12 +45,6 @@ template <int A00_, int A01_, int A02_,
 };
 
 typedef Matrix3Static<1, 0, 0,   0, 1, 0,   0, 0, 1> Identity3Static;
-
-
-/*struct Matrix3 {
-    std::array<std::array<float, 3>, 3> coeffs; //index as [row][col]
-    
-};*/
 
 }
 #endif

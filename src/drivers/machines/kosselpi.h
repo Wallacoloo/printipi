@@ -12,7 +12,6 @@
 #include "drivers/lineardeltastepper.h"
 #include "drivers/rpi/rpiiopin.h"
 #include "drivers/a4988.h"
-//#include "drivers/rpi/sn754410.h"
 #include "drivers/linearcoordmap.h"
 #include "drivers/lineardeltacoordmap.h"
 //#include "drivers/enabledisabledriver.h"
@@ -22,6 +21,8 @@
 //#include "drivers/rpi/onepiniodriver.h"
 #include "drivers/tempcontrol.h"
 #include "drivers/fan.h"
+//#include "drivers/rpi/bcm2835.h" //for pin numberings
+#include "drivers/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
@@ -54,6 +55,9 @@
 //75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
 //90mm/sec uses 75% cpu at quarter-stepping (optimized - Aug 10)
 //70mm/sec uses 50-55% cpu at quarter-stepping, but results in missed steps (Aug 17)
+//30mm/sec uses 55-60% cpu at quarter-stepping (Sept 25, temp=20C)
+//idle uses 8% cpu (Sept 25, temp=20C)
+//30mm/sec uses 60% cpu at quarter-steppeing (Oct 2, temp=20C, thermistor broken)
 #define MAX_MOVE_RATE 30
 //#define MAX_MOVE_RATE 45
 //#define MAX_MOVE_RATE 60
@@ -130,21 +134,13 @@ namespace drv {
 
 class KosselPi : public Machine {
     private:
-        //typedef rpi::OnePinEnabler<RPI_V2_GPIO_P1_16, 0> _StepperEn; //enable pin is LOW for on, HIGH for off
-        //typedef EnableDisableDriver<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_16, IoHigh> > > _StepperEn;
-        typedef InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_16, IoHigh> > _StepperEn;
-        //typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_18, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopA; //endstop is triggered on HIGH
-        //typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_24, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopB;
-        //typedef rpi::LeverEndstop<RPI_V2_GPIO_P1_26, LOW, BCM2835_GPIO_PUD_DOWN> _EndstopC;
-        typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_18, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopA; //endstop is triggered on HIGH
-        typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P5_03, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopB;
-        typedef Endstop<InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_15, IoLow, BCM2835_GPIO_PUD_DOWN> > > _EndstopC;
-        //typedef rpi::RCThermistor<RPI_V2_GPIO_P1_07, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-        typedef RCThermistor<rpi::RpiIoPin<RPI_V2_GPIO_P1_13>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-        //typedef Fan<rpi::OnePinIODriver<RPI_V2_GPIO_P1_08, 1> > _Fan;
-        typedef Fan<rpi::RpiIoPin<RPI_V2_GPIO_P1_08, IoLow> > _Fan;
-        //typedef rpi::OnePinIODriver<RPI_V2_GPIO_P1_10, 0> _HotendOut;
-        typedef InvertedPin<rpi::RpiIoPin<RPI_V2_GPIO_P1_10, IoHigh> > _HotendOut;
+        typedef InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_16, IoHigh> > _StepperEn;
+        typedef Endstop<InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_18, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA; //endstop is triggered on HIGH
+        typedef Endstop<InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P5_03, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
+        typedef Endstop<InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_15, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
+        typedef RCThermistor<rpi::RpiIoPin<mitpi::V2_GPIO_P1_13>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
+        typedef Fan<rpi::RpiIoPin<mitpi::V2_GPIO_P1_08, IoLow> > _Fan;
+        typedef InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_10, IoHigh> > _HotendOut;
         //typedef matr::Identity3Static _BedLevelT;
         /*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
 1836, 999999586, 909083, 
@@ -177,14 +173,10 @@ class KosselPi : public Machine {
         typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
-            //rpi::A4988<RPI_V2_GPIO_P1_22, RPI_V2_GPIO_P1_23, _StepperEn>, //A tower
-            //rpi::A4988<RPI_V2_GPIO_P1_19, RPI_V2_GPIO_P1_21, _StepperEn>, //B tower
-            //rpi::A4988<RPI_V2_GPIO_P1_13, RPI_V2_GPIO_P1_15, _StepperEn>, //C tower
-            //rpi::A4988<RPI_V2_GPIO_P1_03, RPI_V2_GPIO_P1_05, _StepperEn>, //E coord
-            A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_22>, rpi::RpiIoPin<RPI_V2_GPIO_P1_23>, _StepperEn>,
-            A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_19>, rpi::RpiIoPin<RPI_V2_GPIO_P1_21>, _StepperEn>,
-            A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_24>, rpi::RpiIoPin<RPI_V2_GPIO_P1_26>, _StepperEn>,
-            A4988<rpi::RpiIoPin<RPI_V2_GPIO_P1_03>, rpi::RpiIoPin<RPI_V2_GPIO_P1_05>, _StepperEn>,
+            A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_22>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_23>, _StepperEn>, //A tower
+            A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_19>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_21>, _StepperEn>, //B tower
+            A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_24>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
+            A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_03>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
             _Fan,
             //12000, 3000, 1000 gives osc of ~3 min (20C-80C). Converges.
             //20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.
@@ -193,7 +185,6 @@ class KosselPi : public Machine {
             TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000, 1000000>, LowPassFilter<3000> >
             //_EndstopA, _EndstopB, _EndstopC
             > IODriverTypes;
-        //std::tuple<_EndstopA, _EndstopB, _EndstopC> _endstops;
         inline float defaultMoveRate() const { //in mm/sec
             return MAX_MOVE_RATE;
         }
@@ -207,7 +198,8 @@ class KosselPi : public Machine {
         inline float clampMoveRate(float inp) const {
             return std::min(inp, defaultMoveRate());//ensure we never move too fast.
         }
-        inline float clampHomeRate(float /*inp*/) const {
+        inline float clampHomeRate(float inp) const {
+            (void)inp; //unused argument
             return HOME_RATE;
         }
         inline bool doHomeBeforeFirstMovement() const {

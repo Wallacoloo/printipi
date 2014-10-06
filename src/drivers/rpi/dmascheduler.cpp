@@ -7,6 +7,7 @@
 #include <unistd.h> //for NULL
 //#include <stdio.h> //for printf
 #include <stdlib.h> //for exit
+#include <cassert>
 #include <fcntl.h> //for file opening
 #include <errno.h> //for errno
 #include <pthread.h> //for pthread_setschedparam
@@ -15,6 +16,7 @@
 #include "schedulerbase.h"
 #include "common/logging.h"
 #include "common/typesettings/clocks.h"
+#include "common/typesettings/compileflags.h" //for RUNNING_IN_VM
 
 
 namespace drv {
@@ -40,6 +42,10 @@ size_t ceilToPage(size_t size) {
         size += PAGE_SIZE - (size & (PAGE_SIZE-1));
     }
     return size;
+}
+
+uintptr_t physToUncached(uintptr_t phys) {
+    return phys | 0x40000000; //bus address of the ram is 0x40000000. With this binary-or, writes to the returned address will bypass the CPU (L1) cache, but not the L2 cache. 0xc0000000 should be the base address if L2 must also be bypassed. However, the DMA engine is aware of L2 cache - just not the L1 cache (source: http://en.wikibooks.org/wiki/Aros/Platforms/Arm_Raspberry_Pi_support#Framebuffer )
 }
 
 //allocate some memory and lock it so that its physical address will never change
@@ -71,8 +77,35 @@ void freeLockedMem(void* mem, size_t size) {
     munmap(mem, size);
 }
 
+DmaScheduler::DmaMem::DmaMem(const DmaScheduler &dmaSched, std::size_t numBytes) {
+    this->numPages = (numBytes+PAGE_SIZE-1) / PAGE_SIZE; //round up to nearest page so eg 4097 bytes is 2 pages.
+    this->virtL1 = makeLockedMem(numBytes);
+    this->virtL2Coherent = dmaSched.makeUncachedMemView(virtL1, numBytes);
+    this->pageMap = new uintptr_t[numPages];
+    for (unsigned int i=0; i<numPages; ++i) {
+        pageMap[i] = dmaSched.virtToPhys((char*)virtL1 + i*PAGE_SIZE);
+    }
+}
 
-DmaScheduler::DmaScheduler() {
+uintptr_t DmaScheduler::DmaMem::physAddrAtByteOffset(std::size_t bytes) const {
+    return pageMap[bytes/PAGE_SIZE] + bytes % PAGE_SIZE;
+}
+
+uintptr_t DmaScheduler::DmaMem::virtToPhys(void *virt) const {
+    if ((uintptr_t)virt - (uintptr_t)virtL1 < numPages*PAGE_SIZE) {
+        return physAddrAtByteOffset((uintptr_t)virt - (uintptr_t)virtL1);
+    } else if ((uintptr_t)virt - (uintptr_t)virtL2Coherent < numPages*PAGE_SIZE) {
+        return physAddrAtByteOffset((uintptr_t)virt - (uintptr_t)virtL2Coherent);
+    } else {
+        assert(false); //pointer is not owned by this object!
+        return 0;
+    }
+}
+
+
+DmaScheduler::DmaScheduler() 
+  : _lastTimeAtFrame0(0)
+  , _lastDmaSyncedTime(std::chrono::seconds(0)) {
     dmaCh = 5;
     SchedulerBase::registerExitHandler(&cleanup, SCHED_IO_EXIT_LEVEL);
     makeMaps();
@@ -100,7 +133,7 @@ void DmaScheduler::makeMaps() {
     }
     pagemapfd = open("/proc/self/pagemap", O_RDONLY);
     //now map /dev/mem into memory, but only map specific peripheral sections:
-    gpioBaseMem = mapPeripheral(GPIO_BASE);
+    //gpioBaseMem = mapPeripheral(GPIO_BASE);
     dmaBaseMem = mapPeripheral(DMA_BASE);
     pwmBaseMem = mapPeripheral(PWM_BASE);
     timerBaseMem = mapPeripheral(TIMER_BASE);
@@ -130,52 +163,66 @@ void DmaScheduler::initSrcAndControlBlocks() {
     //First, allocate memory for the source:
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
     size_t srcPageBytes = numSrcBlocks*sizeof(struct GpioBufferFrame);
-    virtSrcPageCached = makeLockedMem(srcPageBytes);
-    virtSrcPage = makeUncachedMemView(virtSrcPageCached, srcPageBytes);
-    LOGV("DmaScheduler::initSrcAndControlBlocks mappedPhysSrcPage: %08x\n", virtToPhys(virtSrcPage));
+    srcMem = DmaMem(*this, srcPageBytes);
+    //virtSrcPageCached = makeLockedMem(srcPageBytes);
+    //virtSrcPage = makeUncachedMemView(virtSrcPageCached, srcPageBytes);
+    //LOGV("DmaScheduler::initSrcAndControlBlocks mappedPhysSrcPage: %08x\n", virtToPhys(virtSrcPage));
     
     //cast virtSrcPage to a GpioBufferFrame array:
-    srcArray = (struct GpioBufferFrame*)virtSrcPage; //Note: calling virtToPhys on srcArray will return NULL. Use srcArrayCached for that.
-    srcArrayCached = (struct GpioBufferFrame*)virtSrcPageCached;
+    srcArray = (struct GpioBufferFrame*)srcMem.virtL2Coherent; //Note: calling virtToPhys on srcArray will return NULL. Use srcArrayCached for that.
+    //srcArrayCached = (struct GpioBufferFrame*)srcMem.virtL1;
     
     //allocate memory for the control blocks
     size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 3; //3 cbs for each source block
-    virtCbPageCached = makeLockedMem(cbPageBytes);
-    virtCbPage = makeUncachedMemView(virtCbPageCached, cbPageBytes);
+    //virtCbPageCached = makeLockedMem(cbPageBytes);
+    //virtCbPage = makeUncachedMemView(virtCbPageCached, cbPageBytes);
+    cbMem = DmaMem(*this, cbPageBytes);
     //fill the control blocks:
-    cbArrCached = (struct DmaControlBlock*)virtCbPageCached;
-    cbArr = (struct DmaControlBlock*)virtCbPage;
+    //cbArrCached = (struct DmaControlBlock*)virtCbPageCached;
+    //cbArr = (struct DmaControlBlock*)virtCbPage;
+    //cbArrCached = (struct DmaControlBlock*)cbMem.virtL1;
+    cbArr = (struct DmaControlBlock*)cbMem.virtL2Coherent;
     
     //Allocate memory for the default src outputs (used in PWM, defaults to zeros)
-    virtSrcClrPageCached = makeLockedMem(srcPageBytes);
-    virtSrcClrPage = makeUncachedMemView(virtSrcClrPageCached, srcPageBytes);
-    srcClrArray = (struct GpioBufferFrame*)virtSrcClrPage;
-    srcClrArrayCached = (struct GpioBufferFrame*)virtSrcClrPageCached;
+    srcClrMem = DmaMem(*this, srcPageBytes);
+    //virtSrcClrPageCached = makeLockedMem(srcPageBytes);
+    //virtSrcClrPage = makeUncachedMemView(virtSrcClrPageCached, srcPageBytes);
+    //srcClrArray = (struct GpioBufferFrame*)virtSrcClrPage;
+    //srcClrArrayCached = (struct GpioBufferFrame*)virtSrcClrPageCached;
+    srcClrArray = (struct GpioBufferFrame*)srcClrMem.virtL2Coherent;
+    //srcClrArrayCached = (struct GpioBufferFrame*)srcClrMem.virtL1;
     
     LOG("DmaScheduler::initSrcAndControlBlocks: #dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
     for (unsigned int i=0; i<numSrcBlocks*3; i += 3) {
         //pace DMA through PWM
         cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3); //The data written doesn't matter, but using the GPIO source will hopefully bring it into L2 for more deterministic timing of the next control block.
+        //cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3); //The data written doesn't matter, but using the GPIO source will hopefully bring it into L2 for more deterministic timing of the next control block.
+        cbArr[i].SOURCE_AD = physToUncached(srcMem.physAddrAtByteOffset(i/3*sizeof(GpioBufferFrame)));
         cbArr[i].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
         cbArr[i].STRIDE = i/3;
-        cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1); //have to use the cached version because the uncached version isn't listed in pagemap(?)
+        //cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1); //have to use the cached version because the uncached version isn't listed in pagemap(?)
+        cbArr[i].NEXTCONBK = physToUncached(cbMem.physAddrAtByteOffset((i+1)*sizeof(DmaControlBlock)));
         //copy buffer to GPIOs
         cbArr[i+1].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+1].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3);
+        //cbArr[i+1].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3);
+        cbArr[i+1].SOURCE_AD = physToUncached(srcMem.physAddrAtByteOffset(i/3*sizeof(GpioBufferFrame)));
         cbArr[i+1].DEST_AD = GPIO_BASE_BUS + GPSET0;
         cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
         cbArr[i+1].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
-        cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2);
+        //cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2);
+        cbArr[i+1].NEXTCONBK = physToUncached(cbMem.physAddrAtByteOffset((i+2)*sizeof(DmaControlBlock)));
         //clear buffer (TODO: investigate using a 4-word copy ("burst") )
         cbArr[i+2].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        cbArr[i+2].SOURCE_AD = virtToUncachedPhys(srcClrArrayCached+i/3);
-        cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3);
+        //cbArr[i+2].SOURCE_AD = virtToUncachedPhys(srcClrArrayCached+i/3);
+        cbArr[i+2].SOURCE_AD = physToUncached(srcClrMem.physAddrAtByteOffset(i/3*sizeof(struct GpioBufferFrame)));
+        //cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3);
+        cbArr[i+2].DEST_AD = physToUncached(srcMem.physAddrAtByteOffset(i/3*sizeof(GpioBufferFrame)));
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+2].STRIDE = i/3; //might be better to use the NEXT index
         int nextIdx = i+3 < numSrcBlocks*3 ? i+3 : 0; //last block should loop back to the first block
-        cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArrCached + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+        //cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArrCached + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
+        cbArr[i+2].NEXTCONBK = physToUncached(cbMem.physAddrAtByteOffset(nextIdx*sizeof(DmaControlBlock)));
     }
 }
 
@@ -230,7 +277,8 @@ uintptr_t DmaScheduler::virtToPhys(void* virt) const {
     return mapped;
 }
 uintptr_t DmaScheduler::virtToUncachedPhys(void *virt) const {
-    return virtToPhys(virt) | 0x40000000; //bus address of the ram is 0x40000000. With this binary-or, writes to the returned address will bypass the CPU (L1) cache, but not the L2 cache. 0xc0000000 should be the base address if L2 must also be bypassed. However, the DMA engine is aware of L2 cache - just not the L1 cache (source: http://en.wikibooks.org/wiki/Aros/Platforms/Arm_Raspberry_Pi_support#Framebuffer )
+    return physToUncached(virtToPhys(virt));
+    //return virtToPhys(virt) | 0x40000000; //bus address of the ram is 0x40000000. With this binary-or, writes to the returned address will bypass the CPU (L1) cache, but not the L2 cache. 0xc0000000 should be the base address if L2 must also be bypassed. However, the DMA engine is aware of L2 cache - just not the L1 cache (source: http://en.wikibooks.org/wiki/Aros/Platforms/Arm_Raspberry_Pi_support#Framebuffer )
 }
 
 void DmaScheduler::initPwm() {
@@ -275,15 +323,46 @@ void DmaScheduler::initDma() {
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    uint32_t firstAddr = virtToUncachedPhys(cbArrCached);
+    //uint32_t firstAddr = virtToUncachedPhys(cbArrCached);
+    uint32_t firstAddr = physToUncached(cbMem.physAddrAtByteOffset(0));
     LOG("DmaScheduler::initDma: starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
     dmaHeader->CONBLK_AD = firstAddr; //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG; //high priority (max is 7)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
 }
 
-
-int64_t _lastTimeAtFrame0;
+int64_t DmaScheduler::syncDmaTime() {
+    //returns the last time that a frame idx=0 occured.
+    EventClockT::time_point _now = EventClockT::now();
+    if (_now > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally (every 32.768 ms). 32768 is just a friendly number of about the right magnitude.
+        _lastDmaSyncedTime = _now;
+        int srcIdx;
+        EventClockT::time_point curTime1, curTime2;
+        curTime2 = _now;
+        do {
+            //curTime1 = EventClockT::now();
+            curTime1 = curTime2;
+            srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
+            curTime2 = EventClockT::now();
+        } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > (RUNNING_IN_VM ? 250 : 1) || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability, or 50 uS if running in a VM (valgrind)
+        //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
+        int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
+        int timeDiff = (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
+        if (timeDiff > FRAME_TO_USEC(SOURCE_BUFFER_FRAMES)/2) { //wrap-around
+            timeDiff -= FRAME_TO_USEC(SOURCE_BUFFER_FRAMES);
+        }
+        LOGV("Timing diff: %i\n", timeDiff);
+        if (timeDiff > 20) {
+            LOGW("Warning: Dma timing is off by > 20 uS: %i us\n", timeDiff);
+        }
+        _lastTimeAtFrame0 = curTimeAtFrame0;
+        //if timing diff is positive, then then curTimeAtFrame0 > _lastTimeAtFrame0
+        //curTime2 - srcIdx2 > curTime1 - srcIdx1
+        //curTime2 - curTime2 > srcIdx2 - srcIdx1
+        //more uS have elapsed than frames; DMA cannot keep up
+    }
+    return _lastTimeAtFrame0;
+}
 void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
@@ -297,34 +376,32 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //Note: getting the curTime & srcIdx don't have to be done for every call to queue - it could be done eg just once per buffer.
     //  It should be calculated regularly though, to counter clock drift & PWM FIFO underflows
     //  It is done in this function only for simplicity
-    int srcIdx;
-    EventClockT::time_point curTime1, curTime2;
-    int tries=0;
-    do {
-        curTime1 = EventClockT::now();
-        srcIdx = dmaHeader->STRIDE; //the source index is stored in the otherwise-unused STRIDE register, for efficiency
-        curTime2 = EventClockT::now();
-        ++tries;
-    } while (std::chrono::duration_cast<std::chrono::microseconds>(curTime2-curTime1).count() > 1 || (srcIdx & DMA_CB_TXFR_YLENGTH_MASK)); //allow 1 uS variability.
-    //Uncomment the following lines and the above declaration of _lastTimeAtFrame0 to log jitter information:
-    int64_t curTimeAtFrame0 = std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count() - FRAME_TO_USEC(srcIdx);
-    LOGV("Timing diff: %lli\n", (curTimeAtFrame0-_lastTimeAtFrame0)%FRAME_TO_USEC(SOURCE_BUFFER_FRAMES));
-    _lastTimeAtFrame0 = curTimeAtFrame0;
-    //if timing diff is positive, then then curTimeAtFrame0 > _lastTimeAtFrame0
-    //curTime2 - srcIdx2 > curTime1 - srcIdx1
-    //curTime2 - curTime2 > srcIdx2 - srcIdx1
-    //more uS have elapsed than frames; DMA cannot keep up
+    /*int curIdx;
+    EventClockT::time_point curTime;
+    std::tie(curIdx, curTime) = syncDmaTime();*/
+    int64_t lastUsecAtFrame0 = syncDmaTime();
+    int usecFromFrame0 = micros - lastUsecAtFrame0;
+    if (usecFromFrame0 < 0) { //need this check to prevent newIdx from being negative.
+        LOGV("Warning: clearly missed a step (usecFromFrame0=%i)\n", usecFromFrame0);
+        //attempt to recover:
+        EventClockT::time_point realNow = EventClockT::now();
+        micros = std::chrono::duration_cast<std::chrono::microseconds>(realNow.time_since_epoch()).count();
+        micros += 10; //give ourselves a 10 uS buffer (still not good enough for if we get interrupted...)
+        usecFromFrame0 = micros - lastUsecAtFrame0;
+    }
+    int framesFrom0 = USEC_TO_FRAME(usecFromFrame0);
+    int newIdx = framesFrom0%SOURCE_BUFFER_FRAMES;
 
     //calculate the frame# at which to place the event:
-    int64_t usecFromNow = (int64_t)micros - (int64_t)std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count(); //need signed; could be in past
+    /*int64_t usecFromNow = (int64_t)micros - (int64_t)std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count(); //need signed; could be in past
      if (usecFromNow < 20) { //Not safe to schedule less than ~10uS into the future
         //LOGW("Warning: DmaScheduler behind schedule: %i (%llu) (tries: %i) (sleep %llu -> %llu (wanted %llu for %llu now is %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime, micros, curTime2.time_since_epoch().count());
-        LOGV("DmaScheduler behind schedule: %lli uSec (tries: %i) (event at %llu; got %llu)\n", usecFromNow, tries, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count()); //Note: have to use verbose logging, otherwise the log message will slow the app down and cause even more scheduling woes.
+        LOGV("DmaScheduler behind schedule: %lli uSec (event at %llu; got %llu)\n", usecFromNow, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count()); //Note: have to use verbose logging, otherwise the log message will slow the app down and cause even more scheduling woes.
         usecFromNow = 20;
-    }
-    int framesFromNow = USEC_TO_FRAME(usecFromNow);
+    }*/
+    /*int framesFromNow = USEC_TO_FRAME(usecFromNow);
    
-    int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;
+    int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;*/
     //Now queue the command:
     if (mode == 0) { //turn output off
         srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
@@ -333,7 +410,7 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     }
 }
 
-void DmaScheduler::queuePwm(int pin, float ratio) {
+void DmaScheduler::queuePwm(int pin, float ratio, float maxPeriod) {
     //PWM is achieved through changing the values that each source frame is reset to.
     //the way to choose which frames are '1' and which are '0' is like so:
     //  Keep a counter, which is set to 0.
@@ -348,7 +425,8 @@ void DmaScheduler::queuePwm(int pin, float ratio) {
     //                 ... cycle repeats
     //  PWM cycle length (resolution) can be set easily to any number which is a divisor of the buffer length.
     //  For simplicity, the original code will use a cycle length equal to the buffer length.
-    float counter;
+    (void)maxPeriod; //unused
+    float counter=0;
     for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
         counter += ratio;
         if (counter >= 1.f) {

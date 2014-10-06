@@ -107,7 +107,7 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
             error = _filter.feed(error);
             float pwm = _pid.feed(error);
             LOG("tempcontrol: pwm=%f\n", pwm);
-            sched.schedPwm(DeviceIdx, PwmInfo(pwm, 0.1));
+            sched.schedPwm(DeviceIdx, pwm, heaterPwmPeriod());
         }
 };
 

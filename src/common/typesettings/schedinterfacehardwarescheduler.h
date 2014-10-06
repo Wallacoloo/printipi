@@ -1,13 +1,19 @@
 #ifndef COMMON_TYPESETTINGS_SCHEDINTERFACEHARDWARESCHEDULER_H
 #define COMMON_TYPESETTINGS_SCHEDINTERFACEHARDWARESCHEDULER_H
 
-#if DTARGET_RPI == 1
-    #define TARGET_RPI //provide a user-usable macro
-    #include "drivers/rpi/dmascheduler.h"
-    typedef drv::rpi::DmaScheduler SchedInterfaceHardwareScheduler;
+#include "compileflags.h"
+
+#ifdef TARGET_RPI
+    #ifndef NO_DMA
+        #include "drivers/rpi/dmascheduler.h"
+        typedef drv::rpi::DmaScheduler SchedInterfaceHardwareScheduler;
+    #else
+        #include "drivers/rpi/dumbhardwarescheduler.h"
+        typedef drv::rpi::DumbHardwareScheduler SchedInterfaceHardwareScheduler;
+    #endif
 #else
     #include "schedulerbase.h"
-    typedef DefaultSchedulerInterface::HardwareScheduler SchedInterfaceHardwareScheduler;
+    typedef NullSchedulerInterface::HardwareScheduler SchedInterfaceHardwareScheduler;
 #endif
 
 #endif

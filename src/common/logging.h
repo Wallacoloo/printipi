@@ -87,13 +87,6 @@ inline void enableVerbose() {
     LOG("verbose logging enabled\n");
 }
 
-/*bool isInfoEnabled(); //primarily used for debugging
-bool isDebugEnabled();
-bool isVerboseEnabled();
-void disable();
-void enableVerbose();
-void enableDebug();*/
-
 #else
 
 inline bool isInfoEnabled() {

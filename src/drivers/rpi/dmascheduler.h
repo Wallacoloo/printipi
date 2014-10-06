@@ -102,8 +102,9 @@
 #include <stdint.h> //for uint32_t
 #include <string.h> //for size_t, memset
 #include <chrono> //for std::chrono::microseconds
+//#include <tuple> //for multiple- return types
 
-//#include "common/typesettings.h" //for EventClockT
+#include "common/typesettings/clocks.h" //for EventClockT
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
 
 //config settings:
@@ -421,16 +422,29 @@ struct GpioBufferFrame {
 
 
 class DmaScheduler {
+    struct DmaMem {
+        //Memory used in DMA must bypass the CPU L1 cache, so we keep a L1-cached view & an L2-cache-coherent view
+        void *virtL1;
+        void *virtL2Coherent;
+        std::size_t numPages;
+        uintptr_t *pageMap;
+        uintptr_t physAddrAtByteOffset(std::size_t bytes) const;
+        uintptr_t virtToPhys(void *virt) const;
+        inline DmaMem() {}
+        DmaMem(const DmaScheduler &sched, std::size_t numBytes);
+    };
     int dmaCh;
     int memfd, pagemapfd;
     static DmaChannelHeader *dmaHeader; //must be static for cleanup() function
-    volatile uint32_t *gpioBaseMem, *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
-    void *virtSrcClrPageCached, *virtSrcClrPage;
-    void *virtSrcPageCached, *virtSrcPage;
-    void *virtCbPageCached, *virtCbPage;
-    GpioBufferFrame *srcArrayCached, *srcArray;
-    GpioBufferFrame *srcClrArrayCached, *srcClrArray;
-    DmaControlBlock *cbArrCached, *cbArr;
+    volatile uint32_t *dmaBaseMem, *pwmBaseMem, *timerBaseMem, *clockBaseMem;
+    DmaMem srcClrMem;
+    DmaMem srcMem;
+    DmaMem cbMem;
+    GpioBufferFrame *srcArray;
+    GpioBufferFrame *srcClrArray;
+    DmaControlBlock *cbArr;
+    int64_t _lastTimeAtFrame0;
+    EventClockT::time_point _lastDmaSyncedTime;
     public:
         DmaScheduler();
         static void cleanup();
@@ -438,16 +452,13 @@ class DmaScheduler {
             //yes; this driver is capable of writing to output pins
             return true;
         }
-        template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
-            return EventClockT_time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
+        inline EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
+            return EventClockT::time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
         }
         inline void queue(const OutputEvent &evt) {
             queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
         }
-        inline bool canDoPwm(int pin) const {
-            return true; //Can handle pwm on any pin.
-        }
-        void queuePwm(int pin, float ratio);
+        void queuePwm(int pin, float ratio, float maxPeriod);
     private:
         void makeMaps();
         volatile uint32_t* mapPeripheral(int addr) const; //map a physical address into our virtual address space.
@@ -457,6 +468,7 @@ class DmaScheduler {
         uintptr_t virtToUncachedPhys(void *virt) const;
         void initPwm();
         void initDma();
+        int64_t syncDmaTime();
         void queue(int pin, int mode, uint64_t micros);
         /*inline uint64_t readSysTime() const {
             return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));

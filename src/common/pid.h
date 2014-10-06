@@ -10,7 +10,6 @@
  * Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
  */
 
-//#include "common/timeutil.h" //for timespec*
 #include "common/typesettings.h" //for EventClockT
 
 template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000000, int ITermMin1000000=-ITermMax1000000> class PID {
@@ -21,7 +20,6 @@ template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000
     static constexpr float IMin() { return ITermMin1000000 / 1000000. / (I1000000 / 1000000.); }
     float errorI;
     float lastError;
-    //struct timespec lastTime;
     EventClockT::time_point lastTime;
     public:
         PID() : errorI(0), lastError(0), lastTime() {}
@@ -35,12 +33,10 @@ template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000
         }
     private:
         float refreshTime() {
-            //struct timespec newTime = timespecNow();
             EventClockT::time_point newTime = EventClockT::now();
             if (lastTime == EventClockT::time_point()) { //no previous time.
                 lastTime = newTime;
             }
-            //float r = timespecToFloat(timespecSub(newTime, lastTime));
             float r = std::chrono::duration_cast<std::chrono::duration<float> >(newTime-lastTime).count();
             lastTime = newTime;
             return r;

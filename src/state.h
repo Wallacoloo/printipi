@@ -48,21 +48,15 @@ template <typename Drv> class State {
     struct SchedInterface {
         private:
             State<Drv>& _state;
+            SchedInterfaceHardwareScheduler _hardwareScheduler; //configured in typesettings.h
         public:
-            SchedInterfaceHardwareScheduler hardwareScheduler; //configured in typesettings.h
             //DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
             SchedInterface(State<Drv> &state) : _state(state) {}
-            void onEvent(const Event& evt) {
-                _state.handleEvent(evt);
-            }
             bool onIdleCpu(OnIdleCpuIntervalT interval) {
                 return _state.onIdleCpu(interval);
             }
             static constexpr std::size_t numIoDrivers() {
                 return std::tuple_size<typename Drv::IODriverTypes>::value;
-            }
-            bool isEventOutputSequenceable(const Event& evt) {
-                return drv::IODriver::isEventOutputSequenceable(_state.ioDrivers, evt);
             }
             struct __iterEventOutputSequence {
                 template <typename T, typename Func> void operator()(T &driver, const Event &evt, Func &f) {
@@ -75,9 +69,6 @@ template <typename Drv> class State {
             template <typename Func> void iterEventOutputSequence(const Event &evt, Func f) {
                 return tupleCallOnIndex(_state.ioDrivers, __iterEventOutputSequence(), evt.stepperId(), evt, f);
             }
-            bool canDoPwm(AxisIdType axis) {
-                return drv::IODriver::canDoPwm(_state.ioDrivers, axis);
-            }
             struct __iterPwmPins {
                 template <typename T, typename Func> void operator()(T &driver, float dutyCycle, Func &f) {
                     auto p = driver.getPwmPin();
@@ -86,6 +77,15 @@ template <typename Drv> class State {
             };
             template <typename Func> void iterPwmPins(AxisIdType axis, float dutyCycle, Func f) {
                 return tupleCallOnIndex(_state.ioDrivers, __iterPwmPins(), axis, dutyCycle, f);
+            }
+            inline void queue(const OutputEvent &evt) {
+                _hardwareScheduler.queue(evt);
+            }
+            inline void queuePwm(int pin, float duty, float maxPeriod) {
+                _hardwareScheduler.queuePwm(pin, duty, maxPeriod);
+            }
+            template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
+                return _hardwareScheduler.schedTime(evtTime);
             }
     };
     //The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:
@@ -149,7 +149,7 @@ template <typename Drv> class State {
         /* The host can set the current physical position to be a reference to an arbitrary point (like 0) */
         void setHostZeroPos(float x, float y, float z, float e);
         /* Processes the event immediately, eg stepping a stepper motor */
-        void handleEvent(const Event &evt);
+        //void handleEvent(const Event &evt);
         /* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
         bool onIdleCpu(OnIdleCpuIntervalT interval);
         void eventLoop();
@@ -307,7 +307,7 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
     //x = _destXPrimitive - _hostZeroX;
 }
 
-template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
+/*template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
     //handle an event from the scheduler.
     LOGV("State::handleEvent(time, idx, dir): %" PRId64 ", %i, %i\n", evt.time().time_since_epoch().count(), evt.stepperId(), evt.direction()==StepForward);
     if (evt.direction() == StepForward) {
@@ -315,7 +315,7 @@ template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
     } else {
         drv::IODriver::selectAndStepBackward(this->ioDrivers, evt.stepperId());
     }
-}
+}*/
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     /*if (!_isExecutingGCode && com.tendCom()) {
         _isExecutingGCode = true;
@@ -627,7 +627,7 @@ template <typename SchedT> struct State_setFanRate {
     State_setFanRate(SchedT &s, float rate) : sched(s), rate(rate) {}
     template <typename T> void operator()(std::size_t index, const T &f) {
         if (f.isFan()) {
-            sched.schedPwm(index, PwmInfo(rate, f.fanPwmPeriod()));
+            sched.schedPwm(index, rate, f.fanPwmPeriod());
         }
     }
 };

@@ -24,23 +24,8 @@
 
 namespace drv {
 
-/*template<typename T> struct IODriverInfo {
-    template<typename U, size_t (U::*)() const> struct SFINAE {};
-    template<typename U> static char Test(SFINAE<U, &U::deactivate>*);
-    template<typename U> static int Test(...);
-    static constexpr bool HasDeactivateMethod = sizeof(Test<T>(0)) == sizeof(char);
-};*/
-
 class IODriver {
     public:
-        //template <typename ThisT> IODriver(const ThisT * /* _this */) {
-            //TODO: only register an exit handler if ThisT::deactivate is non-empty
-            //can do this with C++ "SFINAE"
-            //if (IODriverInfo<ThisT>::HasDeactivateMethod) {
-                //Scheduler::registerExitHandler((void(*)())&ThisT::deactivate);
-            //}
-        //  SchedulerBase::registerExitHandler((void(*)())&ThisT::deactivate, SCHED_IO_EXIT_LEVEL);
-        //}
         inline IODriver() {}
         //for a (stepper) motor, advance +/- 1 step:
         inline bool isEventOutputSequenceable(const Event &) { return false; } //OVERRIDE THIS
@@ -58,6 +43,7 @@ class IODriver {
         inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
         inline float fanPwmPeriod() const { return 0.2; }
+        inline float heaterPwmPeriod() const { return 0.1; }
         inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
         inline bool isHeatedBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
         inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
@@ -137,7 +123,7 @@ template <typename TupleT> bool IODriver::canDoPwm(TupleT &drivers, AxisIdType a
 
 //IODriver::callIdleCpuHandlers helper functions:
 
-template <typename TupleT, std::size_t myIdxPlusOne, typename ...Args> struct IODriver__onIdleCpu {
+/*template <typename TupleT, std::size_t myIdxPlusOne, typename ...Args> struct IODriver__onIdleCpu {
     bool operator()(TupleT &drivers, Args... args) {
         bool prev = IODriver__onIdleCpu<TupleT, myIdxPlusOne-1, Args...>()(drivers, args...);
         bool cur = std::get<myIdxPlusOne-1>(drivers).onIdleCpu(args...); //EXPLICITLY CALCULATE THIS SEPARATELY TO PREVENT SHORT-CIRCUIT OPERATIONS
@@ -154,6 +140,14 @@ template <typename TupleT, typename ...Args> struct IODriver__onIdleCpu<TupleT, 
 
 template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
     return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value, Args...>()(drivers, args...);
+}*/
+struct IODriver__onIdleCpu {
+    template <typename T, typename ...Args> bool operator()(std::size_t /*index*/, T &driver, Args... args) {
+        return driver.onIdleCpu(args...);
+    }
+};
+template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
+    return tupleReduceLogicalOr(drivers, IODriver__onIdleCpu(), args...);
 }
 
 //IODriver::lockAllAxis helper functions:
