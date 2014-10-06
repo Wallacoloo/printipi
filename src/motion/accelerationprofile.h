@@ -18,12 +18,12 @@
 
 
 struct AccelerationProfile {
-	inline void begin(float /*moveDuration*/, float /*Vmax*/) {} //Optional, but almost surely needed.
-	//float transform(float inp, float moveDuration, float Vmax);
+    inline void begin(float /*moveDuration*/, float /*Vmax*/) {} //Optional, but almost surely needed.
+    //float transform(float inp, float moveDuration, float Vmax);
 };
 
 struct NoAcceleration : public AccelerationProfile {
-	float transform(float inp) { return inp; }
+    float transform(float inp) { return inp; }
 };
 
 

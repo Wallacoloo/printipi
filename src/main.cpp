@@ -123,46 +123,46 @@
 #include MACHINE_PATH
 
 void printUsage(char* cmd) {
-	//#ifndef NO_USAGE_INFO
-	LOGE("usage: %s [ttyFile] [--help] [--quiet] [--verbose]\n", cmd);
+    //#ifndef NO_USAGE_INFO
+    LOGE("usage: %s [ttyFile] [--help] [--quiet] [--verbose]\n", cmd);
     //std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
     //#endif
     //exit(1);
 }
 
 int main_(int argc, char** argv) {
-	char defaultSerialFile[] = "/dev/stdin";
-	char defaultOutFile[] = "/dev/null";
-	char* serialFileName; //file which Com reads from
-	char* outFile = defaultOutFile; //file which Com posts responses 
-	SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
-	if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
-    	logging::disable();
+    char defaultSerialFile[] = "/dev/stdin";
+    char defaultOutFile[] = "/dev/null";
+    char* serialFileName; //file which Com reads from
+    char* outFile = defaultOutFile; //file which Com posts responses 
+    SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
+    if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
+        logging::disable();
     }
     if (argparse::cmdOptionExists(argv, argv+argc, "--debug")) {
-    	logging::enableDebug();
+        logging::enableDebug();
     }
     if (argparse::cmdOptionExists(argv, argv+argc, "--verbose")) {
-    	logging::enableVerbose();
+        logging::enableVerbose();
     }
     if (argparse::cmdOptionExists(argv, argv+argc, "-h") || argparse::cmdOptionExists(argv, argv+argc, "--help")) {
-    	printUsage(argv[0]);
-    	return 0;
+        printUsage(argv[0]);
+        return 0;
     } 
     if (argc < 2 || argv[1][0] == '-') { //if no arguments, or if first argument (and therefore all args) is an option
         //printUsage(argv[0]);
         serialFileName = defaultSerialFile;
     } else {
-    	serialFileName = argv[1];
-    	if (argc >2 && argv[2][0] != '-') { //second argument is for the output file
-    	    outFile = argv[2];
-    	}
+        serialFileName = argv[1];
+        if (argc >2 && argv[2][0] != '-') { //second argument is for the output file
+            outFile = argv[2];
+        }
     }
     
     //prevent page-swaps to increase performace:
     int retval = mlockall(MCL_FUTURE|MCL_CURRENT);
     if (retval) {
-    	LOGW("Warning: mlockall (prevent memory swaps) in main.cpp::main() returned non-zero: %i\n", retval);
+        LOGW("Warning: mlockall (prevent memory swaps) in main.cpp::main() returned non-zero: %i\n", retval);
     }
     
     //Open the serial device:
@@ -172,23 +172,23 @@ int main_(int argc, char** argv) {
     //instantiate main driver:
     typedef drv::MACHINE MachineT;
     MachineT driver;
-	State<MachineT> state(driver, com);
-	
-	state.eventLoop();
+    State<MachineT> state(driver, com);
+    
+    state.eventLoop();
     return 0;
 }
 
 int main(int argc, char** argv) {
-	try { //wrap in a try/catch loop so we can safely clean up (disable IOs)
-		return main_(argc, argv);
-	} catch (const std::exception *e) {
-		LOGE("caught std::exception*: %s. ... Exiting\n", e->what());
-		return 1;
-	} catch (const std::exception &e) {
-		LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
-		return 1;
-	} catch (...) {
-		LOGE("caught unknown exception. Exiting\n");
-		return 1;
-	}
+    try { //wrap in a try/catch loop so we can safely clean up (disable IOs)
+        return main_(argc, argv);
+    } catch (const std::exception *e) {
+        LOGE("caught std::exception*: %s. ... Exiting\n", e->what());
+        return 1;
+    } catch (const std::exception &e) {
+        LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
+        return 1;
+    } catch (...) {
+        LOGE("caught unknown exception. Exiting\n");
+        return 1;
+    }
 }

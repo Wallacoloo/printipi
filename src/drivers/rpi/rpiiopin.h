@@ -17,32 +17,32 @@ namespace drv {
 namespace rpi {
 
 template <GpioPinIdType PinIdx, IoLevel Default=IoLow, bcm2835PUDControl PullUpDown=BCM2835_GPIO_PUD_OFF> class RpiIoPin : public IoPin {
-	//InitRpiType _initRpi;
-	public:
-		RpiIoPin() {
-			initIO();
-			static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit; //register deactivation of IO pin upon exit.
-		}
-		GpioPinIdType id() const {
-		    return PinIdx;
-		}
-		bool areWritesInverted() const {
-		    return false;
-		}
-		void makeDigitalOutput(IoLevel lev) {
-			bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_OUTP); //configure this pin as output
-			bcm2835_gpio_set_pud(PinIdx, PullUpDown);
-			digitalWrite(lev);
-		}
-		void makeDigitalInput() {
-			bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_INPT); //configure this pin as input
-		}
-		IoLevel digitalRead() const {
-			return bcm2835_gpio_lev(PinIdx) == HIGH ? IoHigh : IoLow;
-		}
-		void digitalWrite(IoLevel lev) {
-			bcm2835_gpio_write(PinIdx, lev == IoHigh ? HIGH : LOW);
-		}
+    //InitRpiType _initRpi;
+    public:
+        RpiIoPin() {
+            initIO();
+            static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit; //register deactivation of IO pin upon exit.
+        }
+        GpioPinIdType id() const {
+            return PinIdx;
+        }
+        bool areWritesInverted() const {
+            return false;
+        }
+        void makeDigitalOutput(IoLevel lev) {
+            bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_OUTP); //configure this pin as output
+            bcm2835_gpio_set_pud(PinIdx, PullUpDown);
+            digitalWrite(lev);
+        }
+        void makeDigitalInput() {
+            bcm2835_gpio_fsel(PinIdx, BCM2835_GPIO_FSEL_INPT); //configure this pin as input
+        }
+        IoLevel digitalRead() const {
+            return bcm2835_gpio_lev(PinIdx) == HIGH ? IoHigh : IoLow;
+        }
+        void digitalWrite(IoLevel lev) {
+            bcm2835_gpio_write(PinIdx, lev == IoHigh ? HIGH : LOW);
+        }
 
 };
 

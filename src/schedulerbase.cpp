@@ -22,30 +22,30 @@ void segfaultHandler(int /*signal*/, siginfo_t *si, void */*arg*/) {
 }
 
 void SchedulerBase::callExitHandlers() {
-	if (!isExiting) {
-		isExiting = true;
-		LOG("Exiting\n");
-		for (const std::vector<void(*)()>& level : exitHandlers) {
-			for (void(*handler)() : level) {
-				(*handler)();
-			}
-		}
-	}
+    if (!isExiting) {
+        isExiting = true;
+        LOG("Exiting\n");
+        for (const std::vector<void(*)()>& level : exitHandlers) {
+            for (void(*handler)() : level) {
+                (*handler)();
+            }
+        }
+    }
 }
 
 
 void SchedulerBase::configureExitHandlers() {
-	std::atexit((void(*)())&SchedulerBase::callExitHandlers);
-	//listen for ctrl+c, ctrl+z and segfaults. Then try to properly unmount any I/Os (crucial for disabling the heated nozzle)
-	struct sigaction sigIntHandler;
-	sigIntHandler.sa_handler = ctrlCOrZHandler;
-	sigemptyset(&sigIntHandler.sa_mask);
-	sigIntHandler.sa_flags = 0;
-	sigaction(SIGINT, &sigIntHandler, NULL); //register ctrl+c
-	sigaction(SIGTSTP, &sigIntHandler, NULL); //register ctrl+z
-	sigaction(SIGABRT, &sigIntHandler, NULL); //register SIGABRT, which is triggered for critical errors (eg glibc detects double-free)
-	
-	struct sigaction sa;
+    std::atexit((void(*)())&SchedulerBase::callExitHandlers);
+    //listen for ctrl+c, ctrl+z and segfaults. Then try to properly unmount any I/Os (crucial for disabling the heated nozzle)
+    struct sigaction sigIntHandler;
+    sigIntHandler.sa_handler = ctrlCOrZHandler;
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+    sigaction(SIGINT, &sigIntHandler, NULL); //register ctrl+c
+    sigaction(SIGTSTP, &sigIntHandler, NULL); //register ctrl+z
+    sigaction(SIGABRT, &sigIntHandler, NULL); //register SIGABRT, which is triggered for critical errors (eg glibc detects double-free)
+    
+    struct sigaction sa;
     //memset(&sa, 0, sizeof(sigaction));
     sigemptyset(&sa.sa_mask);
     sa.sa_sigaction = segfaultHandler;
@@ -54,9 +54,9 @@ void SchedulerBase::configureExitHandlers() {
 }
 
 void SchedulerBase::registerExitHandler(void (*handler)(), unsigned level) {
-	if (level > exitHandlers.size()) {
-		throw std::runtime_error("Tried to register an exit handler at too high of a level");
-	}
-	exitHandlers[level].push_back(handler);
+    if (level > exitHandlers.size()) {
+        throw std::runtime_error("Tried to register an exit handler at too high of a level");
+    }
+    exitHandlers[level].push_back(handler);
 }
 

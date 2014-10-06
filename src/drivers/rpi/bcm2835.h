@@ -327,13 +327,13 @@
 #define LOW  0x0
 
 /// Speed of the core clock core_clk
-#define BCM2835_CORE_CLK_HZ				250000000	///< 250 MHz
+#define BCM2835_CORE_CLK_HZ             250000000   ///< 250 MHz
 
 // Physical addresses for various peripheral register sets
 /// Base Physical Address of the BCM 2835 peripheral registers
 #define BCM2835_PERI_BASE               0x20000000
 /// Base Physical Address of the System Timer registers
-#define BCM2835_ST_BASE			(BCM2835_PERI_BASE + 0x3000)
+#define BCM2835_ST_BASE         (BCM2835_PERI_BASE + 0x3000)
 /// Base Physical Address of the Pads registers
 #define BCM2835_GPIO_PADS               (BCM2835_PERI_BASE + 0x100000)
 /// Base Physical Address of the Clock/timer registers
@@ -343,11 +343,11 @@
 /// Base Physical Address of the SPI0 registers
 #define BCM2835_SPI0_BASE               (BCM2835_PERI_BASE + 0x204000)
 /// Base Physical Address of the BSC0 registers
-#define BCM2835_BSC0_BASE 		(BCM2835_PERI_BASE + 0x205000)
+#define BCM2835_BSC0_BASE       (BCM2835_PERI_BASE + 0x205000)
 /// Base Physical Address of the PWM registers
 #define BCM2835_GPIO_PWM                (BCM2835_PERI_BASE + 0x20C000)
  /// Base Physical Address of the BSC1 registers
-#define BCM2835_BSC1_BASE		(BCM2835_PERI_BASE + 0x804000)
+#define BCM2835_BSC1_BASE       (BCM2835_PERI_BASE + 0x804000)
 
 
 /// Base of the ST (System Timer) registers.
@@ -626,38 +626,38 @@ typedef enum
 // Defines for I2C
 // GPIO register offsets from BCM2835_BSC*_BASE.
 // Offsets into the BSC Peripheral block in bytes per 3.1 BSC Register Map
-#define BCM2835_BSC_C 							0x0000 ///< BSC Master Control
-#define BCM2835_BSC_S 							0x0004 ///< BSC Master Status
-#define BCM2835_BSC_DLEN						0x0008 ///< BSC Master Data Length
-#define BCM2835_BSC_A 							0x000c ///< BSC Master Slave Address
-#define BCM2835_BSC_FIFO						0x0010 ///< BSC Master Data FIFO
-#define BCM2835_BSC_DIV							0x0014 ///< BSC Master Clock Divider
-#define BCM2835_BSC_DEL							0x0018 ///< BSC Master Data Delay
-#define BCM2835_BSC_CLKT						0x001c ///< BSC Master Clock Stretch Timeout
+#define BCM2835_BSC_C                           0x0000 ///< BSC Master Control
+#define BCM2835_BSC_S                           0x0004 ///< BSC Master Status
+#define BCM2835_BSC_DLEN                        0x0008 ///< BSC Master Data Length
+#define BCM2835_BSC_A                           0x000c ///< BSC Master Slave Address
+#define BCM2835_BSC_FIFO                        0x0010 ///< BSC Master Data FIFO
+#define BCM2835_BSC_DIV                         0x0014 ///< BSC Master Clock Divider
+#define BCM2835_BSC_DEL                         0x0018 ///< BSC Master Data Delay
+#define BCM2835_BSC_CLKT                        0x001c ///< BSC Master Clock Stretch Timeout
 
 // Register masks for BSC_C
-#define BCM2835_BSC_C_I2CEN 					0x00008000 ///< I2C Enable, 0 = disabled, 1 = enabled
-#define BCM2835_BSC_C_INTR 						0x00000400 ///< Interrupt on RX
-#define BCM2835_BSC_C_INTT 						0x00000200 ///< Interrupt on TX
-#define BCM2835_BSC_C_INTD 						0x00000100 ///< Interrupt on DONE
-#define BCM2835_BSC_C_ST 						0x00000080 ///< Start transfer, 1 = Start a new transfer
-#define BCM2835_BSC_C_CLEAR_1 					0x00000020 ///< Clear FIFO Clear
-#define BCM2835_BSC_C_CLEAR_2 					0x00000010 ///< Clear FIFO Clear
-#define BCM2835_BSC_C_READ 						0x00000001 ///<	Read transfer
+#define BCM2835_BSC_C_I2CEN                     0x00008000 ///< I2C Enable, 0 = disabled, 1 = enabled
+#define BCM2835_BSC_C_INTR                      0x00000400 ///< Interrupt on RX
+#define BCM2835_BSC_C_INTT                      0x00000200 ///< Interrupt on TX
+#define BCM2835_BSC_C_INTD                      0x00000100 ///< Interrupt on DONE
+#define BCM2835_BSC_C_ST                        0x00000080 ///< Start transfer, 1 = Start a new transfer
+#define BCM2835_BSC_C_CLEAR_1                   0x00000020 ///< Clear FIFO Clear
+#define BCM2835_BSC_C_CLEAR_2                   0x00000010 ///< Clear FIFO Clear
+#define BCM2835_BSC_C_READ                      0x00000001 ///< Read transfer
 
 // Register masks for BSC_S
-#define BCM2835_BSC_S_CLKT 						0x00000200 ///< Clock stretch timeout
-#define BCM2835_BSC_S_ERR 						0x00000100 ///< ACK error
-#define BCM2835_BSC_S_RXF 						0x00000080 ///< RXF FIFO full, 0 = FIFO is not full, 1 = FIFO is full
-#define BCM2835_BSC_S_TXE 						0x00000040 ///< TXE FIFO full, 0 = FIFO is not full, 1 = FIFO is full
-#define BCM2835_BSC_S_RXD 						0x00000020 ///< RXD FIFO contains data
-#define BCM2835_BSC_S_TXD 						0x00000010 ///< TXD FIFO can accept data
-#define BCM2835_BSC_S_RXR 						0x00000008 ///< RXR FIFO needs reading (full)
-#define BCM2835_BSC_S_TXW 						0x00000004 ///< TXW FIFO needs writing (full)
-#define BCM2835_BSC_S_DONE 						0x00000002 ///< Transfer DONE
-#define BCM2835_BSC_S_TA 						0x00000001 ///< Transfer Active
+#define BCM2835_BSC_S_CLKT                      0x00000200 ///< Clock stretch timeout
+#define BCM2835_BSC_S_ERR                       0x00000100 ///< ACK error
+#define BCM2835_BSC_S_RXF                       0x00000080 ///< RXF FIFO full, 0 = FIFO is not full, 1 = FIFO is full
+#define BCM2835_BSC_S_TXE                       0x00000040 ///< TXE FIFO full, 0 = FIFO is not full, 1 = FIFO is full
+#define BCM2835_BSC_S_RXD                       0x00000020 ///< RXD FIFO contains data
+#define BCM2835_BSC_S_TXD                       0x00000010 ///< TXD FIFO can accept data
+#define BCM2835_BSC_S_RXR                       0x00000008 ///< RXR FIFO needs reading (full)
+#define BCM2835_BSC_S_TXW                       0x00000004 ///< TXW FIFO needs writing (full)
+#define BCM2835_BSC_S_DONE                      0x00000002 ///< Transfer DONE
+#define BCM2835_BSC_S_TA                        0x00000001 ///< Transfer Active
 
-#define BCM2835_BSC_FIFO_SIZE   				16 ///< BSC FIFO size
+#define BCM2835_BSC_FIFO_SIZE                   16 ///< BSC FIFO size
 
 /// \brief bcm2835I2CClockDivider
 /// Specifies the divider used to generate the I2C clock from the system clock.
@@ -674,7 +674,7 @@ typedef enum
 /// Specifies the reason codes for the bcm2835_i2c_write and bcm2835_i2c_read functions.
 typedef enum
 {
-    BCM2835_I2C_REASON_OK   	     = 0x00,      ///< Success
+    BCM2835_I2C_REASON_OK            = 0x00,      ///< Success
     BCM2835_I2C_REASON_ERROR_NACK    = 0x01,      ///< Received a NACK
     BCM2835_I2C_REASON_ERROR_CLKT    = 0x02,      ///< Received Clock Stretch Timeout
     BCM2835_I2C_REASON_ERROR_DATA    = 0x04,      ///< Not all data is sent / received
@@ -690,9 +690,9 @@ typedef enum
 // BCM2835_ST_CHI is the System Timer Counter Upper bits register.
 // The system timer free-running counter upper register is a read-only register that returns the current value
 // of the upper 32-bits of the free running counter.
-#define BCM2835_ST_CS 							0x0000 ///< System Timer Control/Status
-#define BCM2835_ST_CLO 							0x0004 ///< System Timer Counter Lower 32 bits
-#define BCM2835_ST_CHI 							0x0008 ///< System Timer Counter Upper 32 bits
+#define BCM2835_ST_CS                           0x0000 ///< System Timer Control/Status
+#define BCM2835_ST_CLO                          0x0004 ///< System Timer Counter Lower 32 bits
+#define BCM2835_ST_CHI                          0x0008 ///< System Timer Counter Upper 32 bits
 
 /// @}
 
@@ -1174,14 +1174,14 @@ extern "C" {
     /// (as previously set by \sa bcm2835_i2c_setSlaveAddress)
     /// \param[in] buf Buffer of bytes to send.
     /// \param[in] len Number of bytes in the buf buffer, and the number of bytes to send.
-	/// \return reason see \ref bcm2835I2CReasonCodes
+    /// \return reason see \ref bcm2835I2CReasonCodes
     extern uint8_t bcm2835_i2c_write(const char * buf, uint32_t len);
 
     /// Transfers any number of bytes from the currently selected I2C slave.
     /// (as previously set by \sa bcm2835_i2c_setSlaveAddress)
     /// \param[in] buf Buffer of bytes to receive.
     /// \param[in] len Number of bytes in the buf buffer, and the number of bytes to received.
-	/// \return reason see \ref bcm2835I2CReasonCodes
+    /// \return reason see \ref bcm2835I2CReasonCodes
     extern uint8_t bcm2835_i2c_read(char* buf, uint32_t len);
 
     /// Allows reading from I2C slaves that require a repeated start (without any prior stop)
@@ -1196,7 +1196,7 @@ extern "C" {
     /// \param[in] regaddr Buffer containing the slave register you wish to read from.
     /// \param[in] buf Buffer of bytes to receive.
     /// \param[in] len Number of bytes in the buf buffer, and the number of bytes to received.
-	/// \return reason see \ref bcm2835I2CReasonCodes
+    /// \return reason see \ref bcm2835I2CReasonCodes
     extern uint8_t bcm2835_i2c_read_register_rs(char* regaddr, char* buf, uint32_t len);
 
     /// Allows sending an arbitrary number of bytes to I2C slaves before issuing a repeated
@@ -1207,7 +1207,7 @@ extern "C" {
     /// \param[in] cmds_len Number of bytes to send from cmds buffer
     /// \param[in] buf Buffer of bytes to receive.
     /// \param[in] buf_len Number of bytes to receive in the buf buffer.
-	/// \return reason see \ref bcm2835I2CReasonCodes
+    /// \return reason see \ref bcm2835I2CReasonCodes
     extern uint8_t bcm2835_i2c_write_read_rs(char* cmds, uint32_t cmds_len, char* buf, uint32_t buf_len);
 
     /// @}

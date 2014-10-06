@@ -53,7 +53,7 @@ uint8_t* makeLockedMem(size_t size) {
         MAP_ANONYMOUS | //no underlying file; initialize to 0
         MAP_NORESERVE | //don't reserve swap space
         MAP_LOCKED, //lock into *virtual* ram. Physical ram may still change!
-        -1,	// File descriptor
+        -1, // File descriptor
     0); //no offset into file (file doesn't exist).
     if (mem == MAP_FAILED) {
         LOGE("dmascheduler.cpp: makeLockedMem failed\n");
@@ -193,7 +193,7 @@ uint8_t* DmaScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
         MAP_ANONYMOUS | //no underlying file; initialize to 0
         MAP_NORESERVE | //don't reserve swap space
         MAP_LOCKED, //lock into *virtual* ram. Physical ram may still change!
-        -1,	// File descriptor
+        -1, // File descriptor
     0); //no offset into file (file doesn't exist).
     uint8_t *memBytes = (uint8_t*)mem;
     //now, free the virtual memory and immediately remap it to the physical addresses used in virtaddr

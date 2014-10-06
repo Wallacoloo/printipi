@@ -26,98 +26,98 @@ pretty = "\n".join("        %s" %f for f in funcs)
 namespace gparse {
 
 class Command {
-	public:
-	//std::string opcode;
-	uint32_t opcodeStr; //opcode still encoded as a 4-character string. MSB=first char, LSB=last char. String is right-adjusted (ie, the MSBs are 0 in the case that opcode isn't full 4 characters).
-	std::vector<std::string> pieces; //the command when split on spaces. Eg "G1 X2 Y3" -> ["G1", "X2", "Y3"]
-	public:
-		//initialize the command object from a line of GCode
-		inline Command() : opcodeStr(0) {}
-		Command(std::string const&);
-		inline bool empty() const {
-		    return opcodeStr == 0;
-		    //return opcode.empty();
-		}
-		std::string getOpcode() const;
-		std::string toGCode() const;
-		bool hasParam(char label) const;
-		
-		std::string getStrParam(char label, bool &hasParam) const;
-		inline std::string getStrParam(char label) const {
-		    bool _ignore;
+    public:
+    //std::string opcode;
+    uint32_t opcodeStr; //opcode still encoded as a 4-character string. MSB=first char, LSB=last char. String is right-adjusted (ie, the MSBs are 0 in the case that opcode isn't full 4 characters).
+    std::vector<std::string> pieces; //the command when split on spaces. Eg "G1 X2 Y3" -> ["G1", "X2", "Y3"]
+    public:
+        //initialize the command object from a line of GCode
+        inline Command() : opcodeStr(0) {}
+        Command(std::string const&);
+        inline bool empty() const {
+            return opcodeStr == 0;
+            //return opcode.empty();
+        }
+        std::string getOpcode() const;
+        std::string toGCode() const;
+        bool hasParam(char label) const;
+        
+        std::string getStrParam(char label, bool &hasParam) const;
+        inline std::string getStrParam(char label) const {
+            bool _ignore;
             return getStrParam(label, _ignore);
         }
         
-		float getFloatParam(char label, float def, bool &hasParam) const;
-		inline float getFloatParam(char label, float def=NAN) const {
-		    bool _ignore;
+        float getFloatParam(char label, float def, bool &hasParam) const;
+        inline float getFloatParam(char label, float def=NAN) const {
+            bool _ignore;
             return getFloatParam(label, def, _ignore);
-		}
-		inline float getFloatParam(char label, bool &hasParam) const {
-		    return getFloatParam(label, NAN, hasParam);
-		}
-		
-		inline float getX(float def=NAN) const {
-		    return getFloatParam('C', def);
-		}
-		inline float getX(bool &hasParam) const {
-		    return getFloatParam('X', hasParam);
-		}
-		inline float getY(float def=NAN) const {
-		    return getFloatParam('Y', def);
-		}
-		inline float getY(bool &hasParam) const {
-		    return getFloatParam('Y', hasParam);
-		}
-		inline float getZ(float def=NAN) const {
-		    return getFloatParam('Z', def);
-		}
-	    inline float getZ(bool &hasParam) const {
-		    return getFloatParam('Z', hasParam);
-		}
-		inline float getE(float def=NAN) const { //extrusion distance
-		    return getFloatParam('E', def);
-		}
-		inline float getE(bool &hasParam) const {
-		    return getFloatParam('E', hasParam);
-		}
-		inline float getF(float def=NAN) const { //extruder feed-rate.
-		    return getFloatParam('F', def);
-		}
-		inline float getF(bool &hasParam) const {
-		    return getFloatParam('F', hasParam);
-		}
-		inline float getS(float def=NAN) const { //PWM rate
-		    return getFloatParam('S', def);
-		}
-		inline float getS(bool &hasParam) const {
-		    return getFloatParam('S', hasParam);
-		}
-		inline bool hasX() const {
-		    return hasParam('X');
-		}
-		inline bool hasY() const {
-		    return hasParam('Y');
-		}
-		inline bool hasZ() const {
-		    return hasParam('Z');
-		}
-		inline bool hasE() const {
-		    return hasParam('E');
-		}
-		inline bool hasF() const {
-		    return hasParam('F');
-		}
-		inline bool hasS() const {
-		    return hasParam('S');
-		}
-		inline bool hasAnyXYZParam() const {
-		    return hasX() || hasY() || hasZ();
-		}
-		inline bool hasAnyXYZEParam() const {
-		    return hasAnyXYZParam() || hasE();
-		}
-		inline bool isG0() const { return isOpcode(0x4730u); }
+        }
+        inline float getFloatParam(char label, bool &hasParam) const {
+            return getFloatParam(label, NAN, hasParam);
+        }
+        
+        inline float getX(float def=NAN) const {
+            return getFloatParam('C', def);
+        }
+        inline float getX(bool &hasParam) const {
+            return getFloatParam('X', hasParam);
+        }
+        inline float getY(float def=NAN) const {
+            return getFloatParam('Y', def);
+        }
+        inline float getY(bool &hasParam) const {
+            return getFloatParam('Y', hasParam);
+        }
+        inline float getZ(float def=NAN) const {
+            return getFloatParam('Z', def);
+        }
+        inline float getZ(bool &hasParam) const {
+            return getFloatParam('Z', hasParam);
+        }
+        inline float getE(float def=NAN) const { //extrusion distance
+            return getFloatParam('E', def);
+        }
+        inline float getE(bool &hasParam) const {
+            return getFloatParam('E', hasParam);
+        }
+        inline float getF(float def=NAN) const { //extruder feed-rate.
+            return getFloatParam('F', def);
+        }
+        inline float getF(bool &hasParam) const {
+            return getFloatParam('F', hasParam);
+        }
+        inline float getS(float def=NAN) const { //PWM rate
+            return getFloatParam('S', def);
+        }
+        inline float getS(bool &hasParam) const {
+            return getFloatParam('S', hasParam);
+        }
+        inline bool hasX() const {
+            return hasParam('X');
+        }
+        inline bool hasY() const {
+            return hasParam('Y');
+        }
+        inline bool hasZ() const {
+            return hasParam('Z');
+        }
+        inline bool hasE() const {
+            return hasParam('E');
+        }
+        inline bool hasF() const {
+            return hasParam('F');
+        }
+        inline bool hasS() const {
+            return hasParam('S');
+        }
+        inline bool hasAnyXYZParam() const {
+            return hasX() || hasY() || hasZ();
+        }
+        inline bool hasAnyXYZEParam() const {
+            return hasAnyXYZParam() || hasE();
+        }
+        inline bool isG0() const { return isOpcode(0x4730u); }
         inline bool isG1() const { return isOpcode(0x4731u); }
         inline bool isG2() const { return isOpcode(0x4732u); }
         inline bool isG3() const { return isOpcode(0x4733u); }
@@ -265,15 +265,15 @@ class Command {
         inline bool isM906() const { return isOpcode(0x4d393036u); }
         inline bool isM998() const { return isOpcode(0x4d393938u); }
         inline bool isM999() const { return isOpcode(0x4d393939u); }
-		inline bool isTxxx() const { return isFirstChar('T'); }
-	private:
-		inline void addPiece(std::string const& piece) {
-		    this->pieces.push_back(piece);
-		}
-		inline bool isOpcode(uint32_t op) const {
-		    return opcodeStr == op;
-		}
-		bool isFirstChar(char c) const;
+        inline bool isTxxx() const { return isFirstChar('T'); }
+    private:
+        inline void addPiece(std::string const& piece) {
+            this->pieces.push_back(piece);
+        }
+        inline bool isOpcode(uint32_t op) const {
+            return opcodeStr == op;
+        }
+        bool isFirstChar(char c) const;
 };
 
 }

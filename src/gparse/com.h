@@ -23,27 +23,27 @@
 namespace gparse {
 
 class Com {
-	int _readFd;
-	int _writeFd;
-	std::string _pending;
-	Command _parsed;
-	public:
-		Com();
-		Com(const std::string &fileR);
-		Com(const std::string &fileR, const std::string &fileW);
-		//returns true if there is a command ready to be interpreted.
-		bool tendCom();
-		Command getCommand() const;
-		//void reply(const Command &response);
-		void reply(const std::string &resp);
-		void reply(const Response &resp);
-		inline bool hasReadFile() const {
-		    return _readFd != NO_HANDLE;
-		}
-	    inline bool hasWriteFile() const {
-	        return _writeFd != NO_HANDLE;
-	    }
-			
+    int _readFd;
+    int _writeFd;
+    std::string _pending;
+    Command _parsed;
+    public:
+        Com();
+        Com(const std::string &fileR);
+        Com(const std::string &fileR, const std::string &fileW);
+        //returns true if there is a command ready to be interpreted.
+        bool tendCom();
+        Command getCommand() const;
+        //void reply(const Command &response);
+        void reply(const std::string &resp);
+        void reply(const Response &resp);
+        inline bool hasReadFile() const {
+            return _readFd != NO_HANDLE;
+        }
+        inline bool hasWriteFile() const {
+            return _writeFd != NO_HANDLE;
+        }
+            
 };
 
 };
