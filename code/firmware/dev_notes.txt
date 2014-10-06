@@ -1,0 +1,4 @@
+State should be templated for a specific driver.
+  This will enable compile-time optimizations for arrays of known, fixed-length (eg number of axis).
+Furthermore, there may be machines for which there are multiple motor coordinates that map to any specific (X, Y, Z) pair.
+  Therefore, relativeTimeOfNextStep should take MOTOR coordinates, not (x, y, z).

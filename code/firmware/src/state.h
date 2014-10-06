@@ -439,13 +439,12 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         setHostZeroPos(actualX, actualY, actualZ, actualE);
         return gparse::Response::Ok;
     } else if (cmd.isM17()) { //enable all stepper motors
+        LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not tested\n");
         drv::IODriver::lockAllAxis(this->ioDrivers);
         return gparse::Response::Ok;
     } else if (cmd.isM18()) { //allow stepper motors to move 'freely'
+        LOGW("Warning (gparse/state.h): OP_M18 (disable stepper motors) not tested\n");
         drv::IODriver::unlockAllAxis(this->ioDrivers);
-        return gparse::Response::Ok;
-    } else if (cmd.isM20()) { //List SD card contents
-        LOGW("Warning (gparse/state.h): OP_M20 (list sd card contents) not implemented\n");
         return gparse::Response::Ok;
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
