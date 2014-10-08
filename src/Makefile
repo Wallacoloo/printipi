@@ -66,7 +66,7 @@ release: TARGET=release
 release: CFLAGS+= -O3 -ggdb3 -fomit-frame-pointer
 release: $(RELEASEDIR)/$(NAME)
 profile: TARGET=profile
-profile: CFLAGS+= -O3 -DDRUNNING_IN_VM -pg
+profile: CFLAGS+= -O3 -DDRUNNING_IN_VM -ggdb3 -fno-omit-frame-pointer #optimized debug mode with less time sensitivity. Can run under valgrind, etc
 profile: $(PROFILEDIR)/$(NAME)
 minsize: TARGET=minsize
 #defining NDEBUG removes assertions.
