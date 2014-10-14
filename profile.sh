@@ -25,7 +25,7 @@ sudo chown "$USER" $TMPDIR/perf.data
 #backup old archive
 sudo mv perf.data.tar.bz2 perf.data.tar.bz2.back
 #and re-archive it
-tar cjf perf.data.tar.bz2 -C $TMDIR .
+tar cjf perf.data.tar.bz2 -C $TMPDIR .
 
 #Done; return to original directory.
 popd
