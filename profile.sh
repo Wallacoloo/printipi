@@ -1,24 +1,30 @@
 #!/bin/sh
 #Run printipi for 5 minutes, gathering profile info. Any arguments will be relayed to printipi (eg the name of a file to print)
-timeout 5m sudo perf record ./build/printipi $@
+sudo timeout --signal=SIGINT 5m perf record ./build/printipi $@
+
+#Give ourselves ownership of perf.data, rather than root (from sudo)
+chown perf.data
 
 #create the profile dir, in case it doesn't already exist
 mkdir -p profile
 mv perf.data profile
 pushd profile
 
-#Now archive the profiling information:
-perf archive
+#archive the profiling information:
+#must be superuser, because data was inserted into ~/.debug by the perf command running as superuser.
+sudo perf archive
 
-#must unzip the archive:
-TMPDIR=`maketemp -d`
+#unzip the archive:
+TMPDIR=`mktemp -d`
 tar xvf perf.data.tar.bz2 -C $TMPDIR
 
-#Now insert the perf.data into the archive
+#insert perf.data into the archive
 cp perf.data $TMPDIR
 
+#backup old archive
+sudo mv perf.data.tar.bz2 perf.data.tar.bz2.back
 #and re-archive it
-tar cjf $TMDIR -C perf.data.tar.bz2
+tar cjf perf.data.tar.bz2 -C $TMDIR .
 
 #Done; return to original directory.
 popd
