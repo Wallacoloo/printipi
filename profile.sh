@@ -2,8 +2,6 @@
 #Run printipi for 5 minutes, gathering profile info. Any arguments will be relayed to printipi (eg the name of a file to print)
 sudo timeout --signal=SIGINT 5m perf record ./build/printipi $@
 
-#Give ourselves ownership of perf.data, rather than root (from sudo)
-sudo chown "$USER" perf.data
 
 #create the profile dir, in case it doesn't already exist
 mkdir -p profile
@@ -19,7 +17,10 @@ TMPDIR=`mktemp -d`
 tar xvf perf.data.tar.bz2 -C $TMPDIR
 
 #insert perf.data into the archive
-cp perf.data $TMPDIR
+sudo cp perf.data $TMPDIR
+#make ourselves the owner of the archived perf.data
+#Note: the original perf.data must be owned by the user who created it, otherwise `perf archive` complains
+sudo chown "$USER" $TMPDIR/perf.data
 
 #backup old archive
 sudo mv perf.data.tar.bz2 perf.data.tar.bz2.back
