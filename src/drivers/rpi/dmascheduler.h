@@ -105,6 +105,7 @@
 //#include <tuple> //for multiple- return types
 
 #include "common/typesettings/clocks.h" //for EventClockT
+#include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
 
 //config settings:
@@ -459,6 +460,7 @@ class DmaScheduler {
             queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
         }
         void queuePwm(int pin, float ratio, float maxPeriod);
+        bool onIdleCpu(OnIdleCpuIntervalT interval);
     private:
         void makeMaps();
         volatile uint32_t* mapPeripheral(int addr) const; //map a physical address into our virtual address space.

@@ -22,12 +22,7 @@
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
 #include <array>
-//#include <inttypes.h> //for PRId64
-//#include <atomic>
-//#include <memory> //for unique_ptr
-//#include <utility> //for std::pair
 #include <functional>
-//#include <thread>
 #include "common/logging.h"
 #include "gparse/command.h"
 #include "gparse/com.h"
@@ -53,7 +48,9 @@ template <typename Drv> class State {
             //DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
             SchedInterface(State<Drv> &state) : _state(state) {}
             bool onIdleCpu(OnIdleCpuIntervalT interval) {
-                return _state.onIdleCpu(interval);
+                bool hwNeedsCpu = _hardwareScheduler.onIdleCpu(interval);
+                bool stateNeedsCpu = _state.onIdleCpu(interval);
+                return hwNeedsCpu || stateNeedsCpu;
             }
             static constexpr std::size_t numIoDrivers() {
                 return std::tuple_size<typename Drv::IODriverTypes>::value;
@@ -317,11 +314,6 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
     }
 }*/
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
-    /*if (!_isExecutingGCode && com.tendCom()) {
-        _isExecutingGCode = true;
-        com.reply(execute(com.getCommand()));
-        _isExecutingGCode = false;
-    }*/
     //Only check the communications periodically because calling execute(com.getCommand()) DOES add up.
     //One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
     if (interval == OnIdleCpuIntervalWide && com.tendCom()) {

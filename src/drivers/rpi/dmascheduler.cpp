@@ -363,6 +363,12 @@ int64_t DmaScheduler::syncDmaTime() {
     }
     return _lastTimeAtFrame0;
 }
+bool DmaScheduler::onIdleCpu(OnIdleCpuIntervalT interval) {
+    if (interval == OnIdleCpuIntervalWide) {
+        syncDmaTime();
+    }
+    return false;
+}
 void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
@@ -379,7 +385,8 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     /*int curIdx;
     EventClockT::time_point curTime;
     std::tie(curIdx, curTime) = syncDmaTime();*/
-    int64_t lastUsecAtFrame0 = syncDmaTime();
+    //int64_t lastUsecAtFrame0 = syncDmaTime();
+    int64_t lastUsecAtFrame0 = _lastTimeAtFrame0;
     int usecFromFrame0 = micros - lastUsecAtFrame0;
     if (usecFromFrame0 < 0) { //need this check to prevent newIdx from being negative.
         LOGV("Warning: clearly missed a step (usecFromFrame0=%i)\n", usecFromFrame0);

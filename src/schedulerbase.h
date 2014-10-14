@@ -9,6 +9,7 @@
 #include "outputevent.h"
 
 #include "common/typesettings/clocks.h" //for EventClockT
+#include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
 
 #ifndef SCHED_PRIORITY
     #define SCHED_PRIORITY 30
@@ -21,11 +22,7 @@
 
 class Event; //forward declaration to avoid inclusion of event.h (as event.h includes typesettings.h, which may include this file)
 
-//Scheduler::Interface::onIdleCpu can be called with a flag indicating (roughly) how long it's been since it was last called.
-enum OnIdleCpuIntervalT {
-    OnIdleCpuIntervalShort,
-    OnIdleCpuIntervalWide
-};
+
 
 /* Base class from which all templated schedulers derive.
 Defines things such as exit handlers */
@@ -58,11 +55,16 @@ struct NullSchedulerInterface {
                 //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support the EventClockT::time_point defined in common/typesettings.h
                 return evtTime;
             }
+            bool onIdleCpu(OnIdleCpuIntervalT interval) {
+                (void)interval; //unused
+                return false; //no more cpu needed
+            }
         };
     private:
         HardwareScheduler _hardwareScheduler;
     public:
-        inline bool onIdleCpu() {
+        inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
+            (void)interval; //unused
             return false; //no more cpu needed
         }
         inline static constexpr std::size_t numIoDrivers() {
