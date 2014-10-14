@@ -331,7 +331,7 @@ void DmaScheduler::initDma() {
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
 }
 
-int64_t DmaScheduler::syncDmaTime() {
+void DmaScheduler::syncDmaTime() {
     //returns the last time that a frame idx=0 occured.
     EventClockT::time_point _now = EventClockT::now();
     if (_now > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally (every 32.768 ms). 32768 is just a friendly number of about the right magnitude.
@@ -361,7 +361,6 @@ int64_t DmaScheduler::syncDmaTime() {
         //curTime2 - curTime2 > srcIdx2 - srcIdx1
         //more uS have elapsed than frames; DMA cannot keep up
     }
-    return _lastTimeAtFrame0;
 }
 bool DmaScheduler::onIdleCpu(OnIdleCpuIntervalT interval) {
     if (interval == OnIdleCpuIntervalWide) {
@@ -373,7 +372,7 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     //uint64_t callTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count(); //only used for debugging
-    uint64_t desiredTime = micros - FRAME_TO_USEC(SOURCE_BUFFER_FRAMES*15/16); //multiple by 15/16 to allow for a small amount of DMA variablitiy / clock drift
+    uint64_t desiredTime = micros - MAX_SCHED_AHEAD_USEC;
     SleepT::sleep_until(std::chrono::time_point<std::chrono::microseconds>(std::chrono::microseconds(desiredTime)));
     //uint64_t awakeTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count(); //only used for debugging
     
@@ -393,22 +392,12 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
         //attempt to recover:
         EventClockT::time_point realNow = EventClockT::now();
         micros = std::chrono::duration_cast<std::chrono::microseconds>(realNow.time_since_epoch()).count();
-        micros += 10; //give ourselves a 10 uS buffer (still not good enough for if we get interrupted...)
+        micros += MIN_SCHED_AHEAD_USEC; //give ourselves a (128) uS buffer
         usecFromFrame0 = micros - lastUsecAtFrame0;
     }
     int framesFrom0 = USEC_TO_FRAME(usecFromFrame0);
     int newIdx = framesFrom0%SOURCE_BUFFER_FRAMES;
 
-    //calculate the frame# at which to place the event:
-    /*int64_t usecFromNow = (int64_t)micros - (int64_t)std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count(); //need signed; could be in past
-     if (usecFromNow < 20) { //Not safe to schedule less than ~10uS into the future
-        //LOGW("Warning: DmaScheduler behind schedule: %i (%llu) (tries: %i) (sleep %llu -> %llu (wanted %llu for %llu now is %llu))\n", framesFromNow, usecFromNow, tries, callTime, awakeTime, desiredTime, micros, curTime2.time_since_epoch().count());
-        LOGV("DmaScheduler behind schedule: %lli uSec (event at %llu; got %llu)\n", usecFromNow, micros, std::chrono::duration_cast<std::chrono::microseconds>(curTime2.time_since_epoch()).count()); //Note: have to use verbose logging, otherwise the log message will slow the app down and cause even more scheduling woes.
-        usecFromNow = 20;
-    }*/
-    /*int framesFromNow = USEC_TO_FRAME(usecFromNow);
-   
-    int newIdx = (srcIdx + framesFromNow)%SOURCE_BUFFER_FRAMES;*/
     //Now queue the command:
     if (mode == 0) { //turn output off
         srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
