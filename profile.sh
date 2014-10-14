@@ -27,7 +27,10 @@ sudo mv perf.data.tar.bz2 perf.data.tar.bz2.back
 #and re-archive it
 tar cjf perf.data.tar.bz2 -C $TMPDIR .
 
-#Done; return to original directory.
+#Done; return to original directory & cleanup
+sudo rm perf.data.tar.bz2.back
+rm -rf $TMPDIR
 popd
 
-echo "Profile info created in profile dir. Now switch to the profile branch and push your data"
+echo "Profile info created in profile dir. Now switch to the profile branch and push your data."
+echo "e.g. `cd profile && git checkout profile && git add perf.data.tar.bz2 && git push origin profile && git checkout master`"
