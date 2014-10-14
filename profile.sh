@@ -3,7 +3,7 @@
 sudo timeout --signal=SIGINT 5m perf record ./build/printipi $@
 
 #Give ourselves ownership of perf.data, rather than root (from sudo)
-chown "$USER" perf.data
+sudo chown "$USER" perf.data
 
 #create the profile dir, in case it doesn't already exist
 mkdir -p profile
