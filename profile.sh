@@ -34,3 +34,4 @@ popd
 
 echo "Profile info created in profile dir. Now switch to the profile branch and push your data."
 echo "e.g. `cd profile && git checkout profile && git add perf.data.tar.bz2 && git push origin profile && git checkout master`"
+echo "To run the profile report on any machine, type `tar xvf perf.data.tar.bz2 -C ~/.debug` followed by `perf report -i ~/.debug/perf.data`"
