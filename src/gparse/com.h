@@ -33,7 +33,7 @@ class Com {
         Com(const std::string &fileR, const std::string &fileW);
         //returns true if there is a command ready to be interpreted.
         bool tendCom();
-        Command getCommand() const;
+        const Command& getCommand() const;
         //void reply(const Command &response);
         void reply(const std::string &resp);
         void reply(const Response &resp);

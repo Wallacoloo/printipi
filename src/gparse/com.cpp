@@ -31,7 +31,7 @@ bool Com::tendCom() {
     return false;
 }
 
-Command Com::getCommand() const {
+const Command& Com::getCommand() const {
     return _parsed;
 }
 
