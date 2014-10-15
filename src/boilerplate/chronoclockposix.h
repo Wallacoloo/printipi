@@ -9,7 +9,6 @@
 
 #include <chrono>
 #include <time.h>
-//#include "common/timeutil.h"
 
 class ChronoClockPosix {
     public:

@@ -7,12 +7,14 @@
     #ifdef COMPILING_MAIN
         #warning "using drv::rpi::ChronoClockRpi for EventClockT. If your compilation target is not the Raspberry Pi, the program will crash on startup"
     #endif
-    //#include "drivers/rpi/chronoclockrpi.h"
-    //typedef drv::rpi::ChronoClockRpi EventClockT;
-    #include "boilerplate/chronoclockposix.h"
-    typedef ChronoClockPosix EventClockT;
+    #include "drivers/rpi/chronoclockrpi.h"
+    typedef drv::rpi::ChronoClockRpi EventClockT;
+    //#include "boilerplate/chronoclockposix.h"
+    //typedef ChronoClockPosix EventClockT;
     #include "boilerplate/thisthreadsleepposix.h"
-    typedef ThisThreadSleepPosix SleepT;
+    //typedef ThisThreadSleepPosix SleepT
+    #include "boilerplate/thisthreadsleepadapter.h"
+    typedef ThisThreadSleepAdapter<EventClockT, ThisThreadSleepPosix> SleepT;
 #else
     #if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
         //use special posix clock
