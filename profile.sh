@@ -5,7 +5,7 @@ sudo timeout --signal=SIGINT 5m perf record -g ./build/printipi $@
 
 #create the profile dir, in case it doesn't already exist
 mkdir -p profile
-mv perf.data profile
+sudo mv perf.data profile #mv must be sudo because perf.data is owned by root
 pushd profile
 
 #archive the profiling information:
