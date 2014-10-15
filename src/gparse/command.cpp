@@ -59,22 +59,23 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
 }
 
 bool Command::isFirstChar(char c) const {
-            char s[4];
-            //extract bytes from opcodeStr.
-            //cannot just cast to char* due to endianness.
-            s[0] = (char)((opcodeStr & 0xff000000u) >> 24);
-            s[1] = (char)((opcodeStr & 0xff0000u) >> 16);
-            s[2] = (char)((opcodeStr & 0xff00u) >> 8);
-            s[3] = (char)(opcodeStr & 0xffu);
-            return (s[0] == c || (s[0] == 0 && 
-                     (s[1] == c || (s[1] == 0 &&
-                       (s[2] == c || (s[2] == 0 && 
-                         s[3] == c)
-                       )
-                     ))
-                   ));
-                       
-        }
+    //Check if the first character of the opcode is `c'
+    char s[4];
+    //extract bytes from opcodeStr.
+    //cannot just cast to char* due to endianness.
+    s[0] = (char)((opcodeStr & 0xff000000u) >> 24);
+    s[1] = (char)((opcodeStr & 0xff0000u) >> 16);
+    s[2] = (char)((opcodeStr & 0xff00u) >> 8);
+    s[3] = (char)(opcodeStr & 0xffu);
+    return (s[0] == c || (s[0] == 0 && 
+             (s[1] == c || (s[1] == 0 &&
+               (s[2] == c || (s[2] == 0 && 
+                 s[3] == c)
+               )
+             ))
+           ));
+               
+}
 
 std::string Command::getOpcode() const {
     //return opcode;

@@ -11,7 +11,6 @@
  */
 
 #include <string>
-//#include <vector>
 #include <array>
 #include <cstdint> //for uint32_t
 #include <cmath> //for NAN
@@ -132,6 +131,7 @@ class Command {
         inline bool hasAnyXYZEParam() const {
             return hasAnyXYZParam() || hasE();
         }
+        //Use these routines to check gcodes, as they potentially allow more optimization than casting the opcode to a string or int.
         inline bool isG0() const { return isOpcode(bigEndianStr('G', '0')); }
         inline bool isG1() const { return isOpcode(bigEndianStr('G', '1')); }
         inline bool isG2() const { return isOpcode(bigEndianStr('G', '2')); }
@@ -283,6 +283,8 @@ class Command {
         inline bool isTxxx() const { return isFirstChar('T'); }
     private:
         inline char upper(char letter) const {
+            //Make the letter passed uppercase if it was not before.
+            //Must be done because gcode is case-insensitive (G1 == g1)
             if (letter >= 'a' && letter <= 'z') { //if lowercase
                 letter += ('A' - 'a'); //add the offset between uppercase and lowercase letters for our character set.
             }
