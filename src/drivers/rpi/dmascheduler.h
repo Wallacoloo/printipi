@@ -24,7 +24,7 @@
 /*
  * Printipi/drivers/rpi/dmascheduler.h
  *
- * DmaScheduler provides the HardwareScheduler interface declared in schedulerbase.h
+ * DmaScheduler implements the HardwareScheduler interface declared in schedulerbase.h
  *
  * It works by maintaining a circular queue of, say, 10 ms in length.
  * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.

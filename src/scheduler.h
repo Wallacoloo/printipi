@@ -128,7 +128,7 @@ template <typename Interface=NullSchedulerInterface> class Scheduler : public Sc
         Scheduler(Interface interface);
         //Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
         void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
-        EventClockT::time_point lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
+        //EventClockT::time_point lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
         bool isRoomInBuffer() const;
         void eventLoop();
         void yield(const OutputEvent *evt);
@@ -180,18 +180,12 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
     #endif
 }
 
-template <typename Interface> EventClockT::time_point Scheduler<Interface>::lastSchedTime() const {
+/*template <typename Interface> EventClockT::time_point Scheduler<Interface>::lastSchedTime() const {
     //TODO: Note, this method, as-is, is const!
-    /*if (this->outputEventQueue.empty()) {
-        const_cast<Scheduler<Interface>*>(this)->schedAdjuster.reset(); //we have no events; no need to preserve *their* reference times, so reset for simplicity.
-        return EventClockT::now(); //an alternative is to not use ::now(), but instead a time set in the past that is scheduled to happen now. Minimum intervals are conserved, so there's that would actually work decently. In actuality, the eventQueue will NEVER be empty except at initialization, because it handles pwm too.
-    } else {
-        return this->outputEventQueue.rbegin()->time();
-    }*/
     //return EventClockT::now();
     auto now = EventClockT::now();
     return _lastSchedTime < now ? now : _lastSchedTime;
-}
+}*/
 
 template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const {
     return !hasActiveEvent;

@@ -595,7 +595,8 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
     }*/
     float minExtRate = -this->driver.maxRetractRate();
     float maxExtRate = this->driver.maxExtrudeRate();
-    motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, velXyz, minExtRate, maxExtRate);
+    //motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, velXyz, minExtRate, maxExtRate);
+    motionPlanner.moveTo(std::max(_lastMotionPlannedTime, EventClockT::now()), x, y, z, e, velXyz, minExtRate, maxExtRate);
     /*float curX, curY, curZ, curE;
     std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
     _destXPrimitive = x;
@@ -629,7 +630,8 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
 
 template <typename Drv> void State<Drv>::homeEndstops() {
     this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
-    motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
+    //motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
+    motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
     this->_isHomed = true;
 }
 
