@@ -1,7 +1,5 @@
 #include "schedulerbase.h"
 
-//#include <pthread.h> //for pthread_setschedparam
-//#include <time.h> //for clock_nanosleep
 #include <signal.h> //for sigaction signal handlers
 #include <cstdlib> //for atexit
 #include <stdexcept> //for runtime_error
@@ -44,7 +42,7 @@ void SchedulerBase::configureExitHandlers() {
     sigaction(SIGINT, &sigIntHandler, NULL); //register ctrl+c
     sigaction(SIGTSTP, &sigIntHandler, NULL); //register ctrl+z
     sigaction(SIGABRT, &sigIntHandler, NULL); //register SIGABRT, which is triggered for critical errors (eg glibc detects double-free)
-    sigaction(SIGTERM, &sigIntHandler, NULL); //register SIGABRT, which is triggered for critical errors (eg glibc detects double-free)
+    sigaction(SIGTERM, &sigIntHandler, NULL); //register SIGTERM
     
     struct sigaction sa;
     //memset(&sa, 0, sizeof(sigaction));

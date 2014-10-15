@@ -1,7 +1,41 @@
-#ifndef DRIVERS_RPI_DMASCHEDULER_H
-#define DRIVERS_RPI_DMASCHEDULER_H
-
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+ 
 /*
+ * Printipi/drivers/rpi/dmascheduler.h
+ *
+ * DmaScheduler provides the HardwareScheduler interface declared in schedulerbase.h
+ *
+ * It works by maintaining a circular queue of, say, 10 ms in length.
+ * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
+ * Meanwhile, a CPU peripheral called DMA (Direct Memory Access) is constantly each frame of this queue into the memory-mapped GPIO bank at a mostly constant rate.
+ * This memory streaming happens constantly, regardless of what the CPU is doing. Logically, it's almost like an entirely separate entity from the cpu.
+ * 
+ * DMA timing is done by configuring the PWM module to request a sample at a given rate. Once this sample is requested, the entire DMA transaction is gated until the request is fulfilled. This allows one to copy a frame into the gpio bank and then fulfill the PWM sample request, which stalls the transaction until the PWM device requests another sample.
+ *
+ */
+ 
+ /*
  * processor documentation is at: http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
  * pg 38 for DMA
  * pg 61 for DMA DREQ PERMAP
@@ -98,6 +132,13 @@
  *   Make sure dummy writes DON'T READ FROM RAM (ie, use src_ignore = 1)
  *   boot with disable_pvt=1 (prevents gpu from halting everything to adjust ram refresh rate twice per second) in /boot/cmdline.txt. Does this affect system stability?
  */
+
+
+
+#ifndef DRIVERS_RPI_DMASCHEDULER_H
+#define DRIVERS_RPI_DMASCHEDULER_H
+
+
  
 #include <stdint.h> //for uint32_t
 #include <string.h> //for size_t, memset
