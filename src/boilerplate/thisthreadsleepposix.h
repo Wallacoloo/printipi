@@ -19,7 +19,7 @@ class ThisThreadSleepPosix {
             tsSleepUntil.tv_nsec = durNsec.count();
             clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &tsSleepUntil, NULL);
         }
-        template <class Rep, class Period> void sleep_for(const std::chrono::duration<Rep, Period> &dur) {
+        template <class Rep, class Period> static void sleep_for(const std::chrono::duration<Rep, Period> &dur) {
             auto durSec = std::chrono::duration_cast<std::chrono::seconds>(dur);
             auto durNsec = std::chrono::duration_cast<std::chrono::nanoseconds>(dur) - durSec;
             timespec tsSleepUntil;

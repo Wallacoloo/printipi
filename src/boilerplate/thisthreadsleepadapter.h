@@ -8,10 +8,10 @@ template <typename ClockT, typename SleepT> class ThisThreadSleepAdapter {
     public:
         template<class Clock, class Duration> static void sleep_until(const std::chrono::time_point<Clock, Duration> &sleep_time) {
             auto now = ClockT::now();
-            auto rel = sleep_time - now;
+            auto rel = sleep_time.time_since_epoch() - now.time_since_epoch();
             sleep_for(rel);
         }
-        template <class Rep, class Period> void sleep_for(const std::chrono::duration<Rep, Period> &dur) {
+        template <class Rep, class Period> static void sleep_for(const std::chrono::duration<Rep, Period> &dur) {
             SleepT::sleep_for(dur);
         }
 };
