@@ -23,6 +23,9 @@
 #define GPPUDCLK0 0x00000098 //GPIO Pull-up/down clock. Have to send a clock signal to the pull-up/down resistors to activate them.
 #define GPPUDCLK1 0x000000a0 //second register for GPPUDCLK (first is for pins 0-31, 2nd for the rest)
 
+#define TIMER_BASE 0x20003000
+#define TIMER_CLO 0x00000004 //lower 32-bits of 1 MHz timer
+#define TIMER_CHI 0x00000008 //upper 32-bits
 
 #include <sys/mman.h> //for mmap
 #include <sys/time.h> //for timespec
@@ -38,6 +41,7 @@
 namespace mitpi {
 
 volatile uint32_t *gpioBaseMem = NULL;
+volatile uint32_t *timerBaseMem = NULL;
 
 void assertValidPin(int pin) {
     assert(pin >= 0 && pin < 64);
@@ -82,6 +86,7 @@ void init() {
         exit(1);
     }
     gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
+    timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
 }
 
 void makeOutput(int pin) {
@@ -132,6 +137,10 @@ void setPinPull(int pin, GpioPull pull) {
 
 void usleep(unsigned int us) {
     ::usleep(us);
+}
+
+uint64_t readSysTime() {
+    return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));
 }
 
 }
