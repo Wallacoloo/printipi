@@ -1,7 +1,7 @@
 #!/bin/sh
 #Run printipi for 5 minutes, gathering profile info. Any arguments will be relayed to printipi (eg the name of a file to print)
-sudo timeout --signal=SIGINT 5m perf record ./build/printipi $@
-
+#-g flag tells perf to record callgraph information
+sudo timeout --signal=SIGINT 5m perf record -g ./build/printipi $@
 
 #create the profile dir, in case it doesn't already exist
 mkdir -p profile
