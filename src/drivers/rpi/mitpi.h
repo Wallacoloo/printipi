@@ -98,7 +98,7 @@ enum GpioPull {
 
 volatile uint32_t* mapPeripheral(int memfd, int addr);
 
-void init();
+bool init();
 
 void makeOutput(int pin);
 void makeInput(int pin);

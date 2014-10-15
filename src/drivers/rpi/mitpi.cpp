@@ -76,9 +76,9 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     return (volatile uint32_t*)mapped;
 }
 
-void init() {
+bool init() {
     if (gpioBaseMem) {
-        return; //already initialized
+        return 0; //already initialized
     }
     int memfd = open("/dev/mem", O_RDWR | O_SYNC);
     if (memfd < 0) {
@@ -87,6 +87,7 @@ void init() {
     }
     gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
     timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
+    return 0; //init OK
 }
 
 void makeOutput(int pin) {
