@@ -1,5 +1,5 @@
-#ifndef COMMAND_H
-#define COMMAND_H
+#ifndef GPARSE_COMMAND_H
+#define GPARSE_COMMAND_H
 
 /* 
  * Printipi/gparse/command.h

@@ -1,5 +1,5 @@
-#ifndef GPARSE_RESPONSE
-#define GPARSE_RESPONSE
+#ifndef GPARSE_RESPONSE_H
+#define GPARSE_RESPONSE_H
 
 #include <string>
 
