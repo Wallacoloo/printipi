@@ -1,6 +1,5 @@
 #include "axisstepper.h"
 
-//#include <stdexcept>
 #include <cassert>
 
 namespace drv {
@@ -14,7 +13,6 @@ Event AxisStepper::getEvent(float realTime) const {
 
 void AxisStepper::_nextStep() {
     //should be implemented in derivatives.
-    //throw std::runtime_error("AxisStepper::_nextStep() must be overriden in any child classes");
     assert(false && "AxisStepper::_nextStep() must be overriden in any child classes");
 }
 
