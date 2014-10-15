@@ -371,19 +371,9 @@ bool DmaScheduler::onIdleCpu(OnIdleCpuIntervalT interval) {
 void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
-    //uint64_t callTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count(); //only used for debugging
     uint64_t desiredTime = micros - MAX_SCHED_AHEAD_USEC;
     SleepT::sleep_until(std::chrono::time_point<std::chrono::microseconds>(std::chrono::microseconds(desiredTime)));
-    //uint64_t awakeTime = std::chrono::duration_cast<std::chrono::microseconds>(EventClockT::now().time_since_epoch()).count(); //only used for debugging
-    
-    //get the current source index at the current time:
-    //must ensure we aren't interrupted during this calculation, hence the two timers instead of 1. 
-    //Note: getting the curTime & srcIdx don't have to be done for every call to queue - it could be done eg just once per buffer.
-    //  It should be calculated regularly though, to counter clock drift & PWM FIFO underflows
-    //  It is done in this function only for simplicity
-    /*int curIdx;
-    EventClockT::time_point curTime;
-    std::tie(curIdx, curTime) = syncDmaTime();*/
+
     //int64_t lastUsecAtFrame0 = syncDmaTime();
     int64_t lastUsecAtFrame0 = _lastTimeAtFrame0;
     int usecFromFrame0 = micros - lastUsecAtFrame0;
