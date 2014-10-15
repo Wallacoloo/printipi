@@ -1,35 +1,42 @@
-#ifndef EVENT_H
-#define EVENT_H
-
-/* 
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+ 
+ /* 
  * Printipi/event.h
- * (c) 2014 Colin Wallace
  *
  * An Event encapsulates information about something that needs to happen at a specific time.
  *   Eg, "advance stepper #2 at time T", or "set hotend #1 high at time T"
  * Events are queued in the Scheduler and then handled by the State at their appropriate time.
  */
 
+#ifndef EVENT_H
+#define EVENT_H
+
 //There will be these events:
 //  step forward (motor 0, 1, 2, 3)
 //  step backward (motor 0, 1, 2, 3)
-//Optionally:
-//  read nozzle/bed temperature.
-//    This is a potentially long process (time cap discharge).
-//    Still want to have scheduler manage it, but shouldn't have it be in the event queue.
-//  wait for temperature to stabilize.
-//    This could be integrated into the event processing.
-//      No - there are some movements which don't require bed to be heated (eg probing).
-//    Could be done unbuffered?
-//      yes - M116 is unbuffered.
 
-//#include <time.h> //for timespec
 #include "common/typesettings.h" //for AxisIdType
-
-/*enum EventType {
-    Evt_StepForward,
-    Evt_StepBackward
-};*/
 
 class Event {
     EventClockT::time_point _time;
@@ -46,7 +53,6 @@ class Event {
         inline EventClockT::time_point time() const {
             return _time;
         }
-        //bool isTime() const;
         inline bool isNull() const {
             return this->stepperId() == NULL_STEPPER_ID;
         }
@@ -55,10 +61,8 @@ class Event {
         static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
         
         template <typename DurationT> void offset(const DurationT offset) {
-            //EventClockT::duration
             this->_time += std::chrono::duration_cast<EventClockT::duration>(offset);
         }
-        //void offsetNano(unsigned nsec); //must be less than 1 second.
         inline bool operator<(const Event &other) const {
             return this->time() < other.time();
         }
