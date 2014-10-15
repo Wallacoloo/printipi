@@ -14,14 +14,9 @@
 #include "drivers/a4988.h"
 #include "drivers/linearcoordmap.h"
 #include "drivers/lineardeltacoordmap.h"
-//#include "drivers/enabledisabledriver.h"
-//#include "drivers/rpi/onepinenabler.h"
-//#include "drivers/rpi/leverendstop.h"
 #include "drivers/rcthermistor.h"
-//#include "drivers/rpi/onepiniodriver.h"
 #include "drivers/tempcontrol.h"
 #include "drivers/fan.h"
-//#include "drivers/rpi/bcm2835.h" //for pin numberings
 #include "drivers/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
