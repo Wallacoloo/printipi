@@ -20,6 +20,7 @@
 #include "drivers/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
+//All of the following #defines are ONLY used within this file
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
 //L1000 = length of the rods that connect each axis to the end effector
 //STEPS_M = #of steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
@@ -40,12 +41,13 @@
 //#define H1000 467100
 #define H1000 467330
 #define BUILDRAD1000 85000
-#define STEPS_M 6265*4
+#define STEPS_M 6265*8
 #define STEPS_M_EXT 10000*8
 
 //#define MAX_ACCEL1000 300000
 //#define MAX_ACCEL1000 1200000
-#define MAX_ACCEL1000 450000
+//#define MAX_ACCEL1000 450000
+#define MAX_ACCEL1000 900000
 //Can reach 160mm/sec at full-stepping (haven't tested the limits)
 //75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
 //90mm/sec uses 75% cpu at quarter-stepping (optimized - Aug 10)
@@ -53,12 +55,12 @@
 //30mm/sec uses 55-60% cpu at quarter-stepping (Sept 25, temp=20C)
 //idle uses 8% cpu (Sept 25, temp=20C)
 //30mm/sec uses 60% cpu at quarter-steppeing (Oct 2, temp=20C, thermistor broken)
-#define MAX_MOVE_RATE 30
+#define MAX_MOVE_RATE 120
 //#define MAX_MOVE_RATE 45
 //#define MAX_MOVE_RATE 60
 //#define MAX_MOVE_RATE 50
 #define HOME_RATE 10
-#define MAX_EXT_RATE 50
+#define MAX_EXT_RATE 150
 //#define MAX_EXT_RATE 24
 //#define MAX_EXT_RATE 60
 
@@ -165,7 +167,7 @@ class KosselPi : public Machine {
         //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
 
-        typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
+        typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
             A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_22>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_23>, _StepperEn>, //A tower
