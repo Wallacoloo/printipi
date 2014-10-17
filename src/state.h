@@ -45,6 +45,7 @@
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
 #include <array>
+#include <stack>
 #include <functional>
 #include "common/logging.h"
 #include "gparse/command.h"
@@ -124,6 +125,12 @@ template <typename Drv> class State {
     bool _isHomed;
     EventClockT::time_point _lastMotionPlannedTime;
     gparse::Com &com;
+    //M32 allows a gcode file to call subroutines, essentially.
+    //  These subroutines can then call more subroutines, so what we have is essentially a call stack.
+    //  We only read the top file on the stack, until it's done, and then pop it and return to the next one.
+    //BUT, we still need to maintain a com channel to the host (especially for emergency stop, etc).
+    //Thus, we need a root com ("com") & an additional file stack ("gcodeFileStack").
+    std::stack<gparse::Com> gcodeFileStack;
     SchedType scheduler;
     MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
     Drv &driver;
@@ -173,6 +180,7 @@ template <typename Drv> class State {
         /* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
         bool onIdleCpu(OnIdleCpuIntervalT interval);
         void eventLoop();
+        void tendComChannel(gparse::Com &com);
         /* execute the GCode on a Driver object that supports a well-defined interface.
          * returns a Command to send back to the host. */
         gparse::Response execute(gparse::Command const& cmd);
@@ -326,18 +334,10 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     //Only check the communications periodically because calling execute(com.getCommand()) DOES add up.
     //One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
-    if (interval == OnIdleCpuIntervalWide && com.tendCom()) {
-        //note: may want to optimize this; once there is a pending command, this involves a lot of extra work.
-        auto cmd = com.getCommand();
-        //auto x = gparse::Response(gparse::ResponseOk);
-        //gparse::Command resp = execute(cmd);
-        gparse::Response resp = execute(cmd);
-        if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
-            if (!NO_LOG_M105 || !cmd.isM105()) {
-                LOG("command: %s\n", cmd.toGCode().c_str());
-                LOG("response: %s", resp.toString().c_str());
-            }
-            com.reply(resp);
+    if (interval == OnIdleCpuIntervalWide) {
+        tendComChannel(com);
+        if (!gcodeFileStack.empty()) {
+            tendComChannel(gcodeFileStack.top());
         }
     }
     bool motionNeedsCpu = false;
@@ -361,6 +361,23 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
 template <typename Drv> void State<Drv>::eventLoop() {
     this->scheduler.initSchedThread();
     this->scheduler.eventLoop();
+}
+
+template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
+    if (com.tendCom()) {
+        //note: may want to optimize this; once there is a pending command, this involves a lot of extra work.
+        auto cmd = com.getCommand();
+        //auto x = gparse::Response(gparse::ResponseOk);
+        //gparse::Command resp = execute(cmd);
+        gparse::Response resp = execute(cmd);
+        if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
+            if (!NO_LOG_M105 || !cmd.isM105()) {
+                LOG("command: %s\n", cmd.toGCode().c_str());
+                LOG("response: %s", resp.toString().c_str());
+            }
+            com.reply(resp);
+        }
+    }
 }
 
 template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command const& cmd) {
@@ -406,17 +423,6 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
             return gparse::Response::Null;
         }
         this->homeEndstops();
-        /*bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
-        bool homeY = cmd.hasY();
-        bool homeZ = cmd.hasZ();
-        if (!homeX && !homeY && !homeZ) { //if no axis are passed, then home ALL axis.
-            homeX = homeY = homeZ = true;
-        }
-        float newX = homeX ? 0 : destXPrimitive();
-        float newY = homeY ? 0 : destYPrimitive();
-        float newZ = homeZ ? 0 : destZPrimitive();
-        float curE = destEPrimitive();
-        //this->queueMovement(newX, newY, newZ, curE);*/
         return gparse::Response::Ok;
     } else if (cmd.isG90()) { //set g-code coordinates to absolute
         setPositionMode(POS_ABSOLUTE);
@@ -450,8 +456,9 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
-    } else if (cmd.isM23()) { //select file on SD card:
-        com.addInput("~/.octoprint/uploads/test.F12000.gcode");
+    } else if (cmd.isM32()) { //select file on SD card and print:
+        //com.addInput("~/.octoprint/uploads/test.F12000.gcode");
+        gcodeFileStack.push(gparse::Com("~/.octoprint/uploads/test.F12000.gcode"));
         return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);
