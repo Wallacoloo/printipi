@@ -194,9 +194,11 @@ template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const 
 
 template <typename Interface> void Scheduler<Interface>::eventLoop() {
     OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
+    int numShortIntervals = 0; //need to track the number of short cpu intervals, because if we just execute short intervals constantly for, say, 1 second, then certain services that only run at long intervals won't occur. So make every, say, 10000th short interval transform into a wide interval.
     while (1) {
         if (interface.onIdleCpu(intervalT)) {
-            intervalT = OnIdleCpuIntervalShort; //more cpu is needed; no delay
+            //intervalT = OnIdleCpuIntervalShort; //more cpu is needed; no delay
+            intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
         } else {
             intervalT = OnIdleCpuIntervalWide; //no cpu is needed; wide delay
             sleepUntilEvent(NULL);
@@ -212,7 +214,7 @@ template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent
             this->sleepUntilEvent(evt);
             //break; //don't break because sleepUntilEvent won't always do the full sleep
             intervalT = OnIdleCpuIntervalWide;
-            numShortIntervals = 0;
+            //numShortIntervals = 0;
         } else {
             //after 2048 (just a nice binary number) short intervals, insert a wide interval instead:
             intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
