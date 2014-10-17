@@ -124,7 +124,7 @@ template <typename Drv> class State {
     float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
     bool _isHomed;
     EventClockT::time_point _lastMotionPlannedTime;
-    gparse::Com &com;
+    gparse::Com com;
     //M32 allows a gcode file to call subroutines, essentially.
     //  These subroutines can then call more subroutines, so what we have is essentially a call stack.
     //  We only read the top file on the stack, until it's done, and then pop it and return to the next one.
@@ -135,13 +135,16 @@ template <typename Drv> class State {
     MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
     Drv &driver;
     typename Drv::IODriverTypes ioDrivers;
-    //bool _isExecutingGCode; //cannot schedule two movements simultaneously, so this serves as a lock
-    //std::thread schedthread;
     public:
         //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
         static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
         static constexpr CelciusType DEFAULT_BED_TEMP() { return -300; }
-        State(Drv &drv, gparse::Com &com);
+        //Initialize the state:
+        //  Needs a driver object (drv), a communications channel (com), and needs to know whether or not the com channel must be persistent
+        //  M32 command allows branching to another, local gcode file. By default, this will PAUSE reading/writing from the previous com channel.
+        //  But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
+        //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
+        State(Drv &drv, gparse::Com com, bool needPersistentCom);
         /* Control interpretation of positions from the host as relative or absolute */
         PositionMode positionMode() const;
         void setPositionMode(PositionMode mode);
@@ -193,19 +196,22 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)
+template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com com, bool needPersistentCom)
     : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
     unitMode(UNIT_MM), 
     _destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
     _hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
     _isHomed(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
-    com(com), 
     scheduler(SchedInterface(*this)),
     driver(drv)
-    //_isExecutingGCode(false)
     {
     this->setDestMoveRatePrimitive(this->driver.defaultMoveRate());
+    if (needPersistentCom) {
+        this->com = com;
+    } else {
+        this->gcodeFileStack.push(com);
+    }
 }
 
 

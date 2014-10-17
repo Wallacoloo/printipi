@@ -103,7 +103,7 @@ int main_(int argc, char** argv) {
     //instantiate main driver:
     typedef drv::MACHINE MachineT;
     MachineT driver;
-    State<MachineT> state(driver, com);
+    State<MachineT> state(driver, com, serialFileName != defaultSerialFile);
     
     state.eventLoop();
     return 0;
