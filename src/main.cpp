@@ -52,7 +52,10 @@
 
 void printUsage(char* cmd) {
     //#ifndef NO_USAGE_INFO
-    LOGE("usage: %s [ttyFile] [--help] [--quiet] [--verbose]\n", cmd);
+    LOGE("usage: %s [input file=/dev/stdin] [output file=/dev/null] [--help] [--quiet] [--verbose]\n", cmd);
+    LOGE("examples:\n");
+    LOGE("  print a gcode file: %s file.gcode\n", cmd);
+    LOGE("  mock serial port: %s /dev/tty3dpm /dev/tty3dps\n", cmd);
     //std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
     //#endif
     //exit(1);
