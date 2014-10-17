@@ -165,6 +165,7 @@ template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float maxPeriod) {
+    duty = std::min(1.f, std::max(0.f, duty)); //clamp pwm between [0, 1]
     interface.iterPwmPins(idx, duty, [this, maxPeriod](int pin_, float duty_) {this->interface.queuePwm(pin_, duty_, maxPeriod); }); //note: some physical pins may be inverted, indicating duty must be switched, hence why it occurs as a parameter to the lambda
 }
 
