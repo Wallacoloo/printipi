@@ -450,6 +450,9 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
+    } else if (cmd.isM23()) { //select file on SD card:
+        com.addInput("~/.octoprint/uploads/test.F12000.gcode");
+        return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);
         return gparse::Response::Ok;

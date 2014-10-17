@@ -46,5 +46,8 @@ void Com::reply(const Response &resp) {
     reply(resp.toString());
 }
 
+void Com::addInput(const std::string &fileR) {
+    _readFd = open(fileR.c_str(), O_RDWR | O_NONBLOCK);
+}
 
 }

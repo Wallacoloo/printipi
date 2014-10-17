@@ -66,6 +66,7 @@ class Com {
         inline bool hasWriteFile() const {
             return _writeFd != NO_HANDLE;
         }
+        void addInput(const std::string &fileR);
             
 };
 
