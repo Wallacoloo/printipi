@@ -51,6 +51,8 @@ class Com {
     std::string _pending;
     Command _parsed;
     public:
+        static const std::string NULL_FILE_STR;
+    public:
         Com();
         Com(const std::string &fileR);
         Com(const std::string &fileR, const std::string &fileW);

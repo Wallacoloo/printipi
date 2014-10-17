@@ -62,10 +62,13 @@ void printUsage(char* cmd) {
 }
 
 int main_(int argc, char** argv) {
-    char defaultSerialFile[] = "/dev/stdin";
-    char defaultOutFile[] = "/dev/null";
+    /*char defaultSerialFile[] = "/dev/stdin";
+    char* defaultOutFile = gparse::Com::NULL_FILE_STR.c_str();
     char* serialFileName; //file which Com reads from
-    char* outFile = defaultOutFile; //file which Com posts responses 
+    char* outFile = defaultOutFile; //file which Com posts responses*/
+    std::string defaultSerialFile("/dev/stdin");
+    std::string serialFileName;
+    std::string outFile = gparse::Com::NULL_FILE_STR;
     SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
     if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
         logging::disable();
@@ -84,9 +87,9 @@ int main_(int argc, char** argv) {
         //printUsage(argv[0]);
         serialFileName = defaultSerialFile;
     } else {
-        serialFileName = argv[1];
+        serialFileName = std::string(argv[1]);
         if (argc >2 && argv[2][0] != '-') { //second argument is for the output file
-            outFile = argv[2];
+            outFile = std::string(argv[2]);
         }
     }
     
@@ -97,13 +100,13 @@ int main_(int argc, char** argv) {
     }
     
     //Open the serial device:
-    LOG("Serial file: %s\n", serialFileName);
-    gparse::Com com = gparse::Com(std::string(serialFileName), std::string(outFile));
+    LOG("Serial file: %s\n", serialFileName.c_str());
+    gparse::Com com = gparse::Com(serialFileName, outFile);
     
     //instantiate main driver:
     typedef drv::MACHINE MachineT;
     MachineT driver;
-    State<MachineT> state(driver, com, serialFileName != defaultSerialFile);
+    State<MachineT> state(driver, com, com.hasWriteFile());
     
     state.eventLoop();
     return 0;
