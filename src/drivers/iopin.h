@@ -78,6 +78,9 @@ template <typename Pin, bool InvertWrite=true, bool InvertRead=true> class Inver
         return doInvert ? (lev == IoHigh ? IoLow : IoHigh) : lev;
     }
     public:
+        inline GpioPinIdType id() const { 
+            return _pin.id(); 
+        }
         void makeDigitalOutput(IoLevel lev) {
             _pin.makeDigitalOutput(invertLev(lev, InvertWrite));
         }
