@@ -86,6 +86,9 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
         CelciusType getMeasuredTemperature() const {
             return _lastTemp;
         }
+        Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
+            return _heater;
+        }
         template <typename Sched> bool onIdleCpu(Sched &sched) {
             //LOGV("TempControl::onIdleCpu()\n");
             if (_isReading) {
