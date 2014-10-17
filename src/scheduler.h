@@ -206,45 +206,19 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 
 template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent *evt) {
     OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
+    int numShortIntervals = 0; //need to track the number of short cpu intervals, because if we just execute short intervals constantly for, say, 1 second, then certain services that only run at long intervals won't occur. So make every, say, 10000th short interval transform into a wide interval.
     while (!isEventTime(*evt)) {
         if (!interface.onIdleCpu(intervalT)) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
             this->sleepUntilEvent(evt);
             //break; //don't break because sleepUntilEvent won't always do the full sleep
             intervalT = OnIdleCpuIntervalWide;
+            numShortIntervals = 0;
         } else {
-            intervalT = OnIdleCpuIntervalShort;
+            //after 2048 (just a nice binary number) short intervals, insert a wide interval instead:
+            intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
         }
     }
-    /*OutputEventQueueType::const_iterator iter = this->outputEventQueue.cbegin();
-    OutputEvent evt = *iter;
-    this->outputEventQueue.erase(iter); //iterator unaffected even if other events were inserted OR erased.
-    interface.queue(evt);*/
     interface.queue(*evt);
-    
-    
-    //manage PWM events:
-    /*const PwmInfo &pwm = pwmInfo[evt.stepperId()];
-    if (pwm.isNonNull()) {
-        Event nextPwm;
-        //         for | back
-        // nsLow    0     1
-        // nsHigh   1     0 
-        //dir = (nsLow ^ for)
-        if (evt.direction() == StepForward) {
-            //next event will be StepBackward, or refresh this event if there is no off-duty.
-            nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsLow ? StepBackward : StepForward);
-            //nextPwm.offsetNano(pwm.nsHigh);
-            nextPwm.offset(std::chrono::nanoseconds(pwm.nsHigh));
-        } else {
-            //next event will be StepForward, or refresh this event if there is no on-duty.
-            nextPwm = Event(evt.time(), evt.stepperId(), pwm.nsHigh ? StepForward : StepBackward);
-            //nextPwm.offsetNano(pwm.nsLow);
-            nextPwm.offset(std::chrono::nanoseconds(pwm.nsLow));
-        }
-        this->orderedInsert(nextPwm, INSERT_FRONT);
-    }*/
-    //this->eventQueue.pop_front(); //this is OK to put after PWM generation, because the next PWM event will ALWAYS occur after the current pwm event, so the queue front won't change. Furthermore, if interface.onEvent(evt) generates a new event (which it shouldn't), it most probably won't be scheduled for the past.
-    //forceWait = false; //avoid draining ALL events - just drain the first.
 }
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const OutputEvent *evt) const {
