@@ -151,7 +151,10 @@
 
 //config settings:
 #define PWM_FIFO_SIZE 1 //The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.
-#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 frames is 1 ms. Using a power-of-two is a good idea as it simplifies some of the arithmetic (modulus operations)
+//#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 frames is 1 ms. Using a power-of-two is a good idea as it simplifies some of the arithmetic (modulus operations)
+//#define SOURCE_BUFFER_FRAMES 16384
+//#define SOURCE_BUFFER_FRAMES 32768
+#define SOURCE_BUFFER_FRAMES 65536
 #define SCHED_PRIORITY 30 //Linux scheduler priority. Higher = more realtime
 
 #define NOMINAL_CLOCK_FREQ 500000000 //PWM Clock runs at 500 MHz, unless overclocking
@@ -173,7 +176,7 @@
 #define MIN_SCHED_AHEAD_USEC (FRAME_TO_USEC(MIN_SCHED_AHEAD_FRAME))
 //Also want to avoid placing things too deep in the queue, for the same wrap-around issue.
 //Can get away with a wider dead-space because we have looser tolerance here.
-#define MAX_SCHED_AHEAD_FRAME (SOURCE_BUFFER_FRAMES - (SOURCE_BUFFER_FRAMES>>4))
+#define MAX_SCHED_AHEAD_FRAME (SOURCE_BUFFER_FRAMES - (SOURCE_BUFFER_FRAMES>>6))
 #define MAX_SCHED_AHEAD_USEC (FRAME_TO_USEC(MAX_SCHED_AHEAD_FRAME))
 
 
