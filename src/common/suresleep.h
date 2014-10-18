@@ -1,7 +1,7 @@
 #ifndef COMMON_SURESLEEP_H
 #define COMMON_SURESLEEP_H
 
-#include "typesettings.h"
+#include "common/typesettings/clocks.h" //for EventClockT and SleepT
 #include <chrono>
 
 

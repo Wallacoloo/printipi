@@ -35,11 +35,7 @@
 
 
 #include <cassert> //for assert
-#include <set>
-//#include <chrono> 
 #include <array>
-#include <vector>
-#include <tuple>
 #include "event.h"
 #include "outputevent.h"
 #include "common/logging.h"

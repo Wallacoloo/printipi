@@ -41,7 +41,6 @@
 #include <cassert> //for assert
 #include "common/typesettings.h"
 #include "common/tupleutil.h"
-#include "scheduler.h"
 #include "event.h"
 #include "drivers/iopin.h" //for NoPin
 

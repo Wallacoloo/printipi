@@ -40,10 +40,8 @@
 #include <chrono>
 
 #include "drivers/iodriver.h"
-//#include "drivers/enabledisabledriver.h"
 #include "drivers/iopin.h" //for NoPin
 #include "common/logging.h"
-#include "drivers/iopin.h"
 #include "outputevent.h"
 #include "event.h"
 

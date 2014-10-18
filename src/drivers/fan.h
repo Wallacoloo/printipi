@@ -34,8 +34,6 @@
  
 #include "iodriver.h"
 
-#include <tuple>
-
 namespace drv {
 
 template <typename Driver> class Fan : public IODriver {

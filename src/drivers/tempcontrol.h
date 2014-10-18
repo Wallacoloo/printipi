@@ -37,7 +37,8 @@
 #include "drivers/iodriver.h"
 #include "common/filters/nofilter.h"
 #include "common/intervaltimer.h"
-#include "common/typesettings.h"
+#include "common/typesettings/clocks.h" //for EventClockT
+#include "common/typesettings/primitives.h" //for CelciusType
 
 namespace drv {
 

@@ -46,6 +46,7 @@
 #include "coordmap.h"
 #include "common/logging.h"
 #include "common/matrix.h"
+#include <array>
 #include <tuple>
 
 namespace drv {

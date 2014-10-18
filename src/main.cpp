@@ -62,10 +62,6 @@ void printUsage(char* cmd) {
 }
 
 int main_(int argc, char** argv) {
-    /*char defaultSerialFile[] = "/dev/stdin";
-    char* defaultOutFile = gparse::Com::NULL_FILE_STR.c_str();
-    char* serialFileName; //file which Com reads from
-    char* outFile = defaultOutFile; //file which Com posts responses*/
     std::string defaultSerialFile("/dev/stdin");
     std::string serialFileName;
     std::string outFile = gparse::Com::NULL_FILE_STR;

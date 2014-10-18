@@ -33,7 +33,7 @@
 #define DRIVERS_ENDSTOP_H
 
 #include "iodriver.h"
-#include "iopin.h"
+#include "iopin.h" //for NoPin
 
 namespace drv {
 

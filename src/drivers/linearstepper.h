@@ -33,7 +33,7 @@
 #define LINEARSTEPPER_H
 
 #include "axisstepper.h"
-#include "common/typesettings.h"
+#include "common/typesettings/enums.h" //for CoordAxis
 #include "endstop.h"
 #include "common/logging.h"
 #include <tuple>

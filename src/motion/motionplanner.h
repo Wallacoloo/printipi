@@ -32,8 +32,10 @@
 #ifndef MOTION_MOTIONPLANNER_H
 #define MOTION_MOTIONPLANNER_H
 
+#include <array>
 #include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
+#include "event.h"
 
 enum MotionType {
     MotionNone,
