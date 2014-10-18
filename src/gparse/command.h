@@ -72,6 +72,11 @@ class Command {
     uint32_t opcodeStr; //opcode still encoded as a 4-character string. MSB=first char, LSB=last char. String is right-adjusted (ie, the MSBs are 0 in the case that opcode isn't full 4 characters).
     //std::vector<std::string> pieces; //the command when split on spaces. Eg "G1 X2 Y3" -> ["G1", "X2", "Y3"]
     std::array<float, 26> arguments; //26 alphabetic possible arguments per Gcode. Case insensitive. Internally, this will default to NaN
+    //sadly, M32 and the like use an unnamed string parameter for the filename
+    //I think it's relatively safe to say that there can only be one unnamed str param per gcode, as parameter order is irrelevant for all other commands, so unnamed parameters would have undefined orders.
+    //  That assumption allows for significant performance benefits (ie, only one string, rather than a vector of strings)
+    //  and if it turns out to be false, one can just join all the parameters into a single string with a defined delimiter (ie, a space)
+    std::string unnamedStrParam;
     public:
         //initialize the command object from a line of GCode
         inline Command() : opcodeStr(0) {
@@ -92,6 +97,10 @@ class Command {
         }
         inline float getFloatParam(char label, bool &hasParam) const {
             return getFloatParam(label, NAN, hasParam);
+        }
+        
+        inline const std::string& getUnnamedStrParam() const {
+            return unnamedStrParam;
         }
         
         inline float getX(float def=NAN) const {

@@ -106,7 +106,10 @@ int main_(int argc, char** argv) {
     //instantiate main driver:
     typedef drv::MACHINE MachineT;
     MachineT driver;
-    State<MachineT> state(driver, com, com.hasWriteFile());
+    
+    //if input is stdin, or a two-way pipe, then it likely means we want to keep this input channel forever,
+    //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
+    State<MachineT> state(driver, com, com.hasWriteFile() || serialFileName == "/dev/stdin");
     
     state.eventLoop();
     return 0;
