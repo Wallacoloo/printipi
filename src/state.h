@@ -453,6 +453,10 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         setHostZeroPos(actualX, actualY, actualZ, actualE);
         return gparse::Response::Ok;
+    } else if (cmd.isM0()) { //Stop; empty move buffer & exit cleanly
+        LOG("recieved M0 command: exiting\n");
+        exit(0);
+        return gparse::Response::Ok;
     } else if (cmd.isM17()) { //enable all stepper motors
         LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not tested\n");
         drv::IODriver::lockAllAxis(this->ioDrivers);
@@ -475,6 +479,15 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isM84()) { //stop idle hold: relax all motors.
         LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
+        return gparse::Response::Ok;
+    } else if (cmd.isM99()) { //return from macro/subprogram
+        LOGW("Warning (state.h): OP_M99 (return) not implemented\n");
+        //note: can't simply pop the top file, because then that causes memory access errors when trying to send it a reply.
+        //Need to check if com channel that received this command is the top one. If yes, then pop it and return Response::Null so that no response will be sent.
+        //  else, pop it and return Response::Ok.
+        //if (!gcodeFileStack.empty()) {
+        //    gcodeFileStack.pop();
+        //}
         return gparse::Response::Ok;
     } else if (cmd.isM104()) { //set hotend temperature and return immediately.
         bool hasS;
@@ -510,6 +523,10 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         return gparse::Response::Ok;
     } else if (cmd.isM110()) { //set current line number
+        LOGW("Warning (state.h): OP_M110 (set current line number) not implemented\n");
+        return gparse::Response::Ok;
+    } else if (cmd.isM112()) { //emergency stop
+        exit(1);
         return gparse::Response::Ok;
     } else if (cmd.isM117()) { //print message
         return gparse::Response::Ok;

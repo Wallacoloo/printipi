@@ -106,10 +106,6 @@ std::string Command::getOpcode() const {
 
 std::string Command::toGCode() const {
     std::string r=getOpcode();
-    /*for (std::string const& s : this->pieces) {
-        r += ' ';
-        r += s;
-    }*/
     for (char c='A'; c<='Z'; ++c) {
         if (hasParam(c)) {
             r += ' ';
