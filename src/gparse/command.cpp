@@ -35,25 +35,34 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
         }
         //now at a LETTER, assuming valid command.
         char param = *it++;
-        //now at either the end, space, * or ; OR a number.
-        float value = 0;
-        if (it != cmd.end() && *it != ' ' && *it != '\t' && *it != '\n' && *it != '*' && *it != ';') { 
-            //Now we are at the first character of a number.
-            //How to parse a float? Can use atof, strtof, or sscanf.
-            //atof is basic, and won't tell how many characters we must advance
-            //strtof will skip whitespace (which is invalid), and tells us how many chars to advance
-            //sscanf is overly heavy, but won't tell how many characters we must advance
-            //ALL THE ABOVE C-FUNCTIONS WORK WITH NULL-TERMINATED STRINGS.
-            //Also, atof, etc, use the locale (so decimal point may be ',', not '.'.
-            //stof can work with c++ strings (no offset), and reports # of chars parsed
-            // '.' separator is the only valid one for gcode (source: http://git.geda-project.org/pcb/commit/?id=6f422eeb5c6a0e0e541b20bfc70fa39a8a2b5af1)
-            char *afterVal;
-            const char *cmdCStr = cmd.c_str();
-            const char *floatStart = cmdCStr + (it-cmd.begin());
-            value = strtof(floatStart, &afterVal); //read a float and set afterVal to point 
-            it += (afterVal-floatStart); //advance iterator to past the number.
+        //now at either the end, space, * or ; OR a number OR a slash (/) if a filename
+        if (param == '/') { //filename; have to parse as a string.
+            std::string::const_iterator first = it-1;
+            //advance to the end of the file name:
+            for (; it != cmd.end() && *it != ' ' && *it != '\t' && *it != '\n' && *it != '*' && *it != ';'; ++it) {}
+            //get the filename as a substr (likely more efficient than just appending the characters one-by-one):
+            std::string filename = cmd.substr(first - cmd.begin(), it-first);
+            this->filepathParam = filename;
+        } else {
+            float value = 0;
+            if (it != cmd.end() && *it != ' ' && *it != '\t' && *it != '\n' && *it != '*' && *it != ';') { 
+                //Now we are at the first character of a number.
+                //How to parse a float? Can use atof, strtof, or sscanf.
+                //atof is basic, and won't tell how many characters we must advance
+                //strtof will skip whitespace (which is invalid), and tells us how many chars to advance
+                //sscanf is overly heavy, but won't tell how many characters we must advance
+                //ALL THE ABOVE C-FUNCTIONS WORK WITH NULL-TERMINATED STRINGS.
+                //Also, atof, etc, use the locale (so decimal point may be ',', not '.'.
+                //stof can work with c++ strings (no offset), and reports # of chars parsed
+                // '.' separator is the only valid one for gcode (source: http://git.geda-project.org/pcb/commit/?id=6f422eeb5c6a0e0e541b20bfc70fa39a8a2b5af1)
+                char *afterVal;
+                const char *cmdCStr = cmd.c_str();
+                const char *floatStart = cmdCStr + (it-cmd.begin());
+                value = strtof(floatStart, &afterVal); //read a float and set afterVal to point 
+                it += (afterVal-floatStart); //advance iterator to past the number.
+            }
+            setArgument(param, value);
         }
-        setArgument(param, value);
         //now at either space, *, ;, or end.
     }
 }

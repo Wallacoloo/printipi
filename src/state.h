@@ -343,6 +343,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
     if (interval == OnIdleCpuIntervalWide) {
         tendComChannel(com);
         if (!gcodeFileStack.empty()) {
+            LOGV("Tending gcodeFileStack top\n");
             tendComChannel(gcodeFileStack.top());
         }
     }
@@ -464,7 +465,8 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isM32()) { //select file on SD card and print:
         //com.addInput("~/.octoprint/uploads/test.F12000.gcode");
-        gcodeFileStack.push(gparse::Com("~/.octoprint/uploads/test.F12000.gcode"));
+        LOGV("loading gcode: %s\n", cmd.getFilepathParam().c_str());
+        gcodeFileStack.push(gparse::Com(cmd.getFilepathParam()));
         return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);

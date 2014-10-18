@@ -76,7 +76,7 @@ class Command {
     //I think it's relatively safe to say that there can only be one unnamed str param per gcode, as parameter order is irrelevant for all other commands, so unnamed parameters would have undefined orders.
     //  That assumption allows for significant performance benefits (ie, only one string, rather than a vector of strings)
     //  and if it turns out to be false, one can just join all the parameters into a single string with a defined delimiter (ie, a space)
-    std::string unnamedStrParam;
+    std::string filepathParam;
     public:
         //initialize the command object from a line of GCode
         inline Command() : opcodeStr(0) {
@@ -99,8 +99,8 @@ class Command {
             return getFloatParam(label, NAN, hasParam);
         }
         
-        inline const std::string& getUnnamedStrParam() const {
-            return unnamedStrParam;
+        inline const std::string& getFilepathParam() const {
+            return filepathParam;
         }
         
         inline float getX(float def=NAN) const {
