@@ -117,6 +117,10 @@ std::string Command::toGCode() const {
             r += std::to_string(getFloatParam(c));
         }
     }
+    if (!getFilepathParam().empty()) {
+        r += ' ';
+        r += getFilepathParam();
+    }
     return r + '\n';
 }
 

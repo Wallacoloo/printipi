@@ -464,7 +464,6 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
     } else if (cmd.isM32()) { //select file on SD card and print:
-        //com.addInput("~/.octoprint/uploads/test.F12000.gcode");
         LOGV("loading gcode: %s\n", cmd.getFilepathParam().c_str());
         gcodeFileStack.push(gparse::Com(cmd.getFilepathParam()));
         return gparse::Response::Ok;
