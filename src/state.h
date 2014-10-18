@@ -46,7 +46,6 @@
 #include <cmath> //for isnan
 #include <array>
 #include <stack>
-#include <functional>
 #include "common/logging.h"
 #include "gparse/command.h"
 #include "gparse/com.h"
@@ -223,7 +222,6 @@ template <typename Drv> void State<Drv>::setPositionMode(PositionMode mode) {
 }
 
 template <typename Drv> PositionMode State<Drv>::extruderPosMode() const {
-    //return this->_extruderPosMode == POS_UNDEFINED ? positionMode() : this->_extruderPosMode;
     return this->_extruderPosMode;
 }
 template <typename Drv> void State<Drv>::setExtruderPosMode(PositionMode mode) {
@@ -547,34 +545,19 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
 }
         
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
-    /*float curX, curY, curZ, curE; 
-    curX = destXPrimitive(); //could add motionPlanner::realXyze() for slightly increased accuracy, but that adds more interdependencies.
-    curY = destYPrimitive();
-    curZ = destZPrimitive();
-    curE = destEPrimitive();*/
     _destXPrimitive = x;
     _destYPrimitive = y;
     _destZPrimitive = z;
     _destEPrimitive = e;
     //now determine the velocity (must ensure xyz velocity doesn't cause too much E velocity):
     float velXyz = destMoveRatePrimitive();
-    /*if (curE != e) { //This if-statement avoids a division-by-zero caused by when velE == 0
-        float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
-        float distXyz = sqrt(distSq);
-        float durationXyz = distXyz / velXyz;
-        float velE = (e-curE)/durationXyz;
-        float newVelE = this->driver.clampExtrusionRate(velE);
-        velXyz *= newVelE / velE;
-    }*/
     float minExtRate = -this->driver.maxRetractRate();
     float maxExtRate = this->driver.maxExtrudeRate();
-    //motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, velXyz, minExtRate, maxExtRate);
     motionPlanner.moveTo(std::max(_lastMotionPlannedTime, EventClockT::now()), x, y, z, e, velXyz, minExtRate, maxExtRate);
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
     this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
-    //motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
     motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
     this->_isHomed = true;
 }
@@ -584,7 +567,6 @@ Note: could be replaced with a generic lambda in C++14 (gcc-4.9) */
 template <typename SchedT> struct State_setFanRate {
     SchedT &sched;
     float rate;
-    //State_setFanRate() {}
     State_setFanRate(SchedT &s, float rate) : sched(s), rate(rate) {}
     template <typename T> void operator()(std::size_t index, const T &f) {
         if (f.isFan()) {
