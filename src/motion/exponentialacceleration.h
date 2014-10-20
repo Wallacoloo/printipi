@@ -1,9 +1,28 @@
-#ifndef MOTION_EXPONENTIALACCELERATION_H
-#define MOTION_EXPONENTIALACCELERATION_H
-
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+ 
 /* 
  * Printipi/motion/exponentialacceleration.h
- * (c) 2014 Colin Wallace
  *
  * ExponentialAcceleration is an implementation of motion/AccelerationProfile in which 
  * v(t) = f(e^t)
@@ -11,6 +30,9 @@
  * Unfortunately, the current version has v(0) != 0 (so there is instantaneous velocity), and is computationally expensive.
  * For those reasons, I recommend against using this acceleration implementation until it is improved.
  */
+ 
+#ifndef MOTION_EXPONENTIALACCELERATION_H
+#define MOTION_EXPONENTIALACCELERATION_H
 
 #include "accelerationprofile.h"
 #include <algorithm> //min, isfinite

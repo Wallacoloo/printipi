@@ -1,3 +1,33 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+ 
+/*
+ * Printipi/schedulerbase.h
+ *
+ * SchedulerBase allows any file to insert exit handlers, without adding the entire Scheduler as a dependency.
+ * It also defines the interfaces used within the Scheduler (SchedulerInterface and HardwareScheduler) which can be inherited from.
+ */
+
 #ifndef SCHEDULERBASE_H
 #define SCHEDULERBASE_H
 
@@ -9,6 +39,7 @@
 #include "outputevent.h"
 
 #include "common/typesettings/clocks.h" //for EventClockT
+#include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
 
 #ifndef SCHED_PRIORITY
     #define SCHED_PRIORITY 30
@@ -21,11 +52,7 @@
 
 class Event; //forward declaration to avoid inclusion of event.h (as event.h includes typesettings.h, which may include this file)
 
-//Scheduler::Interface::onIdleCpu can be called with a flag indicating (roughly) how long it's been since it was last called.
-enum OnIdleCpuIntervalT {
-    OnIdleCpuIntervalShort,
-    OnIdleCpuIntervalWide
-};
+
 
 /* Base class from which all templated schedulers derive.
 Defines things such as exit handlers */
@@ -58,11 +85,16 @@ struct NullSchedulerInterface {
                 //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support the EventClockT::time_point defined in common/typesettings.h
                 return evtTime;
             }
+            bool onIdleCpu(OnIdleCpuIntervalT interval) {
+                (void)interval; //unused
+                return false; //no more cpu needed
+            }
         };
     private:
         HardwareScheduler _hardwareScheduler;
     public:
-        inline bool onIdleCpu() {
+        inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
+            (void)interval; //unused
             return false; //no more cpu needed
         }
         inline static constexpr std::size_t numIoDrivers() {

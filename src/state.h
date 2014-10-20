@@ -1,14 +1,37 @@
-#ifndef STATE_H
-#define STATE_H
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 /* 
  * Printipi/state.h
- * (c) 2014 Colin Wallace
  *
  * State handles as much driver-mutual functionality as possible, including mapping Gcodes to specific functions,
  *   tracking unit mode and axis position, and interfacing with the scheduler.
  * State controls the communications channel, the scheduler, and the underlying driver.
+ * Motion planning is offloaded to src/motion/MotionPlanner
  */
+
+#ifndef STATE_H
+#define STATE_H
 
 //Gcode documentation can be found:
 //  http://reprap.org/wiki/G-code
@@ -22,12 +45,7 @@
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
 #include <array>
-//#include <inttypes.h> //for PRId64
-//#include <atomic>
-//#include <memory> //for unique_ptr
-//#include <utility> //for std::pair
-#include <functional>
-//#include <thread>
+#include <stack>
 #include "common/logging.h"
 #include "gparse/command.h"
 #include "gparse/com.h"
@@ -35,9 +53,7 @@
 #include "event.h"
 #include "scheduler.h"
 #include "motion/motionplanner.h"
-#include "motion/exponentialacceleration.h"
 #include "common/mathutil.h"
-#include "drivers/axisstepper.h"
 #include "drivers/iodriver.h"
 #include "common/typesettings.h"
 #include "common/tupleutil.h"
@@ -53,7 +69,9 @@ template <typename Drv> class State {
             //DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
             SchedInterface(State<Drv> &state) : _state(state) {}
             bool onIdleCpu(OnIdleCpuIntervalT interval) {
-                return _state.onIdleCpu(interval);
+                bool hwNeedsCpu = _hardwareScheduler.onIdleCpu(interval);
+                bool stateNeedsCpu = _state.onIdleCpu(interval);
+                return hwNeedsCpu || stateNeedsCpu;
             }
             static constexpr std::size_t numIoDrivers() {
                 return std::tuple_size<typename Drv::IODriverTypes>::value;
@@ -103,18 +121,27 @@ template <typename Drv> class State {
     float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
     bool _isHomed;
     EventClockT::time_point _lastMotionPlannedTime;
-    gparse::Com &com;
+    gparse::Com com;
+    //M32 allows a gcode file to call subroutines, essentially.
+    //  These subroutines can then call more subroutines, so what we have is essentially a call stack.
+    //  We only read the top file on the stack, until it's done, and then pop it and return to the next one.
+    //BUT, we still need to maintain a com channel to the host (especially for emergency stop, etc).
+    //Thus, we need a root com ("com") & an additional file stack ("gcodeFileStack").
+    std::stack<gparse::Com> gcodeFileStack;
     SchedType scheduler;
     MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
     Drv &driver;
     typename Drv::IODriverTypes ioDrivers;
-    //bool _isExecutingGCode; //cannot schedule two movements simultaneously, so this serves as a lock
-    //std::thread schedthread;
     public:
         //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
         static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
         static constexpr CelciusType DEFAULT_BED_TEMP() { return -300; }
-        State(Drv &drv, gparse::Com &com);
+        //Initialize the state:
+        //  Needs a driver object (drv), a communications channel (com), and needs to know whether or not the com channel must be persistent
+        //  M32 command allows branching to another, local gcode file. By default, this will PAUSE reading/writing from the previous com channel.
+        //  But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
+        //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
+        State(Drv &drv, gparse::Com com, bool needPersistentCom);
         /* Control interpretation of positions from the host as relative or absolute */
         PositionMode positionMode() const;
         void setPositionMode(PositionMode mode);
@@ -153,35 +180,35 @@ template <typename Drv> class State {
         /* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
         bool onIdleCpu(OnIdleCpuIntervalT interval);
         void eventLoop();
+        void tendComChannel(gparse::Com &com);
         /* execute the GCode on a Driver object that supports a well-defined interface.
          * returns a Command to send back to the host. */
-        gparse::Response execute(gparse::Command const& cmd);
+        gparse::Response execute(gparse::Command const& cmd, gparse::Com &com);
         /* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
         void queueMovement(float x, float y, float z, float e);
         /* Home to the endstops. Does not return until endstops have been reached. */
         void homeEndstops();
         /* Set the hotend fan to a duty cycle between 0.0 and 1.0 */
         void setFanRate(float rate);
-    private:
-        /* Used internally to communicate step event times with the scheduler when moving or homing */
-        //float transformEventTime(float time, float moveDuration, float Vmax);
-        //template <typename AxisStepperTypes> void scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate, float maxVel=NAN);
 };
 
 
-template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com &com)// : _isDeadOrDying(false), 
+template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com com, bool needPersistentCom)
     : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
     unitMode(UNIT_MM), 
     _destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
     _hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
     _isHomed(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
-    com(com), 
     scheduler(SchedInterface(*this)),
     driver(drv)
-    //_isExecutingGCode(false)
     {
     this->setDestMoveRatePrimitive(this->driver.defaultMoveRate());
+    if (needPersistentCom) {
+        this->com = com;
+    } else {
+        this->gcodeFileStack.push(com);
+    }
 }
 
 
@@ -193,7 +220,6 @@ template <typename Drv> void State<Drv>::setPositionMode(PositionMode mode) {
 }
 
 template <typename Drv> PositionMode State<Drv>::extruderPosMode() const {
-    //return this->_extruderPosMode == POS_UNDEFINED ? positionMode() : this->_extruderPosMode;
     return this->_extruderPosMode;
 }
 template <typename Drv> void State<Drv>::setExtruderPosMode(PositionMode mode) {
@@ -307,35 +333,14 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
     //x = _destXPrimitive - _hostZeroX;
 }
 
-/*template <typename Drv> void State<Drv>::handleEvent(const Event &evt) {
-    //handle an event from the scheduler.
-    LOGV("State::handleEvent(time, idx, dir): %" PRId64 ", %i, %i\n", evt.time().time_since_epoch().count(), evt.stepperId(), evt.direction()==StepForward);
-    if (evt.direction() == StepForward) {
-        drv::IODriver::selectAndStepForward(this->ioDrivers, evt.stepperId());
-    } else {
-        drv::IODriver::selectAndStepBackward(this->ioDrivers, evt.stepperId());
-    }
-}*/
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
-    /*if (!_isExecutingGCode && com.tendCom()) {
-        _isExecutingGCode = true;
-        com.reply(execute(com.getCommand()));
-        _isExecutingGCode = false;
-    }*/
     //Only check the communications periodically because calling execute(com.getCommand()) DOES add up.
     //One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
-    if (interval == OnIdleCpuIntervalWide && com.tendCom()) {
-        //note: may want to optimize this; once there is a pending command, this involves a lot of extra work.
-        auto cmd = com.getCommand();
-        //auto x = gparse::Response(gparse::ResponseOk);
-        //gparse::Command resp = execute(cmd);
-        gparse::Response resp = execute(cmd);
-        if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
-            if (!NO_LOG_M105 || !cmd.isM105()) {
-                LOG("command: %s\n", cmd.toGCode().c_str());
-                LOG("response: %s", resp.toString().c_str());
-            }
-            com.reply(resp);
+    if (interval == OnIdleCpuIntervalWide) {
+        tendComChannel(com);
+        if (!gcodeFileStack.empty()) {
+            LOGV("Tending gcodeFileStack top\n");
+            tendComChannel(gcodeFileStack.top());
         }
     }
     bool motionNeedsCpu = false;
@@ -361,7 +366,24 @@ template <typename Drv> void State<Drv>::eventLoop() {
     this->scheduler.eventLoop();
 }
 
-template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command const& cmd) {
+template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
+    if (com.tendCom()) {
+        //note: may want to optimize this; once there is a pending command, this involves a lot of extra work.
+        auto cmd = com.getCommand();
+        //auto x = gparse::Response(gparse::ResponseOk);
+        //gparse::Command resp = execute(cmd);
+        gparse::Response resp = execute(cmd, com);
+        if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
+            if (!NO_LOG_M105 || !cmd.isM105()) {
+                LOG("command: %s\n", cmd.toGCode().c_str());
+                LOG("response: %s", resp.toString().c_str());
+            }
+            com.reply(resp);
+        }
+    }
+}
+
+template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command const &cmd, gparse::Com &com) {
     std::string opcode = cmd.getOpcode();
     //gparse::Command resp;
     if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
@@ -404,17 +426,6 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
             return gparse::Response::Null;
         }
         this->homeEndstops();
-        /*bool homeX = cmd.hasX(); //can optionally specify specific axis to home.
-        bool homeY = cmd.hasY();
-        bool homeZ = cmd.hasZ();
-        if (!homeX && !homeY && !homeZ) { //if no axis are passed, then home ALL axis.
-            homeX = homeY = homeZ = true;
-        }
-        float newX = homeX ? 0 : destXPrimitive();
-        float newY = homeY ? 0 : destYPrimitive();
-        float newZ = homeZ ? 0 : destZPrimitive();
-        float curE = destEPrimitive();
-        //this->queueMovement(newX, newY, newZ, curE);*/
         return gparse::Response::Ok;
     } else if (cmd.isG90()) { //set g-code coordinates to absolute
         setPositionMode(POS_ABSOLUTE);
@@ -438,6 +449,10 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         setHostZeroPos(actualX, actualY, actualZ, actualE);
         return gparse::Response::Ok;
+    } else if (cmd.isM0()) { //Stop; empty move buffer & exit cleanly
+        LOG("recieved M0 command: exiting\n");
+        exit(0);
+        return gparse::Response::Ok;
     } else if (cmd.isM17()) { //enable all stepper motors
         LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not tested\n");
         drv::IODriver::lockAllAxis(this->ioDrivers);
@@ -448,6 +463,10 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
+    } else if (cmd.isM32()) { //select file on SD card and print:
+        LOGV("loading gcode: %s\n", cmd.getFilepathParam().c_str());
+        gcodeFileStack.push(gparse::Com(cmd.getFilepathParam()));
+        return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);
         return gparse::Response::Ok;
@@ -457,6 +476,25 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     } else if (cmd.isM84()) { //stop idle hold: relax all motors.
         LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
         return gparse::Response::Ok;
+    } else if (cmd.isM99()) { //return from macro/subprogram
+        LOGW("Warning (state.h): OP_M99 (return) not tested\n");
+        //note: can't simply pop the top file, because then that causes memory access errors when trying to send it a reply.
+        //Need to check if com channel that received this command is the top one. If yes, then pop it and return Response::Null so that no response will be sent.
+        //  else, pop it and return Response::Ok.
+        if (gcodeFileStack.empty()) { //return from the main I/O routine = kill program
+            exit(0);
+            return gparse::Response::Null;
+        } else {
+            if (&gcodeFileStack.top() == &com) { //popping the com channel that sent this = cannot reply
+                //Note: MUST compare com to .top() before popping, otherwise com will become an invalid reference.
+                //We can get away with comparing just the pointers, because com objects are only ever stored in one place.
+                gcodeFileStack.pop();
+                return gparse::Response::Null;
+            } else { //popping a different com channel than the one that sent this request.
+                gcodeFileStack.pop();
+                return gparse::Response::Ok;
+            }
+        }
     } else if (cmd.isM104()) { //set hotend temperature and return immediately.
         bool hasS;
         float t = cmd.getS(hasS);
@@ -491,6 +529,10 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         return gparse::Response::Ok;
     } else if (cmd.isM110()) { //set current line number
+        LOGW("Warning (state.h): OP_M110 (set current line number) not implemented\n");
+        return gparse::Response::Ok;
+    } else if (cmd.isM112()) { //emergency stop
+        exit(1);
         return gparse::Response::Ok;
     } else if (cmd.isM117()) { //print message
         return gparse::Response::Ok;
@@ -509,112 +551,22 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         throw std::runtime_error(std::string("unrecognized gcode opcode: '") + cmd.getOpcode() + "'");
     }
 }
-
-/*template <typename Drv> float State<Drv>::transformEventTime(float time, float moveDuration, float Vmax) {
-    //Note: it is assumed that the original path is already coded for constant velocity = Vmax.
-    float Amax = this->driver.maxAccel();
-    float V0 = std::min(0.5*Vmax, 0.1); //c becomes invalid if V0 >= Vmax
-    float k = 4*Amax/Vmax;
-    float c = V0 / (Vmax-V0);
-    if (time > 0.5*moveDuration) {
-        return 2*transformEventTime(0.5*moveDuration, moveDuration, Vmax) - transformEventTime(moveDuration-time, moveDuration, Vmax);
-    } else { //take advantage of the fact that comparisons against NaN always compare false to allow for indefinite movements:
-        //the problem with the below equation is that it can return infinity if k/Vmax*time is sufficiently large.
-        //return 1./k * log(1./c * ((1. + c)*exp(k/Vmax*time) - 1.));
-        //aka: 1./k*( log(1./c) + log((1. + c)*exp(k/Vmax*time) - 1.))
-        //simplify: 1./k*log(e^x-1) ~=~ 1./k*x at x = Log[1 - E^(-k*.001)], at which point it is only .001 off (however, 1ms is significant! Would rather use a smaller value.
-        auto logparam = (1. + c)*exp(k*time) - 1;
-        if (std::isfinite(logparam)) {
-            return 1./k*( log(1./c) + log(logparam));
-        } else { //use the approximation:
-            return 1./k*(log(1./c) + log(1. + c) + k*time);
-        }
-    }
-}
-
-template <typename Drv> template <typename AxisStepperTypes> void State<Drv>::scheduleAxisSteppers(AxisStepperTypes &iters, float duration, bool accelerate, float maxVel) {
-    //Information on acceleration: http://reprap.org/wiki/Firmware/Linear_Acceleration
-    //Current implementation uses instantaneous acceleration, which is physically impossible.
-    //The best course *appears* to be an exponential velocity curve.
-    //An attempt at that is made in proof-of-concept/acceleration.nb
-    if (Drv::CoordMapT::numAxis() == 0) { 
-        return; //some of the following logic may assume that there are at least 1 axis.
-    }
-    timespec baseTime = scheduler.lastSchedTime();
-    do {
-        drv::AxisStepper& s = drv::AxisStepper::getNextTime(iters);
-        LOGV("Next step: %i at %g of %g\n", s.index(), s.time, duration);
-        //if (s.time > duration || gmath::ltepsilon(s.time, 0, gmath::NANOSECOND)) { 
-        if (s.time > duration || s.time <= 0 || std::isnan(s.time)) { //don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
-            break; 
-        }
-        float transformedTime = accelerate ? transformEventTime(s.time, duration, maxVel) : s.time;
-        LOGV("Step transformed time: %f\n", transformedTime);
-        Event e = s.getEvent(transformedTime);
-        e.offset(baseTime);
-        scheduler.queue(e);
-        _destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction);
-        s.nextStep(iters);
-    } while (1);
-}*/
         
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
-    /*float curX, curY, curZ, curE; 
-    curX = destXPrimitive(); //could add motionPlanner::realXyze() for slightly increased accuracy, but that adds more interdependencies.
-    curY = destYPrimitive();
-    curZ = destZPrimitive();
-    curE = destEPrimitive();*/
     _destXPrimitive = x;
     _destYPrimitive = y;
     _destZPrimitive = z;
     _destEPrimitive = e;
     //now determine the velocity (must ensure xyz velocity doesn't cause too much E velocity):
     float velXyz = destMoveRatePrimitive();
-    /*if (curE != e) { //This if-statement avoids a division-by-zero caused by when velE == 0
-        float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
-        float distXyz = sqrt(distSq);
-        float durationXyz = distXyz / velXyz;
-        float velE = (e-curE)/durationXyz;
-        float newVelE = this->driver.clampExtrusionRate(velE);
-        velXyz *= newVelE / velE;
-    }*/
     float minExtRate = -this->driver.maxRetractRate();
     float maxExtRate = this->driver.maxExtrudeRate();
-    motionPlanner.moveTo(scheduler.lastSchedTime(), x, y, z, e, velXyz, minExtRate, maxExtRate);
-    /*float curX, curY, curZ, curE;
-    std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
-    _destXPrimitive = x;
-    _destYPrimitive = y;
-    _destZPrimitive = z;
-    _destEPrimitive = e;
-    float maxVelXyz = destMoveRatePrimitive(); //the maximum velocity this path will be coded for.
-    float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
-    float dist = sqrt(distSq);
-    float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
-    float velE = (e-curE)/minDuration;
-    float newVelE = this->driver.clampExtrusionRate(velE);
-    if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
-        velE = newVelE;
-        minDuration = (e-curE)/newVelE; //L/(L/t) = t
-        maxVelXyz = dist/minDuration;
-    }
-    float vx = (x-curX)/minDuration;
-    float vy = (y-curY)/minDuration;
-    float vz = (z-curZ)/minDuration;
-    LOGD("State::queueMovement (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
-    LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
-    LOGD("State::queueMovement V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
-    typename Drv::AxisStepperTypes iters;
-    drv::AxisStepper::initAxisSteppers(iters, _destMechanicalPos, vx, vy, vz, velE);
-    this->scheduleAxisSteppers(iters, minDuration, true, maxVelXyz);
-    std::tie(curX, curY, curZ, curE) = Drv::CoordMapT::xyzeFromMechanical(_destMechanicalPos);
-    LOGD("State::queueMovement wanted (%f, %f, %f, %f) got (%f, %f, %f, %f)\n", x, y, z, e, curX, curY, curZ, curE);
-    LOGD("State::queueMovement _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);*/
+    motionPlanner.moveTo(std::max(_lastMotionPlannedTime, EventClockT::now()), x, y, z, e, velXyz, minExtRate, maxExtRate);
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
     this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
-    motionPlanner.homeEndstops(scheduler.lastSchedTime(), this->driver.clampHomeRate(destMoveRatePrimitive()));
+    motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
     this->_isHomed = true;
 }
 
@@ -623,7 +575,6 @@ Note: could be replaced with a generic lambda in C++14 (gcc-4.9) */
 template <typename SchedT> struct State_setFanRate {
     SchedT &sched;
     float rate;
-    //State_setFanRate() {}
     State_setFanRate(SchedT &s, float rate) : sched(s), rate(rate) {}
     template <typename T> void operator()(std::size_t index, const T &f) {
         if (f.isFan()) {

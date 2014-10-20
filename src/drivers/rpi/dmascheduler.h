@@ -1,7 +1,41 @@
-#ifndef DRIVERS_RPI_DMASCHEDULER_H
-#define DRIVERS_RPI_DMASCHEDULER_H
-
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+ 
 /*
+ * Printipi/drivers/rpi/dmascheduler.h
+ *
+ * DmaScheduler implements the HardwareScheduler interface declared in schedulerbase.h
+ *
+ * It works by maintaining a circular queue of, say, 10 ms in length.
+ * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
+ * Meanwhile, a CPU peripheral called DMA (Direct Memory Access) is constantly each frame of this queue into the memory-mapped GPIO bank at a mostly constant rate.
+ * This memory streaming happens constantly, regardless of what the CPU is doing. Logically, it's almost like an entirely separate entity from the cpu.
+ * 
+ * DMA timing is done by configuring the PWM module to request a sample at a given rate. Once this sample is requested, the entire DMA transaction is gated until the request is fulfilled. This allows one to copy a frame into the gpio bank and then fulfill the PWM sample request, which stalls the transaction until the PWM device requests another sample.
+ *
+ */
+ 
+ /*
  * processor documentation is at: http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
  * pg 38 for DMA
  * pg 61 for DMA DREQ PERMAP
@@ -98,6 +132,13 @@
  *   Make sure dummy writes DON'T READ FROM RAM (ie, use src_ignore = 1)
  *   boot with disable_pvt=1 (prevents gpu from halting everything to adjust ram refresh rate twice per second) in /boot/cmdline.txt. Does this affect system stability?
  */
+
+
+
+#ifndef DRIVERS_RPI_DMASCHEDULER_H
+#define DRIVERS_RPI_DMASCHEDULER_H
+
+
  
 #include <stdint.h> //for uint32_t
 #include <string.h> //for size_t, memset
@@ -105,11 +146,15 @@
 //#include <tuple> //for multiple- return types
 
 #include "common/typesettings/clocks.h" //for EventClockT
+#include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
 
 //config settings:
 #define PWM_FIFO_SIZE 1 //The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.
-#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 frames is 1 ms. Using a power-of-two is a good idea as it simplifies some of the arithmetic (modulus operations)
+//#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 frames is 1 ms. Using a power-of-two is a good idea as it simplifies some of the arithmetic (modulus operations)
+//#define SOURCE_BUFFER_FRAMES 16384
+//#define SOURCE_BUFFER_FRAMES 32768
+#define SOURCE_BUFFER_FRAMES 65536
 #define SCHED_PRIORITY 30 //Linux scheduler priority. Higher = more realtime
 
 #define NOMINAL_CLOCK_FREQ 500000000 //PWM Clock runs at 500 MHz, unless overclocking
@@ -126,6 +171,13 @@
 #define USEC_TO_FRAME(u) (SEC_TO_FRAME(u)/1000000)
 #define FRAME_TO_SEC(f) ((int64_t)(f)*BITS_PER_CLOCK*CLOCK_DIV/NOMINAL_CLOCK_FREQ)
 #define FRAME_TO_USEC(f) FRAME_TO_SEC((int64_t)(f)*1000000)
+//Do to timing variance, an event scheduled at the very front of the queue might actually end up being placed at the *end* of the queue instead, so don't place anything into the frames < MIN_SCHED_AHEAD_FRAME ahead current frame
+#define MIN_SCHED_AHEAD_FRAME (SOURCE_BUFFER_FRAMES>>8)
+#define MIN_SCHED_AHEAD_USEC (FRAME_TO_USEC(MIN_SCHED_AHEAD_FRAME))
+//Also want to avoid placing things too deep in the queue, for the same wrap-around issue.
+//Can get away with a wider dead-space because we have looser tolerance here.
+#define MAX_SCHED_AHEAD_FRAME (SOURCE_BUFFER_FRAMES - (SOURCE_BUFFER_FRAMES>>6))
+#define MAX_SCHED_AHEAD_USEC (FRAME_TO_USEC(MAX_SCHED_AHEAD_FRAME))
 
 
 #define TIMER_BASE   0x20003000
@@ -459,6 +511,7 @@ class DmaScheduler {
             queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
         }
         void queuePwm(int pin, float ratio, float maxPeriod);
+        bool onIdleCpu(OnIdleCpuIntervalT interval);
     private:
         void makeMaps();
         volatile uint32_t* mapPeripheral(int addr) const; //map a physical address into our virtual address space.
@@ -468,7 +521,7 @@ class DmaScheduler {
         uintptr_t virtToUncachedPhys(void *virt) const;
         void initPwm();
         void initDma();
-        int64_t syncDmaTime();
+        void syncDmaTime();
         void queue(int pin, int mode, uint64_t micros);
         /*inline uint64_t readSysTime() const {
             return ((uint64_t)*(timerBaseMem + TIMER_CHI/4) << 32) + (uint64_t)(*(timerBaseMem + TIMER_CLO/4));

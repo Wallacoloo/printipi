@@ -1,6 +1,28 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+ 
 /* 
  * Printipi/main.cpp
- * (c) 2014 Colin Wallace
  *
  * main is the program's main entry point.
  * main handles command line arguments, and instantiates the serial communications, State, and machine-specific driver.
@@ -10,10 +32,7 @@
  *   http://forums.reprap.org/read.php?2,396157
  *   https://groups.google.com/forum/#!searchin/deltabot/wallacoloo|sort:relevance/deltabot/JQNpmnlYYUc/_6V6SYcOGMUJ
  *   http://youtube.com/watch?v=g4UD5MRas3E
- *   (referenced) http://3dprintboard.com/showthread.php?5121-MOD-t-may-make-3D-printing-commonplace
  */
- 
-//Note: this file is great for debugging with gdb: https://gist.githubusercontent.com/skyscribe/3978082/raw/e8a0c8daec409e24b29f7c14cf74140a43a9278c/.gdbinit
 
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
@@ -33,17 +52,19 @@
 
 void printUsage(char* cmd) {
     //#ifndef NO_USAGE_INFO
-    LOGE("usage: %s [ttyFile] [--help] [--quiet] [--verbose]\n", cmd);
+    LOGE("usage: %s [input file=/dev/stdin] [output file=/dev/null] [--help] [--quiet] [--verbose]\n", cmd);
+    LOGE("examples:\n");
+    LOGE("  print a gcode file: %s file.gcode\n", cmd);
+    LOGE("  mock serial port: %s /dev/tty3dpm /dev/tty3dps\n", cmd);
     //std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
     //#endif
     //exit(1);
 }
 
 int main_(int argc, char** argv) {
-    char defaultSerialFile[] = "/dev/stdin";
-    char defaultOutFile[] = "/dev/null";
-    char* serialFileName; //file which Com reads from
-    char* outFile = defaultOutFile; //file which Com posts responses 
+    std::string defaultSerialFile("/dev/stdin");
+    std::string serialFileName;
+    std::string outFile = gparse::Com::NULL_FILE_STR;
     SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
     if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
         logging::disable();
@@ -62,9 +83,9 @@ int main_(int argc, char** argv) {
         //printUsage(argv[0]);
         serialFileName = defaultSerialFile;
     } else {
-        serialFileName = argv[1];
+        serialFileName = std::string(argv[1]);
         if (argc >2 && argv[2][0] != '-') { //second argument is for the output file
-            outFile = argv[2];
+            outFile = std::string(argv[2]);
         }
     }
     
@@ -75,13 +96,16 @@ int main_(int argc, char** argv) {
     }
     
     //Open the serial device:
-    LOG("Serial file: %s\n", serialFileName);
-    gparse::Com com = gparse::Com(std::string(serialFileName), std::string(outFile));
+    LOG("Serial file: %s\n", serialFileName.c_str());
+    gparse::Com com = gparse::Com(serialFileName, outFile);
     
     //instantiate main driver:
     typedef drv::MACHINE MachineT;
     MachineT driver;
-    State<MachineT> state(driver, com);
+    
+    //if input is stdin, or a two-way pipe, then it likely means we want to keep this input channel forever,
+    //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
+    State<MachineT> state(driver, com, com.hasWriteFile() || serialFileName == "/dev/stdin");
     
     state.eventLoop();
     return 0;

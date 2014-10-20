@@ -1,9 +1,28 @@
-#ifndef DRIVERS_AXISSTEPPER_H
-#define DRIVERS_AXISSTEPPER_H
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 /* 
  * Printipi/drivers/axisstepper.h
- * (c) 2014 Colin Wallace
  *
  * AxisSteppers are used to queue movements.
  * When a movement is desired, an AxisStepper is instantiated for each MECHANICAL axis (eg each pillar of a Kossel, plus extruders. Or perhaps an X stepper, a Y stepper, a Z stepper, and an extruder for a cartesian bot).
@@ -14,9 +33,13 @@
  * An implementation is needed for each coordinate style - Cartesian, deltabot, etc.
  * These implementations must provide the functions outlined further down in the header.
  */
+ 
+
+#ifndef DRIVERS_AXISSTEPPER_H
+#define DRIVERS_AXISSTEPPER_H
 
 #include "event.h"
-#include "common/typesettings.h" //for AxisIdType
+#include "common/typesettings/primitives.h" //for AxisIdType
 #include <tuple>
 #include <array>
 #include <cmath> //for isnan

@@ -1,3 +1,33 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+ 
+/*
+ * Mitpi is a small library used for interfacing with the Raspberry Pi's peripherals, including GPIO and timers,
+ *   licensed under the extremely permissive MIT license.
+ *
+ * Please note that most of its features require superuser priviledges, so you may have to launch any executable which uses this library with `sudo'
+ */
+
 #ifndef DRIVERS_RPI_MITPI_H
 #define DRIVERS_RPI_MITPI_H
 
@@ -68,7 +98,7 @@ enum GpioPull {
 
 volatile uint32_t* mapPeripheral(int memfd, int addr);
 
-void init();
+bool init();
 
 void makeOutput(int pin);
 void makeInput(int pin);
@@ -78,6 +108,24 @@ void setPinState(int pin, bool state);
 bool readPinState(int pin);
 void setPinPull(int pin, GpioPull pull);
 void usleep(unsigned int us);
+uint64_t readSysTime();
+
+
+struct InitMitpiType {
+    //convenience type used to manage lifetime of mitpi.
+    //Can be used as a member object of a type that depends on Mitpi functionality.
+    //Example:
+    //class X {
+    //    InitMitpiType mitpiDependency;
+    //    void doStuff() {
+    //        mitpi::makeOutput(11);
+    //        //Note the lack of explicit mitpi initialization. This is done with the InitMitpiType above
+    //    }
+    //};
+    inline InitMitpiType() {
+        init();
+    }
+};
 
 }
 

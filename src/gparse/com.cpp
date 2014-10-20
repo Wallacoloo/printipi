@@ -2,14 +2,19 @@
 
 #include <unistd.h> //for (file) read() and write()
 #include <fcntl.h> //needed for (file) open()
-//#include "common/logging.h"
 
 namespace gparse {
 
+//initialize static consts:
+static const std::string Com::NULL_FILE_STR("/dev/null"); 
+
 Com::Com() : _readFd(NO_HANDLE), _writeFd(NO_HANDLE) {}
-Com::Com(const std::string &fileR) : _readFd(open(fileR.c_str(), O_RDWR | O_NONBLOCK)), _writeFd(NO_HANDLE) {}
+Com::Com(const std::string &fileR) 
+  : _readFd(open(fileR.c_str(), O_RDWR | O_NONBLOCK))
+  , _writeFd(NO_HANDLE) {}
 Com::Com(const std::string &fileR, const std::string &fileW) 
-  : _readFd(open(fileR.c_str(), O_RDWR | O_NONBLOCK)), _writeFd(open(fileW.c_str(), O_RDWR | O_NONBLOCK)) {}
+  : _readFd(open(fileR.c_str(), O_RDWR | O_NONBLOCK))
+  , _writeFd(fileW == NULL_FILE_STR ? NO_HANDLE : open(fileW.c_str(), O_RDWR | O_NONBLOCK)) {}
 
 bool Com::tendCom() {
     if (!_parsed.empty()) { 
@@ -31,7 +36,7 @@ bool Com::tendCom() {
     return false;
 }
 
-Command Com::getCommand() const {
+const Command& Com::getCommand() const {
     return _parsed;
 }
 
@@ -45,6 +50,5 @@ void Com::reply(const std::string &resp) {
 void Com::reply(const Response &resp) {
     reply(resp.toString());
 }
-
 
 }

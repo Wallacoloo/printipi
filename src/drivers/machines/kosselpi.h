@@ -14,43 +14,29 @@
 #include "drivers/a4988.h"
 #include "drivers/linearcoordmap.h"
 #include "drivers/lineardeltacoordmap.h"
-//#include "drivers/enabledisabledriver.h"
-//#include "drivers/rpi/onepinenabler.h"
-//#include "drivers/rpi/leverendstop.h"
 #include "drivers/rcthermistor.h"
-//#include "drivers/rpi/onepiniodriver.h"
 #include "drivers/tempcontrol.h"
 #include "drivers/fan.h"
-//#include "drivers/rpi/bcm2835.h" //for pin numberings
 #include "drivers/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
+//All of the following #defines are ONLY used within this file
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
 //L1000 = length of the rods that connect each axis to the end effector
 //STEPS_M = #of steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
-//#define R1000 125000
-//#define L1000 215000
-//#define H1000 507000
-//#define STEPS_M 9000
-//#define STEPS_M_EXT 4000
-
-//#define R1000 121000
-//#define L1000 222000
-//#define H1000 518700
-//#define STEPS_M 5200 //no microstepping enabled.
-//#define STEPS_M_EXT 10000
 
 #define R1000 111000
 #define L1000 221000
-//#define H1000 467100
-#define H1000 467330
+//#define H1000 467330
+#define H1000 467200
 #define BUILDRAD1000 85000
-#define STEPS_M 6265*4
-#define STEPS_M_EXT 10000*8
+#define STEPS_M 6265*8
+#define STEPS_M_EXT 40000*16
 
 //#define MAX_ACCEL1000 300000
 //#define MAX_ACCEL1000 1200000
-#define MAX_ACCEL1000 450000
+//#define MAX_ACCEL1000 450000
+#define MAX_ACCEL1000 900000
 //Can reach 160mm/sec at full-stepping (haven't tested the limits)
 //75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
 //90mm/sec uses 75% cpu at quarter-stepping (optimized - Aug 10)
@@ -58,12 +44,12 @@
 //30mm/sec uses 55-60% cpu at quarter-stepping (Sept 25, temp=20C)
 //idle uses 8% cpu (Sept 25, temp=20C)
 //30mm/sec uses 60% cpu at quarter-steppeing (Oct 2, temp=20C, thermistor broken)
-#define MAX_MOVE_RATE 30
+#define MAX_MOVE_RATE 120
 //#define MAX_MOVE_RATE 45
 //#define MAX_MOVE_RATE 60
 //#define MAX_MOVE_RATE 50
 #define HOME_RATE 10
-#define MAX_EXT_RATE 50
+#define MAX_EXT_RATE 150
 //#define MAX_EXT_RATE 24
 //#define MAX_EXT_RATE 60
 
@@ -142,27 +128,6 @@ class KosselPi : public Machine {
         typedef Fan<rpi::RpiIoPin<mitpi::V2_GPIO_P1_08, IoLow> > _Fan;
         typedef InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_10, IoHigh> > _HotendOut;
         //typedef matr::Identity3Static _BedLevelT;
-        /*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
-1836, 999999586, 909083, 
-4040369, -909083, 999991424, 1000000000> _BedLevelT;*/
-        /*typedef matr::Matrix3Static<999948988, 0, -10100494, 
-0, 1000000000, 0, 
-10100494, 0, 999948988, 1000000000> _BedLevelT;*/
-        /*typedef matr::Matrix3Static<999987246, 0, -5050440, 
-0, 1000000000, 0, 
-5050440, 0, 999987246, 1000000000> _BedLevelT;*/
-        /*typedef matr::Matrix3Static<999997959, 0, -2020197, 
-0, 1000000000, 0, 
-2020197, 0, 999997959, 1000000000> _BedLevelT; //[-0.002, 0.00, 0.99]*/
-        /*typedef matr::Matrix3Static<999993750, 892, -3535330, 
-892, 999999872, 505047, 
-3535330, -505047, 999993623, 1000000000> _BedLevelT; //[-0.0035, 0.0005, 0.99]*/
-        /*typedef matr::Matrix3Static<999989669, 1147, -4545407, 
-1147, 999999872, 505045, 
-4545407, -505045, 999989542, 1000000000> _BedLevelT; //[-0.0045, 0.0005, 0.99]*/
-        /*typedef matr::Matrix3Static<999975003, 1785, -7070529, 
-1785, 999999872, 505037, 
-7070529, -505037, 999974875, 1000000000> _BedLevelT; //[-0.007, 0.0005, 0.99]*/
         typedef matr::Matrix3Static<999975003, 5356, -7070522, 
 5356, 999998852, 1515111, 
 7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
@@ -170,7 +135,7 @@ class KosselPi : public Machine {
         //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
 
-        typedef LinearDeltaCoordMap</*0, 1, 2, 3, */ R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
+        typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
             A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_22>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_23>, _StepperEn>, //A tower
@@ -178,10 +143,6 @@ class KosselPi : public Machine {
             A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_24>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
             A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_03>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
             _Fan,
-            //12000, 3000, 1000 gives osc of ~3 min (20C-80C). Converges.
-            //20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.
-            //12000,  600, 1200 (50C->130C). Peaks 22C above target. Underdamped. 5 mins to converge
-            //18000,  300, 1000 (40C->130C). Overdamped. 4.5 minutes to reach target (& is stabilized when it gets there)
             TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000, 1000000>, LowPassFilter<3000> >
             //_EndstopA, _EndstopB, _EndstopC
             > IODriverTypes;

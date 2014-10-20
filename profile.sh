@@ -1,11 +1,11 @@
 #!/bin/sh
 #Run printipi for 5 minutes, gathering profile info. Any arguments will be relayed to printipi (eg the name of a file to print)
-sudo timeout --signal=SIGINT 5m perf record ./build/printipi $@
-
+#-g flag tells perf to record callgraph information
+sudo timeout --signal=SIGINT 5m perf record -g ./build/printipi $@
 
 #create the profile dir, in case it doesn't already exist
 mkdir -p profile
-mv perf.data profile
+sudo mv perf.data profile #mv must be sudo because perf.data is owned by root
 pushd profile
 
 #archive the profiling information:
@@ -33,5 +33,5 @@ rm -rf $TMPDIR
 popd
 
 echo "Profile info created in profile dir. Now switch to the profile branch and push your data."
-echo "e.g. `cd profile && git checkout profile && git add perf.data.tar.bz2 && git push origin profile && git checkout master`"
-echo "To run the profile report on any machine, type `tar xvf perf.data.tar.bz2 -C ~/.debug` followed by `perf report -i ~/.debug/perf.data`"
+echo "e.g. 'cd profile && git checkout profile && git add perf.data.tar.bz2 && git push origin profile && git checkout master'"
+echo "To run the profile report on any machine, type 'tar xvf perf.data.tar.bz2 -C ~/.debug' followed by 'perf report -i ~/.debug/perf.data'"

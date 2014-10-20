@@ -24,6 +24,12 @@ enum CoordAxis {
     COORD_E
 };
 
+//Scheduler::Interface::onIdleCpu can be called with a flag indicating (roughly) how long it's been since it was last called.
+enum OnIdleCpuIntervalT {
+    OnIdleCpuIntervalShort,
+    OnIdleCpuIntervalWide
+};
+
 template <typename T> StepDirection stepDirFromSign(T dir) {
     return dir < 0 ? StepBackward : StepForward;
 }

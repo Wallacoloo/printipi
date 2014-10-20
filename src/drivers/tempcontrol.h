@@ -1,21 +1,44 @@
-#ifndef DRIVERS_TEMPCONTROL_H
-#define DRIVERS_TEMPCONTROL_H
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 /* 
  * Printipi/drivers/tempcontrol.h
- * (c) 2014 Colin Wallace
  * 
  * TempControl provides a way to coordinate thermistor readings with the PWM control of a hotend OR heated bed.
  * It used a PID controller to determine the ideal PWM for a given thermistor reading and temperature target.
  * Additionally, it accepts an (optional) filter applied BEFORE the PID controller, which can be used to weed out some variability in readings (use a low-pass filter for this).
  * Currently, it assumes an RC-based thermistor, but in the future it may be expanded to work with any analog IoPin too.
  */
+ 
+
+#ifndef DRIVERS_TEMPCONTROL_H
+#define DRIVERS_TEMPCONTROL_H
 
 #include "drivers/iodriver.h"
-//#include "common/timeutil.h"
 #include "common/filters/nofilter.h"
 #include "common/intervaltimer.h"
-#include "common/typesettings.h"
+#include "common/typesettings/clocks.h" //for EventClockT
+#include "common/typesettings/primitives.h" //for CelciusType
 
 namespace drv {
 
@@ -54,17 +77,21 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
         //route output commands to the heater:
         void stepForward() {
             _heater.digitalWrite(IoHigh);
-            //_heater.stepForward();
         }
         void stepBackward() {
             _heater.digitalWrite(IoLow);
-            //_heater.stepBackward();
         }
         void setTargetTemperature(CelciusType t) {
             _destTemp = t;
         }
         CelciusType getMeasuredTemperature() const {
             return _lastTemp;
+        }
+        bool canDoPwm() const {
+            return true;
+        }
+        Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
+            return _heater;
         }
         template <typename Sched> bool onIdleCpu(Sched &sched) {
             //LOGV("TempControl::onIdleCpu()\n");
