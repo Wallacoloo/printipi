@@ -38,11 +38,11 @@
 
 #define R1000 111000
 #define L1000 221000
-//#define H1000 467100
-#define H1000 467330
+//#define H1000 467330
+#define H1000 467500
 #define BUILDRAD1000 85000
 #define STEPS_M 6265*8
-#define STEPS_M_EXT 10000*8
+#define STEPS_M_EXT 80000*16
 
 //#define MAX_ACCEL1000 300000
 //#define MAX_ACCEL1000 1200000
@@ -139,27 +139,6 @@ class KosselPi : public Machine {
         typedef Fan<rpi::RpiIoPin<mitpi::V2_GPIO_P1_08, IoLow> > _Fan;
         typedef InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_10, IoHigh> > _HotendOut;
         //typedef matr::Identity3Static _BedLevelT;
-        /*typedef matr::Matrix3Static<999991837, 1836, -4040369, 
-1836, 999999586, 909083, 
-4040369, -909083, 999991424, 1000000000> _BedLevelT;*/
-        /*typedef matr::Matrix3Static<999948988, 0, -10100494, 
-0, 1000000000, 0, 
-10100494, 0, 999948988, 1000000000> _BedLevelT;*/
-        /*typedef matr::Matrix3Static<999987246, 0, -5050440, 
-0, 1000000000, 0, 
-5050440, 0, 999987246, 1000000000> _BedLevelT;*/
-        /*typedef matr::Matrix3Static<999997959, 0, -2020197, 
-0, 1000000000, 0, 
-2020197, 0, 999997959, 1000000000> _BedLevelT; //[-0.002, 0.00, 0.99]*/
-        /*typedef matr::Matrix3Static<999993750, 892, -3535330, 
-892, 999999872, 505047, 
-3535330, -505047, 999993623, 1000000000> _BedLevelT; //[-0.0035, 0.0005, 0.99]*/
-        /*typedef matr::Matrix3Static<999989669, 1147, -4545407, 
-1147, 999999872, 505045, 
-4545407, -505045, 999989542, 1000000000> _BedLevelT; //[-0.0045, 0.0005, 0.99]*/
-        /*typedef matr::Matrix3Static<999975003, 1785, -7070529, 
-1785, 999999872, 505037, 
-7070529, -505037, 999974875, 1000000000> _BedLevelT; //[-0.007, 0.0005, 0.99]*/
         typedef matr::Matrix3Static<999975003, 5356, -7070522, 
 5356, 999998852, 1515111, 
 7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
@@ -175,10 +154,6 @@ class KosselPi : public Machine {
             A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_24>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
             A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_03>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
             _Fan,
-            //12000, 3000, 1000 gives osc of ~3 min (20C-80C). Converges.
-            //20000,  600,    0 (50C->80C). Converges. No osc. Takes 2 minutes to progress from 81C to 80C. Peaks at 130C when from (80C->120C). Critically damped. Takes 90 seconds to stabilize *near* target.
-            //12000,  600, 1200 (50C->130C). Peaks 22C above target. Underdamped. 5 mins to converge
-            //18000,  300, 1000 (40C->130C). Overdamped. 4.5 minutes to reach target (& is stabilized when it gets there)
             TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000, 1000000>, LowPassFilter<3000> >
             //_EndstopA, _EndstopB, _EndstopC
             > IODriverTypes;
