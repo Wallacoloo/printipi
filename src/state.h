@@ -183,7 +183,7 @@ template <typename Drv> class State {
         void tendComChannel(gparse::Com &com);
         /* execute the GCode on a Driver object that supports a well-defined interface.
          * returns a Command to send back to the host. */
-        gparse::Response execute(gparse::Command const& cmd);
+        gparse::Response execute(gparse::Command const& cmd, gparse::Com &com);
         /* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
         void queueMovement(float x, float y, float z, float e);
         /* Home to the endstops. Does not return until endstops have been reached. */
@@ -372,7 +372,7 @@ template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
         auto cmd = com.getCommand();
         //auto x = gparse::Response(gparse::ResponseOk);
         //gparse::Command resp = execute(cmd);
-        gparse::Response resp = execute(cmd);
+        gparse::Response resp = execute(cmd, com);
         if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
             if (!NO_LOG_M105 || !cmd.isM105()) {
                 LOG("command: %s\n", cmd.toGCode().c_str());
@@ -383,7 +383,7 @@ template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
     }
 }
 
-template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command const& cmd) {
+template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command const &cmd, gparse::Com &com) {
     std::string opcode = cmd.getOpcode();
     //gparse::Command resp;
     if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
@@ -477,14 +477,24 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
         return gparse::Response::Ok;
     } else if (cmd.isM99()) { //return from macro/subprogram
-        LOGW("Warning (state.h): OP_M99 (return) not implemented\n");
+        LOGW("Warning (state.h): OP_M99 (return) not tested\n");
         //note: can't simply pop the top file, because then that causes memory access errors when trying to send it a reply.
         //Need to check if com channel that received this command is the top one. If yes, then pop it and return Response::Null so that no response will be sent.
         //  else, pop it and return Response::Ok.
-        //if (!gcodeFileStack.empty()) {
-        //    gcodeFileStack.pop();
-        //}
-        return gparse::Response::Ok;
+        if (gcodeFileStack.empty()) { //return from the main I/O routine = kill program
+            exit(0);
+            return gparse::Response::Null;
+        } else {
+            if (&gcodeFileStack.top() == &com) { //popping the com channel that sent this = cannot reply
+                //Note: MUST compare com to .top() before popping, otherwise com will become an invalid reference.
+                //We can get away with comparing just the pointers, because com objects are only ever stored in one place.
+                gcodeFileStack.pop();
+                return gparse::Response::Null;
+            } else { //popping a different com channel than the one that sent this request.
+                gcodeFileStack.pop();
+                return gparse::Response::Ok;
+            }
+        }
     } else if (cmd.isM104()) { //set hotend temperature and return immediately.
         bool hasS;
         float t = cmd.getS(hasS);
