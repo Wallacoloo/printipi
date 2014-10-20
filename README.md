@@ -10,7 +10,8 @@ Printipi also aims to support a multitude of printers including typical cartesia
 Demos
 ========
 
-Printipi powering a Mini Kossel: http://youtu.be/g4UD5MRas3E  
+Printipi powering a Mini Kossel @ 120mm/sec (2014/10/19): http://youtu.be/gAruwqOEuPs
+Printipi powering a Mini Kossel (2014/08/18): http://youtu.be/g4UD5MRas3E  
 
 License
 ========
