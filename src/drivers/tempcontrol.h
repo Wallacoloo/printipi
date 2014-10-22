@@ -130,9 +130,10 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
         }
     private:
         template <typename Sched> void updatePwm(Sched &sched) {
-            float error = _destTemp - _lastTemp;
-            error = _filter.feed(error);
-            float pwm = _pid.feed(error);
+	  // Make this actually pass both the setpoint and process value
+	  // into the the controller
+	    float filtered = filter.feed(_lastTemp);
+            float pwm = _pid.feed(_destTemp,_lastTemp);
             LOG("tempcontrol: pwm=%f\n", pwm);
             sched.schedPwm(DeviceIdx, pwm, heaterPwmPeriod());
         }
