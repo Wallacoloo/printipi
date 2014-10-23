@@ -6,7 +6,10 @@
 #include "drivers/linearcoordmap.h"
 #include "machines/machine.h"
 
-namespace drv {
+namespace machines {
+namespace generic {
+
+using namespace drv; //for all the drivers
 
 class Example : public Machine {
     public:
@@ -16,7 +19,7 @@ class Example : public Machine {
         typedef std::tuple<> IODriverTypes;
 };
 
-
+}
 }
 
 #endif

@@ -12,15 +12,10 @@
  *   This way circular includes can be avoided inside types contained in typesettings that depend on other type settings.
  */
 
-#include <inttypes.h> //for PRId64
-
 #include "typesettings/clocks.h"
 #include "typesettings/schedinterfacehardwarescheduler.h"
 
 #include "typesettings/compileflags.h"
-#ifndef PRId64
-    #define PRId64 "lld"
-#endif
 
 #include "typesettings/primitives.h"
 #include "typesettings/enums.h"

@@ -5,7 +5,6 @@
 #include <time.h> //for timespec / nanosleep / usleep (need -std=gnu99)
 #include <signal.h> //for sigaction
 #include <unistd.h> //for NULL
-//#include <stdio.h> //for printf
 #include <stdlib.h> //for exit
 #include <cassert>
 #include <fcntl.h> //for file opening
@@ -164,64 +163,45 @@ void DmaScheduler::initSrcAndControlBlocks() {
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
     size_t srcPageBytes = numSrcBlocks*sizeof(struct GpioBufferFrame);
     srcMem = DmaMem(*this, srcPageBytes);
-    //virtSrcPageCached = makeLockedMem(srcPageBytes);
-    //virtSrcPage = makeUncachedMemView(virtSrcPageCached, srcPageBytes);
-    //LOGV("DmaScheduler::initSrcAndControlBlocks mappedPhysSrcPage: %08x\n", virtToPhys(virtSrcPage));
     
     //cast virtSrcPage to a GpioBufferFrame array:
     srcArray = (struct GpioBufferFrame*)srcMem.virtL2Coherent; //Note: calling virtToPhys on srcArray will return NULL. Use srcArrayCached for that.
-    //srcArrayCached = (struct GpioBufferFrame*)srcMem.virtL1;
     
     //allocate memory for the control blocks
     size_t cbPageBytes = numSrcBlocks * sizeof(struct DmaControlBlock) * 3; //3 cbs for each source block
-    //virtCbPageCached = makeLockedMem(cbPageBytes);
-    //virtCbPage = makeUncachedMemView(virtCbPageCached, cbPageBytes);
     cbMem = DmaMem(*this, cbPageBytes);
     //fill the control blocks:
-    //cbArrCached = (struct DmaControlBlock*)virtCbPageCached;
-    //cbArr = (struct DmaControlBlock*)virtCbPage;
-    //cbArrCached = (struct DmaControlBlock*)cbMem.virtL1;
     cbArr = (struct DmaControlBlock*)cbMem.virtL2Coherent;
     
     //Allocate memory for the default src outputs (used in PWM, defaults to zeros)
     srcClrMem = DmaMem(*this, srcPageBytes);
-    //virtSrcClrPageCached = makeLockedMem(srcPageBytes);
-    //virtSrcClrPage = makeUncachedMemView(virtSrcClrPageCached, srcPageBytes);
-    //srcClrArray = (struct GpioBufferFrame*)virtSrcClrPage;
-    //srcClrArrayCached = (struct GpioBufferFrame*)virtSrcClrPageCached;
     srcClrArray = (struct GpioBufferFrame*)srcClrMem.virtL2Coherent;
-    //srcClrArrayCached = (struct GpioBufferFrame*)srcClrMem.virtL1;
     
     LOG("DmaScheduler::initSrcAndControlBlocks: #dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
     for (unsigned int i=0; i<numSrcBlocks*3; i += 3) {
         //pace DMA through PWM
         cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        //cbArr[i].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3); //The data written doesn't matter, but using the GPIO source will hopefully bring it into L2 for more deterministic timing of the next control block.
+        //The data written doesn't matter, but using the GPIO source will hopefully bring it into L2 for more deterministic timing of the next control block.
         cbArr[i].SOURCE_AD = physToUncached(srcMem.physAddrAtByteOffset(i/3*sizeof(GpioBufferFrame)));
         cbArr[i].DEST_AD = PWM_BASE_BUS + PWM_FIF1; //write to the FIFO
         cbArr[i].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(4);
         cbArr[i].STRIDE = i/3;
-        //cbArr[i].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+1); //have to use the cached version because the uncached version isn't listed in pagemap(?)
         cbArr[i].NEXTCONBK = physToUncached(cbMem.physAddrAtByteOffset((i+1)*sizeof(DmaControlBlock)));
         //copy buffer to GPIOs
         cbArr[i+1].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        //cbArr[i+1].SOURCE_AD = virtToUncachedPhys(srcArrayCached + i/3);
         cbArr[i+1].SOURCE_AD = physToUncached(srcMem.physAddrAtByteOffset(i/3*sizeof(GpioBufferFrame)));
         cbArr[i+1].DEST_AD = GPIO_BASE_BUS + GPSET0;
-        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
-        cbArr[i+1].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
-        //cbArr[i+1].NEXTCONBK = virtToUncachedPhys(cbArrCached+i+2);
+        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(NUM_GPIO_WORDS*4);
+        const int stride = 12 - 4*NUM_GPIO_WORDS; //gpset[0] and gpclr[0] are separated by 3 words (12 bytes).
+        cbArr[i+1].STRIDE = DMA_CB_STRIDE_D_STRIDE(stride) | DMA_CB_STRIDE_S_STRIDE(0);
         cbArr[i+1].NEXTCONBK = physToUncached(cbMem.physAddrAtByteOffset((i+2)*sizeof(DmaControlBlock)));
         //clear buffer (TODO: investigate using a 4-word copy ("burst") )
         cbArr[i+2].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
-        //cbArr[i+2].SOURCE_AD = virtToUncachedPhys(srcClrArrayCached+i/3);
         cbArr[i+2].SOURCE_AD = physToUncached(srcClrMem.physAddrAtByteOffset(i/3*sizeof(struct GpioBufferFrame)));
-        //cbArr[i+2].DEST_AD = virtToUncachedPhys(srcArrayCached + i/3);
         cbArr[i+2].DEST_AD = physToUncached(srcMem.physAddrAtByteOffset(i/3*sizeof(GpioBufferFrame)));
         cbArr[i+2].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(1) | DMA_CB_TXFR_LEN_XLENGTH(sizeof(struct GpioBufferFrame));
         cbArr[i+2].STRIDE = i/3; //might be better to use the NEXT index
         int nextIdx = i+3 < numSrcBlocks*3 ? i+3 : 0; //last block should loop back to the first block
-        //cbArr[i+2].NEXTCONBK = virtToUncachedPhys(cbArrCached + nextIdx); //(uint32_t)physCbPage + ((void*)&cbArr[(i+2)%maxIdx] - virtCbPage);
         cbArr[i+2].NEXTCONBK = physToUncached(cbMem.physAddrAtByteOffset(nextIdx*sizeof(DmaControlBlock)));
     }
 }
@@ -311,8 +291,6 @@ void DmaScheduler::initDma() {
     
     //configure the DMA header to point to our control block:
     dmaHeader = (struct DmaChannelHeader*)(dmaBaseMem + DMACH(dmaCh)/4); //must divide by 4, as dmaBaseMem is uint32_t*
-    //LOGV("Previous DMA header:\n");
-    //logDmaChannelHeader(dmaHeader);
     //abort any previous DMA:
     //dmaHeader->NEXTCONBK = 0; //NEXTCONBK is read-only.
     dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
@@ -323,7 +301,6 @@ void DmaScheduler::initDma() {
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
-    //uint32_t firstAddr = virtToUncachedPhys(cbArrCached);
     uint32_t firstAddr = physToUncached(cbMem.physAddrAtByteOffset(0));
     LOG("DmaScheduler::initDma: starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
     dmaHeader->CONBLK_AD = firstAddr; //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
@@ -374,7 +351,6 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     uint64_t desiredTime = micros - MAX_SCHED_AHEAD_USEC;
     SleepT::sleep_until(std::chrono::time_point<std::chrono::microseconds>(std::chrono::microseconds(desiredTime)));
 
-    //int64_t lastUsecAtFrame0 = syncDmaTime();
     int64_t lastUsecAtFrame0 = _lastTimeAtFrame0;
     int usecFromFrame0 = micros - lastUsecAtFrame0;
     if (usecFromFrame0 < 0) { //need this check to prevent newIdx from being negative.
@@ -390,9 +366,11 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
 
     //Now queue the command:
     if (mode == 0) { //turn output off
-        srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
+        //srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
+        srcArray[newIdx].writeGpClr(pin);
     } else { //turn output on
-        srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
+        //srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
+        srcArray[newIdx].writeGpSet(pin);
     }
 }
 

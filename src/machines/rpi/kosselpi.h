@@ -116,35 +116,38 @@ P5 layout:
   Note: decreasing R decreases actual displacement (eg X100 becomes only 90mm from center)
   at 121, 222, 60mm in x dir is really 68mm.
 */
-namespace drv {
+
+namespace machines {
+namespace rpi {
+
+using namespace drv; //for all the drivers
+using namespace drv::rpi; //for RpiIoPin, etc.
 
 class KosselPi : public Machine {
     private:
-        typedef InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_16, IoHigh> > _StepperEn;
-        typedef Endstop<InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_18, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA; //endstop is triggered on HIGH
-        typedef Endstop<InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P5_03, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
-        typedef Endstop<InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_15, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
-        typedef RCThermistor<rpi::RpiIoPin<mitpi::V2_GPIO_P1_13>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-        typedef Fan<rpi::RpiIoPin<mitpi::V2_GPIO_P1_08, IoLow> > _Fan;
-        typedef InvertedPin<rpi::RpiIoPin<mitpi::V2_GPIO_P1_10, IoHigh> > _HotendOut;
+        typedef InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_16, IoHigh> > _StepperEn;
+        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_18, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA;
+        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P5_03, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
+        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_15, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
+        typedef RCThermistor<RpiIoPin<mitpi::V2_GPIO_P1_13>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
+        typedef Fan<RpiIoPin<mitpi::V2_GPIO_P1_08, IoLow> > _Fan;
+        typedef InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_10, IoHigh> > _HotendOut;
         //typedef matr::Identity3Static _BedLevelT;
         typedef matr::Matrix3Static<999975003, 5356, -7070522, 
 5356, 999998852, 1515111, 
 7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
     public:
-        //typedef ExponentialAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
 
         typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
-            A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_22>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_23>, _StepperEn>, //A tower
-            A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_19>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_21>, _StepperEn>, //B tower
-            A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_24>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
-            A4988<rpi::RpiIoPin<mitpi::V2_GPIO_P1_03>, rpi::RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
+            A4988<RpiIoPin<mitpi::V2_GPIO_P1_22>, RpiIoPin<mitpi::V2_GPIO_P1_23>, _StepperEn>, //A tower
+            A4988<RpiIoPin<mitpi::V2_GPIO_P1_19>, RpiIoPin<mitpi::V2_GPIO_P1_21>, _StepperEn>, //B tower
+            A4988<RpiIoPin<mitpi::V2_GPIO_P1_24>, RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
+            A4988<RpiIoPin<mitpi::V2_GPIO_P1_03>, RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
             _Fan,
             TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000, 1000000>, LowPassFilter<3000> >
-            //_EndstopA, _EndstopB, _EndstopC
             > IODriverTypes;
         inline float defaultMoveRate() const { //in mm/sec
             return MAX_MOVE_RATE;
@@ -168,6 +171,7 @@ class KosselPi : public Machine {
         }
 };
 
+}
 }
 
 #endif

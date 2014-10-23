@@ -47,7 +47,7 @@
 
 //MACHINE_PATH is calculated in the Makefile and then passed as a define through the make system (ie gcc -DMACHINEPATH='"path"')
 //To set the path, call make MACHINE_PATH=...
-//or, call make MACHINE=<machine>, eg MACHINE=Kossel (case-sensitive) and the path will be calculated from that (drivers/machines/kossel.h)
+//or, call make MACHINE=<machine>, eg MACHINE=rpi::KosselPi (case-sensitive) and the path will be calculated from that (src/machines/kossel.h)
 #include MACHINE_PATH
 
 void printUsage(char* cmd) {
@@ -100,7 +100,7 @@ int main_(int argc, char** argv) {
     gparse::Com com = gparse::Com(serialFileName, outFile);
     
     //instantiate main driver:
-    typedef drv::MACHINE MachineT;
+    typedef machines::MACHINE MachineT;
     MachineT driver;
     
     //if input is stdin, or a two-way pipe, then it likely means we want to keep this input channel forever,

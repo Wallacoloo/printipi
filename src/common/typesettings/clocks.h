@@ -1,8 +1,9 @@
 #ifndef COMMON_TYPESETTINGS_CLOCKS_H
 #define COMMON_TYPESETTINGS_CLOCKS_H
 
-#if DTARGET_RPI == 1
-    #define TARGET_RPI //provide a user-usable macro
+#include "compileflags.h"
+
+#ifdef TARGET_RPI
     //use a lower-latency clock available on the rpi:
     #ifdef COMPILING_MAIN
         #warning "using drv::rpi::ChronoClockRpi for EventClockT. If your compilation target is not the Raspberry Pi, the program will crash on startup"
