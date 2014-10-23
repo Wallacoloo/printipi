@@ -8,7 +8,7 @@
     #define RUNNING_IN_VM 0
 #endif
 
-#if DTARGET_RPI == 1
+#ifdef DTARGET_PLATFORM_RPI
     #define TARGET_RPI //provide a user-usable macro
 #endif
 
