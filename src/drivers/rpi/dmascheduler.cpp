@@ -191,8 +191,9 @@ void DmaScheduler::initSrcAndControlBlocks() {
         cbArr[i+1].TI = DMA_CB_TI_SRC_INC | DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
         cbArr[i+1].SOURCE_AD = physToUncached(srcMem.physAddrAtByteOffset(i/3*sizeof(GpioBufferFrame)));
         cbArr[i+1].DEST_AD = GPIO_BASE_BUS + GPSET0;
-        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(8);
-        cbArr[i+1].STRIDE = DMA_CB_STRIDE_D_STRIDE(4) | DMA_CB_STRIDE_S_STRIDE(0);
+        cbArr[i+1].TXFR_LEN = DMA_CB_TXFR_LEN_YLENGTH(2) | DMA_CB_TXFR_LEN_XLENGTH(NUM_GPIO_WORDS*4);
+        const int stride = 12 - 4*NUM_GPIO_WORDS; //gpset[0] and gpclr[0] are separated by 3 words (12 bytes).
+        cbArr[i+1].STRIDE = DMA_CB_STRIDE_D_STRIDE(stride) | DMA_CB_STRIDE_S_STRIDE(0);
         cbArr[i+1].NEXTCONBK = physToUncached(cbMem.physAddrAtByteOffset((i+2)*sizeof(DmaControlBlock)));
         //clear buffer (TODO: investigate using a 4-word copy ("burst") )
         cbArr[i+2].TI = DMA_CB_TI_DEST_INC | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
@@ -365,9 +366,11 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
 
     //Now queue the command:
     if (mode == 0) { //turn output off
-        srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
+        //srcArray[newIdx].gpclr[pin>31] |= 1 << (pin%32);
+        srcArray[newIdx].writeGpClr(pin);
     } else { //turn output on
-        srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
+        //srcArray[newIdx].gpset[pin>31] |= 1 << (pin%32);
+        srcArray[newIdx].writeGpSet(pin);
     }
 }
 

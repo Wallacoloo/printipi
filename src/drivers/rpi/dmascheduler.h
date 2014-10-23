@@ -143,10 +143,11 @@
 #include <stdint.h> //for uint32_t
 #include <string.h> //for size_t, memset
 #include <chrono> //for std::chrono::microseconds
-//#include <tuple> //for multiple- return types
+#include <cassert>
 
 #include "common/typesettings/clocks.h" //for EventClockT
 #include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
+#include "common/typesettings/compileflags.h" //for MAX_RPI_PIN_ID
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
 
 //config settings:
@@ -178,6 +179,12 @@
 //Can get away with a wider dead-space because we have looser tolerance here.
 #define MAX_SCHED_AHEAD_FRAME (SOURCE_BUFFER_FRAMES - (SOURCE_BUFFER_FRAMES>>6))
 #define MAX_SCHED_AHEAD_USEC (FRAME_TO_USEC(MAX_SCHED_AHEAD_FRAME))
+
+#if MAX_RPI_PIN_ID < 32
+    #define NUM_GPIO_WORDS 1
+#else
+    #define NUM_GPIO_WORDS 2
+#endif
 
 
 #define TIMER_BASE   0x20003000
@@ -456,19 +463,33 @@ void freeLockedMem(void* mem, size_t size);
 struct GpioBufferFrame {
     //custom structure used for storing the GPIO buffer.
     //These BufferFrame's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility
-    uint32_t gpset[2];
-    uint32_t gpclr[2];
+    uint32_t gpset[NUM_GPIO_WORDS];
+    uint32_t gpclr[NUM_GPIO_WORDS];
     inline uint32_t* gpsetForPin(int pin) {
-        return &gpset[pin>31];
+        assert(0 <= pin && pin < NUM_GPIO_WORDS*32);
+        int idx = NUM_GPIO_WORDS == 1 ? pin : (pin>31);
+        return &gpset[idx];
     }
     inline uint32_t* gpclrForPin(int pin) {
-        return &gpclr[pin>31];
+        assert(0 <= pin && pin < NUM_GPIO_WORDS*32);
+        int idx = NUM_GPIO_WORDS == 1 ? pin : (pin>31);
+        return &gpclr[idx];
+    }
+    inline void writeGpSet(int pin) {
+        int shift = NUM_GPIO_WORDS == 1 ? pin : pin%32;
+        *gpsetForPin(pin) = (1<<shift);
     }
     inline void writeGpSet(int pin, bool val) {
-        writeBitmasked(gpsetForPin(pin), 1<<(pin%32), val<<(pin%32));
+        int shift = NUM_GPIO_WORDS == 1 ? pin : pin%32;
+        writeBitmasked(gpsetForPin(pin), 1<<shift, val<<shift);
+    }
+    inline void writeGpClr(int pin) {
+        int shift = NUM_GPIO_WORDS == 1 ? pin : pin%32;
+        *gpclrForPin(pin) = (1<<shift);
     }
     inline void writeGpClr(int pin, bool val) {
-        writeBitmasked(gpclrForPin(pin), 1<<(pin%32), val<<(pin%32));
+        int shift = NUM_GPIO_WORDS == 1 ? pin : pin%32;
+        writeBitmasked(gpclrForPin(pin), 1<<shift, val<<shift);
     }
 };
 
