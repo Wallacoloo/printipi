@@ -116,7 +116,10 @@ P5 layout:
   Note: decreasing R decreases actual displacement (eg X100 becomes only 90mm from center)
   at 121, 222, 60mm in x dir is really 68mm.
 */
-namespace drv {
+
+namespace machines {
+
+using namespace drv; //for all the drivers
 
 class KosselPi : public Machine {
     private:

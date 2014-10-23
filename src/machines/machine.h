@@ -1,7 +1,7 @@
 #ifndef DRIVERS_MACHINES_MACHINE_H
 #define DRIVERS_MACHINES_MACHINE_H
 
-namespace drv {
+namespace machines {
 
 class Machine {
     public:
