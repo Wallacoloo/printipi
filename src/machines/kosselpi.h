@@ -6,7 +6,7 @@
 #include "common/filters/lowpassfilter.h"
 //#include "motion/exponentialacceleration.h"
 #include "motion/constantacceleration.h"
-#include "drivers/machines/machine.h"
+#include "machines/machine.h"
 #include "drivers/axisstepper.h"
 #include "drivers/linearstepper.h"
 #include "drivers/lineardeltastepper.h"

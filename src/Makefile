@@ -25,9 +25,9 @@ else #gcc < 4.7, or non-gcc compiler
 	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
-MACHINE=KosselPi
+MACHINE=KosselPi #Default machine if not given via command line argument
 LOWERMACHINE=$(shell echo $(MACHINE) | tr A-Z a-z)
-MACHINE_PATH=drivers/machines/$(LOWERMACHINE).h
+MACHINE_PATH=machines/$(LOWERMACHINE).h
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
