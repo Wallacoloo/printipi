@@ -477,7 +477,7 @@ struct GpioBufferFrame {
     }
     inline void writeGpSet(int pin) {
         int shift = NUM_GPIO_WORDS == 1 ? pin : pin%32;
-        *gpsetForPin(pin) = (1<<shift);
+        *gpsetForPin(pin) |= (1<<shift);
     }
     inline void writeGpSet(int pin, bool val) {
         int shift = NUM_GPIO_WORDS == 1 ? pin : pin%32;
@@ -485,7 +485,7 @@ struct GpioBufferFrame {
     }
     inline void writeGpClr(int pin) {
         int shift = NUM_GPIO_WORDS == 1 ? pin : pin%32;
-        *gpclrForPin(pin) = (1<<shift);
+        *gpclrForPin(pin) |= (1<<shift);
     }
     inline void writeGpClr(int pin, bool val) {
         int shift = NUM_GPIO_WORDS == 1 ? pin : pin%32;
