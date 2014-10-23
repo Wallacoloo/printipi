@@ -4,7 +4,7 @@
 #include <tuple>
 #include "motion/constantacceleration.h"
 #include "drivers/linearcoordmap.h"
-#include "drivers/machines/machine.h"
+#include "machines/machine.h"
 
 namespace drv {
 
