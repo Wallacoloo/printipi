@@ -40,7 +40,7 @@ gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get inst
 
 First, get the sources: `git clone https://github.com/Wallacoloo/printipi.git`  
 
-To compile Printipi, navigate to the src directory and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/machines, eg `KosselPi` or the `Example` machine, and `<target>` is either debug, release, profile, or minsize. Both are case-sensitive. A binary will be produced under build with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg `sudo ./printipi`).
+To compile Printipi, navigate to the src directory and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname (fully-qualified) of the machine contained under src/machines, eg `rpi::KosselPi` or the `generic::Example` machine, and `<target>` is either debug, release, debugrel, profile, or minsize. Both are case-sensitive. A binary will be produced under build with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg `sudo ./printipi`).
 
 Usage
 ========
@@ -67,10 +67,8 @@ Congratulations, you're now running Printipi!
 The Future
 ========
 
-The short to midterm goals for Printipi are mostly optimization-based. DMA has significantly minimized timing issues, but more optimizations are needed in order to lower cpu usage & plan paths more rapidly.
+More effort will be put into the motion planning system, which currently has no concept of curves and thus forces a full deceleration to 0 at each joint in the path.
 
-More effort will also be put into the motion planning system, which currently has no concept of curves and thus forces a full deceleration to 0 at each joint in the path.
-
-Lastly, it will be necessary to make the gcode parser properly handle transmission errors.
+Also, it will be necessary to make the gcode parser properly handle serial transmission errors.
 
 See the issues section for more info.
