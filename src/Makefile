@@ -33,9 +33,9 @@ else #gcc < 4.7, or non-gcc compiler
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
 #Default machine if not given via command line argument:
-MACHINE=rpi/KosselPi
+MACHINE=rpi::KosselPi
 MACHINECPP=$(subst /,::,$(MACHINE))
-LOWERMACHINE=$(shell echo $(MACHINE) | tr A-Z a-z)
+LOWERMACHINE=$(subst ::,/,$(shell echo $(MACHINE) | tr A-Z a-z))
 MACHINE_PATH=machines/$(subst ::,/,$(LOWERMACHINE)).h
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
