@@ -76,17 +76,6 @@ template <typename Drv> class State {
             static constexpr std::size_t numIoDrivers() {
                 return std::tuple_size<typename Drv::IODriverTypes>::value;
             }
-            struct __iterEventOutputSequence {
-                template <typename T, typename Func> void operator()(T &driver, const Event &evt, Func &f) {
-                    auto a = driver.getEventOutputSequence(evt); //get the output events for this events
-                    for (auto &&outputEvt : a) {
-                        f(outputEvt); //apply to f.
-                    }
-                }
-            };
-            template <typename Func> void iterEventOutputSequence(const Event &evt, Func f) {
-                return tupleCallOnIndex(_state.ioDrivers, __iterEventOutputSequence(), evt.stepperId(), evt, f);
-            }
             struct __iterPwmPins {
                 template <typename T, typename Func> void operator()(T &driver, float dutyCycle, Func &f) {
                     auto p = driver.getPwmPin();
@@ -333,6 +322,15 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
     //x = _destXPrimitive - _hostZeroX;
 }
 
+struct __iterEventOutputSequence {
+    template <typename T, typename Func> void operator()(T &driver, const Event &evt, Func &f) {
+        auto a = driver.getEventOutputSequence(evt); //get the output events for this events
+        for (auto &&outputEvt : a) {
+            f(outputEvt); //apply to f.
+        }
+    }
+};
+
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     //Only check the communications periodically because calling execute(com.getCommand()) DOES add up.
     //One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
@@ -349,7 +347,9 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         Event evt; //check to see if motionPlanner has another event ready
         if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
             if (!(evt = motionPlanner.nextStep()).isNull()) {
-                this->scheduler.queue(evt);
+                //this->scheduler.queue(evt);
+                //iterEventOutputSequence(evt, [this](const OutputEvent &out) {this->scheduler.queue(out); });
+                tupleCallOnIndex(this->ioDrivers, __iterEventOutputSequence(), evt.stepperId(), evt, [this](const OutputEvent &out) { this->scheduler.queue(out); });
                 _lastMotionPlannedTime = evt.time();
                 motionNeedsCpu = scheduler.isRoomInBuffer();
             } else { //counter buffer changes set in homing

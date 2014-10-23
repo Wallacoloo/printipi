@@ -63,7 +63,6 @@ template <typename Interface=NullSchedulerInterface> class Scheduler : public Sc
     SchedAdjuster schedAdjuster;
     bool hasActiveEvent;
     public:
-        void queue(const Event &evt);
         void queue(const OutputEvent &evt);
         void schedPwm(AxisIdType idx, float duty, float maxPeriod);
         template <typename T> void setMaxSleep(T duration) {
@@ -93,16 +92,10 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 }
 
 
-template <typename Interface> void Scheduler<Interface>::queue(const Event& evt) {
-    //Turn the event into an output event sequence, and then queue those individual events:
-    //assert(interface.isEventOutputSequenceable(evt));
-    hasActiveEvent = true;
-    interface.iterEventOutputSequence(evt, [this](const OutputEvent &out) {this->queue(out); });
-    hasActiveEvent = false;
-}
-
 template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent &evt) {
+    hasActiveEvent = true;
     this->yield(&evt);
+    hasActiveEvent = false;
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float maxPeriod) {
