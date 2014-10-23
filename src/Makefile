@@ -1,3 +1,10 @@
+##USAGE:
+## make [MACHINE=<machine>] [<buildtype>] [DEFINES=<defines>]
+##   <machine> is the case-sensitive c++ class name of the machine you wish to target. eg rpi::KosselPi or generic::Example
+##   <buildtype> = `release' or `debug' or `debugrel' or `profile` or `minsize'. Defaults to debug
+##   <defines> is a series of (define-related) flags to send to the C compiler. Eg DEFINES=-DNDEBUG
+
+
 #directory containing this makefile:
 SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
@@ -25,9 +32,11 @@ else #gcc < 4.7, or non-gcc compiler
 	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
-MACHINE=KosselPi #Default machine if not given via command line argument
+#Default machine if not given via command line argument:
+MACHINE=rpi/KosselPi
+MACHINECPP=$(subst /,::,$(MACHINE))
 LOWERMACHINE=$(shell echo $(MACHINE) | tr A-Z a-z)
-MACHINE_PATH=machines/$(LOWERMACHINE).h
+MACHINE_PATH=machines/$(subst ::,/,$(LOWERMACHINE)).h
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
@@ -39,9 +48,9 @@ MACHINE_PATH=machines/$(LOWERMACHINE).h
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 #the bcm2835 library has some pedantic errors, so use f=-fpermissive
-CFLAGS=-std=c++0x -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS)  $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE=$(MACHINE) -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI) -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES)
+CFLAGS=-std=c++0x -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS)  $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_RPI=$(TARGET_RPI) -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES)
 MAINCFLAGS=#-fwhole-program
-#CFLAGS+= -fassociateive-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
+#CFLAGS+= -fassociative-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
 LD=ld
 LDFLAGS= $(LTOFLAG)
 LIBS=-lrt
@@ -51,12 +60,15 @@ DEBUGRELDIR=$(BUILDROOT)/debugrel
 RELEASEDIR=$(BUILDROOT)/release
 PROFILEDIR=$(BUILDROOT)/prof
 MINSIZEDIR=$(BUILDROOT)/minsize
-NAME=printipi-$(LOWERMACHINE)
-NAMELINK=printipi #this will become a symbolic link to the actual binary
+#name of binary file:
+NAME=printipi-$(subst /,-,$(LOWERMACHINE))
+#NAMELINK will become a symbolic link to the actual binary
+NAMELINK=printipi
 
 all: debug
 
--include $(wildcard *.d */*.d */*/*.d) #include auto-generated dependencies
+#include auto-generated dependencies:
+-include $(wildcard *.d */*.d */*/*.d)
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)

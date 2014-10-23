@@ -7,6 +7,7 @@
 #include "machines/machine.h"
 
 namespace machines {
+namespace generic {
 
 using namespace drv; //for all the drivers
 
@@ -18,6 +19,7 @@ class Example : public Machine {
         typedef std::tuple<> IODriverTypes;
 };
 
+}
 }
 
 #endif
