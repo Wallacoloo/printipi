@@ -50,9 +50,6 @@ template <typename Driver> class Fan : public IODriver {
         void stepBackward() {
             driver.digitalWrite(IoLow);
         }
-        bool canDoPwm() const {
-            return true;
-        }
         Driver& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
             return driver;
         }

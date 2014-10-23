@@ -52,8 +52,7 @@ class IODriver {
         //for a (stepper) motor, advance +/- 1 step:
         inline bool isEventOutputSequenceable(const Event &) { return false; } //OVERRIDE THIS
         std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS if isEventOutputSequenceable returns true.
-        inline bool canDoPwm() const { return false; } //OVERRIDE THIS
-        NoPin getPwmPin() const { return NoPin(); } //OVERRIDE THIS if canDoPwm returns true.
+        NoPin getPwmPin() const { return NoPin(); } //OVERRIDE THIS if device is pwm-able.
         inline void stepForward() {} //OVERRIDE THIS
         inline void stepBackward() {} //OVERRIDE THIS
         /*deactivate: called at program exit.
@@ -78,7 +77,6 @@ class IODriver {
         template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
         template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
         template <typename TupleT> static bool isEventOutputSequenceable(TupleT &drivers, const Event &evt);
-        template <typename TupleT> static bool canDoPwm(TupleT &drivers, AxisIdType axis);
         template <typename TupleT, typename ...Args > static bool callIdleCpuHandlers(TupleT &drivers, Args... args);
         template <typename TupleT> static void lockAllAxis(TupleT &drivers);
         template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
@@ -128,41 +126,8 @@ template <typename TupleT> bool IODriver::isEventOutputSequenceable(TupleT &driv
     return tupleReduceLogicalOr(drivers, IODriver__isEventOutputSequenceable(), evt);
 }
 
-//IODriver::canDoPwm helper functions:
-struct IODriver__canDoPwm {
-    template <typename T> bool operator()(std::size_t index, T &driver, AxisIdType axis) {
-        if (index == axis) {
-            return driver.canDoPwm();
-        } else {
-            return false;
-        }
-    }
-};
-
-template <typename TupleT> bool IODriver::canDoPwm(TupleT &drivers, AxisIdType axis) {
-    return tupleReduceLogicalOr(drivers, IODriver__canDoPwm(), axis);
-}
-
 //IODriver::callIdleCpuHandlers helper functions:
 
-/*template <typename TupleT, std::size_t myIdxPlusOne, typename ...Args> struct IODriver__onIdleCpu {
-    bool operator()(TupleT &drivers, Args... args) {
-        bool prev = IODriver__onIdleCpu<TupleT, myIdxPlusOne-1, Args...>()(drivers, args...);
-        bool cur = std::get<myIdxPlusOne-1>(drivers).onIdleCpu(args...); //EXPLICITLY CALCULATE THIS SEPARATELY TO PREVENT SHORT-CIRCUIT OPERATIONS
-        return prev || cur; //return true if ANY objects need future servicing.
-    }
-};
-
-template <typename TupleT, typename ...Args> struct IODriver__onIdleCpu<TupleT, 0, Args...> {
-    bool operator()(TupleT &, Args...) {
-        //return std::get<0>(drivers).onIdleCpu(args...);
-        return false; //no more objects need cpu time.
-    }
-};
-
-template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
-    return IODriver__onIdleCpu<TupleT, std::tuple_size<TupleT>::value, Args...>()(drivers, args...);
-}*/
 struct IODriver__onIdleCpu {
     template <typename T, typename ...Args> bool operator()(std::size_t /*index*/, T &driver, Args... args) {
         return driver.onIdleCpu(args...);
