@@ -3,7 +3,6 @@
 
 /* 
  * Printipi/common/pid.h
- * (c) 2014 Colin Wallace
  *
  * http://en.wikipedia.org/wiki/PID_controller
  * PID provides a Proportional-Integral-Derivative controller that can be used as a control feedback mechanism.
@@ -17,8 +16,8 @@ template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000
     static constexpr float P = P1000000 / 1000000.;
     static constexpr float I = I1000000 / 1000000.;
     static constexpr float D = D1000000 / 1000000.;
-    static constexpr float IMax() { return ITermMax1000000 / 1000000. / (I1000000 / 1000000.); }
-    static constexpr float IMin() { return ITermMin1000000 / 1000000. / (I1000000 / 1000000.); }
+    //static constexpr float IMax() { return ITermMax1000000 / 1000000. / (I1000000 / 1000000.); }
+    //static constexpr float IMin() { return ITermMin1000000 / 1000000. / (I1000000 / 1000000.); }
     float errorI;
     float lastValue;
 
@@ -35,28 +34,28 @@ template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000
         float feed(float setpoint, float pv) {
        	    float error = setpoint - pv;
             float deltaT = refreshTime();
-	    // Use a simple 1st order finite difference for the derivative - no fancy filtering.
-	    float errorD = (pv-lastValue)/deltaT;
-	    lastValue = pv;
-	    // Then figure out the change for the integral integral
-	    float update = error * deltaT;
-	    errorI += update;
-	    // Then compute the output, saturate it to [0,1], and implement anti-windup
-	    float output = P*error + I*errorI + D*errorD;
+            // Use a simple 1st order finite difference for the derivative - no fancy filtering.
+            float errorD = (pv-lastValue)/deltaT;
+            lastValue = pv;
+            // Then figure out the change for the integral integral
+            float update = error * deltaT;
+            errorI += update;
+            // Then compute the output, saturate it to [0,1], and implement anti-windup
+            float output = P*error + I*errorI + D*errorD;
 
-	    if(output < 0.0){
-	      if(error < 0.0){
-		errorI -= update;
-	      }
-	      return 0.0;
-	    }
+            if(output < 0.0){
+                if(error < 0.0){
+                    errorI -= update;
+                }
+                return 0.0;
+            }
 
-	    if(1.0 < output){
-	      if(error > 0.0){
-		errorI -= update;
-	      }
-	      return 1.0;
-	    }
+            if(1.0 < output){
+                if(error > 0.0){
+                    errorI -= update;
+                }
+                return 1.0;
+            }
 	    
             return output;
         }
