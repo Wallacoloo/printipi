@@ -5,7 +5,7 @@ Printipi is a software package designed to bring 3d printing to the Raspberry Pi
 
 Although called Printipi, it is not necessarily limited to running on the Pi. The `Example` machine can compile and run on most Linux machines, as a proof of concept (it does no electrical I/O), and new machines can be supported by implementing a handful of interfaces (see the section below for more info).
 
-Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/drivers/machines that exposes its coordinate system and peripherals through a handful of public member functions and typedefs. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
+Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/machines that exposes its coordinate system and peripherals through a handful of public member functions and typedefs. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
 
 Demos
 ========
@@ -40,7 +40,7 @@ gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get inst
 
 First, get the sources: `git clone https://github.com/Wallacoloo/printipi.git`  
 
-To compile Printipi, navigate to the src directory and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/drivers/machines, eg `KosselPi` or the `Example` machine, and `<target>` is either debug, release, profile, or minsize. Both are case-sensitive. A binary will be produced under build with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg `sudo ./printipi`).
+To compile Printipi, navigate to the src directory and type `make MACHINE=<machine> <target>`, where `<machine>` is the C++ classname of the machine contained under src/machines, eg `KosselPi` or the `Example` machine, and `<target>` is either debug, release, profile, or minsize. Both are case-sensitive. A binary will be produced under build with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run eg `sudo ./printipi`).
 
 Usage
 ========
@@ -60,7 +60,7 @@ Supporting Other Architectures
 While Printipi is under heavy development, this process may change slightly, but these are the basic steps to supporting new hardware:  
 1. Implement drivers/IoPin. An example implementation is drivers/rpi/RpiIoPin  
 2. Implement the HardwareScheduler interface found in schedulerbase.h and update common/typesettings/schedinterfacehardwarescheduler.h to use your implementation  
-3. Make a new class for your machine in drivers/machines  
+3. Make a new class for your machine in src/machines  
 
 Congratulations, you're now running Printipi!
 
