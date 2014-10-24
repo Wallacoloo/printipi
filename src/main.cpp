@@ -44,7 +44,7 @@
 #include "gparse/com.h"
 #include "state.h"
 #include "argparse.h"
-#include "common/filesystem.h"
+#include "filesystem.h"
 
 //MACHINE_PATH is calculated in the Makefile and then passed as a define through the make system (ie gcc -DMACHINEPATH='"path"')
 //To set the path, call make MACHINE_PATH=...

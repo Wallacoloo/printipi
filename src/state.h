@@ -60,7 +60,7 @@
 #include "common/typesettings/enums.h" //for PositionMode, etc
 #include "common/typesettings/primitives.h" //for CelciusType
 #include "common/tupleutil.h"
-#include "common/filesystem.h"
+#include "filesystem.h"
 #include "outputevent.h"
 
 template <typename Drv> class State {

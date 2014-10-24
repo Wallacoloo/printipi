@@ -128,10 +128,10 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/common/common.a: %/common/logging.o %/common/filesystem.o
+%/common/common.a: %/common/logging.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/rest.a: %/argparse.o %/event.o %/main.o %/schedulerbase.o 
+%/rest.a: %/argparse.o %/event.o %/filesystem.o %/main.o %/schedulerbase.o 
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 %/main.cpp: $(MACHINE_PATH)
 	
