@@ -40,7 +40,6 @@
 #include "outputevent.h"
 #include "common/logging.h"
 #include "common/intervaltimer.h"
-#include "common/suresleep.h"
 #include "common/typesettings/compileflags.h"
 
 #if USE_PTHREAD
@@ -153,22 +152,16 @@ template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const OutputEvent *evt) const {
     //need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
-    bool doSureSleep = false;
     auto sleepUntil = EventClockT::now() + MAX_SLEEP;
     if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
         //auto evtTime = schedAdjuster.adjust(evt->time());
         auto evtTime = interface.schedTime(schedAdjuster.adjust(evt->time()));
         if (evtTime < sleepUntil) {
             sleepUntil = evtTime;
-            doSureSleep = true;
         }
     }
     //LOGV("Scheduler::sleepUntilEvent: %ld.%08lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
-    if (doSureSleep) {
-        SureSleep::sleep_until(sleepUntil);
-    } else {
-        SleepT::sleep_until(sleepUntil);
-    }
+    SleepT::sleep_until(sleepUntil);
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const OutputEvent &evt) const {
