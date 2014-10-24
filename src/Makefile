@@ -120,7 +120,7 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/common/common.a: %/common/logging.o
+%/common/common.a: %/common/logging.o %/common/filesystem.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 %/rest.a: %/argparse.o %/event.o %/main.o %/schedulerbase.o 

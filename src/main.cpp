@@ -44,6 +44,7 @@
 #include "gparse/com.h"
 #include "state.h"
 #include "argparse.h"
+#include "common/filesystem.h"
 
 //MACHINE_PATH is calculated in the Makefile and then passed as a define through the make system (ie gcc -DMACHINEPATH='"path"')
 //To set the path, call make MACHINE_PATH=...
@@ -66,6 +67,7 @@ int main_(int argc, char** argv) {
     std::string serialFileName;
     std::string outFile = gparse::Com::NULL_FILE_STR;
     SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
+    
     if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
         logging::disable();
     }
@@ -79,6 +81,10 @@ int main_(int argc, char** argv) {
         printUsage(argv[0]);
         return 0;
     } 
+    
+    char* fsRootArg = argparse::getCmdOption(argv, argv+argc, "--fsroot");
+    std::string fsRoot = fsRootArg ? std::string(fsRootArg) : "/";
+    
     if (argc < 2 || argv[1][0] == '-') { //if no arguments, or if first argument (and therefore all args) is an option
         //printUsage(argv[0]);
         serialFileName = defaultSerialFile;
@@ -103,9 +109,12 @@ int main_(int argc, char** argv) {
     typedef machines::MACHINE MachineT;
     MachineT driver;
     
+    LOG("Filesystem root: %s\n", fsRoot.c_str());
+    FileSystem fs(fsRoot);
+    
     //if input is stdin, or a two-way pipe, then it likely means we want to keep this input channel forever,
     //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
-    State<MachineT> state(driver, com, com.hasWriteFile() || serialFileName == "/dev/stdin");
+    State<MachineT> state(driver, fs, com, com.hasWriteFile() || serialFileName == "/dev/stdin");
     
     state.eventLoop();
     return 0;
