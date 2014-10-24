@@ -18,6 +18,8 @@
 #ifdef DTARGET_PLATFORM_RPI
     #define TARGET_RPI //provide a user-usable macro
 #endif
+//e.g. TARGET_PLATFORM_LOWER="rpi" or "generic"
+#define TARGET_PLATFORM_LOWER DTARGET_PLATFORM_LOWER
 
 //pthread isn't required, but can provide higher-elevated thread priority
 #define USE_PTHREAD DUSE_PTHREAD

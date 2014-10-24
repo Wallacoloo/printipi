@@ -22,9 +22,9 @@
  */
  
 /*
- * Printipi/drivers/rpi/dmascheduler.h
+ * Printipi/drivers/rpi/hardwarescheduler.h
  *
- * DmaScheduler implements the HardwareScheduler interface declared in schedulerbase.h
+ * drv::rpi::HardwareScheduler implements the HardwareScheduler interface declared in schedulerbase.h
  *
  * It works by maintaining a circular queue of, say, 10 ms in length.
  * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
@@ -135,8 +135,8 @@
 
 
 
-#ifndef DRIVERS_RPI_DMASCHEDULER_H
-#define DRIVERS_RPI_DMASCHEDULER_H
+#ifndef DRIVERS_RPI_HARDWARESCHEDULER_H
+#define DRIVERS_RPI_HARDWARESCHEDULER_H
 
 
  
@@ -494,7 +494,7 @@ struct GpioBufferFrame {
 };
 
 
-class DmaScheduler {
+class HardwareScheduler {
     struct DmaMem {
         //Memory used in DMA must bypass the CPU L1 cache, so we keep a L1-cached view & an L2-cache-coherent view
         void *virtL1;
@@ -504,7 +504,7 @@ class DmaScheduler {
         uintptr_t physAddrAtByteOffset(std::size_t bytes) const;
         uintptr_t virtToPhys(void *virt) const;
         inline DmaMem() {}
-        DmaMem(const DmaScheduler &sched, std::size_t numBytes);
+        DmaMem(const HardwareScheduler &sched, std::size_t numBytes);
     };
     int dmaCh;
     int memfd, pagemapfd;
@@ -519,7 +519,7 @@ class DmaScheduler {
     int64_t _lastTimeAtFrame0;
     EventClockT::time_point _lastDmaSyncedTime;
     public:
-        DmaScheduler();
+        HardwareScheduler();
         static void cleanup();
         inline bool canWriteOutputs() const {
             //yes; this driver is capable of writing to output pins

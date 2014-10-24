@@ -1,5 +1,5 @@
-#ifndef BOILERPLATE_THISTHREADSLEEPPOSIX_H
-#define BOILERPLATE_THISTHREADSLEEPPOSIX_H
+#ifndef DRIVERS_GENERIC_THISTHREADSLEEP_H
+#define DRIVERS_GENERIC_THISTHREADSLEEP_H
 
 /*
  * std::this_thread::sleep_until may be having issues when using custom clocks. Try this as a workaround if using Posix.
@@ -8,7 +8,10 @@
 #include <chrono>
 #include <time.h>
 
-class ThisThreadSleepPosix {
+namespace drv {
+namespace generic {
+
+class ThisThreadSleep {
     public:
         template<class Clock, class Duration> static void sleep_until(const std::chrono::time_point<Clock, Duration> &sleep_time) {
             auto dur = sleep_time.time_since_epoch();
@@ -29,5 +32,6 @@ class ThisThreadSleepPosix {
         }
 };
 
-
+}
+}
 #endif

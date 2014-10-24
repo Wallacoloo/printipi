@@ -2,12 +2,12 @@
 #include "common/typesettings/compileflags.h"
 #ifdef TARGET_RPI
 
-#include "chronoclockrpi.h"
+#include "chronoclock.h"
 
 namespace drv {
 namespace rpi {
 
-static mitpi::InitMitpiType ChronoClockRpi::_i;
+static mitpi::InitMitpiType ChronoClock::_i;
 
 }
 }

@@ -30,7 +30,15 @@ MACHINE=rpi::KosselPi
 MACHINECPP=$(subst /,::,$(MACHINE))
 LOWERMACHINE=$(subst ::,/,$(shell echo $(MACHINE) | tr A-Z a-z))
 MACHINE_PATH=machines/$(LOWERMACHINE).h
-MACHINE_CLASS=$(shell echo $(subst /,,$(dir $(LOWERMACHINE))) | tr a-z A-Z)
+LOWER_MACHINE_CLASS=$(subst /,,$(dir $(LOWERMACHINE)))
+MACHINE_CLASS=$(shell echo $(LOWER_MACHINE_CLASS) | tr a-z A-Z)
+#Check for platform-specific file overrides:
+ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h)","")
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h"'
+endif
+ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h)","")
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h"'
+endif
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
@@ -42,7 +50,7 @@ MACHINE_CLASS=$(shell echo $(subst /,,$(dir $(LOWERMACHINE))) | tr a-z A-Z)
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 #the bcm2835 library has some pedantic errors, so use f=-fpermissive
-CFLAGS=-std=c++0x -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS)  $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES)
+CFLAGS=-std=c++0x -fpermissive -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES)
 MAINCFLAGS=#-fwhole-program
 #CFLAGS+= -fassociative-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
 LD=ld
@@ -62,7 +70,7 @@ NAMELINK=printipi
 all: debug
 
 #include auto-generated dependencies:
--include $(wildcard *.d */*.d */*/*.d)
+-include $(wildcard *.d */*.d */*/*.d */*/*/*.d)
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
@@ -111,7 +119,7 @@ $(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-%/drivers/rpi/rpi.a: %/drivers/rpi/chronoclockrpi.o %/drivers/rpi/dmascheduler.o %/drivers/rpi/mitpi.o
+%/drivers/rpi/rpi.a: %/drivers/rpi/chronoclock.o %/drivers/rpi/hardwarescheduler.o %/drivers/rpi/mitpi.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 %/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/rpi/rpi.a
