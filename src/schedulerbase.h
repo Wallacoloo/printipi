@@ -38,7 +38,7 @@
 
 #include "outputevent.h"
 
-#include "common/typesettings/clocks.h" //for EventClockT
+#include "drivers/auto/chronoclock.h" //for EventClockT
 #include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
 
 #ifndef SCHED_PRIORITY

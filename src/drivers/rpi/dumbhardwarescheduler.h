@@ -36,7 +36,7 @@
 
 #include "outputevent.h"
 #include "mitpi.h"
-#include "common/typsettings/clocks.h"
+#include "drivers/auto/chronoclock.h" //for EventClockT
 
 namespace rpi {
 

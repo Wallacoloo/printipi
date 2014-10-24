@@ -10,7 +10,7 @@
  */
 
 #include <chrono> //for std::chrono::duration
-#include "common/typesettings/clocks.h" //for EventClockT
+#include "drivers/auto/chronoclock.h" //for EventClockT
 
 template <int P1000000, int I1000000=0, int D1000000=0, int ITermMax1000000=2000000, int ITermMin1000000=-ITermMax1000000> class PID {
     static constexpr float P = P1000000 / 1000000.;

@@ -37,6 +37,7 @@
 //  step backward (motor 0, 1, 2, 3)
 
 #include "common/typesettings.h" //for AxisIdType
+#include "drivers/auto/chronoclock.h" //for EventClockT
 
 class Event {
     EventClockT::time_point _time;

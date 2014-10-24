@@ -55,8 +55,8 @@
 #include "motion/motionplanner.h"
 #include "common/mathutil.h"
 #include "drivers/iodriver.h"
-#include "common/typesettings/clocks.h"
-#include "common/typesettings/schedinterfacehardwarescheduler.h"
+#include "drivers/auto/chronoclock.h" //for EventClockT
+#include "drivers/auto/hardwarescheduler.h" //for SchedInterfaceHardwareScheduler
 #include "common/typesettings/enums.h" //for PositionMode, etc
 #include "common/typesettings/primitives.h" //for CelciusType
 #include "common/tupleutil.h"
