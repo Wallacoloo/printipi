@@ -31,7 +31,8 @@
 #define H1000 467200
 #define BUILDRAD1000 85000
 #define STEPS_M 6265*8
-#define STEPS_M_EXT 40000*16
+//#define STEPS_M_EXT 40000*16
+#define STEPS_M_EXT 30000*16
 
 //#define MAX_ACCEL1000 300000
 //#define MAX_ACCEL1000 1200000
@@ -44,6 +45,7 @@
 //30mm/sec uses 55-60% cpu at quarter-stepping (Sept 25, temp=20C)
 //idle uses 8% cpu (Sept 25, temp=20C)
 //30mm/sec uses 60% cpu at quarter-steppeing (Oct 2, temp=20C, thermistor broken)
+//120mm/sec uses 50% cpu at eigth-stepping (Oct 18, temp=195C)
 #define MAX_MOVE_RATE 120
 //#define MAX_MOVE_RATE 45
 //#define MAX_MOVE_RATE 60
