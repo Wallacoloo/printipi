@@ -36,7 +36,7 @@
 
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
-#include "common/typesettings.h" //check types
+//#include "common/typesettings.h" //check types
 #include <string>
 #include <sys/mman.h> //for mlockall
 #include "common/logging.h"
