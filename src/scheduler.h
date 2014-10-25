@@ -40,7 +40,7 @@
 #include "outputevent.h"
 #include "common/logging.h"
 #include "common/intervaltimer.h"
-#include "common/typesettings/compileflags.h"
+#include "typesettings/compileflags.h"
 #include "drivers/auto/thisthreadsleep.h" //for SleepT
 
 #if USE_PTHREAD

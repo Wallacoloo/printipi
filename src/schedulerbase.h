@@ -39,7 +39,7 @@
 #include "outputevent.h"
 
 #include "drivers/auto/chronoclock.h" //for EventClockT
-#include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
+#include "typesettings/enums.h" //for OnIdleCpuIntervalT
 
 #ifndef SCHED_PRIORITY
     #define SCHED_PRIORITY 30
@@ -82,7 +82,7 @@ struct NullSchedulerInterface {
             }
             EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
                 //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.
-                //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support the EventClockT::time_point defined in common/typesettings.h
+                //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support EventClockT::time_point
                 return evtTime;
             }
             bool onIdleCpu(OnIdleCpuIntervalT interval) {

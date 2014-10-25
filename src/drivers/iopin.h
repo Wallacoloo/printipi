@@ -32,7 +32,7 @@
 #define DRIVERS_IOPIN_H
 
 #include "common/logging.h"
-#include "common/typesettings/primitives.h" //for GpioPinIdType
+#include "typesettings/primitives.h" //for GpioPinIdType
 
 namespace drv {
 

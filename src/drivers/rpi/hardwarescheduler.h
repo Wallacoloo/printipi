@@ -146,8 +146,8 @@
 #include <cassert>
 
 #include "drivers/auto/chronoclock.h" //for EventClockT
-#include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
-#include "common/typesettings/compileflags.h" //for MAX_RPI_PIN_ID
+#include "typesettings/enums.h" //for OnIdleCpuIntervalT
+#include "typesettings/compileflags.h" //for MAX_RPI_PIN_ID
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
 
 //config settings:

@@ -1,7 +1,7 @@
 #ifndef DRIVERS_AUTO_CHRONOCLOCK_H
 #define DRIVERS_AUTO_CHRONOCLOCK_H
 
-#include "common/typesettings/compileflags.h"
+#include "typesettings/compileflags.h"
 
 #ifdef PLATFORM_DRIVER_CHRONOCLOCK
     #include PLATFORM_DRIVER_CHRONOCLOCK

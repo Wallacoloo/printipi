@@ -1,7 +1,7 @@
 #ifndef DRIVERS_AUTO_THISTHREADSLEEP_H
 #define DRIVERS_AUTO_THISTHREADSLEEP_H
 
-#include "common/typesettings/compileflags.h"
+#include "typesettings/compileflags.h"
 
 #ifdef PLATFORM_DRIVER_THISTHREADSLEEP
     #include PLATFORM_DRIVER_THISTHREADSLEEP

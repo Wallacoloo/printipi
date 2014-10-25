@@ -1,5 +1,5 @@
-#ifndef COMMON_TYPESETTINGS_COMPILEFLAGS_H
-#define COMMON_TYPESETTINGS_COMPILEFLAGS_H
+#ifndef TYPESETTINGS_COMPILEFLAGS_H
+#define TYPESETTINGS_COMPILEFLAGS_H
 
 //The BCM2835 chip has 54 pins (#0-53).
 //Only the lower 32 are usable on the 3 current models: A, B, and B+
