@@ -467,12 +467,12 @@ struct GpioBufferFrame {
     uint32_t gpclr[NUM_GPIO_WORDS];
     inline uint32_t* gpsetForPin(int pin) {
         assert(0 <= pin && pin < NUM_GPIO_WORDS*32);
-        int idx = NUM_GPIO_WORDS == 1 ? pin : (pin>31);
+        int idx = NUM_GPIO_WORDS == 1 ? 0 : (pin>31);
         return &gpset[idx];
     }
     inline uint32_t* gpclrForPin(int pin) {
         assert(0 <= pin && pin < NUM_GPIO_WORDS*32);
-        int idx = NUM_GPIO_WORDS == 1 ? pin : (pin>31);
+        int idx = NUM_GPIO_WORDS == 1 ? 0 : (pin>31);
         return &gpclr[idx];
     }
     inline void writeGpSet(int pin) {
