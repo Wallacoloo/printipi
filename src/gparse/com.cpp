@@ -6,7 +6,7 @@
 namespace gparse {
 
 //initialize static consts:
-static const std::string Com::NULL_FILE_STR("/dev/null"); 
+const std::string Com::NULL_FILE_STR("/dev/null"); 
 
 Com::Com() : _readFd(NO_HANDLE), _writeFd(NO_HANDLE) {}
 Com::Com(const std::string &fileR) 

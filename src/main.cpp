@@ -36,7 +36,6 @@
 
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
-//#include "common/typesettings.h" //check types
 #include <string>
 #include <sys/mman.h> //for mlockall
 #include "common/logging.h"
@@ -48,7 +47,7 @@
 
 //MACHINE_PATH is calculated in the Makefile and then passed as a define through the make system (ie gcc -DMACHINEPATH='"path"')
 //To set the path, call make MACHINE_PATH=...
-//or, call make MACHINE=<machine>, eg MACHINE=rpi::KosselPi (case-sensitive) and the path will be calculated from that (src/machines/kossel.h)
+//or, call make MACHINE=<machine>, eg MACHINE=rpi::KosselPi (case-sensitive) and the path will be calculated from that (src/machines/rpi/kossel.h)
 #include MACHINE_PATH
 
 void printUsage(char* cmd) {

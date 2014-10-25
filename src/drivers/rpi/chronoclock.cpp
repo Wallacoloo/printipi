@@ -7,7 +7,7 @@
 namespace drv {
 namespace rpi {
 
-static mitpi::InitMitpiType ChronoClock::_i;
+mitpi::InitMitpiType ChronoClock::_i;
 
 }
 }
