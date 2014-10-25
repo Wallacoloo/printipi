@@ -5,7 +5,7 @@
 
 #ifdef PLATFORM_DRIVER_THISTHREADSLEEP
     #include PLATFORM_DRIVER_THISTHREADSLEEP
-    typedef drv::TARGET_PLATFORM_LOWER::ThisThreadSleep ThisThreadSleep;
+    typedef drv::TARGET_PLATFORM_LOWER::ThisThreadSleep SleepT;
 #else
 
     #ifdef PLATFORM_DRIVER_CHRONOCLOCK
