@@ -1,8 +1,8 @@
-#ifndef COMMON_PID_H
-#define COMMON_PID_H
+	#ifndef PID_H
+#define PID_H
 
 /* 
- * Printipi/common/pid.h
+ * Printipi/pid.h
  *
  * http://en.wikipedia.org/wiki/PID_controller
  * PID provides a Proportional-Integral-Derivative controller that can be used as a control feedback mechanism.

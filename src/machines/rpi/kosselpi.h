@@ -2,7 +2,7 @@
 #define DRIVERS_KOSSELPI_H
 
 
-#include "common/pid.h"
+#include "pid.h"
 #include "common/filters/lowpassfilter.h"
 //#include "motion/exponentialacceleration.h"
 #include "motion/constantacceleration.h"
