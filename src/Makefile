@@ -39,6 +39,9 @@ endif
 ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h)","")
     DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h"'
 endif
+ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/thisthreadsleep.h)","")
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"drivers/$(LOWER_MACHINE_CLASS)/thisthreadsleep.h"'
+endif
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
