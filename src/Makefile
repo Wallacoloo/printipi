@@ -53,8 +53,8 @@ CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -
 MAINCFLAGS=#-fwhole-program
 LD=ld
 LDFLAGS= $(LTOFLAG)
-#-lrt is the realtime posix library - used for sched_setparam, etc. Linking is not necessary if USE_PTHREAD=0
-LIBS=
+#-lrt is the realtime posix library. Appears to be needed for things like clock_nanosleep
+LIBS=-lrt
 BUILDROOT=../build
 DEBUGDIR=$(BUILDROOT)/debug
 DEBUGRELDIR=$(BUILDROOT)/debugrel
