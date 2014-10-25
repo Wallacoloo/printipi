@@ -37,7 +37,6 @@
 //  step backward (motor 0, 1, 2, 3)
 
 #include "typesettings/primitives.h" //for AxisIdType
-//#include "typesettings/enums.h" //for StepDirection
 #include "drivers/auto/chronoclock.h" //for EventClockT
 
 enum StepDirection {

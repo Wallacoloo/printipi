@@ -93,6 +93,8 @@ template <typename TupleT, int idx> struct _AxisStepper__getNextTime {
     }
 };
 
+//TODO: re-implement with tupleutil
+
 template <typename TupleT> struct _AxisStepper__getNextTime<TupleT, 0> {
     AxisStepper& operator()(TupleT &axes) {
         return std::get<0>(axes);
@@ -115,8 +117,6 @@ template <typename TupleT, std::size_t MechSize, int idxPlusOne> struct _AxisSte
 
 template <typename TupleT, std::size_t MechSize> struct _AxisStepper__initAxisSteppers<TupleT, MechSize, 0> {
     void operator()(TupleT &, const std::array<int, MechSize>&, float, float, float, float) {
-        //std::get<0>(steppers) = typename std::tuple_element<0, TupleT>::type(0, curPos, vx, vy, vz, ve);
-        //std::get<0>(steppers)._nextStep();
     }
 };
 
@@ -136,8 +136,6 @@ template <typename TupleT, int idxPlusOne> struct _AxisStepper__initAxisHomeStep
 
 template <typename TupleT> struct _AxisStepper__initAxisHomeSteppers<TupleT, 0> {
     void operator()(TupleT &, float) {
-        //std::get<0>(steppers) = typename std::tuple_element<0, TupleT>::type(0, vHome);
-        //std::get<0>(steppers)._nextStep();
     }
 };
 

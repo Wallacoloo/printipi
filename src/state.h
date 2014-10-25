@@ -57,7 +57,6 @@
 #include "drivers/iodriver.h"
 #include "drivers/auto/chronoclock.h" //for EventClockT
 #include "drivers/auto/hardwarescheduler.h" //for SchedInterfaceHardwareScheduler
-#include "typesettings/enums.h" //for PositionMode, etc
 #include "typesettings/primitives.h" //for CelciusType
 #include "common/tupleutil.h"
 #include "filesystem.h"
