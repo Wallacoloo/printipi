@@ -464,22 +464,15 @@ void HardwareScheduler::queuePwm(int pin, float ratio, float idealPeriod) {
     for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
         charge += ratio;
         transitionCharge += 1;
-        if (charge < 0) {
-            out = 0;
+        if (charge <= 0) {
+            out = false;
         } else if (transitionCharge >= minPeriod) {
-            out = 1;
+            out = true;
             transitionCharge -= minPeriod;
         }
         charge -= out;
-        if (out) {
-            //set output to '1'
-            srcClrArray[idx].writeGpSet(pin, 1); //do set
-            srcClrArray[idx].writeGpClr(pin, 0); //don't clear
-        } else {
-            //set output to '0'
-            srcClrArray[idx].writeGpClr(pin, 1); //do clear
-            srcClrArray[idx].writeGpSet(pin, 0); //don't set
-        }
+        srcClrArray[idx].writeGpSet(pin, out); //if OUT, then set SET and clear CLR
+        srcClrArray[idx].writeGpClr(pin, !out); //if !OUT, then clr SET and set CLR
     }
 }
 
