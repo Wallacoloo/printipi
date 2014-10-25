@@ -51,7 +51,6 @@ UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES)
 MAINCFLAGS=#-fwhole-program
-#CFLAGS+= -fassociative-math #Allows a*a*a*a to become (a*a)*(a*a) for floating point.
 LD=ld
 LDFLAGS= $(LTOFLAG)
 #-lrt is the realtime posix library - used for sched_setparam, etc. Linking is not necessary if USE_PTHREAD=0

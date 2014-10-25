@@ -389,12 +389,88 @@ void HardwareScheduler::queuePwm(int pin, float ratio, float maxPeriod) {
     //                 ... cycle repeats
     //  PWM cycle length (resolution) can be set easily to any number which is a divisor of the buffer length.
     //  For simplicity, the original code will use a cycle length equal to the buffer length.
-    (void)maxPeriod; //unused
+    //
+    //With things like heaters, we want less switching
+    //We want it such that over a time, idealPeriod, there is only 1 transition from low to high.
+    //There are a few ways to do this. One is to simply do a sort of time-stretch, but then we lose resolution
+    //Another is to break the previous example up into "cycles":
+    //we count like this (r=0.4, period=8 frames):
+    //cycle | counter        | output
+    //0     | 0.0->3.2->0.2  | 11100000
+    //1     | 0.2->3.4->0.4  | 11100000
+    //2     | 0.4->3.6->0.6  | 11100000
+    //3     | 0.6->3.8->0.8  | 11100000
+    //4     | 0.8->4.0->0.0  | 11110000
+    //ideally, we don't want to force the cycle length to be a multiple of the pwm frequency.
+    //Example: r=0.4, L=3.5 frames
+    //frame | charge    | frame-count | output
+    //0     | 0.4       | 1           | 0
+    //1     | 0.8       | 2           | 0
+    //2     | 1.2       | 3           | 0 (can't switch, b/c frame-count < L)
+    //3     | 1.6->0.6  | 4->0.5      | 1
+    //4     | 1.0->0    | 1.5         | 1
+    //5     | 0.4->-0.6 | 2.5         | 1
+    //6     |-0.2->-1.2 | 3.5->0      | 0
+    //7     |-0.8       | 1           | 0
+    //8     |-0.4       | 2           | 0
+    //9     | 0.0       | 3           | 0
+    //10    | 0.4       | 4.0->0.5    | 1
+    //11    | 0.8->-0.2 | 1.5         | 1
+    //12    | 0.2->-0.8 | 2.5         | 1
+    //13    | -0.4      | 3.5->0      | 0
+    //Made some errors, but the above is flawed as well because of the lower-bound on the on and off-cycle.
+    //Would be better to have the frame-count only control low->high transitions.
+    //Example: r=0.3, L=5 frames
+    //frame | charge | frame-count | output
+    //0     | -0.7   | 0           | 1
+    //1     | -0.4   | 1           | 0
+    //2     | -0.1   | 2           | 0
+    //3     | 0.2    | 3           | 0
+    //4     | 0.5    | 4           | 0
+    //5     | -0.2   | 0           | 1
+    //6     | 0.1    | 1           | 0
+    //7     | 0.4    | 2           | 0
+    //8     | 0.7    | 3           | 0
+    //9     | 1.0    | 4           | 0
+    //10    | 0.3    | 0           | 1
+    //11    | -0.4   | 1           | 1
+    //12    | -0.1   | 2           | 0
+    //The above appears to work decently!
+    //algorithmically:
+    //set charge, transitionCharge = 0, out=(r>=0.5)
+    //each frame, add r to charge, add 1 to frame-count
+    //  if charge < 0: out = 0
+    //  if charge > 0 && transitionCharge > L: out = 1
+    //  charge -= out
+    /*(void)maxPeriod; //unused
     float counter=0;
     for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
         counter += ratio;
         if (counter >= 1.f) {
             counter -= 1;
+            //set output to '1'
+            srcClrArray[idx].writeGpSet(pin, 1); //do set
+            srcClrArray[idx].writeGpClr(pin, 0); //don't clear
+        } else {
+            //set output to '0'
+            srcClrArray[idx].writeGpClr(pin, 1); //do clear
+            srcClrArray[idx].writeGpSet(pin, 0); //don't set
+        }
+    }*/
+    float minPeriod = 1.;
+    float charge=0;
+    float transitionCharge=0;
+    bool out = (ratio >= 0.5);
+    for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
+        charge += ratio;
+        transitionCharge += 1;
+        if (charge < 0) {
+            out = 0;
+        } else if (transitionCharge > minPeriod) {
+            out = 1;
+            transitionCharge -= minPeriod;
+        }
+        if (out) {
             //set output to '1'
             srcClrArray[idx].writeGpSet(pin, 1); //do set
             srcClrArray[idx].writeGpClr(pin, 0); //don't clear
