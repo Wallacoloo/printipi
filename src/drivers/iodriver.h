@@ -40,7 +40,7 @@
 
 #include <cassert> //for assert
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
-#include "typesettings/primitives.h" //for CelciusType
+#include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
 #include "event.h"
 #include "drivers/iopin.h" //for NoPin

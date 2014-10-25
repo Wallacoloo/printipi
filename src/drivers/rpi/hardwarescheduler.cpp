@@ -15,7 +15,7 @@
 #include "schedulerbase.h"
 #include "common/logging.h"
 #include "drivers/auto/thisthreadsleep.h" //for SleepT 
-#include "typesettings/compileflags.h" //for RUNNING_IN_VM
+#include "compileflags.h" //for RUNNING_IN_VM
 
 
 namespace drv {

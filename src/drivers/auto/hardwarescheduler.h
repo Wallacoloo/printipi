@@ -1,7 +1,7 @@
 #ifndef DRIVERS_AUTO_HARDWARESCHEDULER_H
 #define DRIVERS_AUTO_HARDWARESCHEDULER_H
 
-#include "typesettings/compileflags.h"
+#include "compileflags.h"
 
 #ifdef PLATFORM_DRIVER_HARDWARESCHEDULER
     #include PLATFORM_DRIVER_HARDWARESCHEDULER

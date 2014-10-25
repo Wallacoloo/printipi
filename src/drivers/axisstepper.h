@@ -39,7 +39,7 @@
 #define DRIVERS_AXISSTEPPER_H
 
 #include "event.h"
-#include "typesettings/primitives.h" //for AxisIdType
+#include "compileflags.h" //for AxisIdType
 #include <tuple>
 #include <array>
 #include <cmath> //for isnan
