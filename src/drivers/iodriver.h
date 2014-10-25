@@ -40,6 +40,7 @@
 
 #include <cassert> //for assert
 #include "typesettings/enums.h" //for OnIdleCpuIntervalT, etc
+#include "schedulerbase.h" //for OnIdleCpuIntervalT
 #include "typesettings/primitives.h" //for CelciusType
 #include "common/tupleutil.h"
 #include "event.h"

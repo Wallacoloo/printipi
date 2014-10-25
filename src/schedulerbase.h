@@ -39,7 +39,6 @@
 #include "outputevent.h"
 
 #include "drivers/auto/chronoclock.h" //for EventClockT
-#include "typesettings/enums.h" //for OnIdleCpuIntervalT
 
 #ifndef SCHED_PRIORITY
     #define SCHED_PRIORITY 30
@@ -50,9 +49,13 @@
 #define SCHED_IO_EXIT_LEVEL 0
 #define SCHED_MEM_EXIT_LEVEL 1
 
-class Event; //forward declaration to avoid inclusion of event.h (as event.h includes typesettings.h, which may include this file)
+//Scheduler::Interface::onIdleCpu can be called with a flag indicating (roughly) how long it's been since it was last called.
+enum OnIdleCpuIntervalT {
+    OnIdleCpuIntervalShort,
+    OnIdleCpuIntervalWide
+};
 
-
+class Event; //forward declaration to avoid inclusion of event.h.
 
 /* Base class from which all templated schedulers derive.
 Defines things such as exit handlers */
