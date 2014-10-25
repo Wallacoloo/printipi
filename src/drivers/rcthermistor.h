@@ -37,7 +37,7 @@
 
 #include <time.h> //for timespec
 #include <cmath>
-#include "common/typesettings/clocks.h" //for EventClockT
+#include "drivers/auto/chronoclock.h" //for EventClockT
 #include "common/mathutil.h" //for CtoK, etc
 #include "common/logging.h"
 

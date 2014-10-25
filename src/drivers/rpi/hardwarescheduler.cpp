@@ -1,4 +1,4 @@
-#include "dmascheduler.h"
+#include "hardwarescheduler.h"
 
 #include <sys/mman.h> //for mmap
 #include <sys/time.h> //for timespec
@@ -14,7 +14,7 @@
 
 #include "schedulerbase.h"
 #include "common/logging.h"
-#include "common/typesettings/clocks.h"
+#include "drivers/auto/thisthreadsleep.h" //for SleepT 
 #include "common/typesettings/compileflags.h" //for RUNNING_IN_VM
 
 
@@ -22,7 +22,7 @@ namespace drv {
 namespace rpi {
 
 //initialize static variables:
-DmaChannelHeader *DmaScheduler::dmaHeader(0);
+DmaChannelHeader *HardwareScheduler::dmaHeader(0);
 
 void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
@@ -61,7 +61,7 @@ uint8_t* makeLockedMem(size_t size) {
         -1, // File descriptor
     0); //no offset into file (file doesn't exist).
     if (mem == MAP_FAILED) {
-        LOGE("dmascheduler.cpp: makeLockedMem failed\n");
+        LOGE("rpi/hardwarescheduler.cpp: makeLockedMem failed\n");
         exit(1);
     }
     memset(mem, 0, size); //simultaneously zero the pages and force them into memory
@@ -76,7 +76,7 @@ void freeLockedMem(void* mem, size_t size) {
     munmap(mem, size);
 }
 
-DmaScheduler::DmaMem::DmaMem(const DmaScheduler &dmaSched, std::size_t numBytes) {
+HardwareScheduler::DmaMem::DmaMem(const HardwareScheduler &dmaSched, std::size_t numBytes) {
     this->numPages = (numBytes+PAGE_SIZE-1) / PAGE_SIZE; //round up to nearest page so eg 4097 bytes is 2 pages.
     this->virtL1 = makeLockedMem(numBytes);
     this->virtL2Coherent = dmaSched.makeUncachedMemView(virtL1, numBytes);
@@ -86,11 +86,11 @@ DmaScheduler::DmaMem::DmaMem(const DmaScheduler &dmaSched, std::size_t numBytes)
     }
 }
 
-uintptr_t DmaScheduler::DmaMem::physAddrAtByteOffset(std::size_t bytes) const {
+uintptr_t HardwareScheduler::DmaMem::physAddrAtByteOffset(std::size_t bytes) const {
     return pageMap[bytes/PAGE_SIZE] + bytes % PAGE_SIZE;
 }
 
-uintptr_t DmaScheduler::DmaMem::virtToPhys(void *virt) const {
+uintptr_t HardwareScheduler::DmaMem::virtToPhys(void *virt) const {
     if ((uintptr_t)virt - (uintptr_t)virtL1 < numPages*PAGE_SIZE) {
         return physAddrAtByteOffset((uintptr_t)virt - (uintptr_t)virtL1);
     } else if ((uintptr_t)virt - (uintptr_t)virtL2Coherent < numPages*PAGE_SIZE) {
@@ -102,7 +102,7 @@ uintptr_t DmaScheduler::DmaMem::virtToPhys(void *virt) const {
 }
 
 
-DmaScheduler::DmaScheduler() 
+HardwareScheduler::HardwareScheduler() 
   : _lastTimeAtFrame0(0)
   , _lastDmaSyncedTime(std::chrono::seconds(0)) {
     dmaCh = 5;
@@ -113,8 +113,8 @@ DmaScheduler::DmaScheduler()
     initDma();
 }
 
-void DmaScheduler::cleanup() {
-    LOG("DmaScheduler::cleanup\n");
+void HardwareScheduler::cleanup() {
+    LOG("drv::rpi::HardwareScheduler::cleanup\n");
     //disable DMA. Otherwise, it will continue to run in the background, potentially overwriting future user data.
     if(dmaHeader) {
         writeBitmasked(&dmaHeader->CS, DMA_CS_ACTIVE, 0);
@@ -124,7 +124,7 @@ void DmaScheduler::cleanup() {
     //could also disable PWM, but that's not imperative.
 }
 
-void DmaScheduler::makeMaps() {
+void HardwareScheduler::makeMaps() {
     memfd = open("/dev/mem", O_RDWR | O_SYNC);
     if (memfd < 0) {
         LOGE("Failed to open /dev/mem (did you remember to run as root?)\n");
@@ -139,7 +139,7 @@ void DmaScheduler::makeMaps() {
     clockBaseMem = mapPeripheral(CLOCK_BASE);
 }
 
-volatile uint32_t* DmaScheduler::mapPeripheral(int addr) const {
+volatile uint32_t* HardwareScheduler::mapPeripheral(int addr) const {
     ///dev/mem behaves as a file. We need to map that file into memory:
     //NULL = virtual address of mapping is chosen by kernel.
     //PAGE_SIZE = map 1 page.
@@ -149,15 +149,15 @@ volatile uint32_t* DmaScheduler::mapPeripheral(int addr) const {
     void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
     //now, *mapped = memory at physical address of addr.
     if (mapped == MAP_FAILED) {
-        LOGE("DmaScheduler::mapPeripheral failed to map memory (did you remember to run as root?)\n");
+        LOGE("drv::rpi::HardwareScheduler::mapPeripheral failed to map memory (did you remember to run as root?)\n");
         exit(1);
     } else {
-        LOGV("DmaScheduler::mapPeripheral mapped: %p\n", mapped);
+        LOGV("drv::rpi::HardwareScheduler::mapPeripheral mapped: %p\n", mapped);
     }
     return (volatile uint32_t*)mapped;
 }
 
-void DmaScheduler::initSrcAndControlBlocks() {    
+void HardwareScheduler::initSrcAndControlBlocks() {    
     //configure DMA...
     //First, allocate memory for the source:
     size_t numSrcBlocks = SOURCE_BUFFER_FRAMES; //We want apx 1M blocks/sec.
@@ -177,7 +177,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
     srcClrMem = DmaMem(*this, srcPageBytes);
     srcClrArray = (struct GpioBufferFrame*)srcClrMem.virtL2Coherent;
     
-    LOG("DmaScheduler::initSrcAndControlBlocks: #dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
+    LOG("drv::rpi::HardwareScheduler::initSrcAndControlBlocks: #dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
     for (unsigned int i=0; i<numSrcBlocks*3; i += 3) {
         //pace DMA through PWM
         cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
@@ -206,7 +206,7 @@ void DmaScheduler::initSrcAndControlBlocks() {
     }
 }
 
-uint8_t* DmaScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
+uint8_t* HardwareScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
     //by default, writing to any virtual address will go through the CPU cache.
     //this function will return a pointer that behaves the same as virtaddr, but bypasses the CPU L1 cache (note that because of this, the returned pointer and original pointer should not be used in conjunction, else cache-related inconsistencies will arise)
     //Note: The original memory should not be unmapped during the lifetime of the uncached version, as then the OS won't know that our process still owns the physical memory.
@@ -228,7 +228,7 @@ uint8_t* DmaScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
     for (unsigned int offset=0; offset<bytes; offset += PAGE_SIZE) {
         void *mappedPage = mmap(memBytes+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys((uint8_t*)virtaddr+offset));
         if (mappedPage != memBytes+offset) { //We need these mappings to be contiguous over virtual memory (in order to replicate the virtaddr array), so we must ensure that the address we requested from mmap was actually used.
-            LOGE("DmaScheduler::makeUncachedMemView: failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
+            LOGE("drv::rpi::HardwareScheduler::makeUncachedMemView: failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
             exit(1);
         }
     }
@@ -236,7 +236,7 @@ uint8_t* DmaScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) const {
     return memBytes;
 }
 
-uintptr_t DmaScheduler::virtToPhys(void* virt) const {
+uintptr_t HardwareScheduler::virtToPhys(void* virt) const {
     //uintptr_t pgNum = (uintptr_t)(virt)/PAGE_SIZE;
     int pgNum = (uintptr_t)(virt)/PAGE_SIZE;
     int byteOffsetFromPage = (uintptr_t)(virt)%PAGE_SIZE;
@@ -246,22 +246,22 @@ uintptr_t DmaScheduler::virtToPhys(void* virt) const {
     //because files are bytestreams, one must explicitly multiply each byte index by 8 to treat it as a uint64_t array.
     int err = lseek(pagemapfd, pgNum*8, SEEK_SET);
     if (err != pgNum*8) {
-        LOGW("WARNING: DmaScheduler::virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
+        LOGW("WARNING: drv::rpi::HardwareScheduler::virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
     }
     read(pagemapfd, &physPage, 8);
     if (!physPage & (1ull<<63)) { //bit 63 is set to 1 if the page is present in ram
-        LOGW("WARNING: DmaScheduler::virtToPhys %p has no physical address\n", virt);
+        LOGW("WARNING: drv::rpi::HardwareScheduler::virtToPhys %p has no physical address\n", virt);
     }
     physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
     uintptr_t mapped = (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
     return mapped;
 }
-uintptr_t DmaScheduler::virtToUncachedPhys(void *virt) const {
+uintptr_t HardwareScheduler::virtToUncachedPhys(void *virt) const {
     return physToUncached(virtToPhys(virt));
     //return virtToPhys(virt) | 0x40000000; //bus address of the ram is 0x40000000. With this binary-or, writes to the returned address will bypass the CPU (L1) cache, but not the L2 cache. 0xc0000000 should be the base address if L2 must also be bypassed. However, the DMA engine is aware of L2 cache - just not the L1 cache (source: http://en.wikibooks.org/wiki/Aros/Platforms/Arm_Raspberry_Pi_support#Framebuffer )
 }
 
-void DmaScheduler::initPwm() {
+void HardwareScheduler::initPwm() {
     //configure PWM clock:
     *(clockBaseMem + CM_PWMCTL/4) = CM_PWMCTL_PASSWD | ((*(clockBaseMem + CM_PWMCTL/4))&(~CM_PWMCTL_ENAB)); //disable clock
     do {} while (*(clockBaseMem + CM_PWMCTL/4) & CM_PWMCTL_BUSY); //wait for clock to deactivate
@@ -285,7 +285,7 @@ void DmaScheduler::initPwm() {
     pwmHeader->CTL = PWM_CTL_REPEATEMPTY1 | PWM_CTL_ENABLE1 | PWM_CTL_USEFIFO1;
 }
 
-void DmaScheduler::initDma() {
+void HardwareScheduler::initDma() {
     //enable DMA channel (it's probably already enabled, but we want to be sure):
     writeBitmasked(dmaBaseMem + DMAENABLE/4, 1 << dmaCh, 1 << dmaCh);
     
@@ -302,13 +302,13 @@ void DmaScheduler::initDma() {
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     uint32_t firstAddr = physToUncached(cbMem.physAddrAtByteOffset(0));
-    LOG("DmaScheduler::initDma: starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
+    LOG("drv::rpi::HardwareScheduler::initDma: starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
     dmaHeader->CONBLK_AD = firstAddr; //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG; //high priority (max is 7)
     dmaHeader->CS = DMA_CS_PRIORITY(7) | DMA_CS_PANIC_PRIORITY(7) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 
 }
 
-void DmaScheduler::syncDmaTime() {
+void HardwareScheduler::syncDmaTime() {
     //returns the last time that a frame idx=0 occured.
     EventClockT::time_point _now = EventClockT::now();
     if (_now > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally (every 32.768 ms). 32768 is just a friendly number of about the right magnitude.
@@ -339,13 +339,13 @@ void DmaScheduler::syncDmaTime() {
         //more uS have elapsed than frames; DMA cannot keep up
     }
 }
-bool DmaScheduler::onIdleCpu(OnIdleCpuIntervalT interval) {
+bool HardwareScheduler::onIdleCpu(OnIdleCpuIntervalT interval) {
     if (interval == OnIdleCpuIntervalWide) {
         syncDmaTime();
     }
     return false;
 }
-void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
+void HardwareScheduler::queue(int pin, int mode, uint64_t micros) {
     //This function takes a pin, a mode (0=off, 1=on) and a time. It then manipulates the GpioBufferFrame array in order to ensure that the pin switches to the desired level at the desired time. It will sleep if necessary.
     //Sleep until we are on the right iteration of the circular buffer (otherwise we cannot queue the command)
     uint64_t desiredTime = micros - MAX_SCHED_AHEAD_USEC;
@@ -374,7 +374,7 @@ void DmaScheduler::queue(int pin, int mode, uint64_t micros) {
     }
 }
 
-void DmaScheduler::queuePwm(int pin, float ratio, float maxPeriod) {
+void HardwareScheduler::queuePwm(int pin, float ratio, float idealPeriod) {
     //PWM is achieved through changing the values that each source frame is reset to.
     //the way to choose which frames are '1' and which are '0' is like so:
     //  Keep a counter, which is set to 0.
@@ -389,7 +389,60 @@ void DmaScheduler::queuePwm(int pin, float ratio, float maxPeriod) {
     //                 ... cycle repeats
     //  PWM cycle length (resolution) can be set easily to any number which is a divisor of the buffer length.
     //  For simplicity, the original code will use a cycle length equal to the buffer length.
-    (void)maxPeriod; //unused
+    //
+    //With things like heaters, we want less switching
+    //We want it such that over a time, idealPeriod, there is only 1 transition from low to high.
+    //There are a few ways to do this. One is to simply do a sort of time-stretch, but then we lose resolution
+    //Another is to break the previous example up into "cycles":
+    //we count like this (r=0.4, period=8 frames):
+    //cycle | counter        | output
+    //0     | 0.0->3.2->0.2  | 11100000
+    //1     | 0.2->3.4->0.4  | 11100000
+    //2     | 0.4->3.6->0.6  | 11100000
+    //3     | 0.6->3.8->0.8  | 11100000
+    //4     | 0.8->4.0->0.0  | 11110000
+    //ideally, we don't want to force the cycle length to be a multiple of the pwm frequency.
+    //Example: r=0.4, L=3.5 frames
+    //frame | charge    | frame-count | output
+    //0     | 0.4       | 1           | 0
+    //1     | 0.8       | 2           | 0
+    //2     | 1.2       | 3           | 0 (can't switch, b/c frame-count < L)
+    //3     | 1.6->0.6  | 4->0.5      | 1
+    //4     | 1.0->0    | 1.5         | 1
+    //5     | 0.4->-0.6 | 2.5         | 1
+    //6     |-0.2->-1.2 | 3.5->0      | 0
+    //7     |-0.8       | 1           | 0
+    //8     |-0.4       | 2           | 0
+    //9     | 0.0       | 3           | 0
+    //10    | 0.4       | 4.0->0.5    | 1
+    //11    | 0.8->-0.2 | 1.5         | 1
+    //12    | 0.2->-0.8 | 2.5         | 1
+    //13    | -0.4      | 3.5->0      | 0
+    //Made some errors, but the above is flawed as well because of the lower-bound on the on and off-cycle.
+    //Would be better to have the frame-count only control low->high transitions.
+    //Example: r=0.3, L=5 frames
+    //frame | charge | frame-count | output
+    //0     | -0.7   | 0           | 1
+    //1     | -0.4   | 1           | 0
+    //2     | -0.1   | 2           | 0
+    //3     | 0.2    | 3           | 0
+    //4     | 0.5    | 4           | 0
+    //5     | -0.2   | 0           | 1
+    //6     | 0.1    | 1           | 0
+    //7     | 0.4    | 2           | 0
+    //8     | 0.7    | 3           | 0
+    //9     | 1.0    | 4           | 0
+    //10    | 0.3    | 0           | 1
+    //11    | -0.4   | 1           | 1
+    //12    | -0.1   | 2           | 0
+    //The above appears to work decently!
+    //algorithmically:
+    //set charge, transitionCharge = 0, out=(r>=0.5)
+    //each frame, add r to charge, add 1 to frame-count
+    //  if charge < 0: out = 0
+    //  if charge > 0 && transitionCharge > L: out = 1
+    //  charge -= out
+    /*(void)maxPeriod; //unused
     float counter=0;
     for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
         counter += ratio;
@@ -403,6 +456,23 @@ void DmaScheduler::queuePwm(int pin, float ratio, float maxPeriod) {
             srcClrArray[idx].writeGpClr(pin, 1); //do clear
             srcClrArray[idx].writeGpSet(pin, 0); //don't set
         }
+    }*/
+    float minPeriod = idealPeriod*(float)(FRAMES_PER_SEC);
+    float charge=0;
+    float transitionCharge=0;
+    bool out = (ratio >= 0.5);
+    for (int idx=0; idx < SOURCE_BUFFER_FRAMES; ++idx) {
+        charge += ratio;
+        transitionCharge += 1;
+        if (charge <= 0) {
+            out = false;
+        } else if (transitionCharge >= minPeriod) {
+            out = true;
+            transitionCharge -= minPeriod;
+        }
+        charge -= out;
+        srcClrArray[idx].writeGpSet(pin, out); //if OUT, then set SET and clear CLR
+        srcClrArray[idx].writeGpClr(pin, !out); //if !OUT, then clr SET and set CLR
     }
 }
 

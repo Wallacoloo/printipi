@@ -37,7 +37,7 @@
 #include "drivers/iodriver.h"
 #include "common/filters/nofilter.h"
 #include "common/intervaltimer.h"
-#include "common/typesettings/clocks.h" //for EventClockT
+#include "drivers/auto/chronoclock.h" //for EventClockT
 #include "common/typesettings/primitives.h" //for CelciusType
 
 namespace drv {
@@ -127,11 +127,11 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
         }
     private:
         template <typename Sched> void updatePwm(Sched &sched) {
-	  // Make this actually pass both the setpoint and process value
-	  // into the the controller
-	    float filtered = _filter.feed(_lastTemp);
+	        // Make this actually pass both the setpoint and process value
+	        // into the the controller
+            float filtered = _filter.feed(_lastTemp);
             float pwm = _pid.feed(_destTemp, filtered);
-            LOG("tempcontrol: pwm=%f\n", pwm);
+            LOG("tempcontrol: pwm=%f, temp=%f *C\n", pwm, filtered);
             sched.schedPwm(DeviceIdx, pwm, heaterPwmPeriod());
         }
 };

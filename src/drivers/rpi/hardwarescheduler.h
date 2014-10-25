@@ -22,9 +22,9 @@
  */
  
 /*
- * Printipi/drivers/rpi/dmascheduler.h
+ * Printipi/drivers/rpi/hardwarescheduler.h
  *
- * DmaScheduler implements the HardwareScheduler interface declared in schedulerbase.h
+ * drv::rpi::HardwareScheduler implements the HardwareScheduler interface declared in schedulerbase.h
  *
  * It works by maintaining a circular queue of, say, 10 ms in length.
  * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
@@ -135,8 +135,8 @@
 
 
 
-#ifndef DRIVERS_RPI_DMASCHEDULER_H
-#define DRIVERS_RPI_DMASCHEDULER_H
+#ifndef DRIVERS_RPI_HARDWARESCHEDULER_H
+#define DRIVERS_RPI_HARDWARESCHEDULER_H
 
 
  
@@ -145,7 +145,7 @@
 #include <chrono> //for std::chrono::microseconds
 #include <cassert>
 
-#include "common/typesettings/clocks.h" //for EventClockT
+#include "drivers/auto/chronoclock.h" //for EventClockT
 #include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
 #include "common/typesettings/compileflags.h" //for MAX_RPI_PIN_ID
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
@@ -467,12 +467,12 @@ struct GpioBufferFrame {
     uint32_t gpclr[NUM_GPIO_WORDS];
     inline uint32_t* gpsetForPin(int pin) {
         assert(0 <= pin && pin < NUM_GPIO_WORDS*32);
-        int idx = NUM_GPIO_WORDS == 1 ? pin : (pin>31);
+        int idx = NUM_GPIO_WORDS == 1 ? 0 : (pin>31);
         return &gpset[idx];
     }
     inline uint32_t* gpclrForPin(int pin) {
         assert(0 <= pin && pin < NUM_GPIO_WORDS*32);
-        int idx = NUM_GPIO_WORDS == 1 ? pin : (pin>31);
+        int idx = NUM_GPIO_WORDS == 1 ? 0 : (pin>31);
         return &gpclr[idx];
     }
     inline void writeGpSet(int pin) {
@@ -494,7 +494,7 @@ struct GpioBufferFrame {
 };
 
 
-class DmaScheduler {
+class HardwareScheduler {
     struct DmaMem {
         //Memory used in DMA must bypass the CPU L1 cache, so we keep a L1-cached view & an L2-cache-coherent view
         void *virtL1;
@@ -504,7 +504,7 @@ class DmaScheduler {
         uintptr_t physAddrAtByteOffset(std::size_t bytes) const;
         uintptr_t virtToPhys(void *virt) const;
         inline DmaMem() {}
-        DmaMem(const DmaScheduler &sched, std::size_t numBytes);
+        DmaMem(const HardwareScheduler &sched, std::size_t numBytes);
     };
     int dmaCh;
     int memfd, pagemapfd;
@@ -519,7 +519,7 @@ class DmaScheduler {
     int64_t _lastTimeAtFrame0;
     EventClockT::time_point _lastDmaSyncedTime;
     public:
-        DmaScheduler();
+        HardwareScheduler();
         static void cleanup();
         inline bool canWriteOutputs() const {
             //yes; this driver is capable of writing to output pins

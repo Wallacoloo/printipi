@@ -40,8 +40,8 @@
 #include "outputevent.h"
 #include "common/logging.h"
 #include "common/intervaltimer.h"
-#include "common/suresleep.h"
 #include "common/typesettings/compileflags.h"
+#include "drivers/auto/thisthreadsleep.h" //for SleepT
 
 #if USE_PTHREAD
     #include <pthread.h> //for pthread_setschedparam
@@ -98,9 +98,9 @@ template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent
     hasActiveEvent = false;
 }
 
-template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float maxPeriod) {
+template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float idealPeriod) {
     duty = std::min(1.f, std::max(0.f, duty)); //clamp pwm between [0, 1]
-    interface.iterPwmPins(idx, duty, [this, maxPeriod](int pin_, float duty_) {this->interface.queuePwm(pin_, duty_, maxPeriod); }); //note: some physical pins may be inverted, indicating duty must be switched, hence why it occurs as a parameter to the lambda
+    interface.iterPwmPins(idx, duty, [this, idealPeriod](int pin_, float duty_) {this->interface.queuePwm(pin_, duty_, idealPeriod); }); //note: some physical pins may be inverted, indicating duty must be switched, hence why it occurs as a parameter to the lambda
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {
@@ -153,22 +153,16 @@ template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const OutputEvent *evt) const {
     //need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
-    bool doSureSleep = false;
     auto sleepUntil = EventClockT::now() + MAX_SLEEP;
     if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
         //auto evtTime = schedAdjuster.adjust(evt->time());
         auto evtTime = interface.schedTime(schedAdjuster.adjust(evt->time()));
         if (evtTime < sleepUntil) {
             sleepUntil = evtTime;
-            doSureSleep = true;
         }
     }
     //LOGV("Scheduler::sleepUntilEvent: %ld.%08lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
-    if (doSureSleep) {
-        SureSleep::sleep_until(sleepUntil);
-    } else {
-        SleepT::sleep_until(sleepUntil);
-    }
+    SleepT::sleep_until(sleepUntil);
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const OutputEvent &evt) const {

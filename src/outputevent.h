@@ -31,7 +31,7 @@
 #ifndef OUTPUTEVENT_H
 #define OUTPUTEVENT_H
  
-#include "common/typesettings/clocks.h" //for EventClockT
+#include "drivers/auto/chronoclock.h" //for EventClockT
 #include "common/typesettings/primitives.h" //for GpioPinIdType
 
 class OutputEvent {

@@ -55,11 +55,12 @@
 #include "motion/motionplanner.h"
 #include "common/mathutil.h"
 #include "drivers/iodriver.h"
-#include "common/typesettings/clocks.h"
-#include "common/typesettings/schedinterfacehardwarescheduler.h"
+#include "drivers/auto/chronoclock.h" //for EventClockT
+#include "drivers/auto/hardwarescheduler.h" //for SchedInterfaceHardwareScheduler
 #include "common/typesettings/enums.h" //for PositionMode, etc
 #include "common/typesettings/primitives.h" //for CelciusType
 #include "common/tupleutil.h"
+#include "filesystem.h"
 #include "outputevent.h"
 
 template <typename Drv> class State {
@@ -123,6 +124,7 @@ template <typename Drv> class State {
     SchedType scheduler;
     MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
     Drv &driver;
+    FileSystem &filesystem;
     typename Drv::IODriverTypes ioDrivers;
     public:
         //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
@@ -133,7 +135,7 @@ template <typename Drv> class State {
         //  M32 command allows branching to another, local gcode file. By default, this will PAUSE reading/writing from the previous com channel.
         //  But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
         //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
-        State(Drv &drv, gparse::Com com, bool needPersistentCom);
+        State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom);
         /* Control interpretation of positions from the host as relative or absolute */
         PositionMode positionMode() const;
         void setPositionMode(PositionMode mode);
@@ -185,7 +187,7 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com com, bool needPersistentCom)
+template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom)
     : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
     unitMode(UNIT_MM), 
     _destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
@@ -193,7 +195,8 @@ template <typename Drv> State<Drv>::State(Drv &drv, gparse::Com com, bool needPe
     _isHomed(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
     scheduler(SchedInterface(*this)),
-    driver(drv)
+    driver(drv),
+    filesystem(fs)
     {
     this->setDestMoveRatePrimitive(this->driver.defaultMoveRate());
     if (needPersistentCom) {
@@ -468,7 +471,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isM32()) { //select file on SD card and print:
         LOGV("loading gcode: %s\n", cmd.getFilepathParam().c_str());
-        gcodeFileStack.push(gparse::Com(cmd.getFilepathParam()));
+        gcodeFileStack.push(gparse::Com(filesystem.relGcodePathToAbs(cmd.getFilepathParam())));
         return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);
