@@ -58,11 +58,14 @@ Supporting Other Architectures
 ========
 
 While Printipi is under heavy development, this process may change slightly, but these are the basic steps to supporting new hardware:  
-1. Implement drivers/IoPin. An example implementation is drivers/rpi/RpiIoPin  
-2. Implement the HardwareScheduler interface found in schedulerbase.h and update common/typesettings/schedinterfacehardwarescheduler.h to use your implementation  
-3. Make a new class for your machine in src/machines  
+1. Add a folder under src/drivers for your platform.
+2. Implement `src/drivers/<platform>/IoPin`. An example implementation is drivers/rpi/RpiIoPin  
+3. Implement `src/drivers/<platform>/hardwarescheduler.h`. This interface is outlined near the bottom of schedulerbase.h.
+4. Optionally implement `src/drivers/<platform>/chronoclock.h` and `src/drivers/<platform>/thisthreadsleep.h`. Doing so is not necessary, but if you have direct access to a clock source, then implementing these will reduce the number of calls made into the kernel.
+5. Make a new class for your machine in `src/machines/<platform>/`
+6. Type `make MACHINE=<platform>::<MachineName>`
 
-Congratulations, you're now running Printipi!
+The Printipi build system will automatically detect the files you added to src/drivers/<platform> and will use those in place of the generic implementations, so there's no need to edit any files.
 
 The Future
 ========
