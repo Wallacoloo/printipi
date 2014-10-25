@@ -19,10 +19,7 @@ template <int P1000000, int I1000000=0, int D1000000=0> class PID {
     float errorI;
     float lastValue;
 
-    // Switch to a higher-order discrete derivative operator (3rd?)
-    // Differentiate the process value, not the set-point
-    // Anti-windup mechanism
-    // The eternal question - scale then sum, or sum then scale
+
 
     EventClockT::time_point lastTime;
     public:
@@ -35,11 +32,11 @@ template <int P1000000, int I1000000=0, int D1000000=0> class PID {
             // Use a simple 1st order finite difference for the derivative - no fancy filtering.
             float errorD = (pv-lastValue)/deltaT;
             lastValue = pv;
-            // Then figure out the change for the integral integral
-            float update = error * deltaT;
+            // Then figure out the change for the integral
+            float update = I * error * deltaT;
             errorI += update;
             // Then compute the output, saturate it to [0,1], and implement anti-windup
-            float output = P*error + I*errorI + D*errorD;
+            float output = P*error + errorI + D*errorD;
 
             if(output < 0.0){
                 if(error < 0.0){
