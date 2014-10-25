@@ -149,7 +149,7 @@ class KosselPi : public Machine {
             A4988<RpiIoPin<mitpi::V2_GPIO_P1_24>, RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
             A4988<RpiIoPin<mitpi::V2_GPIO_P1_03>, RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
             _Fan,
-            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000, 1000000>, LowPassFilter<3000> >
+            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000>, LowPassFilter<3000> >
             > IODriverTypes;
         inline float defaultMoveRate() const { //in mm/sec
             return MAX_MOVE_RATE;
