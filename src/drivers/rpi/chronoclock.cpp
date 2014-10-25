@@ -1,6 +1,6 @@
 //Only want to initialize mitpi if we are targeting the raspberry pi:
 #include "typesettings/compileflags.h"
-#ifdef TARGET_RPI
+#ifdef DTARGET_PLATFORM_RPI
 
 #include "chronoclock.h"
 

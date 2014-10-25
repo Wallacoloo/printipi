@@ -15,9 +15,6 @@
     #define RUNNING_IN_VM 0
 #endif
 
-#ifdef DTARGET_PLATFORM_RPI
-    #define TARGET_RPI //provide a user-usable macro
-#endif
 //e.g. TARGET_PLATFORM_LOWER="rpi" or "generic"
 #define TARGET_PLATFORM_LOWER DTARGET_PLATFORM_LOWER
 
