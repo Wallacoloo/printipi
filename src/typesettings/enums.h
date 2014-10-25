@@ -1,22 +1,6 @@
 #ifndef TYPESETTINGS_ENUMS_H
 #define TYPESETTINGS_ENUMS_H
 
-
-enum PositionMode {
-    POS_ABSOLUTE,
-    POS_RELATIVE
-};
-
-enum LengthUnit {
-    UNIT_MM,
-    UNIT_IN
-};
-
-enum StepDirection {
-    StepBackward,
-    StepForward
-};
-
 enum CoordAxis {
     COORD_X,
     COORD_Y,
@@ -28,6 +12,11 @@ enum CoordAxis {
 enum OnIdleCpuIntervalT {
     OnIdleCpuIntervalShort,
     OnIdleCpuIntervalWide
+};
+
+enum StepDirection {
+    StepBackward,
+    StepForward
 };
 
 template <typename T> StepDirection stepDirFromSign(T dir) {

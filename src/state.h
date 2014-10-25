@@ -63,6 +63,16 @@
 #include "filesystem.h"
 #include "outputevent.h"
 
+enum PositionMode {
+    POS_ABSOLUTE,
+    POS_RELATIVE
+};
+
+enum LengthUnit {
+    UNIT_MM,
+    UNIT_IN
+};
+
 template <typename Drv> class State {
     //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
     struct SchedInterface {
