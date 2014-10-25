@@ -28,7 +28,7 @@
 #define R1000 111000
 #define L1000 221000
 //#define H1000 467330
-#define H1000 467200
+#define H1000 467450
 #define BUILDRAD1000 85000
 #define STEPS_M 6265*8
 //#define STEPS_M_EXT 40000*16
