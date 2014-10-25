@@ -64,8 +64,10 @@ class IODriver {
         /* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
         inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
-        inline float fanPwmPeriod() const { return 0.2; }
-        inline float heaterPwmPeriod() const { return 0.1; }
+        //inline float fanPwmPeriod() const { return 0.2; }
+        //inline float heaterPwmPeriod() const { return 0.1; }
+        inline float fanPwmPeriod() const { return 0; }
+        inline float heaterPwmPeriod() const { return 1.0/25000; }
         inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
         inline bool isHeatedBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
         inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
