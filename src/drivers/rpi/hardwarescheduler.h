@@ -71,9 +71,20 @@
  *   Will have to manually determine timing characteristics though.
  * Or use 2 dma channels:
  *   Have one sending the data into PWM, which is DREQ limited
- *   Have another copying from PWM Fifo to GPIOs at a non-limited rate. This is peripheral -> peripheral, so I think it will have its own data bus.
+ *   Have another copying from PWM Fifo to GPIOs at a non-limited rate (or limited with WAITS). This is peripheral -> peripheral, so I think it will have its own data bus.
  *     Unfortunately, the destination can only be one word. Luckily, we have 2 PWM channels - one for setting & one for clearing GPIOs. All gpios that are broken out into the header are in the first register (verified)
- *   Sadly, it appears that the PWM FIFO cannot be read from. One can read the current PWM output, but only if the FIFO is disabled, in which case the DREQ is too.
+ *   Sadly, it appears that the PWM FIFO cannot be read from. One can read the current PWM output, but only if the FIFO is disabled, in which case the DREQ is too. [Pg 146: DAT1 register: "This register stores the 32 bit data to be sent by the PWM Controller when USEFi is 0."]
+ *   Maybe PCM fifo can be read from? PCM is unclear in this portion of the documentation. Pg 129: FIFO_A register: "This is the FIFO port of the PCM. Data written here is transmitted, and received data is read from here... Bits 0-31: Reserved: Write as 0, read as don't care". I suspect you cannot read data queued for transmission
+ * Another possibility using 2 DMA channels:
+ *   Find 2 unused (trash) registers around the PWM FIFO input. Write to these continually, paced through the FIFO.
+ *   Have another channel (or 2) copy from these trash registers into GPCLR and GPSET, at a much higher frequency, only paced by WAITS.
+ *   Note: register layout is: CONTROL, STATUS, DMAC, [unused - mapped?], CH1 RANGE, CH1 DATA, FIFO IN, [unused - mapped?], CH2 RANGE, CH2 DATA
+ *     PCM register map: CONTROL/STATUS, FIFO DATA, PCM MODE, PCM RECV CONFIG, PCM TRANSMIT CONFIG, DMA REQ LEVEL, PCM INTERRUPT ENABLES, PCM INTERRUPT STATUS, PCM GRAY CODE CONTROL
+ *   May be possible to use CH1/2 DATA, which are documented as not being used in FIFO mode.
+ *   Or, investiage the unused registers (they likely read garbage).
+ *   Lastly, it MAY be possible to even use the CH2 RANGE register if CH1 is disabled.
+ *   Best option could very well be using CH2 RANGE and CH2 DATA registers
+ *   Ideally, we want DATA, 0, [garbage], DATA. That way everything can be copied directly to GPIO with 1 DMA channel looping, with little overhead.
  *
  **Or use 1 dma channel, but additionally write to a dreq-able peripheral (PWM):
  *   By using control-blocks, one can copy a word to the GPIOs, then have the next CB copy a word to the PWM fifo, and repeat
@@ -82,6 +93,8 @@
  *     PWM_BITRATE / PWM_RNG1 = #of FIFO writes/sec
  *     Max PWM_BITRATE = 25MHz
  *   Also, dest_addr = 0x7e20b000 // the testbus interface which is a dump peripheral that goes nowhere (http://www.raspberrypi.org/forums/viewtopic.php?f=37&t=7696&start=25 )
+ *
+ * What does the documentation mean on page 140 when it says "PWM DMA is mapped to DMA channel 5."? My guess is that's a typo and it means PWM DREQ is at index 5 in the DREQ mapping.
  *
  * DMA Control Block layout:
  *   repeat #srcBlock times:
