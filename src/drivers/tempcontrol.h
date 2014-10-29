@@ -87,6 +87,9 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
         CelciusType getMeasuredTemperature() const {
             return _lastTemp;
         }
+        CelciusType getTargetTemperature() const {
+            return _destTemp;
+        }
         Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
             return _heater;
         }

@@ -124,6 +124,7 @@ template <typename Drv> class State {
     float _destMoveRatePrimitive;
     float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
     bool _isHomed; //Need to know if our absolute coordinates are accurate, which changes when power is lost or stepper motors are deactivated.
+    bool _isWaitingForHotend;
     EventClockT::time_point _lastMotionPlannedTime;
     gparse::Com com;
     //M32 allows a gcode file to call subroutines, essentially.
@@ -193,6 +194,8 @@ template <typename Drv> class State {
         void queueMovement(float x, float y, float z, float e);
         /* Home to the endstops. Does not return until endstops have been reached. */
         void homeEndstops();
+        //Check if M109 (set temperature and wait until reached) has been satisfied.
+        bool isHotendReady();
         /* Set the hotend fan to a duty cycle between 0.0 and 1.0 */
         void setFanRate(float rate);
 };
@@ -204,6 +207,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     _destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
     _hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
     _isHomed(false),
+    _isWaitingForHotend(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
     scheduler(SchedInterface(*this)),
     driver(drv),
@@ -408,12 +412,16 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     //process a gcode command received on the given communications channel and return an appropriate response
     std::string opcode = cmd.getOpcode();
     if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
-        if (!_isHomed && driver.doHomeBeforeFirstMovement()) {
-            this->homeEndstops();
-        }
         if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
             return gparse::Response::Null;
         }
+        if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
+            return gparse::Response::Null;
+        }
+        if (!_isHomed && driver.doHomeBeforeFirstMovement()) {
+            this->homeEndstops();
+        }
+        
         bool hasX, hasY, hasZ, hasE;
         bool hasF;
         float curX = destXPrimitive();
@@ -442,6 +450,9 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isG28()) { //home to end-stops / zero coordinates
         if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
+            return gparse::Response::Null;
+        }
+        if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return gparse::Response::Null;
         }
         this->homeEndstops();
@@ -480,7 +491,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
     } else if (cmd.isM32()) { //select file on SD card and print:
-        LOGV("loading gcode: %s\n", cmd.getFilepathParam().c_str());
+        LOGD("loading gcode: %s\n", cmd.getFilepathParam().c_str());
         gcodeFileStack.push(gparse::Com(filesystem.relGcodePathToAbs(cmd.getFilepathParam())));
         return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
@@ -540,12 +551,16 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         if (hasS) {
             drv::IODriver::setHotendTemp(ioDrivers, t);
         }
+        _isWaitingForHotend = true;
         return gparse::Response::Ok;
     } else if (cmd.isM110()) { //set current line number
         LOGW("Warning (state.h): OP_M110 (set current line number) not implemented\n");
         return gparse::Response::Ok;
     } else if (cmd.isM112()) { //emergency stop
         exit(1);
+        return gparse::Response::Ok;
+    } else if (cmd.isM116()) { //Wait for all heaters (and slow moving variables) to reach target
+        _isWaitingForHotend = true;
         return gparse::Response::Ok;
     } else if (cmd.isM117()) { //print message
         return gparse::Response::Ok;
@@ -587,6 +602,15 @@ template <typename Drv> void State<Drv>::homeEndstops() {
     this->_isHomed = true;
 }
 
+template <typename Drv> bool State<Drv>::isHotendReady() {
+    if (_isWaitingForHotend) {
+        //TODO: check ALL heaters, not just hotend.
+        CelciusType current = drv::IODriver::getHotendTemp(ioDrivers);
+        CelciusType target = drv::IODriver::getHotendTargetTemp(ioDrivers);
+        _isWaitingForHotend = current < target;
+    }
+    return !_isWaitingForHotend;
+}
 /* State utility class for setting the fan rate (State::setFanRate).
 Note: could be replaced with a generic lambda in C++14 (gcc-4.9) */
 template <typename SchedT> struct State_setFanRate {

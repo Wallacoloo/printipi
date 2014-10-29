@@ -52,7 +52,7 @@ class CoordMap {
             //return the number of axis (physical motors) that we have.
             return 0;
         }
-        static constexpr std::array<int, 0> getHomePosition(const std::array<int, 0> &cur) {
+        static constexpr std::array<int, 0> getHomePosition(const std::array<int, 0> &/*cur*/) {
             //given the current tracked motor coordinates, and knowing that we are at home position,
             //return the true motor coordinates.
             return std::array<int, 0>();
