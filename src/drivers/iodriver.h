@@ -51,7 +51,7 @@ class IODriver {
     public:
         inline IODriver() {}
         //for a (stepper) motor, advance +/- 1 step:
-        inline bool isEventOutputSequenceable(const Event &) { return false; } //OVERRIDE THIS
+        //inline bool isEventOutputSequenceable(const Event &) { return false; } //OVERRIDE THIS
         std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS if isEventOutputSequenceable returns true.
         NoPin getPwmPin() const { return NoPin(); } //OVERRIDE THIS if device is pwm-able.
         inline void stepForward() {} //OVERRIDE THIS
@@ -77,9 +77,9 @@ class IODriver {
         Return true if object needs to continue to be serviced, false otherwise. */
         template <typename Sched> inline bool onIdleCpu(Sched & /*sched*/) { return false; } //OVERRIDE THIS
         //selectAndStep...: used internally
-        template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
-        template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
-        template <typename TupleT> static bool isEventOutputSequenceable(TupleT &drivers, const Event &evt);
+        //template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
+        //template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
+        //template <typename TupleT> static bool isEventOutputSequenceable(TupleT &drivers, const Event &evt);
         template <typename TupleT, typename ...Args > static bool callIdleCpuHandlers(TupleT &drivers, Args... args);
         template <typename TupleT> static void lockAllAxis(TupleT &drivers);
         template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
@@ -90,7 +90,7 @@ class IODriver {
 };
 
 //IODriver::selectAndStepForward helper functions:
-struct IODriver__stepForward {
+/*struct IODriver__stepForward {
     template <typename T> void operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
         if (index == desiredIndex) {
             driver.stepForward();
@@ -112,10 +112,10 @@ struct IODriver__stepBackward {
 };
 template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers, AxisIdType axis) {
     callOnAll(drivers, IODriver__stepBackward(), axis);
-}
+}*/
 
 //IODriver::isEventOutputSequenceable helper functions:
-struct IODriver__isEventOutputSequenceable {
+/*struct IODriver__isEventOutputSequenceable {
     template <typename T> bool operator()(std::size_t index, T &driver, const Event &evt) {
         if (index == evt.stepperId()) {
             return driver.isEventOutputSequenceable(evt);
@@ -127,7 +127,7 @@ struct IODriver__isEventOutputSequenceable {
 
 template <typename TupleT> bool IODriver::isEventOutputSequenceable(TupleT &drivers, const Event &evt) {
     return tupleReduceLogicalOr(drivers, IODriver__isEventOutputSequenceable(), evt);
-}
+}*/
 
 //IODriver::callIdleCpuHandlers helper functions:
 

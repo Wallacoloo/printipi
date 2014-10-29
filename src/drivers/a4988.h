@@ -74,7 +74,7 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
             //enablePin.makeDigitalOutput(IoLow); //disable.
             enablePin.digitalWrite(IoLow);
         }
-        void stepForward() {
+        /*void stepForward() {
             dirPin.digitalWrite(IoHigh);
             //bcm2835_gpio_write(DIRPIN, HIGH); //set direction as forward
             cycleStepPin();
@@ -87,7 +87,7 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
         bool isEventOutputSequenceable(const Event&) {
             //Both stepForward and stepBackward events are sequenceable.
             return true;
-        }
+        }*/
         std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {
             return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
                 OutputEvent(evt.time(), stepPin.id(), IoLow),
