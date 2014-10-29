@@ -250,9 +250,9 @@
 #define DMA_CS_ABORT (1<<30)
 #define DMA_CS_DISDEBUG (1<<28) //DMA will not stop when debug signal is asserted
 #define DMA_CS_PRIORITY(x) ((x)&0xf << 16) //higher priority DMA transfers are serviced first, it would appear
-#define DMA_CS_PRIORITY_MAX DMA_CS_PRIORITY(7)
+#define DMA_CS_PRIORITY_MAX DMA_CS_PRIORITY(15)
 #define DMA_CS_PANIC_PRIORITY(x) ((x)&0xf << 20)
-#define DMA_CS_PANIC_PRIORITY_MAX DMA_CS_PANIC_PRIORITY(7)
+#define DMA_CS_PANIC_PRIORITY_MAX DMA_CS_PANIC_PRIORITY(15)
 #define DMA_CS_END (1<<1)
 #define DMA_CS_ACTIVE (1<<0)
 
