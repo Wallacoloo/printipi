@@ -57,11 +57,20 @@
 #include "drivers/iodriver.h"
 #include "drivers/auto/chronoclock.h" //for EventClockT
 #include "drivers/auto/hardwarescheduler.h" //for SchedInterfaceHardwareScheduler
-#include "common/typesettings/enums.h" //for PositionMode, etc
-#include "common/typesettings/primitives.h" //for CelciusType
+#include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
 #include "filesystem.h"
 #include "outputevent.h"
+
+enum PositionMode {
+    POS_ABSOLUTE,
+    POS_RELATIVE
+};
+
+enum LengthUnit {
+    UNIT_MM,
+    UNIT_IN
+};
 
 template <typename Drv> class State {
     //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:

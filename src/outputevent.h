@@ -32,7 +32,7 @@
 #define OUTPUTEVENT_H
  
 #include "drivers/auto/chronoclock.h" //for EventClockT
-#include "common/typesettings/primitives.h" //for GpioPinIdType
+#include "compileflags.h" //for GpioPinIdType
 
 class OutputEvent {
     EventClockT::time_point _time;

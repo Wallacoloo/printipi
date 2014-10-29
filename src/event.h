@@ -36,9 +36,20 @@
 //  step forward (motor 0, 1, 2, 3)
 //  step backward (motor 0, 1, 2, 3)
 
-#include "common/typesettings/primitives.h" //for AxisIdType
-#include "common/typesettings/enums.h" //for StepDirection
+#include "compileflags.h" //for AxisIdType
 #include "drivers/auto/chronoclock.h" //for EventClockT
+
+enum StepDirection {
+    StepBackward,
+    StepForward
+};
+
+template <typename T> StepDirection stepDirFromSign(T dir) {
+    return dir < 0 ? StepBackward : StepForward;
+}
+template <typename T> T stepDirToSigned(StepDirection dir) {
+    return dir == StepBackward ? -1 : 1;
+}
 
 class Event {
     EventClockT::time_point _time;

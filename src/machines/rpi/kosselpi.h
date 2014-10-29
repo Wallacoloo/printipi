@@ -2,7 +2,7 @@
 #define DRIVERS_KOSSELPI_H
 
 
-#include "common/pid.h"
+#include "pid.h"
 #include "common/filters/lowpassfilter.h"
 //#include "motion/exponentialacceleration.h"
 #include "motion/constantacceleration.h"
@@ -28,7 +28,7 @@
 #define R1000 111000
 #define L1000 221000
 //#define H1000 467330
-#define H1000 467200
+#define H1000 467450
 #define BUILDRAD1000 85000
 #define STEPS_M 6265*8
 //#define STEPS_M_EXT 40000*16
@@ -149,7 +149,7 @@ class KosselPi : public Machine {
             A4988<RpiIoPin<mitpi::V2_GPIO_P1_24>, RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
             A4988<RpiIoPin<mitpi::V2_GPIO_P1_03>, RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
             _Fan,
-            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000, 1000000>, LowPassFilter<3000> >
+            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000>, LowPassFilter<3000> >
             > IODriverTypes;
         inline float defaultMoveRate() const { //in mm/sec
             return MAX_MOVE_RATE;

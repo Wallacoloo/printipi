@@ -39,7 +39,6 @@
 #include "outputevent.h"
 
 #include "drivers/auto/chronoclock.h" //for EventClockT
-#include "common/typesettings/enums.h" //for OnIdleCpuIntervalT
 
 #ifndef SCHED_PRIORITY
     #define SCHED_PRIORITY 30
@@ -50,9 +49,13 @@
 #define SCHED_IO_EXIT_LEVEL 0
 #define SCHED_MEM_EXIT_LEVEL 1
 
-class Event; //forward declaration to avoid inclusion of event.h (as event.h includes typesettings.h, which may include this file)
+//Scheduler::Interface::onIdleCpu can be called with a flag indicating (roughly) how long it's been since it was last called.
+enum OnIdleCpuIntervalT {
+    OnIdleCpuIntervalShort,
+    OnIdleCpuIntervalWide
+};
 
-
+class Event; //forward declaration to avoid inclusion of event.h.
 
 /* Base class from which all templated schedulers derive.
 Defines things such as exit handlers */
@@ -76,13 +79,14 @@ struct NullSchedulerInterface {
                 //add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary
                 assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queue!
             }
-            inline void queuePwm(int /*pin*/, float /*ratio*/, float /*maxPeriod*/) {
+            inline void queuePwm(int pin, float ratio, float idealPeriod) {
                 //Set the given pin to a pwm duty-cycle of `ratio` using a maximum period of maxPeriod (irrelevant if using PCM algorithm). Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
+                (void)pin; (void)ratio; (void)idealPeriod; //unused
                 assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queuePwm!
             }
             EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
                 //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.
-                //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support the EventClockT::time_point defined in common/typesettings.h
+                //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support EventClockT::time_point
                 return evtTime;
             }
             bool onIdleCpu(OnIdleCpuIntervalT interval) {
@@ -109,7 +113,7 @@ struct NullSchedulerInterface {
         inline void queuePwm(int pin, float duty, float maxPeriod) {
             _hardwareScheduler.queuePwm(pin, duty, maxPeriod);
         }
-        template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
+        EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
             return _hardwareScheduler.schedTime(evtTime);
         }
 };

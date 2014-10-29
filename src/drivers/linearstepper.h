@@ -33,11 +33,17 @@
 #define LINEARSTEPPER_H
 
 #include "axisstepper.h"
-#include "common/typesettings/enums.h" //for CoordAxis
 #include "endstop.h"
 #include "common/logging.h"
 #include <tuple>
 #include <cmath> //for fabs
+
+enum CoordAxis {
+    COORD_X,
+    COORD_Y,
+    COORD_Z,
+    COORD_E
+};
 
 namespace drv {
 

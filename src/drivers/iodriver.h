@@ -39,8 +39,8 @@
 #define DRIVERS_IODRIVER_H
 
 #include <cassert> //for assert
-#include "common/typesettings/enums.h" //for OnIdleCpuIntervalT, etc
-#include "common/typesettings/primitives.h" //for CelciusType
+#include "schedulerbase.h" //for OnIdleCpuIntervalT
+#include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
 #include "event.h"
 #include "drivers/iopin.h" //for NoPin
