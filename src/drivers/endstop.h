@@ -50,7 +50,6 @@ template <typename Pin> class Endstop : public IODriver {
             return t;
         }
 };
-//template <typename Pin> Pin Endstop<Pin>::pin;
 
 //default Endstop implementation which always acts as if untriggered:
 typedef Endstop<NoPin> EndstopNoExist;

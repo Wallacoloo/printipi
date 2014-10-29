@@ -68,6 +68,7 @@ class CoordMap {
         }
         static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
             //given axis coordinates &mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.
+            (void)mech; //unused in this stub
             assert(false);
         }
 };

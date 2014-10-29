@@ -80,8 +80,9 @@ template <int STEPS_M> class LinearHomeStepper<STEPS_M, EndstopNoExist> : public
 
 template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoExist> class LinearStepper : public AxisStepper {
     private:
-        float timePerStep;
         static constexpr float STEPS_MM = STEPS_PER_METER/1000.0;
+    private:
+        float timePerStep;
     public:
         typedef LinearHomeStepper<STEPS_PER_METER, EndstopT> HomeStepperT;
         static constexpr float GET_COORD(float x, float y, float z, float e) {
@@ -108,7 +109,6 @@ template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoE
             }
         void _nextStep() {
             this->time += timePerStep;
-            //LOG("LinearStepper::_nextStep() %i, %f\n", CoordType, timePerStep);
         }
 };
 

@@ -51,21 +51,13 @@ class IODriver {
     public:
         inline IODriver() {}
         //for a (stepper) motor, advance +/- 1 step:
-        //inline bool isEventOutputSequenceable(const Event &) { return false; } //OVERRIDE THIS
-        std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS if isEventOutputSequenceable returns true.
+        std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS (stepper motor drivers only)
         NoPin getPwmPin() const { return NoPin(); } //OVERRIDE THIS if device is pwm-able.
-        inline void stepForward() {} //OVERRIDE THIS
-        inline void stepBackward() {} //OVERRIDE THIS
-        /*deactivate: called at program exit.
-        safely deactivate any IOs, including motors, heaters, etc.*/
-        //inline static void deactivate() {} //OVERRIDE THIS
         /* called by M17; Enable/power all stepper motors */
         inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         /* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
         inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
-        //inline float fanPwmPeriod() const { return 0.2; }
-        //inline float heaterPwmPeriod() const { return 0.1; }
         inline float fanPwmPeriod() const { return 0; }
         inline float heaterPwmPeriod() const { return 1.0/25000; }
         inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
@@ -76,10 +68,6 @@ class IODriver {
         Can be used to check the status of inputs, etc.
         Return true if object needs to continue to be serviced, false otherwise. */
         template <typename Sched> inline bool onIdleCpu(Sched & /*sched*/) { return false; } //OVERRIDE THIS
-        //selectAndStep...: used internally
-        //template <typename TupleT> static void selectAndStepForward(TupleT &drivers, AxisIdType axis);
-        //template <typename TupleT> static void selectAndStepBackward(TupleT &drivers, AxisIdType axis);
-        //template <typename TupleT> static bool isEventOutputSequenceable(TupleT &drivers, const Event &evt);
         template <typename TupleT, typename ...Args > static bool callIdleCpuHandlers(TupleT &drivers, Args... args);
         template <typename TupleT> static void lockAllAxis(TupleT &drivers);
         template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
@@ -89,50 +77,11 @@ class IODriver {
         template <typename TupleT> static CelciusType getBedTemp(TupleT &drivers);
 };
 
-//IODriver::selectAndStepForward helper functions:
-/*struct IODriver__stepForward {
-    template <typename T> void operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
-        if (index == desiredIndex) {
-            driver.stepForward();
-        }
-    }
-};
-template <typename TupleT> void IODriver::selectAndStepForward(TupleT &drivers, AxisIdType axis) {
-    callOnAll(drivers, IODriver__stepForward(), axis);
-}
-
-
-//IODriver::selectAndStepBackward helper functions:
-struct IODriver__stepBackward {
-    template <typename T> void operator()(std::size_t index, T &driver, AxisIdType desiredIndex) {
-        if (index == desiredIndex) {
-            driver.stepBackward();
-        }
-    }
-};
-template <typename TupleT> void IODriver::selectAndStepBackward(TupleT &drivers, AxisIdType axis) {
-    callOnAll(drivers, IODriver__stepBackward(), axis);
-}*/
-
-//IODriver::isEventOutputSequenceable helper functions:
-/*struct IODriver__isEventOutputSequenceable {
-    template <typename T> bool operator()(std::size_t index, T &driver, const Event &evt) {
-        if (index == evt.stepperId()) {
-            return driver.isEventOutputSequenceable(evt);
-        } else {
-            return false;
-        }
-    }
-};
-
-template <typename TupleT> bool IODriver::isEventOutputSequenceable(TupleT &drivers, const Event &evt) {
-    return tupleReduceLogicalOr(drivers, IODriver__isEventOutputSequenceable(), evt);
-}*/
-
 //IODriver::callIdleCpuHandlers helper functions:
 
 struct IODriver__onIdleCpu {
-    template <typename T, typename ...Args> bool operator()(std::size_t /*index*/, T &driver, Args... args) {
+    template <typename T, typename ...Args> bool operator()(std::size_t index, T &driver, Args... args) {
+        (void)index; //unused;
         return driver.onIdleCpu(args...);
     }
 };
@@ -142,7 +91,8 @@ template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(
 
 //IODriver::lockAllAxis helper functions:
 struct IODriver__lockAllAxis {
-    template <typename T> void operator()(std::size_t /*index*/, T &driver) {
+    template <typename T> void operator()(std::size_t index, T &driver) {
+        (void)index; //unused;
         driver.lockAxis();
     }
 };
@@ -152,7 +102,8 @@ template <typename TupleT> void IODriver::lockAllAxis(TupleT &drivers) {
 
 //IODriver::unlockAllAxis helper functions:
 struct IODriver__unlockAllAxis {
-    template <typename T> void operator()(std::size_t /*index*/, T &driver) {
+    template <typename T> void operator()(std::size_t index, T &driver) {
+        (void)index; //unused;
         driver.unlockAxis();
     }
 };
@@ -162,7 +113,8 @@ template <typename TupleT> void IODriver::unlockAllAxis(TupleT &drivers) {
 
 //IODriver::setHotendTemp helper functions:
 struct IODriver__setHotendTemp {
-    template <typename T> void operator()(std::size_t /*index*/, T &driver, CelciusType temp) {
+    template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
+        (void)index; //unused;
         if (driver.isHotend()) {
             driver.setTargetTemperature(temp);
         }
@@ -173,7 +125,8 @@ template <typename TupleT> void IODriver::setHotendTemp(TupleT &drivers, Celcius
 }
 //IODriver::setBedTemp helper functions:
 struct IODriver__setBedTemp {
-    template <typename T> void operator()(std::size_t /*index*/, T &driver, CelciusType temp) {
+    template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
+        (void)index; //unused;
         if (driver.isHeatedBed()) {
             driver.setTargetTemperature(temp);
         }
