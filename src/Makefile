@@ -31,6 +31,7 @@ MACHINECPP=$(subst /,::,$(MACHINE))
 LOWERMACHINE=$(subst ::,/,$(shell echo $(MACHINE) | tr A-Z a-z))
 MACHINE_PATH=machines/$(LOWERMACHINE).h
 LOWER_MACHINE_CLASS=$(subst /,,$(dir $(LOWERMACHINE)))
+MACHINE_CLASS_DIR=drivers/$(LOWER_MACHINE_CLASS)
 MACHINE_CLASS=$(shell echo $(LOWER_MACHINE_CLASS) | tr a-z A-Z)
 #Check for platform-specific file overrides:
 ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h)","")
@@ -53,6 +54,7 @@ endif
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES)
+# -DDMACHINE_CLASS_DIR=$(MACHINE_CLASS_DIR)
 MAINCFLAGS=#-fwhole-program
 LD=ld
 LDFLAGS= $(LTOFLAG)
@@ -72,7 +74,7 @@ NAMELINK=printipi
 all: debug
 
 #include auto-generated dependencies:
--include $(wildcard *.d */*.d */*/*.d */*/*/*.d)
+-include $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
@@ -103,23 +105,13 @@ minsize: $(MINSIZEDIR)/$(NAME)
 	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
 	
-%.dir:
+$(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZEDIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-$(DEBUGDIR)/%.o: %.cpp $(DEBUGDIR)/%.dir
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-$(DEBUGRELDIR)/%.o: %.cpp $(DEBUGRELDIR)/%.dir
-	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
-	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-$(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
-	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
-	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-$(PROFILEDIR)/%.o: %.cpp $(PROFILEDIR)/%.dir
-	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
-	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-$(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
-	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
-	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
+	
+%/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard drivers/$(LOWER_MACHINE_CLASS)/*.cpp)))
+	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 %/drivers/rpi/rpi.a: %/drivers/rpi/chronoclock.o %/drivers/rpi/hardwarescheduler.o %/drivers/rpi/mitpi.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
