@@ -99,6 +99,10 @@ minsize: CFLAGS+= -DNDEBUG -Os -s -fmerge-all-constants -fomit-frame-pointer -ff
 minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)-$(TARGET)
+
+#Sometimes need an empty dependency in order to avoid 'no input file' errors, etc:
+%/empty.cpp:
+	touch $@
 	
 %/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
@@ -110,13 +114,11 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-%/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard drivers/$(LOWER_MACHINE_CLASS)/*.cpp)))
+%/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard drivers/$(LOWER_MACHINE_CLASS)/*.cpp))) %/empty.o
+	@mkdir -p $(@D)
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/drivers/rpi/rpi.a: %/drivers/rpi/chronoclock.o %/drivers/rpi/hardwarescheduler.o %/drivers/rpi/mitpi.o
-	$(LD) -r $^ -o $@ $(LDFLAGS)
-	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/rpi/rpi.a
+%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
@@ -143,4 +145,4 @@ cleanminsize:
 	rm -rf $(MINSIZEDIR)
 clean: cleandebug cleanrelease cleanprofile cleanminsize
 	rm -rf $(BUILDROOT)/$(NAME)
-	rm -rf $(wildcard *.d */*.d */*/*.d)
+	rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d)
