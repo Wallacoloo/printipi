@@ -43,6 +43,7 @@
 #include <tuple>
 #include <array>
 #include <cmath> //for isnan
+#include "common/tupleutil.h"
 
 namespace drv {
 
@@ -149,7 +150,7 @@ template <typename TupleT> void AxisStepper::initAxisHomeSteppers(TupleT &steppe
 //This allows for _nextStep to act as if it were virtual (by defining a method of that name in a derived type), but without using a vtable.
 //It also allows for the compiler to easily optimize the if statements into a jump-table.
 
-template <typename TupleT, int myIdx> struct _AxisStepper__nextStep {
+/*template <typename TupleT, int myIdx> struct _AxisStepper__nextStep {
     void operator()(TupleT &steppers, int desiredIdx) {
         _AxisStepper__nextStep<TupleT, myIdx-1>()(steppers, desiredIdx);
         if (desiredIdx == myIdx) {
@@ -165,10 +166,23 @@ template <typename TupleT> struct _AxisStepper__nextStep<TupleT, 0> {
     }
 };
 
-
 template <typename TupleT> void AxisStepper::nextStep(TupleT &axes) {
     _AxisStepper__nextStep<TupleT, (int)std::tuple_size<TupleT>::value-1>()(axes, this->index());
+}*/
+
+struct _AxisStepper__nextStep {
+    template <typename T> void operator()(std::size_t myIdx, T &stepper, std::size_t desiredIdx) {
+        if (desiredIdx == myIdx) {
+            stepper._nextStep();
+        }
+    }
+};
+template <typename TupleT> void AxisStepper::nextStep(TupleT &axes) {
+    callOnAll(axes, _AxisStepper__nextStep(), this->index());
 }
+
+
+
 
 }
 
