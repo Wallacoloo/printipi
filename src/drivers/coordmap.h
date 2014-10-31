@@ -70,6 +70,7 @@ class CoordMap {
             //given axis coordinates &mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.
             (void)mech; //unused in this stub
             assert(false);
+            return std::tuple<float, float, float, float>(0, 0, 0, 0);
         }
 };
 
