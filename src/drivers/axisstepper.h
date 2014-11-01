@@ -108,7 +108,7 @@ template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
 
 //Helper classes for AxisStepper::initAxisSteppers
 
-template <typename TupleT, std::size_t MechSize, int idxPlusOne> struct _AxisStepper__initAxisSteppers {
+/*template <typename TupleT, std::size_t MechSize, int idxPlusOne> struct _AxisStepper__initAxisSteppers {
     void operator()(TupleT &steppers, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
         _AxisStepper__initAxisSteppers<TupleT, MechSize, idxPlusOne-1>()(steppers, curPos, vx, vy, vz, ve); //initialize all previous values.
         std::get<idxPlusOne-1>(steppers) = typename std::tuple_element<idxPlusOne-1, TupleT>::type(idxPlusOne-1, curPos, vx, vy, vz, ve);
@@ -123,6 +123,19 @@ template <typename TupleT, std::size_t MechSize> struct _AxisStepper__initAxisSt
 
 template <typename TupleT, std::size_t MechSize> void AxisStepper::initAxisSteppers(TupleT &steppers, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
     _AxisStepper__initAxisSteppers<TupleT, MechSize, std::tuple_size<TupleT>::value>()(steppers, curPos, vx, vy, vz, ve);
+}*/
+
+struct _AxisStepper__initAxisSteppers {
+    template <std::size_t MyIdx, typename TupleT, typename T, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT &steppers, std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
+        (void)_myIdx; (void)stepper; //unused
+        std::get<MyIdx>(steppers) = T(MyIdx, curPos, vx, vy, vz, ve);
+        std::get<MyIdx>(steppers)._nextStep();
+    }
+};
+
+template <typename TupleT, std::size_t MechSize> void AxisStepper::initAxisSteppers(TupleT &steppers, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
+    //_AxisStepper__initAxisSteppers<TupleT, MechSize, std::tuple_size<TupleT>::value>()(steppers, curPos, vx, vy, vz, ve);
+    callOnAll(steppers, _AxisStepper__initAxisSteppers(), steppers, curPos, vx, vy, vz, ve);
 }
 
 //Helper classes for AxisStepper::initAxisHomeSteppers
