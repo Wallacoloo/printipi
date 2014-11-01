@@ -127,7 +127,7 @@ template <typename TupleT, std::size_t MechSize> void AxisStepper::initAxisStepp
 
 //Helper classes for AxisStepper::initAxisHomeSteppers
 
-template <typename TupleT, int idxPlusOne> struct _AxisStepper__initAxisHomeSteppers {
+/*template <typename TupleT, int idxPlusOne> struct _AxisStepper__initAxisHomeSteppers {
     void operator()(TupleT &steppers, float vHome) {
         _AxisStepper__initAxisHomeSteppers<TupleT, idxPlusOne-1>()(steppers, vHome); //initialize all previous values.
         std::get<idxPlusOne-1>(steppers) = typename std::tuple_element<idxPlusOne-1, TupleT>::type(idxPlusOne-1, vHome);
@@ -142,6 +142,19 @@ template <typename TupleT> struct _AxisStepper__initAxisHomeSteppers<TupleT, 0> 
 
 template <typename TupleT> void AxisStepper::initAxisHomeSteppers(TupleT &steppers, float vHome) {
     _AxisStepper__initAxisHomeSteppers<TupleT, std::tuple_size<TupleT>::value>()(steppers, vHome);
+}*/
+
+
+struct _AxisStepper__initAxisHomeSteppers {
+    template <std::size_t MyIdx, typename T, typename TupleT> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT &steppers, float vHome) {
+        (void)_myIdx; //unused
+        std::get<MyIdx>(steppers) = T(MyIdx, vHome);
+        std::get<MyIdx>(steppers)._nextStep();
+    }
+};
+
+template <typename TupleT> void AxisStepper::initAxisHomeSteppers(TupleT &steppers, float vHome) {
+    callOnAll(steppers, _AxisStepper__initAxisHomeSteppers(), steppers, vHome);
 }
 
 //Helper classes for AxisStepper::nextStep method

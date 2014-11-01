@@ -10,10 +10,17 @@
  */
 
 #include <tuple>
+#include <cassert>
 
-struct VoidObject {
-    inline VoidObject() {}
-    inline void operator()() const {};
+template <std::size_t Value> struct CVTemplateWrapper {
+    //Const-Value template wrapper.
+    //callOnAll function gives an object and a tuple index, both are which are compile-time constants - as function arguments
+    //One can template on the object *type*, but one can't template on the index (a *value*). So in order for the user function to know the index as a compile-time constant, we must wrap it as a type. Hence CVTemplateWrapper<index>
+    static constexpr std::size_t value = Value;
+    CVTemplateWrapper(std::size_t v) {
+        assert(v == Value);
+    }
+    operator std::size_t() const { return Value; }
 };
 
 //callOnAll helper functions:
@@ -21,7 +28,7 @@ struct VoidObject {
 template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename ...Args> struct __callOnAll {
     void operator()(TupleT &t, Func &f, Args... args) {
         __callOnAll<TupleT, IdxPlusOne-1, Func, Args...>()(t, f, args...); //call on all previous indices
-        f(IdxPlusOne-1, std::get<IdxPlusOne-1>(t), args...); //call on our index.
+        f(CVTemplateWrapper<IdxPlusOne-1>(IdxPlusOne-1), std::get<IdxPlusOne-1>(t), args...); //call on our index.
     }
 };
 
