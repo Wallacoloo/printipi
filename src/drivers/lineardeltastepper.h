@@ -31,6 +31,9 @@
   float +,-,*: 2 cycles
   float /: 32 cycles (same for doubles)
   float sqrt: 48 cycles (same for doubles)
+  float atan2: ?
+    Could be approximated well in ~100 cycles (for float; more for double)
+    This website has some efficient trig implementations: http://http.developer.nvidia.com/Cg/atan2.html
 */
 
 /* Useful kinematics document: https://docs.google.com/viewer?a=v&pid=forums&srcid=MTgyNjQwODAyMDkxNzQxMTUwNzIBMDc2NTg4NjQ0MjUxMTE1ODY5OTkBdmZiejRRR2phZjhKATAuMQEBdjI
@@ -160,17 +163,32 @@
  *
  *   (D0 + s - q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]))^2 = L^2 - (q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2
  *
- * (D0 + s)^2 - 2(D0 + s)q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - 2(D0 + s)q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) + 2q^2*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c])*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) + q^2*Cos^2[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c])^2 + q^2*Sin^2[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c])^2 = L^2 - (q*Cos[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + q*Sin[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) - r*Cos[w])^2 - (q*Cos[t u]Cos[b]Cos[c] + q*Sin[t u]Cos[b]Sin[c] - r*Sin[w])^2
+ *   0 = L^2 - (D0+s-q*Cos[t u](-Cos[a] Cos[c] Sin[b]+Sin[a] Sin[c])-q*Sin[t u](Cos[c] Sin[a]+Cos[a] Sin[b] Sin[c]))^2-(q(Cos[t u] (Cos[c] Sin[a] Sin[b]+Cos[a] Sin[c])+(Cos[a] Cos[c]-Sin[a] Sin[b] Sin[c]) Sin[t u])-r Cos[w])^2-(q(Cos[b] Cos[c] Cos[t u]-Cos[b] Sin[c] Sin[t u])-r Sin[w])^2
  *
- * (D0 + s)^2 - 2(D0 + s)q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - 2(D0 + s)q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) + 2q^2*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c])*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) + q^2*Cos^2[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c])^2 + q^2*Sin^2[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c])^2 = L^2 - (2q^2*Cos[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])*Sin[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) - 2*q*Sin[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c])*r*Cos[w] - 2*q*Cos[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])*r*Cos[w] + q^2*Cos^2[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])^2 + q^2*Sin^2[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c])^2 + r^2*Cos^2[w])
+ * FullExpand applied to above yields: 
+ *   0 = -D0^2+L^2-2 D0 s-s^2-q^2 Cos[b]^2 Cos[c]^2 Cos[t u]^2-r^2 Cos[w]^2-2 D0 q Cos[a] Cos[c] Cos[t u] Sin[b]-2 q s Cos[a] Cos[c] Cos[t u] Sin[b]+2 q r Cos[c] Cos[t u] Cos[w] Sin[a] Sin[b]-q^2 Cos[a]^2 Cos[c]^2 Cos[t u]^2 Sin[b]^2-q^2 Cos[c]^2 Cos[t u]^2 Sin[a]^2 Sin[b]^2+2 q r Cos[a] Cos[t u] Cos[w] Sin[c]+2 D0 q Cos[t u] Sin[a] Sin[c]+2 q s Cos[t u] Sin[a] Sin[c]-q^2 Cos[a]^2 Cos[t u]^2 Sin[c]^2-q^2 Cos[t u]^2 Sin[a]^2 Sin[c]^2+2 q r Cos[a] Cos[c] Cos[w] Sin[t u]+2 D0 q Cos[c] Sin[a] Sin[t u]+2 q s Cos[c] Sin[a] Sin[t u]-2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]+2 q^2 Cos[b]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]-2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[c] Sin[t u]+2 D0 q Cos[a] Sin[b] Sin[c] Sin[t u]+2 q s Cos[a] Sin[b] Sin[c] Sin[t u]-2 q r Cos[w] Sin[a] Sin[b] Sin[c] Sin[t u]+2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[b]^2 Sin[c] Sin[t u]+2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[b]^2 Sin[c] Sin[t u]-q^2 Cos[a]^2 Cos[c]^2 Sin[t u]^2-q^2 Cos[c]^2 Sin[a]^2 Sin[t u]^2-q^2 Cos[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Cos[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Sin[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2+2 q r Cos[b] Cos[c] Cos[t u] Sin[w]-2 q r Cos[b] Sin[c] Sin[t u] Sin[w]-r^2 Sin[w]^2
  *
- * (D0 + s)^2 - 2(D0 + s)q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - 2(D0 + s)q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) + 2q^2*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c])*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) + q^2*Cos^2[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c])^2 + q^2*Sin^2[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c])^2 + 2q^2*Cos[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])*Sin[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) - 2*q*Sin[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c])*r*Cos[w] - 2*q*Cos[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])*r*Cos[w] + q^2*Cos^2[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])^2 + q^2*Sin^2[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c])^2 + r^2*Cos^2[w] = L^2
+ * Grouping Sin[t u] and Cos[t u] terms (verified):
+ * 0 = -D0^2+L^2-2*D0*s-s^2 -r^2 Sin[w]^2 -r^2 Cos[w]^2
+     + Sin[t u]*(2 q r Cos[a] Cos[c] Cos[w] + 2 D0 q Cos[c] Sin[a] +2 q s Cos[c] Sin[a] +2 D0 q Cos[a] Sin[b] Sin[c] +2 q s Cos[a] Sin[b] Sin[c] -2 q r Cos[w] Sin[a] Sin[b] Sin[c] -2 q r Cos[b] Sin[c] Sin[w])
+     + Cos[t u]*(-2 D0 q Cos[a] Cos[c] Sin[b] -2 q s Cos[a] Cos[c] Sin[b] +2 q r Cos[c] Cos[w] Sin[a] Sin[b] +2 q r Cos[a] Cos[w] Sin[c] +2 D0 q Sin[a] Sin[c] +2 q s Sin[a] Sin[c] +2 q r Cos[b] Cos[c] Sin[w])
+     + Sin[t u]^2*(-q^2 Cos[a]^2 Cos[c]^2 -q^2 Cos[c]^2 Sin[a]^2 -q^2 Cos[b]^2 Sin[c]^2 -q^2 Cos[a]^2 Sin[b]^2 Sin[c]^2 -q^2 Sin[a]^2 Sin[b]^2 Sin[c]^2)
+     + Cos[t u]^2*(-q^2 Cos[b]^2 Cos[c]^2 -q^2 Cos[a]^2 Cos[c]^2 Sin[b]^2 -q^2 Cos[c]^2 Sin[a]^2 Sin[b]^2 -q^2 Cos[a]^2 Sin[c]^2 -q^2 Sin[a]^2 Sin[c]^2)
+     + Cos[t u]Sin[t u](-2 q^2 Cos[a]^2 Cos[c] Sin[c] +2 q^2 Cos[b]^2 Cos[c] Sin[c] -2 q^2 Cos[c] Sin[a]^2 Sin[c] +2 q^2 Cos[a]^2 Cos[c] Sin[b]^2 Sin[c] +2 q^2 Cos[c] Sin[a]^2 Sin[b]^2 Sin[c] )
+ *   
+ * Need to somehow solve for t. One could use the power-reduction formulae for Sin[t u]^2 and Cos[t u]^2. But still need to decompose Cos[t u]Sin[t u].
  *
- * 0 = (D0 + s)^2 - L^2 - 2(D0 + s)q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - 2(D0 + s)q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) + 2q^2*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c])*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) + q^2*Cos^2[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c])^2 + q^2*Sin^2[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c])^2 + 2q^2*Cos[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])*Sin[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) - 2*q*Sin[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c])*r*Cos[w] - 2*q*Cos[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])*r*Cos[w] + q^2*Cos^2[t u](Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c])^2 + q^2*Sin^2[t u](Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c])^2 + r^2*Cos^2[w]
+ * FullSimplify on above gives: 
+ *   L^2-q^2-r^2-(D0+s)^2+2 q ((D0+s) Sin[a] Sin[c+t u]+Cos[a] (-(D0+s) Cos[c+t u] Sin[b]+r Cos[w] Sin[c+t u])+r Cos[c+t u] (Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w]))
  *
- * FullExpand from far above gives: 
- * 0 = -D0^2+L^2-2 D0 s-s^2-q^2 Cos[b]^2 Cos[c]^2 Cos[t u]^2-r^2 Cos[w]^2-2 D0 q Cos[a] Cos[c] Cos[t u] Sin[b]-2 q s Cos[a] Cos[c] Cos[t u] Sin[b]+2 q r Cos[c] Cos[t u] Cos[w] Sin[a] Sin[b]-q^2 Cos[a]^2 Cos[c]^2 Cos[t u]^2 Sin[b]^2-q^2 Cos[c]^2 Cos[t u]^2 Sin[a]^2 Sin[b]^2+2 q r Cos[a] Cos[t u] Cos[w] Sin[c]+2 D0 q Cos[t u] Sin[a] Sin[c]+2 q s Cos[t u] Sin[a] Sin[c]-q^2 Cos[a]^2 Cos[t u]^2 Sin[c]^2-q^2 Cos[t u]^2 Sin[a]^2 Sin[c]^2+2 q r Cos[a] Cos[c] Cos[w] Sin[t u]+2 D0 q Cos[c] Sin[a] Sin[t u]+2 q s Cos[c] Sin[a] Sin[t u]-2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]+2 q^2 Cos[b]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]-2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[c] Sin[t u]+2 D0 q Cos[a] Sin[b] Sin[c] Sin[t u]+2 q s Cos[a] Sin[b] Sin[c] Sin[t u]-2 q r Cos[w] Sin[a] Sin[b] Sin[c] Sin[t u]+2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[b]^2 Sin[c] Sin[t u]+2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[b]^2 Sin[c] Sin[t u]-q^2 Cos[a]^2 Cos[c]^2 Sin[t u]^2-q^2 Cos[c]^2 Sin[a]^2 Sin[t u]^2-q^2 Cos[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Cos[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Sin[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2+2 q r Cos[b] Cos[c] Cos[t u] Sin[w]-2 q r Cos[b] Sin[c] Sin[t u] Sin[w]-r^2 Sin[w]^2
+ * Note, contains only Sin[c+t u] and Cos[c+t u] terms, and never multiplied together. May therefore be possible to solve with arctan. Mathematica says that if a*sin(x) + b*cos(x) +c = 0, then x = 2(pi*k + arctan[(a +/- sqrt(a^2+b^2-c^2))/(b-c)] where k is an integer. Also has a solution using the 2-argument arctan.
  *
+ *   L^2-q^2-r^2-(D0+s)^2 + 2*q*(D0+s) Sin[a] Sin[c+t u] + 2*q*Cos[a] (-(D0+s) Cos[c+t u] Sin[b]+r Cos[w] Sin[c+t u]) + 2*q*r*Cos[c+t u] (Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w])
+ *
+ *   L^2-q^2-r^2-(D0+s)^2 + Sin[c+t u](2*q*(D0+s) Sin[a] + 2*q*Cos[a]*r*Cos[w]) + Cos[c+t u](2*q*Cos[a]*-(D0+s)*Sin[b] + 2*q*r*(Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w]))
+ *
+ *   Thus, {m,n,p} = {(2*q*(D0+s) Sin[a] + 2*q*Cos[a]*r*Cos[w]), (2*q*Cos[a]*-(D0+s)*Sin[b] + 2*q*r*(Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w])), L^2-q^2-r^2-(D0+s)^2} 
+ *   And c+t*u = arctan((-m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m) OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m)
  */
 
 
