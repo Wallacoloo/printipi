@@ -86,7 +86,7 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned BUILDRAD1000,
                 x *= ratio;
                 y *= ratio;
             }
-            //to-do: force x & y to be on the platform.
+            //TODO: force x & y to be on the platform.
             return std::make_tuple(x, y, z, std::get<3>(xyze));
         }
         static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {

@@ -106,6 +106,30 @@ template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
     return _AxisStepper__getNextTime<TupleT, std::tuple_size<TupleT>::value-1>()(axes);
 }
 
+/*struct _AxisStepper__getNextTime {
+    template <typename T> AxisStepper& operator()(std::size_t idx, T &stepper) {
+        (void)idx; //unused
+        return stepper;
+    }
+};
+
+AxisStepper& _AxisStepper__getNextTime_reduce(AxisStepper &m1, AxisStepper &m2) {
+    //assume that .time can be finite, infinite, or NaN.
+    //comparisons against NaN are ALWAYS false.
+    if (m1.time <= 0) { return m2; } //if one of the times is non-positive (ie no next step), return the other one.
+    if (m2.time <= 0) { return m1; }
+    //Now return the smallest of the two, discarding any NaNs:
+    //if m2.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m1.time
+    //elif m1.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m2.time
+    return (m1.time < m2.time || std::isnan(m2.time)) ? m1 : m2;
+}
+
+template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
+    //return _AxisStepper__getNextTime<TupleT, std::tuple_size<TupleT>::value-1>()(axes);
+    AxisStepper &dflt = std::get<0>(axes);
+    return tupleReduce<TupleT, _AxisStepper__getNextTime, _AxisStepper__getNextTime_reduce, AxisStepper&>(axes, _AxisStepper__getNextTime(), _AxisStepper__getNextTime_reduce, std::get<0>(axes));
+}*/
+
 //Helper classes for AxisStepper::initAxisSteppers
 
 /*template <typename TupleT, std::size_t MechSize, int idxPlusOne> struct _AxisStepper__initAxisSteppers {
