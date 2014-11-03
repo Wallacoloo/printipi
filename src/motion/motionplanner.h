@@ -153,14 +153,14 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
                 case MotionLinear:
                     return _nextStepLinear(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
                 case MotionArc:
-                    return _nextStepArc(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
+                    return _nextStepArc(std::integral_constant<bool, std::tuple_size<ArcStepperTypes>::value != 0>());
                 default:
                     assert(false);
                     return Event();
             }
         }
         void moveTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
-            //called by State to queue a movement from the current destination to a new one, with the desired motion beginning at baseTime
+            //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             if (std::tuple_size<AxisStepperTypes>::value == 0) {
                 return; //Sanity check. Algorithms only work for machines with atleast 1 axis.
@@ -207,6 +207,58 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             this->_duration = NAN;
             this->_motionType = MotionHome;
             this->_accel.begin(NAN, maxVelXyz);
+        }
+        void arcTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float centerX, float centerY, float centerZ, float maxVelXyz, float minVelE, float maxVelE) {
+            //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
+            //Note: it is illegal to call this if readyForNextMove() != true
+            if (std::tuple_size<ArcStepperTypes>::value == 0) {
+                return; //Sanity check. Algorithms only work for machines with atleast 1 axis.
+            }
+            this->_baseTime = baseTime.time_since_epoch();
+            float curX, curY, curZ, curE;
+            std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
+            std::tie(x, y, z) = CoordMapT::applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
+            std::tie(x, y, z, e) = CoordMapT::bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
+            
+            //The 3 points, (centerX, centerY, centerZ), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
+            //To get the arclength, we take the arcangle * arcRad.
+            //a . b = |a| |b| cos(theta), so we can find the arcangle with arccos(a . b / |a| / |b|).
+            //Note: |a| == |b| == arcRad, as these points are defined to be equi-distant from the center-point.
+            //TODO: in actuality, the mechanical limits will be such that arcs WILL propagate error unless we adjust the center to make (xCur, yCur, zCur) at the same radius as (x, y, z)
+            float aX = curX-centerX;
+            float aY = curY-centerY;
+            float aZ = curZ-centerZ;
+            float bX = x-centerX;
+            float bY = y-centerY;
+            float bZ = z-centerZ;
+            float aDotB = aX*bX + aY*bY + aZ*bZ;
+            float arcRadSq = aX*aX + aY*aY + aZ*aZ; //(x-centerX)*(x-centerX) + (y-centerY)*(y-centerY) + (z-centerZ)*(z-centerZ);
+            float arcRad = sqrt(arcRadSq);
+            float arcAngle = acos(aDotB/arcRadSq);
+            float arcLength = arcAngle*arcRad;
+            
+            //Now that we have the arcLength, we can determine the optimal velocity:
+            float minDuration = arcLength/maxVelXyz; //duration, should there be no acceleration
+            float velE = (e-curE)/minDuration;
+            float newVelE = std::max(minVelE, std::min(maxVelE, velE));
+            if (velE != newVelE) { //limit cartesian velocity if it forces extrusion velocity to exceed a doable value
+                velE = newVelE;
+                minDuration = (e-curE)/newVelE;
+                maxVelXyz = arcLength/minDuration;
+            }
+            float arcVel = maxVelXyz / arcRad;
+            
+            //Next, we need to determine the angles from the centerpoint to the current position, which is our starting "phase"
+            //derived geometrically...
+            float xAng = atan2(aZ, aY);
+            float yAng = atan2(aZ, aX);
+            float zAng = atan2(aY, aX);
+            
+            throw "LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE";
+            drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, xAng, yAng, zAng, arcRad, arcVel, velE);
+            this->_duration = minDuration;
+            this->_motionType = MotionArc;
+            this->_accel.begin(minDuration, maxVelXyz);
         }
 };
 

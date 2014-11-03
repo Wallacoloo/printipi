@@ -171,14 +171,6 @@
  * FullExpand applied to above yields: 
  *   0 = -D0^2+L^2-2 D0 s-s^2-q^2 Cos[b]^2 Cos[c]^2 Cos[t u]^2-r^2 Cos[w]^2-2 D0 q Cos[a] Cos[c] Cos[t u] Sin[b]-2 q s Cos[a] Cos[c] Cos[t u] Sin[b]+2 q r Cos[c] Cos[t u] Cos[w] Sin[a] Sin[b]-q^2 Cos[a]^2 Cos[c]^2 Cos[t u]^2 Sin[b]^2-q^2 Cos[c]^2 Cos[t u]^2 Sin[a]^2 Sin[b]^2+2 q r Cos[a] Cos[t u] Cos[w] Sin[c]+2 D0 q Cos[t u] Sin[a] Sin[c]+2 q s Cos[t u] Sin[a] Sin[c]-q^2 Cos[a]^2 Cos[t u]^2 Sin[c]^2-q^2 Cos[t u]^2 Sin[a]^2 Sin[c]^2+2 q r Cos[a] Cos[c] Cos[w] Sin[t u]+2 D0 q Cos[c] Sin[a] Sin[t u]+2 q s Cos[c] Sin[a] Sin[t u]-2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]+2 q^2 Cos[b]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]-2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[c] Sin[t u]+2 D0 q Cos[a] Sin[b] Sin[c] Sin[t u]+2 q s Cos[a] Sin[b] Sin[c] Sin[t u]-2 q r Cos[w] Sin[a] Sin[b] Sin[c] Sin[t u]+2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[b]^2 Sin[c] Sin[t u]+2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[b]^2 Sin[c] Sin[t u]-q^2 Cos[a]^2 Cos[c]^2 Sin[t u]^2-q^2 Cos[c]^2 Sin[a]^2 Sin[t u]^2-q^2 Cos[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Cos[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Sin[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2+2 q r Cos[b] Cos[c] Cos[t u] Sin[w]-2 q r Cos[b] Sin[c] Sin[t u] Sin[w]-r^2 Sin[w]^2
  *
- * Grouping Sin[t u] and Cos[t u] terms (verified):
- * 0 = -D0^2+L^2-2*D0*s-s^2 -r^2 Sin[w]^2 -r^2 Cos[w]^2
-     + Sin[t u]*(2 q r Cos[a] Cos[c] Cos[w] + 2 D0 q Cos[c] Sin[a] +2 q s Cos[c] Sin[a] +2 D0 q Cos[a] Sin[b] Sin[c] +2 q s Cos[a] Sin[b] Sin[c] -2 q r Cos[w] Sin[a] Sin[b] Sin[c] -2 q r Cos[b] Sin[c] Sin[w])
-     + Cos[t u]*(-2 D0 q Cos[a] Cos[c] Sin[b] -2 q s Cos[a] Cos[c] Sin[b] +2 q r Cos[c] Cos[w] Sin[a] Sin[b] +2 q r Cos[a] Cos[w] Sin[c] +2 D0 q Sin[a] Sin[c] +2 q s Sin[a] Sin[c] +2 q r Cos[b] Cos[c] Sin[w])
-     + Sin[t u]^2*(-q^2 Cos[a]^2 Cos[c]^2 -q^2 Cos[c]^2 Sin[a]^2 -q^2 Cos[b]^2 Sin[c]^2 -q^2 Cos[a]^2 Sin[b]^2 Sin[c]^2 -q^2 Sin[a]^2 Sin[b]^2 Sin[c]^2)
-     + Cos[t u]^2*(-q^2 Cos[b]^2 Cos[c]^2 -q^2 Cos[a]^2 Cos[c]^2 Sin[b]^2 -q^2 Cos[c]^2 Sin[a]^2 Sin[b]^2 -q^2 Cos[a]^2 Sin[c]^2 -q^2 Sin[a]^2 Sin[c]^2)
-     + Cos[t u]Sin[t u](-2 q^2 Cos[a]^2 Cos[c] Sin[c] +2 q^2 Cos[b]^2 Cos[c] Sin[c] -2 q^2 Cos[c] Sin[a]^2 Sin[c] +2 q^2 Cos[a]^2 Cos[c] Sin[b]^2 Sin[c] +2 q^2 Cos[c] Sin[a]^2 Sin[b]^2 Sin[c] )
- *   
  * FullSimplify on above gives: 
  *   L^2-q^2-r^2-(D0+s)^2+2 q ((D0+s) Sin[a] Sin[c+t u]+Cos[a] (-(D0+s) Cos[c+t u] Sin[b]+r Cos[w] Sin[c+t u])+r Cos[c+t u] (Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w]))
  *
