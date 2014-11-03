@@ -141,9 +141,9 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
         }
         Event nextStep() {
             //called by State to query the next step in the current path segment
-            if (_motionType == MotionNone) {
+            /*if (_motionType == MotionNone) {
                 return Event(); //no next step; return a null Event
-            }
+            }*/
             /*if ((isHoming() && std::tuple_size<HomeStepperTypes>::value == 0) || (!isHoming() && std::tuple_size<AxisStepperTypes>::value == 0)) {
                 return Event(); //sanity checks. Should get optimized away on most machines.
             }*/
@@ -154,6 +154,8 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
                     return _nextStepLinear(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
                 case MotionArc:
                     return _nextStepArc(std::integral_constant<bool, std::tuple_size<ArcStepperTypes>::value != 0>());
+                case MotionNone:
+                    return Event();
                 default:
                     assert(false);
                     return Event();
@@ -163,7 +165,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             if (std::tuple_size<AxisStepperTypes>::value == 0) {
-                return; //Sanity check. Algorithms only work for machines with atleast 1 axis.
+                return; //Prevents hanging on machines with 0 axes
             }
             this->_baseTime = baseTime.time_since_epoch();
             float curX, curY, curZ, curE;
@@ -200,7 +202,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             //Called by State to begin a motion that homes to the endstops (and stays there)
             //Note: it is illegal to call this if readyForNextMove() != true
             if (std::tuple_size<HomeStepperTypes>::value == 0) {
-                return; //Sanity check. Algorithms only work for machines with atleast 1 axis.
+                return; //Prevents hanging on machines with 0 axes
             }
             drv::AxisStepper::initAxisHomeSteppers(_homeIters, maxVelXyz);
             this->_baseTime = baseTime.time_since_epoch();
@@ -212,7 +214,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
-                return; //Sanity check. Algorithms only work for machines with atleast 1 axis.
+                return; //Prevents hanging on machines with 0 axes
             }
             this->_baseTime = baseTime.time_since_epoch();
             float curX, curY, curZ, curE;
