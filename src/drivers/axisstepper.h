@@ -107,48 +107,7 @@ template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
     return _AxisStepper__getNextTime<TupleT, std::tuple_size<TupleT>::value-1>()(axes);
 }
 
-/*struct _AxisStepper__getNextTime {
-    template <typename T> AxisStepper& operator()(std::size_t idx, T &stepper) {
-        (void)idx; //unused
-        return stepper;
-    }
-};
-
-AxisStepper& _AxisStepper__getNextTime_reduce(AxisStepper &m1, AxisStepper &m2) {
-    //assume that .time can be finite, infinite, or NaN.
-    //comparisons against NaN are ALWAYS false.
-    if (m1.time <= 0) { return m2; } //if one of the times is non-positive (ie no next step), return the other one.
-    if (m2.time <= 0) { return m1; }
-    //Now return the smallest of the two, discarding any NaNs:
-    //if m2.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m1.time
-    //elif m1.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m2.time
-    return (m1.time < m2.time || std::isnan(m2.time)) ? m1 : m2;
-}
-
-template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
-    //return _AxisStepper__getNextTime<TupleT, std::tuple_size<TupleT>::value-1>()(axes);
-    AxisStepper &dflt = std::get<0>(axes);
-    return tupleReduce<TupleT, _AxisStepper__getNextTime, _AxisStepper__getNextTime_reduce, AxisStepper&>(axes, _AxisStepper__getNextTime(), _AxisStepper__getNextTime_reduce, std::get<0>(axes));
-}*/
-
 //Helper classes for AxisStepper::initAxisSteppers
-
-/*template <typename TupleT, std::size_t MechSize, int idxPlusOne> struct _AxisStepper__initAxisSteppers {
-    void operator()(TupleT &steppers, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
-        _AxisStepper__initAxisSteppers<TupleT, MechSize, idxPlusOne-1>()(steppers, curPos, vx, vy, vz, ve); //initialize all previous values.
-        std::get<idxPlusOne-1>(steppers) = typename std::tuple_element<idxPlusOne-1, TupleT>::type(idxPlusOne-1, curPos, vx, vy, vz, ve);
-        std::get<idxPlusOne-1>(steppers)._nextStep();
-    }
-};
-
-template <typename TupleT, std::size_t MechSize> struct _AxisStepper__initAxisSteppers<TupleT, MechSize, 0> {
-    void operator()(TupleT &, const std::array<int, MechSize>&, float, float, float, float) {
-    }
-};
-
-template <typename TupleT, std::size_t MechSize> void AxisStepper::initAxisSteppers(TupleT &steppers, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
-    _AxisStepper__initAxisSteppers<TupleT, MechSize, std::tuple_size<TupleT>::value>()(steppers, curPos, vx, vy, vz, ve);
-}*/
 
 struct _AxisStepper__initAxisSteppers {
     template <std::size_t MyIdx, typename TupleT, typename T, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT &steppers, std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
@@ -164,24 +123,6 @@ template <typename TupleT, std::size_t MechSize> void AxisStepper::initAxisStepp
 }
 
 //Helper classes for AxisStepper::initAxisHomeSteppers
-
-/*template <typename TupleT, int idxPlusOne> struct _AxisStepper__initAxisHomeSteppers {
-    void operator()(TupleT &steppers, float vHome) {
-        _AxisStepper__initAxisHomeSteppers<TupleT, idxPlusOne-1>()(steppers, vHome); //initialize all previous values.
-        std::get<idxPlusOne-1>(steppers) = typename std::tuple_element<idxPlusOne-1, TupleT>::type(idxPlusOne-1, vHome);
-        std::get<idxPlusOne-1>(steppers)._nextStep();
-    }
-};
-
-template <typename TupleT> struct _AxisStepper__initAxisHomeSteppers<TupleT, 0> {
-    void operator()(TupleT &, float) {
-    }
-};
-
-template <typename TupleT> void AxisStepper::initAxisHomeSteppers(TupleT &steppers, float vHome) {
-    _AxisStepper__initAxisHomeSteppers<TupleT, std::tuple_size<TupleT>::value>()(steppers, vHome);
-}*/
-
 
 struct _AxisStepper__initAxisHomeSteppers {
     template <std::size_t MyIdx, typename T, typename TupleT> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT &steppers, float vHome) {
@@ -200,26 +141,6 @@ template <typename TupleT> void AxisStepper::initAxisHomeSteppers(TupleT &steppe
 //if so, it calls _nextStep().
 //This allows for _nextStep to act as if it were virtual (by defining a method of that name in a derived type), but without using a vtable.
 //It also allows for the compiler to easily optimize the if statements into a jump-table.
-
-/*template <typename TupleT, int myIdx> struct _AxisStepper__nextStep {
-    void operator()(TupleT &steppers, int desiredIdx) {
-        _AxisStepper__nextStep<TupleT, myIdx-1>()(steppers, desiredIdx);
-        if (desiredIdx == myIdx) {
-            std::get<myIdx>(steppers)._nextStep();
-        }
-    }
-};
-template <typename TupleT> struct _AxisStepper__nextStep<TupleT, 0> {
-    void operator()(TupleT &steppers, int desiredIdx) {
-        if (desiredIdx == 0) {
-            std::get<0>(steppers)._nextStep();
-        }
-    }
-};
-
-template <typename TupleT> void AxisStepper::nextStep(TupleT &axes) {
-    _AxisStepper__nextStep<TupleT, (int)std::tuple_size<TupleT>::value-1>()(axes, this->index());
-}*/
 
 struct _AxisStepper__nextStep {
     template <typename T> void operator()(std::size_t myIdx, T &stepper, std::size_t desiredIdx) {
