@@ -216,7 +216,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
         static constexpr float MM_STEPS() { return  1. / STEPS_MM(); }
     public:
         LinearDeltaArcStepper() {}
-        template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xAng, float yAng, float zAng, float arcRad, float arcVel) : AxisStepper(idx),
+        template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xAng, float yAng, float zAng, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
              M0(curPos[AxisIdx]*MM_STEPS()), 
              sTotal(0),
              a(zAng),
@@ -228,6 +228,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
             this->time = 0; //this may NOT be zero-initialized by parent.
         }
+    //protected:
         float testDir(float s) {
             float m = 2*arcRad*(M0+s)*sin(a) + 2*arcRad*cos(a)*r()*cos(w);
             float n = 2*arcRad*cos(a)*-(M0+s)*sin(b) + 2*arcRad*r()*(cos(w)*sin(a)*sin(b) + cos(b)*sin(w));

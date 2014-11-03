@@ -37,6 +37,7 @@
 #include "common/logging.h"
 #include <tuple>
 #include <cmath> //for fabs
+#include <cassert>
 
 enum CoordAxis {
     COORD_X,
@@ -85,6 +86,8 @@ template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoE
         float timePerStep;
     public:
         typedef LinearHomeStepper<STEPS_PER_METER, EndstopT> HomeStepperT;
+        typedef LinearStepper<STEPS_PER_METER, CoordType, EndstopT> ArcStepperT;
+    protected:
         static constexpr float GET_COORD(float x, float y, float z, float e) {
             static_assert(CoordType==COORD_X || CoordType==COORD_Y || CoordType==COORD_Z || CoordType==COORD_E, "CoordType can only be x, y, z, or e");
             return CoordType==COORD_X ? x : \
@@ -100,13 +103,24 @@ template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoE
             //NOTE: this may return a NEGATIVE time, indicating that the stepping direction is backward.
             return 1./ (GET_COORD(vx, vy, vz, ve) * STEPS_MM);
         }
+    public:
+        //default constructor
         LinearStepper() {}
+        //Linear movement constructor
         template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
             : AxisStepper(idx, curPos, vx, vy, vz, ve),
             timePerStep(std::fabs( TIME_PER_STEP(vx, vy, vz, ve) )) {
                 this->time = 0;
                 this->direction = stepDirFromSign( TIME_PER_STEP(vx, vy, vz, ve) );
             }
+        //Arc movement constructor
+        template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz> &curPos, float xAng, float yAng, float zAng, float arcRad, float arcVel, float extVel) : AxisStepper(idx), timePerStep(std::fabs(1./ (extVel * STEPS_MM)))
+         {
+            assert(CoordType == COORD_E); //can only use a LinearStepper as an Arc implementation for the extruder axis. 
+            this->time = 0;
+            this->direction = stepDirFromSign(extVel);
+        }
+    //protected:
         void _nextStep() {
             this->time += timePerStep;
         }

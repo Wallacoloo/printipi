@@ -33,6 +33,7 @@
 #define MOTION_MOTIONPLANNER_H
 
 #include <array>
+#include <cassert>
 #include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
 #include "event.h"
@@ -40,6 +41,7 @@
 enum MotionType {
     MotionNone,
     MotionLinear,
+    MotionArc,
     MotionHome
 };
 
@@ -48,11 +50,13 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
         typedef typename Interface::CoordMapT CoordMapT;
         typedef typename Interface::AxisStepperTypes AxisStepperTypes;
         typedef typename drv::AxisStepper::GetHomeStepperTypes<AxisStepperTypes>::HomeStepperTypes HomeStepperTypes;
+        typedef typename drv::AxisStepper::GetArcStepperTypes<AxisStepperTypes>::ArcStepperTypes ArcStepperTypes;
         CoordMapT _coordMapper; //object that maps from (x, y, z) to mechanical coords (eg A, B, C for a kossel)
         AccelProfile _accel; //transforms the constant-velocity motion stream into one that considers acceleration
         std::array<int, CoordMapT::numAxis()> _destMechanicalPos; //the mechanical position of the last step that was scheduled
         AxisStepperTypes _iters; //Each axis iterator reports the next time it needs to be stepped. _iters is for linear movement
         HomeStepperTypes _homeIters; //Axis iterators used when homing
+        ArcStepperTypes _arcIters;
         EventClockT::duration _baseTime; //The time at which the current path segment began (this will be a fraction of a second before the time which the first step in this path is scheduled for)
         float _duration; //the estimated duration of the current piece, not taking into account acceleration
         MotionType _motionType; //which type of segment is being planned
@@ -60,7 +64,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
         MotionPlanner() : 
             _accel(), 
             _destMechanicalPos(), 
-            _iters(), _homeIters(), 
+            _iters(), _homeIters(), _arcIters(),
             _baseTime(), 
             _duration(NAN),
             //_maxVel(0), 
@@ -71,12 +75,12 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             return _motionType == MotionNone;
         }
     private:
-        Event _nextStep(drv::AxisStepper &s, bool isHoming) {
+        Event _nextStep(drv::AxisStepper &s) {
             LOGV("MotionPlanner::nextStep() is: %i at %g of %g\n", s.index(), s.time, _duration);
             if (s.time > _duration || s.time <= 0 || std::isnan(s.time)) { //if the next time the given axis wants to step is invalid or past the movement length, then end the motion
                 //Note: don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
                 //Note: This conditional causes the MotionPlanner to always undershoot the desired position, when it may be desireable to overshoot some of them - see https://github.com/Wallacoloo/printipi/issues/15
-                if (isHoming) { 
+                if (isHoming()) { 
                     //if homing, then we now know the axis mechanical positions; fetch them
                     _destMechanicalPos = CoordMapT::getHomePosition(_destMechanicalPos);
                 }
@@ -93,26 +97,42 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             Event e = s.getEvent(transformedTime);
             e.offset(_baseTime); //AxisSteppers report times relative to the start of motion; transform to absolute.
             _destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction); //update the mechanical position tracked in software
-            if (isHoming) {
-                s.nextStep(_homeIters); //advance the respective AxisStepper to its next step.
-            } else {
-                s.nextStep(_iters);
+            //advance the respective AxisStepper to its next step:
+            switch (_motionType) {
+                case MotionHome:
+                    s.nextStep(_homeIters);
+                    break;
+                case MotionLinear:
+                    s.nextStep(_iters);
+                    break;
+                case MotionArc:
+                    s.nextStep(_arcIters);
+                    break;
+                case MotionNone:
+                default:
+                    assert(false);
             }
             return e;
         }
         //black magic to get nextStep to work when either AxisStepperTypes or HomeStepperTypes have length 0:
         //If they are length zero, then _nextStep* just returns an empty event and a compilation error is avoided.
         //Otherwise, the templated function is called, and _nextStep is run as usual:
-        template <bool T> Event _nextStepHoming(std::integral_constant<bool, T> ) {
-            return _nextStep(drv::AxisStepper::getNextTime(_homeIters), true);
+        template <bool T> Event _nextStepHome(std::integral_constant<bool, T> ) {
+            return _nextStep(drv::AxisStepper::getNextTime(_homeIters));
         }
-        Event _nextStepHoming(std::false_type ) {
+        Event _nextStepHome(std::false_type ) {
             return Event();
         }
-        template <bool T> Event _nextStepMoving(std::integral_constant<bool, T> ) {
-            return _nextStep(drv::AxisStepper::getNextTime(_iters), false);
+        template <bool T> Event _nextStepLinear(std::integral_constant<bool, T> ) {
+            return _nextStep(drv::AxisStepper::getNextTime(_iters));
         }
-        Event _nextStepMoving(std::false_type ) {
+        Event _nextStepLinear(std::false_type ) {
+            return Event();
+        }
+        template <bool T> Event _nextStepArc(std::integral_constant<bool, T> ) {
+            return _nextStep(drv::AxisStepper::getNextTime(_arcIters));
+        }
+        Event _nextStepArc(std::false_type ){
             return Event();
         }
     public:
@@ -124,13 +144,19 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             if (_motionType == MotionNone) {
                 return Event(); //no next step; return a null Event
             }
-            if ((isHoming() && std::tuple_size<HomeStepperTypes>::value == 0) || (!isHoming() && std::tuple_size<AxisStepperTypes>::value == 0)) {
+            /*if ((isHoming() && std::tuple_size<HomeStepperTypes>::value == 0) || (!isHoming() && std::tuple_size<AxisStepperTypes>::value == 0)) {
                 return Event(); //sanity checks. Should get optimized away on most machines.
-            }
-            if (isHoming()) {
-                return _nextStepHoming(std::integral_constant<bool, std::tuple_size<HomeStepperTypes>::value != 0>());
-            } else {
-                return _nextStepMoving(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
+            }*/
+            switch (_motionType) {
+                case MotionHome:
+                    return _nextStepHome(std::integral_constant<bool, std::tuple_size<HomeStepperTypes>::value != 0>());
+                case MotionLinear:
+                    return _nextStepLinear(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
+                case MotionArc:
+                    return _nextStepArc(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
+                default:
+                    assert(false);
+                    return Event();
             }
         }
         void moveTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
