@@ -67,6 +67,7 @@ class AxisStepper {
         Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN
         template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
     protected:
+        AxisStepper(int idx) : _index(idx) {} //only callable via children
         void _nextStep(); //OVERRIDE THIS. Will be called upon initialization.
     public:
         template <typename... Types> struct GetHomeStepperTypes {
@@ -184,7 +185,7 @@ template <typename TupleT> void AxisStepper::initAxisHomeSteppers(TupleT &steppe
 
 struct _AxisStepper__initAxisHomeSteppers {
     template <std::size_t MyIdx, typename T, typename TupleT> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT &steppers, float vHome) {
-        (void)_myIdx; //unused
+        (void)_myIdx; (void)stepper; //unused
         std::get<MyIdx>(steppers) = T(MyIdx, vHome);
         std::get<MyIdx>(steppers)._nextStep();
     }

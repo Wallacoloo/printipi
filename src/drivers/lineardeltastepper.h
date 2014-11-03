@@ -120,9 +120,10 @@
  *   c = -(D0 + s - z0)^2 + L^2 + (y0-rcos(w))^2 + (x0-rsin(w))^2
  * So t = [-b +/- sqrt(b^2 - 4 ac)] / [2a]  according to the quadratic formula
  *
+ * There are two solutions; both may be valid, but have different meanings. If one solution is at a time in the past, then it's just a projection of the current path into the past. If both solutions are in the future, then pick the nearest one; it means that there are two points in this path where the carriage should be at the same spot. This happens, for example, when the effector nears a tower for half of the line-segment, and then continues past the tower, so that the carriage movement is (pseudo) parabolic.
  * The above quadratic solution is used in LinearDeltaStepper::_nextStep(), although it has been optimized.
  *
- * Note: all motion in this file is planned at a constant velocity. Cartesian-space acceleration is introduced by a post-transformation of the step times applied elsewhere in the motion planning system
+ * Note: all motion in this file is planned at a constant velocity. Cartesian-space acceleration is introduced by a post-transformation of the step times applied elsewhere in the motion planning system.
  *
  *
  *
@@ -147,6 +148,8 @@
  *         Rx = [cosc  -sinc 0
  *               sinc  cosc  0
  *               0     0     1]
+ *
+ *   Note: G2/G3 can specify CW or CCW motion. This is done by adding 180* to either b or c.
  *
  * Mathematica Notation:
  *   R = {{1,0,0},{0,Cos[a],-Sin[a]},{0,Sin[a],Cos[a]}} . {{Cos[b],0, Sin[b]},{0,1,0},{-Sin[b],0,Cos[b]}} . {{Cos[c],-Sin[c],0},{Sin[c],Cos[c],0},{0,0,1}} = {{Cos[b] Cos[c], -(Cos[b] Sin[c]), Sin[b]}, {Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c], Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c], -(Cos[b] Sin[a])}, {-(Cos[a] Cos[c] Sin[b]) + Sin[a] Sin[c], Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c], Cos[a] Cos[b]}}
@@ -176,8 +179,6 @@
      + Cos[t u]^2*(-q^2 Cos[b]^2 Cos[c]^2 -q^2 Cos[a]^2 Cos[c]^2 Sin[b]^2 -q^2 Cos[c]^2 Sin[a]^2 Sin[b]^2 -q^2 Cos[a]^2 Sin[c]^2 -q^2 Sin[a]^2 Sin[c]^2)
      + Cos[t u]Sin[t u](-2 q^2 Cos[a]^2 Cos[c] Sin[c] +2 q^2 Cos[b]^2 Cos[c] Sin[c] -2 q^2 Cos[c] Sin[a]^2 Sin[c] +2 q^2 Cos[a]^2 Cos[c] Sin[b]^2 Sin[c] +2 q^2 Cos[c] Sin[a]^2 Sin[b]^2 Sin[c] )
  *   
- * Need to somehow solve for t. One could use the power-reduction formulae for Sin[t u]^2 and Cos[t u]^2. But still need to decompose Cos[t u]Sin[t u].
- *
  * FullSimplify on above gives: 
  *   L^2-q^2-r^2-(D0+s)^2+2 q ((D0+s) Sin[a] Sin[c+t u]+Cos[a] (-(D0+s) Cos[c+t u] Sin[b]+r Cos[w] Sin[c+t u])+r Cos[c+t u] (Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w]))
  *
@@ -201,6 +202,83 @@
 
 namespace drv {
 
+template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000, unsigned STEPS_M> class LinearDeltaArcStepper : public AxisStepper {
+    private:
+        float M0; //initial coordinate of THIS axis.
+        int sTotal; //current step offset from M0
+        float a, b, c; //angles about Z, Y, X axis respectively
+        float arcRad; //radius of arc
+        float u; //angular velocity of arc.
+        float w; //angle of this axis. CW from +y axis
+        static constexpr float r() { return R1000 / 1000.; } //distance from center of build-plate to each axis
+        static constexpr float L() { return L1000 / 1000.; } //length of rods connecting the axis carriages to the effector
+        static constexpr float STEPS_MM() { return STEPS_M / 1000.; } //# of steps to turn an axis stepper in order to elevate the carriage by 1 mm
+        static constexpr float MM_STEPS() { return  1. / STEPS_MM(); }
+    public:
+        LinearDeltaArcStepper() {}
+        template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xAng, float yAng, float zAng, float arcRad, float arcVel) : AxisStepper(idx),
+             M0(curPos[AxisIdx]*MM_STEPS()), 
+             sTotal(0),
+             a(zAng),
+             b(yAng),
+             c(xAng),
+             arcRad(arcRad),
+             u(arcVel),
+             w(AxisIdx*2*M_PI/3) {
+            static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
+            this->time = 0; //this may NOT be zero-initialized by parent.
+        }
+        float testDir(float s) {
+            float m = 2*arcRad*(M0+s)*sin(a) + 2*arcRad*cos(a)*r()*cos(w);
+            float n = 2*arcRad*cos(a)*-(M0+s)*sin(b) + 2*arcRad*r()*(cos(w)*sin(a)*sin(b) + cos(b)*sin(w));
+            float p = L()*L() - arcRad*arcRad - r()*r() - (M0+s)*(M0+s);
+            float c_tu = atan2((-m*sqrt(m*m+n*n-p*p)-n*p)/(m*m+n*n), (n*sqrt(m*m+n*n-p*p) + n*n*p/m)/(m*m+n*n)-p/m); // OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m);
+            float t = (c_tu - c)/u;
+            return t;
+        }
+        void _nextStep() {
+            //called to set this->time and this->direction; the time (in seconds) and the direction at which the next step should occur for this axis
+            //General formula is outlined in comments at the top of this file.
+            //First, we test the time at which a forward step (sTotal + 1) should occur given constant angular velocity.
+            //Then we test that time for a backward step (sTotal - 1).
+            //We choose the nearest resulting time as our next step.
+            //This is necessary because axis velocity can actually reverse direction during a circular cartesian movement.
+            float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
+            float posTime = testDir((this->sTotal+1)*MM_STEPS());
+            if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
+                if (posTime > this->time) {
+                    //LOGV("LinearDeltaStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
+                    this->time = posTime;
+                    this->direction = StepForward;
+                    ++this->sTotal;
+                } else {
+                    this->time = NAN;
+                }
+            } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
+                if (negTime > this->time) {
+                    //LOGV("LinearDeltaStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
+                    this->time = negTime;
+                    this->direction = StepBackward;
+                    --this->sTotal;
+                } else {
+                    this->time = NAN;
+                }
+            } else { //neither time is invalid
+                if (negTime < posTime) {
+                    //LOGV("LinearDeltaStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
+                    this->time = negTime;
+                    this->direction = StepBackward;
+                    --this->sTotal;
+                } else {
+                    //LOGV("LinearDeltaStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
+                    this->time = posTime;
+                    this->direction = StepForward;
+                    ++this->sTotal;
+                }
+            }
+        }
+};
+
 template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000, unsigned STEPS_M, typename EndstopT=EndstopNoExist> class LinearDeltaStepper : public AxisStepper {
     private:
         float M0; //initial coordinate of THIS axis.
@@ -216,6 +294,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
         static constexpr float MM_STEPS() { return  1. / STEPS_MM(); }
     public:
         typedef LinearHomeStepper<STEPS_M, EndstopT> HomeStepperT;
+        typedef LinearDeltaArcStepper<AxisIdx, CoordMap, R1000, L1000, STEPS_M> ArcStepperT;
         LinearDeltaStepper() {}
         template <std::size_t sz> LinearDeltaStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
             : AxisStepper(idx, curPos, vx, vy, vz, ve),
