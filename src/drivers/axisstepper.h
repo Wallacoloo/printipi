@@ -62,6 +62,7 @@ class AxisStepper {
         AxisStepper(int idx, float /*vHome*/) : _index(idx) {}
         template <typename TupleT> static AxisStepper& getNextTime(TupleT &axes);
         template <typename TupleT, std::size_t MechSize> static void initAxisSteppers(TupleT &steppers, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve);
+        template <typename TupleT, std::size_t MechSize> static void initAxisArcSteppers(TupleT &steppers, const std::array<int, MechSize>& curPos, float xAng, float yAng, float zAng, float arcRad, float arcVel);
         template <typename TupleT> static void initAxisHomeSteppers(TupleT &steppers, float vHome);
         Event getEvent() const; //NOT TO BE OVERRIDEN
         Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN
@@ -70,10 +71,16 @@ class AxisStepper {
         AxisStepper(int idx) : _index(idx) {} //only callable via children
         void _nextStep(); //OVERRIDE THIS. Will be called upon initialization.
     public:
+        //homing steppers. GetHomeStepperTypes<std::tuple<StepperT, ...> >::HomeStepperTypes is equivalent to std::tuple<StepperT::HomeStepperT, ...>
         template <typename... Types> struct GetHomeStepperTypes {
             typedef std::tuple<typename Types::HomeStepperT...> HomeStepperTypes;
         };
         template <typename... Types> struct GetHomeStepperTypes<std::tuple<Types...> > : GetHomeStepperTypes<Types...> {};
+        //Arc steppers:
+        template <typename... Types> struct GetArcStepperTypes {
+            typedef std::tuple<typename Types::ArcStepperT...> ArcStepperTypes;
+        };
+        template <typename... Types> struct GetArcStepperTypes<std::tuple<Types...> > : GetArcStepperTypes<Types...> {};
         
 };
 
@@ -134,6 +141,20 @@ struct _AxisStepper__initAxisHomeSteppers {
 
 template <typename TupleT> void AxisStepper::initAxisHomeSteppers(TupleT &steppers, float vHome) {
     callOnAll(steppers, _AxisStepper__initAxisHomeSteppers(), steppers, vHome);
+}
+
+//Helper classes for AxisStepper::initAxisArcSteppers
+
+struct _AxisStepper__initAxisArcSteppers {
+    template <std::size_t MyIdx, typename TupleT, typename T, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT &steppers, std::array<int, MechSize>& curPos, float xAng, float yAng, float zAng, float arcRad, float arcVel) {
+        (void)_myIdx; (void)stepper; //unused
+        std::get<MyIdx>(steppers) = T(MyIdx, curPos, xAng, yAng, zAng, arcRad, arcVel);
+        std::get<MyIdx>(steppers)._nextStep();
+    }
+};
+
+template <typename TupleT, std::size_t MechSize> void AxisStepper::initAxisArcSteppers(TupleT &steppers, const std::array<int, MechSize>& curPos, float xAng, float yAng, float zAng, float arcRad, float arcVel) {
+    callOnAll(steppers, _AxisStepper__initAxisArcSteppers(), steppers, curPos, xAng, yAng, zAng, arcRad, arcVel);
 }
 
 //Helper classes for AxisStepper::nextStep method
