@@ -223,6 +223,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
              x0(xCenter),
              y0(yCenter),
              z0(zCenter) {
+            (void)idx; (void)extVel; //unused
             static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
             this->time = 0; //this may NOT be zero-initialized by parent.
         }

@@ -116,6 +116,7 @@ template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoE
         //Arc movement constructor
         template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz> &curPos, float centerX, float centerY, float centerZ, float xAng, float yAng, float zAng, float arcRad, float arcVel, float extVel) : AxisStepper(idx), timePerStep(std::fabs(1./ (extVel * STEPS_MM)))
          {
+            (void)idx; (void)curPos; (void)centerX; (void)centerY; (void)centerZ; (void)xAng; (void)yAng; (void)zAng; (void)arcRad; (void)arcVel; //unused
             assert(CoordType == COORD_E); //can only use a LinearStepper as an Arc implementation for the extruder axis. 
             this->time = 0;
             this->direction = stepDirFromSign(extVel);
