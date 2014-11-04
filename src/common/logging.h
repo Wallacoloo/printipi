@@ -83,6 +83,7 @@ inline void enableDebug() {
     LOG("debug logging enabled\n");
 }
 inline void enableVerbose() {
+    enableDebug();
     _verbose = true;
     LOG("verbose logging enabled\n");
 }
