@@ -257,7 +257,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             float zAng = atan2(aY, aX);
             
             throw "LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE";
-            drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, xAng, yAng, zAng, arcRad, arcVel, velE);
+            drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE);
             this->_duration = minDuration;
             this->_motionType = MotionArc;
             this->_accel.begin(minDuration, maxVelXyz);

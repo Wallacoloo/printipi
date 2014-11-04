@@ -158,29 +158,31 @@
  {Cos[t u] (-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) + (Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) Sin[t u]}}
  *   
  * Then we substitute this information into the above derived D = z + sqrt(L^2 - (y-rcos(w))^2 - (x-rsin(w))^2), where w is tower angle and D is some axis coordinate.
- *   D(t) = q(Cos[t u] (-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) + (Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) Sin[t u])
-      + Sqrt[L^2 - (q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2]
+ *   D(t) = z0 + q(Cos[t u] (-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) + (Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) Sin[t u])
+      + Sqrt[L^2 - (y0 + q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (x0 + q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2]
  * Solve for D(t) = D0 + s:
- *   D0 + s = q(Cos[t u] (-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) + (Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) Sin[t u])
-      + Sqrt[L^2 - (q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2]
+ *   D0 + s = z0 + q(Cos[t u] (-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) + (Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]) Sin[t u])
+      + Sqrt[L^2 - (y0 + q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (x0 + q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2]
  *
- *   (D0 + s - q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]))^2 = L^2 - (q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2
+ *   (D0 + s - z0 - q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]))^2 = L^2 - (y0 + q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (x0 + q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2
  *
- *   0 = L^2 - (D0+s-q*Cos[t u](-Cos[a] Cos[c] Sin[b]+Sin[a] Sin[c])-q*Sin[t u](Cos[c] Sin[a]+Cos[a] Sin[b] Sin[c]))^2-(q(Cos[t u] (Cos[c] Sin[a] Sin[b]+Cos[a] Sin[c])+(Cos[a] Cos[c]-Sin[a] Sin[b] Sin[c]) Sin[t u])-r Cos[w])^2-(q(Cos[b] Cos[c] Cos[t u]-Cos[b] Sin[c] Sin[t u])-r Sin[w])^2
+ *   0 = L^2 - (D0 + s - z0 - q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]))^2 - (y0 + q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (x0 + q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2
  *
  * FullExpand applied to above yields: 
  *   0 = -D0^2+L^2-2 D0 s-s^2-q^2 Cos[b]^2 Cos[c]^2 Cos[t u]^2-r^2 Cos[w]^2-2 D0 q Cos[a] Cos[c] Cos[t u] Sin[b]-2 q s Cos[a] Cos[c] Cos[t u] Sin[b]+2 q r Cos[c] Cos[t u] Cos[w] Sin[a] Sin[b]-q^2 Cos[a]^2 Cos[c]^2 Cos[t u]^2 Sin[b]^2-q^2 Cos[c]^2 Cos[t u]^2 Sin[a]^2 Sin[b]^2+2 q r Cos[a] Cos[t u] Cos[w] Sin[c]+2 D0 q Cos[t u] Sin[a] Sin[c]+2 q s Cos[t u] Sin[a] Sin[c]-q^2 Cos[a]^2 Cos[t u]^2 Sin[c]^2-q^2 Cos[t u]^2 Sin[a]^2 Sin[c]^2+2 q r Cos[a] Cos[c] Cos[w] Sin[t u]+2 D0 q Cos[c] Sin[a] Sin[t u]+2 q s Cos[c] Sin[a] Sin[t u]-2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]+2 q^2 Cos[b]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]-2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[c] Sin[t u]+2 D0 q Cos[a] Sin[b] Sin[c] Sin[t u]+2 q s Cos[a] Sin[b] Sin[c] Sin[t u]-2 q r Cos[w] Sin[a] Sin[b] Sin[c] Sin[t u]+2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[b]^2 Sin[c] Sin[t u]+2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[b]^2 Sin[c] Sin[t u]-q^2 Cos[a]^2 Cos[c]^2 Sin[t u]^2-q^2 Cos[c]^2 Sin[a]^2 Sin[t u]^2-q^2 Cos[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Cos[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Sin[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2+2 q r Cos[b] Cos[c] Cos[t u] Sin[w]-2 q r Cos[b] Sin[c] Sin[t u] Sin[w]-r^2 Sin[w]^2
  *
  * FullSimplify on above gives: 
- *   L^2-q^2-r^2-(D0+s)^2+2 q ((D0+s) Sin[a] Sin[c+t u]+Cos[a] (-(D0+s) Cos[c+t u] Sin[b]+r Cos[w] Sin[c+t u])+r Cos[c+t u] (Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w]))
+ *   L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w]-2 q Cos[c+t u] (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b])+2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) Sin[c+t u]+2 r (x0+q Cos[b] Cos[c+t u]) Sin[w]
  *
  * Note, contains only Sin[c+t u] and Cos[c+t u] terms, and never multiplied together. May therefore be possible to solve with arctan. Mathematica says that if a*sin(x) + b*cos(x) +c = 0, then x = 2(pi*k + arctan[(a +/- sqrt(a^2+b^2-c^2))/(b-c)] where k is an integer. Also has a solution using the 2-argument arctan.
  *
- *   L^2-q^2-r^2-(D0+s)^2 + 2*q*(D0+s) Sin[a] Sin[c+t u] + 2*q*Cos[a] (-(D0+s) Cos[c+t u] Sin[b]+r Cos[w] Sin[c+t u]) + 2*q*r*Cos[c+t u] (Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w])
+ *   L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] - 2 q Cos[c+t u] (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) Sin[c+t u] + 2 r x0 Sin[w] + 2 r q Cos[b] Sin[w] Cos[c+t u]
  *
- *   L^2-q^2-r^2-(D0+s)^2 + Sin[c+t u](2*q*(D0+s) Sin[a] + 2*q*Cos[a]*r*Cos[w]) + Cos[c+t u](2*q*Cos[a]*-(D0+s)*Sin[b] + 2*q*r*(Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w]))
+ *   L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] + 2 r x0 Sin[w] + Sin[c+t u]*2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) + Cos[c+t u](-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w])
  *
- *   Thus, {m,n,p} = {(2*q*(D0+s) Sin[a] + 2*q*Cos[a]*r*Cos[w]), (2*q*Cos[a]*-(D0+s)*Sin[b] + 2*q*r*(Cos[w] Sin[a] Sin[b]+Cos[b] Sin[w])), L^2-q^2-r^2-(D0+s)^2} 
+ *   Rewrite the above as {m,n,p} , {Sin[c+t u], Cos[c+t u], 1}
+ *
+ *   Thus, {m,n,p} = {2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]), (-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w]), L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w]} 
  *   And c+t*u = arctan((-m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m) OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m)
  */
 
@@ -202,13 +204,14 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
         float arcRad; //radius of arc
         float u; //angular velocity of arc.
         float w; //angle of this axis. CW from +y axis
+        float x0, y0, z0; //center point of arc
         static constexpr float r() { return R1000 / 1000.; } //distance from center of build-plate to each axis
         static constexpr float L() { return L1000 / 1000.; } //length of rods connecting the axis carriages to the effector
         static constexpr float STEPS_MM() { return STEPS_M / 1000.; } //# of steps to turn an axis stepper in order to elevate the carriage by 1 mm
         static constexpr float MM_STEPS() { return  1. / STEPS_MM(); }
     public:
         LinearDeltaArcStepper() {}
-        template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xAng, float yAng, float zAng, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
+        template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float xAng, float yAng, float zAng, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
              M0(curPos[AxisIdx]*MM_STEPS()), 
              sTotal(0),
              a(zAng),
@@ -216,15 +219,22 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
              c(xAng),
              arcRad(arcRad),
              u(arcVel),
-             w(AxisIdx*2*M_PI/3) {
+             w(AxisIdx*2*M_PI/3),
+             x0(xCenter),
+             y0(yCenter),
+             z0(zCenter) {
             static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
             this->time = 0; //this may NOT be zero-initialized by parent.
         }
     //protected:
         float testDir(float s) {
-            float m = 2*arcRad*(M0+s)*sin(a) + 2*arcRad*cos(a)*r()*cos(w);
-            float n = 2*arcRad*cos(a)*-(M0+s)*sin(b) + 2*arcRad*r()*(cos(w)*sin(a)*sin(b) + cos(b)*sin(w));
-            float p = L()*L() - arcRad*arcRad - r()*r() - (M0+s)*(M0+s);
+            //{m, n, p} = {2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]), -2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w], L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w]}
+            //float m = 2*arcRad*(M0+s)*sin(a) + 2*arcRad*cos(a)*r()*cos(w);
+            //float n = 2*arcRad*cos(a)*-(M0+s)*sin(b) + 2*arcRad*r()*(cos(w)*sin(a)*sin(b) + cos(b)*sin(w));
+            //float p = L()*L() - arcRad*arcRad - r()*r() - (M0+s)*(M0+s);
+            float m = 2*arcRad*(cos(a)*(-y0+r()*cos(w))+(M0+s-z0)*sin(a));
+            float n = -2*arcRad*(x0*cos(b)+((M0+s-z0)*cos(a)+(y0-r()*cos(w))*sin(a))*sin(b)) + 2*r()*arcRad*cos(b)*sin(w);
+            float p = L()*L() - arcRad*arcRad - r()*r() - x0*x0 - y0*y0 - (M0+s-z0)*(M0+s-z0) + 2*r()*y0*cos(w);
             float c_tu = atan2((-m*sqrt(m*m+n*n-p*p)-n*p)/(m*m+n*n), (n*sqrt(m*m+n*n-p*p) + n*n*p/m)/(m*m+n*n)-p/m); // OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m);
             float t = (c_tu - c)/u;
             return t;
