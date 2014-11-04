@@ -11,6 +11,7 @@
 
 #include <tuple>
 #include <cassert>
+#include <utility> //for std::forward
 
 template <std::size_t Value> struct CVTemplateWrapper {
     //Const-Value template wrapper.
