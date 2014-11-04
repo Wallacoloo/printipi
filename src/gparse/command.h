@@ -102,7 +102,42 @@ class Command {
         inline const std::string& getFilepathParam() const {
             return filepathParam;
         }
-        
+        inline float getE(float def=NAN) const { //extrusion distance
+            return getFloatParam('E', def);
+        }
+        inline float getE(bool &hasParam) const {
+            return getFloatParam('E', hasParam);
+        }
+        inline float getF(float def=NAN) const { //extruder feed-rate.
+            return getFloatParam('F', def);
+        }
+        inline float getF(bool &hasParam) const {
+            return getFloatParam('F', hasParam);
+        }
+        inline float getI(float def=NAN) const { //arc center X coordinate
+            return getFloatParam('I', def);
+        }
+        inline float getI(bool &hasParam) const {
+            return getFloatParam('I', hasParam);
+        }
+        inline float getJ(float def=NAN) const { //arc center Y coordinate
+            return getFloatParam('J', def);
+        }
+        inline float getJ(bool &hasParam) const {
+            return getFloatParam('J', hasParam);
+        }
+        inline float getK(float def=NAN) const { //arc center Z coordinate
+            return getFloatParam('K', def);
+        }
+        inline float getK(bool &hasParam) const {
+            return getFloatParam('K', hasParam);
+        }
+        inline float getS(float def=NAN) const { //PWM rate
+            return getFloatParam('S', def);
+        }
+        inline float getS(bool &hasParam) const {
+            return getFloatParam('S', hasParam);
+        }
         inline float getX(float def=NAN) const {
             return getFloatParam('C', def);
         }
@@ -121,23 +156,14 @@ class Command {
         inline float getZ(bool &hasParam) const {
             return getFloatParam('Z', hasParam);
         }
-        inline float getE(float def=NAN) const { //extrusion distance
-            return getFloatParam('E', def);
+        inline bool hasE() const {
+            return hasParam('E');
         }
-        inline float getE(bool &hasParam) const {
-            return getFloatParam('E', hasParam);
+        inline bool hasF() const {
+            return hasParam('F');
         }
-        inline float getF(float def=NAN) const { //extruder feed-rate.
-            return getFloatParam('F', def);
-        }
-        inline float getF(bool &hasParam) const {
-            return getFloatParam('F', hasParam);
-        }
-        inline float getS(float def=NAN) const { //PWM rate
-            return getFloatParam('S', def);
-        }
-        inline float getS(bool &hasParam) const {
-            return getFloatParam('S', hasParam);
+        inline bool hasS() const {
+            return hasParam('S');
         }
         inline bool hasX() const {
             return hasParam('X');
@@ -147,15 +173,6 @@ class Command {
         }
         inline bool hasZ() const {
             return hasParam('Z');
-        }
-        inline bool hasE() const {
-            return hasParam('E');
-        }
-        inline bool hasF() const {
-            return hasParam('F');
-        }
-        inline bool hasS() const {
-            return hasParam('S');
         }
         inline bool hasAnyXYZParam() const {
             return hasX() || hasY() || hasZ();

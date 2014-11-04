@@ -190,9 +190,11 @@ template <typename Drv> class State {
         /* execute the GCode on a Driver object that supports a well-defined interface.
          * returns a Command to send back to the host. */
         gparse::Response execute(gparse::Command const& cmd, gparse::Com &com);
+        // make an arc from the current position to (x, y, z), maintaining a constant distance from (cX, cY, cZ)
+        void queueArc(float x, float y, float z, float e, float cX, float cY, float cZ);
         /* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
         void queueMovement(float x, float y, float z, float e);
-        /* Home to the endstops. Does not return until endstops have been reached. */
+        /* Home to the endstops. */
         void homeEndstops();
         //Check if M109 (set temperature and wait until reached) has been satisfied.
         bool isHotendReady();
@@ -442,6 +444,38 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         this->queueMovement(x, y, z, e);
         return gparse::Response::Ok;
+    } else if (cmd.isG2()) { //clockwise arc from current position to (x, y, z) with center at (i, j, k)
+        LOG("Clockwise arcs not supported; use G3 (CCW arc)\n");
+        return gparse::Response::Ok;
+    } else if (cmd.isG3()) {
+        LOGW("Warning: G3 is experimental\n");
+        //first, get the end coordinate and optional feed-rate:
+        bool hasX, hasY, hasZ, hasE;
+        bool hasF;
+        float curX = destXPrimitive();
+        float curY = destYPrimitive();
+        float curZ = destZPrimitive();
+        float curE = destEPrimitive();
+        float x = cmd.getX(hasX); //new x-coordinate.
+        float y = cmd.getY(hasY); //new y-coordinate.
+        float z = cmd.getZ(hasZ); //new z-coordinate.
+        float e = cmd.getE(hasE); //extrusion amount.
+        float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
+        x = hasX ? xUnitToPrimitive(x) : curX;
+        y = hasY ? yUnitToPrimitive(y) : curY;
+        z = hasZ ? zUnitToPrimitive(z) : curZ;
+        e = hasE ? eUnitToPrimitive(e) : curE;
+        if (hasF) {
+            this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
+        }
+        //Now get the center-point coordinate:
+        bool hasK; //center-z is optional.
+        float i = xUnitToPrimitive(cmd.getI());
+        float j = yUnitToPrimitive(cmd.getJ());
+        float k = cmd.getK(hasK);
+        k = hasK ? zUnitToPrimitive(k) : curZ;
+        this->queueArc(x, y, z, e, i, j, k);
+        return gparse::Response::Ok;
     } else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
         setUnitMode(UNIT_IN);
         return gparse::Response::Ok;
@@ -578,6 +612,21 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     } else {
         throw std::runtime_error(std::string("unrecognized gcode opcode: '") + cmd.getOpcode() + "'");
     }
+}
+
+template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, float e, float cX, float cY, float cZ) {
+    //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
+    _destXPrimitive = x;
+    _destYPrimitive = y;
+    _destZPrimitive = z;
+    _destEPrimitive = e;
+    //now determine the velocity of the move. We just calculate limits & relay the info to the motionPlanner
+    float velXyz = destMoveRatePrimitive();
+    float minExtRate = -this->driver.maxRetractRate();
+    float maxExtRate = this->driver.maxExtrudeRate();
+    //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
+    auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
+    motionPlanner.arcTo(startTime, x, y, z, e, cX, cY, cZ, velXyz, minExtRate, maxExtRate);
 }
         
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
