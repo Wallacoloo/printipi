@@ -253,7 +253,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             float posTime = testDir((this->sTotal+1)*MM_STEPS());
             if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                 if (posTime > this->time) {
-                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
+                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
                     this->time = posTime;
                     this->direction = StepForward;
                     ++this->sTotal;
@@ -262,7 +262,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
                 }
             } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
                 if (negTime > this->time) {
-                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
+                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
                     this->time = negTime;
                     this->direction = StepBackward;
                     --this->sTotal;
@@ -271,12 +271,12 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
                 }
             } else { //neither time is invalid
                 if (negTime < posTime) {
-                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
+                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
                     this->time = negTime;
                     this->direction = StepBackward;
                     --this->sTotal;
                 } else {
-                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
+                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
                     this->time = posTime;
                     this->direction = StepForward;
                     ++this->sTotal;
