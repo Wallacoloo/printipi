@@ -193,6 +193,7 @@
 #include "axisstepper.h"
 #include "linearstepper.h" //for LinearHomeStepper
 #include "endstop.h"
+#include "common/logging.h"
 
 namespace drv {
 
@@ -226,6 +227,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             (void)idx; (void)extVel; //unused
             static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
             this->time = 0; //this may NOT be zero-initialized by parent.
+            LOGD("LinearDeltaArcStepper: init #%i center (%f,%f,%f) ang (%f,%f,%f), rad (%f)\n", idx, xCenter, yCenter, zCenter, xAng, yAng, zAng, arcRad);
         }
     //protected:
         float testDir(float s) {
@@ -251,7 +253,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             float posTime = testDir((this->sTotal+1)*MM_STEPS());
             if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                 if (posTime > this->time) {
-                    //LOGV("LinearDeltaStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
+                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
                     this->time = posTime;
                     this->direction = StepForward;
                     ++this->sTotal;
@@ -260,7 +262,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
                 }
             } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
                 if (negTime > this->time) {
-                    //LOGV("LinearDeltaStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
+                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
                     this->time = negTime;
                     this->direction = StepBackward;
                     --this->sTotal;
@@ -269,12 +271,12 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
                 }
             } else { //neither time is invalid
                 if (negTime < posTime) {
-                    //LOGV("LinearDeltaStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
+                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
                     this->time = negTime;
                     this->direction = StepBackward;
                     --this->sTotal;
                 } else {
-                    //LOGV("LinearDeltaStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
+                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
                     this->time = posTime;
                     this->direction = StepForward;
                     ++this->sTotal;

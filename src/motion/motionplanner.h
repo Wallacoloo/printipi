@@ -34,6 +34,7 @@
 
 #include <array>
 #include <cassert>
+#include <stdexcept> //for runtime_error
 #include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
 #include "event.h"
@@ -257,6 +258,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             float zAng = atan2(aY, aX);
             
             //throw std::runtime_error("LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE");
+            LOGD("MotionPlanner arc center (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
             drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE);
             this->_duration = minDuration;
             this->_motionType = MotionArc;
