@@ -228,10 +228,10 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             //a . b = |a| |b| cos(theta), so we can find the arcangle with arccos(a . b / |a| / |b|).
             //Note: |a| == |b| == arcRad, as these points are defined to be equi-distant from the center-point.
             //TODO: in actuality, the mechanical limits will be such that arcs WILL propagate error unless we adjust the center to make (xCur, yCur, zCur) at the same radius as (x, y, z)
-            float aX = curX-centerX;
+            float aX = curX-centerX; //relative *current* coordinates
             float aY = curY-centerY;
             float aZ = curZ-centerZ;
-            float bX = x-centerX;
+            float bX = x-centerX; //relative *desired* coordinates
             float bY = y-centerY;
             float bZ = z-centerZ;
             float aDotB = aX*bX + aY*bY + aZ*bZ;
@@ -258,7 +258,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             float zAng = atan2(aY, aX);
             
             //throw std::runtime_error("LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE");
-            LOGD("MotionPlanner arc center (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
+            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, centerX, centerY, centerZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
             drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE);
             this->_duration = minDuration;
             this->_motionType = MotionArc;
