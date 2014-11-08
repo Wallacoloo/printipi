@@ -124,12 +124,15 @@ int main(int argc, char** argv) {
         return main_(argc, argv);
     } catch (const std::exception *e) {
         LOGE("caught std::exception*: %s. ... Exiting\n", e->what());
+        throw;
         return 1;
     } catch (const std::exception &e) {
         LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
+        throw;
         return 1;
     } catch (...) {
         LOGE("caught unknown exception. Exiting\n");
+        throw;
         return 1;
     }
 }
