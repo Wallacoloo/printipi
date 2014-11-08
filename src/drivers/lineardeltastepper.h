@@ -180,9 +180,9 @@
  *
  *   L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] + 2 r x0 Sin[w] + Sin[c+t u]*2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) + Cos[c+t u](-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w])
  *
- *   Rewrite the above as {m,n,p} , {Sin[c+t u], Cos[c+t u], 1}
+ *   Rewrite the above as {m,n,p} . {Sin[c+t u], Cos[c+t u], 1}
  *
- *   Thus, {m,n,p} = {2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]), (-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w]), L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w]} 
+ *   Thus, {m,n,p} = {2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]), (-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w]), L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] + 2 r x0 Sin[w]} 
  *   And c+t*u = arctan((-m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m) OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m)
  */
 
@@ -237,8 +237,11 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             //float p = L()*L() - arcRad*arcRad - r()*r() - (M0+s)*(M0+s);
             float m = 2*arcRad*(cos(a)*(-y0+r()*cos(w))+(M0+s-z0)*sin(a));
             float n = -2*arcRad*(x0*cos(b)+((M0+s-z0)*cos(a)+(y0-r()*cos(w))*sin(a))*sin(b)) + 2*r()*arcRad*cos(b)*sin(w);
-            float p = L()*L() - arcRad*arcRad - r()*r() - x0*x0 - y0*y0 - (M0+s-z0)*(M0+s-z0) + 2*r()*y0*cos(w);
+            float p = L()*L() - arcRad*arcRad - r()*r() - x0*x0 - y0*y0 - (M0+s-z0)*(M0+s-z0) + 2*r()*y0*cos(w)  + 2*r()*x0*sin(w);
             float c_tu = atan2((-m*sqrt(m*m+n*n-p*p)-n*p)/(m*m+n*n), (n*sqrt(m*m+n*n-p*p) + n*n*p/m)/(m*m+n*n)-p/m); // OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m);
+            if (c_tu > M_PI/4) { //rounding errors
+                c_tu -= M_PI/2;
+            }
             float t = (c_tu - c)/u;
             return t;
         }
