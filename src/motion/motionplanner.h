@@ -251,14 +251,21 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             }
             float arcVel = maxVelXyz / arcRad;
             
+            //a cross b to get normal vector of arc (axis of rotation):
+            float NX = aY*bZ - aZ*bY;
+            float NY = -(aX*bZ - aZ*bX);
+            float NZ = aX*bY - aY*bX;
+            float magN = sqrt(NX*NX + NY*NY + NZ*NZ);
+            float xAng = asin(-NY/magN);
+            float yAng = asin(NX/magN);
             //Next, we need to determine the angles from the centerpoint to the current position, which is our starting "phase"
             //derived geometrically...
-            float xAng = atan2(aZ, aY);
-            float yAng = atan2(aZ, aX);
+            //float xAng = atan2(aZ, aY);
+            //float yAng = atan2(aZ, aX);
             float zAng = atan2(aY, aX);
             
             //throw std::runtime_error("LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE");
-            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, centerX, centerY, centerZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
+            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
             drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE);
             this->_duration = minDuration;
             this->_motionType = MotionArc;
