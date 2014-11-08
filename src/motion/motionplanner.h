@@ -154,6 +154,7 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
                 case MotionLinear:
                     return _nextStepLinear(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
                 case MotionArc:
+                    LOGV("MotionPlanner::nextStep() _motionType is MotionArc\n");
                     return _nextStepArc(std::integral_constant<bool, std::tuple_size<ArcStepperTypes>::value != 0>());
                 case MotionNone:
                     return Event();

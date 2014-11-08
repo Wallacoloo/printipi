@@ -183,7 +183,9 @@
  *   Rewrite the above as {m,n,p} . {Sin[c+t u], Cos[c+t u], 1}
  *
  *   Thus, {m,n,p} = {2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]), (-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w]), L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] + 2 r x0 Sin[w]} 
- *   And c+t*u = arctan((-m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m) OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m)
+ *   Note: 
+ *        c+t*u = arctan((-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )  where ArcTan[x, y] = atan(y/x)
+ *     OR c+t*u = arctan((-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )
  */
 
 
@@ -238,12 +240,20 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             float m = 2*arcRad*(cos(a)*(-y0+r()*cos(w))+(M0+s-z0)*sin(a));
             float n = -2*arcRad*(x0*cos(b)+((M0+s-z0)*cos(a)+(y0-r()*cos(w))*sin(a))*sin(b)) + 2*r()*arcRad*cos(b)*sin(w);
             float p = L()*L() - arcRad*arcRad - r()*r() - x0*x0 - y0*y0 - (M0+s-z0)*(M0+s-z0) + 2*r()*y0*cos(w)  + 2*r()*x0*sin(w);
-            float c_tu = atan2((-m*sqrt(m*m+n*n-p*p)-n*p)/(m*m+n*n), (n*sqrt(m*m+n*n-p*p) + n*n*p/m)/(m*m+n*n)-p/m); // OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m);
-            if (c_tu > M_PI/4) { //rounding errors
-                c_tu -= M_PI/2;
-            }
-            float t = (c_tu - c)/u;
-            return t;
+            //float c_tu = atan2((-m*sqrt(m*m+n*n-p*p)-n*p)/(m*m+n*n), (n*sqrt(m*m+n*n-p*p) + n*n*p/m)/(m*m+n*n)-p/m); // OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m);
+            //if (c_tu > M_PI/4) { //rounding errors
+            //    c_tu -= M_PI/2;
+            //}
+            //float t = (c_tu - c)/u;
+            //return t;
+            float c_tu_1 = atan2((-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
+            float c_tu_2 = atan2((-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
+            float t1 = (c_tu_1 - c)/u;
+            float t2 = (c_tu_2 - c)/u;
+            if (t1 < 0 && t2 < 0) { return NAN; }
+            else if (t1 < 0) { return t2; }
+            else if (t2 < 0) { return t1; }
+            else { return std::min(t1, t2); }
         }
         void _nextStep() {
             //called to set this->time and this->direction; the time (in seconds) and the direction at which the next step should occur for this axis
