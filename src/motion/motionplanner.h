@@ -257,12 +257,14 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             float NY = -(aX*bZ - aZ*bX);
             float NZ = aX*bY - aY*bX;
             float magN = sqrt(NX*NX + NY*NY + NZ*NZ);
-            float xAng = asin(-NY/magN);
-            float yAng = asin(NX/magN);
             //Next, we need to determine the angles from the centerpoint to the current position, which is our starting "phase"
             //derived geometrically...
-            //float xAng = atan2(aZ, aY);
-            //float yAng = atan2(aZ, aX);
+            ////float xAng = atan2(aZ, aY);
+            ////float yAng = atan2(aZ, aX);
+            //float xAng = asin(-NY/magN);
+            //float yAng = asin(NX/magN);
+            float xAng = atan2(NZ, NY) - M_PI/2;
+            float yAng = atan2(NX, NZ);
             float zAng = atan2(aY, aX);
             
             //throw std::runtime_error("LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE");

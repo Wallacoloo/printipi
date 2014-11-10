@@ -168,17 +168,17 @@
  *
  *   0 = L^2 - (D0 + s - z0 - q*Cos[t u](-Cos[a] Cos[c] Sin[b] + Sin[a] Sin[c]) - q*Sin[t u](Cos[c] Sin[a] + Cos[a] Sin[b] Sin[c]))^2 - (y0 + q(Cos[t u] (Cos[c] Sin[a] Sin[b] + Cos[a] Sin[c]) + (Cos[a] Cos[c] - Sin[a] Sin[b] Sin[c]) Sin[t u]) - r Cos[w])^2 - (x0 + q(Cos[b] Cos[c] Cos[t u] - Cos[b] Sin[c] Sin[t u]) - r Sin[w])^2
  *
- * FullExpand applied to above yields: 
+ * Expand applied to above yields: 
  *   0 = -D0^2+L^2-2 D0 s-s^2-q^2 Cos[b]^2 Cos[c]^2 Cos[t u]^2-r^2 Cos[w]^2-2 D0 q Cos[a] Cos[c] Cos[t u] Sin[b]-2 q s Cos[a] Cos[c] Cos[t u] Sin[b]+2 q r Cos[c] Cos[t u] Cos[w] Sin[a] Sin[b]-q^2 Cos[a]^2 Cos[c]^2 Cos[t u]^2 Sin[b]^2-q^2 Cos[c]^2 Cos[t u]^2 Sin[a]^2 Sin[b]^2+2 q r Cos[a] Cos[t u] Cos[w] Sin[c]+2 D0 q Cos[t u] Sin[a] Sin[c]+2 q s Cos[t u] Sin[a] Sin[c]-q^2 Cos[a]^2 Cos[t u]^2 Sin[c]^2-q^2 Cos[t u]^2 Sin[a]^2 Sin[c]^2+2 q r Cos[a] Cos[c] Cos[w] Sin[t u]+2 D0 q Cos[c] Sin[a] Sin[t u]+2 q s Cos[c] Sin[a] Sin[t u]-2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]+2 q^2 Cos[b]^2 Cos[c] Cos[t u] Sin[c] Sin[t u]-2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[c] Sin[t u]+2 D0 q Cos[a] Sin[b] Sin[c] Sin[t u]+2 q s Cos[a] Sin[b] Sin[c] Sin[t u]-2 q r Cos[w] Sin[a] Sin[b] Sin[c] Sin[t u]+2 q^2 Cos[a]^2 Cos[c] Cos[t u] Sin[b]^2 Sin[c] Sin[t u]+2 q^2 Cos[c] Cos[t u] Sin[a]^2 Sin[b]^2 Sin[c] Sin[t u]-q^2 Cos[a]^2 Cos[c]^2 Sin[t u]^2-q^2 Cos[c]^2 Sin[a]^2 Sin[t u]^2-q^2 Cos[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Cos[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2-q^2 Sin[a]^2 Sin[b]^2 Sin[c]^2 Sin[t u]^2+2 q r Cos[b] Cos[c] Cos[t u] Sin[w]-2 q r Cos[b] Sin[c] Sin[t u] Sin[w]-r^2 Sin[w]^2
  *
  * FullSimplify on above gives: 
- *   L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w]-2 q Cos[c+t u] (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b])+2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) Sin[c+t u]+2 r (x0+q Cos[b] Cos[c+t u]) Sin[w]
+ *   0 = L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w]-2 q Cos[c+t u] (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b])+2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) Sin[c+t u]+2 r (x0+q Cos[b] Cos[c+t u]) Sin[w]
  *
  * Note, contains only Sin[c+t u] and Cos[c+t u] terms, and never multiplied together. May therefore be possible to solve with arctan. Mathematica says that if a*sin(x) + b*cos(x) +c = 0, then x = 2(pi*k + arctan[(a +/- sqrt(a^2+b^2-c^2))/(b-c)] where k is an integer. Also has a solution using the 2-argument arctan.
  *
- *   L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] - 2 q Cos[c+t u] (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) Sin[c+t u] + 2 r x0 Sin[w] + 2 r q Cos[b] Sin[w] Cos[c+t u]
+ *   0 = L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] - 2 q Cos[c+t u] (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) Sin[c+t u] + 2 r x0 Sin[w] + 2 r q Cos[b] Sin[w] Cos[c+t u]
  *
- *   L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] + 2 r x0 Sin[w] + Sin[c+t u]*2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) + Cos[c+t u](-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w])
+ *   0 = L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] + 2 r x0 Sin[w] + Sin[c+t u]*2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) + Cos[c+t u](-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w])
  *
  *   Rewrite the above as {m,n,p} . {Sin[c+t u], Cos[c+t u], 1}
  *
