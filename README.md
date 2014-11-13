@@ -54,7 +54,14 @@ Using with Octoprint:
 
 Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. 
 
-Supporting Other Architectures
+Configuration Files
+========
+
+The files under `src/machines` define classes of machines - deltabots, cartesian bots, polar bots, etc. Each one of these is analogous to a master "config file". That is to say, you should find the machine definition in that folder that is most similar to your own (eg `src/machines/rpi/kosselpi.h`), make a copy of it (eg copy it to `src/machines/rpi/customkossel.h` and be sure to rename the `KosselPi` C++ class contained in the file to `CustomKossel` in order to reflect the path change), and then customize it. Unless you are a developer, you should never have to edit code outside of your config file. To build your CustomKossel machine, type `make MACHINE=rpi::CustomKossel`.
+
+Until the documention for these config files is improved, you may be best off referencing [this](http://forums.reprap.org/read.php?2,396157,431972#msg-431972) forum post for configuring your GPIOs and calibrating your printer.
+
+Supporting Other CPU Architectures
 ========
 
 While Printipi is under heavy development, this process may change slightly, but these are the basic steps to supporting new hardware:  
