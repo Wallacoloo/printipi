@@ -20,7 +20,7 @@
 #include "drivers/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
-//All of the following #defines are ONLY used within this file
+//All of the following #defines are ONLY used within this file,
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
 //L1000 = length of the rods that connect each axis to the end effector
 //H1000 = distance from tower base to endstop, in micrometers (assumes each endstop is at the same height)
@@ -75,6 +75,12 @@
 #define PIN_STEPPER_C_DIR  mitpi::V2_GPIO_P1_26
 #define PIN_STEPPER_E_STEP mitpi::V2_GPIO_P1_03
 #define PIN_STEPPER_E_DIR  mitpi::V2_GPIO_P1_05
+
+//PID settings:
+#define HOTEND_PID_P 18000
+#define HOTEND_PID_I 250
+#define HOTEND_PID_D 1000
+
 
 /*Used IOs:
   (1 -3.3v)
@@ -161,7 +167,7 @@ class KosselPi : public Machine {
             A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>, //C tower
             A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>, //E coord
             _Fan,
-            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000>, LowPassFilter<3000> >
+            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D>, LowPassFilter<3000> >
             > IODriverTypes;
         inline float defaultMoveRate() const { //in mm/sec
             return MAX_MOVE_RATE;
