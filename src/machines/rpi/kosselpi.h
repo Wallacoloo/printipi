@@ -23,7 +23,10 @@
 //All of the following #defines are ONLY used within this file
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
 //L1000 = length of the rods that connect each axis to the end effector
-//STEPS_M = #of steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
+//H1000 = distance from tower base to endstop, in micrometers (assumes each endstop is at the same height)
+//BUILDRAD1000 = radius of actual build plate, in micrometers
+//STEPS_M = #of *micro* steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
+//STEPS_M_EXT = # of *micro* steps needed to push 1 meter of filament through the extruder.
 
 #define R1000 111000
 #define L1000 221000
@@ -34,35 +37,44 @@
 //#define STEPS_M_EXT 40000*16
 #define STEPS_M_EXT 30000*16
 
-//#define MAX_ACCEL1000 300000
-//#define MAX_ACCEL1000 1200000
-//#define MAX_ACCEL1000 450000
+//MAX_ACCEL1000 = maximum cartesian acceleration of end effector in micrometers / s^2
+//MAX_MOVE_RATE = maximum cartesian verlocity of end effector, in mm/s
+//HOME_RATE = speed at which to home the endstops, in mm/2
+//MAX_EXT_RATE = maximum rate at which filament should ever be extruded, in mm of filament / s
+
 #define MAX_ACCEL1000 900000
-//Can reach 160mm/sec at full-stepping (haven't tested the limits)
-//75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
-//90mm/sec uses 75% cpu at quarter-stepping (optimized - Aug 10)
-//70mm/sec uses 50-55% cpu at quarter-stepping, but results in missed steps (Aug 17)
-//30mm/sec uses 55-60% cpu at quarter-stepping (Sept 25, temp=20C)
-//idle uses 8% cpu (Sept 25, temp=20C)
-//30mm/sec uses 60% cpu at quarter-steppeing (Oct 2, temp=20C, thermistor broken)
 //120mm/sec uses 50% cpu at eigth-stepping (Oct 18, temp=195C)
 #define MAX_MOVE_RATE 120
-//#define MAX_MOVE_RATE 45
-//#define MAX_MOVE_RATE 60
-//#define MAX_MOVE_RATE 50
 #define HOME_RATE 10
 #define MAX_EXT_RATE 150
-//#define MAX_EXT_RATE 24
-//#define MAX_EXT_RATE 60
+
+//Resistor-Capacitor thermistor read settings:
 
 #define THERM_RA 665
-//#define THERM_CAP_PICO 100000
 #define THERM_CAP_PICO  2200000
 #define VCC_mV 3300
 #define THERM_IN_THRESH_mV 1600
 #define THERM_T0 25
 #define THERM_R0 100000
 #define THERM_BETA 3950
+
+//Pin Defines:
+#define PIN_STEPPER_EN     mitpi::V2_GPIO_P1_16
+#define PIN_ENDSTOP_A      mitpi::V2_GPIO_P1_18
+#define PIN_ENDSTOP_B      mitpi::V2_GPIO_P5_03
+#define PIN_ENDSTOP_C      mitpi::V2_GPIO_P1_15
+#define PIN_THERMISTOR     mitpi::V2_GPIO_P1_13
+#define PIN_FAN            mitpi::V2_GPIO_P1_08
+#define PIN_HOTEND         mitpi::V2_GPIO_P1_10
+
+#define PIN_STEPPER_A_STEP mitpi::V2_GPIO_P1_22
+#define PIN_STEPPER_A_DIR  mitpi::V2_GPIO_P1_23
+#define PIN_STEPPER_B_STEP mitpi::V2_GPIO_P1_19
+#define PIN_STEPPER_B_DIR  mitpi::V2_GPIO_P1_21
+#define PIN_STEPPER_C_STEP mitpi::V2_GPIO_P1_24
+#define PIN_STEPPER_C_DIR  mitpi::V2_GPIO_P1_26
+#define PIN_STEPPER_E_STEP mitpi::V2_GPIO_P1_03
+#define PIN_STEPPER_E_DIR  mitpi::V2_GPIO_P1_05
 
 /*Used IOs:
   (1 -3.3v)
@@ -127,13 +139,13 @@ using namespace drv::rpi; //for RpiIoPin, etc.
 
 class KosselPi : public Machine {
     private:
-        typedef InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_16, IoHigh> > _StepperEn;
-        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_18, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA;
-        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P5_03, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
-        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_15, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
-        typedef RCThermistor<RpiIoPin<mitpi::V2_GPIO_P1_13>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-        typedef Fan<RpiIoPin<mitpi::V2_GPIO_P1_08, IoLow> > _Fan;
-        typedef InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_10, IoHigh> > _HotendOut;
+        typedef InvertedPin<RpiIoPin<PIN_STEPPER_EN, IoHigh> > _StepperEn;
+        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_A, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA;
+        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_B, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
+        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_C, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
+        typedef RCThermistor<RpiIoPin<PIN_THERMISTOR>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
+        typedef Fan<RpiIoPin<PIN_FAN, IoLow> > _Fan;
+        typedef InvertedPin<RpiIoPin<PIN_HOTEND, IoHigh> > _HotendOut;
         //typedef matr::Identity3Static _BedLevelT;
         typedef matr::Matrix3Static<999975003, 5356, -7070522, 
 5356, 999998852, 1515111, 
@@ -144,10 +156,10 @@ class KosselPi : public Machine {
         typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
         typedef std::tuple<
-            A4988<RpiIoPin<mitpi::V2_GPIO_P1_22>, RpiIoPin<mitpi::V2_GPIO_P1_23>, _StepperEn>, //A tower
-            A4988<RpiIoPin<mitpi::V2_GPIO_P1_19>, RpiIoPin<mitpi::V2_GPIO_P1_21>, _StepperEn>, //B tower
-            A4988<RpiIoPin<mitpi::V2_GPIO_P1_24>, RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
-            A4988<RpiIoPin<mitpi::V2_GPIO_P1_03>, RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
+            A4988<RpiIoPin<PIN_STEPPER_A_STEP>, RpiIoPin<PIN_STEPPER_A_DIR>, _StepperEn>, //A tower
+            A4988<RpiIoPin<PIN_STEPPER_B_STEP>, RpiIoPin<PIN_STEPPER_B_DIR>, _StepperEn>, //B tower
+            A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>, //C tower
+            A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>, //E coord
             _Fan,
             TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000>, LowPassFilter<3000> >
             > IODriverTypes;
