@@ -17,7 +17,8 @@
 #include "drivers/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
-//All of the following #defines are ONLY used within this file,
+//All of the #defines between this point and the end of this file are ONLY used within this file,
+
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
 //L1000 = length of the rods that connect each axis to the end effector
 //H1000 = distance from tower base to endstop, in micrometers (assumes each endstop is at the same height)
