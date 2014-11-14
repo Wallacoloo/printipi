@@ -2,17 +2,14 @@
 #define DRIVERS_KOSSELPI_H
 
 
+#include "machines/machine.h"
 #include "pid.h"
 #include "common/filters/lowpassfilter.h"
-//#include "motion/exponentialacceleration.h"
 #include "motion/constantacceleration.h"
-#include "machines/machine.h"
-#include "drivers/axisstepper.h"
 #include "drivers/linearstepper.h"
 #include "drivers/lineardeltastepper.h"
 #include "drivers/rpi/rpiiopin.h"
 #include "drivers/a4988.h"
-#include "drivers/linearcoordmap.h"
 #include "drivers/lineardeltacoordmap.h"
 #include "drivers/rcthermistor.h"
 #include "drivers/tempcontrol.h"
@@ -145,22 +142,47 @@ using namespace drv::rpi; //for RpiIoPin, etc.
 
 class KosselPi : public Machine {
     private:
+        //define one pin to enable/disable ALL steppers.
+        //  This pin should be connected directly to the EN pin of each stepper motor driver chip in use.
+        //  it defaults to HIGH=disabled, LOW=enabled.
         typedef InvertedPin<RpiIoPin<PIN_STEPPER_EN, IoHigh> > _StepperEn;
+        //define the endstops:
+        //  These endstops are wired as a switch, with one end tied to the 3.3V supply and the other connected to a resistor of 1k-50k ohms, and then fed to the input. The endstop is interpreted as triggered when the switch is OPEN (so if you have a 3-pin endstop, use the common pin and the open pin)
+        //  the resistor is technically optional, but without it, you run the risk of shorting Vcc to ground if the pin EVER gets misconfigured as an output (this would destroy the pin & possibly damage the Pi).
         typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_A, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA;
         typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_B, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
         typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_C, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
+        //define the thermistor:
+        //  The Raspberry Pi lacks an analog to digital converter, so we use a resistor-capacitor circuit to measure the time it takes a fully charged capacitor of known capacitance to discharge through the thermistor.
+        //We have a single pin here, and we configure it as output(HIGH) to charge the capacitor, and then configure it as input and measure the time it takes for the logic level to drop to low while the capacitor discharges through a parallel connection to ground (through Ra).
         typedef RCThermistor<RpiIoPin<PIN_THERMISTOR>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
+        //define the fan:
+        //  The fan is controlled in a PWM way - set HIGH for full power, set LOW for off, toggle rapidly for something in-between.
+        //  One should not attempt to directly drive a fan off of the Pi's GPIOs.
+        //  Instead, obtain a transistor, wire base to 12V, collector to the GPIO, and emitter should be connected through the fan and into ground.
         typedef Fan<RpiIoPin<PIN_FAN, IoLow> > _Fan;
+        //define the hotend:
+        //  The hotend is controlled in precisely the same manner as the fan.
+        //  Please note that this is currently set to inverted mode, so a logic-level HIGH should result in 0 power delivered to the hotend.
         typedef InvertedPin<RpiIoPin<PIN_HOTEND, IoHigh> > _HotendOut;
         //typedef matr::Identity3Static _BedLevelT;
+        //define the level of the bed:
+        //  This is a matrix, such that M * {x,y,z} should transform desired coordinates into a bed-level-compensated equivalent.
+        //  Usually, this is just a rotation matrix.
         typedef matr::Matrix3Static<999975003, 5356, -7070522, 
 5356, 999998852, 1515111, 
 7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
     public:
+        //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
         typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
-
+        //Define the coordinate system:
+        //  We are using a LinearDelta coordinate system, where vertically-moving carriages are attached to an end effector via fixed-length, rotatable rods.
         typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
+        //Expose the logic used to control the stepper motors:
+        //Here we just have 1 stepper motor for each axis and another for the extruder:
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
+        //Gather all the I/O controlled devices we defined above:
+        //  Additionally, define the actual stepper motor drivers and tie the thermistor to the hotend as a feedback source.
         typedef std::tuple<
             A4988<RpiIoPin<PIN_STEPPER_A_STEP>, RpiIoPin<PIN_STEPPER_A_DIR>, _StepperEn>, //A tower
             A4988<RpiIoPin<PIN_STEPPER_B_STEP>, RpiIoPin<PIN_STEPPER_B_DIR>, _StepperEn>, //B tower
@@ -169,6 +191,8 @@ class KosselPi : public Machine {
             _Fan,
             TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D>, LowPassFilter<3000> >
             > IODriverTypes;
+        
+        //Expose default and maximum velocities:
         inline float defaultMoveRate() const { //in mm/sec
             return MAX_MOVE_RATE;
         }
@@ -180,7 +204,7 @@ class KosselPi : public Machine {
             return MAX_EXT_RATE;
         }
         inline float clampMoveRate(float inp) const {
-            return std::min(inp, defaultMoveRate());//ensure we never move too fast.
+            return std::min(inp, defaultMoveRate());
         }
         inline float clampHomeRate(float inp) const {
             (void)inp; //unused argument
