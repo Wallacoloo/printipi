@@ -186,6 +186,80 @@
  *   Note: 
  *        c+t*u = arctan((-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )  where ArcTan[x, y] = atan(y/x)
  *     OR c+t*u = arctan((-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )
+ *
+ *
+ *
+ * Arcs - Revision 2:
+ *   a circle in 2d is x(t) = rcos(wt), y(t) = rsin(wt)
+ *   can write this as P(t) = rcos(wt)*i + rsin(wt)*j
+ *   Replace i and j with perpindicular vectors to extend to multiple dimensions:
+ *   P(t) = <xc, yc, zc> + rcos(wt)*u+ rsin(wt)*v
+ *   Let x0, y0, z0 be P(0) (the starting point), and P(end) = Pe=<xe, ye, ze>, and Pc=<xc, yc, zc> will be the center of the arc.
+ *   The u is just <x0-xc, y0-yc, z0-zc>.
+ *
+ *   Now need to solve for v. v will be in the plane containing vectors u and Pe-Pc and will be at a 90* angle with u.
+ *   In other words, v is some linear combination of u and (Pe-Pc) such that u is perpindicular to v and has a magnitude of r.
+ *   { v = a*u + b*(Pe-Pc), v . u = 0, |v| = r }
+ *     u . (a*u + b*(Pe-Pc)) == 0
+ *     a|u|^2 + b|u . (Pe-Pc)| == 0
+ *   let b = 1, and we can solve for the direction of v:
+ *     b = 1
+ *     a = -u.(Pe-Pc) / |u|^2
+ *   Then normalize v and scale it up to |u|.
+ *
+ *   Given u, v, Pc, and let m be the angular velocity:
+ *     x = xc + r*Cos[m*t]*ux + r*Sin[m*t]*vx
+ *     y = yc + r*Cos[m*t]*uy + r*Sin[m*t]*vy
+ *     z = zc + r*Cos[m*t]*uz + r*Sin[m*t]*vz
+ *   Substitute this information into the above derived D = z + sqrt(L^2 - (y-rcos(w))^2 - (x-rsin(w))^2), where w is tower angle and D is some axis coordinate.
+ *     D(t) = (zc + r*Cos[m*t]*uz + r*Sin[m*t]*vz) + Sqrt[L^2 - ((yc + r*Cos[m*t]*uy + r*Sin[m*t]*vy) - r*Cos[w])^2 - ((xc + r*Cos[m*t]*ux + r*Sin[m*t]*vx) - r*Sin[w])^2]
+ *   Want to solve for the time at which D = D0 + s, where s is a constant step offset to test:
+ *     D0 + s = (zc + r*Cos[m*t]*uz + r*Sin[m*t]*vz) + Sqrt[L^2 - ((yc + r*Cos[m*t]*uy + r*Sin[m*t]*vy) - r*Cos[w])^2 - ((xc + r*Cos[m*t]*ux + r*Sin[m*t]*vx) - r*Sin[w])^2]
+ *     ((D0 + s) - (zc + r*Cos[m*t]*uz + r*Sin[m*t]*vz))^2 = L^2 - ((yc + r*Cos[m*t]*uy + r*Sin[m*t]*vy) - r*Cos[w])^2 - ((xc + r*Cos[m*t]*ux + r*Sin[m*t]*vx) - r*Sin[w])^2
+ *   0 = L^2 - ((yc + r*Cos[m*t]*uy + r*Sin[m*t]*vy) - r*Cos[w])^2 - ((xc + r*Cos[m*t]*ux + r*Sin[m*t]*vx) - r*Sin[w])^2 - ((D0 + s) - (zc + r*Cos[m*t]*uz + r*Sin[m*t]*vz))^2
+ *
+ *   Expand applied to above gives:
+ *     0 = -D0^2+L^2-2 D0 s-s^2-xc^2-yc^2+2 D0 zc+2 s zc-zc^2+2 D0 r uz Cos[m t]+2 r s uz Cos[m t]-2 r ux xc Cos[m t]-2 r uy yc Cos[m t]-2 r uz zc Cos[m t]-r^2 ux^2 Cos[m t]^2-r^2 uy^2 Cos[m t]^2-r^2 uz^2 Cos[m t]^2+2 r yc Cos[w]+2 r^2 uy Cos[m t] Cos[w]-r^2 Cos[w]^2+2 D0 r vz Sin[m t]+2 r s vz Sin[m t]-2 r vx xc Sin[m t]-2 r vy yc Sin[m t]-2 r vz zc Sin[m t]-2 r^2 ux vx Cos[m t] Sin[m t]-2 r^2 uy vy Cos[m t] Sin[m t]-2 r^2 uz vz Cos[m t] Sin[m t]+2 r^2 vy Cos[w] Sin[m t]-r^2 vx^2 Sin[m t]^2-r^2 vy^2 Sin[m t]^2-r^2 vz^2 Sin[m t]^2+2 r xc Sin[w]+2 r^2 ux Cos[m t] Sin[w]+2 r^2 vx Sin[m t] Sin[w]-r^2 Sin[w]^2
+ *
+ *   FullSimplify applied above gives:
+ *     0 = 1/2 (2 L^2-r^2 (2+vx^2+vy^2+vz^2)-2 (xc^2+yc^2)-2 (D0+s-zc)^2+r (-2 r (ux^2+uy^2+uz^2) Cos[m t]^2+r (vx^2+vy^2+vz^2) Cos[2 m t]-2 r (ux vx+uy vy+uz vz) Sin[2 m t]+4 Cos[m t] (-ux xc-uy yc+uz (D0+s-zc)+r uy Cos[w]+r ux Sin[w])+4 Sin[m t] (-vx xc-vy yc+vz (D0+s-zc)+r vy Cos[w]+r vx Sin[w])+4 (yc Cos[w]+xc Sin[w])))
+ *     0 = 2 L^2-r^2 (2+vx^2+vy^2+vz^2)-2 (xc^2+yc^2)-2 (D0+s-zc)^2+r (-2 r (ux^2+uy^2+uz^2) Cos[m t]^2+r (vx^2+vy^2+vz^2) Cos[2 m t]-2 r (ux vx+uy vy+uz vz) Sin[2 m t]+4 Cos[m t] (-ux xc-uy yc+uz (D0+s-zc)+r uy Cos[w]+r ux Sin[w])+4 Sin[m t] (-vx xc-vy yc+vz (D0+s-zc)+r vy Cos[w]+r vx Sin[w])+4 (yc Cos[w]+xc Sin[w]))
+ *   TrigExpand applied above gives:
+ *     0 = -D0^2+L^2-r^2-2 D0 s-s^2-(r^2 ux^2)/2-(r^2 uy^2)/2-(r^2 uz^2)/2-(r^2 vx^2)/2-(r^2 vy^2)/2-(r^2 vz^2)/2-xc^2-yc^2+2 D0 zc+2 s zc-zc^2+2 D0 r uz Cos[m t]+2 r s uz Cos[m t]-2 r ux xc Cos[m t]-2 r uy yc Cos[m t]-2 r uz zc Cos[m t]-1/2 r^2 ux^2 Cos[m t]^2-1/2 r^2 uy^2 Cos[m t]^2-1/2 r^2 uz^2 Cos[m t]^2+1/2 r^2 vx^2 Cos[m t]^2+1/2 r^2 vy^2 Cos[m t]^2+1/2 r^2 vz^2 Cos[m t]^2+2 r yc Cos[w]+2 r^2 uy Cos[m t] Cos[w]+2 D0 r vz Sin[m t]+2 r s vz Sin[m t]-2 r vx xc Sin[m t]-2 r vy yc Sin[m t]-2 r vz zc Sin[m t]-2 r^2 ux vx Cos[m t] Sin[m t]-2 r^2 uy vy Cos[m t] Sin[m t]-2 r^2 uz vz Cos[m t] Sin[m t]+2 r^2 vy Cos[w] Sin[m t]+1/2 r^2 ux^2 Sin[m t]^2+1/2 r^2 uy^2 Sin[m t]^2+1/2 r^2 uz^2 Sin[m t]^2-1/2 r^2 vx^2 Sin[m t]^2-1/2 r^2 vy^2 Sin[m t]^2-1/2 r^2 vz^2 Sin[m t]^2+2 r xc Sin[w]+2 r^2 ux Cos[m t] Sin[w]+2 r^2 vx Sin[m t] Sin[w]
+ *   Note: cos(2x) = cos^2(x) - sin^2(x) = 2cos^2(x)-1
+ *   Therefore: cos^2(x) = (cos(2x)+1)/2 and sin^2(x) = (cos(2x)-1)/2
+ *   Thus,
+ *     0 = 2 L^2-r^2 (2+vx^2+vy^2+vz^2)-2 (xc^2+yc^2)-2 (D0+s-zc)^2+r (-2 r (ux^2+uy^2+uz^2) (Cos[2m t]+1)/2+r (vx^2+vy^2+vz^2) Cos[2 m t]-2 r (ux vx+uy vy+uz vz) Sin[2 m t]+4 Cos[m t] (-ux xc-uy yc+uz (D0+s-zc)+r uy Cos[w]+r ux Sin[w])+4 Sin[m t] (-vx xc-vy yc+vz (D0+s-zc)+r vy Cos[w]+r vx Sin[w])+4 (yc Cos[w]+xc Sin[w]))
+ *
+ *   Knowing that |v| = |u| = r, can reduce to:
+ *   0 = 2L^2 - 2r^2 - r^4 - 2|<xc, yc, D0+s-zc>|^2 - r^4*Sin[m t]^2 + 4r<r*Sin[w]-xc, r*Cos[w]-yc, D0+s-zc> . (u*Cos[m t] + v*Sin[m t]) + 4r*(yc*Cos[w] + xc*Sin[w])
+ *
+ *
+ *
+ * Arcs - Revision 3:
+ *   Use the same parameterization as in Rev 2, but do more solving by hand.
+ *   Let P = P(t) = <xc, yc, zc> + rcos(m*t)u + rsin(m*t)v
+ *   Have the constraint equation: |P - <rsin(w), rcos(w), D>| = L, where <rsin(w), rcos(w), D> is the carriage position and P is the effector position
+ *   Then substitute P into the constraint equation and square each side:
+ *     (xc-rsin(w))^2 + (yc-rcos(w))^2 + (zc-D)^2 + r^2*cos^2(m*t) + r^2*sin^2(m*t) + 2<xc-rsin(w), yc-rcos(w), zc-D> . rcos(m*t)u + 2<xc-rsin(w), yc-rcos(w), zc-D> . rsin(m*t)v == L^2
+ *   Note: removed all terms involving u . v, because u is perpindicular to v so u.v = 0
+ *   Can simplify a bit and put into Mathematica notation. Note: used mt=m*t to make solving for t slightly easier:
+ *     (xc-r*Sin[w])^2 + (yc-r*Cos[w])^2 + (zc-D)^2 + r^2 + 2*r*{xc-r*Sin[w], yc-r*Cos[w], zc-D} . (Cos[mt]*u + Sin[mt]*v) == L^2
+ *   Can directly apply Solve on the above equation and mt, but produces LARGE output. So simplify some more:
+ *     r^2+(-D+zc)^2+(yc-r Cos[w])^2+(xc-r Sin[w])^2+2 r ((yc-r Cos[w]) (uy Cos[mt]+vy Sin[mt])+(-D+zc) (uz Cos[mt]+vz Sin[mt])+(ux Cos[mt]+vx Sin[mt]) (xc-r Sin[w])) == L^2
+ *   Expand:
+ *     0 == D^2+r^2+xc^2+yc^2-2 D zc+zc^2-2 D r uz Cos[mt]+2 r ux xc Cos[mt]+2 r uy yc Cos[mt]+2 r uz zc Cos[mt]-2 r yc Cos[w]-2 r^2 uy Cos[mt] Cos[w]+r^2 Cos[w]^2-2 D r vz Sin[mt]+2 r vx xc Sin[mt]+2 r vy yc Sin[mt]+2 r vz zc Sin[mt]-2 r^2 vy Cos[w] Sin[mt]-2 r xc Sin[w]-2 r^2 ux Cos[mt] Sin[w]-2 r^2 vx Sin[mt] Sin[w]+r^2 Sin[w]^2 - L^2
+ *   Group Sin[mt] and Cos[mt] terms:
+ *     D^2+r^2+xc^2+yc^2-2 D zc+zc^2 -2 r yc Cos[w] +r^2 Cos[w]^2 -2 r xc Sin[w] + r^2 Sin[w]^2 - L^2
+     + Cos[mt] (-2 D r uz +2 r ux xc + 2 r uy yc +2 r uz zc -2 r^2 uy Cos[w] -2 r^2 ux Sin[w])
+     + Sin[mt] (-2 D r vz +2 r vx xc + 2 r vy yc +2 r vz zc -2 r^2 vy Cos[w] -2 r^2 vx Sin[w])
+ *   Simplify each term:
+ *     2 r^2+xc^2+yc^2+(D-zc)^2-2 r (yc Cos[w]+xc Sin[w]) - L^2
+     + Cos[mt] (2 r (-D uz+ux xc+uy yc+uz zc-r (uy Cos[w]+ux Sin[w])))
+     + Sin[mt] (2 r (-D vz+vx xc+vy yc+vz zc-r (vy Cos[w]+vx Sin[w])))
+ *   Now we can use the earlier derived identity: {m,n,p} . {Sin[mt], Cos[mt], 1} has solutions of:
+ *        mt = arctan((-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )  where ArcTan[x, y] = atan(y/x)
+ *     OR mt = arctan((-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )
  */
 
 
