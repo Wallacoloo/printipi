@@ -80,45 +80,6 @@
 #define HOTEND_PID_D 1000
 
 
-/*Used IOs:
-  (1 -3.3v)
-  (2 -5.0v)
-  (3 -input unusable (internally tied to 3.3v via 1.8kOhm); output functional)
-  (4 -5.0v)
-  (5 -input unusable (internally tied to 3.3v via 1.8kOhm); output functional)
-  (6 -GND)
-  (7 -input&output broken)
-  (8 -input finicky; output functional)
-  (9 -GND)
-  (10-input finicky; output functional)
-  (11-input&output broken)
-  (12-input&output broken)
-  13
-  (14-GND)
-  15
-  16
-  (17-3.3v)
-  18
-  19
-  (20-GND)
-  21
-  22
-  23
-  (24-input broken; output functional)
-  (25-GND)
-  (26-input broken; output functional)
-  
-P5 layout:
-  P5-01 is, from the back of the board with GPIOs on the top, the upper-right pin.
-  P5-01 = +5V
-  P5-02 = +3.3V
-  P5-03 = GPIO28
-  P5-04 = GPIO29
-  P5-05 = GPIO30
-  P5-06 = GPIO31
-  P5-07 = GND
-  P5-08 = GND
-*/
 /* Calibrating:
   as y leaves 0 to +side, z increases (should stay level)
     Even more so as it goes to -side.
@@ -212,6 +173,7 @@ class KosselPi : public Machine {
             return HOME_RATE;
         }
         inline bool doHomeBeforeFirstMovement() const {
+            //TODO: This logic seems more appropriate to place in the CoordMap; not the machine.
             return true; //if we get a G1 before the first G28, then yes - we want to home first!
         }
 };
