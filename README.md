@@ -3,7 +3,7 @@ Printipi
 
 Printipi is a software package designed to bring 3d printing to the Raspberry Pi. It takes on all of the roles generally given to dedicated microcontrollers (interfacing with stepper drivers, temperature control of the hotend, and cooling fans) while also running under an operating system. This means that the same device that is running the firmware can also perform other tasks while printing, such as hosting a web interface like Octoprint.
 
-Although called Printi**pi**, it is not necessarily limited to running on the Pi. The `Example` machine can compile and run on most Linux machines, as a proof of concept (it does no electrical I/O), and new machines can be supported by implementing a handful of interfaces (see the section below for more info).
+Although called Printi<b>pi</b>, it is not necessarily limited to running on the Pi. The `Example` machine can compile and run on most Linux machines, as a proof of concept (it does no electrical I/O), and new machines can be supported by implementing a handful of interfaces (see the section below for more info).
 
 Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/machines that exposes its coordinate system and peripherals through a handful of public member functions and typedefs. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
 
