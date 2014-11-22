@@ -18,7 +18,7 @@ Printipi powering a Mini Kossel (2014/08/18): http://youtu.be/g4UD5MRas3E
 License
 ========
 
-With the exception of certain files*, Printipi is licensed under the MIT license. This means that you are free to use, modify, distribute, and sublicense the code as you see fit. While you are not obligated to do so by the license, it would be appreciated that you share any improvements you make (eg make a public fork on github containing your modifications and then submit a pull request to have it merged with the master branch).
+With the exception of certain files*, Printipi is licensed under the MIT license. This means that you are free to use, modify, distribute, and sublicense the code as you see fit. While you are not obligated to do so by the license, it would be appreciated that you share any improvements you make (eg make a public fork on github containing your modifications and then submit a pull request to have it merged with the devel branch).
 
 *util/rotation_matrix.py is (c) Edward d'Auvergne and reproduced here only to aid in calibration
 
