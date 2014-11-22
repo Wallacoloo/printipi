@@ -7,7 +7,7 @@ Although called Printi<b>pi</b>, it is not necessarily limited to running on the
 
 Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/machines that exposes its coordinate system and peripherals through a handful of public member functions and typedefs. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
 
-**Note:** Printipi is in a very developmental state and only has limited documentation. As of this time, it is *not* recommended to users who aren't comfortable with digging into the source code to figure out how it all works.
+**Note:** Printipi is in a very developmental state and only has limited documentation. As of this time, it is *not* recommended to users who aren't comfortable with digging into the source code to figure out how things work.
 
 Demos
 ========
