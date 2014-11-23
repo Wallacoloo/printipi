@@ -215,9 +215,9 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
         void arcTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float centerX, float centerY, float centerZ, float maxVelXyz, float minVelE, float maxVelE) {
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
-            if (std::tuple_size<ArcStepperTypes>::value == 0) {
+            /*if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes
-            }
+            }*/
             this->_baseTime = baseTime.time_since_epoch();
             float curX, curY, curZ, curE;
             std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
@@ -253,23 +253,55 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
             float arcVel = maxVelXyz / arcRad;
             
             //a cross b to get normal vector of arc (axis of rotation):
-            float NX = aY*bZ - aZ*bY;
-            float NY = -(aX*bZ - aZ*bX);
-            float NZ = aX*bY - aY*bX;
-            float magN = sqrt(NX*NX + NY*NY + NZ*NZ);
+            //float NX = aY*bZ - aZ*bY;
+            //float NY = -(aX*bZ - aZ*bX);
+            //float NZ = aX*bY - aY*bX;
+            //float magN = sqrt(NX*NX + NY*NY + NZ*NZ);
             //Next, we need to determine the angles from the centerpoint to the current position, which is our starting "phase"
             //derived geometrically...
             ////float xAng = atan2(aZ, aY);
             ////float yAng = atan2(aZ, aX);
-            //float xAng = asin(-NY/magN);
-            //float yAng = asin(NX/magN);
-            float xAng = atan2(NZ, NY) - M_PI/2;
-            float yAng = atan2(NX, NZ);
-            float zAng = atan2(aY, aX);
+            ////float xAng = asin(-NY/magN);
+            ////float yAng = asin(NX/magN);
+            //float xAng = atan2(NZ, NY) - M_PI/2;
+            //float yAng = atan2(NX, NZ);
+            //float zAng = atan2(aY, aX);
+            
+            //TODO: reference arcs-parameterization.nb to fix xAng yAng, zAng calculations.
+            
+            //Want two perpindicular vectors such that <x, y, z> = P(t) = <xc, yc, zc> + r*cos(m*t)*u + r*sin(m*t)*v
+            //Thus, u is the normal vector of <x0, y0, z0> - <xc, yc, zc>
+            float magA = sqrt(aX*aX + aY*aY + aZ*aZ);
+            float ux = aX/magA;
+            float uy = aY/magA;
+            float uz = aZ/magA;
+            
+            //Now to get v; v is some linear combination of u + <x1-xc, y1-yc, z1-zc> that is perpindicular to u and has length 1.
+            //So, v = au + b<x1-xc, y1-yc, z1-zc>
+            //and u.v = 0 = a*1 + b<x1-xc, y1-yc, z1-zc> . u
+            //a = -b<x1-xc, y1-yc, z1-zc> . u
+            //let b=1 and solve for a. This gives us our direction, but non-normalized:
+            //a = -[(x1-xc)*ux + (y1-yc)*uy + (z1-zc)*uz]
+            //Then normalize.
+            //TODO: Another way to put this may be that v is <x1-xc, y1-yc, z1-zc> minus the projection of <x1-xc, y1-yc, z1-zc> onto u, normalized.
+            
+            float a = -(bX*ux + bY*uy + bZ*uz);
+            float vx = a*ux + bX;
+            float vy = a*uy + bY;
+            float vz = a*uz + bZ;
+            float magV = sqrt(vx*vx + vy*vy + vz*vz);
+            vx = vx/magV;
+            vy = vy/magV;
+            vz = vz/magV;
             
             //throw std::runtime_error("LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE");
-            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
-            drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE);
+            //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
+            //drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE);
+            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE, minDuration);
+            drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE);
+            if (std::tuple_size<ArcStepperTypes>::value == 0) {
+                return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
+            }
             this->_duration = minDuration;
             this->_motionType = MotionArc;
             this->_accel.begin(minDuration, maxVelXyz);

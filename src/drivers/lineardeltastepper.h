@@ -260,6 +260,7 @@
  *   Now we can use the earlier derived identity: {m,n,p} . {Sin[mt], Cos[mt], 1} has solutions of:
  *        mt = arctan((-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )  where ArcTan[x, y] = atan(y/x)
  *     OR mt = arctan((-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )
+ *   Note: D=D0+s
  */
 
 
@@ -277,9 +278,11 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
     private:
         float M0; //initial coordinate of THIS axis.
         int sTotal; //current step offset from M0
-        float a, b, c; //angles about Z, Y, X axis respectively
+        //float a, b, c; //angles about Z, Y, X axis respectively
+        //float u; //angular velocity of arc.
+        float xc, yc, zc, ux, uy, uz, vx, vy, vz;
         float arcRad; //radius of arc
-        float u; //angular velocity of arc.
+        float m;
         float w; //angle of this axis. CW from +y axis
         float x0, y0, z0; //center point of arc
         static constexpr float r() { return R1000 / 1000.; } //distance from center of build-plate to each axis
@@ -288,7 +291,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
         static constexpr float MM_STEPS() { return  1. / STEPS_MM(); }
     public:
         LinearDeltaArcStepper() {}
-        template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float xAng, float yAng, float zAng, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
+        /*template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float xAng, float yAng, float zAng, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
              M0(curPos[AxisIdx]*MM_STEPS()), 
              sTotal(0),
              a(zAng),
@@ -304,6 +307,25 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
             this->time = 0; //this may NOT be zero-initialized by parent.
             LOGD("LinearDeltaArcStepper: init #%i center (%f,%f,%f) ang (%f,%f,%f), rad (%f)\n", idx, xCenter, yCenter, zCenter, xAng, yAng, zAng, arcRad);
+        }*/
+        template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
+            M0(curPos[AxisIdx]*MM_STEPS()), 
+            sTotal(0),
+            xc(xCenter),
+            yc(yCenter),
+            zc(zCenter),
+            ux(ux),
+            uy(uy),
+            uz(uz),
+            vx(vx),
+            vy(vy),
+            vz(vz),
+            arcRad(arcRad),
+            m(arcVel),
+            w(AxisIdx*2*M_PI/3) {
+                (void)idx; (void)extVel; //unused
+                static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
+                this->time = 0; //this may NOT be zero-initialized by parent.
         }
     //protected:
         float testDir(float s) {
@@ -311,19 +333,28 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             //float m = 2*arcRad*(M0+s)*sin(a) + 2*arcRad*cos(a)*r()*cos(w);
             //float n = 2*arcRad*cos(a)*-(M0+s)*sin(b) + 2*arcRad*r()*(cos(w)*sin(a)*sin(b) + cos(b)*sin(w));
             //float p = L()*L() - arcRad*arcRad - r()*r() - (M0+s)*(M0+s);
-            float m = 2*arcRad*(cos(a)*(-y0+r()*cos(w))+(M0+s-z0)*sin(a));
-            float n = -2*arcRad*(x0*cos(b)+((M0+s-z0)*cos(a)+(y0-r()*cos(w))*sin(a))*sin(b)) + 2*r()*arcRad*cos(b)*sin(w);
-            float p = L()*L() - arcRad*arcRad - r()*r() - x0*x0 - y0*y0 - (M0+s-z0)*(M0+s-z0) + 2*r()*y0*cos(w)  + 2*r()*x0*sin(w);
+            
+            //float m = 2*arcRad*(cos(a)*(-y0+r()*cos(w))+(M0+s-z0)*sin(a));
+            //float n = -2*arcRad*(x0*cos(b)+((M0+s-z0)*cos(a)+(y0-r()*cos(w))*sin(a))*sin(b)) + 2*r()*arcRad*cos(b)*sin(w);
+            //float p = L()*L() - arcRad*arcRad - r()*r() - x0*x0 - y0*y0 - (M0+s-z0)*(M0+s-z0) + 2*r()*y0*cos(w)  + 2*r()*x0*sin(w);
+            
             //float c_tu = atan2((-m*sqrt(m*m+n*n-p*p)-n*p)/(m*m+n*n), (n*sqrt(m*m+n*n-p*p) + n*n*p/m)/(m*m+n*n)-p/m); // OR c+t*u = arctan((m*sqrt(m^2+n^2-p^2)-np)/(m^2+n^2), (-n*sqrt(m^2+n^2-p^2) + n^2*p/m)/(m^2+n^2)-p/m);
             //if (c_tu > M_PI/4) { //rounding errors
             //    c_tu -= M_PI/2;
             //}
             //float t = (c_tu - c)/u;
             //return t;
-            float c_tu_1 = atan2((-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
-            float c_tu_2 = atan2((-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
-            float t1 = (c_tu_1 - c)/u;
-            float t2 = (c_tu_2 - c)/u;
+            
+            float D = M0+s;
+            
+            float p = 2*r()*r()+xc*xc+yc*yc+(D-zc)*(D-zc)-2*r()*(yc*cos(w)+xc*sin(w)) - L()*L();
+            float n = 2*r()*(-D*uz+ux*xc+uy*yc+uz*zc-r()*(uy*cos(w)+ux*sin(w)));
+            float m = 2*r()*(-D*vz+vx*xc+vy*yc+vz*zc-r()*(vy*cos(w)+vx*sin(w)));
+            
+            float mt_1 = atan2((-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
+            float mt_2 = atan2((-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
+            float t1 = mt_1/this->m;
+            float t2 = mt_2/this->m;
             if (t1 < 0 && t2 < 0) { return NAN; }
             else if (t1 < 0) { return t2; }
             else if (t2 < 0) { return t1; }
