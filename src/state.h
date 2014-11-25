@@ -111,9 +111,16 @@ template <typename Drv> class State {
             }
     };
     //The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:
-    struct MotionInterface {
-        typedef typename Drv::CoordMapT CoordMapT;
-        typedef typename Drv::AxisStepperTypes AxisStepperTypes;
+    class MotionInterface {
+        State<Drv> &state;
+        public:
+            typedef typename Drv::CoordMapT CoordMapT;
+            typedef typename Drv::AxisStepperTypes AxisStepperTypes;
+            typedef decltype(std::declval<Drv>().getAccelerationProfile()) AccelerationProfileT;
+            MotionInterface(State<Drv> &state) : state(state) {}
+            AccelerationProfileT getAccelerationProfile() const {
+                return state.driver.getAccelerationProfile();
+            }
     };
     typedef Scheduler<SchedInterface> SchedType;
     PositionMode _positionMode; // = POS_ABSOLUTE;
@@ -134,7 +141,7 @@ template <typename Drv> class State {
     //Thus, we need a root com ("com") & an additional file stack ("gcodeFileStack").
     std::stack<gparse::Com> gcodeFileStack;
     SchedType scheduler;
-    MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
+    MotionPlanner<MotionInterface> motionPlanner;
     Drv &driver;
     FileSystem &filesystem;
     typename Drv::IODriverTypes ioDrivers;
@@ -212,6 +219,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     _isWaitingForHotend(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
     scheduler(SchedInterface(*this)),
+    motionPlanner(MotionInterface(*this)),
     driver(drv),
     filesystem(fs)
     {

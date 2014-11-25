@@ -46,14 +46,16 @@ enum MotionType {
     MotionHome
 };
 
-template <typename Interface, typename AccelProfile=NoAcceleration> class MotionPlanner {
+template <typename Interface> class MotionPlanner {
     private:
         typedef typename Interface::CoordMapT CoordMapT;
         typedef typename Interface::AxisStepperTypes AxisStepperTypes;
+        typedef typename Interface::AccelerationProfileT AccelerationProfileT;
         typedef typename drv::AxisStepper::GetHomeStepperTypes<AxisStepperTypes>::HomeStepperTypes HomeStepperTypes;
         typedef typename drv::AxisStepper::GetArcStepperTypes<AxisStepperTypes>::ArcStepperTypes ArcStepperTypes;
+        Interface _interface;
         CoordMapT _coordMapper; //object that maps from (x, y, z) to mechanical coords (eg A, B, C for a kossel)
-        AccelProfile _accel; //transforms the constant-velocity motion stream into one that considers acceleration
+        AccelerationProfileT _accel; //transforms the constant-velocity motion stream into one that considers acceleration
         std::array<int, CoordMapT::numAxis()> _destMechanicalPos; //the mechanical position of the last step that was scheduled
         AxisStepperTypes _iters; //Each axis iterator reports the next time it needs to be stepped. _iters is for linear movement
         HomeStepperTypes _homeIters; //Axis iterators used when homing
@@ -62,7 +64,8 @@ template <typename Interface, typename AccelProfile=NoAcceleration> class Motion
         float _duration; //the estimated duration of the current piece, not taking into account acceleration
         MotionType _motionType; //which type of segment is being planned
     public:
-        MotionPlanner() : 
+        MotionPlanner(const Interface &interface) : 
+            _interface(interface),
             _accel(), 
             _destMechanicalPos(), 
             _iters(), _homeIters(), _arcIters(),

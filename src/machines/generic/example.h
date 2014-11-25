@@ -13,7 +13,9 @@ using namespace drv; //for all the drivers
 
 class Example : public Machine {
     public:
-        typedef ConstantAcceleration<500*1000> AccelerationProfileT;
+        ConstantAcceleration<500*1000> getAccelerationProfile() const {
+            return ConstantAcceleration<500*1000>();
+        }
         typedef LinearCoordMap<> CoordMapT;
         typedef std::tuple<> AxisStepperTypes;
         typedef std::tuple<> IODriverTypes;

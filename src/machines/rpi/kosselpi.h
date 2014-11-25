@@ -136,7 +136,10 @@ class KosselPi : public Machine {
 7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
     public:
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
-        typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
+        //typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
+        ConstantAcceleration<MAX_ACCEL1000> getAccelerationProfile() const {
+            return ConstantAcceleration<MAX_ACCEL1000>();
+        }
         //Define the coordinate system:
         //  We are using a LinearDelta coordinate system, where vertically-moving carriages are attached to an end effector via fixed-length, rotatable rods.
         typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
