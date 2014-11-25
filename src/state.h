@@ -125,6 +125,7 @@ template <typename Drv> class State {
             }
     };
     typedef Scheduler<SchedInterface> SchedType;
+    typedef decltype(std::declval<Drv>().getIoDrivers()) IODriverTypes;
     PositionMode _positionMode; // = POS_ABSOLUTE;
     PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
     LengthUnit unitMode; // = UNIT_MM;
@@ -146,7 +147,7 @@ template <typename Drv> class State {
     MotionPlanner<MotionInterface> motionPlanner;
     Drv &driver;
     FileSystem &filesystem;
-    typename Drv::IODriverTypes ioDrivers;
+    IODriverTypes ioDrivers;
     public:
         //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
         static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
@@ -396,7 +397,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
             }
         }
     }
-    bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
+    bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
     return motionNeedsCpu || driversNeedCpu;
 }
 

@@ -22,7 +22,9 @@ class Example : public Machine {
         std::tuple<> getAxisSteppers() const {
             return std::tuple<>();
         }
-        typedef std::tuple<> IODriverTypes;
+        std::tuple<> getIoDrivers() const {
+            return std::tuple<>();
+        }
 };
 
 }
