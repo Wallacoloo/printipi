@@ -51,8 +51,8 @@ template <typename Interface> class MotionPlanner {
         typedef typename Interface::CoordMapT CoordMapT;
         typedef typename Interface::AxisStepperTypes AxisStepperTypes;
         typedef typename Interface::AccelerationProfileT AccelerationProfileT;
-        typedef typename drv::AxisStepper::GetHomeStepperTypes<AxisStepperTypes>::HomeStepperTypes HomeStepperTypes;
-        typedef typename drv::AxisStepper::GetArcStepperTypes<AxisStepperTypes>::ArcStepperTypes ArcStepperTypes;
+        typedef typename Interface::AxisHomeStepperTypes HomeStepperTypes;
+        typedef typename Interface::AxisArcStepperTypes ArcStepperTypes;
         Interface _interface;
         CoordMapT _coordMapper; //object that maps from (x, y, z) to mechanical coords (eg A, B, C for a kossel)
         AccelerationProfileT _accel; //transforms the constant-velocity motion stream into one that considers acceleration
@@ -66,9 +66,10 @@ template <typename Interface> class MotionPlanner {
     public:
         MotionPlanner(const Interface &interface) : 
             _interface(interface),
-            _accel(), 
+            _coordMapper(interface.getCoordMap()),
+            _accel(interface.getAccelerationProfile()), 
             _destMechanicalPos(), 
-            _iters(), _homeIters(), _arcIters(),
+            _iters(interface.getAxisSteppers()), _homeIters(interface.getHomeSteppers()), _arcIters(interface.getArcSteppers()),
             _baseTime(), 
             _duration(NAN),
             //_maxVel(0), 

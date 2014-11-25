@@ -22,6 +22,12 @@ class Example : public Machine {
         std::tuple<> getAxisSteppers() const {
             return std::tuple<>();
         }
+        std::tuple<> getHomeSteppers() const {
+            return std::tuple<>();
+        }
+        std::tuple<> getArcSteppers() const {
+            return std::tuple<>();
+        }
         std::tuple<> getIoDrivers() const {
             return std::tuple<>();
         }
