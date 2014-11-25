@@ -19,7 +19,9 @@ class Example : public Machine {
         LinearCoordMap<> getCoordMap() const {
             return LinearCoordMap<>();
         }
-        typedef std::tuple<> AxisStepperTypes;
+        std::tuple<> getAxisSteppers() const {
+            return std::tuple<>();
+        }
         typedef std::tuple<> IODriverTypes;
 };
 

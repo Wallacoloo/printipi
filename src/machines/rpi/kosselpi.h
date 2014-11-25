@@ -135,6 +135,7 @@ class KosselPi : public Machine {
 5356, 999998852, 1515111, 
 7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
         typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
+        typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > _AxisStepperTypes;
     public:
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
         ConstantAcceleration<MAX_ACCEL1000> getAccelerationProfile() const {
@@ -146,9 +147,13 @@ class KosselPi : public Machine {
         CoordMapT getCoordMap() const {
             return CoordMapT();
         }
+        
         //Expose the logic used to control the stepper motors:
         //Here we just have 1 stepper motor for each axis and another for the extruder:
-        typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
+        //typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
+        _AxisStepperTypes getAxisSteppers() const {
+            return _AxisStepperTypes();
+        }
         //Gather all the I/O controlled devices we defined above:
         //  Additionally, define the actual stepper motor drivers and tie the thermistor to the hotend as a feedback source.
         typedef std::tuple<
