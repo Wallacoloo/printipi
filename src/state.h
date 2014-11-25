@@ -114,7 +114,8 @@ template <typename Drv> class State {
     class MotionInterface {
         State<Drv> &state;
         public:
-            typedef typename Drv::CoordMapT CoordMapT;
+            //typedef typename Drv::CoordMapT CoordMapT;
+            typedef decltype(std::declval<Drv>().getCoordMap()) CoordMapT;
             typedef typename Drv::AxisStepperTypes AxisStepperTypes;
             typedef decltype(std::declval<Drv>().getAccelerationProfile()) AccelerationProfileT;
             MotionInterface(State<Drv> &state) : state(state) {}

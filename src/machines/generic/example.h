@@ -16,7 +16,9 @@ class Example : public Machine {
         ConstantAcceleration<500*1000> getAccelerationProfile() const {
             return ConstantAcceleration<500*1000>();
         }
-        typedef LinearCoordMap<> CoordMapT;
+        LinearCoordMap<> getCoordMap() const {
+            return LinearCoordMap<>();
+        }
         typedef std::tuple<> AxisStepperTypes;
         typedef std::tuple<> IODriverTypes;
 };

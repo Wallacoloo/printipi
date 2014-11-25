@@ -134,15 +134,18 @@ class KosselPi : public Machine {
         typedef matr::Matrix3Static<999975003, 5356, -7070522, 
 5356, 999998852, 1515111, 
 7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
+        typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
     public:
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
-        //typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
         ConstantAcceleration<MAX_ACCEL1000> getAccelerationProfile() const {
             return ConstantAcceleration<MAX_ACCEL1000>();
         }
         //Define the coordinate system:
         //  We are using a LinearDelta coordinate system, where vertically-moving carriages are attached to an end effector via fixed-length, rotatable rods.
-        typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
+        //typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
+        CoordMapT getCoordMap() const {
+            return CoordMapT();
+        }
         //Expose the logic used to control the stepper motors:
         //Here we just have 1 stepper motor for each axis and another for the extruder:
         typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
