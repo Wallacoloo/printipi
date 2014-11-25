@@ -44,6 +44,7 @@
 #include <cstddef> //for size_t
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
+#include <utility> //for std::declval
 #include <array>
 #include <stack>
 #include "common/logging.h"
