@@ -51,7 +51,7 @@
 
 namespace drv {
 
-template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned BUILDRAD1000, unsigned STEPS_M, unsigned STEPS_M_EXT, typename Transform=matr::Identity3Static> class LinearDeltaCoordMap : public CoordMap {
+template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned BUILDRAD1000, unsigned STEPS_M, unsigned STEPS_M_EXT, typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public CoordMap {
     static constexpr std::size_t AIdx = 0;
     static constexpr std::size_t BIdx = 1;
     static constexpr std::size_t CIdx = 2;
@@ -65,18 +65,19 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned BUILDRAD1000,
     static constexpr float MM_STEPS = 1. / STEPS_MM;
     static constexpr float STEPS_MM_EXT = STEPS_M_EXT / 1000.f;
     static constexpr float MM_STEPS_EXT = 1. / STEPS_MM_EXT;
-    //Transform transform;
+    BedLevelT bedLevel;
     public:
+        LinearDeltaCoordMap(const BedLevelT &t) : bedLevel(t) {}
         static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-        static constexpr std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) {
+        std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({{(int)(h*STEPS_MM), (int)(h*STEPS_MM), (int)(h*STEPS_MM), cur[3]}});
         }
-        static std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) {
-            return Transform::transform(xyz);
+        std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
+            return bedLevel.transform(xyz);
         }
-        static std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) {
+        std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
             //bound z:
             float z = std::max(MIN_Z(), std::min((float)((h+sqrt(L*L-r*r))*STEPS_MM), std::get<2>(xyze)));
             float x = std::get<0>(xyze);
@@ -89,7 +90,7 @@ template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned BUILDRAD1000,
             //TODO: force x & y to be on the platform.
             return std::make_tuple(x, y, z, std::get<3>(xyze));
         }
-        static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
+        std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
             float e = mech[EIdx]*MM_STEPS_EXT;
             float x, y, z;
             float A = mech[AIdx]*MM_STEPS; //convert mechanical positions (steps) to MM.

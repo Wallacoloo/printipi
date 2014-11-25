@@ -5,6 +5,7 @@
 #include "motion/constantacceleration.h"
 #include "drivers/linearcoordmap.h"
 #include "machines/machine.h"
+#include "common/matrix.h"
 
 namespace machines {
 namespace generic {
@@ -17,7 +18,10 @@ class Example : public Machine {
             return ConstantAcceleration<500*1000>();
         }
         LinearCoordMap<> getCoordMap() const {
-            return LinearCoordMap<>();
+            return LinearCoordMap<>(Matrix3x3(
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1));
         }
         std::tuple<> getAxisSteppers() const {
             return std::tuple<>();

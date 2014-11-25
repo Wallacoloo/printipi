@@ -87,11 +87,11 @@ template <typename Interface> class MotionPlanner {
                 //Note: This conditional causes the MotionPlanner to always undershoot the desired position, when it may be desireable to overshoot some of them - see https://github.com/Wallacoloo/printipi/issues/15
                 if (isHoming()) { 
                     //if homing, then we now know the axis mechanical positions; fetch them
-                    _destMechanicalPos = CoordMapT::getHomePosition(_destMechanicalPos);
+                    _destMechanicalPos = _coordMapper.getHomePosition(_destMechanicalPos);
                 }
                 //log debug info:
                 float x, y, z, e;
-                std::tie(x, y, z, e) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
+                std::tie(x, y, z, e) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
                 LOGD("MotionPlanner::moveTo Got (x,y,z,e) %f, %f, %f, %f\n", x, y, z, e);
                 LOGD("MotionPlanner _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
                 _motionType = MotionNone; //motion is over.
@@ -175,9 +175,9 @@ template <typename Interface> class MotionPlanner {
             }
             this->_baseTime = baseTime.time_since_epoch();
             float curX, curY, curZ, curE;
-            std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
-            std::tie(x, y, z) = CoordMapT::applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
-            std::tie(x, y, z, e) = CoordMapT::bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
+            std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
+            std::tie(x, y, z) = _coordMapper.applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
+            std::tie(x, y, z, e) = _coordMapper.bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
             
             //Calculate velocities in x, y, z, e directions, and the duration of the linear movement:
             float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
@@ -198,7 +198,7 @@ template <typename Interface> class MotionPlanner {
             LOGD("MotionPlanner::moveTo (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
             LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
             //LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
-            drv::AxisStepper::initAxisSteppers(_iters, _destMechanicalPos, vx, vy, vz, velE);
+            drv::AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, vx, vy, vz, velE);
             this->_duration = minDuration;
             this->_motionType = MotionLinear;
             this->_accel.begin(minDuration, maxVelXyz);
@@ -210,7 +210,7 @@ template <typename Interface> class MotionPlanner {
             if (std::tuple_size<HomeStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes
             }
-            drv::AxisStepper::initAxisHomeSteppers(_homeIters, maxVelXyz);
+            drv::AxisStepper::initAxisHomeSteppers(_homeIters, _coordMapper, maxVelXyz);
             this->_baseTime = baseTime.time_since_epoch();
             this->_duration = NAN;
             this->_motionType = MotionHome;
@@ -224,9 +224,9 @@ template <typename Interface> class MotionPlanner {
             }*/
             this->_baseTime = baseTime.time_since_epoch();
             float curX, curY, curZ, curE;
-            std::tie(curX, curY, curZ, curE) = CoordMapT::xyzeFromMechanical(_destMechanicalPos);
-            std::tie(x, y, z) = CoordMapT::applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
-            std::tie(x, y, z, e) = CoordMapT::bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
+            std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
+            std::tie(x, y, z) = _coordMapper.applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
+            std::tie(x, y, z, e) = _coordMapper.bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
             
             //The 3 points, (centerX, centerY, centerZ), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
             //To get the arclength, we take the arcangle * arcRad.
@@ -302,7 +302,7 @@ template <typename Interface> class MotionPlanner {
             //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
             //drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE);
             LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE, minDuration);
-            drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE);
+            drv::AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, centerX, centerY, centerZ, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE);
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
             }

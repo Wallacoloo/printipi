@@ -5,6 +5,7 @@
 #include "machines/machine.h"
 #include "pid.h"
 #include "common/filters/lowpassfilter.h"
+#include "common/matrix.h"
 #include "motion/constantacceleration.h"
 #include "drivers/linearstepper.h"
 #include "drivers/lineardeltastepper.h"
@@ -132,16 +133,9 @@ class KosselPi : public Machine {
         //  Please note that this is currently set to inverted mode, so a logic-level HIGH should result in 0 power delivered to the hotend.
         typedef InvertedPin<RpiIoPin<PIN_HOTEND, IoHigh> > _HotendOut;
         
-        //typedef matr::Identity3Static _BedLevelT;
-        //define the level of the bed:
-        //  This is a matrix, such that M * {x,y,z} should transform desired coordinates into a bed-level-compensated equivalent.
-        //  Usually, this is just a rotation matrix.
-        typedef matr::Matrix3Static<999975003, 5356, -7070522, 
-5356, 999998852, 1515111, 
-7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
         //Define the coordinate system:
         //  We are using a LinearDelta coordinate system, where vertically-moving carriages are attached to an end effector via fixed-length, rotatable rods.
-        typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
+        typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT> CoordMapT;
         
         //Expose the logic used to control the stepper motors:
         //Here we just have 1 stepper motor for each axis and another for the extruder:
@@ -167,7 +161,13 @@ class KosselPi : public Machine {
         
         //Define wrappers for all the above types. Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
         CoordMapT getCoordMap() const {
-            return CoordMapT();
+            //the Matrix3x3 defines the level of the bed:
+            //  This is a matrix such that M * {x,y,z} should transform desired coordinates into a bed-level-compensated equivalent.
+            //  Usually, this is just a rotation matrix.
+            return CoordMapT(Matrix3x3(
+                0.999975003, 0.000005356, -0.007070522, 
+                0.000005356, 0.999998852, 0.001515111, 
+                0.007070522, -0.001515111, 0.999973855));
         }
         _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();

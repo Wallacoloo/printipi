@@ -115,9 +115,11 @@ template <typename Drv> class State {
     class MotionInterface {
         State<Drv> &state;
         public:
-            //typedef typename Drv::CoordMapT CoordMapT;
+            //Derive the types for various Machine-specific subtypes:
+            //Do this by applying decltype on the functions that create these types.
+            //Note: In order to avoid any assumptions about the Machine's constructor, but still be able to access its member functions,
+            //  we use declval<Drv>() to create a dummy instance of the Machine.
             typedef decltype(std::declval<Drv>().getCoordMap()) CoordMapT;
-            //typedef typename Drv::AxisStepperTypes AxisStepperTypes;
             typedef decltype(std::declval<Drv>().getAxisSteppers()) AxisStepperTypes;
             typedef decltype(std::declval<Drv>().getHomeSteppers()) AxisHomeStepperTypes;
             typedef decltype(std::declval<Drv>().getArcSteppers()) AxisArcStepperTypes;

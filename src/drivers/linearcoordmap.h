@@ -37,26 +37,27 @@
 
 namespace drv {
 
-template <typename Transform=matr::Identity3Static> class LinearCoordMap : public CoordMap {
+template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
     static constexpr std::size_t xIdx = 0;
     static constexpr std::size_t yIdx = 1;
     static constexpr std::size_t zIdx = 2;
     static constexpr std::size_t eIdx = 3;
-    //Transform transform;
+    BedLevelT bedLevel;
     public:
+        LinearCoordMap(const BedLevelT& t) : bedLevel(t) {}
         static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-        static constexpr std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) {
+        std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({0, 0, 0, cur[3]});
         }
-        static std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) {
-            return Transform::transform(xyz);
+        std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
+            return bedLevel.transform(xyz);
         }
-        static std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) {
+        std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
             return xyze; //no bounding.
         }
-        static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
+        std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
             return std::make_tuple(mech[xIdx], mech[yIdx], mech[zIdx], mech[eIdx]);
         }
 

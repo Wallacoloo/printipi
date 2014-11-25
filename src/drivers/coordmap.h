@@ -52,21 +52,21 @@ class CoordMap {
             //return the number of axis (physical motors) that we have.
             return 0;
         }
-        static constexpr std::array<int, 0> getHomePosition(const std::array<int, 0> &/*cur*/) {
+        std::array<int, 0> getHomePosition(const std::array<int, 0> &/*cur*/) const {
             //given the current tracked motor coordinates, and knowing that we are at home position,
             //return the true motor coordinates.
             return std::array<int, 0>();
         }
-        static std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) {
+        std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
             //apply some leveling transformation to the [x,y,z] cartesian coordinate to compensate for an unlevel bed.
             //Note: this is only applied to the endpoints of a line, so a non-planar bed cannot properly be leveled.
             return xyz;
         }
-        static std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) {
+        std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
             //ensure that the desired coordinate is accessible. (i.e. motors won't ram the endstops, etc).
             return xyze;
         }
-        static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) {
+        std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
             //given axis coordinates &mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.
             (void)mech; //unused in this stub
             assert(false);

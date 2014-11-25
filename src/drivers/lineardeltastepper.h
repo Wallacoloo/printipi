@@ -308,7 +308,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             this->time = 0; //this may NOT be zero-initialized by parent.
             LOGD("LinearDeltaArcStepper: init #%i center (%f,%f,%f) ang (%f,%f,%f), rad (%f)\n", idx, xCenter, yCenter, zCenter, xAng, yAng, zAng, arcRad);
         }*/
-        template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
+        template <typename CoordMapT, std::size_t sz> LinearDeltaArcStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
             M0(curPos[AxisIdx]*MM_STEPS()), 
             sTotal(0),
             xc(xCenter),
@@ -323,7 +323,7 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
             arcRad(arcRad),
             m(arcVel),
             w(AxisIdx*2*M_PI/3) {
-                (void)idx; (void)extVel; //unused
+                (void)map, (void)idx; (void)extVel; //unused
                 static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
                 this->time = 0; //this may NOT be zero-initialized by parent.
         }
@@ -420,19 +420,20 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
         typedef LinearHomeStepper<STEPS_M, EndstopT> HomeStepperT;
         typedef LinearDeltaArcStepper<AxisIdx, CoordMap, R1000, L1000, STEPS_M> ArcStepperT;
         LinearDeltaStepper() {}
-        template <std::size_t sz> LinearDeltaStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
-            : AxisStepper(idx, curPos, vx, vy, vz, ve),
+        template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
+            : AxisStepper(idx),
              M0(curPos[AxisIdx]*MM_STEPS()), 
              sTotal(0),
              //vx(vx), vy(vy), vz(vz),
              //v2(vx*vx + vy*vy + vz*vz), 
              inv_v2(1/(vx*vx + vy*vy + vz*vz)),
              vz_over_v2(vz*inv_v2) {
+                (void)ve; //unused
                 static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
                 this->time = 0; //this may NOT be zero-initialized by parent.
                 float x0, y0, z0, e_;
-                //CoordMap::xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
-                std::tie(x0, y0, z0, e_) = CoordMap::xyzeFromMechanical(curPos);
+                //map.xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
+                std::tie(x0, y0, z0, e_) = map.xyzeFromMechanical(curPos);
                 //precompute as much as possible:
                 _almostRootParamV2S = 2*M0 - 2*z0;
                 if (AxisIdx == 0) {

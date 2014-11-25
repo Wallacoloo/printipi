@@ -54,7 +54,8 @@ template <int STEPS_M, typename EndstopT> class LinearHomeStepper : public AxisS
     static constexpr float STEPS_MM = STEPS_M / 1000.;
     public:
         LinearHomeStepper() {}
-        LinearHomeStepper(int idx, float vHome) : AxisStepper(idx, vHome) {
+        template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome) : AxisStepper(idx) {
+            (void)map; //unused
             this->time = 0;
             this->direction = StepForward;
             this->timePerStep = 1./ (vHome*STEPS_MM);
@@ -73,7 +74,8 @@ template <int STEPS_M, typename EndstopT> class LinearHomeStepper : public AxisS
 template <int STEPS_M> class LinearHomeStepper<STEPS_M, EndstopNoExist> : public AxisStepper {
     public:
         LinearHomeStepper() {}
-        LinearHomeStepper(int idx, float vHome) : AxisStepper(idx, vHome) {
+        template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome) : AxisStepper(idx) {
+            (void)map; //unused
             this->time = NAN; //device isn't homeable, so never step.
         }
         void _nextStep() {}
@@ -107,16 +109,17 @@ template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoE
         //default constructor
         LinearStepper() {}
         //Linear movement constructor
-        template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
-            : AxisStepper(idx, curPos, vx, vy, vz, ve),
+        template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
+            : AxisStepper(idx),
             timePerStep(std::fabs( TIME_PER_STEP(vx, vy, vz, ve) )) {
+                (void)map; //unused
                 this->time = 0;
                 this->direction = stepDirFromSign( TIME_PER_STEP(vx, vy, vz, ve) );
             }
         //Arc movement constructor
-        template <std::size_t sz> LinearStepper(int idx, const std::array<int, sz> &curPos, float centerX, float centerY, float centerZ, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) : AxisStepper(idx), timePerStep(std::fabs(1./ (extVel * STEPS_MM)))
+        template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, float centerX, float centerY, float centerZ, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) : AxisStepper(idx), timePerStep(std::fabs(1./ (extVel * STEPS_MM)))
          {
-            (void)idx; (void)curPos; (void)centerX; (void)centerY; (void)centerZ; (void)ux; (void)uy; (void)uz; (void)vx; (void)vy; (void)vz; (void)arcRad; (void)arcVel; //unused
+            (void)map; (void)idx; (void)curPos; (void)centerX; (void)centerY; (void)centerZ; (void)ux; (void)uy; (void)uz; (void)vx; (void)vy; (void)vz; (void)arcRad; (void)arcVel; //unused
             assert(CoordType == COORD_E); //can only use a LinearStepper as an Arc implementation for the extruder axis. 
             this->time = 0;
             this->direction = stepDirFromSign(extVel);
