@@ -269,47 +269,33 @@
 
 #include "axisstepper.h"
 #include "linearstepper.h" //for LinearHomeStepper
+#include "lineardeltacoordmap.h" //for DeltaAxis
 #include "endstop.h"
 #include "common/logging.h"
 
 namespace drv {
 
-template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000, unsigned STEPS_M> class LinearDeltaArcStepper : public AxisStepper {
+template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
     private:
+        float _r, _L, _MM_STEPS; //settings which will be obtained from the CoordMap
         float M0; //initial coordinate of THIS axis.
         int sTotal; //current step offset from M0
-        //float a, b, c; //angles about Z, Y, X axis respectively
-        //float u; //angular velocity of arc.
         float xc, yc, zc, ux, uy, uz, vx, vy, vz;
         float arcRad; //radius of arc
         float m;
         float w; //angle of this axis. CW from +y axis
         float x0, y0, z0; //center point of arc
-        static constexpr float r() { return R1000 / 1000.; } //distance from center of build-plate to each axis
-        static constexpr float L() { return L1000 / 1000.; } //length of rods connecting the axis carriages to the effector
-        static constexpr float STEPS_MM() { return STEPS_M / 1000.; } //# of steps to turn an axis stepper in order to elevate the carriage by 1 mm
-        static constexpr float MM_STEPS() { return  1. / STEPS_MM(); }
+        float r() const { return _r; }
+        float L() const { return _L; }
+        float MM_STEPS() const { return _MM_STEPS; }
     public:
-        LinearDeltaArcStepper() {}
-        /*template <std::size_t sz> LinearDeltaArcStepper(int idx, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float xAng, float yAng, float zAng, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
-             M0(curPos[AxisIdx]*MM_STEPS()), 
-             sTotal(0),
-             a(zAng),
-             b(yAng),
-             c(xAng),
-             arcRad(arcRad),
-             u(arcVel),
-             w(AxisIdx*2*M_PI/3),
-             x0(xCenter),
-             y0(yCenter),
-             z0(zCenter) {
-            (void)idx; (void)extVel; //unused
-            static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
-            this->time = 0; //this may NOT be zero-initialized by parent.
-            LOGD("LinearDeltaArcStepper: init #%i center (%f,%f,%f) ang (%f,%f,%f), rad (%f)\n", idx, xCenter, yCenter, zCenter, xAng, yAng, zAng, arcRad);
-        }*/
-        template <typename CoordMapT, std::size_t sz> LinearDeltaArcStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) : AxisStepper(idx),
-            M0(curPos[AxisIdx]*MM_STEPS()), 
+        LinearDeltaArcStepper() : _r(0), _L(0), _MM_STEPS(0) {}
+        template <typename CoordMapT, std::size_t sz> LinearDeltaArcStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel)
+          : AxisStepper(idx),
+            _r(map.r()),
+            _L(map.L()),
+            _MM_STEPS(map.MM_STEPS(AxisIdx)),
+            M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
             sTotal(0),
             xc(xCenter),
             yc(yCenter),
@@ -403,8 +389,9 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
         }
 };
 
-template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000, unsigned STEPS_M, typename EndstopT=EndstopNoExist> class LinearDeltaStepper : public AxisStepper {
+template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDeltaStepper : public AxisStepper {
     private:
+        float _r, _L, _MM_STEPS; //settings which will be obtained from the CoordMap
         float M0; //initial coordinate of THIS axis.
         int sTotal; //current step offset from M0
         float inv_v2; //1/v^2, where v is the linear speed in cartesian-space
@@ -412,17 +399,17 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
         float _almostTerm1; //used for caching & reducing computational complexity inside nextStep()
         float _almostRootParam;
         float _almostRootParamV2S;
-        static constexpr float r() { return R1000 / 1000.; } //distance from center of build-plate to each axis
-        static constexpr float L() { return L1000 / 1000.; } //length of rods connecting the axis carriages to the effector
-        static constexpr float STEPS_MM() { return STEPS_M / 1000.; } //# of steps to turn an axis stepper in order to elevate the carriage by 1 mm
-        static constexpr float MM_STEPS() { return  1. / STEPS_MM(); }
+        float r() const { return _r; }
+        float L() const { return _L; }
+        float MM_STEPS() const { return _MM_STEPS; }
     public:
-        typedef LinearHomeStepper<STEPS_M, EndstopT> HomeStepperT;
-        typedef LinearDeltaArcStepper<AxisIdx, CoordMap, R1000, L1000, STEPS_M> ArcStepperT;
-        LinearDeltaStepper() {}
+        typedef LinearHomeStepper<AxisIdx, EndstopT> HomeStepperT;
+        typedef LinearDeltaArcStepper<AxisIdx> ArcStepperT;
+        LinearDeltaStepper() : _r(0), _L(0), _MM_STEPS(0) {}
         template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
-            : AxisStepper(idx),
-             M0(curPos[AxisIdx]*MM_STEPS()), 
+           : AxisStepper(idx),
+             _r(map.r()), _L(map.L()), _MM_STEPS(map.MM_STEPS(AxisIdx)),
+             M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
              sTotal(0),
              //vx(vx), vy(vy), vz(vz),
              //v2(vx*vx + vy*vy + vz*vz), 
@@ -436,19 +423,19 @@ template <std::size_t AxisIdx, typename CoordMap, unsigned R1000, unsigned L1000
                 std::tie(x0, y0, z0, e_) = map.xyzeFromMechanical(curPos);
                 //precompute as much as possible:
                 _almostRootParamV2S = 2*M0 - 2*z0;
-                if (AxisIdx == 0) {
+                if (AxisIdx == DELTA_AXIS_A) {
                     _almostTerm1 = inv_v2*(r()*vy - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
                     //rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
                     //rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 + 2*M0*s - 2*M0*z0 + s*s - 2*s*z0 + z0*z0);
                     //rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0) - v2*s*(2*M0 + s - 2*z0);
                     _almostRootParam = -inv_v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0);
                     //_almostRootParamV2S = 2*M0 - 2*z0; // (...+s)*-1/v2*s
-                } else if (AxisIdx == 1) { 
+                } else if (AxisIdx == DELTA_AXIS_B) { 
                     _almostTerm1 = inv_v2*(r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
                     //rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
                     _almostRootParam = -inv_v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
                     //_almostRootParamV2S = 2*M0 - 2*z0;
-                } else if (AxisIdx == 2) {
+                } else if (AxisIdx == DELTA_AXIS_C) {
                     _almostTerm1 = inv_v2*(-r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
                     //rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
                     _almostRootParam = -inv_v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);

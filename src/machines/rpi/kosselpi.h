@@ -133,13 +133,9 @@ class KosselPi : public Machine {
         //  Please note that this is currently set to inverted mode, so a logic-level HIGH should result in 0 power delivered to the hotend.
         typedef InvertedPin<RpiIoPin<PIN_HOTEND, IoHigh> > _HotendOut;
         
-        //Define the coordinate system:
-        //  We are using a LinearDelta coordinate system, where vertically-moving carriages are attached to an end effector via fixed-length, rotatable rods.
-        typedef LinearDeltaCoordMap<> CoordMapT;
-        
         //Expose the logic used to control the stepper motors:
         //Here we just have 1 stepper motor for each axis and another for the extruder:
-        typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > _AxisStepperTypes;
+        typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A, _EndstopA>, LinearDeltaStepper<DELTA_AXIS_B, _EndstopB>, LinearDeltaStepper<DELTA_AXIS_C, _EndstopC>, LinearStepper<CARTESIAN_AXIS_E> > _AxisStepperTypes;
         typedef AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
         typedef AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
         
@@ -154,17 +150,20 @@ class KosselPi : public Machine {
             TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D>, LowPassFilter<3000> >
             > _IODriverTypes;
     public:
+        //getXXX defines wrappers for all the above types. Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
+        
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
         ConstantAcceleration<MAX_ACCEL1000> getAccelerationProfile() const {
             return ConstantAcceleration<MAX_ACCEL1000>();
         }
         
-        //Define wrappers for all the above types. Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
-        CoordMapT getCoordMap() const {
+        //Define the coordinate system:
+        //  We are using a LinearDelta coordinate system, where vertically-moving carriages are attached to an end effector via fixed-length, rotatable rods.
+        LinearDeltaCoordMap<> getCoordMap() const {
             //the Matrix3x3 defines the level of the bed:
             //  This is a matrix such that M * {x,y,z} should transform desired coordinates into a bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
-            return CoordMapT(R1000/1000., L1000/1000., H1000/1000., BUILDRAD1000/1000., STEPS_M/1000., STEPS_M_EXT/1000., Matrix3x3(
+            return LinearDeltaCoordMap<>(R1000/1000., L1000/1000., H1000/1000., BUILDRAD1000/1000., STEPS_M/1000., STEPS_M_EXT/1000., Matrix3x3(
                 0.999975003, 0.000005356, -0.007070522, 
                 0.000005356, 0.999998852, 0.001515111, 
                 0.007070522, -0.001515111, 0.999973855));

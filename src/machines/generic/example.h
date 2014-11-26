@@ -18,7 +18,7 @@ class Example : public Machine {
             return ConstantAcceleration<500*1000>();
         }
         LinearCoordMap<> getCoordMap() const {
-            return LinearCoordMap<>(Matrix3x3(
+            return LinearCoordMap<>(1.0, 1.0, 1.0, 1.0, Matrix3x3(
             1, 0, 0,
             0, 1, 0,
             0, 0, 1));

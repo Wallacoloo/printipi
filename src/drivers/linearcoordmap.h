@@ -37,14 +37,36 @@
 
 namespace drv {
 
+enum CartesianAxis {
+    CARTESIAN_AXIS_X=0,
+    CARTESIAN_AXIS_Y=1,
+    CARTESIAN_AXIS_Z=2,
+    CARTESIAN_AXIS_E=3
+};
+
 template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
-    static constexpr std::size_t xIdx = 0;
-    static constexpr std::size_t yIdx = 1;
-    static constexpr std::size_t zIdx = 2;
-    static constexpr std::size_t eIdx = 3;
+    float _STEPS_MM_X, _MM_STEPS_X;
+    float _STEPS_MM_Y, _MM_STEPS_Y;
+    float _STEPS_MM_Z, _MM_STEPS_Z;
+    float _STEPS_MM_E, _MM_STEPS_E;
     BedLevelT bedLevel;
     public:
-        LinearCoordMap(const BedLevelT& t) : bedLevel(t) {}
+        float STEPS_MM(std::size_t axisIdx) const { 
+            return axisIdx == CARTESIAN_AXIS_X ? _STEPS_MM_X
+              :   (axisIdx == CARTESIAN_AXIS_Y ? _STEPS_MM_Y
+              :   (axisIdx == CARTESIAN_AXIS_Z ? _STEPS_MM_Z : _STEPS_MM_E));
+        }
+        float MM_STEPS(std::size_t axisIdx) const { 
+            return axisIdx == CARTESIAN_AXIS_X ? _MM_STEPS_X
+              :   (axisIdx == CARTESIAN_AXIS_Y ? _MM_STEPS_Y
+              :   (axisIdx == CARTESIAN_AXIS_Z ? _MM_STEPS_Z : _MM_STEPS_E));
+        }
+        LinearCoordMap(float STEPS_MM_X, float STEPS_MM_Y, float STEPS_MM_Z, float STEPS_MM_E, const BedLevelT& t)
+         : _STEPS_MM_X(STEPS_MM_X), _MM_STEPS_X(1. / STEPS_MM_X),
+           _STEPS_MM_Y(STEPS_MM_Y), _MM_STEPS_Y(1. / STEPS_MM_Y),
+           _STEPS_MM_Z(STEPS_MM_Z), _MM_STEPS_Z(1. / STEPS_MM_Z),
+           _STEPS_MM_E(STEPS_MM_E), _MM_STEPS_E(1. / STEPS_MM_E),
+           bedLevel(t) {}
         static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
@@ -58,7 +80,7 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
             return xyze; //no bounding.
         }
         std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
-            return std::make_tuple(mech[xIdx], mech[yIdx], mech[zIdx], mech[eIdx]);
+            return std::make_tuple(mech[CARTESIAN_AXIS_X], mech[CARTESIAN_AXIS_Y], mech[CARTESIAN_AXIS_Z], mech[CARTESIAN_AXIS_E]);
         }
 
 };
