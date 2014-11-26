@@ -112,7 +112,7 @@ template <int STEPS_PER_METER, CoordAxis CoordType, typename EndstopT=EndstopNoE
         template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
             : AxisStepper(idx),
             timePerStep(std::fabs( TIME_PER_STEP(vx, vy, vz, ve) )) {
-                (void)map; //unused
+                (void)map; (void)curPos; //unused
                 this->time = 0;
                 this->direction = stepDirFromSign( TIME_PER_STEP(vx, vy, vz, ve) );
             }
