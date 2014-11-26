@@ -51,23 +51,30 @@
 
 namespace drv {
 
-template <unsigned R1000, unsigned L1000, unsigned H1000, unsigned BUILDRAD1000, unsigned STEPS_M, unsigned STEPS_M_EXT, typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public CoordMap {
+template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public CoordMap {
     static constexpr std::size_t AIdx = 0;
     static constexpr std::size_t BIdx = 1;
     static constexpr std::size_t CIdx = 2;
     static constexpr std::size_t EIdx = 3;
     static constexpr float MIN_Z() { return -2; }//useful to be able to go a little under z=0 when tuning.
-    static constexpr float r = R1000 / 1000.f;
+    /*static constexpr float r = R1000 / 1000.f;
     static constexpr float L = L1000 / 1000.f;
     static constexpr float h = H1000 / 1000.f;
     static constexpr float buildrad = BUILDRAD1000 / 1000.f;
     static constexpr float STEPS_MM = STEPS_M / 1000.f;
     static constexpr float MM_STEPS = 1. / STEPS_MM;
     static constexpr float STEPS_MM_EXT = STEPS_M_EXT / 1000.f;
-    static constexpr float MM_STEPS_EXT = 1. / STEPS_MM_EXT;
+    static constexpr float MM_STEPS_EXT = 1. / STEPS_MM_EXT;*/
+    float r, L, h, buildrad;
+    float STEPS_MM, MM_STEPS;
+    float STEPS_MM_EXT, MM_STEPS_EXT;
     BedLevelT bedLevel;
     public:
-        LinearDeltaCoordMap(const BedLevelT &t) : bedLevel(t) {}
+        LinearDeltaCoordMap(float r, float L, float h, float buildrad, float STEPS_MM, float STEPS_MM_EXT, const BedLevelT &t)
+         : r(r), L(L), h(h), buildrad(buildrad),
+           STEPS_MM(STEPS_MM), MM_STEPS(1. / STEPS_MM),
+           STEPS_MM_EXT(STEPS_MM_EXT), MM_STEPS_EXT(1./ STEPS_MM_EXT),
+           bedLevel(t) {}
         static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }

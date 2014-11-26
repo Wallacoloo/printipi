@@ -135,7 +135,7 @@ class KosselPi : public Machine {
         
         //Define the coordinate system:
         //  We are using a LinearDelta coordinate system, where vertically-moving carriages are attached to an end effector via fixed-length, rotatable rods.
-        typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT> CoordMapT;
+        typedef LinearDeltaCoordMap<> CoordMapT;
         
         //Expose the logic used to control the stepper motors:
         //Here we just have 1 stepper motor for each axis and another for the extruder:
@@ -164,7 +164,7 @@ class KosselPi : public Machine {
             //the Matrix3x3 defines the level of the bed:
             //  This is a matrix such that M * {x,y,z} should transform desired coordinates into a bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
-            return CoordMapT(Matrix3x3(
+            return CoordMapT(R1000/1000., L1000/1000., H1000/1000., BUILDRAD1000/1000., STEPS_M/1000., STEPS_M_EXT/1000., Matrix3x3(
                 0.999975003, 0.000005356, -0.007070522, 
                 0.000005356, 0.999998852, 0.001515111, 
                 0.007070522, -0.001515111, 0.999973855));
