@@ -11,20 +11,23 @@ SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 CXX=g++
 #Check if using gcc >= 4.7; Then we can use -flto flag. 4.6 and lower support lto, but have errors (specifically when "functional" is included)
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
+GCC_GTEQ_490 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40900)
 #Allow user to pass USE_PTHREAD=0 for a system that doesn't support pthreads (it's only used for upping the priority)
 ifneq "$(USE_PTHREAD)" "0"
     USE_PTHREAD := 1
 endif
 LOGFLAGS=-DDNO_LOG_M105
 PROFFLAGS=
-#LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
+ifeq "$(GCC_GTEQ_490)" "1"
+	DIAGFLAG=-fdiagnostics-color=auto
+else
+	DIAGFLAG= #gcc < 4.9 doesn't support colorized diagnostics (error messages)
+endif
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
-	DIAGFLAG=-fdiagnostics-color=auto
 	ARCHFLAGS=-march=native -mtune=native
 else #gcc < 4.7, or non-gcc compiler
 	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
-	DIAGFLAG= #gcc < 4.7 doesn't support colorized diagnostics (error messages)
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
 #Default machine if not given via command line argument:
