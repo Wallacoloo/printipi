@@ -53,7 +53,7 @@ endif
 #-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
-CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
+CFLAGS=-std=c++0x -I$(SRCDIR) -fdiagnostics-color=auto -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
 # -DDMACHINE_CLASS_DIR=$(MACHINE_CLASS_DIR)
 MAINCFLAGS=#-fwhole-program
 LD=ld
