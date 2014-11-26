@@ -180,7 +180,7 @@
  *
  *   0 = L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] + 2 r x0 Sin[w] + Sin[c+t u]*2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]) + Cos[c+t u](-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w])
  *
- *   Rewrite the above as {m,n,p} . {Sin[c+t u], Cos[c+t u], 1}
+ *   Rewrite the above as 0 = {m,n,p} . {Sin[c+t u], Cos[c+t u], 1}
  *
  *   Thus, {m,n,p} = {2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]), (-2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w]), L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w] + 2 r x0 Sin[w]} 
  *   Note: 
@@ -243,20 +243,20 @@
  *   Then substitute P into the constraint equation and square each side:
  *     L^2 = |<xc-rsin(w), yc-rcos(w), zc-D> + s*cos(m*t)u + s*sin(m*t)v|^2
  *   Manually expand based upon the property that |v|^2 = v . v
- *     (xc-rsin(w))^2 + (yc-rcos(w))^2 + (zc-D)^2 + r^2*cos^2(m*t) + r^2*sin^2(m*t) + 2<xc-rsin(w), yc-rcos(w), zc-D> . s*cos(m*t)u + 2<xc-rsin(w), yc-rcos(w), zc-D> . s*sin(m*t)v == L^2
+ *     (xc-rsin(w))^2 + (yc-rcos(w))^2 + (zc-D)^2 + s^2*cos^2(m*t) + s^2*sin^2(m*t) + 2<xc-rsin(w), yc-rcos(w), zc-D> . s*cos(m*t)u + 2<xc-rsin(w), yc-rcos(w), zc-D> . s*sin(m*t)v == L^2
  *   Note: removed all terms involving u . v, because u is perpindicular to v so u.v = 0
- *   Can simplify a bit and put into Mathematica notation. Note: used mt=m*t to make solving for t slightly easier:
- *     (xc-r*Sin[w])^2 + (yc-r*Cos[w])^2 + (zc-D)^2 + r^2 + 2*s*{xc-r*Sin[w], yc-r*Cos[w], zc-D} . (Cos[mt]*u + Sin[mt]*v) == L^2
+ *   Can manually simplify a bit and put into Mathematica notation. Note: used mt=m*t to make solving for t slightly easier:
+ *     (xc-r*Sin[w])^2 + (yc-r*Cos[w])^2 + (zc-D)^2 + s^2 + 2*s*{xc-r*Sin[w], yc-r*Cos[w], zc-D} . (Cos[mt]*u + Sin[mt]*v) == L^2
  *   Can directly apply Solve on the above equation and mt, but produces LARGE output. So apply FullSimplify on the above (with u->{ux, uy, uz}, v->{vx, vy, vz}):
- *     r^2+(D-zc)^2+(yc-r Cos[w])^2+(xc-r Sin[w])^2+2 s ((yc-r Cos[w]) (uy Cos[mt]+vy Sin[mt])+(-D+zc) (uz Cos[mt]+vz Sin[mt])+(ux Cos[mt]+vx Sin[mt]) (xc-r Sin[w])) == L^2
+ *     s^2+(D-zc)^2+(yc-r Cos[w])^2+(xc-r Sin[w])^2+2 s ((yc-r Cos[w]) (uy Cos[mt]+vy Sin[mt])+(-D+zc) (uz Cos[mt]+vz Sin[mt])+(ux Cos[mt]+vx Sin[mt]) (xc-r Sin[w])) == L^2
  *   Expand:
- *     0 == D^2+r^2+xc^2+yc^2-2 D zc+zc^2-2 D s uz Cos[mt]+2 s ux xc Cos[mt]+2 s uy yc Cos[mt]+2 s uz zc Cos[mt]-2 r yc Cos[w]-2 r s uy Cos[mt] Cos[w]+r^2 Cos[w]^2-2 D s vz Sin[mt]+2 s vx xc Sin[mt]+2 s vy yc Sin[mt]+2 s vz zc Sin[mt]-2 r s vy Cos[w] Sin[mt]-2 r xc Sin[w]-2 r s ux Cos[mt] Sin[w]-2 r s vx Sin[mt] Sin[w]+r^2 Sin[w]^2 - L^2
+ *     0 == D^2-L^2+s^2+xc^2+yc^2-2 D zc+zc^2-2 D s uz Cos[mt]+2 s ux xc Cos[mt]+2 s uy yc Cos[mt]+2 s uz zc Cos[mt]-2 r yc Cos[w]-2 r s uy Cos[mt] Cos[w]+r^2 Cos[w]^2-2 D s vz Sin[mt]+2 s vx xc Sin[mt]+2 s vy yc Sin[mt]+2 s vz zc Sin[mt]-2 r s vy Cos[w] Sin[mt]-2 r xc Sin[w]-2 r s ux Cos[mt] Sin[w]-2 r s vx Sin[mt] Sin[w]+r^2 Sin[w]^2
  *   Apply Collect[%, {Sin[mt], Cos[mt]}] to above to group terms:
- *     D^2-L^2+r^2+xc^2+yc^2-2 D zc+zc^2-2 r yc Cos[w]+r^2 Cos[w]^2-2 r xc Sin[w]+r^2 Sin[w]^2
+ *   0 ==  D^2-L^2+s^2+xc^2+yc^2-2 D zc+zc^2-2 r yc Cos[w]+r^2 Cos[w]^2-2 r xc Sin[w]+r^2 Sin[w]^2
      + Cos[mt] (-2 D s uz+2 s ux xc+2 s uy yc+2 s uz zc-2 r s uy Cos[w]-2 r s ux Sin[w])
      + Sin[mt] (-2 D s vz+2 s vx xc+2 s vy yc+2 s vz zc-2 r s vy Cos[w]-2 r s vx Sin[w])
  *   apply FullSimplify to each term:
- *     -L^2+2 r^2+xc^2+yc^2+(D-zc)^2-2 r (yc Cos[w]+xc Sin[w])
+ *   0 == -L^2+r^2+s^2+xc^2+yc^2+(D-zc)^2-2 r (yc Cos[w]+xc Sin[w])
      + Cos[mt] (2 s (-D uz+ux xc+uy yc+uz zc-r (uy Cos[w]+ux Sin[w])))
      + Sin[mt] (2 s (-D vz+vx xc+vy yc+vz zc-r (vy Cos[w]+vx Sin[w])))
  *   Now we can use the earlier derived identity: {m,n,p} . {Sin[mt], Cos[mt], 1} has solutions of:
@@ -334,8 +334,8 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
             //return t;
             
             float D = M0+s;
-            //        2 r^2    +xc^2 +yc^2 +(D-zc)^2     -2 r   (yc Cos[w]+xc Sin[w]) - L^2
-            float p = 2*r()*r()+xc*xc+yc*yc+(D-zc)*(D-zc)-2*r()*(yc*cos(w)+xc*sin(w)) - L()*L();
+            //        r^2      +s^2          +xc^2 +yc^2 +(D-zc)^2     -2 r   (yc Cos[w]+xc Sin[w]) - L^2
+            float p = r()*r()  +arcRad*arcRad+xc*xc+yc*yc+(D-zc)*(D-zc)-2*r()*(yc*cos(w)+xc*sin(w)) - L()*L();
             //        2 s      (-D uz+ux xc+uy yc+uz zc-r   (uy Cos[w]+ux Sin[w]))
             float n = 2*arcRad*(-D*uz+ux*xc+uy*yc+uz*zc-r()*(uy*cos(w)+ux*sin(w)));
             //        2 s      (-D vz+vx xc+vy yc+vz zc-r   (vy Cos[w]+vx Sin[w]))
