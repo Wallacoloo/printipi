@@ -39,6 +39,7 @@
 #include "drivers/axisstepper.h"
 #include "event.h"
 
+//There are 3 distinct types of motion that can occur at any given time:
 enum MotionType {
     MotionNone,
     MotionLinear,
@@ -72,7 +73,6 @@ template <typename Interface> class MotionPlanner {
             _iters(interface.getAxisSteppers()), _homeIters(interface.getHomeSteppers()), _arcIters(interface.getArcSteppers()),
             _baseTime(), 
             _duration(NAN),
-            //_maxVel(0), 
             _motionType(MotionNone) {}
         bool readyForNextMove() const {
             //returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems)
@@ -115,7 +115,7 @@ template <typename Interface> class MotionPlanner {
                     break;
                 case MotionNone:
                 default:
-                    assert(false);
+                    assert(false); //it is illegal to call nextStep() when a move is not in progress.
             }
             return e;
         }
@@ -146,12 +146,6 @@ template <typename Interface> class MotionPlanner {
         }
         Event nextStep() {
             //called by State to query the next step in the current path segment
-            /*if (_motionType == MotionNone) {
-                return Event(); //no next step; return a null Event
-            }*/
-            /*if ((isHoming() && std::tuple_size<HomeStepperTypes>::value == 0) || (!isHoming() && std::tuple_size<AxisStepperTypes>::value == 0)) {
-                return Event(); //sanity checks. Should get optimized away on most machines.
-            }*/
             switch (_motionType) {
                 case MotionHome:
                     return _nextStepHome(std::integral_constant<bool, std::tuple_size<HomeStepperTypes>::value != 0>());
@@ -184,7 +178,6 @@ template <typename Interface> class MotionPlanner {
             float dist = sqrt(distSq);
             float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
             float velE = (e-curE)/minDuration;
-            //float newVelE = this->driver.clampExtrusionRate(velE);
             float newVelE = std::max(minVelE, std::min(maxVelE, velE));
             if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
                 velE = newVelE;
@@ -239,8 +232,42 @@ template <typename Interface> class MotionPlanner {
             float bX = x-centerX; //relative *desired* coordinates
             float bY = y-centerY;
             float bZ = z-centerZ;
+
+            //Need to adjust the center point such that it is equidistant from a and b.
+            //Note: the set of points equidistant from a and b is described by the normal vector, n = (b-a)
+            //  and a point on the plane, the midpoint between a and b: 1/2*(a+b)
+            //Then we choose as our new center, the point on the plane that is closest to the old center, c.
+            //Note that this is done just by moving c along n until it is on the plane:
+            //    c
+            //     \   |
+            //      \  | n (normal vector)
+            //       \ |
+            //        \|
+            //----*----------------- (equidistant plane)
+            //    ^- closest point on the plane to c.
+            // the closest point on the plane is c - proj(c->n) (that is, the projection of c onto n; the component of c parallel to n)
+            //Note: proj(c->n) = (c . n / |n|^2)n
+            float nX = bX-aX;
+            float nY = bY-aY;
+            float nZ = bZ-aZ;
+            float magNSq = nX*nX + nY*nY + nZ*nZ;
+            float projcnX = centerX*nX / magNSq * nX;
+            float projcnY = centerY*nY / magNSq * nY;
+            float projcnZ = centerZ*nZ / magNSq * nZ;
+            centerX -= projcnX;
+            centerY -= projcnY;
+            centerZ -= projcnZ;
+            //recalculate our a and b vectors, relative to this new center-point:
+            aX = curX-centerX; //relative *current* coordinates
+            aY = curY-centerY;
+            aZ = curZ-centerZ;
+            bX = x-centerX; //relative *desired* coordinates
+            bY = y-centerY;
+            bZ = z-centerZ;
+
+            //now solve for the arcLength and arcAngle
             float aDotB = aX*bX + aY*bY + aZ*bZ;
-            float arcRadSq = aX*aX + aY*aY + aZ*aZ; //(x-centerX)*(x-centerX) + (y-centerY)*(y-centerY) + (z-centerZ)*(z-centerZ);
+            float arcRadSq = aX*aX + aY*aY + aZ*aZ;
             float arcRad = sqrt(arcRadSq);
             float arcAngle = acos(aDotB/arcRadSq);
             float arcLength = arcAngle*arcRad;
@@ -255,24 +282,7 @@ template <typename Interface> class MotionPlanner {
                 maxVelXyz = arcLength/minDuration;
             }
             float arcVel = maxVelXyz / arcRad;
-            
-            //a cross b to get normal vector of arc (axis of rotation):
-            //float NX = aY*bZ - aZ*bY;
-            //float NY = -(aX*bZ - aZ*bX);
-            //float NZ = aX*bY - aY*bX;
-            //float magN = sqrt(NX*NX + NY*NY + NZ*NZ);
-            //Next, we need to determine the angles from the centerpoint to the current position, which is our starting "phase"
-            //derived geometrically...
-            ////float xAng = atan2(aZ, aY);
-            ////float yAng = atan2(aZ, aX);
-            ////float xAng = asin(-NY/magN);
-            ////float yAng = asin(NX/magN);
-            //float xAng = atan2(NZ, NY) - M_PI/2;
-            //float yAng = atan2(NX, NZ);
-            //float zAng = atan2(aY, aX);
-            
-            //TODO: reference arcs-parameterization.nb to fix xAng yAng, zAng calculations.
-            
+                        
             //Want two perpindicular vectors such that <x, y, z> = P(t) = <xc, yc, zc> + r*cos(m*t)*u + r*sin(m*t)*v
             //Thus, u is the normal vector of <x0, y0, z0> - <xc, yc, zc>
             float magA = sqrt(aX*aX + aY*aY + aZ*aZ);
@@ -309,9 +319,7 @@ template <typename Interface> class MotionPlanner {
                 vz = -vz;
             }
             
-            //throw std::runtime_error("LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE");
             //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
-            //drv::AxisStepper::initAxisArcSteppers(_arcIters, _destMechanicalPos, centerX, centerY, centerZ, xAng, yAng, zAng, arcRad, arcVel, velE);
             LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE, minDuration);
             drv::AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, centerX, centerY, centerZ, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE);
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
