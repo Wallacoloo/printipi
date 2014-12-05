@@ -316,7 +316,7 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
                 this->time = 0; //this may NOT be zero-initialized by parent.
         }
     //protected:
-        float testDir(float s) {
+        float testDir(float s, float curTime) {
             //{m, n, p} = {2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]), -2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w], L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w]}
             //float m = 2*arcRad*(M0+s)*sin(a) + 2*arcRad*cos(a)*r()*cos(w);
             //float n = 2*arcRad*cos(a)*-(M0+s)*sin(b) + 2*arcRad*r()*(cos(w)*sin(a)*sin(b) + cos(b)*sin(w));
@@ -345,9 +345,9 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
             float mt_2 = atan2((-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
             float t1 = mt_1/this->m;
             float t2 = mt_2/this->m;
-            if (t1 < 0 && t2 < 0) { return NAN; }
-            else if (t1 < 0) { return t2; }
-            else if (t2 < 0) { return t1; }
+            if (t1 < curTime && t2 < curTime) { return NAN; }
+            else if (t1 < curTime) { return t2; }
+            else if (t2 < curTime) { return t1; }
             else { return std::min(t1, t2); }
         }
         void _nextStep() {
@@ -357,8 +357,8 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
             //Then we test that time for a backward step (sTotal - 1).
             //We choose the nearest resulting time as our next step.
             //This is necessary because axis velocity can actually reverse direction during a circular cartesian movement.
-            float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
-            float posTime = testDir((this->sTotal+1)*MM_STEPS());
+            float negTime = testDir((this->sTotal-1)*MM_STEPS(), this->time); //get the time at which next steps would occur.
+            float posTime = testDir((this->sTotal+1)*MM_STEPS(), this->time);
             if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                 if (posTime > this->time) {
                     LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
