@@ -216,7 +216,7 @@ template <typename Interface> class MotionPlanner {
             this->_motionType = MotionHome;
             this->_accel.begin(NAN, maxVelXyz);
         }
-        void arcTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float centerX, float centerY, float centerZ, float maxVelXyz, float minVelE, float maxVelE) {
+        void arcTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float centerX, float centerY, float centerZ, float maxVelXyz, float minVelE, float maxVelE, bool isCW) {
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             /*if (std::tuple_size<ArcStepperTypes>::value == 0) {
@@ -297,6 +297,14 @@ template <typename Interface> class MotionPlanner {
             vx = vx/magV;
             vy = vy/magV;
             vz = vz/magV;
+            //in a CCW system, x(t), y(t) = <u*cos(t), v*sin(t)>
+            //in a CW system,  x(t), y(t) = <u*cos(t),-v*sin(t)>
+            //So invert v if we desire a CW arc.
+            if (isCW) {
+                vx = -vx;
+                vy = -vy;
+                vz = -vz;
+            }
             
             //throw std::runtime_error("LinearDeltaStepper arcs were incorrectly derived; must take the CENTER position, xAng, yAng, zAng, arcRad, arcVel, velE");
             //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);

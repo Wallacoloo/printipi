@@ -218,7 +218,7 @@ template <typename Drv> class State {
          * returns a Command to send back to the host. */
         gparse::Response execute(gparse::Command const& cmd, gparse::Com &com);
         // make an arc from the current position to (x, y, z), maintaining a constant distance from (cX, cY, cZ)
-        void queueArc(float x, float y, float z, float e, float cX, float cY, float cZ);
+        void queueArc(float x, float y, float z, float e, float cX, float cY, float cZ, bool isCW=false);
         /* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
         void queueMovement(float x, float y, float z, float e);
         /* Home to the endstops. */
@@ -473,10 +473,10 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         this->queueMovement(x, y, z, e);
         return gparse::Response::Ok;
-    } else if (cmd.isG2()) { //clockwise arc from current position to (x, y, z) with center at (i, j, k)
-        LOG("Clockwise arcs not supported; use G3 (CCW arc)\n");
-        return gparse::Response::Ok;
-    } else if (cmd.isG3()) {
+    //} else if (cmd.isG2()) { //clockwise arc from current position to (x, y, z) with center at (i, j, k)
+    //    LOG("Clockwise arcs not supported; use G3 (CCW arc)\n");
+    //    return gparse::Response::Ok;
+    } else if (cmd.isG2() || cmd.isG3()) {
         LOGW("Warning: G3 is experimental\n");
         //first, get the end coordinate and optional feed-rate:
         bool hasX, hasY, hasZ, hasE;
@@ -503,7 +503,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         float j = yUnitToPrimitive(cmd.getJ());
         float k = cmd.getK(hasK);
         k = hasK ? zUnitToPrimitive(k) : curZ;
-        this->queueArc(x, y, z, e, i, j, k);
+        this->queueArc(x, y, z, e, i, j, k, cmd.isG2());
         return gparse::Response::Ok;
     } else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
         setUnitMode(UNIT_IN);
@@ -643,7 +643,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     }
 }
 
-template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, float e, float cX, float cY, float cZ) {
+template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, float e, float cX, float cY, float cZ, bool isCW) {
     //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
     _destXPrimitive = x;
     _destYPrimitive = y;
@@ -655,7 +655,7 @@ template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, flo
     float maxExtRate = this->driver.maxExtrudeRate();
     //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
     auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
-    motionPlanner.arcTo(startTime, x, y, z, e, cX, cY, cZ, velXyz, minExtRate, maxExtRate);
+    motionPlanner.arcTo(startTime, x, y, z, e, cX, cY, cZ, velXyz, minExtRate, maxExtRate, isCW);
 }
         
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
