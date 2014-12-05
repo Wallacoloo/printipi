@@ -243,11 +243,14 @@
  *   Then substitute P into the constraint equation and square each side:
  *     L^2 = |<xc-rsin(w), yc-rcos(w), zc-D> + s*cos(m*t)u + s*sin(m*t)v|^2
  *   Manually expand based upon the property that |v|^2 = v . v
- *     (xc-rsin(w))^2 + (yc-rcos(w))^2 + (zc-D)^2 + s^2*cos^2(m*t) + s^2*sin^2(m*t) + 2<xc-rsin(w), yc-rcos(w), zc-D> . s*cos(m*t)u + 2<xc-rsin(w), yc-rcos(w), zc-D> . s*sin(m*t)v == L^2
+ *     (xc-rsin(w))^2 + (yc-rcos(w))^2 + (zc-D)^2 + s^2*cos^2(m*t) + s^2*sin^2(m*t) 
+       + 2<xc-rsin(w), yc-rcos(w), zc-D> . s*cos(m*t)u + 2<xc-rsin(w), yc-rcos(w), zc-D> . s*sin(m*t)v == L^2
  *   Note: removed all terms involving u . v, because u is perpindicular to v so u.v = 0
  *   Can manually simplify a bit and put into Mathematica notation. Note: used mt=m*t to make solving for t slightly easier:
- *     (xc-r*Sin[w])^2 + (yc-r*Cos[w])^2 + (zc-D)^2 + s^2 + 2*s*{xc-r*Sin[w], yc-r*Cos[w], zc-D} . (Cos[mt]*u + Sin[mt]*v) == L^2
- *   Can directly apply Solve on the above equation and mt, but produces LARGE output. So apply FullSimplify on the above (with u->{ux, uy, uz}, v->{vx, vy, vz}):
+ *     (xc-r*Sin[w])^2 + (yc-r*Cos[w])^2 + (zc-D)^2 + s^2 
+       + 2*s*{xc-r*Sin[w], yc-r*Cos[w], zc-D} . (Cos[mt]*u + Sin[mt]*v) == L^2
+ *   Can directly apply Solve on the above equation and mt, but produces LARGE output.
+       So apply FullSimplify on the above (with u->{ux, uy, uz}, v->{vx, vy, vz}):
  *     s^2+(D-zc)^2+(yc-r Cos[w])^2+(xc-r Sin[w])^2+2 s ((yc-r Cos[w]) (uy Cos[mt]+vy Sin[mt])+(-D+zc) (uz Cos[mt]+vz Sin[mt])+(ux Cos[mt]+vx Sin[mt]) (xc-r Sin[w])) == L^2
  *   Expand:
  *     0 == D^2-L^2+s^2+xc^2+yc^2-2 D zc+zc^2-2 D s uz Cos[mt]+2 s ux xc Cos[mt]+2 s uy yc Cos[mt]+2 s uz zc Cos[mt]-2 r yc Cos[w]-2 r s uy Cos[mt] Cos[w]+r^2 Cos[w]^2-2 D s vz Sin[mt]+2 s vx xc Sin[mt]+2 s vy yc Sin[mt]+2 s vz zc Sin[mt]-2 r s vy Cos[w] Sin[mt]-2 r xc Sin[w]-2 r s ux Cos[mt] Sin[w]-2 r s vx Sin[mt] Sin[w]+r^2 Sin[w]^2
@@ -259,7 +262,7 @@
  *   0 == -L^2+r^2+s^2+xc^2+yc^2+(D-zc)^2-2 r (yc Cos[w]+xc Sin[w])
      + Cos[mt] (2 s (-D uz+ux xc+uy yc+uz zc-r (uy Cos[w]+ux Sin[w])))
      + Sin[mt] (2 s (-D vz+vx xc+vy yc+vz zc-r (vy Cos[w]+vx Sin[w])))
- *   Now we can use the earlier derived identity: {m,n,p} . {Sin[mt], Cos[mt], 1} has solutions of:
+ *   Now we can use the earlier derived identity: {m,n,p} . {Sin[mt], Cos[mt], 1} == 0 has solutions of:
  *        mt = arctan((-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )  where ArcTan[x, y] = atan(y/x)
  *     OR mt = arctan((-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n),  (-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n)  )
  *   Note: D=D0+s
@@ -316,7 +319,7 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
                 this->time = 0; //this may NOT be zero-initialized by parent.
         }
     //protected:
-        float testDir(float s, float curTime) {
+        float testDir(float s) {
             //{m, n, p} = {2 q (Cos[a] (-y0+r Cos[w])+(D0+s-z0) Sin[a]), -2 q (x0 Cos[b]+((D0+s-z0) Cos[a]+(y0-r Cos[w]) Sin[a]) Sin[b]) + 2 r q Cos[b] Sin[w], L^2-q^2-r^2-x0^2-y0^2-(D0+s-z0)^2+2 r y0 Cos[w]}
             //float m = 2*arcRad*(M0+s)*sin(a) + 2*arcRad*cos(a)*r()*cos(w);
             //float n = 2*arcRad*cos(a)*-(M0+s)*sin(b) + 2*arcRad*r()*(cos(w)*sin(a)*sin(b) + cos(b)*sin(w));
@@ -345,9 +348,10 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
             float mt_2 = atan2((-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
             float t1 = mt_1/this->m;
             float t2 = mt_2/this->m;
-            if (t1 < curTime && t2 < curTime) { return NAN; }
-            else if (t1 < curTime) { return t2; }
-            else if (t2 < curTime) { return t1; }
+            float thresh = this->time;
+            if (t1 < thresh && t2 < thresh) { return NAN; }
+            else if (t1 < thresh) { return t2; }
+            else if (t2 < thresh) { return t1; }
             else { return std::min(t1, t2); }
         }
         void _nextStep() {
@@ -357,8 +361,8 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
             //Then we test that time for a backward step (sTotal - 1).
             //We choose the nearest resulting time as our next step.
             //This is necessary because axis velocity can actually reverse direction during a circular cartesian movement.
-            float negTime = testDir((this->sTotal-1)*MM_STEPS(), this->time); //get the time at which next steps would occur.
-            float posTime = testDir((this->sTotal+1)*MM_STEPS(), this->time);
+            float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
+            float posTime = testDir((this->sTotal+1)*MM_STEPS());
             if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                 if (posTime > this->time) {
                     LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
