@@ -297,10 +297,13 @@ template <typename Interface> class MotionPlanner {
             vx = vx/magV;
             vy = vy/magV;
             vz = vz/magV;
-            //in a CCW system, x(t), y(t) = <u*cos(t), v*sin(t)>
-            //in a CW system,  x(t), y(t) = <u*cos(t),-v*sin(t)>
-            //So invert v if we desire a CW arc.
-            if (isCW) {
+
+            //Given <x, y, z> = u*cos(t) + v*sin(t)
+            //  if we are CCW, then u x v should be out of the page (+z)
+            //  and if we are CW, then u x v should be into the page (-z)
+            //If u x v isn't of the desired sign, then we can just invert v (but keep u the same!)
+            float uCrossV_z = ux*vy - uy*vx; //z component of u x v
+            if ((isCW && uCrossV_z > 0) || (!isCW && uCrossV_z < 0)) { //fix direction:
                 vx = -vx;
                 vy = -vy;
                 vz = -vz;
