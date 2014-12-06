@@ -34,6 +34,7 @@
 #define STATE_H
 
 //Gcode documentation can be found:
+//  http://www.nist.gov/customcf/get_pdf.cfm?pub_id=823374
 //  http://reprap.org/wiki/G-code
 //  or (with implementation): https://github.com/Traumflug/Teacup_Firmware/blob/master/gcode_process.c
 //  Marlin-specific: http://www.ctheroux.com/2012/11/g-code-commands-supported-by-marlin/
