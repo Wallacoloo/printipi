@@ -38,6 +38,7 @@
 #include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
 #include "event.h"
+#include "common/vector3.h"
 
 //There are 3 distinct types of motion that can occur at any given time:
 enum MotionType {
@@ -226,12 +227,14 @@ template <typename Interface> class MotionPlanner {
             //a . b = |a| |b| cos(theta), so we can find the arcangle with arccos(a . b / |a| / |b|).
             //Note: |a| == |b| == arcRad, as these points are defined to be equi-distant from the center-point.
             //TODO: in actuality, the mechanical limits will be such that arcs WILL propagate error unless we adjust the center to make (xCur, yCur, zCur) at the same radius as (x, y, z)
-            float aX = curX-centerX; //relative *current* coordinates
+            /*float aX = curX-centerX; //relative *current* coordinates
             float aY = curY-centerY;
             float aZ = curZ-centerZ;
             float bX = x-centerX; //relative *desired* coordinates
             float bY = y-centerY;
-            float bZ = z-centerZ;
+            float bZ = z-centerZ;*/
+            Vector3f a(curX-centerX, curY-centerY, curZ-centerZ);
+            Vector3f b(x-centerX, y-centerY, z-centerZ);
 
             //Need to adjust the center point such that it is equidistant from a and b.
             //Note: the set of points equidistant from a and b is described by the normal vector, n = (b-a)
@@ -247,27 +250,26 @@ template <typename Interface> class MotionPlanner {
             //    ^- closest point on the plane to c.
             // the closest point on the plane is c - proj(c->n) (that is, the projection of c onto n; the component of c parallel to n)
             //Note: proj(c->n) = (c . n / |n|^2)n
-            float nX = bX-aX;
+            /*float nX = bX-aX;
             float nY = bY-aY;
-            float nZ = bZ-aZ;
-            float magNSq = nX*nX + nY*nY + nZ*nZ;
-            float projcnX = centerX*nX / magNSq * nX;
-            float projcnY = centerY*nY / magNSq * nY;
-            float projcnZ = centerZ*nZ / magNSq * nZ;
+            float nZ = bZ-aZ;*/
+            Vector3f n = b - a;
+            //float magNSq = nX*nX + nY*nY + nZ*nZ;
+            float magNSq = n.magSq();
+            //Vector3f projcn = center.dot(n)
+            float projcnX = centerX*n.x() / magNSq * n.x();
+            float projcnY = centerY*n.y() / magNSq * n.y();
+            float projcnZ = centerZ*n.z() / magNSq * n.z();
             centerX -= projcnX;
             centerY -= projcnY;
             centerZ -= projcnZ;
             //recalculate our a and b vectors, relative to this new center-point:
-            aX = curX-centerX; //relative *current* coordinates
-            aY = curY-centerY;
-            aZ = curZ-centerZ;
-            bX = x-centerX; //relative *desired* coordinates
-            bY = y-centerY;
-            bZ = z-centerZ;
+            a = Vector3f(curX-centerX, curY-centerY, curZ-centerZ); //relative *current* coordinates
+            b = Vector3f(x-centerX, y-centerY, z-centerZ); //relative *desired* coordinates
 
             //now solve for the arcLength and arcAngle
-            float aDotB = aX*bX + aY*bY + aZ*bZ;
-            float arcRadSq = aX*aX + aY*aY + aZ*aZ;
+            float aDotB = a.dot(b);
+            float arcRadSq = a.magSq();
             float arcRad = sqrt(arcRadSq);
             float arcAngle = acos(aDotB/arcRadSq);
             float arcLength = arcAngle*arcRad;
@@ -285,10 +287,8 @@ template <typename Interface> class MotionPlanner {
                         
             //Want two perpindicular vectors such that <x, y, z> = P(t) = <xc, yc, zc> + r*cos(m*t)*u + r*sin(m*t)*v
             //Thus, u is the normal vector of <x0, y0, z0> - <xc, yc, zc>
-            float magA = sqrt(aX*aX + aY*aY + aZ*aZ);
-            float ux = aX/magA;
-            float uy = aY/magA;
-            float uz = aZ/magA;
+            float magA = a.mag();
+            Vector3f u = a/magA;
             
             //Now to get v; v is some linear combination of u + <x1-xc, y1-yc, z1-zc> that is perpindicular to u and has length 1.
             //So, v = au + b<x1-xc, y1-yc, z1-zc>
@@ -299,29 +299,25 @@ template <typename Interface> class MotionPlanner {
             //Then normalize.
             //TODO: Another way to put this may be that v is <x1-xc, y1-yc, z1-zc> minus the projection of <x1-xc, y1-yc, z1-zc> onto u, normalized.
             
-            float a = -(bX*ux + bY*uy + bZ*uz);
-            float vx = a*ux + bX;
-            float vy = a*uy + bY;
-            float vz = a*uz + bZ;
-            float magV = sqrt(vx*vx + vy*vy + vz*vz);
-            vx = vx/magV;
-            vy = vy/magV;
-            vz = vz/magV;
+            //float a = -b.dot(u); //-(bX*u.x() + bY*u.y() + bZ*u.z());
+            //Vector3f v = a*u - b;
+            Vector3f v = u*-b.dot(u) - b;
+            float magV = v.mag();
+            v = v/magV;
 
             //Given <x, y, z> = u*cos(t) + v*sin(t)
             //  if we are CCW, then u x v should be out of the page (+z)
             //  and if we are CW, then u x v should be into the page (-z)
             //If u x v isn't of the desired sign, then we can just invert v (but keep u the same!)
-            float uCrossV_z = ux*vy - uy*vx; //z component of u x v
+            //float uCrossV_z = ux*vy - uy*vx; //z component of u x v
+            float uCrossV_z = u.cross(v).z();
             if ((isCW && uCrossV_z > 0) || (!isCW && uCrossV_z < 0)) { //fix direction:
-                vx = -vx;
-                vy = -vy;
-                vz = -vz;
+                v = v*-1.f;
             }
             
             //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
-            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE, minDuration);
-            drv::AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, centerX, centerY, centerZ, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE);
+            //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE, minDuration);
+            drv::AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, centerX, centerY, centerZ, u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE);
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
             }
