@@ -316,7 +316,7 @@ template <typename Interface> class MotionPlanner {
             }
             
             //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
-            //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, ux, uy, uz, vx, vy, vz, arcRad, arcVel, velE, minDuration);
+            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE, minDuration);
             drv::AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, centerX, centerY, centerZ, u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE);
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
