@@ -257,7 +257,7 @@ template <typename Interface> class MotionPlanner {
             float nY = bY-aY;
             float nZ = bZ-aZ;*/
             Vector3f n = b - a;
-            Vector3f mp = (b+a)*0.5;
+            Vector3f mp = (b+center + a+center)*0.5;
             //float magNSq = nX*nX + nY*nY + nZ*nZ;
             float magNSq = n.magSq();
             //float projcmp_nX = (mp.x()-centerX)*n.x() / magNSq * n.x();
