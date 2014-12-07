@@ -168,6 +168,16 @@ class KosselPi : public Machine {
         //getXXX defines wrappers for all the above types. 
         //  Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
         
+        inline _IODriverTypes getIoDrivers() const {
+            return _IODriverTypes(
+                A4988<RpiIoPin<PIN_STEPPER_A_STEP>, RpiIoPin<PIN_STEPPER_A_DIR>, _StepperEn>(),
+                A4988<RpiIoPin<PIN_STEPPER_B_STEP>, RpiIoPin<PIN_STEPPER_B_DIR>, _StepperEn>(),
+                A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>(),
+                A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>(),
+                _Fan(),
+                TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D>, LowPassFilter<3000> >());
+        }
+
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
         inline ConstantAcceleration getAccelerationProfile() const {
             return ConstantAcceleration(MAX_ACCEL_MM_SEC2);
@@ -195,10 +205,7 @@ class KosselPi : public Machine {
         inline _ArcStepperTypes getArcSteppers() const {
             return _ArcStepperTypes();
         }
-        inline _IODriverTypes getIoDrivers() const {
-            return _IODriverTypes();
-        }
-        
+
         //Expose default and maximum velocities:
         inline float defaultMoveRate() const { //in mm/sec
             return MAX_MOVE_RATE_MM_SEC;
