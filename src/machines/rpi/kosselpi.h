@@ -20,13 +20,7 @@
 
 //All of the #defines between this point and the end of this file are ONLY used within this file,
 
-//R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
-//L1000 = length of the rods that connect each axis to the end effector
-//H1000 = distance from tower base to endstop, in micrometers (assumes each endstop is at the same height)
-//BUILDRAD1000 = radius of actual build plate, in micrometers
-//STEPS_M = #of *micro* steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
-//STEPS_M_EXT = # of *micro* steps needed to push 1 meter of filament through the extruder.
-
+//Build calibration settings:
 #define R_MM 111.000                // Distance from the center of the build plate to each delta tower, in mm
 #define L_MM 221.000                // Length of the vertical rods that connect the carriages to the end effector, in mm
 #define H_MM 467.450                // The vertical distance from your endstops to the build platform, in mm
@@ -34,7 +28,7 @@
 #define STEPS_MM 6.265*8            // Number of stepper motor steps it takes to raise a carriage by 1 mm
 #define STEPS_MM_EXT 30.000*16      // Number of stepper motor steps it takes to extrude 1 mm of filament
 
-
+//Movement rates:
 #define MAX_ACCEL_MM_SEC2 900.000   // Maximum cartesian acceleration of end effector in mm / s^2
 #define MAX_MOVE_RATE_MM_SEC 120    // Maximum cartesian verlocity of end effector, in mm/s
 #define HOME_RATE_MM_SEC 10         // Speed at which to home the endstops, in mm/s
