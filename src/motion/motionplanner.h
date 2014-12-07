@@ -221,9 +221,9 @@ template <typename Interface> class MotionPlanner {
             std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
             std::tie(x, y, z) = _coordMapper.applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
             std::tie(x, y, z, e) = _coordMapper.bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
+            std::tie(centerX_, centerY_, centerZ_) = _coordMapper.applyLeveling(std::make_tuple(centerX_, centerY_, centerZ_)); //get the level'd center
             
-            //The 3 points, (centerX, centerY, centerZ), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
-            //TODO: apply leveling to the center!
+            //The 3 points, (centerX_, centerY_, centerZ_), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
             Vector3f center(centerX_, centerY_, centerZ_);
             Vector3f a(curX-centerX_, curY-centerY_, curZ-centerZ_);
             Vector3f b(x-centerX_, y-centerY_, z-centerZ_);
@@ -274,22 +274,10 @@ template <typename Interface> class MotionPlanner {
             float arcVel = maxVelXyz / arcRad;
                         
             //Want two perpindicular vectors such that <x, y, z> = P(t) = <xc, yc, zc> + r*cos(m*t)*u + r*sin(m*t)*v
-            //Thus, u is the normal vector of <x0, y0, z0> - <xc, yc, zc>
+            //Thus, u is the unit vector parallel to <x0, y0, z0> - <xc, yc, zc>
             Vector3f u = a.norm();
             
-            //Now to get v; v is some linear combination of u + <x1-xc, y1-yc, z1-zc> that is perpindicular to u and has length 1.
-            //So, v = au + b<x1-xc, y1-yc, z1-zc>
-            //and u.v = 0 = a*1 + b<x1-xc, y1-yc, z1-zc> . u
-            //a = -b<x1-xc, y1-yc, z1-zc> . u
-            //let b=1 and solve for a. This gives us our direction, but non-normalized:
-            //a = -[(x1-xc)*ux + (y1-yc)*uy + (z1-zc)*uz]
-            //Then normalize.
-            //TODO: Another way to put this may be that v is <x1-xc, y1-yc, z1-zc> minus the projection of <x1-xc, y1-yc, z1-zc> onto u, normalized.
-            
-            //float a = -b.dot(u); //-(bX*u.x() + bY*u.y() + bZ*u.z());
-            //Vector3f v = a*u - b;
-            //Vector3f v = u*-b.dot(u) - b;
-            //v = v.norm();
+            // Now to solve for v, which must be perpindicular to u:
             // |
             // |   / b
             // |  /
@@ -304,14 +292,12 @@ template <typename Interface> class MotionPlanner {
             //Given <x, y, z> = u*cos(t) + v*sin(t)
             //  if we are CCW, then u x v should be out of the page (+z)
             //  and if we are CW, then u x v should be into the page (-z)
-            //If u x v isn't of the desired sign, then we can just invert v (but keep u the same!)
-            //float uCrossV_z = ux*vy - uy*vx; //z component of u x v
+            //If u x v isn't of the desired sign, then we can just invert v (but keep u the same so as not to change P(t=0))
             float uCrossV_z = u.cross(v).z();
             if ((isCW && uCrossV_z > 0) || (!isCW && uCrossV_z < 0)) { //fix direction:
                 v = v*-1.f;
             }
             
-            //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
             LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", 
                   center.x(), center.y(), center.z(), curX, curY, curZ, x, y, z, 
                   u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE, minDuration);
