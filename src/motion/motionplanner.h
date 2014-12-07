@@ -246,23 +246,25 @@ template <typename Interface> class MotionPlanner {
             //      \  | n (normal vector)
             //       \ |
             //        \|
-            //----*----------------- (equidistant plane)
+            //----*----m------------ (equidistant plane)
             //    ^- closest point on the plane to c.
-            // the closest point on the plane is c - proj(c->n) (that is, the projection of c onto n; the component of c parallel to n)
+            // the closest point on the plane is c + proj(cm->n) 
+            //  (that is, the projection of the line from c to the midpoint of a and b, onto n; the component of cm parallel to n)
             //Note: proj(c->n) = (c . n / |n|^2)n
             /*float nX = bX-aX;
             float nY = bY-aY;
             float nZ = bZ-aZ;*/
             Vector3f n = b - a;
+            Vector3f mp = (b+a)*0.5;
             //float magNSq = nX*nX + nY*nY + nZ*nZ;
             float magNSq = n.magSq();
             //Vector3f projcn = center.dot(n)
-            float projcnX = centerX*n.x() / magNSq * n.x();
-            float projcnY = centerY*n.y() / magNSq * n.y();
-            float projcnZ = centerZ*n.z() / magNSq * n.z();
-            centerX -= projcnX;
-            centerY -= projcnY;
-            centerZ -= projcnZ;
+            float projcmp_nX = (mp.x()-centerX)*n.x() / magNSq * n.x();
+            float projcmp_nY = (mp.y()-centerY)*n.y() / magNSq * n.y();
+            float projcmp_nZ = (mp.z()-centerZ*n.z()) / magNSq * n.z();
+            centerX += projcmp_nX;
+            centerY += projcmp_nY;
+            centerZ += projcmp_nZ;
             //recalculate our a and b vectors, relative to this new center-point:
             a = Vector3f(curX-centerX, curY-centerY, curZ-centerZ); //relative *current* coordinates
             b = Vector3f(x-centerX, y-centerY, z-centerZ); //relative *desired* coordinates
