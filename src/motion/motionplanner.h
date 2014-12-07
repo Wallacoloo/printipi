@@ -243,13 +243,13 @@ template <typename Interface> class MotionPlanner {
             //Then we choose as our new center, the point on the plane that is closest to the old center, c.
             //Note that this is done just by moving c along n until it is on the plane:
             //    c
-            //     \   |
+            //     \   ^
             //      \  | n (normal vector)
             //       \ |
             //        \|
             //----*----m------------ (equidistant plane)
             //    ^- closest point on the plane to c.
-            // the closest point on the plane is c + proj(cm->n) 
+            // the closest point on the plane is c - proj(cm->n) 
             //  (that is, the projection of the line from c to the midpoint of a and b, onto n; the component of cm parallel to n)
             //Note: proj(c->n) = (c . n / |n|^2)n
             /*float nX = bX-aX;
@@ -266,7 +266,7 @@ template <typename Interface> class MotionPlanner {
             //centerY += projcmp_nY;
             //centerZ += projcmp_nZ;
             Vector3f projcmpn = (mp-center).proj(n);
-            center += projcmpn;
+            center -= projcmpn;
             
             //recalculate our a and b vectors, relative to this new center-point:
             //a = Vector3f(curX-centerX, curY-centerY, curZ-centerZ); //relative *current* coordinates
