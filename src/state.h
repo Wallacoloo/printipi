@@ -34,6 +34,7 @@
 #define STATE_H
 
 //Gcode documentation can be found:
+//  http://www.nist.gov/customcf/get_pdf.cfm?pub_id=823374
 //  http://reprap.org/wiki/G-code
 //  or (with implementation): https://github.com/Traumflug/Teacup_Firmware/blob/master/gcode_process.c
 //  Marlin-specific: http://www.ctheroux.com/2012/11/g-code-commands-supported-by-marlin/
@@ -44,6 +45,7 @@
 #include <cstddef> //for size_t
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
+#include <utility> //for std::declval
 #include <array>
 #include <stack>
 #include "common/logging.h"
@@ -73,21 +75,19 @@ enum LengthUnit {
 };
 
 template <typename Drv> class State {
-    //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State:
+    //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State by defining a SchedInterface object:
     struct SchedInterface {
         private:
             State<Drv>& _state;
             SchedInterfaceHardwareScheduler _hardwareScheduler; //configured in typesettings.h
         public:
-            //DefaultSchedulerInterface::HardwareScheduler hardwareScheduler;
             SchedInterface(State<Drv> &state) : _state(state) {}
             bool onIdleCpu(OnIdleCpuIntervalT interval) {
+                //relay onIdleCpu event to hardware scheduler & state.
+                //return true if either one requests more cpu time. 
                 bool hwNeedsCpu = _hardwareScheduler.onIdleCpu(interval);
                 bool stateNeedsCpu = _state.onIdleCpu(interval);
                 return hwNeedsCpu || stateNeedsCpu;
-            }
-            static constexpr std::size_t numIoDrivers() {
-                return std::tuple_size<typename Drv::IODriverTypes>::value;
             }
             struct __iterPwmPins {
                 template <typename T, typename Func> void operator()(T &driver, float dutyCycle, Func &f) {
@@ -96,24 +96,54 @@ template <typename Drv> class State {
                 }
             };
             template <typename Func> void iterPwmPins(AxisIdType axis, float dutyCycle, Func f) {
+                //call a function, f, for each pin owned by the driver stored at index 'axis' in the ioDrivers object
                 return tupleCallOnIndex(_state.ioDrivers, __iterPwmPins(), axis, dutyCycle, f);
             }
             inline void queue(const OutputEvent &evt) {
+                //schedule an event to happen at some time in the future (relay message to hardware scheduler)
                 _hardwareScheduler.queue(evt);
             }
             inline void queuePwm(int pin, float duty, float maxPeriod) {
+                //configure hardware pin with id 'pin' for PWM, and ensure the PWM period is < maxPeriod (if possible)
                 _hardwareScheduler.queuePwm(pin, duty, maxPeriod);
             }
-            template <typename EventClockT_time_point> EventClockT_time_point schedTime(EventClockT_time_point evtTime) const {
+            EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
+                //if an event is to occur at evtTime, then return the soonest that we are capable of scheduling it in hardware (we may have limited buffers, etc).
                 return _hardwareScheduler.schedTime(evtTime);
             }
     };
     //The MotionPlanner needs certain information about the physical machine, so we provide that without exposing all of Drv:
-    struct MotionInterface {
-        typedef typename Drv::CoordMapT CoordMapT;
-        typedef typename Drv::AxisStepperTypes AxisStepperTypes;
+    class MotionInterface {
+        State<Drv> &state;
+        public:
+            //Derive the types for various Machine-specific subtypes:
+            //Do this by applying decltype on the functions that create these types.
+            //Note: In order to avoid any assumptions about the Machine's constructor, but still be able to access its member functions,
+            //  we use declval<Drv>() to create a dummy instance of the Machine.
+            typedef decltype(std::declval<Drv>().getCoordMap()) CoordMapT;
+            typedef decltype(std::declval<Drv>().getAxisSteppers()) AxisStepperTypes;
+            typedef decltype(std::declval<Drv>().getHomeSteppers()) AxisHomeStepperTypes;
+            typedef decltype(std::declval<Drv>().getArcSteppers()) AxisArcStepperTypes;
+            typedef decltype(std::declval<Drv>().getAccelerationProfile()) AccelerationProfileT;
+            MotionInterface(State<Drv> &state) : state(state) {}
+            AccelerationProfileT getAccelerationProfile() const {
+                return state.driver.getAccelerationProfile();
+            }
+            CoordMapT getCoordMap() const {
+                return state.driver.getCoordMap();
+            }
+            AxisStepperTypes getAxisSteppers() const {
+                return state.driver.getAxisSteppers();
+            }
+            AxisHomeStepperTypes getHomeSteppers() const {
+                return state.driver.getHomeSteppers();
+            }
+            AxisArcStepperTypes getArcSteppers() const {
+                return state.driver.getArcSteppers();
+            }
     };
     typedef Scheduler<SchedInterface> SchedType;
+    typedef decltype(std::declval<Drv>().getIoDrivers()) IODriverTypes;
     PositionMode _positionMode; // = POS_ABSOLUTE;
     PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
     LengthUnit unitMode; // = UNIT_MM;
@@ -121,7 +151,8 @@ template <typename Drv> class State {
     float _destEPrimitive;
     float _destMoveRatePrimitive;
     float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
-    bool _isHomed;
+    bool _isHomed; //Need to know if our absolute coordinates are accurate, which changes when power is lost or stepper motors are deactivated.
+    bool _isWaitingForHotend;
     EventClockT::time_point _lastMotionPlannedTime;
     gparse::Com com;
     //M32 allows a gcode file to call subroutines, essentially.
@@ -131,10 +162,10 @@ template <typename Drv> class State {
     //Thus, we need a root com ("com") & an additional file stack ("gcodeFileStack").
     std::stack<gparse::Com> gcodeFileStack;
     SchedType scheduler;
-    MotionPlanner<MotionInterface, typename Drv::AccelerationProfileT> motionPlanner;
+    MotionPlanner<MotionInterface> motionPlanner;
     Drv &driver;
     FileSystem &filesystem;
-    typename Drv::IODriverTypes ioDrivers;
+    IODriverTypes ioDrivers;
     public:
         //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
         static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
@@ -187,10 +218,14 @@ template <typename Drv> class State {
         /* execute the GCode on a Driver object that supports a well-defined interface.
          * returns a Command to send back to the host. */
         gparse::Response execute(gparse::Command const& cmd, gparse::Com &com);
+        // make an arc from the current position to (x, y, z), maintaining a constant distance from (cX, cY, cZ)
+        void queueArc(float x, float y, float z, float e, float cX, float cY, float cZ, bool isCW=false);
         /* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
         void queueMovement(float x, float y, float z, float e);
-        /* Home to the endstops. Does not return until endstops have been reached. */
+        /* Home to the endstops. */
         void homeEndstops();
+        //Check if M109 (set temperature and wait until reached) has been satisfied.
+        bool isHotendReady();
         /* Set the hotend fan to a duty cycle between 0.0 and 1.0 */
         void setFanRate(float rate);
 };
@@ -202,10 +237,13 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     _destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
     _hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
     _isHomed(false),
+    _isWaitingForHotend(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
     scheduler(SchedInterface(*this)),
+    motionPlanner(MotionInterface(*this)),
     driver(drv),
-    filesystem(fs)
+    filesystem(fs),
+    ioDrivers(drv.getIoDrivers())
     {
     this->setDestMoveRatePrimitive(this->driver.defaultMoveRate());
     if (needPersistentCom) {
@@ -235,6 +273,7 @@ template <typename Drv> void State<Drv>::setUnitMode(LengthUnit mode) {
 }
 
 template <typename Drv> float State<Drv>::xUnitToAbsolute(float posUnit) const {
+    //if we're set to interpret coordinates as relative, then translate to absolute:
     switch (this->positionMode()) {
         case POS_RELATIVE:
             posUnit += this->_destXPrimitive;
@@ -246,6 +285,7 @@ template <typename Drv> float State<Drv>::xUnitToAbsolute(float posUnit) const {
     return posUnit;
 }
 template <typename Drv> float State<Drv>::yUnitToAbsolute(float posUnit) const {
+    //if we're set to interpret coordinates as relative, then translate to absolute:
     switch (this->positionMode()) {
         case POS_RELATIVE:
             posUnit += this->_destYPrimitive;
@@ -257,6 +297,7 @@ template <typename Drv> float State<Drv>::yUnitToAbsolute(float posUnit) const {
     return posUnit;
 }
 template <typename Drv> float State<Drv>::zUnitToAbsolute(float posUnit) const {
+    //if we're set to interpret coordinates as relative, then translate to absolute:
     switch (this->positionMode()) {
         case POS_RELATIVE:
             posUnit += this->_destZPrimitive;
@@ -268,6 +309,7 @@ template <typename Drv> float State<Drv>::zUnitToAbsolute(float posUnit) const {
     return posUnit;
 }
 template <typename Drv> float State<Drv>::eUnitToAbsolute(float posUnit) const {
+    //if we're set to interpret coordinates as relative, then translate to absolute:
     switch (this->extruderPosMode()) {
         case POS_RELATIVE:
             posUnit += this->_destEPrimitive;
@@ -279,6 +321,7 @@ template <typename Drv> float State<Drv>::eUnitToAbsolute(float posUnit) const {
     return posUnit;
 }
 template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
+    //If we're set to interpret coordinates as inches, then convert to mm:
     switch (this->unitMode) {
         case UNIT_IN:
             return mathutil::MM_PER_IN * posUnit;
@@ -289,19 +332,23 @@ template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
 }
 
 template <typename Drv> float State<Drv>::xUnitToPrimitive(float posUnit) const {
+    //Convert the gcode unit to absolute MM, compensated for the zero setpoint
     return posUnitToMM(xUnitToAbsolute(posUnit)) + this->_hostZeroX;
 }
 template <typename Drv> float State<Drv>::yUnitToPrimitive(float posUnit) const {
+    //Convert the gcode unit to absolute MM, compensated for the zero setpoint
     return posUnitToMM(yUnitToAbsolute(posUnit)) + this->_hostZeroY;
 }
 template <typename Drv> float State<Drv>::zUnitToPrimitive(float posUnit) const {
+    //Convert the gcode unit to absolute MM, compensated for the zero setpoint
     return posUnitToMM(zUnitToAbsolute(posUnit)) + this->_hostZeroZ;
 }
 template <typename Drv> float State<Drv>::eUnitToPrimitive(float posUnit) const {
+    //Convert the gcode unit to absolute MM, compensated for the zero setpoint
     return posUnitToMM(eUnitToAbsolute(posUnit)) + this->_hostZeroE;
 }
 template <typename Drv> float State<Drv>::fUnitToPrimitive(float posUnit) const {
-    return posUnitToMM(posUnit/60); //feed rate is always relative, so no need to call toAbsolute. It is also given in mm/minute
+    return posUnitToMM(posUnit/60); //feed rate is given in mm/minute, or in/minute.
 }
 
 template <typename Drv> float State<Drv>::destXPrimitive() const {
@@ -358,21 +405,18 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
     }
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
-        //LOGV("State::satisfyIOs, sched has buffer room\n");
         Event evt; //check to see if motionPlanner has another event ready
         if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
             if (!(evt = motionPlanner.nextStep()).isNull()) {
-                //this->scheduler.queue(evt);
-                //iterEventOutputSequence(evt, [this](const OutputEvent &out) {this->scheduler.queue(out); });
                 tupleCallOnIndex(this->ioDrivers, __iterEventOutputSequence(), evt.stepperId(), evt, [this](const OutputEvent &out) { this->scheduler.queue(out); });
                 _lastMotionPlannedTime = evt.time();
                 motionNeedsCpu = scheduler.isRoomInBuffer();
-            } else { //counter buffer changes set in homing
+            } else { //undo buffer-length changes set in homing
                 this->scheduler.setDefaultMaxSleep();
             }
         }
     }
-    bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<typename Drv::IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
+    bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
     return motionNeedsCpu || driversNeedCpu;
 }
 
@@ -385,8 +429,6 @@ template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
     if (com.tendCom()) {
         //note: may want to optimize this; once there is a pending command, this involves a lot of extra work.
         auto cmd = com.getCommand();
-        //auto x = gparse::Response(gparse::ResponseOk);
-        //gparse::Command resp = execute(cmd);
         gparse::Response resp = execute(cmd, com);
         if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
             if (!NO_LOG_M105 || !cmd.isM105()) {
@@ -399,16 +441,19 @@ template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
 }
 
 template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command const &cmd, gparse::Com &com) {
+    //process a gcode command received on the given communications channel and return an appropriate response
     std::string opcode = cmd.getOpcode();
-    //gparse::Command resp;
     if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
-        //LOGW("Warning (gparse/state.h): OP_G0/1 (linear movement) not fully implemented - notably extrusion\n");
-        if (!_isHomed && driver.doHomeBeforeFirstMovement()) {
-            this->homeEndstops();
-        }
         if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
             return gparse::Response::Null;
         }
+        if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
+            return gparse::Response::Null;
+        }
+        if (!_isHomed && driver.doHomeBeforeFirstMovement()) {
+            this->homeEndstops();
+        }
+        
         bool hasX, hasY, hasZ, hasE;
         bool hasF;
         float curX = destXPrimitive();
@@ -425,10 +470,41 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         z = hasZ ? zUnitToPrimitive(z) : curZ;
         e = hasE ? eUnitToPrimitive(e) : curE;
         if (hasF) {
-            //this->setDestFeedRatePrimitive(fUnitToPrimitive(f));
             this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
         }
         this->queueMovement(x, y, z, e);
+        return gparse::Response::Ok;
+    //} else if (cmd.isG2()) { //clockwise arc from current position to (x, y, z) with center at (i, j, k)
+    //    LOG("Clockwise arcs not supported; use G3 (CCW arc)\n");
+    //    return gparse::Response::Ok;
+    } else if (cmd.isG2() || cmd.isG3()) {
+        LOGW("Warning: G3 is experimental\n");
+        //first, get the end coordinate and optional feed-rate:
+        bool hasX, hasY, hasZ, hasE;
+        bool hasF;
+        float curX = destXPrimitive();
+        float curY = destYPrimitive();
+        float curZ = destZPrimitive();
+        float curE = destEPrimitive();
+        float x = cmd.getX(hasX); //new x-coordinate.
+        float y = cmd.getY(hasY); //new y-coordinate.
+        float z = cmd.getZ(hasZ); //new z-coordinate.
+        float e = cmd.getE(hasE); //extrusion amount.
+        float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
+        x = hasX ? xUnitToPrimitive(x) : curX;
+        y = hasY ? yUnitToPrimitive(y) : curY;
+        z = hasZ ? zUnitToPrimitive(z) : curZ;
+        e = hasE ? eUnitToPrimitive(e) : curE;
+        if (hasF) {
+            this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
+        }
+        //Now get the center-point coordinate:
+        bool hasK; //center-z is optional.
+        float i = xUnitToPrimitive(cmd.getI());
+        float j = yUnitToPrimitive(cmd.getJ());
+        float k = cmd.getK(hasK);
+        k = hasK ? zUnitToPrimitive(k) : curZ;
+        this->queueArc(x, y, z, e, i, j, k, cmd.isG2());
         return gparse::Response::Ok;
     } else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
         setUnitMode(UNIT_IN);
@@ -438,6 +514,9 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isG28()) { //home to end-stops / zero coordinates
         if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
+            return gparse::Response::Null;
+        }
+        if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return gparse::Response::Null;
         }
         this->homeEndstops();
@@ -451,7 +530,6 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         setExtruderPosMode(POS_RELATIVE);
         return gparse::Response::Ok;
     } else if (cmd.isG92()) { //set current position = 0
-        //LOG("Warning (gparse/state.h): OP_G92 (set current position as reference to zero) not tested\n");
         float actualX, actualY, actualZ, actualE;
         bool hasXYZE = cmd.hasAnyXYZEParam();
         if (!hasXYZE) { //make current position (0, 0, 0, 0)
@@ -469,17 +547,15 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         exit(0);
         return gparse::Response::Ok;
     } else if (cmd.isM17()) { //enable all stepper motors
-        LOGW("Warning (gparse/state.h): OP_M17 (enable stepper motors) not tested\n");
         drv::IODriver::lockAllAxis(this->ioDrivers);
         return gparse::Response::Ok;
     } else if (cmd.isM18()) { //allow stepper motors to move 'freely'
-        LOGW("Warning (gparse/state.h): OP_M18 (disable stepper motors) not tested\n");
         drv::IODriver::unlockAllAxis(this->ioDrivers);
         return gparse::Response::Ok;
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
     } else if (cmd.isM32()) { //select file on SD card and print:
-        LOGV("loading gcode: %s\n", cmd.getFilepathParam().c_str());
+        LOGD("loading gcode: %s\n", cmd.getFilepathParam().c_str());
         gcodeFileStack.push(gparse::Com(filesystem.relGcodePathToAbs(cmd.getFilepathParam())));
         return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
@@ -518,10 +594,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         return gparse::Response::Ok;
     } else if (cmd.isM105()) { //get temperature, in C
-        //CelciusType t=DEFAULT_HOTEND_TEMP(), b=DEFAULT_BED_TEMP(); //a temperature < absolute zero means no reading available.
-        //driver.getTemperature(t, b);
         CelciusType t, b;
-        //std::tie(t, b) = driver.getTemperature();
         t = drv::IODriver::getHotendTemp(ioDrivers);
         b = drv::IODriver::getBedTemp(ioDrivers);
         return gparse::Response(gparse::ResponseOk, "T:" + std::to_string(t) + " B:" + std::to_string(b));
@@ -542,12 +615,16 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         if (hasS) {
             drv::IODriver::setHotendTemp(ioDrivers, t);
         }
+        _isWaitingForHotend = true;
         return gparse::Response::Ok;
     } else if (cmd.isM110()) { //set current line number
         LOGW("Warning (state.h): OP_M110 (set current line number) not implemented\n");
         return gparse::Response::Ok;
     } else if (cmd.isM112()) { //emergency stop
         exit(1);
+        return gparse::Response::Ok;
+    } else if (cmd.isM116()) { //Wait for all heaters (and slow moving variables) to reach target
+        _isWaitingForHotend = true;
         return gparse::Response::Ok;
     } else if (cmd.isM117()) { //print message
         return gparse::Response::Ok;
@@ -566,25 +643,53 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         throw std::runtime_error(std::string("unrecognized gcode opcode: '") + cmd.getOpcode() + "'");
     }
 }
-        
-template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
+
+template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, float e, float cX, float cY, float cZ, bool isCW) {
+    //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
     _destXPrimitive = x;
     _destYPrimitive = y;
     _destZPrimitive = z;
     _destEPrimitive = e;
-    //now determine the velocity (must ensure xyz velocity doesn't cause too much E velocity):
+    //now determine the velocity of the move. We just calculate limits & relay the info to the motionPlanner
     float velXyz = destMoveRatePrimitive();
     float minExtRate = -this->driver.maxRetractRate();
     float maxExtRate = this->driver.maxExtrudeRate();
-    motionPlanner.moveTo(std::max(_lastMotionPlannedTime, EventClockT::now()), x, y, z, e, velXyz, minExtRate, maxExtRate);
+    //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
+    auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
+    motionPlanner.arcTo(startTime, x, y, z, e, cX, cY, cZ, velXyz, minExtRate, maxExtRate, isCW);
+}
+        
+template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
+    //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
+    _destXPrimitive = x;
+    _destYPrimitive = y;
+    _destZPrimitive = z;
+    _destEPrimitive = e;
+    //now determine the velocity of the move. We just calculate limits & relay the info to the motionPlanner
+    float velXyz = destMoveRatePrimitive();
+    float minExtRate = -this->driver.maxRetractRate();
+    float maxExtRate = this->driver.maxExtrudeRate();
+    //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
+    auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
+    motionPlanner.moveTo(startTime, x, y, z, e, velXyz, minExtRate, maxExtRate);
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
+    //homing is done with real-time scheduling (can't plan far ahead), so instruct the Scheduler to avoid long sleeps
     this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
     motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
     this->_isHomed = true;
 }
 
+template <typename Drv> bool State<Drv>::isHotendReady() {
+    if (_isWaitingForHotend) {
+        //TODO: check ALL heaters, not just hotend.
+        CelciusType current = drv::IODriver::getHotendTemp(ioDrivers);
+        CelciusType target = drv::IODriver::getHotendTargetTemp(ioDrivers);
+        _isWaitingForHotend = current < target;
+    }
+    return !_isWaitingForHotend;
+}
 /* State utility class for setting the fan rate (State::setFanRate).
 Note: could be replaced with a generic lambda in C++14 (gcc-4.9) */
 template <typename SchedT> struct State_setFanRate {

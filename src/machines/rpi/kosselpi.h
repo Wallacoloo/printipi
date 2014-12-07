@@ -2,17 +2,15 @@
 #define DRIVERS_KOSSELPI_H
 
 
+#include "machines/machine.h"
 #include "pid.h"
 #include "common/filters/lowpassfilter.h"
-//#include "motion/exponentialacceleration.h"
+#include "common/matrix.h"
 #include "motion/constantacceleration.h"
-#include "machines/machine.h"
-#include "drivers/axisstepper.h"
 #include "drivers/linearstepper.h"
 #include "drivers/lineardeltastepper.h"
 #include "drivers/rpi/rpiiopin.h"
 #include "drivers/a4988.h"
-#include "drivers/linearcoordmap.h"
 #include "drivers/lineardeltacoordmap.h"
 #include "drivers/rcthermistor.h"
 #include "drivers/tempcontrol.h"
@@ -20,43 +18,38 @@
 #include "drivers/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
-//All of the following #defines are ONLY used within this file
+//All of the #defines between this point and the end of this file are ONLY used within this file,
+
 //R1000 = distance from (0, 0) (platform center) to each axis, in micrometers (1e-6)
 //L1000 = length of the rods that connect each axis to the end effector
-//STEPS_M = #of steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
+//H1000 = distance from tower base to endstop, in micrometers (assumes each endstop is at the same height)
+//BUILDRAD1000 = radius of actual build plate, in micrometers
+//STEPS_M = #of *micro* steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
+//STEPS_M_EXT = # of *micro* steps needed to push 1 meter of filament through the extruder.
 
-#define R1000 111000
-#define L1000 221000
+#define R_MM 111.000
+#define L_MM 221.000
 //#define H1000 467330
-#define H1000 467450
-#define BUILDRAD1000 85000
-#define STEPS_M 6265*8
+#define H_MM 467.450
+#define BUILDRAD_MM 85.000
+#define STEPS_MM 6.265*8
 //#define STEPS_M_EXT 40000*16
-#define STEPS_M_EXT 30000*16
+#define STEPS_MM_EXT 30.000*16
 
-//#define MAX_ACCEL1000 300000
-//#define MAX_ACCEL1000 1200000
-//#define MAX_ACCEL1000 450000
-#define MAX_ACCEL1000 900000
-//Can reach 160mm/sec at full-stepping (haven't tested the limits)
-//75mm/sec uses 75% cpu at quarter-stepping (unoptimized)
-//90mm/sec uses 75% cpu at quarter-stepping (optimized - Aug 10)
-//70mm/sec uses 50-55% cpu at quarter-stepping, but results in missed steps (Aug 17)
-//30mm/sec uses 55-60% cpu at quarter-stepping (Sept 25, temp=20C)
-//idle uses 8% cpu (Sept 25, temp=20C)
-//30mm/sec uses 60% cpu at quarter-steppeing (Oct 2, temp=20C, thermistor broken)
+//MAX_ACCEL1000 = maximum cartesian acceleration of end effector in micrometers / s^2
+//MAX_MOVE_RATE = maximum cartesian verlocity of end effector, in mm/s
+//HOME_RATE = speed at which to home the endstops, in mm/2
+//MAX_EXT_RATE = maximum rate at which filament should ever be extruded, in mm of filament / s
+
+#define MAX_ACCEL_MM_SEC2 900.000
 //120mm/sec uses 50% cpu at eigth-stepping (Oct 18, temp=195C)
 #define MAX_MOVE_RATE 120
-//#define MAX_MOVE_RATE 45
-//#define MAX_MOVE_RATE 60
-//#define MAX_MOVE_RATE 50
 #define HOME_RATE 10
 #define MAX_EXT_RATE 150
-//#define MAX_EXT_RATE 24
-//#define MAX_EXT_RATE 60
+
+//Resistor-Capacitor thermistor read settings:
 
 #define THERM_RA 665
-//#define THERM_CAP_PICO 100000
 #define THERM_CAP_PICO  2200000
 #define VCC_mV 3300
 #define THERM_IN_THRESH_mV 1600
@@ -64,45 +57,30 @@
 #define THERM_R0 100000
 #define THERM_BETA 3950
 
-/*Used IOs:
-  (1 -3.3v)
-  (2 -5.0v)
-  (3 -input unusable (internally tied to 3.3v via 1.8kOhm); output functional)
-  (4 -5.0v)
-  (5 -input unusable (internally tied to 3.3v via 1.8kOhm); output functional)
-  (6 -GND)
-  (7 -input&output broken)
-  (8 -input finicky; output functional)
-  (9 -GND)
-  (10-input finicky; output functional)
-  (11-input&output broken)
-  (12-input&output broken)
-  13
-  (14-GND)
-  15
-  16
-  (17-3.3v)
-  18
-  19
-  (20-GND)
-  21
-  22
-  23
-  (24-input broken; output functional)
-  (25-GND)
-  (26-input broken; output functional)
-  
-P5 layout:
-  P5-01 is, from the back of the board with GPIOs on the top, the upper-right pin.
-  P5-01 = +5V
-  P5-02 = +3.3V
-  P5-03 = GPIO28
-  P5-04 = GPIO29
-  P5-05 = GPIO30
-  P5-06 = GPIO31
-  P5-07 = GND
-  P5-08 = GND
-*/
+//Pin Defines:
+#define PIN_STEPPER_EN     mitpi::V2_GPIO_P1_16
+#define PIN_ENDSTOP_A      mitpi::V2_GPIO_P1_13
+#define PIN_ENDSTOP_B      mitpi::V2_GPIO_P5_03
+#define PIN_ENDSTOP_C      mitpi::V2_GPIO_P1_15
+#define PIN_THERMISTOR     mitpi::V2_GPIO_P1_18
+#define PIN_FAN            mitpi::V2_GPIO_P1_08
+#define PIN_HOTEND         mitpi::V2_GPIO_P1_10
+
+#define PIN_STEPPER_A_STEP mitpi::V2_GPIO_P1_22
+#define PIN_STEPPER_A_DIR  mitpi::V2_GPIO_P1_23
+#define PIN_STEPPER_B_STEP mitpi::V2_GPIO_P1_19
+#define PIN_STEPPER_B_DIR  mitpi::V2_GPIO_P1_21
+#define PIN_STEPPER_C_STEP mitpi::V2_GPIO_P1_24
+#define PIN_STEPPER_C_DIR  mitpi::V2_GPIO_P1_26
+#define PIN_STEPPER_E_STEP mitpi::V2_GPIO_P1_03
+#define PIN_STEPPER_E_DIR  mitpi::V2_GPIO_P1_05
+
+//PID settings:
+#define HOTEND_PID_P 18000
+#define HOTEND_PID_I 250
+#define HOTEND_PID_D 1000
+
+
 /* Calibrating:
   as y leaves 0 to +side, z increases (should stay level)
     Even more so as it goes to -side.
@@ -127,30 +105,83 @@ using namespace drv::rpi; //for RpiIoPin, etc.
 
 class KosselPi : public Machine {
     private:
-        typedef InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_16, IoHigh> > _StepperEn;
-        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_18, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA;
-        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P5_03, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
-        typedef Endstop<InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_15, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
-        typedef RCThermistor<RpiIoPin<mitpi::V2_GPIO_P1_13>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
-        typedef Fan<RpiIoPin<mitpi::V2_GPIO_P1_08, IoLow> > _Fan;
-        typedef InvertedPin<RpiIoPin<mitpi::V2_GPIO_P1_10, IoHigh> > _HotendOut;
-        //typedef matr::Identity3Static _BedLevelT;
-        typedef matr::Matrix3Static<999975003, 5356, -7070522, 
-5356, 999998852, 1515111, 
-7070522, -1515111, 999973855, 1000000000> _BedLevelT; //[-0.007, 0.0015, 0.99]
-    public:
-        typedef ConstantAcceleration<MAX_ACCEL1000> AccelerationProfileT;
-
-        typedef LinearDeltaCoordMap<R1000, L1000, H1000, BUILDRAD1000, STEPS_M, STEPS_M_EXT, _BedLevelT> CoordMapT;
-        typedef std::tuple<LinearDeltaStepper<0, CoordMapT, R1000, L1000, STEPS_M, _EndstopA>, LinearDeltaStepper<1, CoordMapT, R1000, L1000, STEPS_M, _EndstopB>, LinearDeltaStepper<2, CoordMapT, R1000, L1000, STEPS_M, _EndstopC>, LinearStepper<STEPS_M_EXT, COORD_E> > AxisStepperTypes;
+        //define one pin to enable/disable ALL steppers.
+        //  This pin should be connected directly to the EN pin of each stepper motor driver chip in use.
+        //  it defaults to HIGH=disabled, LOW=enabled.
+        typedef InvertedPin<RpiIoPin<PIN_STEPPER_EN, IoHigh> > _StepperEn;
+        
+        //define the endstops:
+        //  These endstops are wired as a switch, with one end tied to the 3.3V supply and the other connected to a resistor of 1k-50k ohms, and then fed to the input. The endstop is interpreted as triggered when the switch is OPEN (so if you have a 3-pin endstop, use the common pin and the open pin)
+        //  the resistor is technically optional, but without it, you run the risk of shorting Vcc to ground if the pin EVER gets misconfigured as an output (this would destroy the pin & possibly damage the Pi).
+        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_A, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA;
+        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_B, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
+        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_C, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
+        
+        //define the thermistor:
+        //  The Raspberry Pi lacks an analog to digital converter, so we use a resistor-capacitor circuit to measure the time it takes a fully charged capacitor of known capacitance to discharge through the thermistor.
+        //We have a single pin here, and we configure it as output(HIGH) to charge the capacitor, and then configure it as input and measure the time it takes for the logic level to drop to low while the capacitor discharges through a parallel connection to ground (through Ra).
+        typedef RCThermistor<RpiIoPin<PIN_THERMISTOR>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
+        
+        //define the fan:
+        //  The fan is controlled in a PWM way - set HIGH for full power, set LOW for off, toggle rapidly for something in-between.
+        //  One should not attempt to directly drive a fan off of the Pi's GPIOs.
+        //  Instead, obtain a transistor, wire base to 12V, collector to the GPIO, and emitter should be connected through the fan and into ground.
+        typedef Fan<RpiIoPin<PIN_FAN, IoLow> > _Fan;
+        
+        //define the hotend:
+        //  The hotend is controlled in precisely the same manner as the fan.
+        //  Please note that this is currently set to inverted mode, so a logic-level HIGH should result in 0 power delivered to the hotend.
+        typedef InvertedPin<RpiIoPin<PIN_HOTEND, IoHigh> > _HotendOut;
+        
+        //Expose the logic used to control the stepper motors:
+        //Here we just have 1 stepper motor for each axis and another for the extruder:
+        typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A, _EndstopA>, LinearDeltaStepper<DELTA_AXIS_B, _EndstopB>, LinearDeltaStepper<DELTA_AXIS_C, _EndstopC>, LinearStepper<CARTESIAN_AXIS_E> > _AxisStepperTypes;
+        typedef AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
+        typedef AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
+        
+        //Gather all the I/O controlled devices we defined above:
+        //  Additionally, define the actual stepper motor drivers and tie the thermistor to the hotend as a feedback source.
         typedef std::tuple<
-            A4988<RpiIoPin<mitpi::V2_GPIO_P1_22>, RpiIoPin<mitpi::V2_GPIO_P1_23>, _StepperEn>, //A tower
-            A4988<RpiIoPin<mitpi::V2_GPIO_P1_19>, RpiIoPin<mitpi::V2_GPIO_P1_21>, _StepperEn>, //B tower
-            A4988<RpiIoPin<mitpi::V2_GPIO_P1_24>, RpiIoPin<mitpi::V2_GPIO_P1_26>, _StepperEn>, //C tower
-            A4988<RpiIoPin<mitpi::V2_GPIO_P1_03>, RpiIoPin<mitpi::V2_GPIO_P1_05>, _StepperEn>, //E coord
+            A4988<RpiIoPin<PIN_STEPPER_A_STEP>, RpiIoPin<PIN_STEPPER_A_DIR>, _StepperEn>, //A tower
+            A4988<RpiIoPin<PIN_STEPPER_B_STEP>, RpiIoPin<PIN_STEPPER_B_DIR>, _StepperEn>, //B tower
+            A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>, //C tower
+            A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>, //E coord
             _Fan,
-            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<18000, 250, 1000>, LowPassFilter<3000> >
-            > IODriverTypes;
+            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D>, LowPassFilter<3000> >
+            > _IODriverTypes;
+    public:
+        //getXXX defines wrappers for all the above types. Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
+        
+        //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
+        ConstantAcceleration getAccelerationProfile() const {
+            return ConstantAcceleration(MAX_ACCEL_MM_SEC2);
+        }
+        
+        //Define the coordinate system:
+        //  We are using a LinearDelta coordinate system, where vertically-moving carriages are attached to an end effector via fixed-length, rotatable rods.
+        LinearDeltaCoordMap<> getCoordMap() const {
+            //the Matrix3x3 defines the level of the bed:
+            //  This is a matrix such that M * {x,y,z} should transform desired coordinates into a bed-level-compensated equivalent.
+            //  Usually, this is just a rotation matrix.
+            return LinearDeltaCoordMap<>(R_MM, L_MM, H_MM, BUILDRAD_MM, STEPS_MM, STEPS_MM_EXT, Matrix3x3(
+                0.999975003, 0.000005356, -0.007070522, 
+                0.000005356, 0.999998852, 0.001515111, 
+                0.007070522, -0.001515111, 0.999973855));
+        }
+        _AxisStepperTypes getAxisSteppers() const {
+            return _AxisStepperTypes();
+        }
+        _HomeStepperTypes getHomeSteppers() const {
+            return _HomeStepperTypes();
+        }
+        _ArcStepperTypes getArcSteppers() const {
+            return _ArcStepperTypes();
+        }
+        _IODriverTypes getIoDrivers() const {
+            return _IODriverTypes();
+        }
+        
+        //Expose default and maximum velocities:
         inline float defaultMoveRate() const { //in mm/sec
             return MAX_MOVE_RATE;
         }
@@ -162,13 +193,14 @@ class KosselPi : public Machine {
             return MAX_EXT_RATE;
         }
         inline float clampMoveRate(float inp) const {
-            return std::min(inp, defaultMoveRate());//ensure we never move too fast.
+            return std::min(inp, defaultMoveRate());
         }
         inline float clampHomeRate(float inp) const {
             (void)inp; //unused argument
             return HOME_RATE;
         }
         inline bool doHomeBeforeFirstMovement() const {
+            //TODO: This logic seems more appropriate to place in the CoordMap; not the machine.
             return true; //if we get a G1 before the first G28, then yes - we want to home first!
         }
 };

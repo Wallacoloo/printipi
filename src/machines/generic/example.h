@@ -5,6 +5,7 @@
 #include "motion/constantacceleration.h"
 #include "drivers/linearcoordmap.h"
 #include "machines/machine.h"
+#include "common/matrix.h"
 
 namespace machines {
 namespace generic {
@@ -13,10 +14,27 @@ using namespace drv; //for all the drivers
 
 class Example : public Machine {
     public:
-        typedef ConstantAcceleration<500*1000> AccelerationProfileT;
-        typedef LinearCoordMap<> CoordMapT;
-        typedef std::tuple<> AxisStepperTypes;
-        typedef std::tuple<> IODriverTypes;
+        ConstantAcceleration getAccelerationProfile() const {
+            return ConstantAcceleration(500);
+        }
+        LinearCoordMap<> getCoordMap() const {
+            return LinearCoordMap<>(1.0, 1.0, 1.0, 1.0, Matrix3x3(
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1));
+        }
+        std::tuple<> getAxisSteppers() const {
+            return std::tuple<>();
+        }
+        std::tuple<> getHomeSteppers() const {
+            return std::tuple<>();
+        }
+        std::tuple<> getArcSteppers() const {
+            return std::tuple<>();
+        }
+        std::tuple<> getIoDrivers() const {
+            return std::tuple<>();
+        }
 };
 
 }

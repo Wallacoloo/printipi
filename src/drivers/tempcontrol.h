@@ -63,6 +63,10 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
     bool _isReading;
     EventClockT::time_point _nextReadTime;
     public:
+        /*TempControl(const PID &pid) : IODriver(), _pid(pid), _destTemp(-300), _lastTemp(-300), _isReading(false),
+         _nextReadTime(EventClockT::now()) {
+            _heater.makeDigitalOutput(IoLow);
+        }*/
         TempControl() : IODriver(), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.makeDigitalOutput(IoLow);
@@ -86,6 +90,9 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
         }
         CelciusType getMeasuredTemperature() const {
             return _lastTemp;
+        }
+        CelciusType getTargetTemperature() const {
+            return _destTemp;
         }
         Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
             return _heater;

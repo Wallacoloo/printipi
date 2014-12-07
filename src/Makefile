@@ -11,13 +11,18 @@ SRCDIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 CXX=g++
 #Check if using gcc >= 4.7; Then we can use -flto flag. 4.6 and lower support lto, but have errors (specifically when "functional" is included)
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
+GCC_GTEQ_490 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40900)
 #Allow user to pass USE_PTHREAD=0 for a system that doesn't support pthreads (it's only used for upping the priority)
 ifneq "$(USE_PTHREAD)" "0"
     USE_PTHREAD := 1
 endif
 LOGFLAGS=-DDNO_LOG_M105
 PROFFLAGS=
-#LOGFLAGS= -DNO_LOGGING -DNO_USAGE_INFO
+ifeq "$(GCC_GTEQ_490)" "1"
+	DIAGFLAG=-fdiagnostics-color=auto
+else
+	DIAGFLAG= #gcc < 4.9 doesn't support colorized diagnostics (error messages)
+endif
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
@@ -31,6 +36,7 @@ MACHINECPP=$(subst /,::,$(MACHINE))
 LOWERMACHINE=$(subst ::,/,$(shell echo $(MACHINE) | tr A-Z a-z))
 MACHINE_PATH=machines/$(LOWERMACHINE).h
 LOWER_MACHINE_CLASS=$(subst /,,$(dir $(LOWERMACHINE)))
+MACHINE_CLASS_DIR=drivers/$(LOWER_MACHINE_CLASS)
 MACHINE_CLASS=$(shell echo $(LOWER_MACHINE_CLASS) | tr a-z A-Z)
 #Check for platform-specific file overrides:
 ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h)","")
@@ -52,7 +58,8 @@ endif
 #-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
-CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES)
+CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
+# -DDMACHINE_CLASS_DIR=$(MACHINE_CLASS_DIR)
 MAINCFLAGS=#-fwhole-program
 LD=ld
 LDFLAGS= $(LTOFLAG)
@@ -72,7 +79,7 @@ NAMELINK=printipi
 all: debug
 
 #include auto-generated dependencies:
--include $(wildcard *.d */*.d */*/*.d */*/*/*.d)
+-include $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
 
 #Configure debug/release settings:
 # -fsanitize=address (gcc 4.8)
@@ -97,34 +104,26 @@ minsize: CFLAGS+= -DNDEBUG -Os -s -fmerge-all-constants -fomit-frame-pointer -ff
 minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)-$(TARGET)
+
+#Sometimes need an empty dependency in order to avoid 'no input file' errors, etc:
+%/empty.cpp:
+	touch $@
 	
 %/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
 	
-%.dir:
+$(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZEDIR)/%.o: %.cpp
 	@mkdir -p $(@D)
-$(DEBUGDIR)/%.o: %.cpp $(DEBUGDIR)/%.dir
-	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
-	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-$(DEBUGRELDIR)/%.o: %.cpp $(DEBUGRELDIR)/%.dir
-	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
-	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-$(RELEASEDIR)/%.o: %.cpp $(RELEASEDIR)/%.dir
-	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
-	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-$(PROFILEDIR)/%.o: %.cpp $(PROFILEDIR)/%.dir
-	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
-	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-$(MINSIZEDIR)/%.o: %.cpp $(MINSIZEDIR)/%.dir
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-%/drivers/rpi/rpi.a: %/drivers/rpi/chronoclock.o %/drivers/rpi/hardwarescheduler.o %/drivers/rpi/mitpi.o
+%/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard drivers/$(LOWER_MACHINE_CLASS)/*.cpp))) %/empty.o
+	@mkdir -p $(@D)
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/rpi/rpi.a
+%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
@@ -151,4 +150,4 @@ cleanminsize:
 	rm -rf $(MINSIZEDIR)
 clean: cleandebug cleanrelease cleanprofile cleanminsize
 	rm -rf $(BUILDROOT)/$(NAME)
-	rm -rf $(wildcard *.d */*.d */*/*.d)
+	rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d)

@@ -53,58 +53,24 @@ template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPi
     DirPin dirPin;
     public:
         A4988() : IODriver() {
-            //initIO();
-            //bcm2835_gpio_fsel(STEPPIN, BCM2835_GPIO_FSEL_OUTP); //configure these pins as output
-            //bcm2835_gpio_fsel(DIRPIN, BCM2835_GPIO_FSEL_OUTP);
             stepPin.makeDigitalOutput(IoLow);
             dirPin.makeDigitalOutput(IoLow);
-            //Enabler::enable();
-            //enabler.enable();
             enablePin.makeDigitalOutput(IoHigh); //set as output and enable.
         }
         void lockAxis() {
-            //Enabler::enable();
-            //enabler.enable();
-            //enablePin.makeDigitalOutput(IoHigh); //enable.
             enablePin.digitalWrite(IoHigh);
         }
         void unlockAxis() {
-            //Enabler::disable();
-            //enabler.disable();
-            //enablePin.makeDigitalOutput(IoLow); //disable.
             enablePin.digitalWrite(IoLow);
         }
-        void stepForward() {
-            dirPin.digitalWrite(IoHigh);
-            //bcm2835_gpio_write(DIRPIN, HIGH); //set direction as forward
-            cycleStepPin();
-        }
-        void stepBackward() {
-            dirPin.digitalWrite(IoLow);
-            //bcm2835_gpio_write(DIRPIN, LOW); //set direction as backward
-            cycleStepPin();
-        }
-        bool isEventOutputSequenceable(const Event&) {
-            //Both stepForward and stepBackward events are sequenceable.
-            return true;
-        }
         std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {
+            //A4988 is directed by putting a direction on the DIRPIN, and then
+            //sending a pulse on the STEPPIN.
+            //It's the low->high transition that triggers the step. 
+            //NOTE: documentation says STEP must be LOW for at least 1 uS and then HIGH for at least 1 uS.
             return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
                 OutputEvent(evt.time(), stepPin.id(), IoLow),
-                OutputEvent(evt.time()+std::chrono::microseconds(8), stepPin.id(), IoHigh)}}; //It's the low->high transition that triggers the step. NOTE: documentation says only 1 uS delay is necessary, but < 15 causes consistent problems. May be DMA scheduling
-        }
-    private:
-        //A4988 is directed by putting a direction on the DIRPIN, and then
-        //sending a pulse on the STEPPIN.
-        void cycleStepPin() {
-            //LOGV("cycling pin %i\n", DIRPIN);
-            stepPin.digitalWrite(IoHigh);
-            //bcm2835_gpio_write(STEPPIN, HIGH); 
-            mitpi::usleep(2);
-            //bcm2835_delayMicroseconds(2); //delayMicroseconds(n) can delay anywhere from (n-1) to n. Need to delay 2 uS to get minimum of 1 uS. Note, this is a waste of 700-1400 cycles.
-            stepPin.digitalWrite(IoLow);
-            //bcm2835_gpio_write(STEPPIN, LOW); //note: may need a (SHORT!) delay here.
-            //bcm2835_delayMicroseconds(1);
+                OutputEvent(evt.time()+std::chrono::microseconds(8), stepPin.id(), IoHigh)}};
         }
 };
 

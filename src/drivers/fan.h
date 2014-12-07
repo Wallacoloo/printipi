@@ -25,7 +25,7 @@
  * Printipi/drivers/fan.h
  *
  * The Fan class serves to control a physical Fan, often used to cool cpu components.
- * This class essentially wraps an IoPin so that it can be commanded as a fan
+ * This class essentially wraps an IoPin so that it can be commanded and recognized as a fan.
  */
  
 
@@ -43,13 +43,6 @@ template <typename Driver> class Fan : public IODriver {
             driver.makeDigitalOutput(IoLow);
         }
         constexpr bool isFan() { return true; }
-        //forward output control:
-        void stepForward() {
-            driver.digitalWrite(IoHigh);
-        }
-        void stepBackward() {
-            driver.digitalWrite(IoLow);
-        }
         Driver& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
             return driver;
         }

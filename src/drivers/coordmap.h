@@ -30,21 +30,48 @@
  * Note: CoordMap is an interface, and not an implementation.
  * An implementation is needed for each coordinate style - Cartesian, deltabot, etc.
  * These implementations must provide the functions outlined further down in the header.
+ *
+ * Note: the term "axis coordinates" refers to an individual motor's microstep index (no wraparound).
+ *   whereas "cartesian coordinates" refers to the print head's location in [x, y, z[, e]] space in units of mm.
+ *   For example, if your Z motor has 1000 steps/mm and is 200 mm tall, then an axis coordinate of 0 translates to a cartesian Z coordinate of 0mm,
+ *     and an axis coordinate of 200000 translates to a cartesian Z coordinate of 200mm.
  */
 
 #ifndef DRIVERS_COORDMAP_H
 #define DRIVERS_COORDMAP_H
 
-//#include <tuple> //needed for children
+#include <tuple>
+#include <array>
+#include <cassert>
 
 namespace drv {
 
 class CoordMap {
     public:
-        //static std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, N>&);
-        //constexpr static std::size_t numAxis();
-        //return the home position, in cartesian coordinates:
-        //static constexpr std::array<int, 4> getHomePosition(const std::array<int, 4> &cur)
+        static constexpr std::size_t numAxis() {
+            //return the number of axis (physical motors) that we have.
+            return 0;
+        }
+        std::array<int, 0> getHomePosition(const std::array<int, 0> &/*cur*/) const {
+            //given the current tracked motor coordinates, and knowing that we are at home position,
+            //return the true motor coordinates.
+            return std::array<int, 0>();
+        }
+        std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
+            //apply some leveling transformation to the [x,y,z] cartesian coordinate to compensate for an unlevel bed.
+            //Note: this is only applied to the endpoints of a line, so a non-planar bed cannot properly be leveled.
+            return xyz;
+        }
+        std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
+            //ensure that the desired coordinate is accessible. (i.e. motors won't ram the endstops, etc).
+            return xyze;
+        }
+        std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
+            //given axis coordinates &mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.
+            (void)mech; //unused in this stub
+            assert(false);
+            return std::tuple<float, float, float, float>(0, 0, 0, 0);
+        }
 };
 
 }

@@ -25,7 +25,8 @@
  * Printipi/drivers/rcthermistor.h
  *
  * This file provides code to approximate a temperature via first determining the resistance of a thermistor (resistor that varies its resistance according to temperature) via only a digital IO pin, fixed resistor and capacitor.
- * The raspberry pi doesn't have any ADC pins, so we must use the method outlined here: http://www.robotshop.com/media/files/pdf/RCtime_App_Note.pdf
+ * The raspberry pi doesn't have any ADC pins, so we must use the method outlined here (figure 1): 
+ *   http://www.robotshop.com/media/files/pdf/RCtime_App_Note.pdf
  *
  * NOTE: there are almost certainly better ways to achieve ADC conversion on a Raspberry Pi. 
  *   A discussion on these can be found here: https://github.com/Wallacoloo/printipi/issues/24
@@ -44,6 +45,13 @@
 namespace drv {
 
 template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV, unsigned T0_C, unsigned R0_OHMS, unsigned BETA, unsigned MIN_R=0, unsigned MAX_R=R0_OHMS*2> class RCThermistor {
+    //Note: R_OHMS should be at least 300 ohms to limit current through the pins, 
+    //  but you probably don't want it higher than 1000 ohms, or else you won't be able to sense high temperatures.
+    //Larger capacitors give you more precision, but decrease the frequency with which you can measure when at a low temperature (e.g. < 50 C).
+    //V_TOGGLE_mV is the voltage threshold at which your pin will switch from sensing HIGH to LOW
+    //  note: due to hysterisis, this may not be the same voltage at which it switches from LOW to HIGH.
+    //T0, R0 and BETA are constants for the thermistor and should be found on the packaging / documentation.
+    // (T0 can be assumed to be 25*C if not explicitly listed)
     static constexpr float C = C_PICO * 1.0e-12;
     static constexpr float Vcc = VCC_mV/1000.;
     static constexpr float Va = V_TOGGLE_mV/1000.;
@@ -51,39 +59,30 @@ template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsig
     static constexpr float T0 = mathutil::CtoK(T0_C); //convert to Kelvin
     static constexpr float R0 = R0_OHMS; //measured resistance of thermistor at T0
     static constexpr float B = BETA; //describes how thermistor changes resistance over the temperature range.
-    //struct timespec _startReadTime, _endReadTime;
     Pin pin;
     EventClockT::time_point _startReadTime, _endReadTime;
     public:
-        RCThermistor() {
-            //initIO();
-        }
         void startRead() {
-            //bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_INPT);
             pin.makeDigitalInput();
-            _startReadTime = EventClockT::now(); //timespecNow();
+            _startReadTime = EventClockT::now();
         }
         bool isReady() {
-            //if (bcm2835_gpio_lev(PIN)) { //wait for pin to go LOW.
             if (pin.digitalRead() == IoHigh) { //capacitor is still discharging; not ready.
                 return false;
             } else {
-                _endReadTime = EventClockT::now(); //timespecNow();
+                //reading is complete. Log the current time to determine discharge duration:
+                _endReadTime = EventClockT::now();
                 //prepare IOs for the next read (ie. drain the capacitor that was charged during reading)
                 pin.makeDigitalOutput(IoHigh); //output high to drain the capacitor
-                //bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_OUTP);
-                //bcm2835_gpio_set(PIN); //output high to drain the capacitor
                 return true;
             }
         }
         EventClockT::duration timeSinceStartRead() const {
+            //need to expose this information to assist in detecting freezes / failed reads.
             return EventClockT::now() - _startReadTime;
         }
         
         float value() const {
-            //struct timespec tDelta;
-            //tDelta = timespecSub(_endReadTime, _startReadTime);
-            //float duration = timespecToFloat(tDelta);
             float duration = std::chrono::duration_cast<std::chrono::duration<float> >(_endReadTime - _startReadTime).count();
             LOGV("time to read resistor: %f\n", duration);
             //now try to guess the resistance:

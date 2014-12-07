@@ -28,6 +28,10 @@
     #define NO_DMA
 #endif
 
+#if BUILD_TYPE_release
+    #define CLEAN_EXIT
+#endif
+
 
 //Now expose some primitive typedefs:
 typedef uint8_t AxisIdType;
