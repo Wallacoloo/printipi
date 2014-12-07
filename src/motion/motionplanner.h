@@ -238,7 +238,7 @@ template <typename Interface> class MotionPlanner {
 
             //Need to adjust the center point such that it is equidistant from a and b.
             //Note: the set of points equidistant from a and b is described by the normal vector, n = (b-a)
-            //  and a point on the plane, the midpoint between a and b: 1/2*(a+b)
+            //  and a point on the plane, the midpoint between a and b: m = 1/2*(a+b)
             //Then we choose as our new center, the point on the plane that is closest to the old center, c.
             //Note that this is done just by moving c along n until it is on the plane:
             //    c
@@ -261,7 +261,7 @@ template <typename Interface> class MotionPlanner {
             //Vector3f projcn = center.dot(n)
             float projcmp_nX = (mp.x()-centerX)*n.x() / magNSq * n.x();
             float projcmp_nY = (mp.y()-centerY)*n.y() / magNSq * n.y();
-            float projcmp_nZ = (mp.z()-centerZ*n.z()) / magNSq * n.z();
+            float projcmp_nZ = (mp.z()-centerZ)*n.z() / magNSq * n.z();
             centerX += projcmp_nX;
             centerY += projcmp_nY;
             centerZ += projcmp_nZ;
