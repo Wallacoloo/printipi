@@ -266,7 +266,7 @@ template <typename Interface> class MotionPlanner {
             //centerY += projcmp_nY;
             //centerZ += projcmp_nZ;
             Vector3f projcmpn = (mp-center).proj(n);
-            center = center + projcmpn;
+            center += projcmpn;
             
             //recalculate our a and b vectors, relative to this new center-point:
             //a = Vector3f(curX-centerX, curY-centerY, curZ-centerZ); //relative *current* coordinates
