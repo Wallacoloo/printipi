@@ -46,6 +46,11 @@
 
 //Pin Definitions:
 //Note: these are all physical pin numbers, as opposed to logical pin numbers.
+//  We don't use any of the pins' special features, 
+//    so you should be able to choose whichever pins you find most convenient.
+//  Please note, though, that you must invoke `make MAX_RPI_PIN_ID=NN' if you use a *logical* pin that maps to something > 31
+//    This is not applicable to the RPI model A, B, A+ or B+, since all usable GPIOs are < 32, 
+//    but it may be applicable to future versions
 //  P1_01 is the top-left of the GPIO headers,
 //  P1_02 is the top-right,
 //  then the next row is P1_03, P1_04, and so on.
