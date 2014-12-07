@@ -223,16 +223,6 @@ template <typename Interface> class MotionPlanner {
             std::tie(x, y, z, e) = _coordMapper.bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
             
             //The 3 points, (centerX, centerY, centerZ), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
-            //To get the arclength, we take the arcangle * arcRad.
-            //a . b = |a| |b| cos(theta), so we can find the arcangle with arccos(a . b / |a| / |b|).
-            //Note: |a| == |b| == arcRad, as these points are defined to be equi-distant from the center-point.
-            //TODO: in actuality, the mechanical limits will be such that arcs WILL propagate error unless we adjust the center to make (xCur, yCur, zCur) at the same radius as (x, y, z)
-            /*float aX = curX-centerX; //relative *current* coordinates
-            float aY = curY-centerY;
-            float aZ = curZ-centerZ;
-            float bX = x-centerX; //relative *desired* coordinates
-            float bY = y-centerY;
-            float bZ = z-centerZ;*/
             //TODO: apply leveling to the center!
             Vector3f center(centerX_, centerY_, centerZ_);
             Vector3f a(curX-centerX_, curY-centerY_, curZ-centerZ_);
@@ -253,19 +243,8 @@ template <typename Interface> class MotionPlanner {
             // the closest point on the plane is c +Z proj(mc->n) 
             //  (that is, the projection of the line from c to the midpoint of a and b, onto n; the component of mc parallel to n)
             //Note: proj(c->n) = (c . n / |n|^2)n
-            /*float nX = bX-aX;
-            float nY = bY-aY;
-            float nZ = bZ-aZ;*/
             Vector3f n = b - a;
             Vector3f mp = (b+center + a+center)*0.5;
-            //float magNSq = nX*nX + nY*nY + nZ*nZ;
-            float magNSq = n.magSq();
-            //float projcmp_nX = (mp.x()-centerX)*n.x() / magNSq * n.x();
-            //float projcmp_nY = (mp.y()-centerY)*n.y() / magNSq * n.y();
-            //float projcmp_nZ = (mp.z()-centerZ)*n.z() / magNSq * n.z();
-            //centerX += projcmp_nX;
-            //centerY += projcmp_nY;
-            //centerZ += projcmp_nZ;
             Vector3f projcmpn = (mp-center).proj(n);
             center += projcmpn;
             
@@ -275,11 +254,13 @@ template <typename Interface> class MotionPlanner {
             a = Vector3f(curX, curY, curZ) - center; //relative *current* coordinates
             b = Vector3f(x, y, z) - center; //relative *desired* coordinates
             //now solve for the arcLength and arcAngle
-            float aDotB = a.dot(b);
-            float arcRadSq = a.magSq();
-            float arcRad = sqrt(arcRadSq);
-            float arcAngle = acos(aDotB/arcRadSq);
-            float arcLength = arcAngle*arcRad;
+            //To get the arclength, we take the arcangle * arcRad.
+            //a . b = |a| |b| cos(theta), so we can find the arcangle with arccos(a . b / |a| / |b|).
+            //Note: |a| == |b| == arcRad, as these points are defined to be equi-distant from the center-point.
+
+            float arcRad = a.mag();
+            float arcAngle = acos(a.dot(b)/a.magSq()); //a . b = (r)*(r)*cos(theta)
+            float arcLength = arcAngle*arcRad; //s = r*theta
             
             //Now that we have the arcLength, we can determine the optimal velocity:
             float minDuration = arcLength/maxVelXyz; //duration, should there be no acceleration
@@ -294,8 +275,7 @@ template <typename Interface> class MotionPlanner {
                         
             //Want two perpindicular vectors such that <x, y, z> = P(t) = <xc, yc, zc> + r*cos(m*t)*u + r*sin(m*t)*v
             //Thus, u is the normal vector of <x0, y0, z0> - <xc, yc, zc>
-            float magA = a.mag();
-            Vector3f u = a/magA;
+            Vector3f u = a.norm();
             
             //Now to get v; v is some linear combination of u + <x1-xc, y1-yc, z1-zc> that is perpindicular to u and has length 1.
             //So, v = au + b<x1-xc, y1-yc, z1-zc>
@@ -308,9 +288,18 @@ template <typename Interface> class MotionPlanner {
             
             //float a = -b.dot(u); //-(bX*u.x() + bY*u.y() + bZ*u.z());
             //Vector3f v = a*u - b;
-            Vector3f v = u*-b.dot(u) - b;
-            float magV = v.mag();
-            v = v/magV;
+            //Vector3f v = u*-b.dot(u) - b;
+            //v = v.norm();
+            // |
+            // |   / b
+            // |  /
+            // | /
+            // |/    u
+            //  ------->
+            // To create a unit vector v that is perpidicular to u
+            // v is proportional to b - proj(b->u)
+            // Therefore: v = (b - b.proj(b->u)).norm() 
+            Vector3f v = (b-b.proj(u)).norm();
 
             //Given <x, y, z> = u*cos(t) + v*sin(t)
             //  if we are CCW, then u x v should be out of the page (+z)
