@@ -66,7 +66,7 @@ template <typename F> class Vector3 {
 		}
 
 		Vector3<F> operator-(const Vector3<F> &v) const {
-			return Vector3<F>(x() - v.x(), y() - v.y(), z() - v.z());
+			return *this + (-v);
 		}
 		Vector3<F>& operator-=(const Vector3<F> &v) {
 			return *this = (*this - v);
@@ -78,7 +78,7 @@ template <typename F> class Vector3 {
 		Vector3<F>& operator*=(F s) {
 			return *this = (*this * s);
 		}
-		
+
 		Vector3<F> operator/(F s) const {
 			return *this * ((F)1. / s);
 		}
