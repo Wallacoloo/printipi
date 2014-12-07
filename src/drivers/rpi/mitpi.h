@@ -87,6 +87,35 @@ enum GpioPin {
     V2_GPIO_P5_04  = 29,
     V2_GPIO_P5_05  = 30,
     V2_GPIO_P5_06  = 31,
+
+    //The addition of the model A+ and B+ brought a 40-pin GPIO header.
+    //The first 26 pins are identical to the model A/B Revision 2, with the latter 14 exposing additional GPIOs
+    PLUS_GPIO_P1_03  =  2,
+    PLUS_GPIO_P1_05  =  3,
+    PLUS_GPIO_P1_07  =  4,
+    PLUS_GPIO_P1_08  = 14,
+    PLUS_GPIO_P1_10  = 15,
+    PLUS_GPIO_P1_11  = 17,
+    PLUS_GPIO_P1_12  = 18,
+    PLUS_GPIO_P1_13  = 27,
+    PLUS_GPIO_P1_15  = 22,
+    PLUS_GPIO_P1_16  = 23,
+    PLUS_GPIO_P1_18  = 24,
+    PLUS_GPIO_P1_19  = 10,
+    PLUS_GPIO_P1_21  =  9,
+    PLUS_GPIO_P1_22  = 25,
+    PLUS_GPIO_P1_23  = 11,
+    PLUS_GPIO_P1_24  =  8,
+    PLUS_GPIO_P1_26  =  7,
+    PLUS_GPIO_P1_29  =  5,
+    PLUS_GPIO_P1_31  =  6,
+    PLUS_GPIO_P1_32  = 12,
+    PLUS_GPIO_P1_33  = 13,
+    PLUS_GPIO_P1_35  = 19,
+    PLUS_GPIO_P1_36  = 16,
+    PLUS_GPIO_P1_37  = 26,
+    PLUS_GPIO_P1_38  = 20,
+    PLUS_GPIO_P1_40  = 21,
 };
 
 enum GpioPull {
