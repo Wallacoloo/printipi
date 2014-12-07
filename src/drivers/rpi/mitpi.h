@@ -36,29 +36,29 @@
 namespace mitpi {
 
 enum GpioPin {
-    //There are 2 board revisions (and now the model B+), which have slightly different I/O wiring.
-    //P1 header (2x13 pins) for version 1:
+    //There are 2 board revisions (and now the model A+/B+), which have slightly different I/O wiring.
+    //P1 header (2x13 pins) for version 1 (i.e. before Sept 2012:
     //looking down at the board with the P1 header in the upper right,
     //The upper-left pin is P1_01,
     //The upper-right pin is P1_02 (so, odds are left, evens are right)
     //numbering increases as you go vertically down 
-    GPIO_P1_03     =  0, //(i.e., physical pin #3 is addressed in software as #0)
-    GPIO_P1_05     =  1,
-    GPIO_P1_07     =  4,
-    GPIO_P1_08     = 14,
-    GPIO_P1_10     = 15,
-    GPIO_P1_11     = 17,
-    GPIO_P1_12     = 18,
-    GPIO_P1_13     = 21,
-    GPIO_P1_15     = 22,
-    GPIO_P1_16     = 23,
-    GPIO_P1_18     = 24,
-    GPIO_P1_19     = 10,
-    GPIO_P1_21     =  9,
-    GPIO_P1_22     = 25,
-    GPIO_P1_23     = 11,
-    GPIO_P1_24     =  8,
-    GPIO_P1_26     =  7,
+    V1_GPIO_P1_03     =  0, //(i.e., physical pin #3 is addressed in software as #0)
+    V1_GPIO_P1_05     =  1,
+    V1_GPIO_P1_07     =  4,
+    V1_GPIO_P1_08     = 14,
+    V1_GPIO_P1_10     = 15,
+    V1_GPIO_P1_11     = 17,
+    V1_GPIO_P1_12     = 18,
+    V1_GPIO_P1_13     = 21,
+    V1_GPIO_P1_15     = 22,
+    V1_GPIO_P1_16     = 23,
+    V1_GPIO_P1_18     = 24,
+    V1_GPIO_P1_19     = 10,
+    V1_GPIO_P1_21     =  9,
+    V1_GPIO_P1_22     = 25,
+    V1_GPIO_P1_23     = 11,
+    V1_GPIO_P1_24     =  8,
+    V1_GPIO_P1_26     =  7,
 
     //The P1 header for revision 2:
     //same physical numbering as before
@@ -80,7 +80,7 @@ enum GpioPin {
     V2_GPIO_P1_24  =  8,
     V2_GPIO_P1_26  =  7,
 
-    //Revision 2 has another 2x4 header.
+    //Revision 2 has another 2x4 header called 'P5'.
     //This doesn't have any pins soldered on by default, so (trivial) physical modification is required to use them
     //Physical numbering is ordered ... how?
     V2_GPIO_P5_03  = 28,
