@@ -18,11 +18,13 @@ template <int P1000000, int I1000000=0, int D1000000=0> class PID {
     static constexpr float D = D1000000 / 1000000.;
     float errorI;
     float lastValue;
-
-
+    float _P, _I, _D;
 
     EventClockT::time_point lastTime;
     public:
+        /*PID(float P_, float I_, float D_) 
+          : _P(P_), _I(I_), _D(D_),
+            errorI(0), lastValue(0), lastTime() {}*/
         PID() : errorI(0), lastValue(0), lastTime() {}
         /* notify PID controller of a newly-read error value.
         Returns a recalculated output */
