@@ -14,8 +14,8 @@ using namespace drv; //for all the drivers
 
 class Example : public Machine {
     public:
-        ConstantAcceleration<500*1000> getAccelerationProfile() const {
-            return ConstantAcceleration<500*1000>();
+        ConstantAcceleration getAccelerationProfile() const {
+            return ConstantAcceleration(500);
         }
         LinearCoordMap<> getCoordMap() const {
             return LinearCoordMap<>(1.0, 1.0, 1.0, 1.0, Matrix3x3(

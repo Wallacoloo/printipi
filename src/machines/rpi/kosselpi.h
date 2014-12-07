@@ -59,10 +59,10 @@
 
 //Pin Defines:
 #define PIN_STEPPER_EN     mitpi::V2_GPIO_P1_16
-#define PIN_ENDSTOP_A      mitpi::V2_GPIO_P1_18
+#define PIN_ENDSTOP_A      mitpi::V2_GPIO_P1_13
 #define PIN_ENDSTOP_B      mitpi::V2_GPIO_P5_03
 #define PIN_ENDSTOP_C      mitpi::V2_GPIO_P1_15
-#define PIN_THERMISTOR     mitpi::V2_GPIO_P1_13
+#define PIN_THERMISTOR     mitpi::V2_GPIO_P1_18
 #define PIN_FAN            mitpi::V2_GPIO_P1_08
 #define PIN_HOTEND         mitpi::V2_GPIO_P1_10
 
