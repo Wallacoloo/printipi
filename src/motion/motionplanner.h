@@ -80,6 +80,9 @@ template <typename Interface> class MotionPlanner {
             //Note: for now, there isn't actually buffering.
             return _motionType == MotionNone;
         }
+        bool doHomeBeforeFirstMovement() const {
+            return _coordMapper.doHomeBeforeFirstMovement();
+        }
     private:
         Event _nextStep(drv::AxisStepper &s) {
             LOGV("MotionPlanner::nextStep() is: %i at %g of %g\n", s.index(), s.time, _duration);

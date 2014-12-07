@@ -170,14 +170,14 @@ class KosselPi : public Machine {
         //  Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
         
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
-        ConstantAcceleration getAccelerationProfile() const {
+        inline ConstantAcceleration getAccelerationProfile() const {
             return ConstantAcceleration(MAX_ACCEL_MM_SEC2);
         }
         
         //Define the coordinate system:
         //  We are using a LinearDelta coordinate system, where vertically-moving carriages are
         //    attached to an end effector via fixed-length, rotatable rods.
-        LinearDeltaCoordMap<> getCoordMap() const {
+        inline LinearDeltaCoordMap<> getCoordMap() const {
             //the Matrix3x3 defines the level of the bed:
             //  This is a matrix such that M * {x,y,z} should transform desired coordinates into a 
             //    bed-level-compensated equivalent.
@@ -187,16 +187,16 @@ class KosselPi : public Machine {
                 0.000005356, 0.999998852, 0.001515111, 
                 0.007070522, -0.001515111, 0.999973855));
         }
-        _AxisStepperTypes getAxisSteppers() const {
+        inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
         }
-        _HomeStepperTypes getHomeSteppers() const {
+        inline _HomeStepperTypes getHomeSteppers() const {
             return _HomeStepperTypes();
         }
-        _ArcStepperTypes getArcSteppers() const {
+        inline _ArcStepperTypes getArcSteppers() const {
             return _ArcStepperTypes();
         }
-        _IODriverTypes getIoDrivers() const {
+        inline _IODriverTypes getIoDrivers() const {
             return _IODriverTypes();
         }
         
@@ -217,10 +217,6 @@ class KosselPi : public Machine {
         inline float clampHomeRate(float inp) const {
             (void)inp; //unused argument
             return HOME_RATE_MM_SEC;
-        }
-        inline bool doHomeBeforeFirstMovement() const {
-            //TODO: This logic seems more appropriate to place in the CoordMap; not the machine.
-            return true; //if we get a G1 before the first G28, then yes - we want to home first!
         }
 };
 

@@ -450,7 +450,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return gparse::Response::Null;
         }
-        if (!_isHomed && driver.doHomeBeforeFirstMovement()) {
+        if (!_isHomed && motionPlanner.doHomeBeforeFirstMovement()) {
             this->homeEndstops();
         }
         
