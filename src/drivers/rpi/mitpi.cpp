@@ -28,10 +28,9 @@
 #define TIMER_CHI 0x00000008 //upper 32-bits
 
 #include <sys/mman.h> //for mmap
-#include <sys/time.h> //for timespec
-#include <time.h> //for timespec / nanosleep / usleep (need -std=gnu99)
+#include <sys/time.h> 
+#include <time.h> //for nanosleep / usleep (need -std=gnu99)
 #include <unistd.h> //for NULL
-//#include <stdio.h> //for printf
 #include <stdlib.h> //for exit
 #include <cassert> //for assert
 #include <fcntl.h> //for file opening
@@ -93,12 +92,12 @@ bool init() {
 void makeOutput(int pin) {
     assertValidPin(pin);
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + pin/10);
-    writeBitmasked(fselAddr, 0x7 << (3*(pin%10)), 0x1 << (3*(pin%10))); //0b111 is bitmask to select just our pin, 0b001 is mode to make pin an output
+    writeBitmasked(fselAddr, 0x7 << (3*(pin%10)), 0x1 << (3*(pin%10))); //0x7  is bitmask to select just our pin, 0x1 is mode to make pin an output
 }
 void makeInput(int pin) {
     assertValidPin(pin);
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + pin/10);
-    writeBitmasked(fselAddr, 0x7 << (3*(pin%10)), 0x0 << (3*(pin%10))); //0b111 is bitmask to select just our pin, 0b000 is mode to make pin an input
+    writeBitmasked(fselAddr, 0x7 << (3*(pin%10)), 0x0 << (3*(pin%10))); //0x7 is bitmask to select just our pin, 0x0 is mode to make pin an input
 }
 void setPinHigh(int pin) {
     assertValidPin(pin);
@@ -137,6 +136,7 @@ void setPinPull(int pin, GpioPull pull) {
 }
 
 void usleep(unsigned int us) {
+    //explicitly exposed to allow users of the library access to a usleep function
     ::usleep(us);
 }
 
