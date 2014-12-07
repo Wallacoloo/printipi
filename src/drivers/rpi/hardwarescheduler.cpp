@@ -140,21 +140,6 @@ void HardwareScheduler::makeMaps() {
 }
 
 volatile uint32_t* HardwareScheduler::mapPeripheral(int addr) const {
-    ///dev/mem behaves as a file. We need to map that file into memory:
-    //NULL = virtual address of mapping is chosen by kernel.
-    //PAGE_SIZE = map 1 page.
-    //PROT_READ|PROT_WRITE means give us read and write priveliges to the memory
-    //MAP_SHARED means updates to the mapped memory should be written back to the file & shared with other processes
-    //addr = offset in file to map
-    /*void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
-    //now, *mapped = memory at physical address of addr.
-    if (mapped == MAP_FAILED) {
-        LOGE("drv::rpi::HardwareScheduler::mapPeripheral failed to map memory (did you remember to run as root?)\n");
-        exit(1);
-    } else {
-        LOGV("drv::rpi::HardwareScheduler::mapPeripheral mapped: %p\n", mapped);
-    }
-    return (volatile uint32_t*)mapped;*/
     return mitpi::mapPeripheral(memfd, addr);
 }
 
