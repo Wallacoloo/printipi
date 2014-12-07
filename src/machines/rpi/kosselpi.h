@@ -27,21 +27,21 @@
 //STEPS_M = #of *micro* steps for the motor driving each axis (A, B, C) to raise its carriage by 1 meter.
 //STEPS_M_EXT = # of *micro* steps needed to push 1 meter of filament through the extruder.
 
-#define R1000 111000
-#define L1000 221000
+#define R_MM 111.000
+#define L_MM 221.000
 //#define H1000 467330
-#define H1000 467450
-#define BUILDRAD1000 85000
-#define STEPS_M 6265*8
+#define H_MM 467.450
+#define BUILDRAD_MM 85.000
+#define STEPS_MM 6.265*8
 //#define STEPS_M_EXT 40000*16
-#define STEPS_M_EXT 30000*16
+#define STEPS_MM_EXT 30.000*16
 
 //MAX_ACCEL1000 = maximum cartesian acceleration of end effector in micrometers / s^2
 //MAX_MOVE_RATE = maximum cartesian verlocity of end effector, in mm/s
 //HOME_RATE = speed at which to home the endstops, in mm/2
 //MAX_EXT_RATE = maximum rate at which filament should ever be extruded, in mm of filament / s
 
-#define MAX_ACCEL1000 900000
+#define MAX_ACCEL_MM_SEC2 900.000
 //120mm/sec uses 50% cpu at eigth-stepping (Oct 18, temp=195C)
 #define MAX_MOVE_RATE 120
 #define HOME_RATE 10
@@ -153,8 +153,8 @@ class KosselPi : public Machine {
         //getXXX defines wrappers for all the above types. Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
         
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
-        ConstantAcceleration<MAX_ACCEL1000> getAccelerationProfile() const {
-            return ConstantAcceleration<MAX_ACCEL1000>();
+        ConstantAcceleration getAccelerationProfile() const {
+            return ConstantAcceleration(MAX_ACCEL_MM_SEC2);
         }
         
         //Define the coordinate system:
@@ -163,7 +163,7 @@ class KosselPi : public Machine {
             //the Matrix3x3 defines the level of the bed:
             //  This is a matrix such that M * {x,y,z} should transform desired coordinates into a bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
-            return LinearDeltaCoordMap<>(R1000/1000., L1000/1000., H1000/1000., BUILDRAD1000/1000., STEPS_M/1000., STEPS_M_EXT/1000., Matrix3x3(
+            return LinearDeltaCoordMap<>(R_MM, L_MM, H_MM, BUILDRAD_MM, STEPS_MM, STEPS_MM_EXT, Matrix3x3(
                 0.999975003, 0.000005356, -0.007070522, 
                 0.000005356, 0.999998852, 0.001515111, 
                 0.007070522, -0.001515111, 0.999973855));
