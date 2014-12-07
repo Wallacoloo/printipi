@@ -36,14 +36,16 @@
 #include "accelerationprofile.h"
 #include "common/logging.h"
 
-template <int Accel1000> class ConstantAcceleration : public AccelerationProfile {
-    static constexpr float a() { return Accel1000 / 1000.; }
+class ConstantAcceleration : public AccelerationProfile {
+    float _accel;
     float moveDuration;
     float tmax1, tmax2;
     float tbase3;
     float twiceVmax_a;
+    float a() const { return _accel; }
     public:
-        void begin(float moveDuration, float Vmax) {
+        ConstantAcceleration(float accel) : _accel(accel) {}
+        inline void begin(float moveDuration, float Vmax) {
             this->moveDuration = moveDuration;
             this->tmax1 = Vmax/2/a();
             this->tmax2 = std::isnan(moveDuration) ? INFINITY : moveDuration - Vmax/2/a();
@@ -54,7 +56,7 @@ template <int Accel1000> class ConstantAcceleration : public AccelerationProfile
             LOGD("Accel::begin tmax1, tmax2, tbase3, twiceVmax_a: %f, %f, %f, %f\n", tmax1, tmax2, tbase3, twiceVmax_a);
         }
         //float transform(float time, float moveDuration, float Vmax) {
-        float transform(float time) {
+        inline float transform(float time) {
             /*if (time < Vmax/2/a()) { //accelerating
                 return std::sqrt(2*Vmax/a()*time);
             } else if (time < moveDuration - Vmax/2/a() || std::isnan(moveDuration)) { //constant velocity
