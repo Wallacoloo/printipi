@@ -210,7 +210,7 @@ template <typename Interface> class MotionPlanner {
             this->_motionType = MotionHome;
             this->_accel.begin(NAN, maxVelXyz);
         }
-        void arcTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float centerX, float centerY, float centerZ, float maxVelXyz, float minVelE, float maxVelE, bool isCW) {
+        void arcTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float centerX_, float centerY_, float centerZ_, float maxVelXyz, float minVelE, float maxVelE, bool isCW) {
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             /*if (std::tuple_size<ArcStepperTypes>::value == 0) {
@@ -233,8 +233,9 @@ template <typename Interface> class MotionPlanner {
             float bX = x-centerX; //relative *desired* coordinates
             float bY = y-centerY;
             float bZ = z-centerZ;*/
-            Vector3f a(curX-centerX, curY-centerY, curZ-centerZ);
-            Vector3f b(x-centerX, y-centerY, z-centerZ);
+            Vector3f center(centerX_, centerY_, centerZ_);
+            Vector3f a(curX-centerX_, curY-centerY_, curZ-centerZ_);
+            Vector3f b(x-centerX_, y-centerY_, z-centerZ_);
 
             //Need to adjust the center point such that it is equidistant from a and b.
             //Note: the set of points equidistant from a and b is described by the normal vector, n = (b-a)
@@ -258,17 +259,20 @@ template <typename Interface> class MotionPlanner {
             Vector3f mp = (b+a)*0.5;
             //float magNSq = nX*nX + nY*nY + nZ*nZ;
             float magNSq = n.magSq();
-            //Vector3f projcn = center.dot(n)
-            float projcmp_nX = (mp.x()-centerX)*n.x() / magNSq * n.x();
-            float projcmp_nY = (mp.y()-centerY)*n.y() / magNSq * n.y();
-            float projcmp_nZ = (mp.z()-centerZ)*n.z() / magNSq * n.z();
-            centerX += projcmp_nX;
-            centerY += projcmp_nY;
-            centerZ += projcmp_nZ;
+            //float projcmp_nX = (mp.x()-centerX)*n.x() / magNSq * n.x();
+            //float projcmp_nY = (mp.y()-centerY)*n.y() / magNSq * n.y();
+            //float projcmp_nZ = (mp.z()-centerZ)*n.z() / magNSq * n.z();
+            //centerX += projcmp_nX;
+            //centerY += projcmp_nY;
+            //centerZ += projcmp_nZ;
+            Vector3f projcmpn = (mp-center).proj(n);
+            center = center + projcmpn;
+            
             //recalculate our a and b vectors, relative to this new center-point:
-            a = Vector3f(curX-centerX, curY-centerY, curZ-centerZ); //relative *current* coordinates
-            b = Vector3f(x-centerX, y-centerY, z-centerZ); //relative *desired* coordinates
-
+            //a = Vector3f(curX-centerX, curY-centerY, curZ-centerZ); //relative *current* coordinates
+            //b = Vector3f(x-centerX, y-centerY, z-centerZ); //relative *desired* coordinates
+            a = Vector3f(curX, curY, curZ) - center; //relative *current* coordinates
+            b = Vector3f(x, y, z) - center; //relative *desired* coordinates
             //now solve for the arcLength and arcAngle
             float aDotB = a.dot(b);
             float arcRadSq = a.magSq();
@@ -318,8 +322,13 @@ template <typename Interface> class MotionPlanner {
             }
             
             //LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) phase (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, xAng, yAng, zAng, arcRad, arcVel, velE, minDuration);
-            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", centerX, centerY, centerZ, curX, curY, curZ, x, y, z, u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE, minDuration);
-            drv::AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, centerX, centerY, centerZ, u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE);
+            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", 
+                  center.x(), center.y(), center.z(), curX, curY, curZ, x, y, z, 
+                  u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE, minDuration);
+            LOGD("MotionPlanner arc orig center (%f,%f,%f), proj (%f,%f,%f) n(%f,%f,%f), mp(%f,%f,%f)\n", 
+                centerX_, centerY_, centerZ_, projcmpn.x(), projcmpn.y(), projcmpn.z(),
+                n.x(), n.y(), n.z(), mp.x(), mp.y(), mp.z());
+            drv::AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, center.x(), center.y(), center.z(), u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE);
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
             }
