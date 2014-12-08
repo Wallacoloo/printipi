@@ -28,6 +28,15 @@
 #define STEPS_MM 6.265*8            // Number of stepper motor steps it takes to raise a carriage by 1 mm
 #define STEPS_MM_EXT 30.000*16      // Number of stepper motor steps it takes to extrude 1 mm of filament
 
+/* Calibrating:
+  Note: increasing L increases convexity (/\)
+  Note: decreasing L increases concavity (\/)
+  Note: increasing R increases concavity (\/)
+  Note: decreasing R increases convexity (/\)
+  Note: decreasing R decreases actual displacement (eg X100 becomes only 90mm from center)
+*/
+
+
 //Movement rates:
 #define MAX_ACCEL_MM_SEC2 900.000   // Maximum cartesian acceleration of end effector in mm / s^2
 #define MAX_MOVE_RATE_MM_SEC 120    // Maximum cartesian verlocity of end effector, in mm/s
@@ -79,23 +88,6 @@
 #define HOTEND_PID_P 18.000
 #define HOTEND_PID_I  0.250
 #define HOTEND_PID_D  1.000
-
-
-/* Calibrating:
-  as y leaves 0 to +side, z increases (should stay level)
-    Even more so as it goes to -side.
-  as x becomes +size, z increases
-  as x becomes -size, z increases
-  This points to either R or L being off, but in what way?
-    joint to edge of bed is ~43 mm. bed is 170mm, so R is 43 + 85 = 128mm
-    L is 215mm as measured BUT math doesn't consider the existence of an effector (so L should be longer?)
-  Note: increasing L increases convexity (/\)
-  Note: decreasing L increases concavity (\/)
-  Note: increasing R increases concavity (\/)
-  Note: decreasing R increases convexity (/\)
-  Note: decreasing R decreases actual displacement (eg X100 becomes only 90mm from center)
-  at 121, 222, 60mm in x dir is really 68mm.
-*/
 
 namespace machines {
 namespace rpi {
