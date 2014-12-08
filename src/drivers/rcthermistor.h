@@ -48,19 +48,14 @@ template <typename Pin> class RCThermistor {
     //Note: R_OHMS should be at least 300 ohms to limit current through the pins, 
     //  but you probably don't want it higher than 1000 ohms, or else you won't be able to sense high temperatures.
     //Larger capacitors give you more precision, but decrease the frequency with which you can measure when at a low temperature (e.g. < 50 C).
-    //V_TOGGLE_mV is the voltage threshold at which your pin will switch from sensing HIGH to LOW
+    //V_TOGGLE_V is the voltage threshold at which your pin will switch from sensing HIGH to LOW
     //  note: due to hysterisis, this may not be the same voltage at which it switches from LOW to HIGH.
     //T0, R0 and BETA are constants for the thermistor and should be found on the packaging / documentation.
     // (T0 can be assumed to be 25*C if not explicitly listed)
-    /*static constexpr float C = C_PICO * 1.0e-12;
-    static constexpr float Vcc = VCC_mV/1000.;
-    static constexpr float Va = V_TOGGLE_mV/1000.;
-    static constexpr float Ra = R_OHMS;
-    static constexpr float T0 = mathutil::CtoK(T0_C); //convert to Kelvin
-    static constexpr float R0 = R0_OHMS; //measured resistance of thermistor at T0
-    static constexpr float B = BETA; //describes how thermistor changes resistance over the temperature range.*/
-    float C, Vcc, Va, Ra, T0, R0, B;
-    float MIN_R, MAX_R;
+    float C, Vcc, Va, Ra; //capacitance, supply voltage, toggle voltage and fixed RC resistance, respectively
+    float T0, R0; //R0 = measured resistance at temperature T0 (in Ohms / Kelvin) (listed on thermistor packaging or documentation page)
+    float B; //Thermistor Beta value; describes how thermistor changes resistance over the temperature range (listed on thermistor packaging or documentation page)
+    float MIN_R, MAX_R; //thermistor resistance range to consider when estimating the resistance.
     Pin pin;
     EventClockT::time_point _startReadTime, _endReadTime;
     public:
