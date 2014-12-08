@@ -44,7 +44,7 @@
 
 namespace drv {
 
-template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsigned V_TOGGLE_mV, unsigned T0_C, unsigned R0_OHMS, unsigned BETA, unsigned MIN_R=0, unsigned MAX_R=R0_OHMS*2> class RCThermistor {
+template <typename Pin> class RCThermistor {
     //Note: R_OHMS should be at least 300 ohms to limit current through the pins, 
     //  but you probably don't want it higher than 1000 ohms, or else you won't be able to sense high temperatures.
     //Larger capacitors give you more precision, but decrease the frequency with which you can measure when at a low temperature (e.g. < 50 C).
@@ -52,21 +52,26 @@ template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsig
     //  note: due to hysterisis, this may not be the same voltage at which it switches from LOW to HIGH.
     //T0, R0 and BETA are constants for the thermistor and should be found on the packaging / documentation.
     // (T0 can be assumed to be 25*C if not explicitly listed)
-    static constexpr float C = C_PICO * 1.0e-12;
+    /*static constexpr float C = C_PICO * 1.0e-12;
     static constexpr float Vcc = VCC_mV/1000.;
     static constexpr float Va = V_TOGGLE_mV/1000.;
     static constexpr float Ra = R_OHMS;
     static constexpr float T0 = mathutil::CtoK(T0_C); //convert to Kelvin
     static constexpr float R0 = R0_OHMS; //measured resistance of thermistor at T0
-    static constexpr float B = BETA; //describes how thermistor changes resistance over the temperature range.
+    static constexpr float B = BETA; //describes how thermistor changes resistance over the temperature range.*/
+    float C, Vcc, Va, Ra, T0, R0, B;
+    float MIN_R, MAX_R;
     Pin pin;
     EventClockT::time_point _startReadTime, _endReadTime;
     public:
-        void startRead() {
+        RCThermistor(float R_OHMS, float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA)
+          : C(C_FARADS), Vcc(VCC_V), Va(V_TOGGLE_V), Ra(R_OHMS), T0(mathutil::CtoK(T0_C)), R0(R0_OHMS), B(BETA),
+          MIN_R(0), MAX_R(R0_OHMS*2) {}
+        inline void startRead() {
             pin.makeDigitalInput();
             _startReadTime = EventClockT::now();
         }
-        bool isReady() {
+        inline bool isReady() {
             if (pin.digitalRead() == IoHigh) { //capacitor is still discharging; not ready.
                 return false;
             } else {
@@ -77,12 +82,12 @@ template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsig
                 return true;
             }
         }
-        EventClockT::duration timeSinceStartRead() const {
+        inline EventClockT::duration timeSinceStartRead() const {
             //need to expose this information to assist in detecting freezes / failed reads.
             return EventClockT::now() - _startReadTime;
         }
         
-        float value() const {
+        inline float value() const {
             float duration = std::chrono::duration_cast<std::chrono::duration<float> >(_endReadTime - _startReadTime).count();
             LOGV("time to read resistor: %f\n", duration);
             //now try to guess the resistance:
@@ -93,7 +98,7 @@ template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsig
             return temp;
         }
     private:
-        float guessRFromTime(float time) const {
+        inline float guessRFromTime(float time) const {
             //equation is: Va = Vcc (1 - Ra/(Ra+Rt)) e^-t/(Rt C)
             //where Va is the minimum voltage sensed as HIGH,
             //  Ra is resistance connecting IO pin to cap,
@@ -116,7 +121,7 @@ template <typename Pin, unsigned R_OHMS, unsigned C_PICO, unsigned VCC_mV, unsig
             }
             return 0.5*(lower+upper);
         }
-        float temperatureFromR(float R) const {
+        inline float temperatureFromR(float R) const {
             float K = 1. / (1./T0 + log(R/R0)/B); //resistance;
             return mathutil::KtoC(K);
         }

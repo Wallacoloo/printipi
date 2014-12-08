@@ -45,12 +45,12 @@
 
 
 //Resistor-Capacitor thermistor read settings (see drivers/rcthermistor.h):
-#define THERM_RA 665
-#define THERM_CAP_PICO  2200000
-#define VCC_mV 3300
-#define THERM_IN_THRESH_mV 1600
-#define THERM_T0 25
-#define THERM_R0 100000
+#define THERM_RA_OHMS 665
+#define THERM_CAP_FARADS  2.200*1.e-6
+#define VCC_V 3.300
+#define THERM_IN_THRESH_V 1.600
+#define THERM_T0_C 25
+#define THERM_R0_OHMS 100000
 #define THERM_BETA 3950
 
 //Pin Definitions:
@@ -120,7 +120,7 @@ class KosselPi : public Machine {
         //  We have a single pin here, and we configure it as output(HIGH) to charge the capacitor, 
         //    and then configure it as input and measure the time it takes for the logic level to drop to 
         //    low while the capacitor discharges through a parallel connection to ground (through Ra).
-        typedef RCThermistor<RpiIoPin<PIN_THERMISTOR>, THERM_RA, THERM_CAP_PICO, VCC_mV, THERM_IN_THRESH_mV, THERM_T0, THERM_R0, THERM_BETA> _Thermistor;
+        typedef RCThermistor<RpiIoPin<PIN_THERMISTOR> > _Thermistor;
         
         //define the fan:
         //  The fan is controlled in a PWM way - set HIGH for full power, set LOW for off, 
@@ -168,7 +168,8 @@ class KosselPi : public Machine {
                 A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>(),
                 _Fan(),
                 TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID, LowPassFilter>(
-                    _HotendOut(), _Thermistor(), PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3000)));
+                    _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
+                    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3000)));
         }
 
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
