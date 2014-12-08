@@ -161,7 +161,7 @@ class KosselPi : public Machine {
         //  Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
         
         inline _IODriverTypes getIoDrivers() const {
-            return _IODriverTypes(
+            return std::make_tuple(
                 A4988<RpiIoPin<PIN_STEPPER_A_STEP>, RpiIoPin<PIN_STEPPER_A_DIR>, _StepperEn>(),
                 A4988<RpiIoPin<PIN_STEPPER_B_STEP>, RpiIoPin<PIN_STEPPER_B_DIR>, _StepperEn>(),
                 A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>(),
