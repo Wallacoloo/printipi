@@ -169,7 +169,7 @@ class KosselPi : public Machine {
                 _Fan(),
                 TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID, LowPassFilter>(
                     _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
-                    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3000)));
+                    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));
         }
 
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
