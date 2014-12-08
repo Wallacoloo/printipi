@@ -28,7 +28,6 @@ class LowPassFilter {
     inline float a() { return 1 / (_RC + 1); }
     public:
         LowPassFilter(float RC) : _RC(RC), _last(0) {}
-        LowPassFilter() : _last(0) {}
         inline float feed(float inp) {
             _last = _last + a()*(inp - _last);
             return _last;
