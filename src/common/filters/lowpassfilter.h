@@ -20,14 +20,16 @@
    Will need to convert this to work with seconds, and not sample numbers.
 */
 
-template <unsigned RAD_SEC_1000> class LowPassFilter {
-    static constexpr float RC() { return RAD_SEC_1000/1000.; }
+class LowPassFilter {
+    //static constexpr float RC() { return RAD_SEC_1000/1000.; }
     //for now, just assume that the time between samples is a steady 1 second.
-    static constexpr float a() { return 1 / (RC() + 1); }
+    float _RC;
     float _last;
+    inline float a() { return 1 / (_RC + 1); }
     public:
+        LowPassFilter(float RC) : _RC(RC), _last(0) {}
         LowPassFilter() : _last(0) {}
-        float feed(float inp) {
+        inline float feed(float inp) {
             _last = _last + a()*(inp - _last);
             return _last;
             //return inp;

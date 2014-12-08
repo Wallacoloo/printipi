@@ -63,10 +63,11 @@ template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typena
     bool _isReading;
     EventClockT::time_point _nextReadTime;
     public:
-        /*TempControl(const PID &pid) : IODriver(), _pid(pid), _destTemp(-300), _lastTemp(-300), _isReading(false),
+        TempControl(const Heater &heater, const Thermistor &therm, const PID &pid, const Filter &filter) 
+         : IODriver(), _heater(heater), _therm(therm), _pid(pid), _filter(filter), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.makeDigitalOutput(IoLow);
-        }*/
+        }
         TempControl() : IODriver(), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.makeDigitalOutput(IoLow);
