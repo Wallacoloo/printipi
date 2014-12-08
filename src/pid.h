@@ -12,33 +12,32 @@
 #include <chrono> //for std::chrono::duration
 #include "drivers/auto/chronoclock.h" //for EventClockT
 
-template <int P1000000, int I1000000=0, int D1000000=0> class PID {
-    static constexpr float P = P1000000 / 1000000.;
-    static constexpr float I = I1000000 / 1000000.;
-    static constexpr float D = D1000000 / 1000000.;
+class PID {
+    float _P, _I, _D;
     float errorI;
     float lastValue;
-    float _P, _I, _D;
 
     EventClockT::time_point lastTime;
+    float P() const { return _P; }
+    float I() const { return _I; }
+    float D() const { return _D; }
     public:
-        /*PID(float P_, float I_, float D_) 
-          : _P(P_), _I(I_), _D(D_),
-            errorI(0), lastValue(0), lastTime() {}*/
-        PID() : errorI(0), lastValue(0), lastTime() {}
+        PID(float P, float I, float D) 
+          : _P(P), _I(I), _D(D),
+            errorI(0), lastValue(0), lastTime() {}
         /* notify PID controller of a newly-read error value.
         Returns a recalculated output */
-        float feed(float setpoint, float pv) {
+        inline float feed(float setpoint, float pv) {
        	    float error = setpoint - pv;
             float deltaT = refreshTime();
             // Use a simple 1st order finite difference for the derivative - no fancy filtering.
             float errorD = (pv-lastValue)/deltaT;
             lastValue = pv;
             // Then figure out the change for the integral
-            float update = I * error * deltaT;
+            float update = I() * error * deltaT;
             errorI += update;
             // Then compute the output, saturate it to [0,1], and implement anti-windup
-            float output = P*error + errorI + D*errorD;
+            float output = P()*error + errorI + D()*errorD;
 
             if(output < 0.0){
                 if(error < 0.0){
@@ -57,7 +56,7 @@ template <int P1000000, int I1000000=0, int D1000000=0> class PID {
             return output;
         }
     private:
-        float refreshTime() {
+        inline float refreshTime() {
             EventClockT::time_point newTime = EventClockT::now();
             if (lastTime == EventClockT::time_point()) { //no previous time.
                 lastTime = newTime;

@@ -39,6 +39,7 @@
 #include "common/intervaltimer.h"
 #include "drivers/auto/chronoclock.h" //for EventClockT
 #include "compileflags.h" //for CelciusType
+#include "pid.h" //for default template parameter
 
 namespace drv {
 
@@ -49,7 +50,7 @@ enum TempControlType {
     HeatedBedType
 };
 
-template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID, typename Filter=NoFilter> class TempControl : public IODriver {
+template <TempControlType HotType, AxisIdType DeviceIdx, typename Heater, typename Thermistor, typename PID=PID, typename Filter=NoFilter> class TempControl : public IODriver {
     static const std::chrono::microseconds _intervalThresh;
     static const std::chrono::microseconds _readInterval;
     static const std::chrono::microseconds _maxRead;

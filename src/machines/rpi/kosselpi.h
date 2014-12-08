@@ -76,9 +76,9 @@
 //  We need to take the current temperature and use that to drive how much power we are sending to the hotend.
 //  Note especially that a thermistor takes a few seconds to adjust, so there is some latency in readings.
 //  The feedback algorithm is explained in pid.h and http://en.wikipedia.org/wiki/PID_controller
-#define HOTEND_PID_P 18000
-#define HOTEND_PID_I 250
-#define HOTEND_PID_D 1000
+#define HOTEND_PID_P 18.000
+#define HOTEND_PID_I  0.250
+#define HOTEND_PID_D  1.000
 
 
 /* Calibrating:
@@ -162,7 +162,7 @@ class KosselPi : public Machine {
             A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>, //C tower
             A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>, //E coord
             _Fan,
-            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D>, LowPassFilter>
+            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID, LowPassFilter> //The 5 indicates the TempControl's index in this tuple
             > _IODriverTypes;
     public:
         //getXXX defines wrappers for all the above types. 
@@ -175,8 +175,8 @@ class KosselPi : public Machine {
                 A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>(),
                 A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>(),
                 _Fan(),
-                TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID<HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D>, LowPassFilter>(
-                    _HotendOut(), _Thermistor(), PID<HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D>(), LowPassFilter(3000)));
+                TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID, LowPassFilter>(
+                    _HotendOut(), _Thermistor(), PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3000)));
         }
 
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
