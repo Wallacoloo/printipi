@@ -30,6 +30,7 @@ else #gcc < 4.7, or non-gcc compiler
 	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
+
 #Default machine if not given via command line argument:
 MACHINE=rpi/kossel.h
 ifeq "$(suffix $(MACHINE))" ".h"
@@ -44,7 +45,7 @@ MACHINE_ENDPATH=$(subst ::,/,$(MACHINEPARSED))
 MACHINE_PATH=machines/$(MACHINE_ENDPATH).h
 MACHINE_CLASS=$(subst /,,$(dir $(MACHINE_ENDPATH)))
 MACHINE_CLASS_DIR=drivers/$(MACHINE_CLASS)
-#MACHINE_CLASS=$(shell echo $(MACHINE_CLASS) | tr a-z A-Z)
+
 #Check for platform-specific file overrides:
 ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h)","")
     DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"drivers/$(MACHINE_CLASS)/chronoclock.h"'
