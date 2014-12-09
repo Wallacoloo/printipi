@@ -127,6 +127,8 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
+#Detect and build platform dependencies
+#  Thus, if you're targeting the Raspberry Pi (rpi), any source files under drivers/rpi/* will be compiled into the executable
 %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard $(MACHINE_CLASS_DIR)/*.cpp))) %/empty.o
 	@mkdir -p $(@D)
 	$(LD) -r $^ -o $@ $(LDFLAGS)
@@ -144,7 +146,7 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 %/main.cpp: $(MACHINE_PATH)
 	
-#Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.
+#Prevent the automatic deletion of "intermediate" .o files after the build by nulling .SECONDARY as follows.
 .SECONDARY:
 
 .PHONY: clean cleandebug cleanrelease cleanprofile cleanminsize debug release profile minsize
@@ -158,4 +160,4 @@ cleanminsize:
 	rm -rf $(MINSIZEDIR)
 clean: cleandebug cleanrelease cleanprofile cleanminsize
 	rm -rf $(BUILDROOT)/$(NAME)
-	rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d)
+	rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
