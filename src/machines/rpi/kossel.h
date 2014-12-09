@@ -95,7 +95,7 @@ namespace rpi {
 using namespace drv; //for all the drivers
 using namespace drv::rpi; //for RpiIoPin, etc.
 
-class KosselPi : public Machine {
+class kossel : public Machine {
     private:
         //define one pin to enable/disable ALL steppers.
         //  This pin should be connected directly to the EN pin of each stepper motor driver chip in use.

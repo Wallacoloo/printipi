@@ -12,6 +12,7 @@
 #include <pthread.h> //for pthread_setschedparam
 #include <chrono>
 
+#include "mitpi.h"
 #include "schedulerbase.h"
 #include "common/logging.h"
 #include "drivers/auto/thisthreadsleep.h" //for SleepT 

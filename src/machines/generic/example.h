@@ -12,7 +12,7 @@ namespace generic {
 
 using namespace drv; //for all the drivers
 
-class Example : public Machine {
+class example : public Machine {
     public:
         ConstantAcceleration getAccelerationProfile() const {
             return ConstantAcceleration(500);

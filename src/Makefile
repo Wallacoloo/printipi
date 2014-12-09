@@ -31,22 +31,29 @@ else #gcc < 4.7, or non-gcc compiler
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
 #Default machine if not given via command line argument:
-MACHINE=rpi::KosselPi
-MACHINECPP=$(subst /,::,$(MACHINE))
-LOWERMACHINE=$(subst ::,/,$(shell echo $(MACHINE) | tr A-Z a-z))
-MACHINE_PATH=machines/$(LOWERMACHINE).h
-LOWER_MACHINE_CLASS=$(subst /,,$(dir $(LOWERMACHINE)))
-MACHINE_CLASS_DIR=drivers/$(LOWER_MACHINE_CLASS)
-MACHINE_CLASS=$(shell echo $(LOWER_MACHINE_CLASS) | tr a-z A-Z)
+MACHINE=rpi/kossel.h
+ifeq "$(suffix $(MACHINE))" ".h"
+	MACHINEPARSED:=$(basename $(MACHINE))
+else
+	MACHINEPARSED:=$(MACHINE)
+endif
+MACHINECPP=$(subst /,::,$(MACHINEPARSED))
+
+
+MACHINE_ENDPATH=$(subst ::,/,$(MACHINEPARSED))
+MACHINE_PATH=machines/$(MACHINE_ENDPATH).h
+MACHINE_CLASS=$(subst /,,$(dir $(MACHINE_ENDPATH)))
+MACHINE_CLASS_DIR=drivers/$(MACHINE_CLASS)
+#MACHINE_CLASS=$(shell echo $(MACHINE_CLASS) | tr a-z A-Z)
 #Check for platform-specific file overrides:
 ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h"'
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"drivers/$(MACHINE_CLASS)/chronoclock.h"'
 endif
 ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h"'
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"drivers/$(MACHINE_CLASS)/hardwarescheduler.h"'
 endif
 ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/thisthreadsleep.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"drivers/$(LOWER_MACHINE_CLASS)/thisthreadsleep.h"'
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"drivers/$(MACHINE_CLASS)/thisthreadsleep.h"'
 endif
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
@@ -58,7 +65,7 @@ endif
 #-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
-CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
+CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
 # -DDMACHINE_CLASS_DIR=$(MACHINE_CLASS_DIR)
 MAINCFLAGS=#-fwhole-program
 LD=ld
@@ -72,7 +79,7 @@ RELEASEDIR=$(BUILDROOT)/release
 PROFILEDIR=$(BUILDROOT)/prof
 MINSIZEDIR=$(BUILDROOT)/minsize
 #name of binary file:
-NAME=printipi-$(subst /,-,$(LOWERMACHINE))
+NAME=printipi-$(subst /,-,$(MACHINEPARSED))
 #NAMELINK will become a symbolic link to the actual binary
 NAMELINK=printipi
 
@@ -119,11 +126,11 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
-%/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard drivers/$(LOWER_MACHINE_CLASS)/*.cpp))) %/empty.o
+%/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard $(MACHINE_CLASS_DIR)/*.cpp))) %/empty.o
 	@mkdir -p $(@D)
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a
+%/drivers/drivers.a: %/drivers/axisstepper.o %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
