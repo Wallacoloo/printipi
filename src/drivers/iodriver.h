@@ -69,7 +69,6 @@ class IODriver {
         Can be used to check the status of inputs, etc.
         Return true if object needs to continue to be serviced, false otherwise. */
         template <typename Sched> inline bool onIdleCpu(Sched & /*sched*/) { return false; } //OVERRIDE THIS
-        template <typename TupleT, typename ...Args > static bool callIdleCpuHandlers(TupleT &drivers, Args... args);
         template <typename TupleT> static void lockAllAxis(TupleT &drivers);
         template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
         template <typename TupleT> static void setHotendTemp(TupleT &drivers, CelciusType temp);
@@ -78,18 +77,6 @@ class IODriver {
         template <typename TupleT> static CelciusType getHotendTargetTemp(TupleT &drivers);
         template <typename TupleT> static CelciusType getBedTemp(TupleT &drivers);
 };
-
-//IODriver::callIdleCpuHandlers helper functions:
-
-struct IODriver__onIdleCpu {
-    template <typename T, typename ...Args> bool operator()(std::size_t index, T &driver, Args... args) {
-        (void)index; //unused;
-        return driver.onIdleCpu(args...);
-    }
-};
-template <typename TupleT, typename ...Args> bool IODriver::callIdleCpuHandlers(TupleT &drivers, Args... args) {
-    return tupleReduceLogicalOr(drivers, IODriver__onIdleCpu(), args...);
-}
 
 //IODriver::lockAllAxis helper functions:
 struct IODriver__lockAllAxis {

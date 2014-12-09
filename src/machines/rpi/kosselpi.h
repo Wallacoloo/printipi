@@ -154,7 +154,7 @@ class KosselPi : public Machine {
             A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>, //C tower
             A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>, //E coord
             _Fan,
-            TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID, LowPassFilter> //The 5 indicates the TempControl's index in this tuple
+            TempControl<drv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>
             > _IODriverTypes;
     public:
         //getXXX defines wrappers for all the above types. 
@@ -167,7 +167,7 @@ class KosselPi : public Machine {
                 A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperEn>(),
                 A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEn>(),
                 _Fan(),
-                TempControl<drv::HotendType, 5, _HotendOut, _Thermistor, PID, LowPassFilter>(
+                TempControl<drv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>(
                     _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                     PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));
         }

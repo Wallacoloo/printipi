@@ -142,6 +142,17 @@ template <typename Drv> class State {
                 return state.driver.getArcSteppers();
             }
     };
+    //Drivers need certain extra information within their onIdleCpu handlers, etc.
+    class DriverCallbackInterface {
+        State<Drv> &state;
+        AxisIdType index;
+        public:
+            DriverCallbackInterface(State<Drv> &state, AxisIdType index) : state(state), index(index) {}
+            void schedPwm(float duty, float maxPeriod) const {
+                state.scheduler.schedPwm(index, duty, maxPeriod);
+            }
+    };
+    struct State__onIdleCpu; //forward declare a type used internally in onIdleCpu() function
     typedef Scheduler<SchedInterface> SchedType;
     typedef decltype(std::declval<Drv>().getIoDrivers()) IODriverTypes;
     PositionMode _positionMode; // = POS_ABSOLUTE;
@@ -393,6 +404,13 @@ struct __iterEventOutputSequence {
     }
 };
 
+template <typename Drv> struct State<Drv>::State__onIdleCpu {
+    template <typename T> bool operator()(std::size_t index, T &driver, State<Drv> &state) {
+        DriverCallbackInterface cbInterface(state, index);
+        return driver.onIdleCpu(cbInterface);
+    }
+};
+
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     //Only check the communications periodically because calling execute(com.getCommand()) DOES add up.
     //One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
@@ -416,7 +434,15 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
             }
         }
     }
-    bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
+    /*struct IODriver__onIdleCpu {
+        template <typename T, typename ...Args> bool operator()(std::size_t index, T &driver, Args... args) {
+            (void)index; //unused;
+            return driver.onIdleCpu(args...);
+        }
+    };*/
+    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), *this);
+    //bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
+    //bool driversNeedCpu = false; //drv::IODriver::callIdleCpuHandlers<IODriverTypes, DriverCallbackInterface>(this->ioDrivers, DriverCallbackInterface(*this));
     return motionNeedsCpu || driversNeedCpu;
 }
 
