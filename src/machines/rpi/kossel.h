@@ -1,5 +1,5 @@
-#ifndef DRIVERS_KOSSELPI_H
-#define DRIVERS_KOSSELPI_H
+#ifndef MACHINES_RPI_KOSSEL_H
+#define MACHINES_RPI_KOSSEL_H
 
 
 #include "machines/machine.h"
