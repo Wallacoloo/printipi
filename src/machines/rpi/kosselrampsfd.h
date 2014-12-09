@@ -4,6 +4,7 @@
  *   Board Schematic https://github.com/bobc/bobc_hardware/blob/master/RAMPS-FD/RAMPS-FD-Schematic.pdf
  *   Arduino MEGA/DUE pinout: http://arduino.cc/en/uploads/Reference/arduino_mega_ethernet_pins.png
  *     Note: the RAMPS-FD schematic uses the above pin labeling
+ *   Marlin may also be of reference for RAMPS-FD pinouts: https://github.com/bobc/Marlin/blob/Marlin_v1/Due/Marlin/pins.h#L170
  *
  * Notes:
  *   RAMPS-FD (hereto dubbed 'FD') routes the stepper enable pins individually,
@@ -11,6 +12,17 @@
  *        Y-axis has Y_EN, 
  *        ... Z_EN, E0_EN, E1_EN, E2_EN
  *   FD Shield has 6 endstops; X-MIN, X-MAX, ..., Z-MIN, Z-MAX
+ *   All MOSFET outputs (heatbed, etc) are labeled as non-inverting
+ *   Have 4 outputs for high-power things:
+ *     1x heated bed,
+ *     1x "Extruder 1" (This may actually be for the heating resistor within the nozzle)
+ *     1x "Extruder 2 / Fan" (It appears this can be EITHER a second hotend or a general-purpose fan)
+ *     1x "Extruder 3 / Fan"
+ *     All of the above are functionally the same and use IRL88743PBF mosfets
+ *   Then we get 2 extra FETs:
+ *     FET5_BUF (D12) / FET6_BUF (D2)
+ *     Same circuitry as the other 4 mosfets, but use part #DMN2075U
+ *   Note: Marlin uses HEATER_0_PIN = D9 -> maps to "Extruder 1" on RAMPS-FD, so "Extruder 1" must refer to the heating resistor in primary hotend
  *
  */
 
@@ -73,9 +85,9 @@
 #define PIN_ENDSTOP_A      mitpi::V2_GPIO_P1_13 //maps to FD Shield D30 (X-MAX)
 #define PIN_ENDSTOP_B      mitpi::V2_GPIO_P5_03 //maps to FD Shield D38 (Y-MAX)
 #define PIN_ENDSTOP_C      mitpi::V2_GPIO_P1_15 //maps to FD Shield D34 (Z-MAX)
-#define PIN_THERMISTOR     mitpi::V2_GPIO_P1_18 //maps to FD Shield ?
-#define PIN_FAN            mitpi::V2_GPIO_P1_08 //maps to FD Shield ?
-#define PIN_HOTEND         mitpi::V2_GPIO_P1_10 //maps to FD Shield ?
+//#define PIN_THERMISTOR     mitpi::V2_GPIO_P1_18 //maps to FD Shield ?
+#define PIN_FAN            mitpi::V2_GPIO_P1_08 //maps to FD Shield D12 (FET5)
+#define PIN_HOTEND         mitpi::V2_GPIO_P1_10 //maps to FD Shield D9  (Extruder 1)
 
 #define PIN_STEPPER_A_EN   mitpi::V2_GPIO_P1_16 //maps to FD Shield D48  (X_EN)
 #define PIN_STEPPER_A_STEP mitpi::V2_GPIO_P1_22 //maps to FD Shield AD9  (X_STEP)
