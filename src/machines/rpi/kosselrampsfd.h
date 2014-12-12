@@ -1,10 +1,19 @@
 /*
- * Kossel Deltabot design that interfaces the Raspberry Pi to a RAMPS-FD board:
+ * Kossel Deltabot design that interfaces the Raspberry Pi to a RAMPS-FD (version 1 rev A) board:
+ *   Geeetech RAMPS-FD files: http://www.geeetech.com/wiki/index.php/Ramps-FD#FILES
+ *     Schematic: http://www.geeetech.com/wiki/images/8/83/RAMPS-FD-Schematic.pdf
  *   RAMPS-FD (RAMPS-For Due) board documentation: http://reprap.org/wiki/RAMPS-FD
- *   Board Schematic https://github.com/bobc/bobc_hardware/blob/master/RAMPS-FD/RAMPS-FD-Schematic.pdf
+ *   Board Schematic (note! This is for Rev 2): https://github.com/bobc/bobc_hardware/blob/master/RAMPS-FD/RAMPS-FD-Schematic.pdf
+ *   Thread describing Ramps-fd v1 "fixes": http://forums.reprap.org/read.php?219,424146,435502
+ *     don't appear to be any deal-breakers, just inconveniences
+ *   Friendly Labeled Board Image: http://reprap.org/wiki/File:Ramps-FD_Diagram_-_Rev3.png
  *   Arduino MEGA/DUE pinout: http://arduino.cc/en/uploads/Reference/arduino_mega_ethernet_pins.png
  *     Note: the RAMPS-FD schematic uses the above pin labeling
+ *     NOTE: the FD board has additional pins near RESET, 3V3, 5V, GND, VIN than listed in this photo!
+ *       It would appear that "R3" arduinos have these extra pins?
+ *   BETTER Arduino Due pinout: http://forum.arduino.cc/index.php?topic=132130.0
  *   Marlin may also be of reference for RAMPS-FD pinouts: https://github.com/bobc/Marlin/blob/Marlin_v1/Due/Marlin/pins.h#L170
+ *   FD blog posts: http://andy-projects.blogspot.com/2014/02/ramps-fd-initial-setup.html
  *
  * Notes:
  *   RAMPS-FD (hereto dubbed 'FD') routes the stepper enable pins individually,
@@ -22,8 +31,54 @@
  *   Then we get 2 extra FETs:
  *     FET5_BUF (D12) / FET6_BUF (D2)
  *     Same circuitry as the other 4 mosfets, but use part #DMN2075U
+ *     All 6 fets produce either 12V or 0V across the connected device
  *   Note: Marlin uses HEATER_0_PIN = D9 -> maps to "Extruder 1" on RAMPS-FD, so "Extruder 1" must refer to the heating resistor in primary hotend
+ * Power:
+ *   Although Arduino Due uses 3.3V internally, it still exposes 5V to the 5V shield pin (taken from power adapter)
+ *   P108, P107, HB_IN (3 blue adjacent screw terminals at the corner) are all 12-24V power inputs
+ *   No screw terminal for logic (3.3 V) power - so it likely comes from the arduino header.
+ *   Oddly, there are references to a 5V power source. The pin adjacent to 3.3V on arduino is labeled 5V and DUE_5V on the FD schematic.
+ *     This 5V source is used for the "status" LED (pg 1) and then OPTIONALLY sent to V_LOGIC (pg 2).
+ *      Also used in: 
+         - SERVO1 through SERVO4 (pg 6), 
+         - AUX3 - SPI (pg 6), 
+         - ENDSTOPS (pg 7) - acts as a pullup, can be disabled by removing JP801
+		     Endstop outputs are sent to an IO buffer chip, 4050_RMC, with Vlogic power supply. So likely still 3.3V compatible, 
+		       so long as you avoid the unbuffered P802 (CONN_6X2) interface
+		 - P801 - "CONN_6" (pg 7)
+ *     There is a jumper - JP101 - to choose 3.3V or 5V logic levels. The note says: "VSEL - Select logic voltage. 1-2 = Autoselect by IOREF, 2-3 = 5V"
+ *       Also a note: "On R3 compatible Arduinos, IOREF will supply 3.3V (DUE) or 5V (MEGA). If IOREF is not provided (non-R3) then it must be a 5V Arduino so set VSEL = 5V"
+ *     There is also jumper JP201, "5V_SEL" that connects DUE_5V to FD_5V. FD_5V is also permanently connected to P219, "EXT_5V". This suggests that one can either use an external 5V supply and remove the jumper, or use DUE_5V and insert the jumper.
+ *   It looks like all we need to do to be safe is:
+ *     put 3.3V on the IOREF pin, OPTIONALLY 5V on the 5V pin, and set JP101 to "1-2 = Autoselect by IOREF"
+ *     set JP102 to the appropriate power source; 1-2 = 24V, 2-3 = 12V.
+ *         these are incorrectly labeled on the board such that "12" = 24V and "24" = 12V
+ *     Remove JP1, for safety ("Supply 12V to Arduino in standalone operation")
+ *     Set JP801 (endstop pull-ups)
  *
+ *   Connecting motor power:
+ *     put 12V to P107 (2nd blue terminal from corner). 
+ *       Pin closest to board's corner is ground, according to https://raw.githubusercontent.com/bobc/bobc_hardware/master/RAMPS-FD/RAMPS-FD.png
+ *   
+ *   For thermistor reading:
+ *     RPi only has digital inputs/outputs (can PWM outputs)
+ *     But Ramps-FD gives us a few extra resistors, capacitors, diodes AND mosfets.
+ *     Previous RC reading designs here: https://github.com/Wallacoloo/printipi/issues/24
+ *     RPi inputs have "hysteresis" - a pin may transition from reading LOW to HIGH at a 2v threshold, but HIGH -> LOW at a 1v threshold.
+ *       This can be disabled, according to: http://www.mosaic-industries.com/embedded-systems/microcontroller-projects/raspberry-pi/gpio-pin-electrical-specifications
+ *       But the procedure to do so is not described.
+ *       We can also use one of the spare transistors on the FD board as a fixed comparator.
+ *         Example (usting BJTs): http://pyevolve.sourceforge.net/wordpress/?p=2383
+ *     One can create what is essentially a digitally-controlled resistor with a FET + capacitor: http://en.wikipedia.org/wiki/Switched_capacitor
+ *     ADC Types: http://en.wikipedia.org/wiki/Analog-to-digital_converter#ADC_types
+ *       Of note: delta-encoded ADC (same design as on the github issue: https://github.com/Wallacoloo/printipi/issues/24#issuecomment-58137624)
+ *	     Of note: Successive Approximation ADC which is more resistance to oscillations around to signal than a delta-encoded ADC
+ *     If we can convert an analog signal into a digital PWM signal, with duty cycle proportional to V,
+ *       then we can sample the PWM signal with the RPi regulary and deduce the duty cycle via its average value.
+ *       One such way to do this: compare Vin to some periodic analog signal
+ *         Eg a sawtooth wave: http://electronics.stackexchange.com/questions/74138/voltage-controlled-pwm-generator
+ *         Can produce a sinewave with 1 or 2 transistors (but might not achieve large voltage range):
+ *           http://www.bowdenshobbycircuits.info/page8.htm#phase.gif
  */
 
 #ifndef MACHINES_RPI_KOSSELRAMPSFD
@@ -82,6 +137,11 @@
 //  P1_02 is the top-right,
 //  then the next row is P1_03, P1_04, and so on.
 //  More information can be found in drivers/rpi/mitpi.h
+//Note: supply the following power connections: 
+//RPI:3.3V to FD:IOREF
+//RPI:3.3V to FD:3.3V
+//RPI:GND to FD:GND
+//12V tp FD:P107 (MOT_IN) (2nd blue terminal from corner). Pin closest to corner is ground.
 #define PIN_ENDSTOP_A      mitpi::V2_GPIO_P1_13 //maps to FD Shield D30 (X-MAX)
 #define PIN_ENDSTOP_B      mitpi::V2_GPIO_P5_03 //maps to FD Shield D38 (Y-MAX)
 #define PIN_ENDSTOP_C      mitpi::V2_GPIO_P1_15 //maps to FD Shield D34 (Z-MAX)
