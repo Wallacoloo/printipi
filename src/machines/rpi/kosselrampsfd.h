@@ -149,15 +149,15 @@
 #define PIN_FAN            mitpi::V2_GPIO_P1_08 //maps to FD Shield D12 (FET5)
 #define PIN_HOTEND         mitpi::V2_GPIO_P1_10 //maps to FD Shield D9  (Extruder 1)
 
-#define PIN_STEPPER_A_EN   mitpi::V2_GPIO_P1_16 //maps to FD Shield D48  (X_EN)
+#define PIN_STEPPER_A_EN   mitpi::V2_GPIO_P5_04 //maps to FD Shield D48  (X_EN)
 #define PIN_STEPPER_A_STEP mitpi::V2_GPIO_P1_22 //maps to FD Shield AD9  (X_STEP)
 #define PIN_STEPPER_A_DIR  mitpi::V2_GPIO_P1_23 //maps to FD Sheild AD8  (X_DIR)
 
-#define PIN_STEPPER_B_EN   mitpi::V2_GPIO_P1_16 //maps to FD Shield D46  (Y_EN)
+#define PIN_STEPPER_B_EN   mitpi::V2_GPIO_P5_05 //maps to FD Shield D46  (Y_EN)
 #define PIN_STEPPER_B_STEP mitpi::V2_GPIO_P1_19 //maps to FD Shield AD11 (Y_STEP)
 #define PIN_STEPPER_B_DIR  mitpi::V2_GPIO_P1_21 //maps to FD Shield AD10 (Y_DIR)
 
-#define PIN_STEPPER_C_EN   mitpi::V2_GPIO_P1_16 //maps to FD Shield D44  (Z_EN)
+#define PIN_STEPPER_C_EN   mitpi::V2_GPIO_P5_06 //maps to FD Shield D44  (Z_EN)
 #define PIN_STEPPER_C_STEP mitpi::V2_GPIO_P1_24 //maps to FD Shield AD13 (Z_STEP)
 #define PIN_STEPPER_C_DIR  mitpi::V2_GPIO_P1_26 //maps to FD Shield AD12 (Z_DIR)
 
