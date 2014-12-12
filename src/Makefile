@@ -47,13 +47,13 @@ MACHINE_CLASS=$(subst /,,$(dir $(MACHINE_ENDPATH)))
 MACHINE_CLASS_DIR=drivers/$(MACHINE_CLASS)
 
 #Check for platform-specific file overrides:
-ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h)","")
+ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/chronoclock.h)","")
     DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"drivers/$(MACHINE_CLASS)/chronoclock.h"'
 endif
-ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h)","")
+ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/hardwarescheduler.h)","")
     DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"drivers/$(MACHINE_CLASS)/hardwarescheduler.h"'
 endif
-ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/thisthreadsleep.h)","")
+ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/thisthreadsleep.h)","")
     DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"drivers/$(MACHINE_CLASS)/thisthreadsleep.h"'
 endif
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
