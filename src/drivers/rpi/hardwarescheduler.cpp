@@ -122,7 +122,7 @@ void HardwareScheduler::cleanup() {
         usleep(100);
         writeBitmasked(&dmaHeader->CS, DMA_CS_RESET, DMA_CS_RESET);
     }
-    //could also disable PWM, but that's not imperative.
+    //TODO: could also disable PWM, but that's not imperative.
 }
 
 void HardwareScheduler::makeMaps() {

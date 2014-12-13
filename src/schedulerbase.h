@@ -60,14 +60,16 @@ class Event; //forward declaration to avoid inclusion of event.h.
 /* Base class from which all templated schedulers derive.
 Defines things such as exit handlers */
 class SchedulerBase {
+    //for the exitHandlers, we could use a set, but a vector is even less likely to fail,
+    //  and the exitHandlers are called in the case of an extreme error (eg segfauly; corrupted data)
     static std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> exitHandlers;
-    //static std::atomic<bool> isExiting; //typical implementations of exit() call the exit handlers from within the thread that called exit. Therefore, if the exiting thread causes another thread to call exit(), this value must be atomic. But we only have one thread.
     static bool isExiting;
     private:
         static void callExitHandlers();
     public:
         static void configureExitHandlers();
-        static void registerExitHandler(void (*handler)(), unsigned level);
+        //need to return a value so we can do tricks like `static bool _wasInit=registerExitHandler(...)` to do something just once
+        static bool registerExitHandler(void (*handler)(), unsigned level);
 };
 
 /* A Scheduler is useless without an interface. In order to use a scheduler, implement a class with the following methods

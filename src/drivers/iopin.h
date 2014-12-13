@@ -52,6 +52,7 @@ class IoPin {
     bool _invertWrites;
     IoLevel _defaultState;
     static std::set<IoPin*> livingPins;
+
     public:
         //forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly
         //null() cannot be implemented as a function, as it would necessitate a copy, which is prohibited
@@ -62,6 +63,10 @@ class IoPin {
             for (auto p : livingPins) {
                 p->setToDefault();
             }
+        }
+        inline static void registerExitHandler() {
+            //install exit handler to leave pins in a safe state post-execution.
+            static bool doOnce(SchedulerBase::registerExitHandler((void(*)())&deactivateAll, SCHED_IO_EXIT_LEVEL));
         }
 
         //prevent copy operations to make pin lifetime-tracking easier.
@@ -79,12 +84,8 @@ class IoPin {
         template <typename ...Args> IoPin(IoPinInversions inversions, IoLevel defaultState, Args... args)
           : _pin(args...),  _invertReads(inversions & INVERT_READS), _invertWrites(inversions & INVERT_WRITES), _defaultState(defaultState) {
             //We need to tell the scheduler to deactivate all pins at shutdown, but only once:
-            static bool registeredWithSched = false;
-            if (!registeredWithSched) {
-                SchedulerBase::registerExitHandler((void(*)())&deactivateAll, SCHED_IO_EXIT_LEVEL);
-                registeredWithSched = true;
-            }
-            //track the pins that are in use so that we can deactivate them on any call to exit()
+            //Note: this is done in a separate, non-templated function to avoid a bug in gcc-4.7 with the -flto flag
+            registerExitHandler();
             livingPins.insert(this);
         }
         inline ~IoPin() {

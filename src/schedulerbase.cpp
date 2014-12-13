@@ -53,10 +53,11 @@ void SchedulerBase::configureExitHandlers() {
     sigaction(SIGSEGV, &sa, NULL); //register segfault listener
 }
 
-void SchedulerBase::registerExitHandler(void (*handler)(), unsigned level) {
+bool SchedulerBase::registerExitHandler(void (*handler)(), unsigned level) {
     if (level > exitHandlers.size()) {
         throw std::runtime_error("Tried to register an exit handler at too high of a level");
     }
     exitHandlers[level].push_back(handler);
+    return 0; //ok
 }
 
