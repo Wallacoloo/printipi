@@ -25,7 +25,6 @@
  * Printipi/scheduler.h
  *
  * The Scheduler controls program flow between tending communications and executing events at precise times.
- * It also allows for software PWM of any output.
  * It is designed to run in a single-threaded environment so it can have maximum control.
  * As such, the program should call Scheduler.yield() periodically if doing any long-running task.
  * Events can be queued with Scheduler.queue, and Scheduler.eventLoop should be called after any program setup is completed.
