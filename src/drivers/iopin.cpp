@@ -2,6 +2,7 @@
 
 namespace drv {
 
-std::set<IoPin*> IoPin::livingPins; //allocate storage for static variable.
+std::set<IoPin*> IoPin::livingPins; //allocate storage for static variables.
+IoPin::null IoPin::null::_null;
 
 }

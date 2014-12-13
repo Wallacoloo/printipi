@@ -32,6 +32,7 @@
 #ifndef DRIVERS_FAN_H
 #define DRIVERS_FAN_H
  
+#include <utility> //for std::move
 #include "iodriver.h"
 #include "drivers/iopin.h"
 
@@ -40,11 +41,11 @@ namespace drv {
 class Fan : public IODriver {
     IoPin pin;
     public:
-        Fan(const IoPin &pin) : IODriver(), pin(pin) {
+        Fan(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
             this->pin.makeDigitalOutput(IoLow);
         }
         bool isFan() const { return true; }
-        IoPin& getPwmPin() {
+        const IoPin& getPwmPin() {
             return pin;
         }
 };

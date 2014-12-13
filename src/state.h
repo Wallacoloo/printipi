@@ -59,6 +59,7 @@
 #include "drivers/iodriver.h"
 #include "drivers/auto/chronoclock.h" //for EventClockT
 #include "drivers/auto/hardwarescheduler.h" //for SchedInterfaceHardwareScheduler
+#include "drivers/iopin.h"
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
 #include "filesystem.h"
@@ -91,7 +92,7 @@ template <typename Drv> class State {
             }
             struct __iterPwmPins {
                 template <typename T, typename Func> void operator()(T &driver, float dutyCycle, Func &f) {
-                    auto p = driver.getPwmPin();
+                    const drv::IoPin &p = driver.getPwmPin();
                     f(p.id(), p.areWritesInverted() ? 1-dutyCycle : dutyCycle);
                 }
             };
@@ -405,8 +406,8 @@ struct __iterEventOutputSequence {
 };
 
 template <typename Drv> struct State<Drv>::State__onIdleCpu {
-    template <typename T> bool operator()(std::size_t index, T &driver, State<Drv> &state) {
-        DriverCallbackInterface cbInterface(state, index);
+    template <typename T> bool operator()(std::size_t index, T &driver, State<Drv> *state) {
+        DriverCallbackInterface cbInterface(*state, index);
         return driver.onIdleCpu(cbInterface);
     }
 };
@@ -440,7 +441,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
             return driver.onIdleCpu(args...);
         }
     };*/
-    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), *this);
+    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), this);
     //bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
     //bool driversNeedCpu = false; //drv::IODriver::callIdleCpuHandlers<IODriverTypes, DriverCallbackInterface>(this->ioDrivers, DriverCallbackInterface(*this));
     return motionNeedsCpu || driversNeedCpu;

@@ -32,8 +32,7 @@
 #define DRIVERS_IOPIN_H
 
 #include <set>
-//#include "common/logging.h"
-//#include "compileflags.h" //for GpioPinIdType
+#include <utility> //for std::move
 #include "drivers/auto/primitiveiopin.h"
 #include "schedulerbase.h"
 
@@ -54,15 +53,28 @@ class IoPin {
     IoLevel _defaultState;
     static std::set<IoPin*> livingPins;
     public:
-        //static functions:
-        static IoPin null() {
-            return IoPin(NO_INVERSIONS, IoLow, PrimitiveIoPin::null());
-        }
+        //forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly
+        //null() cannot be implemented as a function, as it would necessitate a copy, which is prohibited
+        struct null;
+
+        //set all pins to their (safe) default output:
         static void deactivateAll() {
             for (auto p : livingPins) {
                 p->setToDefault();
             }
         }
+
+        //prevent copy operations to make pin lifetime-tracking easier.
+        //  otherwise, we end up with a pin resetting itself everytime its copied
+        IoPin(const IoPin &other) = delete;
+        IoPin& operator=(const IoPin &other) = delete;
+        //allow the move constructor:
+        IoPin(IoPin &&other) : _pin(std::move(other._pin)), 
+          _invertReads(other._invertReads), _invertWrites(other._invertWrites),
+          _defaultState(std::move(other._defaultState)) {
+            livingPins.insert(this);
+            livingPins.erase(&other);
+        } 
 
         template <typename ...Args> IoPin(IoPinInversions inversions, IoLevel defaultState, Args... args)
           : _pin(args...),  _invertReads(inversions & INVERT_READS), _invertWrites(inversions & INVERT_WRITES), _defaultState(defaultState) {
@@ -102,7 +114,15 @@ class IoPin {
             //set the pin to a "safe" default state:
             digitalWrite(_defaultState);
         }
-        
+};
+
+class IoPin::null : public IoPin {
+    static null _null;
+    public:
+        null() : IoPin(NO_INVERSIONS, IoLow, PrimitiveIoPin::null()) {}
+        static const null& ref() {
+            return _null;
+        }
 };
 
 }

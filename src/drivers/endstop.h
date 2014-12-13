@@ -32,6 +32,7 @@
 #ifndef DRIVERS_ENDSTOP_H
 #define DRIVERS_ENDSTOP_H
 
+#include <utility> //for std::move
 #include "iodriver.h"
 #include "iopin.h"
 
@@ -41,7 +42,7 @@ namespace drv {
 class Endstop : public IODriver {
     IoPin pin;
     public:
-        Endstop(const IoPin &pin) : IODriver(), pin(pin) {
+        Endstop(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
             this->pin.makeDigitalInput();
         }
         bool isTriggered() {

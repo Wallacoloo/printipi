@@ -38,6 +38,7 @@
 #include <cstdint> //for uint8_t
 #include <array>
 #include <chrono>
+#include <utility> //for std::move
 
 #include "drivers/iodriver.h"
 #include "drivers/iopin.h"
@@ -52,7 +53,8 @@ class A4988 : public IODriver {
     IoPin stepPin;
     IoPin dirPin;
     public:
-        A4988(const IoPin &stepPin, const IoPin &dirPin, const IoPin &enablePin) : IODriver(), enablePin(enablePin), stepPin(stepPin), dirPin(dirPin) {
+        A4988(IoPin &&stepPin, IoPin &&dirPin, IoPin &&enablePin) : IODriver(), 
+          enablePin(std::move(enablePin)), stepPin(std::move(stepPin)), dirPin(std::move(dirPin)) {
             this->stepPin.makeDigitalOutput(IoLow);
             this->dirPin.makeDigitalOutput(IoLow);
             this->enablePin.makeDigitalOutput(IoHigh); //set as output and enable.

@@ -96,7 +96,7 @@ template <TempControlType HotType, typename Heater, typename Thermistor, typenam
         CelciusType getTargetTemperature() const {
             return _destTemp;
         }
-        Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
+        const Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
             return _heater;
         }
         template <typename CallbackInterface> bool onIdleCpu(CallbackInterface &cbInterface) {
