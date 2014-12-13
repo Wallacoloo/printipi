@@ -60,9 +60,11 @@ class A4988 : public IODriver {
             this->enablePin.makeDigitalOutput(IoHigh); //set as output and enable.
         }
         inline void lockAxis() {
+            //restrict stepper motors
             enablePin.digitalWrite(IoHigh);
         }
         inline void unlockAxis() {
+            //let stepper motors move freely
             enablePin.digitalWrite(IoLow);
         }
         inline std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {

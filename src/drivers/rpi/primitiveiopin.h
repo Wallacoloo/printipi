@@ -13,6 +13,10 @@ class PrimitiveIoPin {
 		inline static PrimitiveIoPin null() {
 			return PrimitiveIoPin(mitpi::NULL_GPIO_PIN);
 		}
+		inline bool isNull() const {
+			//cannot implicitly compare types, so we need an explicit `isNull` function
+			return PinIdx == mitpi::NULL_GPIO_PIN;
+		}
 		inline PrimitiveIoPin(mitpi::GpioPin pinIdx, mitpi::GpioPull pullUpDown=mitpi::GPIOPULL_NONE)
 		  : PinIdx(pinIdx), PullUpDown(pullUpDown) {
 			mitpi::init();

@@ -74,12 +74,7 @@ class IoPin {
         IoPin(const IoPin &other) = delete;
         IoPin& operator=(const IoPin &other) = delete;
         //allow the move constructor:
-        IoPin(IoPin &&other) : _pin(std::move(other._pin)), 
-          _invertReads(std::move(other._invertReads)), _invertWrites(std::move(other._invertWrites)),
-          _defaultState(std::move(other._defaultState)) {
-            livingPins.insert(this);
-            livingPins.erase(&other);
-        } 
+        IoPin(IoPin &&other);
 
         template <typename ...Args> IoPin(IoPinInversions inversions, IoLevel defaultState, Args... args)
           : _pin(args...),  _invertReads(inversions & INVERT_READS != 0), _invertWrites(inversions & INVERT_WRITES != 0), _defaultState(defaultState) {
@@ -113,7 +108,9 @@ class IoPin {
         }
         inline void setToDefault() {
             //set the pin to a "safe" default state:
-            digitalWrite(_defaultState);
+            if (!_pin.isNull()) {
+                digitalWrite(_defaultState);
+            }
         }
 };
 
