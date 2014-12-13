@@ -70,22 +70,33 @@ endif
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
 CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
-# -DDMACHINE_CLASS_DIR=$(MACHINE_CLASS_DIR)
-MAINCFLAGS=#-fwhole-program
+#Extra flags to apply JUST to main.cpp (eg -fwhole-program)
+MAINCFLAGS=
 LD=ld
 LDFLAGS= $(LTOFLAG)
 #-lrt is the realtime posix library. Appears to be needed for things like clock_nanosleep
 LIBS=-lrt
 BUILDROOT=../build
-DEBUGDIR=$(BUILDROOT)/debug-$(CXX)
-DEBUGRELDIR=$(BUILDROOT)/debugrel-$(CXX)
-RELEASEDIR=$(BUILDROOT)/release-$(CXX)
-PROFILEDIR=$(BUILDROOT)/prof-$(CXX)
-MINSIZEDIR=$(BUILDROOT)/minsize-$(CXX)
-#name of binary file:
-NAME=printipi-$(subst /,-,$(MACHINEPARSED))
 #NAMELINK will become a symbolic link to the actual binary
 NAMELINK=printipi
+#NAME_EXT is the version-info that should be tagged onto the binary name
+NAME_EXT=$(subst /,-,$(MACHINEPARSED))-$(CXX)
+#NAME of binary file:
+NAME=$(NAMELINK)-$(NAME_EXT)
+
+DEBUGDIR_BASE=$(BUILDROOT)/debug
+DEBUGRELDIR_BASE=$(BUILDROOT)/debugrel
+RELEASEDIR_BASE=$(BUILDROOT)/release
+PROFILEDIR_BASE=$(BUILDROOT)/prof
+MINSIZEDIR_BASE=$(BUILDROOT)/minsize
+
+DEBUGDIR=$(DEBUGDIR_BASE)-$(NAME_EXT)
+DEBUGRELDIR=$(DEBUGRELDIR_BASE)-$(NAME_EXT)
+RELEASEDIR=$(RELEASEDIR_BASE)-$(NAME_EXT)
+PROFILEDIR=$(PROFILEDIR_BASE)-$(NAME_EXT)
+MINSIZEDIR=$(MINSIZEDIR_BASE)-$(NAME_EXT)
+
+
 
 all: debugrel
 
@@ -122,7 +133,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 	
 %/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
-	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)-$(CXX)
+	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
 	
 $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZEDIR)/%.o: %.cpp
@@ -154,13 +165,14 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 
 .PHONY: clean cleandebug cleanrelease cleanprofile cleanminsize debug release profile minsize
 cleandebug:
-	rm -rf $(DEBUGDIR)
+	rm -rf $(DEBUGDIR_BASE)-*
+cleandebugrel:
+	rm -rf $(DEBUGRELDIR_BASE)-*
 cleanrelease:
-	rm -rf $(RELEASEDIR)
+	rm -rf $(RELEASEDIR_BASE)-*
 cleanprofile:
-	rm -rf $(PROFILEDIR)
+	rm -rf $(PROFILEDIR_BASE)-*
 cleanminsize:
-	rm -rf $(MINSIZEDIR)
-clean: cleandebug cleanrelease cleanprofile cleanminsize
-	rm -rf $(BUILDROOT)/$(NAME)
+	rm -rf $(MINSIZEDIR_BASE)-*
+clean: cleandebug cleandebugrel cleanrelease cleanprofile cleanminsize
 	rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
