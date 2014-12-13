@@ -42,10 +42,10 @@ namespace drv {
 class Endstop : public IODriver {
     IoPin pin;
     public:
-        Endstop(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
+        inline Endstop(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
             this->pin.makeDigitalInput();
         }
-        bool isTriggered() {
+        inline bool isTriggered() {
             bool t = pin.digitalRead() == IoHigh;
             LOGV("LeverEndstop is %i\n", t);
             return t;

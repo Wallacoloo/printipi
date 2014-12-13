@@ -64,39 +64,39 @@ template <TempControlType HotType, typename Heater, typename Thermistor, typenam
     bool _isReading;
     EventClockT::time_point _nextReadTime;
     public:
-        TempControl(const Heater &heater, const Thermistor &therm, const PID &pid, const Filter &filter) 
+        inline TempControl(const Heater &heater, const Thermistor &therm, const PID &pid, const Filter &filter) 
          : IODriver(), _heater(heater), _therm(therm), _pid(pid), _filter(filter), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.makeDigitalOutput(IoLow);
         }
-        TempControl() : IODriver(), _destTemp(-300), _lastTemp(-300), _isReading(false),
+        inline TempControl() : IODriver(), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.makeDigitalOutput(IoLow);
         }
         //register as the correct device type:
-        bool isHotend() const {
+        inline bool isHotend() const {
             return HotType == HotendType;
         }
-        bool isHeatedBed() const {
+        inline bool isHeatedBed() const {
             return HotType == HeatedBedType;
         }
         //route output commands to the heater:
-        void stepForward() {
+        inline void stepForward() {
             _heater.digitalWrite(IoHigh);
         }
-        void stepBackward() {
+        inline void stepBackward() {
             _heater.digitalWrite(IoLow);
         }
-        void setTargetTemperature(CelciusType t) {
+        inline void setTargetTemperature(CelciusType t) {
             _destTemp = t;
         }
-        CelciusType getMeasuredTemperature() const {
+        inline CelciusType getMeasuredTemperature() const {
             return _lastTemp;
         }
-        CelciusType getTargetTemperature() const {
+        inline CelciusType getTargetTemperature() const {
             return _destTemp;
         }
-        const Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
+        inline const Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
             return _heater;
         }
         template <typename CallbackInterface> bool onIdleCpu(CallbackInterface &cbInterface) {

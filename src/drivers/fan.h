@@ -41,11 +41,11 @@ namespace drv {
 class Fan : public IODriver {
     IoPin pin;
     public:
-        Fan(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
+        inline Fan(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
             this->pin.makeDigitalOutput(IoLow);
         }
-        bool isFan() const { return true; }
-        const IoPin& getPwmPin() {
+        inline bool isFan() const { return true; }
+        inline const IoPin& getPwmPin() {
             return pin;
         }
 };

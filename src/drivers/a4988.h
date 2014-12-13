@@ -53,19 +53,19 @@ class A4988 : public IODriver {
     IoPin stepPin;
     IoPin dirPin;
     public:
-        A4988(IoPin &&stepPin, IoPin &&dirPin, IoPin &&enablePin) : IODriver(), 
+        inline A4988(IoPin &&stepPin, IoPin &&dirPin, IoPin &&enablePin) : IODriver(), 
           enablePin(std::move(enablePin)), stepPin(std::move(stepPin)), dirPin(std::move(dirPin)) {
             this->stepPin.makeDigitalOutput(IoLow);
             this->dirPin.makeDigitalOutput(IoLow);
             this->enablePin.makeDigitalOutput(IoHigh); //set as output and enable.
         }
-        void lockAxis() {
+        inline void lockAxis() {
             enablePin.digitalWrite(IoHigh);
         }
-        void unlockAxis() {
+        inline void unlockAxis() {
             enablePin.digitalWrite(IoLow);
         }
-        std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {
+        inline std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {
             //A4988 is directed by putting a direction on the DIRPIN, and then
             //sending a pulse on the STEPPIN.
             //It's the low->high transition that triggers the step. 

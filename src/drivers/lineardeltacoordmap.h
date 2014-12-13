@@ -65,35 +65,35 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
     float _STEPS_MM_EXT, _MM_STEPS_EXT;
     BedLevelT bedLevel;
     private:
-        float STEPS_MM() const { return _STEPS_MM; }
-        float MM_STEPS() const { return _MM_STEPS; }
-        float STEPS_MM_EXT() const { return _STEPS_MM_EXT; }
-        float MM_STEPS_EXT() const { return _MM_STEPS_EXT; }
+        inline float STEPS_MM() const { return _STEPS_MM; }
+        inline float MM_STEPS() const { return _MM_STEPS; }
+        inline float STEPS_MM_EXT() const { return _STEPS_MM_EXT; }
+        inline float MM_STEPS_EXT() const { return _MM_STEPS_EXT; }
     public:
-        float r() const { return _r; }
-        float L() const { return _L; }
-        float h() const { return _h; }
-        float buildrad() const { return _buildrad; }
-        float STEPS_MM(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? STEPS_MM_EXT() : STEPS_MM(); }
-        float MM_STEPS(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? MM_STEPS_EXT() : MM_STEPS(); }
-        LinearDeltaCoordMap(float r, float L, float h, float buildrad, float STEPS_MM, float STEPS_MM_EXT, const BedLevelT &t)
+        inline float r() const { return _r; }
+        inline float L() const { return _L; }
+        inline float h() const { return _h; }
+        inline float buildrad() const { return _buildrad; }
+        inline float STEPS_MM(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? STEPS_MM_EXT() : STEPS_MM(); }
+        inline float MM_STEPS(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? MM_STEPS_EXT() : MM_STEPS(); }
+        inline LinearDeltaCoordMap(float r, float L, float h, float buildrad, float STEPS_MM, float STEPS_MM_EXT, const BedLevelT &t)
          : _r(r), _L(L), _h(h), _buildrad(buildrad),
            _STEPS_MM(STEPS_MM), _MM_STEPS(1. / STEPS_MM),
            _STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
            bedLevel(t) {}
-        static constexpr std::size_t numAxis() {
+        inline static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-        int getAxisPosition(const std::array<int, 4> &cur, std::size_t axis) const {
+        inline int getAxisPosition(const std::array<int, 4> &cur, std::size_t axis) const {
             return cur[axis];
         }
-        std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
+        inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({{(int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), cur[3]}});
         }
-        std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
+        inline std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
             return bedLevel.transform(xyz);
         }
-        std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
+        inline std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
             //bound z:
             float z = std::max(MIN_Z(), std::min((float)((h()+sqrt(L()*L()-r()*r()))*STEPS_MM()), std::get<2>(xyze)));
             float x = std::get<0>(xyze);
@@ -106,7 +106,7 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
             //TODO: force x & y to be on the platform.
             return std::make_tuple(x, y, z, std::get<3>(xyze));
         }
-        std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
+        inline std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
             float e = mech[DELTA_AXIS_E]*MM_STEPS_EXT();
             float x, y, z;
             float A = mech[DELTA_AXIS_A]*MM_STEPS(); //convert mechanical positions (steps) to MM.

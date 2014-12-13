@@ -42,7 +42,7 @@ namespace rpi {
 
 class DumbHardwareScheduler {
     public:
-        DumbHardwareScheduler() {
+        inline DumbHardwareScheduler() {
             mitpi::init();
         }
         inline void queue(const OutputEvent &e) {

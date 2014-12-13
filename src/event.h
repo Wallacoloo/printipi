@@ -69,8 +69,8 @@ class Event {
         inline bool isNull() const {
             return this->stepperId() == NULL_STEPPER_ID;
         }
-        Event() : _time(), _stepperNum(NULL_STEPPER_ID) {}
-        Event(EventClockT::time_point t, AxisIdType stepperNum, StepDirection dir) : _time(t), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
+        inline Event() : _time(), _stepperNum(NULL_STEPPER_ID) {}
+        inline Event(EventClockT::time_point t, AxisIdType stepperNum, StepDirection dir) : _time(t), _stepperNum(stepperNum), _isForward(dir==StepForward) {}
         static Event StepperEvent(float relTime, AxisIdType stepperNum, StepDirection dir);
         
         template <typename DurationT> void offset(const DurationT offset) {

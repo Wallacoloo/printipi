@@ -10,14 +10,14 @@ class PrimitiveIoPin {
 	mitpi::GpioPin PinIdx;
     mitpi::GpioPull PullUpDown;
 	public:
-		static PrimitiveIoPin null() {
+		inline static PrimitiveIoPin null() {
 			return PrimitiveIoPin(mitpi::NULL_GPIO_PIN);
 		}
-		PrimitiveIoPin(mitpi::GpioPin pinIdx, mitpi::GpioPull pullUpDown=mitpi::GPIOPULL_NONE)
+		inline PrimitiveIoPin(mitpi::GpioPin pinIdx, mitpi::GpioPull pullUpDown=mitpi::GPIOPULL_NONE)
 		  : PinIdx(pinIdx), PullUpDown(pullUpDown) {
 			mitpi::init();
 		}
-		GpioPinIdType id() const {
+		inline GpioPinIdType id() const {
             return PinIdx;
         }
         //configure the pin as an output, and set its output state
@@ -26,15 +26,15 @@ class PrimitiveIoPin {
             digitalWrite(lev);
         }
 	    //configure the pin to be an input
-	    void makeDigitalInput() {
+	    inline void makeDigitalInput() {
             mitpi::makeInput(PinIdx);
             mitpi::setPinPull(PinIdx, PullUpDown);
         }
 	    //read the pin's input value (assumes pin is configured as digital)
-	    IoLevel digitalRead() const {
+	    inline IoLevel digitalRead() const {
             return mitpi::readPinState(PinIdx) ? IoHigh : IoLow;
         }
-        void digitalWrite(IoLevel lev) {
+        inline void digitalWrite(IoLevel lev) {
             mitpi::setPinState(PinIdx, lev == IoHigh ? 1 : 0);
         }
 };

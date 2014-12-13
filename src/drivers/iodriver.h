@@ -51,7 +51,7 @@ class IODriver {
     public:
         inline IODriver() {}
         //for a (stepper) motor, advance +/- 1 step:
-        std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS (stepper motor drivers only)
+        inline std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS (stepper motor drivers only)
         const IoPin& getPwmPin() const { return IoPin::null::ref(); } //OVERRIDE THIS if device is pwm-able.
         /* called by M17; Enable/power all stepper motors */
         inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)

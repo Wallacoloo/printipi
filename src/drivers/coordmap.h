@@ -48,7 +48,7 @@ namespace drv {
 
 class CoordMap {
     public:
-        static constexpr std::size_t numAxis() {
+        inline static constexpr std::size_t numAxis() {
             //return the number of axis (physical motors) that we have.
             return 0;
         }

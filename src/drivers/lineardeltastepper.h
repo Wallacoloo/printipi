@@ -170,11 +170,11 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
         float m; //angular velocity of the arc.
         float w; //angle of this axis. CW from +y axis
         float x0, y0, z0; //center point of arc
-        float r() const { return _r; }
-        float L() const { return _L; }
-        float MM_STEPS() const { return _MM_STEPS; }
+        inline float r() const { return _r; }
+        inline float L() const { return _L; }
+        inline float MM_STEPS() const { return _MM_STEPS; }
     public:
-        LinearDeltaArcStepper() : _r(0), _L(0), _MM_STEPS(0) {}
+        inline LinearDeltaArcStepper() : _r(0), _L(0), _MM_STEPS(0) {}
         template <typename CoordMapT, std::size_t sz> LinearDeltaArcStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel)
           : AxisStepper(idx),
             _r(map.r()),
@@ -199,7 +199,7 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
                 this->time = 0; //this may NOT be zero-initialized by parent.
         }
     //protected:
-        float testDir(float s) {
+        inline float testDir(float s) {
         	//returns the next time at which this axis should be at `s' mm above the initial position,
         	//  or NAN if the axis should never be at that position during the motion.
 
@@ -251,7 +251,7 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
             else if (t2 < this->time) { return t1; }
             else { return std::min(t1, t2); }
         }
-        void _nextStep() {
+        inline void _nextStep() {
             //called to set this->time and this->direction; the time (in seconds) and the direction at which the next step should occur for this axis
             //General formula is outlined in comments at the top of this file.
             //First, we test the time at which a forward step (sTotal + 1) should occur given constant angular velocity.
@@ -304,13 +304,13 @@ template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDelta
         float _almostTerm1; //used for caching & reducing computational complexity inside nextStep()
         float _almostRootParam;
         float _almostRootParamV2S;
-        float r() const { return _r; }
-        float L() const { return _L; }
-        float MM_STEPS() const { return _MM_STEPS; }
+        inline float r() const { return _r; }
+        inline float L() const { return _L; }
+        inline float MM_STEPS() const { return _MM_STEPS; }
     public:
         typedef LinearHomeStepper<AxisIdx, EndstopT> HomeStepperT;
         typedef LinearDeltaArcStepper<AxisIdx> ArcStepperT;
-        LinearDeltaStepper() : _r(0), _L(0), _MM_STEPS(0) {}
+        inline LinearDeltaStepper() : _r(0), _L(0), _MM_STEPS(0) {}
         template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
            : AxisStepper(idx),
              _r(map.r()), _L(map.L()), _MM_STEPS(map.MM_STEPS(AxisIdx)),
@@ -347,7 +347,7 @@ template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDelta
                     //_almostRootParamV2S = 2*M0 - 2*z0;
                 }
             }
-        void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
+        inline void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
             //Therefore, we should cache values calculatable at init-time, like all of the second-half on rootParam.
             term1 = _almostTerm1 + vz_over_v2*s;
             rootParam = term1*term1 + _almostRootParam - inv_v2*s*(_almostRootParamV2S + s);
@@ -365,7 +365,7 @@ template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDelta
             float t1 = (term1 - root)/v2;
             float t2 = (term1 + root)/v2;*/
         }
-        float testDir(float s) {
+        inline float testDir(float s) {
             float term1, rootParam;
             getTerm1AndRootParam(term1, rootParam, s);
             if (rootParam < 0) {
@@ -381,7 +381,7 @@ template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDelta
                 return t1 > this->time ? t1 : (t2 > this->time ? t2 : NAN); //ensure no value < time is returned.
             }
         }
-        void _nextStep() {
+        inline void _nextStep() {
             //called to set this->time and this->direction; the time (in seconds) and the direction at which the next step should occur for this axis
             //General formula is outlined in comments at the top of this file.
             //First, we test the time at which a forward step (sTotal + 1) should occur given constant cartesian velocity.

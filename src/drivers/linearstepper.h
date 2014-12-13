@@ -47,7 +47,7 @@ template <std::size_t AxisIdx, typename EndstopT> class LinearHomeStepper : publ
     float timePerStep;
     //static constexpr float STEPS_MM = STEPS_M / 1000.;
     public:
-        LinearHomeStepper() {}
+        inline LinearHomeStepper() {}
         template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome) : AxisStepper(idx) {
             (void)map; //unused
             this->time = 0;
@@ -55,7 +55,7 @@ template <std::size_t AxisIdx, typename EndstopT> class LinearHomeStepper : publ
             this->timePerStep = 1./ (vHome*map.STEPS_MM(AxisIdx));
         }
         
-        void _nextStep() {
+        inline void _nextStep() {
             //if (EndstopT::isTriggered()) {
             if (endstop.isTriggered()) {
                 this->time = NAN; //at endstop; no more steps.
@@ -69,12 +69,12 @@ template <std::size_t AxisIdx, typename EndstopT> class LinearHomeStepper : publ
 //  Makes it so that a homing operation returns instantly.
 template <std::size_t AxisIdx> class LinearHomeStepper<AxisIdx, EndstopNoExist> : public AxisStepper {
     public:
-        LinearHomeStepper() {}
+        inline LinearHomeStepper() {}
         template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome) : AxisStepper(idx) {
             (void)map; (void)vHome; //unused
             this->time = NAN; //device isn't homeable, so never step.
         }
-        void _nextStep() {}
+        inline void _nextStep() {}
 };
 
 template <CartesianAxis CoordType, typename EndstopT=EndstopNoExist> class LinearStepper : public AxisStepper {
@@ -86,7 +86,7 @@ template <CartesianAxis CoordType, typename EndstopT=EndstopNoExist> class Linea
         typedef LinearHomeStepper<CoordType, EndstopT> HomeStepperT;
         typedef LinearStepper<CoordType, EndstopT> ArcStepperT;
     protected:
-        float GET_COORD(float x, float y, float z, float e) const {
+        inline float GET_COORD(float x, float y, float z, float e) const {
             //static_assert(CoordType==CARTESIAN_AXIS_X || CoordType==CARTESIAN_AXIS_Y || CoordType==CARTESIAN_AXIS_Z || CoordType==CARTESIAN_AXIS_E, "CoordType can only be x, y, z, or e");
             return CoordType==CARTESIAN_AXIS_X ? x : \
                   (CoordType==CARTESIAN_AXIS_Y ? y : \
@@ -103,7 +103,7 @@ template <CartesianAxis CoordType, typename EndstopT=EndstopNoExist> class Linea
         }
     public:
         //default constructor
-        LinearStepper() {}
+        inline LinearStepper() {}
         //Linear movement constructor
         template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
             : AxisStepper(idx),
@@ -121,7 +121,7 @@ template <CartesianAxis CoordType, typename EndstopT=EndstopNoExist> class Linea
             this->direction = stepDirFromSign(extVel);
         }
     //protected:
-        void _nextStep() {
+        inline void _nextStep() {
             this->time += timePerStep;
         }
 };

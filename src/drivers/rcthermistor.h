@@ -59,7 +59,7 @@ template <typename Pin> class RCThermistor {
     Pin pin;
     EventClockT::time_point _startReadTime, _endReadTime;
     public:
-        RCThermistor(float R_OHMS, float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA)
+        inline RCThermistor(float R_OHMS, float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA)
           : C(C_FARADS), Vcc(VCC_V), Va(V_TOGGLE_V), Ra(R_OHMS), T0(mathutil::CtoK(T0_C)), R0(R0_OHMS), B(BETA),
           MIN_R(0), MAX_R(R0_OHMS*2) {}
         inline void startRead() {

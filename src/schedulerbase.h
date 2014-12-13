@@ -84,12 +84,12 @@ struct NullSchedulerInterface {
                 (void)pin; (void)ratio; (void)idealPeriod; //unused
                 assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queuePwm!
             }
-            EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
+            inline EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
                 //If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.
                 //This function is only templated to prevent importing typesettings.h (circular import), required for the real EventClockT. An implementation only needs to support EventClockT::time_point
                 return evtTime;
             }
-            bool onIdleCpu(OnIdleCpuIntervalT interval) {
+            inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
                 (void)interval; //unused
                 return false; //no more cpu needed
             }
@@ -113,7 +113,7 @@ struct NullSchedulerInterface {
         inline void queuePwm(int pin, float duty, float maxPeriod) {
             _hardwareScheduler.queuePwm(pin, duty, maxPeriod);
         }
-        EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
+        inline EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
             return _hardwareScheduler.schedTime(evtTime);
         }
 };

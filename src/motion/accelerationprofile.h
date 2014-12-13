@@ -45,7 +45,7 @@ struct AccelerationProfile {
 };
 
 struct NoAcceleration : public AccelerationProfile {
-    float transform(float inp) { return inp; }
+    inline float transform(float inp) { return inp; }
 };
 
 

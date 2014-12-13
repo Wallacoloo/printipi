@@ -51,35 +51,35 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
     float _STEPS_MM_E, _MM_STEPS_E;
     BedLevelT bedLevel;
     public:
-        float STEPS_MM(std::size_t axisIdx) const { 
+        inline float STEPS_MM(std::size_t axisIdx) const { 
             return axisIdx == CARTESIAN_AXIS_X ? _STEPS_MM_X
               :   (axisIdx == CARTESIAN_AXIS_Y ? _STEPS_MM_Y
               :   (axisIdx == CARTESIAN_AXIS_Z ? _STEPS_MM_Z : _STEPS_MM_E));
         }
-        float MM_STEPS(std::size_t axisIdx) const { 
+        inline float MM_STEPS(std::size_t axisIdx) const { 
             return axisIdx == CARTESIAN_AXIS_X ? _MM_STEPS_X
               :   (axisIdx == CARTESIAN_AXIS_Y ? _MM_STEPS_Y
               :   (axisIdx == CARTESIAN_AXIS_Z ? _MM_STEPS_Z : _MM_STEPS_E));
         }
-        LinearCoordMap(float STEPS_MM_X, float STEPS_MM_Y, float STEPS_MM_Z, float STEPS_MM_E, const BedLevelT& t)
+        inline LinearCoordMap(float STEPS_MM_X, float STEPS_MM_Y, float STEPS_MM_Z, float STEPS_MM_E, const BedLevelT& t)
          : _STEPS_MM_X(STEPS_MM_X), _MM_STEPS_X(1. / STEPS_MM_X),
            _STEPS_MM_Y(STEPS_MM_Y), _MM_STEPS_Y(1. / STEPS_MM_Y),
            _STEPS_MM_Z(STEPS_MM_Z), _MM_STEPS_Z(1. / STEPS_MM_Z),
            _STEPS_MM_E(STEPS_MM_E), _MM_STEPS_E(1. / STEPS_MM_E),
            bedLevel(t) {}
-        static constexpr std::size_t numAxis() {
+        inline static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-        std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
+        inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({0, 0, 0, cur[3]});
         }
-        std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
+        inline std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
             return bedLevel.transform(xyz);
         }
-        std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
+        inline std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
             return xyze; //no bounding.
         }
-        std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
+        inline std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
             return std::make_tuple(mech[CARTESIAN_AXIS_X], mech[CARTESIAN_AXIS_Y], mech[CARTESIAN_AXIS_Z], mech[CARTESIAN_AXIS_E]);
         }
 

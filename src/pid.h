@@ -18,11 +18,11 @@ class PID {
     float lastValue;
 
     EventClockT::time_point lastTime;
-    float P() const { return _P; }
-    float I() const { return _I; }
-    float D() const { return _D; }
+    inline float P() const { return _P; }
+    inline float I() const { return _I; }
+    inline float D() const { return _D; }
     public:
-        PID(float P, float I, float D) 
+        inline PID(float P, float I, float D) 
           : _P(P), _I(I), _D(D),
             errorI(0), lastValue(0), lastTime() {}
         /* notify PID controller of a newly-read error value.

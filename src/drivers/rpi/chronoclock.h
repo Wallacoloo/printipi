@@ -42,6 +42,7 @@ namespace rpi {
 
 
 class ChronoClock {
+    //special implementation of std::chrono::clock<...>
     static mitpi::InitMitpiType _i; //ensure mitpi is init before any calls to now() occur.
     public:
         typedef std::chrono::microseconds duration;

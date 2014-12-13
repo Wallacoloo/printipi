@@ -14,25 +14,25 @@ using namespace drv; //for all the drivers
 
 class example : public Machine {
     public:
-        ConstantAcceleration getAccelerationProfile() const {
+        inline ConstantAcceleration getAccelerationProfile() const {
             return ConstantAcceleration(500);
         }
-        LinearCoordMap<> getCoordMap() const {
+        inline LinearCoordMap<> getCoordMap() const {
             return LinearCoordMap<>(1.0, 1.0, 1.0, 1.0, Matrix3x3(
             1, 0, 0,
             0, 1, 0,
             0, 0, 1));
         }
-        std::tuple<> getAxisSteppers() const {
+        inline std::tuple<> getAxisSteppers() const {
             return std::tuple<>();
         }
-        std::tuple<> getHomeSteppers() const {
+        inline std::tuple<> getHomeSteppers() const {
             return std::tuple<>();
         }
-        std::tuple<> getArcSteppers() const {
+        inline std::tuple<> getArcSteppers() const {
             return std::tuple<>();
         }
-        std::tuple<> getIoDrivers() const {
+        inline std::tuple<> getIoDrivers() const {
             return std::tuple<>();
         }
 };

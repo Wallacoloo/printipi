@@ -14,7 +14,7 @@
 class IntervalTimer {
     EventClockT::time_point _last;
     public:
-        IntervalTimer() : _last() {}
+        inline IntervalTimer() : _last() {}
         inline void reset() {
             _last = EventClockT::time_point();
         }

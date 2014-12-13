@@ -39,7 +39,7 @@ class OutputEvent {
     GpioPinIdType _pinId;
     bool _state; //1=HIGH, 0=LOW
     public:
-        OutputEvent(EventClockT::time_point time, GpioPinIdType pinId, bool state) : _time(time), _pinId(pinId), _state(state) {
+        inline OutputEvent(EventClockT::time_point time, GpioPinIdType pinId, bool state) : _time(time), _pinId(pinId), _state(state) {
         }
         inline EventClockT::time_point time() const {
             return _time;

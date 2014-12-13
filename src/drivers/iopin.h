@@ -58,7 +58,7 @@ class IoPin {
         struct null;
 
         //set all pins to their (safe) default output:
-        static void deactivateAll() {
+        inline static void deactivateAll() {
             for (auto p : livingPins) {
                 p->setToDefault();
             }
@@ -87,7 +87,7 @@ class IoPin {
             //track the pins that are in use so that we can deactivate them on any call to exit()
             livingPins.insert(this);
         }
-        ~IoPin() {
+        inline ~IoPin() {
             setToDefault();
             livingPins.erase(this);
         }
@@ -119,8 +119,8 @@ class IoPin {
 class IoPin::null : public IoPin {
     static null _null;
     public:
-        null() : IoPin(NO_INVERSIONS, IoLow, PrimitiveIoPin::null()) {}
-        static const null& ref() {
+        inline null() : IoPin(NO_INVERSIONS, IoLow, PrimitiveIoPin::null()) {}
+        inline static const null& ref() {
             return _null;
         }
 };

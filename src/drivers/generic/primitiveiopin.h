@@ -7,7 +7,7 @@ namespace generic {
 class PrimitiveIoPin {
 	//Implementation for a basic (do-nothing) GPIO pin
 	public:
-		static PrimitiveIoPin null() { return PrimitiveIoPin(); }
+		inline static PrimitiveIoPin null() { return PrimitiveIoPin(); }
 		//We want to use this PrimitiveIoPin on any architecture, 
 		// so let it be constructed with whatever platform-specific arguments the config file uses with its IO pins
 		template <typename ...T> PrimitiveIoPin(T ...args) {}

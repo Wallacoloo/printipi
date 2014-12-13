@@ -42,9 +42,9 @@ class ConstantAcceleration : public AccelerationProfile {
     float tmax1, tmax2;
     float tbase3;
     float twiceVmax_a;
-    float a() const { return _accel; }
+    inline float a() const { return _accel; }
     public:
-        ConstantAcceleration(float accel) : _accel(accel) {}
+        inline ConstantAcceleration(float accel) : _accel(accel) {}
         inline void begin(float moveDuration, float Vmax) {
             this->moveDuration = moveDuration;
             this->tmax1 = Vmax/2/a();

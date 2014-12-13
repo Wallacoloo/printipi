@@ -32,7 +32,7 @@ class Matrix3x3 {
             a00(a00), a01(a01), a02(a02),
             a10(a10), a11(a11), a12(a12),
             a20(a20), a21(a21), a22(a22) {}
-        std::tuple<float, float, float> transform(const std::tuple<float, float, float> &xyz) const {
+        inline std::tuple<float, float, float> transform(const std::tuple<float, float, float> &xyz) const {
             return std::tuple<float, float, float>(
                   a00*std::get<0>(xyz) + a01*std::get<1>(xyz) + a02*std::get<2>(xyz),
                   a10*std::get<0>(xyz) + a11*std::get<1>(xyz) + a12*std::get<2>(xyz),
