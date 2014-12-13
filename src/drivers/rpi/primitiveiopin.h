@@ -32,10 +32,10 @@ class PrimitiveIoPin {
         }
 	    //read the pin's input value (assumes pin is configured as digital)
 	    inline IoLevel digitalRead() const {
-            return mitpi::readPinState(PinIdx) ? IoHigh : IoLow;
+            return mitpi::readPinState(PinIdx);
         }
         inline void digitalWrite(IoLevel lev) {
-            mitpi::setPinState(PinIdx, lev == IoHigh ? 1 : 0);
+            mitpi::setPinState(PinIdx, lev);
         }
 };
 

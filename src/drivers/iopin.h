@@ -75,14 +75,14 @@ class IoPin {
         IoPin& operator=(const IoPin &other) = delete;
         //allow the move constructor:
         IoPin(IoPin &&other) : _pin(std::move(other._pin)), 
-          _invertReads(other._invertReads), _invertWrites(other._invertWrites),
+          _invertReads(std::move(other._invertReads)), _invertWrites(std::move(other._invertWrites)),
           _defaultState(std::move(other._defaultState)) {
             livingPins.insert(this);
             livingPins.erase(&other);
         } 
 
         template <typename ...Args> IoPin(IoPinInversions inversions, IoLevel defaultState, Args... args)
-          : _pin(args...),  _invertReads(inversions & INVERT_READS), _invertWrites(inversions & INVERT_WRITES), _defaultState(defaultState) {
+          : _pin(args...),  _invertReads(inversions & INVERT_READS != 0), _invertWrites(inversions & INVERT_WRITES != 0), _defaultState(defaultState) {
             //We need to tell the scheduler to deactivate all pins at shutdown, but only once:
             //Note: this is done in a separate, non-templated function to avoid a bug in gcc-4.7 with the -flto flag
             registerExitHandler();

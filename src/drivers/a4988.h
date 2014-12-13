@@ -72,7 +72,7 @@ class A4988 : public IODriver {
             //NOTE: documentation says STEP must be LOW for at least 1 uS and then HIGH for at least 1 uS.
             return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
                 OutputEvent(evt.time(), stepPin.id(), IoLow),
-                OutputEvent(evt.time()+std::chrono::microseconds(8), stepPin.id(), IoHigh)}};
+                OutputEvent(evt.time()+std::chrono::microseconds(8), stepPin.id(), IoHigh)}}; //TODO: Doesn't handle inversions!
         }
 };
 
