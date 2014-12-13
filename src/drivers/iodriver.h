@@ -42,8 +42,10 @@
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
-#include "event.h"
+//#include "event.h"
 #include "drivers/iopin.h"
+
+class Event; //forward-declare class defined in event.h
 
 namespace drv {
 

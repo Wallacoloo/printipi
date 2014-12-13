@@ -43,6 +43,7 @@
 #include <tuple>
 #include <array>
 #include <cmath> //for isnan
+#include <utility> //for std::move
 #include "common/tupleutil.h"
 
 namespace drv {
@@ -54,7 +55,7 @@ class AxisStepper {
         float time; //time of next step
         StepDirection direction; //direction of next step
         inline int index() const { return _index; } //NOT TO BE OVERRIDEN
-        AxisStepper() {}
+        inline AxisStepper() {}
         //standard initializer:
         //template <typename CoordMapT, std::size_t sz> AxisStepper(int idx, const CoordMapT &/*map*/, const std::array<int, sz>& /*curPos*/, float /*vx*/, float /*vy*/, float /*vz*/, float /*ve*/)
         //    : _index(idx) {}
@@ -134,7 +135,7 @@ template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisSt
 struct _AxisStepper__initAxisHomeSteppers {
     template <std::size_t MyIdx, typename T, typename TupleT, typename CoordMapT> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT &map, float vHome) {
         (void)_myIdx; (void)stepper; //unused
-        std::get<MyIdx>(*steppers) = T(MyIdx, map, vHome);
+        std::get<MyIdx>(*steppers) = std::move(T(MyIdx, map, vHome));
         std::get<MyIdx>(*steppers)._nextStep();
     }
 };

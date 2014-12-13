@@ -35,14 +35,12 @@
 #ifndef DRIVERS_A4988_H
 #define DRIVERS_A4988_H
 
-#include <cstdint> //for uint8_t
 #include <array>
 #include <chrono>
 #include <utility> //for std::move
 
 #include "drivers/iodriver.h"
 #include "drivers/iopin.h"
-#include "common/logging.h"
 #include "outputevent.h"
 #include "event.h"
 

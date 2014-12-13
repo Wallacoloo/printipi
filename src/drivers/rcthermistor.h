@@ -36,7 +36,6 @@
 #ifndef DRIVERS_RCTHERMISTOR_H
 #define DRIVERS_RCTHERMISTOR_H
 
-#include <time.h> //for timespec
 #include <cmath>
 #include "drivers/auto/chronoclock.h" //for EventClockT
 #include "common/mathutil.h" //for CtoK, etc
