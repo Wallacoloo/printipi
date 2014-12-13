@@ -14,7 +14,8 @@ void ctrlCOrZHandler(int s){
    exit(1); 
 }
 
-void segfaultHandler(int /*signal*/, siginfo_t *si, void */*arg*/) {
+void segfaultHandler(int signal, siginfo_t *si, void *arg) {
+    (void)signal; (void)arg; //unused
     printf("Caught segfault at address %p\n", si->si_addr);
     exit(1);
 }

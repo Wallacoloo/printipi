@@ -37,11 +37,15 @@
 namespace drv {
 namespace rpi {
 
-template <GpioPinIdType PinIdx, IoLevel Default=IoLow, mitpi::GpioPull PullUpDown=mitpi::GPIOPULL_NONE> class RpiIoPin : public IoPin {
+//template <GpioPinIdType PinIdx, IoLevel Default=IoLow, mitpi::GpioPull PullUpDown=mitpi::GPIOPULL_NONE> class RpiIoPin : public IoPin {
+class RpiIoPin : public IoPin {
+    GpioPinIdType PinIdx;
+    mitpi::GpioPull PullUpDown;
     public:
-        RpiIoPin() {
+        RpiIoPin() {}
+        RpiIoPin(GpioPinIdType PinIdx, IoLevel Default=IoLow, mitpi::GpioPull PullUpDown=mitpi::GPIOPULL_NONE) : PinIdx(PinIdx), PullUpDown(PullUpDown) {
             mitpi::init();
-            static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit; //register deactivation of IO pin upon exit.
+            //static IoPinOnExit<RpiIoPin<PinIdx, Default, PullUpDown>, Default> _onExit; //register deactivation of IO pin upon exit.
         }
         GpioPinIdType id() const {
             return PinIdx;

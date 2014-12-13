@@ -116,6 +116,8 @@ enum GpioPin {
     PLUS_GPIO_P1_37  = 26,
     PLUS_GPIO_P1_38  = 20,
     PLUS_GPIO_P1_40  = 21,
+
+    NULL_GPIO_PIN = 127,
 };
 
 enum GpioPull {

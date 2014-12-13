@@ -32,7 +32,7 @@ else #gcc < 4.7, or non-gcc compiler
 endif
 
 #Default machine if not given via command line argument:
-MACHINE=rpi/kossel.h
+MACHINE=rpi/kosselrampsfd.h
 ifeq "$(suffix $(MACHINE))" ".h"
 	MACHINEPARSED:=$(basename $(MACHINE))
 else
@@ -55,6 +55,9 @@ ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/hardwarescheduler.h)","")
 endif
 ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/thisthreadsleep.h)","")
     DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"drivers/$(MACHINE_CLASS)/thisthreadsleep.h"'
+endif
+ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/primitiveiopin.h)","")
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"drivers/$(MACHINE_CLASS)/primitiveiopin.h"'
 endif
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
@@ -133,7 +136,7 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	@mkdir -p $(@D)
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a
+%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/iopin.o %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o

@@ -33,18 +33,19 @@
 #define DRIVERS_FAN_H
  
 #include "iodriver.h"
+#include "drivers/iopin.h"
 
 namespace drv {
 
-template <typename Driver> class Fan : public IODriver {
-    Driver driver;
+class Fan : public IODriver {
+    IoPin pin;
     public:
-        Fan() : IODriver() {
-            driver.makeDigitalOutput(IoLow);
+        Fan(const IoPin &pin) : IODriver(), pin(pin) {
+            this->pin.makeDigitalOutput(IoLow);
         }
-        constexpr bool isFan() { return true; }
-        Driver& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
-            return driver;
+        bool isFan() const { return true; }
+        IoPin& getPwmPin() {
+            return pin;
         }
 };
 

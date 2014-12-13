@@ -43,7 +43,7 @@
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
 #include "event.h"
-#include "drivers/iopin.h" //for NoPin
+#include "drivers/iopin.h"
 
 namespace drv {
 
@@ -52,7 +52,7 @@ class IODriver {
         inline IODriver() {}
         //for a (stepper) motor, advance +/- 1 step:
         std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS (stepper motor drivers only)
-        NoPin getPwmPin() const { return NoPin(); } //OVERRIDE THIS if device is pwm-able.
+        IoPin getPwmPin() const { return IoPin::null(); } //OVERRIDE THIS if device is pwm-able.
         /* called by M17; Enable/power all stepper motors */
         inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         /* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */

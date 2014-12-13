@@ -63,6 +63,7 @@
  *   For thermistor reading:
  *     RPi only has digital inputs/outputs (can PWM outputs)
  *     But Ramps-FD gives us a few extra resistors, capacitors, diodes AND mosfets.
+ *       Note: can create limited diode logic gates: http://en.wikipedia.org/wiki/Diode_logic#AND_logic_gate
  *     Previous RC reading designs here: https://github.com/Wallacoloo/printipi/issues/24
  *     RPi inputs have "hysteresis" - a pin may transition from reading LOW to HIGH at a 2v threshold, but HIGH -> LOW at a 1v threshold.
  *       This can be disabled, according to: http://www.mosaic-industries.com/embedded-systems/microcontroller-projects/raspberry-pi/gpio-pin-electrical-specifications
@@ -79,6 +80,7 @@
  *         Eg a sawtooth wave: http://electronics.stackexchange.com/questions/74138/voltage-controlled-pwm-generator
  *         Can produce a sinewave with 1 or 2 transistors (but might not achieve large voltage range):
  *           http://www.bowdenshobbycircuits.info/page8.htm#phase.gif
+ *         Can also produce something CLOSE to a sinewave by outputting a square wave (with DMA) and low-pass filtering it with a cap
  */
 
 #ifndef MACHINES_RPI_KOSSELRAMPSFD
@@ -91,12 +93,12 @@
 #include "motion/constantacceleration.h"
 #include "drivers/linearstepper.h"
 #include "drivers/lineardeltastepper.h"
-#include "drivers/rpi/rpiiopin.h"
 #include "drivers/a4988.h"
 #include "drivers/lineardeltacoordmap.h"
 #include "drivers/rcthermistor.h"
 #include "drivers/tempcontrol.h"
 #include "drivers/fan.h"
+#include "drivers/iopin.h"
 #include "drivers/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
@@ -177,18 +179,14 @@ namespace machines {
 namespace rpi {
 
 using namespace drv; //for all the drivers
-using namespace drv::rpi; //for RpiIoPin, etc.
+//using namespace drv::rpi; //for RpiIoPin, etc.
 
 class kosselrampsfd : public Machine {
     private:
         //define one pin to enable/disable ALL steppers.
         //  This pin should be connected directly to the EN pin of each stepper motor driver chip in use.
         //  it defaults to HIGH=disabled, LOW=enabled.
-        typedef InvertedPin<RpiIoPin<PIN_STEPPER_A_EN, IoHigh> > _StepperAEn;
-        typedef InvertedPin<RpiIoPin<PIN_STEPPER_B_EN, IoHigh> > _StepperBEn;
-        typedef InvertedPin<RpiIoPin<PIN_STEPPER_C_EN, IoHigh> > _StepperCEn;
-        typedef InvertedPin<RpiIoPin<PIN_STEPPER_E_EN, IoHigh> > _StepperEEn;
-
+        
         //define the endstops:
         //  These endstops are wired as a switch, with one end tied to the 3.3V supply and the other 
         //    connected to a resistor of 1k-50k ohms, and then fed to the input. 
@@ -197,9 +195,7 @@ class kosselrampsfd : public Machine {
         //  The resistor is technically optional, but without it, you run the risk of
         //    shorting Vcc to ground if the pin EVER gets misconfigured as an output 
         //    (this would destroy the pin & possibly damage the Pi).
-        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_A, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopA;
-        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_B, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopB;
-        typedef Endstop<InvertedPin<RpiIoPin<PIN_ENDSTOP_C, IoLow, mitpi::GPIOPULL_DOWN> > > _EndstopC;
+
         
         //define the thermistor:
         //  The Raspberry Pi lacks an analog to digital converter, so we use a resistor-capacitor circuit to 
@@ -207,7 +203,6 @@ class kosselrampsfd : public Machine {
         //  We have a single pin here, and we configure it as output(HIGH) to charge the capacitor, 
         //    and then configure it as input and measure the time it takes for the logic level to drop to 
         //    low while the capacitor discharges through a parallel connection to ground (through Ra).
-        //typedef RCThermistor<RpiIoPin<PIN_THERMISTOR> > _Thermistor;
         
         //define the fan:
         //  The fan is controlled in a PWM way - set HIGH for full power, set LOW for off, 
@@ -215,19 +210,17 @@ class kosselrampsfd : public Machine {
         //  One should not attempt to directly drive a fan off of the Pi's GPIOs.
         //  Instead, obtain a transistor, wire base to 12V, collector to the GPIO, and emitter should be
         //    connected through the fan and into ground.
-        typedef Fan<RpiIoPin<PIN_FAN, IoLow> > _Fan;
         
         //define the hotend:
         //  The hotend is controlled in precisely the same manner as the fan.
         //  Please note that this is currently set to inverted mode, so a logic-level HIGH should 
         //    result in 0 power delivered to the hotend.
-        //typedef InvertedPin<RpiIoPin<PIN_HOTEND, IoHigh> > _HotendOut;
         
         //Expose the logic used to control the stepper motors:
         //Here we just have 1 stepper motor for each axis and another for the extruder:
-        typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A, _EndstopA>, 
-                           LinearDeltaStepper<DELTA_AXIS_B, _EndstopB>, 
-                           LinearDeltaStepper<DELTA_AXIS_C, _EndstopC>, 
+        typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A, Endstop>, 
+                           LinearDeltaStepper<DELTA_AXIS_B, Endstop>, 
+                           LinearDeltaStepper<DELTA_AXIS_C, Endstop>, 
                            LinearStepper<CARTESIAN_AXIS_E> > _AxisStepperTypes;
         typedef AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
         typedef AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
@@ -236,11 +229,11 @@ class kosselrampsfd : public Machine {
         //  Additionally, define the actual stepper motor drivers and tie the thermistor to 
         //    the hotend as a feedback source.
         typedef std::tuple<
-            A4988<RpiIoPin<PIN_STEPPER_A_STEP>, RpiIoPin<PIN_STEPPER_A_DIR>, _StepperAEn>, //A tower
-            A4988<RpiIoPin<PIN_STEPPER_B_STEP>, RpiIoPin<PIN_STEPPER_B_DIR>, _StepperBEn>, //B tower
-            A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperCEn>, //C tower
-            A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEEn>, //E coord
-            _Fan
+            A4988, //A tower
+            A4988, //B tower
+            A4988, //C tower
+            A4988, //E coord
+            Fan    //Hotend fan
             //TempControl<drv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>
             > _IODriverTypes;
     public:
@@ -249,11 +242,11 @@ class kosselrampsfd : public Machine {
         
         inline _IODriverTypes getIoDrivers() const {
             return std::make_tuple(
-                A4988<RpiIoPin<PIN_STEPPER_A_STEP>, RpiIoPin<PIN_STEPPER_A_DIR>, _StepperAEn>(),
-                A4988<RpiIoPin<PIN_STEPPER_B_STEP>, RpiIoPin<PIN_STEPPER_B_DIR>, _StepperBEn>(),
-                A4988<RpiIoPin<PIN_STEPPER_C_STEP>, RpiIoPin<PIN_STEPPER_C_DIR>, _StepperCEn>(),
-                A4988<RpiIoPin<PIN_STEPPER_E_STEP>, RpiIoPin<PIN_STEPPER_E_DIR>, _StepperEEn>(),
-                _Fan());
+                A4988(IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_A_STEP), IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_A_DIR), IoPin(INVERT_WRITES, IoLow, PIN_STEPPER_A_EN)),
+                A4988(IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_B_STEP), IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_B_DIR), IoPin(INVERT_WRITES, IoLow, PIN_STEPPER_B_EN)),
+                A4988(IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_C_STEP), IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_C_DIR), IoPin(INVERT_WRITES, IoLow, PIN_STEPPER_C_EN)),
+                A4988(IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_E_STEP), IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_E_DIR), IoPin(INVERT_WRITES, IoLow, PIN_STEPPER_E_EN)),
+                Fan(IoPin(NO_INVERSIONS, IoLow, PIN_FAN)));
                 //TempControl<drv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>(
                 //    _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                 //    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));

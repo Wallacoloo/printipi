@@ -40,22 +40,22 @@
 #include <chrono>
 
 #include "drivers/iodriver.h"
-#include "drivers/iopin.h" //for NoPin
+#include "drivers/iopin.h"
 #include "common/logging.h"
 #include "outputevent.h"
 #include "event.h"
 
 namespace drv {
 
-template <typename StepPin=NoPin, typename DirPin=NoPin, typename EnablePin=NoPin> class A4988 : public IODriver {
-    EnablePin enablePin;
-    StepPin stepPin;
-    DirPin dirPin;
+class A4988 : public IODriver {
+    IoPin enablePin;
+    IoPin stepPin;
+    IoPin dirPin;
     public:
-        A4988() : IODriver() {
-            stepPin.makeDigitalOutput(IoLow);
-            dirPin.makeDigitalOutput(IoLow);
-            enablePin.makeDigitalOutput(IoHigh); //set as output and enable.
+        A4988(const IoPin &stepPin, const IoPin &dirPin, const IoPin &enablePin) : IODriver(), enablePin(enablePin), stepPin(stepPin), dirPin(dirPin) {
+            this->stepPin.makeDigitalOutput(IoLow);
+            this->dirPin.makeDigitalOutput(IoLow);
+            this->enablePin.makeDigitalOutput(IoHigh); //set as output and enable.
         }
         void lockAxis() {
             enablePin.digitalWrite(IoHigh);

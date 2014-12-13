@@ -33,16 +33,16 @@
 #define DRIVERS_ENDSTOP_H
 
 #include "iodriver.h"
-#include "iopin.h" //for NoPin
+#include "iopin.h"
 
 namespace drv {
 
 
-template <typename Pin> class Endstop : public IODriver {
-    Pin pin;
+class Endstop : public IODriver {
+    IoPin pin;
     public:
-        Endstop() : IODriver() {
-            pin.makeDigitalInput();
+        Endstop(const IoPin &pin) : IODriver(), pin(pin) {
+            this->pin.makeDigitalInput();
         }
         bool isTriggered() {
             bool t = pin.digitalRead() == IoHigh;
@@ -52,7 +52,8 @@ template <typename Pin> class Endstop : public IODriver {
 };
 
 //default Endstop implementation which always acts as if untriggered:
-typedef Endstop<NoPin> EndstopNoExist;
+//typedef Endstop<NoPin> EndstopNoExist;
+typedef Endstop EndstopNoExist;
 
 }
 #endif

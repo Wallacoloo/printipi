@@ -5,7 +5,7 @@
 
 
 //The BCM2835 chip has 54 pins (#0-53).
-//Only the lower 32 are usable on the 3 current models: A, B, and B+
+//Only the lower 32 are usable on the 3 current models: A, B, and A+/B+
 //This allows for some code optimizations, but we want to somewhat future-proof them in case a new model adds more IO:
 #ifndef MAX_RPI_PIN_ID
     #define MAX_RPI_PIN_ID 31
@@ -29,14 +29,20 @@
 #endif
 
 #if BUILD_TYPE_release
+	//on a debug build, we might want to let exceptions raise all the way up into the OS
+	//but on a release build, we want to catch them and display our own error message.
     #define CLEAN_EXIT
 #endif
 
 
 //Now expose some primitive typedefs:
 typedef uint8_t AxisIdType;
+//TODO: remove GpioPinIdType (https://github.com/Wallacoloo/printipi/issues/51)
 typedef int GpioPinIdType; //Even if a machine only has 64 gpio pins, they may be separated into, say, 2 side-by-side bytes. So use an int by default.
 typedef float CelciusType;
+typedef bool IoLevel;
+#define IoLow false
+#define IoHigh true
 
 
 #endif
