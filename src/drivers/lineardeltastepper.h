@@ -294,7 +294,7 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
         }
 };
 
-template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDeltaStepper : public AxisStepper {
+template <DeltaAxis AxisIdx> class LinearDeltaStepper : public AxisStepper {
     private:
         float _r, _L, _MM_STEPS; //settings which will be obtained from the CoordMap
         float M0; //initial coordinate of THIS axis.
@@ -308,7 +308,7 @@ template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDelta
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
     public:
-        typedef LinearHomeStepper<AxisIdx, EndstopT> HomeStepperT;
+        typedef LinearHomeStepper<AxisIdx> HomeStepperT;
         typedef LinearDeltaArcStepper<AxisIdx> ArcStepperT;
         inline LinearDeltaStepper() : _r(0), _L(0), _MM_STEPS(0) {}
         template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)

@@ -218,9 +218,9 @@ class kosselrampsfd : public Machine {
         
         //Expose the logic used to control the stepper motors:
         //Here we just have 1 stepper motor for each axis and another for the extruder:
-        typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A, Endstop>, 
-                           LinearDeltaStepper<DELTA_AXIS_B, Endstop>, 
-                           LinearDeltaStepper<DELTA_AXIS_C, Endstop>, 
+        typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A>, 
+                           LinearDeltaStepper<DELTA_AXIS_B>, 
+                           LinearDeltaStepper<DELTA_AXIS_C>, 
                            LinearStepper<CARTESIAN_AXIS_E> > _AxisStepperTypes;
         typedef AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
         typedef AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;

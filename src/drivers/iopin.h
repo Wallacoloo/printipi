@@ -34,7 +34,7 @@
 #include <set>
 #include <utility> //for std::move
 #include "drivers/auto/primitiveiopin.h"
-#include "schedulerbase.h"
+#include "schedulerbase.h" //for SchedulerBase::registerExitHandler
 
 
 namespace drv {
@@ -76,6 +76,7 @@ class IoPin {
         IoPin& operator=(const IoPin &other) = delete;
         //allow the move constructor:
         IoPin(IoPin &&other);
+        IoPin& operator=(IoPin &&other);
 
         template <typename ...Args> IoPin(IoPinInversions inversions, IoLevel defaultState, Args... args)
           : _pin(args...),  _invertReads((inversions & INVERT_READS) != 0), _invertWrites((inversions & INVERT_WRITES) != 0), _defaultState(defaultState) {
@@ -88,6 +89,7 @@ class IoPin {
             setToDefault();
             livingPins.erase(this);
         }
+        inline bool isNull() const { return _pin.isNull(); }
         inline GpioPinIdType id() const { return _pin.id(); } //TODO: remove this
         inline bool areWritesInverted() const { return _invertWrites; } //TODO: remove this
         //wrapper functions that take the burden of inversions, etc off the platform-specific drivers:
@@ -99,7 +101,7 @@ class IoPin {
         inline void makeDigitalInput() {
             _pin.makeDigitalInput();
         }
-        inline IoLevel digitalRead() {
+        inline IoLevel digitalRead() const {
             //relay the call to the real pin, performing any inversions necessary
             return _invertReads ? !_pin.digitalRead() : _pin.digitalRead();
         }

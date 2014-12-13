@@ -42,19 +42,19 @@ namespace drv {
 class Endstop : public IODriver {
     IoPin pin;
     public:
+        inline Endstop() : pin(IoPin::null()) {}
         inline Endstop(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
             this->pin.makeDigitalInput();
         }
-        inline bool isTriggered() {
+        inline bool isNull() const {
+            return pin.isNull();
+        }
+        inline bool isTriggered() const {
             bool t = pin.digitalRead() == IoHigh;
             LOGV("LeverEndstop is %i\n", t);
             return t;
         }
 };
-
-//default Endstop implementation which always acts as if untriggered:
-//typedef Endstop<NoPin> EndstopNoExist;
-typedef Endstop EndstopNoExist;
 
 }
 #endif

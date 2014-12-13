@@ -42,10 +42,9 @@
 
 namespace drv {
 
-template <std::size_t AxisIdx, typename EndstopT> class LinearHomeStepper : public AxisStepper {
-    EndstopT endstop;
+template <std::size_t AxisIdx> class LinearHomeStepper : public AxisStepper {
+    Endstop endstop;
     float timePerStep;
-    //static constexpr float STEPS_MM = STEPS_M / 1000.;
     public:
         inline LinearHomeStepper() {}
         template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome) : AxisStepper(idx) {
@@ -56,8 +55,7 @@ template <std::size_t AxisIdx, typename EndstopT> class LinearHomeStepper : publ
         }
         
         inline void _nextStep() {
-            //if (EndstopT::isTriggered()) {
-            if (endstop.isTriggered()) {
+            if (endstop.isTriggered() || endstop.isNull()) {
                 this->time = NAN; //at endstop; no more steps.
             } else {
                 this->time += timePerStep;
@@ -65,26 +63,15 @@ template <std::size_t AxisIdx, typename EndstopT> class LinearHomeStepper : publ
         }
 };
 
-//Special overload for an axis that doesn't have an endstop (like the extruder).
-//  Makes it so that a homing operation returns instantly.
-template <std::size_t AxisIdx> class LinearHomeStepper<AxisIdx, EndstopNoExist> : public AxisStepper {
-    public:
-        inline LinearHomeStepper() {}
-        template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome) : AxisStepper(idx) {
-            (void)map; (void)vHome; //unused
-            this->time = NAN; //device isn't homeable, so never step.
-        }
-        inline void _nextStep() {}
-};
 
-template <CartesianAxis CoordType, typename EndstopT=EndstopNoExist> class LinearStepper : public AxisStepper {
+template <CartesianAxis CoordType> class LinearStepper : public AxisStepper {
     //private:
     //    static constexpr float STEPS_MM = STEPS_PER_METER/1000.0;
     private:
         float timePerStep;
     public:
-        typedef LinearHomeStepper<CoordType, EndstopT> HomeStepperT;
-        typedef LinearStepper<CoordType, EndstopT> ArcStepperT;
+        typedef LinearHomeStepper<CoordType> HomeStepperT;
+        typedef LinearStepper<CoordType> ArcStepperT;
     protected:
         inline float GET_COORD(float x, float y, float z, float e) const {
             //static_assert(CoordType==CARTESIAN_AXIS_X || CoordType==CARTESIAN_AXIS_Y || CoordType==CARTESIAN_AXIS_Z || CoordType==CARTESIAN_AXIS_E, "CoordType can only be x, y, z, or e");
