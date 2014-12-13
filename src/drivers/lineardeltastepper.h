@@ -262,7 +262,7 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
             float posTime = testDir((this->sTotal+1)*MM_STEPS());
             if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                 if (posTime > this->time) {
-                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
+                    LOGV("LinearDeltaArcStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
                     this->time = posTime;
                     this->direction = StepForward;
                     ++this->sTotal;
@@ -271,7 +271,7 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
                 }
             } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
                 if (negTime > this->time) {
-                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
+                    LOGV("LinearDeltaArcStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
                     this->time = negTime;
                     this->direction = StepBackward;
                     --this->sTotal;
@@ -280,12 +280,12 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
                 }
             } else { //neither time is invalid
                 if (negTime < posTime) {
-                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
+                    LOGV("LinearDeltaArcStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
                     this->time = negTime;
                     this->direction = StepBackward;
                     --this->sTotal;
                 } else {
-                    LOGV("LinearDeltaArcStepper<%zu>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
+                    LOGV("LinearDeltaArcStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
                     this->time = posTime;
                     this->direction = StepForward;
                     ++this->sTotal;
@@ -392,7 +392,7 @@ template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDelta
             float posTime = testDir((this->sTotal+1)*MM_STEPS());
             if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                 if (posTime > this->time) {
-                    //LOGV("LinearDeltaStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
+                    //LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
                     this->time = posTime;
                     this->direction = StepForward;
                     ++this->sTotal;
@@ -401,7 +401,7 @@ template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDelta
                 }
             } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
                 if (negTime > this->time) {
-                    //LOGV("LinearDeltaStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
+                    //LOGV("LinearDeltaStepper<%u>::chose %f (neg)\n", AxisIdx, negTime);
                     this->time = negTime;
                     this->direction = StepBackward;
                     --this->sTotal;
@@ -410,12 +410,12 @@ template <DeltaAxis AxisIdx, typename EndstopT=EndstopNoExist> class LinearDelta
                 }
             } else { //neither time is invalid
                 if (negTime < posTime) {
-                    //LOGV("LinearDeltaStepper<%zu>::chose %f (neg)\n", AxisIdx, negTime);
+                    //LOGV("LinearDeltaStepper<%u>::chose %f (neg)\n", AxisIdx, negTime);
                     this->time = negTime;
                     this->direction = StepBackward;
                     --this->sTotal;
                 } else {
-                    //LOGV("LinearDeltaStepper<%zu>::chose %f (pos)\n", AxisIdx, posTime);
+                    //LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
                     this->time = posTime;
                     this->direction = StepForward;
                     ++this->sTotal;

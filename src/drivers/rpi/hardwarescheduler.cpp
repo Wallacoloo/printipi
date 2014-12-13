@@ -164,7 +164,7 @@ void HardwareScheduler::initSrcAndControlBlocks() {
     srcClrMem = DmaMem(*this, srcPageBytes);
     srcClrArray = (struct GpioBufferFrame*)srcClrMem.virtL2Coherent;
     
-    LOG("drv::rpi::HardwareScheduler::initSrcAndControlBlocks: #dma blocks: %i, #src blocks: %i\n", numSrcBlocks*3, numSrcBlocks);
+    LOG("drv::rpi::HardwareScheduler::initSrcAndControlBlocks: #dma blocks: %zu, #src blocks: %zu\n", numSrcBlocks*3, numSrcBlocks);
     for (unsigned int i=0; i<numSrcBlocks*3; i += 3) {
         //pace DMA through PWM
         cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
