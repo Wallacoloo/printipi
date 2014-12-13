@@ -80,7 +80,7 @@ template <typename Drv> class State {
     struct SchedInterface {
         private:
             State<Drv>& _state;
-            SchedInterfaceHardwareScheduler _hardwareScheduler; //configured in typesettings.h
+            SchedInterfaceHardwareScheduler _hardwareScheduler; 
         public:
             SchedInterface(State<Drv> &state) : _state(state) {}
             bool onIdleCpu(OnIdleCpuIntervalT interval) {

@@ -7,8 +7,8 @@
     #include PLATFORM_DRIVER_HARDWARESCHEDULER
     typedef drv::TARGET_PLATFORM_LOWER::HardwareScheduler SchedInterfaceHardwareScheduler;
 #else
-    #include "schedulerbase.h"
-    typedef NullSchedulerInterface::HardwareScheduler SchedInterfaceHardwareScheduler;
+    #include "drivers/generic/hardwarescheduler.h"
+    typedef drv::generic::HardwareScheduler SchedInterfaceHardwareScheduler;
 #endif
 
 #endif

@@ -55,7 +55,7 @@ struct NullSchedAdjuster {
     //void update(EventClockT::time_point) {}
 };
 
-template <typename Interface=NullSchedulerInterface> class Scheduler : public SchedulerBase {
+template <typename Interface> class Scheduler : public SchedulerBase {
     typedef NullSchedAdjuster SchedAdjuster;
     EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
     Interface interface;
