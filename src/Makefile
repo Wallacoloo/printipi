@@ -77,11 +77,11 @@ LDFLAGS= $(LTOFLAG)
 #-lrt is the realtime posix library. Appears to be needed for things like clock_nanosleep
 LIBS=-lrt
 BUILDROOT=../build
-DEBUGDIR=$(BUILDROOT)/debug
-DEBUGRELDIR=$(BUILDROOT)/debugrel
-RELEASEDIR=$(BUILDROOT)/release
-PROFILEDIR=$(BUILDROOT)/prof
-MINSIZEDIR=$(BUILDROOT)/minsize
+DEBUGDIR=$(BUILDROOT)/debug-$(CXX)
+DEBUGRELDIR=$(BUILDROOT)/debugrel-$(CXX)
+RELEASEDIR=$(BUILDROOT)/release-$(CXX)
+PROFILEDIR=$(BUILDROOT)/prof-$(CXX)
+MINSIZEDIR=$(BUILDROOT)/minsize-$(CXX)
 #name of binary file:
 NAME=printipi-$(subst /,-,$(MACHINEPARSED))
 #NAMELINK will become a symbolic link to the actual binary
@@ -122,7 +122,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 	
 %/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
-	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
+	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)-$(CXX)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
 	
 $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZEDIR)/%.o: %.cpp
