@@ -87,7 +87,7 @@ NAME=printipi-$(subst /,-,$(MACHINEPARSED))
 #NAMELINK will become a symbolic link to the actual binary
 NAMELINK=printipi
 
-all: debug
+all: debugrel
 
 #include auto-generated dependencies:
 -include $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
