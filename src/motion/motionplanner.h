@@ -41,6 +41,8 @@
 #include "event.h"
 #include "common/vector3.h"
 
+namespace motion {
+
 //There are 3 distinct types of motion that can occur at any given time:
 enum MotionType {
     MotionNone,
@@ -319,5 +321,6 @@ template <typename Interface> class MotionPlanner {
         }
 };
 
+}
 
 #endif

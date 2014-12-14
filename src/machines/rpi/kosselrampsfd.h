@@ -200,6 +200,7 @@ namespace machines {
 namespace rpi {
 
 using namespace drv; //for all the drivers
+using namespace motion; //for Acceleration & such
 
 class kosselrampsfd : public Machine {
     private:

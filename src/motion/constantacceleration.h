@@ -36,6 +36,8 @@
 #include "accelerationprofile.h"
 #include "common/logging.h"
 
+namespace motion {
+
 class ConstantAcceleration : public AccelerationProfile {
     float _accel;
     float moveDuration;
@@ -74,5 +76,7 @@ class ConstantAcceleration : public AccelerationProfile {
             }
         }
 };
+
+}
 
 #endif

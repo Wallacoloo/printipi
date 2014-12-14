@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
+
 /*
  * This is a minimal Machine that will respond to gcode commands,
  *   but won't actually do any movements or control hotends, fans, etc.
@@ -40,6 +40,7 @@ namespace machines {
 namespace generic {
 
 using namespace drv; //for all the drivers
+using namespace motion; //for Acceleration & such
 
 class example : public Machine {
     public:

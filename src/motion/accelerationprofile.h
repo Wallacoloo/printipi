@@ -38,9 +38,13 @@
 #ifndef MOTION_ACCELERATIONPROFILE_H
 #define MOTION_ACCELERATIONPROFILE_H
 
+namespace motion {
 
 struct AccelerationProfile {
-    inline void begin(float /*moveDuration*/, float /*Vmax*/) {} //Optional, but almost surely needed.
+	//Optional, but almost surely needed:
+    inline void begin(float moveDuration, float Vmax) {
+    	(void)moveDuration; (void)Vmax; //unused
+    }
     //float transform(float inp, float moveDuration, float Vmax);
 };
 
@@ -48,5 +52,6 @@ struct NoAcceleration : public AccelerationProfile {
     inline float transform(float inp) { return inp; }
 };
 
+}
 
 #endif

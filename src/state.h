@@ -162,7 +162,7 @@ template <typename Drv> class State {
     //Thus, we need a root com ("com") & an additional file stack ("gcodeFileStack").
     std::stack<gparse::Com> gcodeFileStack;
     SchedType scheduler;
-    MotionPlanner<MotionInterface> motionPlanner;
+    motion::MotionPlanner<MotionInterface> motionPlanner;
     Drv &driver;
     FileSystem &filesystem;
     IODriverTypes ioDrivers;
