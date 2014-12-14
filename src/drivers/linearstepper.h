@@ -63,7 +63,7 @@ template <std::size_t AxisIdx> class LinearHomeStepper : public AxisStepper {
         }
         
         inline void _nextStep() {
-            if (endstop->isTriggered() || endstop->isNull()) {
+            if (endstop->isNull() || endstop->isTriggered()) {
                 this->time = NAN; //at endstop; no more steps.
             } else {
                 this->time += timePerStep;
