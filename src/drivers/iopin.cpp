@@ -11,6 +11,9 @@ IoPin::IoPin(IoPin &&other) : _pin(PrimitiveIoPin::null()) {
 }
 
 IoPin& IoPin::operator=(IoPin &&other) {
+	_invertReads = other._invertReads;
+    _invertWrites = other._invertWrites;
+    _defaultState = other._defaultState;
 	_pin = other._pin;
 	other._pin = IoPin::null::ref()._pin;
 	livingPins.insert(this);
