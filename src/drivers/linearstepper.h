@@ -34,13 +34,20 @@
 
 #include "axisstepper.h"
 #include "endstop.h"
-#include "linearcoordmap.h" //for CartesianAxis
+//#include "linearcoordmap.h" //for CartesianAxis
 #include "common/logging.h"
 #include <tuple>
 #include <cmath> //for fabs
 #include <cassert>
 
 namespace drv {
+
+enum CartesianAxis {
+    CARTESIAN_AXIS_X=0,
+    CARTESIAN_AXIS_Y=1,
+    CARTESIAN_AXIS_Z=2,
+    CARTESIAN_AXIS_E=3
+};
 
 template <std::size_t AxisIdx> class LinearHomeStepper : public AxisStepper {
     const Endstop *endstop; //must be pointer, because cannot move a reference
@@ -66,8 +73,6 @@ template <std::size_t AxisIdx> class LinearHomeStepper : public AxisStepper {
 
 
 template <CartesianAxis CoordType> class LinearStepper : public AxisStepper {
-    //private:
-    //    static constexpr float STEPS_MM = STEPS_PER_METER/1000.0;
     private:
         float timePerStep;
     public:

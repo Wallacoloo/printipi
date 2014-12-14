@@ -32,17 +32,16 @@
 #ifndef DRIVERS_LINEARCOORDMAP_H
 #define DRIVERS_LINEARCOORDMAP_H
 
+#include <array>
+
 #include "coordmap.h"
 #include "common/matrix.h"
+#include "linearstepper.h"
+#include "endstop.h"
 
 namespace drv {
 
-enum CartesianAxis {
-    CARTESIAN_AXIS_X=0,
-    CARTESIAN_AXIS_Y=1,
-    CARTESIAN_AXIS_Z=2,
-    CARTESIAN_AXIS_E=3
-};
+
 
 template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
     float _STEPS_MM_X, _MM_STEPS_X;
@@ -50,6 +49,14 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
     float _STEPS_MM_Z, _MM_STEPS_Z;
     float _STEPS_MM_E, _MM_STEPS_E;
     BedLevelT bedLevel;
+    std::array<Endstop, 4> endstops; //x, y, z, e (null)
+
+    typedef std::tuple<LinearStepper<CARTESIAN_AXIS_X>, 
+                       LinearStepper<CARTESIAN_AXIS_Y>, 
+                       LinearStepper<CARTESIAN_AXIS_Z>, 
+                       LinearStepper<CARTESIAN_AXIS_E> > _AxisStepperTypes;
+    typedef AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
+    typedef AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
     public:
         inline float STEPS_MM(std::size_t axisIdx) const { 
             return axisIdx == CARTESIAN_AXIS_X ? _STEPS_MM_X
@@ -61,12 +68,29 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
               :   (axisIdx == CARTESIAN_AXIS_Y ? _MM_STEPS_Y
               :   (axisIdx == CARTESIAN_AXIS_Z ? _MM_STEPS_Z : _MM_STEPS_E));
         }
-        inline LinearCoordMap(float STEPS_MM_X, float STEPS_MM_Y, float STEPS_MM_Z, float STEPS_MM_E, const BedLevelT& t)
+        inline LinearCoordMap(float STEPS_MM_X, float STEPS_MM_Y, float STEPS_MM_Z, float STEPS_MM_E, 
+          Endstop &&endstopX, Endstop &&endstopY, Endstop &&endstopZ,
+          const BedLevelT& t)
          : _STEPS_MM_X(STEPS_MM_X), _MM_STEPS_X(1. / STEPS_MM_X),
            _STEPS_MM_Y(STEPS_MM_Y), _MM_STEPS_Y(1. / STEPS_MM_Y),
            _STEPS_MM_Z(STEPS_MM_Z), _MM_STEPS_Z(1. / STEPS_MM_Z),
            _STEPS_MM_E(STEPS_MM_E), _MM_STEPS_E(1. / STEPS_MM_E),
-           bedLevel(t) {}
+           bedLevel(t),
+           endstops({std::move(endstopX), std::move(endstopY), std::move(endstopZ), std::move(Endstop())}) {}
+
+        inline _AxisStepperTypes getAxisSteppers() const {
+            return _AxisStepperTypes();
+        }
+        inline _HomeStepperTypes getHomeSteppers() const {
+            return _HomeStepperTypes();
+        }
+        inline _ArcStepperTypes getArcSteppers() const {
+            return _ArcStepperTypes();
+        }
+        inline const Endstop& getEndstop(std::size_t axis) const {
+            return endstops[axis];
+        }
+
         inline static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }

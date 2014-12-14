@@ -46,8 +46,25 @@
 
 namespace drv {
 
+class Endstop; //forward declare for class in "endstop.h"
+
 class CoordMap {
     public:
+        inline std::tuple<> getAxisSteppers() const {
+            //return a tuple of uninitialized AxisSteppers for moving in a straight line. See axisstepper.h for the definition of AxisStepper.
+            return std::tuple<>();
+        }
+        inline std::tuple<> getHomeSteppers() const {
+            return std::tuple<>();
+        }
+        inline std::tuple<> getArcSteppers() const {
+            return std::tuple<>();
+        }
+        inline const Endstop& getEndstop(std::size_t axis) const {
+            //return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)
+            (void)axis; //unused
+            return *(Endstop*)(NULL);
+        }
         inline static constexpr std::size_t numAxis() {
             //return the number of axis (physical motors) that we have.
             return 0;
