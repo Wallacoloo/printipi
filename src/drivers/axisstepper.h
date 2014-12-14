@@ -119,43 +119,43 @@ template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
 //Helper classes for AxisStepper::initAxisSteppers
 
 struct _AxisStepper__initAxisSteppers {
-    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT &map, std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
+    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
         (void)_myIdx; (void)stepper; //unused
-        std::get<MyIdx>(*steppers) = T(MyIdx, map, curPos, vx, vy, vz, ve);
+        std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, curPos, vx, vy, vz, ve));
         std::get<MyIdx>(*steppers)._nextStep();
     }
 };
 
 template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisStepper::initAxisSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
-    callOnAll(steppers, _AxisStepper__initAxisSteppers(), &steppers, map, curPos, vx, vy, vz, ve);
+    callOnAll(steppers, _AxisStepper__initAxisSteppers(), &steppers, &map, curPos, vx, vy, vz, ve);
 }
 
 //Helper classes for AxisStepper::initAxisHomeSteppers
 
 struct _AxisStepper__initAxisHomeSteppers {
-    template <std::size_t MyIdx, typename T, typename TupleT, typename CoordMapT> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT &map, float vHome) {
+    template <std::size_t MyIdx, typename T, typename TupleT, typename CoordMapT> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, float vHome) {
         (void)_myIdx; (void)stepper; //unused
-        std::get<MyIdx>(*steppers) = std::move(T(MyIdx, map, vHome));
+        std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, vHome));
         std::get<MyIdx>(*steppers)._nextStep();
     }
 };
 
 template <typename TupleT, typename CoordMapT> void AxisStepper::initAxisHomeSteppers(TupleT &steppers, const CoordMapT &map, float vHome) {
-    callOnAll(steppers, _AxisStepper__initAxisHomeSteppers(), &steppers, map, vHome);
+    callOnAll(steppers, _AxisStepper__initAxisHomeSteppers(), &steppers, &map, vHome);
 }
 
 //Helper classes for AxisStepper::initAxisArcSteppers
 
 struct _AxisStepper__initAxisArcSteppers {
-    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT &map, std::array<int, MechSize>& curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) {
+    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) {
         (void)_myIdx; (void)stepper; //unused
-        std::get<MyIdx>(*steppers) = T(MyIdx, map, curPos, xCenter, yCenter, zCenter, ux, uy, uz, vx, vy, vz, arcRad, arcVel, extVel);
+        std::get<MyIdx>(*steppers) = T(MyIdx, *map, curPos, xCenter, yCenter, zCenter, ux, uy, uz, vx, vy, vz, arcRad, arcVel, extVel);
         std::get<MyIdx>(*steppers)._nextStep();
     }
 };
 
 template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisStepper::initAxisArcSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) {
-    callOnAll(steppers, _AxisStepper__initAxisArcSteppers(), &steppers, map, curPos, xCenter, yCenter, zCenter, ux, uy, uz, vx, vy, vz, arcRad, arcVel, extVel);
+    callOnAll(steppers, _AxisStepper__initAxisArcSteppers(), &steppers, &map, curPos, xCenter, yCenter, zCenter, ux, uy, uz, vx, vy, vz, arcRad, arcVel, extVel);
 }
 
 //Helper classes for AxisStepper::nextStep method

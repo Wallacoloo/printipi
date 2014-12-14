@@ -47,8 +47,10 @@
 #include "common/logging.h"
 #include "common/matrix.h"
 #include "lineardeltastepper.h"
+#include "endstop.h"
 #include <array>
 #include <tuple>
+#include <utility> //for std::move
 
 namespace drv {
 
@@ -58,6 +60,8 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
     float _STEPS_MM, _MM_STEPS;
     float _STEPS_MM_EXT, _MM_STEPS_EXT;
     BedLevelT bedLevel;
+
+    Endstop endstopA, endstopB, endstopC;
 
     typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A>, 
                        LinearDeltaStepper<DELTA_AXIS_B>, 
@@ -77,11 +81,13 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
         inline float buildrad() const { return _buildrad; }
         inline float STEPS_MM(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? STEPS_MM_EXT() : STEPS_MM(); }
         inline float MM_STEPS(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? MM_STEPS_EXT() : MM_STEPS(); }
-        inline LinearDeltaCoordMap(float r, float L, float h, float buildrad, float STEPS_MM, float STEPS_MM_EXT, const BedLevelT &t)
+        inline LinearDeltaCoordMap(float r, float L, float h, float buildrad, float STEPS_MM, float STEPS_MM_EXT, 
+            Endstop &&endstopA, Endstop &&endstopB, Endstop &&endstopC, const BedLevelT &t)
          : _r(r), _L(L), _h(h), _buildrad(buildrad),
            _STEPS_MM(STEPS_MM), _MM_STEPS(1. / STEPS_MM),
            _STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
-           bedLevel(t) {}
+           bedLevel(t),
+           endstopA(std::move(endstopA)), endstopB(std::move(endstopB)), endstopC(std::move(endstopC)) {}
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
         }

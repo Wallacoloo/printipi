@@ -85,6 +85,11 @@ class IoPin {
             registerExitHandler();
             livingPins.insert(this);
         }
+        /*template <typename ...Args> IoPin(Args... args)
+          : _pin(args...), _invertReads(false), _invertWrites(false), _defaultState(IoLow) {
+            registerExitHandler();
+            livingPins.insert(this);
+        }*/
         inline ~IoPin() {
             setToDefault();
             livingPins.erase(this);
