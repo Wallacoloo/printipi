@@ -22,9 +22,9 @@
  */
  
 /*
- * Printipi/drivers/rpi/hardwarescheduler.h
+ * Printipi/platforms/rpi/hardwarescheduler.h
  *
- * drv::rpi::HardwareScheduler implements the HardwareScheduler interface declared in schedulerbase.h
+ * platforms::rpi::HardwareScheduler implements the HardwareScheduler interface defined in platforms/generic/hardwarescheduler.h
  *
  * It works by maintaining a circular queue of, say, 10 ms in length.
  * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.

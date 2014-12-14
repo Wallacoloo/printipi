@@ -22,7 +22,7 @@
  */
  
 /*
- * Printipi/drivers/rpi/chronoclockrpi.h
+ * Printipi/platforms/rpi/chronoclockrpi.h
  *
  * Implements the same interfaces as std::chrono::<clock>::now()
  *   to allow for highly efficient access to the system time (no context switching to kernel)
