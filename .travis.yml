@@ -2,3 +2,13 @@ language: cpp
 compiler:
   - gcc
 script: ./buildtest.sh
+
+before_install:
+  # g++4.7.3
+  - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
+
+  - sudo apt-get update -qq
+
+install:
+  # g++4.7.3
+  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.7; fi
