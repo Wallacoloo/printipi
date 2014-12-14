@@ -153,10 +153,10 @@
 #include "axisstepper.h"
 #include "linearstepper.h" //for LinearHomeStepper
 //#include "lineardeltacoordmap.h" //for DeltaAxis
-#include "endstop.h"
+#include "drivers/endstop.h"
 #include "common/logging.h"
 
-namespace drv {
+namespace motion {
 
 enum DeltaAxis {
     DELTA_AXIS_A=0,

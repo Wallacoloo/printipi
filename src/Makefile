@@ -132,7 +132,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 %/empty.cpp:
 	touch $@
 	
-%/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
+%/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/motion/motion.a %/rest.a
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
@@ -148,13 +148,16 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	@mkdir -p $(@D)
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/iopin.o %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a
+%/drivers/drivers.a: %/drivers/iopin.o %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 %/common/common.a: %/common/logging.o
+	$(LD) -r $^ -o $@ $(LDFLAGS)
+
+%/motion/motion.a: %/motion/axisstepper.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
 %/rest.a: %/argparse.o %/event.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o 

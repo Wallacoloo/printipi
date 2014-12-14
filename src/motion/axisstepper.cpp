@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-namespace drv {
+namespace motion {
 
 Event AxisStepper::getEvent() const {
     return Event::StepperEvent(this->time, this->index(), this->direction);

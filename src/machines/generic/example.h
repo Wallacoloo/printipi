@@ -31,7 +31,7 @@
 
 #include <tuple>
 #include "motion/constantacceleration.h"
-#include "drivers/linearcoordmap.h"
+#include "motion/linearcoordmap.h"
 #include "machines/machine.h"
 #include "common/matrix.h"
 #include "drivers/endstop.h"

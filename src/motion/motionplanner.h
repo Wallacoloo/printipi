@@ -37,7 +37,7 @@
 #include <stdexcept> //for runtime_error
 #include <utility> //for std::declval
 #include "accelerationprofile.h"
-#include "drivers/axisstepper.h"
+#include "axisstepper.h"
 #include "event.h"
 #include "common/vector3.h"
 
@@ -88,7 +88,7 @@ template <typename Interface> class MotionPlanner {
             return _coordMapper.doHomeBeforeFirstMovement();
         }
     private:
-        Event _nextStep(drv::AxisStepper &s) {
+        Event _nextStep(AxisStepper &s) {
             LOGV("MotionPlanner::nextStep() is: %i at %g of %g\n", s.index(), s.time, _duration);
             if (s.time > _duration || s.time <= 0 || std::isnan(s.time)) { //if the next time the given axis wants to step is invalid or past the movement length, then end the motion
                 //Note: don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
@@ -131,19 +131,19 @@ template <typename Interface> class MotionPlanner {
         //If they are length zero, then _nextStep* just returns an empty event and a compilation error is avoided.
         //Otherwise, the templated function is called, and _nextStep is run as usual:
         template <bool T> Event _nextStepHome(std::integral_constant<bool, T> ) {
-            return _nextStep(drv::AxisStepper::getNextTime(_homeIters));
+            return _nextStep(AxisStepper::getNextTime(_homeIters));
         }
         Event _nextStepHome(std::false_type ) {
             return Event();
         }
         template <bool T> Event _nextStepLinear(std::integral_constant<bool, T> ) {
-            return _nextStep(drv::AxisStepper::getNextTime(_iters));
+            return _nextStep(AxisStepper::getNextTime(_iters));
         }
         Event _nextStepLinear(std::false_type ) {
             return Event();
         }
         template <bool T> Event _nextStepArc(std::integral_constant<bool, T> ) {
-            return _nextStep(drv::AxisStepper::getNextTime(_arcIters));
+            return _nextStep(AxisStepper::getNextTime(_arcIters));
         }
         Event _nextStepArc(std::false_type ){
             return Event();
@@ -199,7 +199,7 @@ template <typename Interface> class MotionPlanner {
             LOGD("MotionPlanner::moveTo (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
             LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
             //LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
-            drv::AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, vx, vy, vz, velE);
+            AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, vx, vy, vz, velE);
             this->_duration = minDuration;
             this->_motionType = MotionLinear;
             this->_accel.begin(minDuration, maxVelXyz);
@@ -211,7 +211,7 @@ template <typename Interface> class MotionPlanner {
             if (std::tuple_size<HomeStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes
             }
-            drv::AxisStepper::initAxisHomeSteppers(_homeIters, _coordMapper, maxVelXyz);
+            AxisStepper::initAxisHomeSteppers(_homeIters, _coordMapper, maxVelXyz);
             this->_baseTime = baseTime.time_since_epoch();
             this->_duration = NAN;
             this->_motionType = MotionHome;
@@ -311,7 +311,7 @@ template <typename Interface> class MotionPlanner {
             LOGD("MotionPlanner arc orig center (%f,%f,%f), proj (%f,%f,%f) n(%f,%f,%f), mp(%f,%f,%f)\n", 
                 centerX_, centerY_, centerZ_, projcmpn.x(), projcmpn.y(), projcmpn.z(),
                 n.x(), n.y(), n.z(), mp.x(), mp.y(), mp.z());
-            drv::AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, center.x(), center.y(), center.z(), u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE);
+            AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, center.x(), center.y(), center.z(), u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE);
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
             }

@@ -46,7 +46,7 @@
 #include <utility> //for std::move
 #include "common/tupleutil.h"
 
-namespace drv {
+namespace motion {
 
 class AxisStepper {
     private:

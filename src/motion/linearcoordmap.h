@@ -37,9 +37,9 @@
 #include "coordmap.h"
 #include "common/matrix.h"
 #include "linearstepper.h"
-#include "endstop.h"
+#include "drivers/endstop.h"
 
-namespace drv {
+namespace motion {
 
 
 
@@ -49,7 +49,7 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
     float _STEPS_MM_Z, _MM_STEPS_Z;
     float _STEPS_MM_E, _MM_STEPS_E;
     BedLevelT bedLevel;
-    std::array<Endstop, 4> endstops; //x, y, z, e (null)
+    std::array<drv::Endstop, 4> endstops; //x, y, z, e (null)
 
     typedef std::tuple<LinearStepper<CARTESIAN_AXIS_X>, 
                        LinearStepper<CARTESIAN_AXIS_Y>, 
@@ -69,14 +69,14 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
               :   (axisIdx == CARTESIAN_AXIS_Z ? _MM_STEPS_Z : _MM_STEPS_E));
         }
         inline LinearCoordMap(float STEPS_MM_X, float STEPS_MM_Y, float STEPS_MM_Z, float STEPS_MM_E, 
-          Endstop &&endstopX, Endstop &&endstopY, Endstop &&endstopZ,
+          drv::Endstop &&endstopX, drv::Endstop &&endstopY, drv::Endstop &&endstopZ,
           const BedLevelT& t)
          : _STEPS_MM_X(STEPS_MM_X), _MM_STEPS_X(1. / STEPS_MM_X),
            _STEPS_MM_Y(STEPS_MM_Y), _MM_STEPS_Y(1. / STEPS_MM_Y),
            _STEPS_MM_Z(STEPS_MM_Z), _MM_STEPS_Z(1. / STEPS_MM_Z),
            _STEPS_MM_E(STEPS_MM_E), _MM_STEPS_E(1. / STEPS_MM_E),
            bedLevel(t),
-           endstops({{std::move(endstopX), std::move(endstopY), std::move(endstopZ), std::move(Endstop())}}) {}
+           endstops({{std::move(endstopX), std::move(endstopY), std::move(endstopZ), std::move(drv::Endstop())}}) {}
 
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
@@ -87,7 +87,7 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
         inline _ArcStepperTypes getArcSteppers() const {
             return _ArcStepperTypes();
         }
-        inline const Endstop& getEndstop(std::size_t axis) const {
+        inline const drv::Endstop& getEndstop(std::size_t axis) const {
             return endstops[axis];
         }
 

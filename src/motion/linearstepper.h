@@ -33,14 +33,13 @@
 #define LINEARSTEPPER_H
 
 #include "axisstepper.h"
-#include "endstop.h"
-//#include "linearcoordmap.h" //for CartesianAxis
+#include "drivers/endstop.h"
 #include "common/logging.h"
 #include <tuple>
 #include <cmath> //for fabs
 #include <cassert>
 
-namespace drv {
+namespace motion {
 
 enum CartesianAxis {
     CARTESIAN_AXIS_X=0,
@@ -50,7 +49,7 @@ enum CartesianAxis {
 };
 
 template <std::size_t AxisIdx> class LinearHomeStepper : public AxisStepper {
-    const Endstop *endstop; //must be pointer, because cannot move a reference
+    const drv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
     public:
         inline LinearHomeStepper() : endstop(NULL) {}

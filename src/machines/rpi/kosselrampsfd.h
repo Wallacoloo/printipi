@@ -115,7 +115,7 @@
 #include "common/matrix.h"
 #include "motion/constantacceleration.h"
 #include "drivers/a4988.h"
-#include "drivers/lineardeltacoordmap.h"
+#include "motion/lineardeltacoordmap.h"
 #include "drivers/rcthermistor.h"
 #include "drivers/tempcontrol.h"
 #include "drivers/fan.h"
