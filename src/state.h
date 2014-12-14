@@ -58,7 +58,7 @@
 #include "common/mathutil.h"
 #include "drivers/iodriver.h"
 #include "platforms/auto/chronoclock.h" //for EventClockT
-#include "platforms/auto/hardwarescheduler.h" //for SchedInterfaceHardwareScheduler
+#include "platforms/auto/hardwarescheduler.h" //for HardwareScheduler
 #include "drivers/iopin.h"
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
@@ -80,7 +80,7 @@ template <typename Drv> class State {
     struct SchedInterface {
         private:
             State<Drv>& _state;
-            SchedInterfaceHardwareScheduler _hardwareScheduler; 
+            HardwareScheduler _hardwareScheduler; 
         public:
             SchedInterface(State<Drv> &state) : _state(state) {}
             bool onIdleCpu(OnIdleCpuIntervalT interval) {
