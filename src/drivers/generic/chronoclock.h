@@ -21,7 +21,6 @@
                 typedef std::chrono::time_point<ChronoClock> time_point;
                 static const bool is_steady = true;
                 inline static time_point now() noexcept {
-                    //struct timespec tnow = timespecNow();
                     struct timespec tnow;
                     clock_gettime(CLOCK_MONOTONIC, &tnow);
                     return time_point(std::chrono::seconds(tnow.tv_sec) + std::chrono::nanoseconds(tnow.tv_nsec));

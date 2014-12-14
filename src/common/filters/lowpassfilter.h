@@ -31,7 +31,6 @@ class LowPassFilter {
         inline float feed(float inp) {
             _last = _last + a()*(inp - _last);
             return _last;
-            //return inp;
         }
 };
 
