@@ -49,7 +49,7 @@ class IoPin {
     bool _invertReads;
     bool _invertWrites;
     IoLevel _defaultState;
-    
+
     static std::set<IoPin*> livingPins;
 
     public:
@@ -73,8 +73,12 @@ class IoPin {
           : _pin(args...),  _invertReads((inversions & INVERT_READS) != 0), _invertWrites((inversions & INVERT_WRITES) != 0), _defaultState(defaultState) {
             //We need to tell the scheduler to deactivate all pins at shutdown, but only once:
             //Note: this is done in a separate, non-templated function to avoid a bug in gcc-4.7 with the -flto flag
-            registerExitHandler();
-            livingPins.insert(this);
+            //Note: only registerExitHandler if this pin is NOT null,
+            //  this is critical because the null pin is a static variable, which could possibly get constructed before the Scheduler's exitHandler containers!
+            if (!isNull()) {
+                registerExitHandler();
+                livingPins.insert(this);
+            }
         }
         /*template <typename ...Args> IoPin(Args... args)
           : _pin(args...), _invertReads(false), _invertWrites(false), _defaultState(IoLow) {
