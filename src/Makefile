@@ -80,7 +80,8 @@ BUILDROOT=../build
 #NAMELINK will become a symbolic link to the actual binary
 NAMELINK=printipi
 #NAME_EXT is the version-info that should be tagged onto the binary name
-NAME_EXT=$(subst /,-,$(MACHINEPARSED))-$(CXX)
+#Note: explicitly prefix with MACHINE_CLASS, because it's possible to build (eg) a rpi Machine with the generic platform implementation
+NAME_EXT=$(MACHINE_CLASS)-$(subst /,-,$(MACHINEPARSED))-$(CXX)
 #NAME of binary file:
 NAME=$(NAMELINK)-$(NAME_EXT)
 
