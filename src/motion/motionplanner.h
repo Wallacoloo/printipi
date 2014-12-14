@@ -35,6 +35,7 @@
 #include <array>
 #include <cassert>
 #include <stdexcept> //for runtime_error
+#include <utility> //for std::declval
 #include "accelerationprofile.h"
 #include "drivers/axisstepper.h"
 #include "event.h"
@@ -51,10 +52,11 @@ enum MotionType {
 template <typename Interface> class MotionPlanner {
     private:
         typedef typename Interface::CoordMapT CoordMapT;
-        typedef typename Interface::AxisStepperTypes AxisStepperTypes;
         typedef typename Interface::AccelerationProfileT AccelerationProfileT;
-        typedef typename Interface::AxisHomeStepperTypes HomeStepperTypes;
-        typedef typename Interface::AxisArcStepperTypes ArcStepperTypes;
+        typedef decltype(std::declval<CoordMapT>().getAxisSteppers()) AxisStepperTypes;
+        typedef decltype(std::declval<CoordMapT>().getHomeSteppers()) HomeStepperTypes;
+        typedef decltype(std::declval<CoordMapT>().getArcSteppers())  ArcStepperTypes;
+
         Interface _interface;
         CoordMapT _coordMapper; //object that maps from (x, y, z) to mechanical coords (eg A, B, C for a kossel)
         AccelerationProfileT _accel; //transforms the constant-velocity motion stream into one that considers acceleration
@@ -71,7 +73,7 @@ template <typename Interface> class MotionPlanner {
             _coordMapper(interface.getCoordMap()),
             _accel(interface.getAccelerationProfile()), 
             _destMechanicalPos(), 
-            _iters(interface.getAxisSteppers()), _homeIters(interface.getHomeSteppers()), _arcIters(interface.getArcSteppers()),
+            _iters(_coordMapper.getAxisSteppers()), _homeIters(_coordMapper.getHomeSteppers()), _arcIters(_coordMapper.getArcSteppers()),
             _baseTime(), 
             _duration(NAN),
             _motionType(MotionNone) {}

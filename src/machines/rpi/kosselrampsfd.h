@@ -91,8 +91,6 @@
 #include "common/filters/lowpassfilter.h"
 #include "common/matrix.h"
 #include "motion/constantacceleration.h"
-#include "drivers/linearstepper.h"
-#include "drivers/lineardeltastepper.h"
 #include "drivers/a4988.h"
 #include "drivers/lineardeltacoordmap.h"
 #include "drivers/rcthermistor.h"
@@ -179,7 +177,6 @@ namespace machines {
 namespace rpi {
 
 using namespace drv; //for all the drivers
-//using namespace drv::rpi; //for RpiIoPin, etc.
 
 class kosselrampsfd : public Machine {
     private:
@@ -216,16 +213,9 @@ class kosselrampsfd : public Machine {
         //  Please note that this is currently set to inverted mode, so a logic-level HIGH should 
         //    result in 0 power delivered to the hotend.
         
-        //Expose the logic used to control the stepper motors:
-        //Here we just have 1 stepper motor for each axis and another for the extruder:
-        typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A>, 
-                           LinearDeltaStepper<DELTA_AXIS_B>, 
-                           LinearDeltaStepper<DELTA_AXIS_C>, 
-                           LinearStepper<CARTESIAN_AXIS_E> > _AxisStepperTypes;
-        typedef AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
-        typedef AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
         
-        //Gather all the I/O controlled devices we defined above:
+        
+        //Gather all the I/O controlled devices:
         //  Additionally, define the actual stepper motor drivers and tie the thermistor to 
         //    the hotend as a feedback source.
         typedef std::tuple<
@@ -269,15 +259,6 @@ class kosselrampsfd : public Machine {
                 0.999975003, 0.000005356, -0.007070522, 
                 0.000005356, 0.999998852, 0.001515111, 
                 0.007070522, -0.001515111, 0.999973855));
-        }
-        inline _AxisStepperTypes getAxisSteppers() const {
-            return _AxisStepperTypes();
-        }
-        inline _HomeStepperTypes getHomeSteppers() const {
-            return _HomeStepperTypes();
-        }
-        inline _ArcStepperTypes getArcSteppers() const {
-            return _ArcStepperTypes();
         }
 
         //Expose default and maximum velocities:

@@ -46,17 +46,11 @@
 #include "coordmap.h"
 #include "common/logging.h"
 #include "common/matrix.h"
+#include "lineardeltastepper.h"
 #include <array>
 #include <tuple>
 
 namespace drv {
-
-enum DeltaAxis {
-    DELTA_AXIS_A=0,
-    DELTA_AXIS_B=1,
-    DELTA_AXIS_C=2,
-    DELTA_AXIS_E=3
-};
 
 template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public CoordMap {
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
@@ -64,6 +58,13 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
     float _STEPS_MM, _MM_STEPS;
     float _STEPS_MM_EXT, _MM_STEPS_EXT;
     BedLevelT bedLevel;
+
+    typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A>, 
+                       LinearDeltaStepper<DELTA_AXIS_B>, 
+                       LinearDeltaStepper<DELTA_AXIS_C>, 
+                       LinearStepper<CARTESIAN_AXIS_E> > _AxisStepperTypes;
+    typedef AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
+    typedef AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
     private:
         inline float STEPS_MM() const { return _STEPS_MM; }
         inline float MM_STEPS() const { return _MM_STEPS; }
@@ -81,6 +82,15 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
            _STEPS_MM(STEPS_MM), _MM_STEPS(1. / STEPS_MM),
            _STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
            bedLevel(t) {}
+        inline _AxisStepperTypes getAxisSteppers() const {
+            return _AxisStepperTypes();
+        }
+        inline _HomeStepperTypes getHomeSteppers() const {
+            return _HomeStepperTypes();
+        }
+        inline _ArcStepperTypes getArcSteppers() const {
+            return _ArcStepperTypes();
+        }
         inline static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }

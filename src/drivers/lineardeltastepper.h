@@ -152,11 +152,18 @@
 
 #include "axisstepper.h"
 #include "linearstepper.h" //for LinearHomeStepper
-#include "lineardeltacoordmap.h" //for DeltaAxis
+//#include "lineardeltacoordmap.h" //for DeltaAxis
 #include "endstop.h"
 #include "common/logging.h"
 
 namespace drv {
+
+enum DeltaAxis {
+    DELTA_AXIS_A=0,
+    DELTA_AXIS_B=1,
+    DELTA_AXIS_C=2,
+    DELTA_AXIS_E=3
+};
 
 template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
     private:

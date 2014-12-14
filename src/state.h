@@ -122,9 +122,6 @@ template <typename Drv> class State {
             //Note: In order to avoid any assumptions about the Machine's constructor, but still be able to access its member functions,
             //  we use declval<Drv>() to create a dummy instance of the Machine.
             typedef decltype(std::declval<Drv>().getCoordMap()) CoordMapT;
-            typedef decltype(std::declval<Drv>().getAxisSteppers()) AxisStepperTypes;
-            typedef decltype(std::declval<Drv>().getHomeSteppers()) AxisHomeStepperTypes;
-            typedef decltype(std::declval<Drv>().getArcSteppers()) AxisArcStepperTypes;
             typedef decltype(std::declval<Drv>().getAccelerationProfile()) AccelerationProfileT;
             MotionInterface(State<Drv> &state) : state(state) {}
             AccelerationProfileT getAccelerationProfile() const {
@@ -132,15 +129,6 @@ template <typename Drv> class State {
             }
             CoordMapT getCoordMap() const {
                 return state.driver.getCoordMap();
-            }
-            AxisStepperTypes getAxisSteppers() const {
-                return state.driver.getAxisSteppers();
-            }
-            AxisHomeStepperTypes getHomeSteppers() const {
-                return state.driver.getHomeSteppers();
-            }
-            AxisArcStepperTypes getArcSteppers() const {
-                return state.driver.getArcSteppers();
             }
     };
     //Drivers need certain extra information within their onIdleCpu handlers, etc.
