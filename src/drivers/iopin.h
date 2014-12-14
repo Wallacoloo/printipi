@@ -34,8 +34,6 @@
 #include <set>
 #include <utility> //for std::move
 #include "drivers/auto/primitiveiopin.h"
-#include "schedulerbase.h" //for SchedulerBase::registerExitHandler
-
 
 namespace drv {
 
@@ -51,6 +49,7 @@ class IoPin {
     bool _invertReads;
     bool _invertWrites;
     IoLevel _defaultState;
+    
     static std::set<IoPin*> livingPins;
 
     public:
@@ -59,22 +58,14 @@ class IoPin {
         struct null;
 
         //set all pins to their (safe) default output:
-        inline static void deactivateAll() {
-            for (auto p : livingPins) {
-                p->setToDefault();
-            }
-        }
-        inline static void registerExitHandler() {
-            //install exit handler to leave pins in a safe state post-execution.
-            static bool doOnce(SchedulerBase::registerExitHandler((void(*)())&deactivateAll, SCHED_IO_EXIT_LEVEL));
-            (void)doOnce; //destroy 'unused' warning
-        }
+        static void deactivateAll();
+        static void registerExitHandler();
 
         //prevent copy operations to make pin lifetime-tracking easier.
         //  otherwise, we end up with a pin resetting itself everytime its copied
         IoPin(const IoPin &other) = delete;
         IoPin& operator=(const IoPin &other) = delete;
-        //allow the move constructor:
+        //allow the move constructor & move assignment:
         IoPin(IoPin &&other);
         IoPin& operator=(IoPin &&other);
 
@@ -90,10 +81,7 @@ class IoPin {
             registerExitHandler();
             livingPins.insert(this);
         }*/
-        inline ~IoPin() {
-            setToDefault();
-            livingPins.erase(this);
-        }
+        ~IoPin();
         inline bool isNull() const { return _pin.isNull(); }
         inline GpioPinIdType id() const { return _pin.id(); } //TODO: remove this
         inline bool areWritesInverted() const { return _invertWrites; } //TODO: remove this
