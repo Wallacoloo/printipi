@@ -22,7 +22,7 @@
  */
 
 /* 
- * Printipi/drivers/lineardeltastepper.h
+ * Printipi/motion/lineardeltastepper.h
  * 
  * LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel
  */
@@ -147,12 +147,11 @@
  */
 
 
-#ifndef DRIVERS_LINEARDELTASTEPPER_H
-#define DRIVERS_LINEARDELTASTEPPER_H
+#ifndef MOTION_LINEARDELTASTEPPER_H
+#define MOTION_LINEARDELTASTEPPER_H
 
 #include "axisstepper.h"
 #include "linearstepper.h" //for LinearHomeStepper
-//#include "lineardeltacoordmap.h" //for DeltaAxis
 #include "drivers/endstop.h"
 #include "common/logging.h"
 

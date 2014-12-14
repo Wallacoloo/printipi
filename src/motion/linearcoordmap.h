@@ -22,15 +22,15 @@
  */
 
 /* 
- * Printipi/drivers/linearcoordmap.h
+ * Printipi/motion/linearcoordmap.h
  *
  * LinearCoordMap implements the CoordMap interface for Cartesian robots.
- * This is the CoordMap that your driver (src/drivers/driver.h implementation) should use if it is a Cartesian robot.
+ * This is the CoordMap that your machine should use if it is a Cartesian robot.
  */
  
  
-#ifndef DRIVERS_LINEARCOORDMAP_H
-#define DRIVERS_LINEARCOORDMAP_H
+#ifndef MOTION_LINEARCOORDMAP_H
+#define MOTION_LINEARCOORDMAP_H
 
 #include <array>
 

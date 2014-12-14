@@ -22,7 +22,7 @@
  */
 
 /* 
- * Printipi/drivers/coordmap.h
+ * Printipi/motion/coordmap.h
  *
  * CoordMaps are used to translate cartesian coordinates to and from the machine's coordinate system
  * This allows for a bot to internally use a non-cartesian coordinate system - very useful for delta bots.
@@ -37,8 +37,8 @@
  *     and an axis coordinate of 200000 translates to a cartesian Z coordinate of 200mm.
  */
 
-#ifndef DRIVERS_COORDMAP_H
-#define DRIVERS_COORDMAP_H
+#ifndef MOTION_COORDMAP_H
+#define MOTION_COORDMAP_H
 
 #include <tuple>
 #include <array>

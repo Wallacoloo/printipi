@@ -22,7 +22,7 @@
  */
 
 /* 
- * Printipi/drivers/axisstepper.h
+ * Printipi/motion/axisstepper.h
  *
  * AxisSteppers are used to queue movements.
  * When a movement is desired, an AxisStepper is instantiated for each MECHANICAL axis (eg each pillar of a Kossel, plus extruders. Or perhaps an X stepper, a Y stepper, a Z stepper, and an extruder for a cartesian bot).
@@ -35,8 +35,8 @@
  */
  
 
-#ifndef DRIVERS_AXISSTEPPER_H
-#define DRIVERS_AXISSTEPPER_H
+#ifndef MOTION_AXISSTEPPER_H
+#define MOTION_AXISSTEPPER_H
 
 #include "event.h"
 #include "compileflags.h" //for AxisIdType

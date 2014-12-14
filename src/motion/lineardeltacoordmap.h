@@ -22,7 +22,7 @@
  */
 
 /* 
- * Printipi/drivers/lineardeltacoordmap.h
+ * Printipi/motion/lineardeltacoordmap.h
  * 
  * LinearDeltaCoordMap implements the CoordMap interface for (rail-based) Delta-style robots like the Kossel
  * This class allows for translating mechanical positions to the cartesian x, y, z, e system.
@@ -40,8 +40,8 @@
  * The math is described more in /code/proof-of-concept/coordmath.py and coord-math.nb (note: file has been deleted; must view an archived version of printipi on Github to view this documentation)
  */
 
-#ifndef DRIVERS_LINEARDELTACOORDMAP_H
-#define DRIVERS_LINEARDELTACOORDMAP_H
+#ifndef MOTION_LINEARDELTACOORDMAP_H
+#define MOTION_LINEARDELTACOORDMAP_H
 
 #include "coordmap.h"
 #include "common/logging.h"
