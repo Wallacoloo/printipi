@@ -47,7 +47,7 @@
 #include "common/logging.h"
 #include "common/matrix.h"
 #include "lineardeltastepper.h"
-#include "drivers/endstop.h"
+#include "iodrivers/endstop.h"
 #include <array>
 #include <tuple>
 #include <utility> //for std::move

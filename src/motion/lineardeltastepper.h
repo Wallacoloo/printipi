@@ -152,7 +152,7 @@
 
 #include "axisstepper.h"
 #include "linearstepper.h" //for LinearHomeStepper
-#include "drivers/endstop.h"
+#include "iodrivers/endstop.h"
 #include "common/logging.h"
 
 namespace motion {

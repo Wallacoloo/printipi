@@ -34,7 +34,7 @@
 #include "motion/linearcoordmap.h"
 #include "machines/machine.h"
 #include "common/matrix.h"
-#include "drivers/endstop.h"
+#include "iodrivers/endstop.h"
 
 namespace machines {
 namespace generic {

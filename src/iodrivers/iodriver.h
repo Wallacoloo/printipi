@@ -22,7 +22,7 @@
  */
 
 /* 
- * Printipi/drivers/iodriver.h
+ * Printipi/iodrivers/iodriver.h
  *
  * IODrivers control the electrical interface to each component.
  * One IODriver is needed for each stepper motor, fan, hotend, etc.
@@ -42,7 +42,7 @@
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
-#include "drivers/iopin.h"
+#include "iopin.h"
 
 class Event; //forward-declare class defined in event.h
 

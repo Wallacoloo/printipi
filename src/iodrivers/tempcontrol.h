@@ -22,7 +22,7 @@
  */
 
 /* 
- * Printipi/drivers/tempcontrol.h
+ * Printipi/iodrivers/tempcontrol.h
  * 
  * TempControl provides a way to coordinate thermistor readings with the PWM control of a hotend OR heated bed.
  * It used a PID controller to determine the ideal PWM for a given thermistor reading and temperature target.
@@ -34,7 +34,7 @@
 #ifndef DRIVERS_TEMPCONTROL_H
 #define DRIVERS_TEMPCONTROL_H
 
-#include "drivers/iodriver.h"
+#include "iodriver.h"
 #include "common/filters/nofilter.h"
 #include "common/intervaltimer.h"
 #include "platforms/auto/chronoclock.h" //for EventClockT

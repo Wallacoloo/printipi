@@ -22,7 +22,7 @@
  */
  
 /*
- * Printipi/drivers/iopin.h
+ * Printipi/iodrivers/iopin.h
  *
  * IoPin defines the interface for a GPIO pin, as well as default implementations of each function in case they aren't supported by the actual driver. 
  * Each microcontroller platform should provide its own IoPin implementation that inherits from this class.

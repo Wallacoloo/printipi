@@ -114,12 +114,12 @@
 #include "common/filters/lowpassfilter.h"
 #include "common/matrix.h"
 #include "motion/constantacceleration.h"
-#include "drivers/a4988.h"
+#include "iodrivers/a4988.h"
 #include "motion/lineardeltacoordmap.h"
-#include "drivers/rcthermistor.h"
-#include "drivers/tempcontrol.h"
-#include "drivers/fan.h"
-#include "drivers/iopin.h"
+#include "iodrivers/rcthermistor.h"
+#include "iodrivers/tempcontrol.h"
+#include "iodrivers/fan.h"
+#include "iodrivers/iopin.h"
 #include "platforms/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 

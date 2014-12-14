@@ -22,31 +22,37 @@
  */
 
 /* 
- * Printipi/drivers/fan.h
+ * Printipi/iodrivers/axisstepper.h
  *
- * The Fan class serves to control a physical Fan, often used to cool cpu components.
- * This class essentially wraps an IoPin so that it can be commanded and recognized as a fan.
+ * Endstops are queriable switches placed at the axis limits.
+ * They typically represent a "known" point to which the device can be homed upon initiailization,
+ *   or a point beyond which the device should not be pushed.
  */
- 
 
-#ifndef DRIVERS_FAN_H
-#define DRIVERS_FAN_H
- 
+#ifndef DRIVERS_ENDSTOP_H
+#define DRIVERS_ENDSTOP_H
+
 #include <utility> //for std::move
 #include "iodriver.h"
-#include "drivers/iopin.h"
+#include "iopin.h"
 
 namespace drv {
 
-class Fan : public IODriver {
+
+class Endstop : public IODriver {
     IoPin pin;
     public:
-        inline Fan(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
-            this->pin.makeDigitalOutput(IoLow);
+        inline Endstop() : pin(IoPin::null()) {}
+        inline Endstop(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
+            this->pin.makeDigitalInput();
         }
-        inline bool isFan() const { return true; }
-        inline const IoPin& getPwmPin() {
-            return pin;
+        inline bool isNull() const {
+            return pin.isNull();
+        }
+        inline bool isTriggered() const {
+            bool t = pin.digitalRead() == IoHigh;
+            LOGV("LeverEndstop is %i\n", t);
+            return t;
         }
 };
 

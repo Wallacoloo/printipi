@@ -33,7 +33,7 @@
 #define MOTION_LINEARSTEPPER_H
 
 #include "axisstepper.h"
-#include "drivers/endstop.h"
+#include "iodrivers/endstop.h"
 #include "common/logging.h"
 #include <tuple>
 #include <cmath> //for fabs

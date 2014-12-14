@@ -56,10 +56,10 @@
 #include "scheduler.h"
 #include "motion/motionplanner.h"
 #include "common/mathutil.h"
-#include "drivers/iodriver.h"
+#include "iodrivers/iodriver.h"
 #include "platforms/auto/chronoclock.h" //for EventClockT
 #include "platforms/auto/hardwarescheduler.h" //for HardwareScheduler
-#include "drivers/iopin.h"
+#include "iodrivers/iopin.h"
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
 #include "filesystem.h"

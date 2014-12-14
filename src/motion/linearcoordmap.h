@@ -37,7 +37,7 @@
 #include "coordmap.h"
 #include "common/matrix.h"
 #include "linearstepper.h"
-#include "drivers/endstop.h"
+#include "iodrivers/endstop.h"
 
 namespace motion {
 

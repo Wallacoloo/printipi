@@ -39,8 +39,8 @@
 #include <chrono>
 #include <utility> //for std::move
 
-#include "drivers/iodriver.h"
-#include "drivers/iopin.h"
+#include "iodriver.h"
+#include "iopin.h"
 #include "outputevent.h"
 #include "event.h"
 
