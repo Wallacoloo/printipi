@@ -57,8 +57,8 @@
 #include "motion/motionplanner.h"
 #include "common/mathutil.h"
 #include "drivers/iodriver.h"
-#include "drivers/auto/chronoclock.h" //for EventClockT
-#include "drivers/auto/hardwarescheduler.h" //for SchedInterfaceHardwareScheduler
+#include "platforms/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/hardwarescheduler.h" //for SchedInterfaceHardwareScheduler
 #include "drivers/iopin.h"
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
@@ -209,8 +209,6 @@ template <typename Drv> class State {
         void setDestMoveRatePrimitive(float f);
         /* The host can set the current physical position to be a reference to an arbitrary point (like 0) */
         void setHostZeroPos(float x, float y, float z, float e);
-        /* Processes the event immediately, eg stepping a stepper motor */
-        //void handleEvent(const Event &evt);
         /* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
         bool onIdleCpu(OnIdleCpuIntervalT interval);
         void eventLoop();

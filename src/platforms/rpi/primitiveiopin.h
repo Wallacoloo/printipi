@@ -1,9 +1,9 @@
-#ifndef DRIVERS_RPI_PRIMITIVEIOPIN_H
-#define DRIVERS_RPI_PRIMITIVEIOPIN_H
+#ifndef PLATFORMS_RPI_PRIMITIVEIOPIN_H
+#define PLATFORMS_RPI_PRIMITIVEIOPIN_H
 
 #include "mitpi.h" //for GpioPin
 
-namespace drv {
+namespace plat {
 namespace rpi {
 
 class PrimitiveIoPin {

@@ -30,14 +30,14 @@
  * NOTE: The time reported by ChronoClockRpi may be different than the actual system time, so make sure to use consistent clock sources!
  */
  
-#ifndef DRIVERS_RPI_CHRONOCLOCK_H
-#define DRIVERS_RPI_CHRONOCLOCK_H
+#ifndef PLATFORMS_RPI_CHRONOCLOCK_H
+#define PLATFORMS_RPI_CHRONOCLOCK_H
 
 #include <chrono> //for std::chrono::*
 #include "mitpi.h"
 
 
-namespace drv {
+namespace plat {
 namespace rpi {
 
 

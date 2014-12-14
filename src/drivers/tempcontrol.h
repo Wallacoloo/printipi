@@ -37,7 +37,7 @@
 #include "drivers/iodriver.h"
 #include "common/filters/nofilter.h"
 #include "common/intervaltimer.h"
-#include "drivers/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/chronoclock.h" //for EventClockT
 #include "compileflags.h" //for CelciusType
 #include "pid.h" //for default template parameter
 

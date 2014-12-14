@@ -1,15 +1,15 @@
-#ifndef DRIVERS_GENERIC_HARDWARESCHEDULER_H
-#define DRIVERS_GENERIC_HARDWARESCHEDULER_H
+#ifndef PLATFORMS_GENERIC_HARDWARESCHEDULER_H
+#define PLATFORMS_GENERIC_HARDWARESCHEDULER_H
 
 #include <cassert> //for assert
 
-#include "drivers/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/chronoclock.h" //for EventClockT
 #include "schedulerbase.h" //for OnIdleCpuIntervalT (cannot forward-declare an enum)
 
 class OutputEvent; //forward declare for class defined in outputevent.h
 
 
-namespace drv {
+namespace plat {
 namespace generic {
 
 struct HardwareScheduler {

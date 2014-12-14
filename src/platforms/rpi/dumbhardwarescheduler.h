@@ -31,14 +31,14 @@
  * For a much better implementation of HardwareScheduler, see DmaScheduler (which is the default HardwareScheduler used for Raspberry Pi builds)
  */
 
-#ifndef DRIVERS_RPI_DUMBHARDWARESCHEDULER_H
-#define DRIVERS_RPI_DUMBHARDWARESCHEDULER_H
+#ifndef PLATFORMS_RPI_DUMBHARDWARESCHEDULER_H
+#define PLATFORMS_RPI_DUMBHARDWARESCHEDULER_H
 
 #include "outputevent.h"
 #include "mitpi.h"
-#include "drivers/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/chronoclock.h" //for EventClockT
 
-namespace rpi {
+namespace plat {
 
 class DumbHardwareScheduler {
     public:

@@ -40,7 +40,7 @@
 #include "common/logging.h"
 #include "common/intervaltimer.h"
 #include "compileflags.h"
-#include "drivers/auto/thisthreadsleep.h" //for SleepT
+#include "platforms/auto/thisthreadsleep.h" //for SleepT
 
 #if USE_PTHREAD
     #include <pthread.h> //for pthread_setschedparam

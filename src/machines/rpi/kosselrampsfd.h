@@ -120,7 +120,7 @@
 #include "drivers/tempcontrol.h"
 #include "drivers/fan.h"
 #include "drivers/iopin.h"
-#include "drivers/rpi/mitpi.h" //for pin numberings
+#include "platforms/rpi/mitpi.h" //for pin numberings
 #include <tuple>
 
 //All of the #defines between this point and the end of this file are ONLY used within this file,

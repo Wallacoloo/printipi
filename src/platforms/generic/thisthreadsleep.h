@@ -1,5 +1,5 @@
-#ifndef DRIVERS_GENERIC_THISTHREADSLEEP_H
-#define DRIVERS_GENERIC_THISTHREADSLEEP_H
+#ifndef PLATFORMS_GENERIC_THISTHREADSLEEP_H
+#define PLATFORMS_GENERIC_THISTHREADSLEEP_H
 
 /*
  * std::this_thread::sleep_until may be having issues when using custom clocks. Try this as a workaround if using Posix.
@@ -10,7 +10,7 @@
     #include <chrono>
     #include <time.h>
 
-    namespace drv {
+    namespace plat {
     namespace generic {
 
     class ThisThreadSleep {
@@ -39,7 +39,7 @@
     
 #else //default to C++11 thread interface and hope for the best:
     #include <thread>
-    namespace drv {
+    namespace plat {
     namespace generic {
         typedef std::this_thead SleepT;
     }

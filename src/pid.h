@@ -9,7 +9,7 @@
  * Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
  */
 
-#include "drivers/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/chronoclock.h" //for EventClockT
 
 class PID {
     float _P, _I, _D;

@@ -1,9 +1,9 @@
-#ifndef DRIVERS_GENERIC_PRIMITIVEIOPIN_H
-#define DRIVERS_GENERIC_PRIMITIVEIOPIN_H
+#ifndef PLATFORMS_GENERIC_PRIMITIVEIOPIN_H
+#define PLATFORMS_GENERIC_PRIMITIVEIOPIN_H
 
 #include <tuple>
 
-namespace drv {
+namespace plat {
 namespace generic {
 
 class PrimitiveIoPin {

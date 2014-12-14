@@ -1,6 +1,6 @@
 #include "chronoclock.h"
 
-namespace drv {
+namespace plat {
 namespace rpi {
 
 mitpi::InitMitpiType ChronoClock::_i;

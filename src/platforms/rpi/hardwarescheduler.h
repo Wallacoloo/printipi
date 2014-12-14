@@ -148,8 +148,8 @@
 
 
 
-#ifndef DRIVERS_RPI_HARDWARESCHEDULER_H
-#define DRIVERS_RPI_HARDWARESCHEDULER_H
+#ifndef PLATFORMS_RPI_HARDWARESCHEDULER_H
+#define PLATFORMS_RPI_HARDWARESCHEDULER_H
 
 
  
@@ -158,7 +158,7 @@
 #include <chrono> //for std::chrono::microseconds
 #include <cassert>
 
-#include "drivers/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/chronoclock.h" //for EventClockT
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
 #include "compileflags.h" //for MAX_RPI_PIN_ID
 #include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
@@ -343,7 +343,7 @@
 #define CM_PWMDIV_DIVI(x) (((x)&0xfff) << 12)
 #define CM_PWMDIV_DIVF(x) ((x)&0xfff)
 
-namespace drv {
+namespace plat {
 namespace rpi {
 
 struct DmaChannelHeader {

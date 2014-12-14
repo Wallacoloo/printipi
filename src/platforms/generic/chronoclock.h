@@ -1,5 +1,5 @@
-#ifndef DRIVERS_GENERIC_CHRONOCLOCK
-#define DRIVERS_GENERIC_CHRONOCLOCK
+#ifndef PLATFORMS_GENERIC_CHRONOCLOCK
+#define PLATFORMS_GENERIC_CHRONOCLOCK
 
 /*
  * gcc 4.6 doesn't support std::chrono::clock stuff.
@@ -11,7 +11,7 @@
 #if defined (__unix__) || (defined (__APPLE__) && defined (__MACH__))
     #include <chrono>
     #include <time.h>
-    namespace drv {
+    namespace plat {
     namespace generic {
         class ChronoClock {
             public:
@@ -30,7 +30,7 @@
     }
 #else //default to C++11 clocks and hope for the best:
     #include <chrono>
-    namespace drv {
+    namespace plat {
     namespace generic {
         typedef std::chrono::steady_clock EventClockT;
     }

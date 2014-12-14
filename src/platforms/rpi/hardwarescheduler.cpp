@@ -15,11 +15,11 @@
 #include "mitpi.h"
 #include "schedulerbase.h"
 #include "common/logging.h"
-#include "drivers/auto/thisthreadsleep.h" //for SleepT 
+#include "platforms/auto/thisthreadsleep.h" //for SleepT 
 #include "compileflags.h" //for RUNNING_IN_VM
 
 
-namespace drv {
+namespace plat {
 namespace rpi {
 
 //initialize static variables:

@@ -44,20 +44,20 @@ MACHINECPP=$(subst /,::,$(MACHINEPARSED))
 MACHINE_ENDPATH=$(subst ::,/,$(MACHINEPARSED))
 MACHINE_PATH=machines/$(MACHINE_ENDPATH).h
 MACHINE_CLASS=$(subst /,,$(dir $(MACHINE_ENDPATH)))
-MACHINE_CLASS_DIR=drivers/$(MACHINE_CLASS)
+MACHINE_CLASS_DIR=platforms/$(MACHINE_CLASS)
 
 #Check for platform-specific file overrides:
-ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/chronoclock.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"drivers/$(MACHINE_CLASS)/chronoclock.h"'
+ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/chronoclock.h)","")
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"platforms/$(MACHINE_CLASS)/chronoclock.h"'
 endif
-ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/hardwarescheduler.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"drivers/$(MACHINE_CLASS)/hardwarescheduler.h"'
+ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/hardwarescheduler.h)","")
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"platforms/$(MACHINE_CLASS)/hardwarescheduler.h"'
 endif
-ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/thisthreadsleep.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"drivers/$(MACHINE_CLASS)/thisthreadsleep.h"'
+ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/thisthreadsleep.h)","")
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"platforms/$(MACHINE_CLASS)/thisthreadsleep.h"'
 endif
-ifneq ("$(wildcard drivers/$(MACHINE_CLASS)/primitiveiopin.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"drivers/$(MACHINE_CLASS)/primitiveiopin.h"'
+ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/primitiveiopin.h)","")
+    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"platforms/$(MACHINE_CLASS)/primitiveiopin.h"'
 endif
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
@@ -143,7 +143,7 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
 	
 #Detect and build platform dependencies
-#  Thus, if you're targeting the Raspberry Pi (rpi), any source files under drivers/rpi/* will be compiled into the executable
+#  Thus, if you're targeting the Raspberry Pi (rpi), any source files under platforms/rpi/* will be compiled into the executable
 %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard $(MACHINE_CLASS_DIR)/*.cpp))) %/empty.o
 	@mkdir -p $(@D)
 	$(LD) -r $^ -o $@ $(LDFLAGS)

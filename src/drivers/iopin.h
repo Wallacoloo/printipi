@@ -33,7 +33,7 @@
 
 #include <set>
 #include <utility> //for std::move
-#include "drivers/auto/primitiveiopin.h"
+#include "platforms/auto/primitiveiopin.h"
 
 namespace drv {
 

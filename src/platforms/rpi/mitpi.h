@@ -28,8 +28,8 @@
  * Please note that most of its features require superuser priviledges, so you may have to launch any executable which uses this library with `sudo'
  */
 
-#ifndef DRIVERS_RPI_MITPI_H
-#define DRIVERS_RPI_MITPI_H
+#ifndef PLATFORMS_RPI_MITPI_H
+#define PLATFORMS_RPI_MITPI_H
 
 #include <stdint.h> //for uint32_t
 

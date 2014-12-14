@@ -9,7 +9,7 @@
  * This can be used to detect when an input isn't being serviced regularaly enough (eg in src/drivers/tempcontrol.h)
  */
 
-#include "drivers/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/chronoclock.h" //for EventClockT
 
 class IntervalTimer {
     EventClockT::time_point _last;
