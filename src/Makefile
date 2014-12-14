@@ -156,7 +156,7 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 %/common/common.a: %/common/logging.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/rest.a: %/argparse.o %/event.o %/filesystem.o %/main.o %/schedulerbase.o 
+%/rest.a: %/argparse.o %/event.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o 
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 %/main.cpp: $(MACHINE_PATH)
 	

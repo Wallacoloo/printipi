@@ -53,7 +53,7 @@ class IODriver {
         inline IODriver() {}
         //for a (stepper) motor, advance +/- 1 step:
         inline std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS (stepper motor drivers only)
-        const IoPin& getPwmPin() const { return IoPin::null::ref(); } //OVERRIDE THIS if device is pwm-able.
+        inline const IoPin& getPwmPin() const { return IoPin::null::ref(); } //OVERRIDE THIS if device is pwm-able.
         /* called by M17; Enable/power all stepper motors */
         inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         /* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
