@@ -76,7 +76,7 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
            _STEPS_MM_Z(STEPS_MM_Z), _MM_STEPS_Z(1. / STEPS_MM_Z),
            _STEPS_MM_E(STEPS_MM_E), _MM_STEPS_E(1. / STEPS_MM_E),
            bedLevel(t),
-           endstops({std::move(endstopX), std::move(endstopY), std::move(endstopZ), std::move(Endstop())}) {}
+           endstops({{std::move(endstopX), std::move(endstopY), std::move(endstopZ), std::move(Endstop())}}) {}
 
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
@@ -95,7 +95,7 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
             return 4; //A, B, C + Extruder
         }
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
-            return std::array<int, 4>({0, 0, 0, cur[3]});
+            return std::array<int, 4>({{0, 0, 0, cur[3]}});
         }
         inline std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
             return bedLevel.transform(xyz);
