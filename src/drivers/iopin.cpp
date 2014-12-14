@@ -17,7 +17,6 @@ void IoPin::deactivateAll() {
 
 void IoPin::registerExitHandler() {
     //install exit handler to leave pins in a safe state post-execution.
-    LOG("IoPin::registerExitHandler()\n");
     static bool doOnce(SchedulerBase::registerExitHandler((void(*)())&deactivateAll, SCHED_IO_EXIT_LEVEL));
     (void)doOnce; //destroy 'unused' warning
 }
