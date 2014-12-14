@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
+
 /*
  * Kossel Deltabot design that interfaces the Raspberry Pi to a RAMPS-FD (version 1 rev A) board:
  *   Geeetech RAMPS-FD files: http://www.geeetech.com/wiki/index.php/Ramps-FD#FILES
@@ -245,7 +245,7 @@ class kosselrampsfd : public Machine {
             A4988, //A tower
             A4988, //B tower
             A4988, //C tower
-            A4988, //E coord
+            A4988, //E coord. Note: the ordering of (A, B, C, E) in this tuple is strict (must be index 0, 1, 2 and then 3). But everything after that can be ordered any way
             Fan    //Hotend fan
             //TempControl<drv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>
             > _IODriverTypes;

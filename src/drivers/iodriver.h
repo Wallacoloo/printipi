@@ -42,7 +42,6 @@
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
-//#include "event.h"
 #include "drivers/iopin.h"
 
 class Event; //forward-declare class defined in event.h
@@ -70,7 +69,7 @@ class IODriver {
         /* called when the scheduler has extra time,
         Can be used to check the status of inputs, etc.
         Return true if object needs to continue to be serviced, false otherwise. */
-        template <typename Sched> inline bool onIdleCpu(Sched & /*sched*/) { return false; } //OVERRIDE THIS
+        template <typename CallbackInterface> inline bool onIdleCpu(CallbackInterface &) { return false; } //OVERRIDE THIS
         template <typename TupleT> static void lockAllAxis(TupleT &drivers);
         template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
         template <typename TupleT> static void setHotendTemp(TupleT &drivers, CelciusType temp);

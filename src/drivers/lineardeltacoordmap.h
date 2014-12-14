@@ -87,7 +87,7 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
            _STEPS_MM(STEPS_MM), _MM_STEPS(1. / STEPS_MM),
            _STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
            bedLevel(t),
-           endstops({std::move(endstopA), std::move(endstopB), std::move(endstopC), std::move(Endstop())}) {}
+           endstops({{std::move(endstopA), std::move(endstopB), std::move(endstopC), std::move(Endstop())}}) {}
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
         }
@@ -101,7 +101,7 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
         inline static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-        inline int getAxisPosition(const std::array<int, numAxis()> &cur, std::size_t axis) const {
+        inline int getAxisPosition(const std::array<int, 4> &cur, std::size_t axis) const {
             return cur[axis];
         }
         inline const Endstop& getEndstop(std::size_t axis) const {
