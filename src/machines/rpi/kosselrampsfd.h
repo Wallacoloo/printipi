@@ -279,9 +279,9 @@ class kosselrampsfd : public Machine {
             //    bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
             return LinearDeltaCoordMap<>(R_MM, L_MM, H_MM, BUILDRAD_MM, STEPS_MM, STEPS_MM_EXT, 
-                Endstop(IoPin(NO_INVERSIONS, IoLow, PIN_ENDSTOP_A)),
-                Endstop(IoPin(NO_INVERSIONS, IoLow, PIN_ENDSTOP_B)),
-                Endstop(IoPin(NO_INVERSIONS, IoLow, PIN_ENDSTOP_C)),
+                Endstop(IoPin(INVERT_READS, IoLow, PIN_ENDSTOP_A)),
+                Endstop(IoPin(INVERT_READS, IoLow, PIN_ENDSTOP_B)),
+                Endstop(IoPin(INVERT_READS, IoLow, PIN_ENDSTOP_C)),
                 Matrix3x3(
                 0.999975003, 0.000005356, -0.007070522, 
                 0.000005356, 0.999998852, 0.001515111, 
