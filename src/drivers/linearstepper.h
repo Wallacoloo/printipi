@@ -43,11 +43,12 @@
 namespace drv {
 
 template <std::size_t AxisIdx> class LinearHomeStepper : public AxisStepper {
-    Endstop endstop;
+    const Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
     public:
-        inline LinearHomeStepper() {}
-        template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome) : AxisStepper(idx) {
+        inline LinearHomeStepper() : endstop(NULL) {}
+        template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome)
+          : AxisStepper(idx), endstop(&map.getEndstop(AxisIdx)) {
             (void)map; //unused
             this->time = 0;
             this->direction = StepForward;
@@ -55,7 +56,7 @@ template <std::size_t AxisIdx> class LinearHomeStepper : public AxisStepper {
         }
         
         inline void _nextStep() {
-            if (endstop.isTriggered() || endstop.isNull()) {
+            if (endstop->isTriggered() || endstop->isNull()) {
                 this->time = NAN; //at endstop; no more steps.
             } else {
                 this->time += timePerStep;

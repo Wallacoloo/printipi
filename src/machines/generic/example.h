@@ -23,15 +23,6 @@ class example : public Machine {
             0, 1, 0,
             0, 0, 1));
         }
-        inline std::tuple<> getAxisSteppers() const {
-            return std::tuple<>();
-        }
-        inline std::tuple<> getHomeSteppers() const {
-            return std::tuple<>();
-        }
-        inline std::tuple<> getArcSteppers() const {
-            return std::tuple<>();
-        }
         inline std::tuple<> getIoDrivers() const {
             return std::tuple<>();
         }

@@ -61,7 +61,7 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
     float _STEPS_MM_EXT, _MM_STEPS_EXT;
     BedLevelT bedLevel;
 
-    Endstop endstopA, endstopB, endstopC;
+    std::array<Endstop, 4> endstops; //A, B, C and E (E is null)
 
     typedef std::tuple<LinearDeltaStepper<DELTA_AXIS_A>, 
                        LinearDeltaStepper<DELTA_AXIS_B>, 
@@ -87,7 +87,7 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
            _STEPS_MM(STEPS_MM), _MM_STEPS(1. / STEPS_MM),
            _STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
            bedLevel(t),
-           endstopA(std::move(endstopA)), endstopB(std::move(endstopB)), endstopC(std::move(endstopC)) {}
+           endstops({std::move(endstopA), std::move(endstopB), std::move(endstopC), std::move(Endstop())}) {}
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
         }
@@ -97,11 +97,15 @@ template <typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public Coord
         inline _ArcStepperTypes getArcSteppers() const {
             return _ArcStepperTypes();
         }
+
         inline static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
         }
-        inline int getAxisPosition(const std::array<int, 4> &cur, std::size_t axis) const {
+        inline int getAxisPosition(const std::array<int, numAxis()> &cur, std::size_t axis) const {
             return cur[axis];
+        }
+        inline const Endstop& getEndstop(std::size_t axis) const {
+            return endstops[axis];
         }
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({{(int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), cur[3]}});
