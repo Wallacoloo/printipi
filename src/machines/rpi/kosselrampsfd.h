@@ -199,7 +199,7 @@
 namespace machines {
 namespace rpi {
 
-using namespace drv; //for all the drivers
+using namespace iodrv; //for all the drivers
 using namespace motion; //for Acceleration & such
 
 class kosselrampsfd : public Machine {
@@ -248,7 +248,7 @@ class kosselrampsfd : public Machine {
             A4988, //C tower
             A4988, //E coord. Note: the ordering of (A, B, C, E) in this tuple is strict (must be index 0, 1, 2 and then 3). But everything after that can be ordered any way
             Fan    //Hotend fan
-            //TempControl<drv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>
+            //TempControl<iodrv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>
             > _IODriverTypes;
     public:
         //getXXX defines wrappers for all the above types. 
@@ -261,7 +261,7 @@ class kosselrampsfd : public Machine {
                 A4988(IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_C_STEP), IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_C_DIR), IoPin(INVERT_WRITES, IoLow, PIN_STEPPER_C_EN)),
                 A4988(IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_E_STEP), IoPin(NO_INVERSIONS, IoLow, PIN_STEPPER_E_DIR), IoPin(INVERT_WRITES, IoLow, PIN_STEPPER_E_EN)),
                 Fan(IoPin(NO_INVERSIONS, IoLow, PIN_FAN)));
-                //TempControl<drv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>(
+                //TempControl<iodrv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>(
                 //    _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                 //    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));
         }

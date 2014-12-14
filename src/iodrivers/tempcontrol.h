@@ -41,7 +41,7 @@
 #include "compileflags.h" //for CelciusType
 #include "pid.h" //for default template parameter
 
-namespace drv {
+namespace iodrv {
 
 //enum passed as template parameter to define the TempControl instance as either controlling a Hotend or a Heated Bed.
 //Functionally, they work the same, but each type responds to different G-codes.

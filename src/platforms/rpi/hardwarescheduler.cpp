@@ -115,7 +115,7 @@ HardwareScheduler::HardwareScheduler()
 }
 
 void HardwareScheduler::cleanup() {
-    LOG("drv::rpi::HardwareScheduler::cleanup\n");
+    LOG("platforms::rpi::HardwareScheduler::cleanup\n");
     //disable DMA. Otherwise, it will continue to run in the background, potentially overwriting future user data.
     if(dmaHeader) {
         writeBitmasked(&dmaHeader->CS, DMA_CS_ACTIVE, 0);
@@ -164,7 +164,7 @@ void HardwareScheduler::initSrcAndControlBlocks() {
     srcClrMem = DmaMem(*this, srcPageBytes);
     srcClrArray = (struct GpioBufferFrame*)srcClrMem.virtL2Coherent;
     
-    LOG("drv::rpi::HardwareScheduler::initSrcAndControlBlocks: #dma blocks: %zu, #src blocks: %zu\n", numSrcBlocks*3, numSrcBlocks);
+    LOG("platforms::rpi::HardwareScheduler::initSrcAndControlBlocks: #dma blocks: %zu, #src blocks: %zu\n", numSrcBlocks*3, numSrcBlocks);
     for (unsigned int i=0; i<numSrcBlocks*3; i += 3) {
         //pace DMA through PWM
         cbArr[i].TI = DMA_CB_TI_PERMAP_PWM | DMA_CB_TI_DEST_DREQ | DMA_CB_TI_NO_WIDE_BURSTS | DMA_CB_TI_TDMODE;
@@ -215,7 +215,7 @@ uint8_t* HardwareScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) co
     for (unsigned int offset=0; offset<bytes; offset += PAGE_SIZE) {
         void *mappedPage = mmap(memBytes+offset, PAGE_SIZE, PROT_WRITE|PROT_READ, MAP_SHARED|MAP_FIXED|MAP_NORESERVE|MAP_LOCKED, memfd, virtToUncachedPhys((uint8_t*)virtaddr+offset));
         if (mappedPage != memBytes+offset) { //We need these mappings to be contiguous over virtual memory (in order to replicate the virtaddr array), so we must ensure that the address we requested from mmap was actually used.
-            LOGE("drv::rpi::HardwareScheduler::makeUncachedMemView: failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
+            LOGE("platforms::rpi::HardwareScheduler::makeUncachedMemView: failed to create an uncached view of memory at addr %p+0x%08x\n", virtaddr, offset);
             exit(1);
         }
     }
@@ -233,11 +233,11 @@ uintptr_t HardwareScheduler::virtToPhys(void* virt) const {
     //because files are bytestreams, one must explicitly multiply each byte index by 8 to treat it as a uint64_t array.
     int err = lseek(pagemapfd, pgNum*8, SEEK_SET);
     if (err != pgNum*8) {
-        LOGW("WARNING: drv::rpi::HardwareScheduler::virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
+        LOGW("WARNING: platforms::rpi::HardwareScheduler::virtToPhys %p failed to seek (expected %i got %i. errno: %i)\n", virt, pgNum*8, err, errno);
     }
     read(pagemapfd, &physPage, 8);
     if (!physPage & (1ull<<63)) { //bit 63 is set to 1 if the page is present in ram
-        LOGW("WARNING: drv::rpi::HardwareScheduler::virtToPhys %p has no physical address\n", virt);
+        LOGW("WARNING: platforms::rpi::HardwareScheduler::virtToPhys %p has no physical address\n", virt);
     }
     physPage = physPage & ~(0x1ffull << 55); //bits 55-63 are flags.
     uintptr_t mapped = (uintptr_t)(physPage*PAGE_SIZE + byteOffsetFromPage);
@@ -289,7 +289,7 @@ void HardwareScheduler::initDma() {
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags
     uint32_t firstAddr = physToUncached(cbMem.physAddrAtByteOffset(0));
-    LOG("drv::rpi::HardwareScheduler::initDma: starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
+    LOG("platforms::rpi::HardwareScheduler::initDma: starting DMA @ CONBLK_AD=0x%08x\n", firstAddr);
     dmaHeader->CONBLK_AD = firstAddr; //(uint32_t)physCbPage + ((void*)cbArr - virtCbPage); //we have to point it to the PHYSICAL address of the control block (cb1)
     dmaHeader->CS = DMA_CS_PRIORITY(14) | DMA_CS_PANIC_PRIORITY(14) | DMA_CS_DISDEBUG; //high priority (max is 15)
     dmaHeader->CS = DMA_CS_PRIORITY(14) | DMA_CS_PANIC_PRIORITY(14) | DMA_CS_DISDEBUG | DMA_CS_ACTIVE; //activate DMA. 

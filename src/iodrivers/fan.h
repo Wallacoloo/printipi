@@ -36,7 +36,7 @@
 #include "iodriver.h"
 #include "iopin.h"
 
-namespace drv {
+namespace iodrv {
 
 class Fan : public IODriver {
     IoPin pin;

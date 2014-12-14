@@ -35,7 +35,7 @@
 #include <utility> //for std::move
 #include "platforms/auto/primitiveiopin.h"
 
-namespace drv {
+namespace iodrv {
 
 enum IoPinInversions {
     //bitfield that can be used to indicate whether a pin has logically-inverted reads/writes

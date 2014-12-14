@@ -46,7 +46,7 @@
 
 class Event; //forward-declare class defined in event.h
 
-namespace drv {
+namespace iodrv {
 
 class IODriver {
     public:

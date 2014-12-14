@@ -44,7 +44,7 @@
 #include "outputevent.h"
 #include "event.h"
 
-namespace drv {
+namespace iodrv {
 
 class A4988 : public IODriver {
     IoPin enablePin;

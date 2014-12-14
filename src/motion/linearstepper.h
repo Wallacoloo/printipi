@@ -49,7 +49,7 @@ enum CartesianAxis {
 };
 
 template <std::size_t AxisIdx> class LinearHomeStepper : public AxisStepper {
-    const drv::Endstop *endstop; //must be pointer, because cannot move a reference
+    const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
     public:
         inline LinearHomeStepper() : endstop(NULL) {}

@@ -41,7 +41,7 @@
 #include "common/mathutil.h" //for CtoK, etc
 #include "common/logging.h"
 
-namespace drv {
+namespace iodrv {
 
 template <typename Pin> class RCThermistor {
     //Note: R_OHMS should be at least 300 ohms to limit current through the pins, 

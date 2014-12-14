@@ -3,7 +3,7 @@
 #include "schedulerbase.h" //for SchedulerBase::registerExitHandler
 #include "common/logging.h"
 
-namespace drv {
+namespace iodrv {
 
 std::set<IoPin*> IoPin::livingPins; //allocate storage for static variables.
 IoPin::null IoPin::null::_null;

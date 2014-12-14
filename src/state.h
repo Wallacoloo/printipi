@@ -92,7 +92,7 @@ template <typename Drv> class State {
             }
             struct __iterPwmPins {
                 template <typename T, typename Func> void operator()(T &driver, float dutyCycle, Func &f) {
-                    const drv::IoPin &p = driver.getPwmPin();
+                    const iodrv::IoPin &p = driver.getPwmPin();
                     f(p.id(), p.areWritesInverted() ? 1-dutyCycle : dutyCycle);
                 }
             };
@@ -421,15 +421,8 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
             }
         }
     }
-    /*struct IODriver__onIdleCpu {
-        template <typename T, typename ...Args> bool operator()(std::size_t index, T &driver, Args... args) {
-            (void)index; //unused;
-            return driver.onIdleCpu(args...);
-        }
-    };*/
+
     bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), this);
-    //bool driversNeedCpu = drv::IODriver::callIdleCpuHandlers<IODriverTypes, SchedType&>(this->ioDrivers, this->scheduler);
-    //bool driversNeedCpu = false; //drv::IODriver::callIdleCpuHandlers<IODriverTypes, DriverCallbackInterface>(this->ioDrivers, DriverCallbackInterface(*this));
     return motionNeedsCpu || driversNeedCpu;
 }
 
@@ -560,10 +553,10 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         exit(0);
         return gparse::Response::Ok;
     } else if (cmd.isM17()) { //enable all stepper motors
-        drv::IODriver::lockAllAxis(this->ioDrivers);
+        iodrv::IODriver::lockAllAxis(this->ioDrivers);
         return gparse::Response::Ok;
     } else if (cmd.isM18()) { //allow stepper motors to move 'freely'
-        drv::IODriver::unlockAllAxis(this->ioDrivers);
+        iodrv::IODriver::unlockAllAxis(this->ioDrivers);
         return gparse::Response::Ok;
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
@@ -603,13 +596,13 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         bool hasS;
         float t = cmd.getS(hasS);
         if (hasS) {
-            drv::IODriver::setHotendTemp(ioDrivers, t);
+            iodrv::IODriver::setHotendTemp(ioDrivers, t);
         }
         return gparse::Response::Ok;
     } else if (cmd.isM105()) { //get temperature, in C
         CelciusType t, b;
-        t = drv::IODriver::getHotendTemp(ioDrivers);
-        b = drv::IODriver::getBedTemp(ioDrivers);
+        t = iodrv::IODriver::getHotendTemp(ioDrivers);
+        b = iodrv::IODriver::getBedTemp(ioDrivers);
         return gparse::Response(gparse::ResponseOk, "T:" + std::to_string(t) + " B:" + std::to_string(b));
     } else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
         float s = cmd.getS(1.0); //PWM duty cycle
@@ -626,7 +619,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         bool hasS;
         float t = cmd.getS(hasS);
         if (hasS) {
-            drv::IODriver::setHotendTemp(ioDrivers, t);
+            iodrv::IODriver::setHotendTemp(ioDrivers, t);
         }
         _isWaitingForHotend = true;
         return gparse::Response::Ok;
@@ -646,7 +639,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         bool hasS;
         float t = cmd.getS(hasS);
         if (hasS) {
-            drv::IODriver::setBedTemp(ioDrivers, t);
+            iodrv::IODriver::setBedTemp(ioDrivers, t);
         }
         return gparse::Response::Ok;
     } else if (cmd.isTxxx()) { //set tool number
@@ -697,8 +690,8 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 template <typename Drv> bool State<Drv>::isHotendReady() {
     if (_isWaitingForHotend) {
         //TODO: check ALL heaters, not just hotend.
-        CelciusType current = drv::IODriver::getHotendTemp(ioDrivers);
-        CelciusType target = drv::IODriver::getHotendTargetTemp(ioDrivers);
+        CelciusType current = iodrv::IODriver::getHotendTemp(ioDrivers);
+        CelciusType target = iodrv::IODriver::getHotendTargetTemp(ioDrivers);
         _isWaitingForHotend = current < target;
     }
     return !_isWaitingForHotend;

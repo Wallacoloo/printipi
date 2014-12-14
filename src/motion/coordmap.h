@@ -44,7 +44,7 @@
 #include <array>
 #include <cassert> //for assert
 
-namespace drv { class Endstop; } //forward declare for class in "endstop.h"
+namespace iodrv { class Endstop; } //forward declare for class in "endstop.h"
 
 namespace motion {
 
@@ -60,10 +60,10 @@ class CoordMap {
         inline std::tuple<> getArcSteppers() const {
             return std::tuple<>();
         }
-        inline const drv::Endstop& getEndstop(std::size_t axis) const {
+        inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
             //return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)
             (void)axis; //unused
-            return *(drv::Endstop*)(NULL);
+            return *(iodrv::Endstop*)(NULL);
         }
         inline static constexpr std::size_t numAxis() {
             //return the number of axis (physical motors) that we have.
