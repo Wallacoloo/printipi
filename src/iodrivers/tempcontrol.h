@@ -59,17 +59,14 @@ template <TempControlType HotType, typename Heater, typename Thermistor, typenam
     Thermistor _therm;
     PID _pid;
     Filter _filter;
+    float _pwmPeriod;
     float _destTemp;
     float _lastTemp;
     bool _isReading;
     EventClockT::time_point _nextReadTime;
     public:
-        inline TempControl(const Heater &heater, const Thermistor &therm, const PID &pid, const Filter &filter) 
-         : IODriver(), _heater(heater), _therm(therm), _pid(pid), _filter(filter), _destTemp(-300), _lastTemp(-300), _isReading(false),
-         _nextReadTime(EventClockT::now()) {
-            _heater.makeDigitalOutput(IoLow);
-        }
-        inline TempControl() : IODriver(), _destTemp(-300), _lastTemp(-300), _isReading(false),
+        inline TempControl(const Heater &heater, const Thermistor &therm, const PID &pid, const Filter &filter, float pwmPeriod=1./25000) 
+         : IODriver(), _heater(heater), _therm(therm), _pid(pid), _filter(filter), _pwmPeriod(pwmPeriod), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.makeDigitalOutput(IoLow);
         }
@@ -81,7 +78,7 @@ template <TempControlType HotType, typename Heater, typename Thermistor, typenam
             return HotType == HeatedBedType;
         }
         //route output commands to the heater:
-        inline void stepForward() {
+        inline void stepForward() { //TODO: remove; stepForward/stepBackward likely aren't ever called.
             _heater.digitalWrite(IoHigh);
         }
         inline void stepBackward() {
@@ -98,6 +95,9 @@ template <TempControlType HotType, typename Heater, typename Thermistor, typenam
         }
         inline const Heater& getPwmPin() { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
             return _heater;
+        }
+        inline float heaterPwmPeriod() const { 
+            return _pwmPeriod; 
         }
         template <typename CallbackInterface> bool onIdleCpu(CallbackInterface &cbInterface) {
             //LOGV("TempControl::onIdleCpu()\n");

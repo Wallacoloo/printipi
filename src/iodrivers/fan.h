@@ -40,12 +40,14 @@ namespace iodrv {
 
 class Fan : public IODriver {
     IoPin pin;
+    float period;
     public:
-        inline Fan(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
+        inline Fan(IoPin &&pin, float period=0) : IODriver(), pin(std::move(pin)), period(period) {
             this->pin.makeDigitalOutput(IoLow);
         }
         inline bool isFan() const { return true; }
-        inline const IoPin& getPwmPin() {
+        inline float fanPwmPeriod() const { return period; }
+        inline const IoPin& getPwmPin() const {
             return pin;
         }
 };

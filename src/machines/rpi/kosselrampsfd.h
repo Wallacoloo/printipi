@@ -167,33 +167,36 @@
 //  to be extra safe, we want to avoid ANY 5V where possible, so we supply the FD "5V" source with an actual 3.3V.
 //  if you actually need the 5V somewhere, it is safe to connect 5V -> 5V, so long as you're extra careful wiring the rest.
 //RPI:GND to FD:GND
+//12V to FD:P108 (V_POWER; mosfet power suuply) (1st blue terminal from corner). Pin closest to corner is ground.
 //12V tp FD:P107 (MOT_IN) (2nd blue terminal from corner). Pin closest to corner is ground.
-#define PIN_ENDSTOP_A             mitpi::V2_GPIO_P1_18 //maps to FD Shield D22 (X-MIN)
-#define PIN_ENDSTOP_B             mitpi::V2_GPIO_P5_03 //maps to FD Shield D24 (Y-MIN)
-#define PIN_ENDSTOP_C             mitpi::V2_GPIO_P1_15 //maps to FD Shield D26 (Z-MIN)
+#define PIN_ENDSTOP_A             mitpi::V2_GPIO_P1_18    //maps to FD Shield D22 (X-MIN)
+#define PIN_ENDSTOP_B             mitpi::V2_GPIO_P5_03    //maps to FD Shield D24 (Y-MIN)
+#define PIN_ENDSTOP_C             mitpi::V2_GPIO_P1_15    //maps to FD Shield D26 (Z-MIN)
 #define PIN_ENDSTOP_INVERSIONS    NO_INVERSIONS
-//#define PIN_THERMISTOR         mitpi::V2_GPIO_P1_18 //maps to FD Shield ?
-#define PIN_FAN                   mitpi::V2_GPIO_P1_08 //maps to FD Shield D12 (FET5)
-#define PIN_FAN_INVERSIONS        NO_INVERSIONS
+//#define PIN_THERMISTOR         mitpi::V2_GPIO_P1_18    //maps to FD Shield ?
+#define PIN_FAN                   mitpi::V2_GPIO_P1_08    //maps to FD Shield D10 (Extruder 2 / Fan)
+#define PIN_FAN_INVERSIONS        INVERT_WRITES
 #define PIN_FAN_DEFAULT_STATE     IoDefaultLow
-#define PIN_HOTEND                mitpi::V2_GPIO_P1_10 //maps to FD Shield D9  (Extruder 1)
+#define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
+#define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
 #define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
+#define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
 
-#define PIN_STEPPER_A_EN          mitpi::V2_GPIO_P5_04 //maps to FD Shield D48  (X_EN)
-#define PIN_STEPPER_A_STEP        mitpi::V2_GPIO_P1_22 //maps to FD Shield AD9  (X_STEP)
-#define PIN_STEPPER_A_DIR         mitpi::V2_GPIO_P1_23 //maps to FD Sheild AD8  (X_DIR)
+#define PIN_STEPPER_A_EN          mitpi::V2_GPIO_P5_04    //maps to FD Shield D48  (X_EN)
+#define PIN_STEPPER_A_STEP        mitpi::V2_GPIO_P1_22    //maps to FD Shield AD9  (X_STEP)
+#define PIN_STEPPER_A_DIR         mitpi::V2_GPIO_P1_23    //maps to FD Sheild AD8  (X_DIR)
 
-#define PIN_STEPPER_B_EN          mitpi::V2_GPIO_P5_05 //maps to FD Shield D46  (Y_EN)
-#define PIN_STEPPER_B_STEP        mitpi::V2_GPIO_P1_19 //maps to FD Shield AD11 (Y_STEP)
-#define PIN_STEPPER_B_DIR         mitpi::V2_GPIO_P1_21 //maps to FD Shield AD10 (Y_DIR)
+#define PIN_STEPPER_B_EN          mitpi::V2_GPIO_P5_05    //maps to FD Shield D46  (Y_EN)
+#define PIN_STEPPER_B_STEP        mitpi::V2_GPIO_P1_19    //maps to FD Shield AD11 (Y_STEP)
+#define PIN_STEPPER_B_DIR         mitpi::V2_GPIO_P1_21    //maps to FD Shield AD10 (Y_DIR)
 
-#define PIN_STEPPER_C_EN          mitpi::V2_GPIO_P5_06 //maps to FD Shield D44  (Z_EN)
-#define PIN_STEPPER_C_STEP        mitpi::V2_GPIO_P1_24 //maps to FD Shield AD13 (Z_STEP)
-#define PIN_STEPPER_C_DIR         mitpi::V2_GPIO_P1_26 //maps to FD Shield AD12 (Z_DIR)
+#define PIN_STEPPER_C_EN          mitpi::V2_GPIO_P5_06    //maps to FD Shield D44  (Z_EN)
+#define PIN_STEPPER_C_STEP        mitpi::V2_GPIO_P1_24    //maps to FD Shield AD13 (Z_STEP)
+#define PIN_STEPPER_C_DIR         mitpi::V2_GPIO_P1_26    //maps to FD Shield AD12 (Z_DIR)
 
-#define PIN_STEPPER_E_EN          mitpi::V2_GPIO_P1_16 //maps to FD Shield D42  (E0_EN)
-#define PIN_STEPPER_E_STEP        mitpi::V2_GPIO_P1_03 //maps to FD Shield D36  (E0_STEP)
-#define PIN_STEPPER_E_DIR         mitpi::V2_GPIO_P1_05 //maps to FD Shield D28  (E0_DIR)
+#define PIN_STEPPER_E_EN          mitpi::V2_GPIO_P1_16    //maps to FD Shield D42  (E0_EN)
+#define PIN_STEPPER_E_STEP        mitpi::V2_GPIO_P1_03    //maps to FD Shield D36  (E0_STEP)
+#define PIN_STEPPER_E_DIR         mitpi::V2_GPIO_P1_05    //maps to FD Shield D28  (E0_DIR)
 #define PIN_STEPPER_EN_INVERSIONS INVERT_WRITES
 
 //PID thermistor->hotend feedback settings
@@ -276,7 +279,8 @@ class kosselrampsfd : public Machine {
                 A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_STEP), 
                       IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_DIR), 
                       IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_E_EN)),
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN_DEFAULT_STATE, PIN_FAN)));
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN_DEFAULT_STATE, PIN_FAN), 
+                    FAN_MIN_PWM_PERIOD));
                 //TempControl<iodrv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>(
                 //    _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                 //    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));
