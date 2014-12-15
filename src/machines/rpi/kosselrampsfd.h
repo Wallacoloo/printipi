@@ -163,11 +163,14 @@
 //Note: supply the following power connections: 
 //RPI:3.3V to FD:IOREF
 //RPI:3.3V to FD:3.3V
+//RPI:3.3V to FD:5V (NOT A TYPO - the FD board has endstop-pullups to "5V" (which are then buffered to 3.3V)). 
+//  to be extra safe, we want to avoid ANY 5V where possible, so we supply the FD "5V" source with an actual 3.3V.
+//  if you actually need the 5V somewhere, it is safe to connect 5V -> 5V, so long as you're extra careful wiring the rest.
 //RPI:GND to FD:GND
 //12V tp FD:P107 (MOT_IN) (2nd blue terminal from corner). Pin closest to corner is ground.
-#define PIN_ENDSTOP_A      mitpi::V2_GPIO_P1_13 //maps to FD Shield D30 (X-MAX)
-#define PIN_ENDSTOP_B      mitpi::V2_GPIO_P5_03 //maps to FD Shield D38 (Y-MAX)
-#define PIN_ENDSTOP_C      mitpi::V2_GPIO_P1_15 //maps to FD Shield D34 (Z-MAX)
+#define PIN_ENDSTOP_A      mitpi::V2_GPIO_P1_18 //maps to FD Shield D22 (X-MIN)
+#define PIN_ENDSTOP_B      mitpi::V2_GPIO_P5_03 //maps to FD Shield D24 (Y-MIN)
+#define PIN_ENDSTOP_C      mitpi::V2_GPIO_P1_15 //maps to FD Shield D26 (Z-MIN)
 //#define PIN_THERMISTOR     mitpi::V2_GPIO_P1_18 //maps to FD Shield ?
 #define PIN_FAN            mitpi::V2_GPIO_P1_08 //maps to FD Shield D12 (FET5)
 #define PIN_HOTEND         mitpi::V2_GPIO_P1_10 //maps to FD Shield D9  (Extruder 1)
