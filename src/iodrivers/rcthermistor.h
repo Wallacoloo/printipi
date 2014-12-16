@@ -46,13 +46,15 @@
 #define DRIVERS_RCTHERMISTOR_H
 
 #include <cmath>
+#include <utility> //for std::move
 #include "platforms/auto/chronoclock.h" //for EventClockT
+#include "iodrivers/iopin.h"
 #include "common/mathutil.h" //for CtoK, etc
 #include "common/logging.h"
 
 namespace iodrv {
 
-template <typename Pin> class RCThermistor {
+class RCThermistor {
     //Note: R_OHMS should be at least 300 ohms to limit current through the pins, 
     //  but you probably don't want it higher than 1000 ohms, or else you won't be able to sense high temperatures.
     //Larger capacitors give you more precision, but decrease the frequency with which you can measure when at a low temperature (e.g. < 50 C).
@@ -64,12 +66,13 @@ template <typename Pin> class RCThermistor {
     float T0, R0; //R0 = measured resistance at temperature T0 (in Ohms / Kelvin) (listed on thermistor packaging or documentation page)
     float B; //Thermistor Beta value; describes how thermistor changes resistance over the temperature range (listed on thermistor packaging or documentation page)
     float MIN_R, MAX_R; //thermistor resistance range to consider when estimating the resistance.
-    Pin pin;
+    IoPin pin;
     EventClockT::time_point _startReadTime, _endReadTime;
     public:
-        inline RCThermistor(float R_OHMS, float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA)
+        inline RCThermistor(IoPin &&pin, float R_OHMS, float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA)
           : C(C_FARADS), Vcc(VCC_V), Va(V_TOGGLE_V), Ra(R_OHMS), T0(mathutil::CtoK(T0_C)), R0(R0_OHMS), B(BETA),
-          MIN_R(0), MAX_R(R0_OHMS*2) {}
+          MIN_R(0), MAX_R(R0_OHMS*2), 
+          pin(std::move(pin)) {}
         inline void startRead() {
             pin.makeDigitalInput();
             _startReadTime = EventClockT::now();
