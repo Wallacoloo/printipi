@@ -105,9 +105,33 @@
  *           http://www.bowdenshobbycircuits.info/page8.htm#phase.gif
  *         Can also produce something CLOSE to a sinewave by outputting a square wave (with DMA) and low-pass filtering it with a cap
  *
+ *     Note the following thermistor table for T0=25*C, R0=100k, B=3950:
+ *         R | T
+ *    100000 |  25.00
+ *     50000 |  41.46
+ *     20000 |  66.23
+ *     10000 |  87.72
+ *      5000 | 112.12
+ *      2000 | 149.93
+ *      1000 | 183.86
+ *       500 | 223.70
+ *       200 | 288.43
+ *       100 | 349.82
+ *
  *     Can do classic RC-time measurements.
- *       Can also use a PWM signal to gate the discharge, so that we can keep discharge time more uniform across temperature.
+ *       Can also use a PWM signal w/ diode to gate the discharge (see below), so that we can keep discharge time more uniform across temperature.
  *       Major problem here is an unknown pin input threshold. Can use the buffer chips on the FD, but their specs aren't much better.
+ *       Note: difficult to find a free diode in FD. I spot one for the heated bed, if the user isn't using that.
+ *         the only free capacitors are at the thermistor bank, and those have some slightly undesirable connections.
+ *         There is a cap from GND to V0 in LM7812 that's not connected to anything else (since we use 12V). Can we use that?
+ *           Probably not. The 7812 is a voltage regulator. In this case, it's being used to bring 24V down to 12V,
+ *             and is bypassed in the case that the input is already 12V. The capacitor connects output voltage to ground.
+ *           It's possible that the output is floating when the input is < 14~15V (regulator has 2V drop-out),
+ *             in which case we COULD use it.
+ *         There aren't many free resistors. If we disable endstop pullups, then we have 3x 10k in parallel from unused endstops.
+ *           Each stepper driver has a single 100k pull-down to ground.
+ *           Fet 5 & 6 each have a 10k pull-down to ground (although it looks like their state is only undefined when the board loses power)
+ *           ESTOP switch has a 4.7k resistor connected to ground. Not clear if it's a button or 2 pins, but it appears to be 2 pins on my board (on top of the physical button).
  *
  *   Possible thermistor circuits:
  *     1.                                 
@@ -154,6 +178,7 @@
  *       Note that the point of PWMing Vdis is to have more control over the time it takes to discharge the capacitor
  *         - when measuring a HIGH resistance (normally long discharge time), Vdis is set to 0.
  *         - when measuring a LOW resistance (normally short discharge time), Vdis is set to a higher PWM value.
+ *
  */
 
 #ifndef MACHINES_RPI_KOSSELRAMPSFD
@@ -230,7 +255,7 @@
 #define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
 #define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
 #define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
-#define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
+#define HOTEND_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
 
 #define PIN_STEPPER_A_EN          mitpi::V2_GPIO_P5_04    //maps to FD Shield D48  (X_EN)
 #define PIN_STEPPER_A_STEP        mitpi::V2_GPIO_P1_22    //maps to FD Shield AD9  (X_STEP)
