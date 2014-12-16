@@ -104,7 +104,10 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
             return xyze; //no bounding.
         }
         inline std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
-            return std::make_tuple(mech[CARTESIAN_AXIS_X], mech[CARTESIAN_AXIS_Y], mech[CARTESIAN_AXIS_Z], mech[CARTESIAN_AXIS_E]);
+            return std::make_tuple(mech[CARTESIAN_AXIS_X]*_MM_STEPS_X, 
+                                   mech[CARTESIAN_AXIS_Y]*_MM_STEPS_Y, 
+                                   mech[CARTESIAN_AXIS_Z]*_MM_STEPS_Z, 
+                                   mech[CARTESIAN_AXIS_E]*_MM_STEPS_E);
         }
 
 };
