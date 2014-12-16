@@ -24,9 +24,18 @@
 /*
  * Printipi/iodrivers/rcthermistor.h
  *
- * This file provides code to approximate a temperature via first determining the resistance of a thermistor (resistor that varies its resistance according to temperature) via only a digital IO pin, fixed resistor and capacitor.
+ * This file provides code to approximate a temperature via first determining the resistance of a thermistor 
+ *   (resistor that varies its resistance according to temperature) via only a digital IO pin, fixed resistor and capacitor.
  * The raspberry pi doesn't have any ADC pins, so we must use the method outlined here (figure 1): 
  *   http://www.robotshop.com/media/files/pdf/RCtime_App_Note.pdf
+ *
+ *                     Vcc
+ *                     _|_
+ *                     ___ C
+ *             Ra       |         Rt
+ *  Vin ----/\/\/\/\----+------/\/\/\/\---- GND
+ *
+ *  Rt is the thermistor, Ra is a known and fixed resistance.
  *
  * NOTE: there are almost certainly better ways to achieve ADC conversion on a Raspberry Pi. 
  *   A discussion on these can be found here: https://github.com/Wallacoloo/printipi/issues/24
