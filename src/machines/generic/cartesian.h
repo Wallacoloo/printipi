@@ -25,6 +25,10 @@
  * This is a minimal Machine that will respond to gcode commands 
  *  and will simulate motion in cartesian space, 
  *  but is configured to not actually interact with any GPIOs
+ *
+ * Copy this file to src/machines/<platform>/cartesian.h where platform is e.g. "rpi",
+ *   edit the pin definitions (reference another machine under your platform directory if possible),
+ *   and then compile with `make MACHINE=machines/<platform>/cartesian.h`
  */
 
 #ifndef MACHINES_GENERIC_CARTESIAN_H
