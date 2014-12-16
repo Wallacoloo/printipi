@@ -104,6 +104,56 @@
  *         Can produce a sinewave with 1 or 2 transistors (but might not achieve large voltage range):
  *           http://www.bowdenshobbycircuits.info/page8.htm#phase.gif
  *         Can also produce something CLOSE to a sinewave by outputting a square wave (with DMA) and low-pass filtering it with a cap
+ *
+ *     Can do classic RC-time measurements.
+ *       Can also use a PWM signal to gate the discharge, so that we can keep discharge time more uniform across temperature.
+ *       Major problem here is an unknown pin input threshold. Can use the buffer chips on the FD, but their specs aren't much better.
+ *
+ *   Possible thermistor circuits:
+ *     1.                                 
+ *                                         
+ *                Rt             
+ *      Vcc ---/\/\/\/\---+-------\/\/\/\/\---------+ Node 2
+ *                        |                        _|
+ *                        |                       |
+ *                        +----------|>|---------||<.
+ *                       _|_                      |_|
+ *                       ___ C                      |
+ *                        |                        GND
+ *                       GND  
+ *      In the above circuit, Rt is the thermistor, C is a capacitor, Rf is a feedback resistor,
+ *        buffer is the 74HC125 chip on the FD board (if its input voltage > ~0.4V (?), then it outputs Vcc, else 0V)
+ *        the mosfet serves as an inverting gate. when the buffer is HIGH, then Node 2 = Vgs (gate threshold, 0.4~1.0V), 
+ *          else it's high-impedence
+ *      The result is a feedback circuit, where the voltage across C is kept nearly constant (equal to the buffer's input threshold voltage).
+ *        So we sample the output of the buffer (it serves as a comparator) many times and keep a rolling average of what we sample.
+ *          This gives us a "duty cycle" - an idea of how often the buffer is active vs inactive.
+ *          From this, we can calculate the average voltage at Node 2, and use that to solve for Rt.
+ *      Possible problems:
+ *        The feedback is limited by the mosfet switching frequency. I don't know how a fet behaves while switching, 
+ *          so this notion of average voltage at Node 2 may be inaccurate.
+ *        If this frequency is too high, capacitance at the input may become significant.
+ *        What we might consider is to gate the feedback with square wave (generated via the Pi's DMA output).
+ *          This would be done by placing a diode-based AND gate after the buffer, with the buffer as one input & square wave as the other.
+ *
+ *     2. RC-time modification:
+ *
+ *                  Ra                   Rt
+ *       Vctrl ----/\/\/\/\----+------/\/\/\/\----|>|--- Vdis
+ *                            _|_              
+ *                            ___ C             
+ *                             |
+ *                            GND
+ *       
+ *       In this circuit, a capacitor is charged, via setting Vctrl HIGH and Vdis to high-impedence.
+ *       After waiting long enough for the capacitor to be nearly fully-charged,
+ *         Vctrl is set to high-impedance (input mode), and Vdis is PWM'd at a constant value.
+ *         This has the effect of discharging the capacitor through Rt,
+ *         and we monitor Vctrl until it gets pulled low. At that instant, we know its approximate voltage and 
+ *           can determine the time-constant of the time circuit, and from that, Rt.
+ *       Note that the point of PWMing Vdis is to have more control over the time it takes to discharge the capacitor
+ *         - when measuring a HIGH resistance (normally long discharge time), Vdis is set to 0.
+ *         - when measuring a LOW resistance (normally short discharge time), Vdis is set to a higher PWM value.
  */
 
 #ifndef MACHINES_RPI_KOSSELRAMPSFD
