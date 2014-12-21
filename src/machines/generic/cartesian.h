@@ -125,19 +125,9 @@ class cartesian : public Machine {
         inline ConstantAcceleration getAccelerationProfile() const {
             return ConstantAcceleration(MAX_ACCEL_MM_SEC2);
         }
-        inline LinearCoordMap<> getCoordMap() const {
-            return LinearCoordMap<>(STEPS_MM_X, STEPS_MM_Y, STEPS_MM_Z, STEPS_MM_EXT,
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_X)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_Y)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_Z)),
-                Matrix3x3( //bed level matrix. Coordinates are leveled by multiplying them with this matrix: P(leveled) = M*P(unleveled)
-            1, 0, 0,
-            0, 1, 0,
-            0, 0, 1));
-        }
-        inline std::tuple<A4988, A4988, A4988, A4988, Fan, TempControl<iodrv::HotendType, RCThermistor, PID, LowPassFilter> > 
-          getIoDrivers() const {
-            return std::make_tuple(
+        inline LinearCoordMap<A4988, A4988, A4988, A4988> getCoordMap() const {
+            return LinearCoordMap<A4988, A4988, A4988, A4988>(
+                STEPS_MM_X, STEPS_MM_Y, STEPS_MM_Z, STEPS_MM_EXT,
                 A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_X_STEP), 
                       IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_X_DIR), 
                       IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_X_EN)),
@@ -150,6 +140,17 @@ class cartesian : public Machine {
                 A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_STEP), 
                       IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_DIR), 
                       IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_E_EN)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_X)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_Y)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_Z)),
+                Matrix3x3( //bed level matrix. Coordinates are leveled by multiplying them with this matrix: P(leveled) = M*P(unleveled)
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1));
+        }
+        inline std::tuple<Fan, TempControl<iodrv::HotendType, RCThermistor, PID, LowPassFilter> > 
+          getIoDrivers() const {
+            return std::make_tuple(
                 Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN_DEFAULT_STATE, PIN_FAN), 
                     FAN_MIN_PWM_PERIOD),
                 TempControl<iodrv::HotendType, RCThermistor, PID, LowPassFilter>(

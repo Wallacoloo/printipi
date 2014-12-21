@@ -33,6 +33,9 @@
 #define MOTION_LINEARCOORDMAP_H
 
 #include <array>
+#include <utility> //for std::move
+#include <tuple>
+
 
 #include "coordmap.h"
 #include "common/matrix.h"
@@ -43,20 +46,22 @@ namespace motion {
 
 
 
-template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
+template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
+    typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
+    typedef std::tuple<LinearStepper<Stepper1, CARTESIAN_AXIS_X>, 
+                       LinearStepper<Stepper2, CARTESIAN_AXIS_Y>, 
+                       LinearStepper<Stepper3, CARTESIAN_AXIS_Z>, 
+                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
+    typedef typename AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
+    typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
+
     float _STEPS_MM_X, _MM_STEPS_X;
     float _STEPS_MM_Y, _MM_STEPS_Y;
     float _STEPS_MM_Z, _MM_STEPS_Z;
     float _STEPS_MM_E, _MM_STEPS_E;
     BedLevelT bedLevel;
     std::array<iodrv::Endstop, 4> endstops; //x, y, z, e (null)
-
-    typedef std::tuple<LinearStepper<CARTESIAN_AXIS_X>, 
-                       LinearStepper<CARTESIAN_AXIS_Y>, 
-                       LinearStepper<CARTESIAN_AXIS_Z>, 
-                       LinearStepper<CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
-    typedef AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
+    StepperDriverTypes stepperDrivers;
     public:
         inline float STEPS_MM(std::size_t axisIdx) const { 
             return axisIdx == CARTESIAN_AXIS_X ? _STEPS_MM_X
@@ -69,6 +74,7 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
               :   (axisIdx == CARTESIAN_AXIS_Z ? _MM_STEPS_Z : _MM_STEPS_E));
         }
         inline LinearCoordMap(float STEPS_MM_X, float STEPS_MM_Y, float STEPS_MM_Z, float STEPS_MM_E, 
+          Stepper1 &&stepper1, Stepper2 &&stepper2, Stepper3 &&stepper3, Stepper4 &&stepper4,
           iodrv::Endstop &&endstopX, iodrv::Endstop &&endstopY, iodrv::Endstop &&endstopZ,
           const BedLevelT& t)
          : _STEPS_MM_X(STEPS_MM_X), _MM_STEPS_X(1. / STEPS_MM_X),
@@ -76,7 +82,8 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
            _STEPS_MM_Z(STEPS_MM_Z), _MM_STEPS_Z(1. / STEPS_MM_Z),
            _STEPS_MM_E(STEPS_MM_E), _MM_STEPS_E(1. / STEPS_MM_E),
            bedLevel(t),
-           endstops({{std::move(endstopX), std::move(endstopY), std::move(endstopZ), std::move(iodrv::Endstop())}}) {}
+           endstops({{std::move(endstopX), std::move(endstopY), std::move(endstopZ), std::move(iodrv::Endstop())}}),
+           stepperDrivers(std::move(stepper1), std::move(stepper2), std::move(stepper3), std::move(stepper4)) {}
 
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
@@ -89,6 +96,10 @@ template <typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
         }
         inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
             return endstops[axis];
+        }
+        template <std::size_t idx> auto getStepperDriver() const
+         -> const typename std::tuple_element<idx, StepperDriverTypes>::type& {
+            return std::get<idx>(stepperDrivers);
         }
 
         inline static constexpr std::size_t numAxis() {

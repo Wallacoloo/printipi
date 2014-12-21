@@ -43,18 +43,28 @@
 #ifndef MOTION_LINEARDELTACOORDMAP_H
 #define MOTION_LINEARDELTACOORDMAP_H
 
+#include <array>
+#include <tuple>
+#include <utility> //for std::move
+#include <tuple>
+
 #include "coordmap.h"
 #include "common/logging.h"
 #include "common/matrix.h"
 #include "lineardeltastepper.h"
 #include "iodrivers/endstop.h"
-#include <array>
-#include <tuple>
-#include <utility> //for std::move
 
 namespace motion {
 
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public CoordMap {
+    typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
+    typedef std::tuple<LinearDeltaStepper<Stepper1, DELTA_AXIS_A>, 
+                       LinearDeltaStepper<Stepper2, DELTA_AXIS_B>, 
+                       LinearDeltaStepper<Stepper3, DELTA_AXIS_C>, 
+                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
+    typedef typename AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
+    typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
+
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
     float _r, _L, _h, _buildrad;
     float _STEPS_MM, _MM_STEPS;
@@ -62,14 +72,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
     BedLevelT bedLevel;
 
     std::array<iodrv::Endstop, 4> endstops; //A, B, C and E (E is null)
-    std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> stepperDrivers;
-
-    typedef std::tuple<LinearDeltaStepper<Stepper1, DELTA_AXIS_A>, 
-                       LinearDeltaStepper<Stepper2, DELTA_AXIS_B>, 
-                       LinearDeltaStepper<Stepper3, DELTA_AXIS_C>, 
-                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef typename AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
-    typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
+    StepperDriverTypes stepperDrivers;    
     private:
         inline float STEPS_MM() const { return _STEPS_MM; }
         inline float MM_STEPS() const { return _MM_STEPS; }
@@ -110,7 +113,8 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
             return endstops[axis];
         }
-        template <std::size_t idx> auto getStepperDriver() const -> decltype(std::get<idx>(stepperDrivers)) {
+        template <std::size_t idx> const auto getStepperDriver() const
+         -> const typename std::tuple_element<idx, StepperDriverTypes>::type& {
             return std::get<idx>(stepperDrivers);
         }
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
