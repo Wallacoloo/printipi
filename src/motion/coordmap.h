@@ -62,6 +62,7 @@ class CoordMap {
         }
         inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
             //return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)
+            //Depending on which AxisSteppers your CoordMap uses, you may not need to implement this function.
             (void)axis; //unused
             return *(iodrv::Endstop*)(NULL);
         }
