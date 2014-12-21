@@ -51,8 +51,6 @@ namespace iodrv {
 class IODriver {
     public:
         inline IODriver() {}
-        //for a (stepper) motor, advance +/- 1 step:
-        inline std::vector<OutputEvent> getEventOutputSequence(const Event &) { assert(false); } //OVERRIDE THIS (stepper motor drivers only)
         inline const IoPin& getPwmPin() const { return IoPin::null::ref(); } //OVERRIDE THIS if device is pwm-able.
         /* called by M17; Enable/power all stepper motors */
         inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
@@ -64,7 +62,10 @@ class IODriver {
         inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
         inline bool isHeatedBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
         inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
-        inline CelciusType getTargetTemperature() const { assert(false && "IoDriver::getTargetTemperature() must be overriden by subclass."); }
+        inline CelciusType getTargetTemperature() const { 
+            assert(false && "IoDriver::getTargetTemperature() must be overriden by subclass."); 
+            return -300; //for when assertions are disabled.
+        }
         inline CelciusType getMeasuredTemperature() const { return -300; } //OVERRIDE THIS (hotends / beds only)
         /* called when the scheduler has extra time,
         Can be used to check the status of inputs, etc.

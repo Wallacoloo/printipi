@@ -43,6 +43,7 @@ volatile uint32_t *gpioBaseMem = NULL;
 volatile uint32_t *timerBaseMem = NULL;
 
 void assertValidPin(int pin) {
+    (void)pin; //unused when assertions are disabled.
     assert(pin >= 0 && pin < 64);
 }
 

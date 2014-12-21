@@ -45,12 +45,13 @@
         }
     
 #else
-
-    #define LOGE(format, args...) {}
-    #define LOGW(format, args...) {}
-    #define LOG(format, args...) {}
-    #define LOGD(format, args...) {}
-    #define LOGV(format, args...) {}
+    #include <tuple>
+    //make a tuple with the arguments and make it as (void) to avoid unused variable warnings.
+    #define LOGE(format, args...) do { (void)std::make_tuple(format, ##args); } while(0);
+    #define LOGW(format, args...) do { (void)std::make_tuple(format, ##args); } while(0);
+    #define LOG(format, args...) do { (void)std::make_tuple(format, ##args); } while(0);
+    #define LOGD(format, args...) do { (void)std::make_tuple(format, ##args); } while(0);
+    #define LOGV(format, args...) do { (void)std::make_tuple(format, ##args); } while(0);
 
 #endif
     

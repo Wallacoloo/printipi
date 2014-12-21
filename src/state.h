@@ -91,7 +91,8 @@ template <typename Drv> class State {
                 return hwNeedsCpu || stateNeedsCpu;
             }
             struct __iterPwmPins {
-                template <typename T, typename Func> void operator()(T &driver, float dutyCycle, Func &f) {
+                template <typename T, typename Func> void operator()(std::size_t index, T &driver, float dutyCycle, Func &f) {
+                    (void)index; //unused
                     const iodrv::IoPin &p = driver.getPwmPin();
                     f(p.id(), p.areWritesInverted() ? 1-dutyCycle : dutyCycle);
                 }
@@ -410,10 +411,24 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
     }
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
-        Event evt; //check to see if motionPlanner has another event ready
+        /*Event evt; //check to see if motionPlanner has another event ready
         if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
             if (!(evt = motionPlanner.nextStep()).isNull()) {
                 tupleCallOnIndex(this->ioDrivers, __iterEventOutputSequence(), evt.stepperId(), evt, [this](const OutputEvent &out) { this->scheduler.queue(out); });
+                _lastMotionPlannedTime = evt.time();
+                motionNeedsCpu = scheduler.isRoomInBuffer();
+            } else { //undo buffer-length changes set in homing
+                this->scheduler.setDefaultMaxSleep();
+            }
+        }*/
+        /*if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
+            motionPlanner.processNextStep([this](const OutputEvent &out) { this->scheduler.queue(out); });
+            
+        }*/
+        OutputEvent evt; //check to see if motionPlanner has another event ready
+        if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
+            if (!(evt = motionPlanner.nextOutputEvent()).isNull()) {
+                this->scheduler.queue(evt);
                 _lastMotionPlannedTime = evt.time();
                 motionNeedsCpu = scheduler.isRoomInBuffer();
             } else { //undo buffer-length changes set in homing

@@ -51,13 +51,51 @@ enum MotionType {
     MotionHome
 };
 
+template<typename ArrayT> struct array_size;
+template<typename ElementT, std::size_t Size> struct array_size<std::array<ElementT, Size> > {
+    static const std::size_t size = Size;
+};
+
+template <typename AxisStepperTypes, std::size_t IdxPlusOne> class MaxOutputEventSequenceSize {
+    typedef decltype(std::get<IdxPlusOne-1>(std::declval<AxisStepperTypes>())) ThisAxisStepper;
+    typedef decltype(std::declval<ThisAxisStepper>().getStepOutputEventSequence(EventClockT::duration())) OutputEventArrayType; //std::array<OutputEvent, N>
+    static constexpr std::size_t mySize() {
+        return array_size<OutputEventArrayType>::size;
+    }
+    static constexpr std::size_t prevMaxSize() {
+        return MaxOutputEventSequenceSize<AxisStepperTypes, IdxPlusOne-1>::maxSize();
+    }
+    public:
+        static constexpr std::size_t maxSize() {
+            return prevMaxSize() > mySize() ? prevMaxSize() : mySize();
+            //return std::max(prevMaxSize(), mySize()); //there is no constexpr std::max in c++11 (only c++14)
+        }
+};
+
+template <typename AxisStepperTypes> struct MaxOutputEventSequenceSize<AxisStepperTypes, 0> {
+    static constexpr std::size_t maxSize() {
+        return 0;
+    }
+};
+
 template <typename Interface> class MotionPlanner {
     private:
+        struct UpdateOutputEvents {
+            template <std::size_t MyIdx, typename T> void operator()(CVTemplateWrapper<MyIdx> myIdx, T &stepper, 
+              MotionPlanner<Interface> *_this, EventClockT::duration baseTime) {
+                (void)myIdx; //unused
+                auto sequence = stepper.getStepOutputEventSequence(baseTime);
+                std::copy(sequence.begin(), sequence.end(), _this->outputEventBuffer.begin());
+                _this->curOutputEvent = _this->outputEventBuffer.begin();
+                _this->endOutputEvent = _this->outputEventBuffer.begin() + sequence.size();
+            }
+        };
         typedef typename Interface::CoordMapT CoordMapT;
         typedef typename Interface::AccelerationProfileT AccelerationProfileT;
         typedef decltype(std::declval<CoordMapT>().getAxisSteppers()) AxisStepperTypes;
         typedef decltype(std::declval<CoordMapT>().getHomeSteppers()) HomeStepperTypes;
         typedef decltype(std::declval<CoordMapT>().getArcSteppers())  ArcStepperTypes;
+        typedef std::array<OutputEvent, MaxOutputEventSequenceSize<AxisStepperTypes, std::tuple_size<AxisStepperTypes>::value>::maxSize()> OutputEventBufferT;
 
         Interface _interface;
         CoordMapT _coordMapper; //object that maps from (x, y, z) to mechanical coords (eg A, B, C for a kossel)
@@ -69,6 +107,10 @@ template <typename Interface> class MotionPlanner {
         EventClockT::duration _baseTime; //The time at which the current path segment began (this will be a fraction of a second before the time which the first step in this path is scheduled for)
         float _duration; //the estimated duration of the current piece, not taking into account acceleration
         MotionType _motionType; //which type of segment is being planned
+        
+        OutputEventBufferT outputEventBuffer; //hold the maximum-sized OutputEvent sequence from any AxisStepper.
+        typename OutputEventBufferT::iterator curOutputEvent;
+        typename OutputEventBufferT::iterator endOutputEvent;
     public:
         MotionPlanner(const Interface &interface) : 
             _interface(interface),
@@ -78,7 +120,10 @@ template <typename Interface> class MotionPlanner {
             _iters(_coordMapper.getAxisSteppers()), _homeIters(_coordMapper.getHomeSteppers()), _arcIters(_coordMapper.getArcSteppers()),
             _baseTime(), 
             _duration(NAN),
-            _motionType(MotionNone) {}
+            _motionType(MotionNone),
+            outputEventBuffer(),
+            curOutputEvent(outputEventBuffer.begin()),
+            endOutputEvent(outputEventBuffer.begin()) {}
         bool readyForNextMove() const {
             //returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems)
             //Note: for now, there isn't actually buffering.
@@ -88,7 +133,7 @@ template <typename Interface> class MotionPlanner {
             return _coordMapper.doHomeBeforeFirstMovement();
         }
     private:
-        Event _nextStep(AxisStepper &s) {
+        template <typename StepperTypes> void _nextStep(StepperTypes &steppers, AxisStepper &s) {
             LOGV("MotionPlanner::nextStep() is: %i at %g of %g\n", s.index(), s.time, _duration);
             if (s.time > _duration || s.time <= 0 || std::isnan(s.time)) { //if the next time the given axis wants to step is invalid or past the movement length, then end the motion
                 //Note: don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
@@ -103,70 +148,69 @@ template <typename Interface> class MotionPlanner {
                 LOGD("MotionPlanner::moveTo Got (x,y,z,e) %f, %f, %f, %f\n", x, y, z, e);
                 LOGD("MotionPlanner _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
                 _motionType = MotionNone; //motion is over.
-                return Event();
+                return;
             }
             float transformedTime = _accel.transform(s.time); //transform the step time according to acceleration profile
+            EventClockT::duration transformedChronoTime = std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(transformedTime));
             LOGV("Step transformed time: %f\n", transformedTime);
-            Event e = s.getEvent(transformedTime);
-            e.offset(_baseTime); //AxisSteppers report times relative to the start of motion; transform to absolute.
+            //update outputEventBuffer member variable:
+            tupleCallOnIndex(steppers, UpdateOutputEvents(), s.index(), this, _baseTime + transformedChronoTime);            
+            //Event e = s.getEvent(transformedTime);
+            //e.offset(_baseTime); //AxisSteppers report times relative to the start of motion; transform to absolute.
             _destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction); //update the mechanical position tracked in software
             //advance the respective AxisStepper to its next step:
-            switch (_motionType) {
-                case MotionHome:
-                    s.nextStep(_homeIters);
-                    break;
-                case MotionLinear:
-                    s.nextStep(_iters);
-                    break;
-                case MotionArc:
-                    s.nextStep(_arcIters);
-                    break;
-                case MotionNone:
-                default:
-                    assert(false); //it is illegal to call nextStep() when a move is not in progress.
-            }
-            return e;
+            s.nextStep(steppers);
+            //return e;
         }
         //black magic to get nextStep to work when either AxisStepperTypes or HomeStepperTypes have length 0:
         //If they are length zero, then _nextStep* just returns an empty event and a compilation error is avoided.
         //Otherwise, the templated function is called, and _nextStep is run as usual:
-        template <bool T> Event _nextStepHome(std::integral_constant<bool, T> ) {
-            return _nextStep(AxisStepper::getNextTime(_homeIters));
+        template <bool T> void _nextStepHome(std::integral_constant<bool, T> ) {
+            _nextStep(_homeIters, AxisStepper::getNextTime(_homeIters));
         }
-        Event _nextStepHome(std::false_type ) {
-            return Event();
+        void _nextStepHome(std::false_type ) {
         }
-        template <bool T> Event _nextStepLinear(std::integral_constant<bool, T> ) {
-            return _nextStep(AxisStepper::getNextTime(_iters));
+
+        template <bool T> void _nextStepLinear(std::integral_constant<bool, T> ) {
+            _nextStep(_iters, AxisStepper::getNextTime(_iters));
         }
-        Event _nextStepLinear(std::false_type ) {
-            return Event();
+        void _nextStepLinear(std::false_type ) {
         }
-        template <bool T> Event _nextStepArc(std::integral_constant<bool, T> ) {
-            return _nextStep(AxisStepper::getNextTime(_arcIters));
+
+        template <bool T> void _nextStepArc(std::integral_constant<bool, T> ) {
+            _nextStep(_arcIters, AxisStepper::getNextTime(_arcIters));
         }
-        Event _nextStepArc(std::false_type ){
-            return Event();
+        void _nextStepArc(std::false_type ){
         }
     public:
         bool isHoming() const {
             return _motionType == MotionHome;
         }
-        Event nextStep() {
+        OutputEvent nextOutputEvent() {
             //called by State to query the next step in the current path segment
-            switch (_motionType) {
-                case MotionHome:
-                    return _nextStepHome(std::integral_constant<bool, std::tuple_size<HomeStepperTypes>::value != 0>());
-                case MotionLinear:
-                    return _nextStepLinear(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
-                case MotionArc:
-                    LOGV("MotionPlanner::nextStep() _motionType is MotionArc\n");
-                    return _nextStepArc(std::integral_constant<bool, std::tuple_size<ArcStepperTypes>::value != 0>());
-                case MotionNone:
-                    return Event();
-                default:
-                    assert(false);
-                    return Event();
+            if (curOutputEvent == endOutputEvent) { //we have some OutputEvents buffered.
+                switch (_motionType) {
+                    case MotionHome:
+                        _nextStepHome(std::integral_constant<bool, std::tuple_size<HomeStepperTypes>::value != 0>());
+                        break;
+                    case MotionLinear:
+                        _nextStepLinear(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
+                        break;
+                    case MotionArc:
+                        LOGV("MotionPlanner::nextStep() _motionType is MotionArc\n");
+                        _nextStepArc(std::integral_constant<bool, std::tuple_size<ArcStepperTypes>::value != 0>());
+                        break;
+                    case MotionNone:
+                        return OutputEvent();
+                    default: //impossible enum type
+                        assert(false && "Impossible enum type");
+                        return OutputEvent();
+                }
+            }
+            if (curOutputEvent != endOutputEvent) {
+                return *(curOutputEvent++);
+            } else {
+                return OutputEvent();
             }
         }
         void moveTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {

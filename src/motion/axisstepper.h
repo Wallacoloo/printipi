@@ -46,6 +46,9 @@
 #include <utility> //for std::move
 #include "common/tupleutil.h"
 
+#include "outputevent.h"
+#include <cassert>
+
 namespace motion {
 
 class AxisStepper {
@@ -69,6 +72,11 @@ class AxisStepper {
         Event getEvent() const; //NOT TO BE OVERRIDEN
         Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN
         template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
+        inline std::array<OutputEvent, 3> getStepOutputEventSequence(EventClockT::duration baseTime) {
+            (void)baseTime; //unused.
+            assert(false);
+            return {{OutputEvent(), OutputEvent(), OutputEvent()}};
+        }
     protected:
         AxisStepper(int idx) : _index(idx) {} //only callable via children
         void _nextStep(); //OVERRIDE THIS. Will be called upon initialization.
