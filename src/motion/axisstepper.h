@@ -44,8 +44,9 @@
 #include <array>
 #include <cmath> //for isnan
 #include <utility> //for std::move
-#include "common/tupleutil.h"
 
+#include "platforms/auto/chronoclock.h"
+#include "common/tupleutil.h"
 #include "outputevent.h"
 #include <cassert>
 
@@ -69,17 +70,17 @@ class AxisStepper {
         template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve);
         template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisArcSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel);
         template <typename TupleT, typename CoordMapT> static void initAxisHomeSteppers(TupleT &steppers, const CoordMapT &map, float vHome);
-        Event getEvent() const; //NOT TO BE OVERRIDEN
-        Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN
+        //Event getEvent() const; //NOT TO BE OVERRIDEN
+        //Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN
         template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
-        inline std::array<OutputEvent, 3> getStepOutputEventSequence(EventClockT::duration baseTime) {
-            (void)baseTime; //unused.
+        /*inline std::array<OutputEvent, 3> getStepOutputEventSequence(EventClockT::duration absoluteTime) {
+            (void)absoluteTime; //unused.
             assert(false);
             return {{OutputEvent(), OutputEvent(), OutputEvent()}};
-        }
+        }*/
     protected:
         AxisStepper(int idx) : _index(idx) {} //only callable via children
-        void _nextStep(); //OVERRIDE THIS. Will be called upon initialization.
+        inline void _nextStep(); //OVERRIDE THIS. And yes, it will be called upon initialization too.
     public:
         //homing steppers. GetHomeStepperTypes<std::tuple<StepperT, ...> >::HomeStepperTypes is equivalent to std::tuple<StepperT::HomeStepperT, ...>
         template <typename... Types> struct GetHomeStepperTypes {
@@ -92,6 +93,16 @@ class AxisStepper {
         };
         template <typename... Types> struct GetArcStepperTypes<std::tuple<Types...> > : GetArcStepperTypes<Types...> {};
         
+};
+
+template <typename StepperDriver> class AxisStepperWithDriver : public AxisStepper {
+    const StepperDriver *driver; //must be pointer, because cannot move a reference
+    public:
+        AxisStepperWithDriver() : AxisStepper() {}
+        AxisStepperWithDriver(int idx, const StepperDriver &d) : AxisStepper(idx), driver(&d) {}
+        inline std::array<OutputEvent, 3> getStepOutputEventSequence(EventClockT::time_point absoluteTime) const {
+            return driver->getEventOutputSequence(Event(absoluteTime, index(), this->direction));
+        }
 };
 
 //Helper classes for AxisStepper::getNextTime method

@@ -65,7 +65,7 @@ class A4988 : public IODriver {
             //let stepper motors move freely
             enablePin.digitalWrite(IoLow);
         }
-        inline std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) {
+        inline std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) const {
             //A4988 is directed by putting a direction on the DIRPIN, and then
             //sending a pulse on the STEPPIN.
             //It's the low->high transition that triggers the step. 

@@ -164,7 +164,7 @@ enum DeltaAxis {
     DELTA_AXIS_E=3
 };
 
-template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
+template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepperWithDriver<StepperDriverT> {
     private:
         float _r, _L, _MM_STEPS; //calibration settings which will be obtained from the CoordMap
         float M0; //initial coordinate of THIS axis.
@@ -181,25 +181,27 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
         inline float MM_STEPS() const { return _MM_STEPS; }
     public:
         inline LinearDeltaArcStepper() : _r(0), _L(0), _MM_STEPS(0) {}
-        template <typename CoordMapT, std::size_t sz> LinearDeltaArcStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel)
-          : AxisStepper(idx),
-            _r(map.r()),
-            _L(map.L()),
-            _MM_STEPS(map.MM_STEPS(AxisIdx)),
-            M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
-            sTotal(0),
-            xc(xCenter),
-            yc(yCenter),
-            zc(zCenter),
-            ux(ux),
-            uy(uy),
-            uz(uz),
-            vx(vx),
-            vy(vy),
-            vz(vz),
-            arcRad(arcRad),
-            m(arcVel),
-            w(AxisIdx*2*M_PI/3) {
+        template <typename CoordMapT, std::size_t sz> LinearDeltaArcStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, 
+        float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, 
+        float arcRad, float arcVel, float extVel)
+        : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()),
+          _r(map.r()),
+          _L(map.L()),
+          _MM_STEPS(map.MM_STEPS(AxisIdx)),
+          M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
+          sTotal(0),
+          xc(xCenter),
+          yc(yCenter),
+          zc(zCenter),
+          ux(ux),
+          uy(uy),
+          uz(uz),
+          vx(vx),
+          vy(vy),
+          vz(vz),
+          arcRad(arcRad),
+          m(arcVel),
+          w(AxisIdx*2*M_PI/3) {
                 (void)map, (void)idx; (void)extVel; //unused
                 static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
                 this->time = 0; //this may NOT be zero-initialized by parent.
@@ -300,7 +302,7 @@ template <DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepper {
         }
 };
 
-template <DeltaAxis AxisIdx> class LinearDeltaStepper : public AxisStepper {
+template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
     private:
         float _r, _L, _MM_STEPS; //settings which will be obtained from the CoordMap
         float M0; //initial coordinate of THIS axis.
@@ -314,11 +316,12 @@ template <DeltaAxis AxisIdx> class LinearDeltaStepper : public AxisStepper {
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
     public:
-        typedef LinearHomeStepper<AxisIdx> HomeStepperT;
-        typedef LinearDeltaArcStepper<AxisIdx> ArcStepperT;
+        typedef LinearHomeStepper<StepperDriverT, AxisIdx> HomeStepperT;
+        typedef LinearDeltaArcStepper<StepperDriverT, AxisIdx> ArcStepperT;
         inline LinearDeltaStepper() : _r(0), _L(0), _MM_STEPS(0) {}
-        template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, float vx, float vy, float vz, float ve)
-           : AxisStepper(idx),
+        template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, 
+        float vx, float vy, float vz, float ve)
+        : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()),
              _r(map.r()), _L(map.L()), _MM_STEPS(map.MM_STEPS(AxisIdx)),
              M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
              sTotal(0),

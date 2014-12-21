@@ -4,12 +4,12 @@
 
 namespace motion {
 
-Event AxisStepper::getEvent() const {
+/*Event AxisStepper::getEvent() const {
     return Event::StepperEvent(this->time, this->index(), this->direction);
 }
 Event AxisStepper::getEvent(float realTime) const {
     return Event::StepperEvent(realTime, this->index(), this->direction);
-}
+}*/
 
 void AxisStepper::_nextStep() {
     //should be implemented in derivatives.

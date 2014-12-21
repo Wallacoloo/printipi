@@ -58,7 +58,7 @@ template<typename ElementT, std::size_t Size> struct array_size<std::array<Eleme
 
 template <typename AxisStepperTypes, std::size_t IdxPlusOne> class MaxOutputEventSequenceSize {
     typedef decltype(std::get<IdxPlusOne-1>(std::declval<AxisStepperTypes>())) ThisAxisStepper;
-    typedef decltype(std::declval<ThisAxisStepper>().getStepOutputEventSequence(EventClockT::duration())) OutputEventArrayType; //std::array<OutputEvent, N>
+    typedef decltype(std::declval<ThisAxisStepper>().getStepOutputEventSequence(EventClockT::time_point())) OutputEventArrayType; //std::array<OutputEvent, N>
     static constexpr std::size_t mySize() {
         return array_size<OutputEventArrayType>::size;
     }
@@ -82,7 +82,7 @@ template <typename Interface> class MotionPlanner {
     private:
         struct UpdateOutputEvents {
             template <std::size_t MyIdx, typename T> void operator()(CVTemplateWrapper<MyIdx> myIdx, T &stepper, 
-              MotionPlanner<Interface> *_this, EventClockT::duration baseTime) {
+              MotionPlanner<Interface> *_this, EventClockT::time_point baseTime) {
                 (void)myIdx; //unused
                 auto sequence = stepper.getStepOutputEventSequence(baseTime);
                 std::copy(sequence.begin(), sequence.end(), _this->outputEventBuffer.begin());
@@ -104,6 +104,7 @@ template <typename Interface> class MotionPlanner {
         AxisStepperTypes _iters; //Each axis iterator reports the next time it needs to be stepped. _iters is for linear movement
         HomeStepperTypes _homeIters; //Axis iterators used when homing
         ArcStepperTypes _arcIters;
+        //TODO: _baseTime should be a time_point, not a duration
         EventClockT::duration _baseTime; //The time at which the current path segment began (this will be a fraction of a second before the time which the first step in this path is scheduled for)
         float _duration; //the estimated duration of the current piece, not taking into account acceleration
         MotionType _motionType; //which type of segment is being planned
@@ -154,7 +155,7 @@ template <typename Interface> class MotionPlanner {
             EventClockT::duration transformedChronoTime = std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(transformedTime));
             LOGV("Step transformed time: %f\n", transformedTime);
             //update outputEventBuffer member variable:
-            tupleCallOnIndex(steppers, UpdateOutputEvents(), s.index(), this, _baseTime + transformedChronoTime);            
+            tupleCallOnIndex(steppers, UpdateOutputEvents(), s.index(), this, EventClockT::time_point(_baseTime + transformedChronoTime));            
             //Event e = s.getEvent(transformedTime);
             //e.offset(_baseTime); //AxisSteppers report times relative to the start of motion; transform to absolute.
             _destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction); //update the mechanical position tracked in software

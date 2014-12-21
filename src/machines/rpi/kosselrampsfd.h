@@ -329,10 +329,6 @@ class kosselrampsfd : public Machine {
         //  Additionally, define the actual stepper motor drivers and tie the thermistor to 
         //    the hotend as a feedback source.
         typedef std::tuple<
-            A4988, //A tower
-            A4988, //B tower
-            A4988, //C tower
-            A4988, //E coord. Note: the ordering of (A, B, C, E) in this tuple is strict (must be index 0, 1, 2 and then 3). But everything after that can be ordered any way
             Fan    //Hotend fan
             //TempControl<iodrv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>
             > _IODriverTypes;
@@ -342,18 +338,6 @@ class kosselrampsfd : public Machine {
         
         inline _IODriverTypes getIoDrivers() const {
             return std::make_tuple(
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_A_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_A_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_A_EN)),
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_B_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_B_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_B_EN)),
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_C_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_C_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_C_EN)),
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_E_EN)),
                 Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN_DEFAULT_STATE, PIN_FAN), 
                     FAN_MIN_PWM_PERIOD));
                 //TempControl<iodrv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>(
@@ -369,12 +353,29 @@ class kosselrampsfd : public Machine {
         //Define the coordinate system:
         //  We are using a LinearDelta coordinate system, where vertically-moving carriages are
         //    attached to an end effector via fixed-length, rotatable rods.
-        inline LinearDeltaCoordMap<> getCoordMap() const {
+        inline LinearDeltaCoordMap<A4988, A4988, A4988, A4988> getCoordMap() const {
             //the Matrix3x3 defines the level of the bed:
             //  This is a matrix such that M * {x,y,z} should transform desired coordinates into a 
             //    bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
-            return LinearDeltaCoordMap<>(R_MM, L_MM, H_MM, BUILDRAD_MM, STEPS_MM, STEPS_MM_EXT, 
+            return LinearDeltaCoordMap<A4988, A4988, A4988, A4988>(
+                R_MM, L_MM, H_MM, BUILDRAD_MM, STEPS_MM, STEPS_MM_EXT, 
+                //A tower:
+                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_A_STEP), 
+                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_A_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_A_EN)),
+                //B tower:
+                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_B_STEP), 
+                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_B_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_B_EN)),
+                //C tower:
+                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_C_STEP), 
+                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_C_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_C_EN)),
+                //Extruder axis:
+                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_STEP), 
+                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_E_EN)),
                 Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_A)),
                 Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_B)),
                 Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_C)),
