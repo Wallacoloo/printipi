@@ -408,6 +408,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
                 _lastMotionPlannedTime = evt.time();
                 motionNeedsCpu = scheduler.isRoomInBuffer();
             } else { //undo buffer-length changes set in homing
+                //LOGV("State::onIdleCpu() OutputEvent is null. Signals end of move\n");
                 this->scheduler.setDefaultMaxSleep();
             }
         }

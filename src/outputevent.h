@@ -39,7 +39,7 @@ class OutputEvent {
     GpioPinIdType _pinId;
     bool _state; //1=HIGH, 0=LOW
     public:
-        inline OutputEvent() : _pinId(-1) {}
+        inline OutputEvent() : _time(std::chrono::seconds(0)) {}
         inline OutputEvent(EventClockT::time_point time, GpioPinIdType pinId, bool state) : _time(time), _pinId(pinId), _state(state) {
         }
         inline EventClockT::time_point time() const {
@@ -52,7 +52,7 @@ class OutputEvent {
             return _state;
         }
         inline bool isNull() const {
-            return _pinId == -1;
+            return _time == EventClockT::time_point(std::chrono::seconds(0));
         }
 };
 

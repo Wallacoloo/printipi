@@ -84,6 +84,7 @@ template <typename Interface> class MotionPlanner {
               MotionPlanner<Interface> *_this, EventClockT::time_point baseTime) {
                 (void)myIdx; //unused
                 auto sequence = stepper.getStepOutputEventSequence(baseTime);
+                //LOGV("MotionPlanner::UpdateOutputEvents is sequence[0] null? %i\n", sequence[0].isNull());
                 std::copy(sequence.begin(), sequence.end(), _this->outputEventBuffer.begin());
                 _this->curOutputEvent = _this->outputEventBuffer.begin();
                 _this->endOutputEvent = _this->outputEventBuffer.begin() + sequence.size();
@@ -160,7 +161,7 @@ template <typename Interface> class MotionPlanner {
             _destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction); //update the mechanical position tracked in software
             //advance the respective AxisStepper to its next step:
             s.nextStep(steppers);
-            //return e;
+            LOGV("MotionPlanner::nextStep() generated %zu OutputEvents\n", (endOutputEvent-curOutputEvent));
         }
         //black magic to get nextStep to work when either AxisStepperTypes or HomeStepperTypes have length 0:
         //If they are length zero, then _nextStep* just returns an empty event and a compilation error is avoided.
