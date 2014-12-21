@@ -159,7 +159,7 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 %/motion/motion.a: %/motion/axisstepper.o
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 	
-%/rest.a: %/argparse.o %/event.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o 
+%/rest.a: %/argparse.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o 
 	$(LD) -r $^ -o $@ $(LDFLAGS)
 %/main.cpp: $(MACHINE_PATH)
 	

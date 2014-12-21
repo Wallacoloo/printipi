@@ -35,7 +35,7 @@
 
 #include <cassert> //for assert
 #include <array>
-#include "event.h"
+//#include "event.h"
 #include "outputevent.h"
 #include "common/logging.h"
 #include "common/intervaltimer.h"
@@ -71,9 +71,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
             setMaxSleep(std::chrono::milliseconds(40));
         }
         Scheduler(Interface interface);
-        //Event nextEvent(bool doSleep=true, std::chrono::microseconds timeout=std::chrono::microseconds(1000000));
         void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
-        //EventClockT::time_point lastSchedTime() const; //get the time at which the last event is scheduled, or the current time if no events queued.
         bool isRoomInBuffer() const;
         void eventLoop();
         void yield(const OutputEvent *evt);

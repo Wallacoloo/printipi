@@ -44,8 +44,6 @@
 #include "common/tupleutil.h"
 #include "iopin.h"
 
-class Event; //forward-declare class defined in event.h
-
 namespace iodrv {
 
 class IODriver {

@@ -52,7 +52,6 @@
 #include "gparse/command.h"
 #include "gparse/com.h"
 #include "gparse/response.h"
-#include "event.h"
 #include "scheduler.h"
 #include "motion/motionplanner.h"
 #include "common/mathutil.h"

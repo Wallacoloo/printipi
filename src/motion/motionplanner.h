@@ -38,7 +38,6 @@
 #include <utility> //for std::declval
 #include "accelerationprofile.h"
 #include "axisstepper.h"
-#include "event.h"
 #include "common/vector3.h"
 
 namespace motion {

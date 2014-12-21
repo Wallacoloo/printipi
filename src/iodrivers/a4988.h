@@ -42,7 +42,8 @@
 #include "iodriver.h"
 #include "iopin.h"
 #include "outputevent.h"
-#include "event.h"
+#include "platforms/auto/chronoclock.h"
+#include "motion/axisstepper.h" //for StepDirection
 
 namespace iodrv {
 
@@ -58,19 +59,19 @@ class A4988 : public IODriver {
             this->enablePin.makeDigitalOutput(IoHigh); //set as output and enable.
         }
         inline void lockAxis() {
-            //restrict stepper motors
+            //restrict stepper motors from moving
             enablePin.digitalWrite(IoHigh);
         }
         inline void unlockAxis() {
             //let stepper motors move freely
             enablePin.digitalWrite(IoLow);
         }
-        inline std::array<OutputEvent, 3> getEventOutputSequence(EventClockT::time_point evtTime, StepDirection dir) const {
+        inline std::array<OutputEvent, 3> getEventOutputSequence(EventClockT::time_point evtTime, motion::StepDirection dir) const {
             //A4988 is directed by putting a direction on the DIRPIN, and then
             //sending a pulse on the STEPPIN.
             //It's the low->high transition that triggers the step. 
             //NOTE: documentation says STEP must be LOW for at least 1 uS and then HIGH for at least 1 uS.
-            return {{OutputEvent(evtTime, dirPin.id(), dir == StepForward ? IoHigh : IoLow),
+            return {{OutputEvent(evtTime, dirPin.id(), dir == motion::StepForward ? IoHigh : IoLow),
                 OutputEvent(evtTime, stepPin.id(), IoLow),
                 OutputEvent(evtTime+std::chrono::microseconds(8), stepPin.id(), IoHigh)}}; //TODO: Doesn't handle inversions!
         }

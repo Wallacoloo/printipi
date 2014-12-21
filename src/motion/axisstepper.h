@@ -38,7 +38,6 @@
 #ifndef MOTION_AXISSTEPPER_H
 #define MOTION_AXISSTEPPER_H
 
-#include "event.h"
 #include "compileflags.h" //for AxisIdType
 #include <tuple>
 #include <array>
@@ -51,6 +50,18 @@
 #include <cassert>
 
 namespace motion {
+
+enum StepDirection {
+    StepBackward,
+    StepForward
+};
+
+template <typename T> StepDirection stepDirFromSign(T dir) {
+    return dir < 0 ? StepBackward : StepForward;
+}
+template <typename T> T stepDirToSigned(StepDirection dir) {
+    return dir == StepBackward ? -1 : 1;
+}
 
 class AxisStepper {
     private:
