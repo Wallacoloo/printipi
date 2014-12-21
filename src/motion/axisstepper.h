@@ -101,7 +101,7 @@ template <typename StepperDriver> class AxisStepperWithDriver : public AxisStepp
         AxisStepperWithDriver() : AxisStepper() {}
         AxisStepperWithDriver(int idx, const StepperDriver &d) : AxisStepper(idx), driver(&d) {}
         inline std::array<OutputEvent, 3> getStepOutputEventSequence(EventClockT::time_point absoluteTime) const {
-            return driver->getEventOutputSequence(Event(absoluteTime, index(), this->direction));
+            return driver->getEventOutputSequence(absoluteTime, this->direction);
         }
 };
 

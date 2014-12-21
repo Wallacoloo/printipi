@@ -51,7 +51,7 @@ template <typename T> T stepDirToSigned(StepDirection dir) {
     return dir == StepBackward ? -1 : 1;
 }
 
-class Event {
+/*class Event {
     EventClockT::time_point _time;
     AxisIdType _stepperNum;
     bool _isForward;
@@ -83,6 +83,6 @@ class Event {
             return this->time() > other.time();
         }
         
-};
+};*/
 
 #endif

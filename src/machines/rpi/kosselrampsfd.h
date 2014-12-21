@@ -326,8 +326,7 @@ class kosselrampsfd : public Machine {
         
         
         //Gather all the I/O controlled devices:
-        //  Additionally, define the actual stepper motor drivers and tie the thermistor to 
-        //    the hotend as a feedback source.
+        //  Additionally, tie the thermistor to the hotend as a feedback source.
         typedef std::tuple<
             Fan    //Hotend fan
             //TempControl<iodrv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>

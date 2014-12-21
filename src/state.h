@@ -383,14 +383,14 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
     //x = _destXPrimitive - _hostZeroX;
 }
 
-struct __iterEventOutputSequence {
+/*struct __iterEventOutputSequence {
     template <typename T, typename Func> void operator()(T &driver, const Event &evt, Func &f) {
         auto a = driver.getEventOutputSequence(evt); //get the output events for this events
         for (auto &&outputEvt : a) {
             f(outputEvt); //apply to f.
         }
     }
-};
+};*/
 
 template <typename Drv> struct State<Drv>::State__onIdleCpu {
     template <typename T> bool operator()(std::size_t index, T &driver, State<Drv> *state) {
@@ -420,10 +420,6 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
             } else { //undo buffer-length changes set in homing
                 this->scheduler.setDefaultMaxSleep();
             }
-        }*/
-        /*if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
-            motionPlanner.processNextStep([this](const OutputEvent &out) { this->scheduler.queue(out); });
-            
         }*/
         OutputEvent evt; //check to see if motionPlanner has another event ready
         if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.

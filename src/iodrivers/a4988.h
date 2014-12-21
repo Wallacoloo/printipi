@@ -65,14 +65,14 @@ class A4988 : public IODriver {
             //let stepper motors move freely
             enablePin.digitalWrite(IoLow);
         }
-        inline std::array<OutputEvent, 3> getEventOutputSequence(const Event &evt) const {
+        inline std::array<OutputEvent, 3> getEventOutputSequence(EventClockT::time_point evtTime, StepDirection dir) const {
             //A4988 is directed by putting a direction on the DIRPIN, and then
             //sending a pulse on the STEPPIN.
             //It's the low->high transition that triggers the step. 
             //NOTE: documentation says STEP must be LOW for at least 1 uS and then HIGH for at least 1 uS.
-            return {{OutputEvent(evt.time(), dirPin.id(), evt.direction() == StepForward ? IoHigh : IoLow),
-                OutputEvent(evt.time(), stepPin.id(), IoLow),
-                OutputEvent(evt.time()+std::chrono::microseconds(8), stepPin.id(), IoHigh)}}; //TODO: Doesn't handle inversions!
+            return {{OutputEvent(evtTime, dirPin.id(), dir == StepForward ? IoHigh : IoLow),
+                OutputEvent(evtTime, stepPin.id(), IoLow),
+                OutputEvent(evtTime+std::chrono::microseconds(8), stepPin.id(), IoHigh)}}; //TODO: Doesn't handle inversions!
         }
 };
 
