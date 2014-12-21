@@ -112,7 +112,7 @@ template <typename StepperDriver> class AxisStepperWithDriver : public AxisStepp
         AxisStepperWithDriver() : AxisStepper() {}
         AxisStepperWithDriver(int idx, const StepperDriver &d) : AxisStepper(idx), driver(&d) {}
         inline auto getStepOutputEventSequence(EventClockT::time_point absoluteTime) const
-         -> decltype(driver->getEventOutputSequence(absoluteTime, this->direction)) {
+         -> decltype(driver->getEventOutputSequence(absoluteTime, direction)) {
             return driver->getEventOutputSequence(absoluteTime, this->direction);
         }
 };
