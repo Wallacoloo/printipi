@@ -4,8 +4,17 @@
 set -e #exit script if any of the commands error
 pushd src
 make clean
-make CXX=g++-4.6 MACHINE=rpi/kosselrampsfd.h
-make CXX=g++-4.6 MACHINE=generic/cartesian.h
-make CXX=g++-4.7 MACHINE=rpi/kosselrampsfd.h
-make CXX=g++-4.7 MACHINE=generic/cartesian.h
+#things to test:
+#Multiple machines
+#at least g++-4.6, g++-4.7
+#must test both release & debug builds,
+#as sometimes having the NDEBUG flag present alters the code path
+make CXX=g++-4.6 MACHINE=rpi/kosselrampsfd.h debug
+make CXX=g++-4.6 MACHINE=rpi/kosselrampsfd.h release
+make CXX=g++-4.6 MACHINE=generic/cartesian.h debug
+make CXX=g++-4.6 MACHINE=generic/cartesian.h release
+make CXX=g++-4.7 MACHINE=rpi/kosselrampsfd.h debug
+make CXX=g++-4.7 MACHINE=rpi/kosselrampsfd.h release
+make CXX=g++-4.7 MACHINE=generic/cartesian.h debug
+make CXX=g++-4.7 MACHINE=generic/cartesian.h release
 popd
