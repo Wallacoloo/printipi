@@ -89,9 +89,6 @@ template <TempControlType HotType, typename Thermistor, typename PID=PID, typena
         inline CelciusType getTargetTemperature() const {
             return _destTemp;
         }
-        inline float heaterPwmPeriod() const { 
-            return _pwmPeriod; 
-        }
         template <typename CallbackInterface> bool onIdleCpu(CallbackInterface &cbInterface) {
             //LOGV("TempControl::onIdleCpu()\n");
             if (_isReading) {
