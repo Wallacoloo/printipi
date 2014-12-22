@@ -89,11 +89,13 @@ class IoPin {
         inline bool isNull() const { return _pin.isNull(); }
         inline GpioPinIdType id() const { return _pin.id(); } //TODO: remove this
         inline bool areWritesInverted() const { return _invertWrites; } //TODO: remove this
+        inline IoLevel translateWriteToPrimitive(IoLevel lev) const { return _invertWrites ? !lev : lev; }
+        inline const PrimitiveIoPin& primitiveIoPin() const { return _pin; }
         //wrapper functions that take the burden of inversions, etc off the platform-specific drivers:
         inline void makeDigitalOutput(IoLevel lev) {
             //set the pin as a digital output, and give it the specified state.
             //Doing these two actions together allow us to prevent the pin from ever being in an undefined state.
-            _pin.makeDigitalOutput(_invertWrites ? !lev : lev);
+            _pin.makeDigitalOutput(translateWriteToPrimitive(lev));
         }
         inline void makeDigitalInput() {
             _pin.makeDigitalInput();
@@ -104,7 +106,7 @@ class IoPin {
         }
         inline void digitalWrite(IoLevel lev) {
             //relay the call to the real pin, performing any inversions necessary
-            _pin.digitalWrite(_invertWrites ? !lev : lev);
+            _pin.digitalWrite(translateWriteToPrimitive(lev));
         }
         inline void setToDefault() {
             //set the pin to a "safe" default state:

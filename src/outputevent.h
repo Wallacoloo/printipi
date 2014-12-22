@@ -32,21 +32,26 @@
 #define OUTPUTEVENT_H
  
 #include "platforms/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/primitiveiopin.h"
+#include "iodrivers/iopin.h"
 #include "compileflags.h" //for GpioPinIdType
 
 class OutputEvent {
     EventClockT::time_point _time;
-    GpioPinIdType _pinId;
-    bool _state; //1=HIGH, 0=LOW
+    PrimitiveIoPin _pin;
+    IoLevel _state; //1=HIGH, 0=LOW
     public:
-        inline OutputEvent() : _time(std::chrono::seconds(0)) {}
-        inline OutputEvent(EventClockT::time_point time, GpioPinIdType pinId, bool state) : _time(time), _pinId(pinId), _state(state) {
+        inline OutputEvent()
+        : _time(std::chrono::seconds(0)), _pin(PrimitiveIoPin::null()), _state(IoLow) {
+        }
+        inline OutputEvent(EventClockT::time_point time, const iodrv::IoPin &pin, bool state) 
+        : _time(time), _pin(pin.primitiveIoPin()), _state(pin.translateWriteToPrimitive(state)) {
         }
         inline EventClockT::time_point time() const {
             return _time;
         }
         inline GpioPinIdType pinId() const {
-            return _pinId;
+            return _pin.id();
         }
         inline bool state() const {
             return _state;

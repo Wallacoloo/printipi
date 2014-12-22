@@ -71,9 +71,9 @@ class A4988 : public IODriver {
             //sending a pulse on the STEPPIN.
             //It's the low->high transition that triggers the step. 
             //NOTE: documentation says STEP must be LOW for at least 1 uS and then HIGH for at least 1 uS.
-            return {{OutputEvent(evtTime, dirPin.id(), dir == motion::StepForward ? IoHigh : IoLow),
-                OutputEvent(evtTime, stepPin.id(), IoLow),
-                OutputEvent(evtTime+std::chrono::microseconds(8), stepPin.id(), IoHigh)}}; //TODO: Doesn't handle inversions!
+            return {{OutputEvent(evtTime, dirPin, dir == motion::StepForward ? IoHigh : IoLow),
+                OutputEvent(evtTime, stepPin, IoLow),
+                OutputEvent(evtTime+std::chrono::microseconds(8), stepPin, IoHigh)}}; //TODO: Doesn't handle inversions!
         }
 };
 
