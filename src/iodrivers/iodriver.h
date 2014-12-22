@@ -26,8 +26,6 @@
  *
  * IODrivers control the electrical interface to each component.
  * One IODriver is needed for each stepper motor, fan, hotend, etc.
- * Note that the stepForward and stepBackward methods may have different meanings for non-stepper motors.
- *   for fans or hotends, this would mean turn on, or turn off
  *
  * Note: IODriver is an interface, and not an implementation.
  * An implementation is needed for each electrical component - the fan, hotend, and 1 for each stepper motor, etc.

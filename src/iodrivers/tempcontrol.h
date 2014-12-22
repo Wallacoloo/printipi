@@ -80,13 +80,6 @@ template <TempControlType HotType, typename Thermistor, typename PID=PID, typena
         inline bool isHeatedBed() const {
             return HotType == HeatedBedType;
         }
-        //route output commands to the heater:
-        inline void stepForward() { //TODO: remove; stepForward/stepBackward likely aren't ever called.
-            _heater.digitalWrite(IoHigh);
-        }
-        inline void stepBackward() {
-            _heater.digitalWrite(IoLow);
-        }
         inline void setTargetTemperature(CelciusType t) {
             _destTemp = t;
         }
@@ -144,7 +137,7 @@ template <TempControlType HotType, typename Thermistor, typename PID=PID, typena
             float filtered = _filter.feed(_lastTemp);
             float pwm = _pid.feed(_destTemp, filtered);
             LOG("tempcontrol: pwm=%f, temp=%f *C\n", pwm, filtered);
-            cbInterface.schedPwm(_heater, pwm, heaterPwmPeriod());
+            cbInterface.schedPwm(_heater, pwm, _pwmPeriod);
         }
 };
 
