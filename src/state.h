@@ -126,8 +126,8 @@ template <typename Drv> class State {
         AxisIdType index;
         public:
             DriverCallbackInterface(State<Drv> &state, AxisIdType index) : state(state), index(index) {}
-            void schedPwm(float duty, float maxPeriod) const {
-                state.scheduler.schedPwm(index, duty, maxPeriod);
+            void schedPwm(const iodrv::IoPin &pin, float duty, float maxPeriod) const {
+                state.scheduler.schedPwm(pin, duty, maxPeriod);
             }
     };
     struct State__onIdleCpu; //forward declare a type used internally in onIdleCpu() function
