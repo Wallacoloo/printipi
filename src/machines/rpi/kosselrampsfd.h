@@ -329,7 +329,7 @@ class kosselrampsfd : public Machine {
         //  Additionally, tie the thermistor to the hotend as a feedback source.
         typedef std::tuple<
             Fan    //Hotend fan
-            //TempControl<iodrv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>
+            //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>
             > _IODriverTypes;
     public:
         //getXXX defines wrappers for all the above types. 
@@ -339,8 +339,8 @@ class kosselrampsfd : public Machine {
             return std::make_tuple(
                 Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN_DEFAULT_STATE, PIN_FAN), 
                     FAN_MIN_PWM_PERIOD));
-                //TempControl<iodrv::HotendType, _HotendOut, _Thermistor, PID, LowPassFilter>(
-                //    _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
+                //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>(
+                //    iodrv::HotendType, _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                 //    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));
         }
 

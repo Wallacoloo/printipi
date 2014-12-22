@@ -53,10 +53,11 @@ enum TempControlType {
     HeatedBedType
 };
 
-template <TempControlType HotType, typename Thermistor, typename PID=PID, typename Filter=NoFilter> class TempControl : public IODriver {
+template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class TempControl : public IODriver {
     static const std::chrono::microseconds _intervalThresh;
     static const std::chrono::microseconds _readInterval;
     static const std::chrono::microseconds _maxRead;
+    TempControlType _hotType;
     IntervalTimer _intervalTimer;
     IoPin _heater;
     Thermistor _therm;
@@ -68,17 +69,17 @@ template <TempControlType HotType, typename Thermistor, typename PID=PID, typena
     bool _isReading;
     EventClockT::time_point _nextReadTime;
     public:
-        inline TempControl(IoPin &&heater, Thermistor &&therm, const PID &pid, const Filter &filter, float pwmPeriod=1./25000) 
-         : IODriver(), _heater(std::move(heater)), _therm(std::move(therm)), _pid(pid), _filter(filter), _pwmPeriod(pwmPeriod), _destTemp(-300), _lastTemp(-300), _isReading(false),
+        inline TempControl(TempControlType hotType, IoPin &&heater, Thermistor &&therm, const PID &pid, const Filter &filter, float pwmPeriod=1./25000) 
+         : IODriver(), _hotType(hotType), _heater(std::move(heater)), _therm(std::move(therm)), _pid(pid), _filter(filter), _pwmPeriod(pwmPeriod), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.makeDigitalOutput(IoLow);
         }
         //register as the correct device type:
         inline bool isHotend() const {
-            return HotType == HotendType;
+            return _hotType == HotendType;
         }
         inline bool isHeatedBed() const {
-            return HotType == HeatedBedType;
+            return _hotType == HeatedBedType;
         }
         inline void setTargetTemperature(CelciusType t) {
             _destTemp = t;
@@ -136,13 +137,13 @@ template <TempControlType HotType, typename Thermistor, typename PID=PID, typena
 };
 
 #if RUNNING_IN_VM
-    template <TempControlType HotType, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, Thermistor, PID, Filter>::_intervalThresh(2000000); //high latency for valgrind
+    template <typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<Thermistor, PID, Filter>::_intervalThresh(2000000); //high latency for valgrind
 #else
-    template <TempControlType HotType, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, Thermistor, PID, Filter>::_intervalThresh(40000);
+    template <typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<Thermistor, PID, Filter>::_intervalThresh(40000);
 #endif
 
-template <TempControlType HotType, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, Thermistor, PID, Filter>::_readInterval(3000000);
-template <TempControlType HotType, typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<HotType, Thermistor, PID, Filter>::_maxRead(1000000);
+template <typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<Thermistor, PID, Filter>::_readInterval(3000000);
+template <typename Thermistor, typename PID, typename Filter> const std::chrono::microseconds TempControl<Thermistor, PID, Filter>::_maxRead(1000000);
 
 }
 #endif
