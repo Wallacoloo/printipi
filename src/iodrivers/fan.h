@@ -46,9 +46,11 @@ class Fan : public IODriver {
             this->pin.makeDigitalOutput(IoLow);
         }
         inline bool isFan() const { return true; }
-        inline float fanPwmPeriod() const { return period; }
-        inline const IoPin& getPwmPin() const {
-            return pin;
+        
+        template <typename CallbackInterface> inline void setFanDutyCycle(const CallbackInterface &interface, float dutyCycle) {
+            (void)interface;
+            (void)dutyCycle;
+            interface.schedPwm(pin, dutyCycle, period);
         }
 };
 

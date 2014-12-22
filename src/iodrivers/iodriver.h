@@ -47,13 +47,11 @@ namespace iodrv {
 class IODriver {
     public:
         inline IODriver() {}
-        inline const IoPin& getPwmPin() const { return IoPin::null::ref(); } //OVERRIDE THIS if device is pwm-able.
         /* called by M17; Enable/power all stepper motors */
         inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         /* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
         inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
         inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
-        inline float fanPwmPeriod() const { return 0; }
         inline float heaterPwmPeriod() const { return 1.0/25000; }
         inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
         inline bool isHeatedBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
@@ -66,7 +64,12 @@ class IODriver {
         /* called when the scheduler has extra time,
         Can be used to check the status of inputs, etc.
         Return true if object needs to continue to be serviced, false otherwise. */
-        template <typename CallbackInterface> inline bool onIdleCpu(CallbackInterface &) { return false; } //OVERRIDE THIS
+        template <typename CallbackInterface> inline bool onIdleCpu(const CallbackInterface &) { return false; } //OVERRIDE THIS
+        template <typename CallbackInterface> inline void setFanDutyCycle(const CallbackInterface &interface, float dutyCycle) {
+            (void)interface;
+            (void)dutyCycle;
+            assert(false && "IoDriver::setFanDutyCycle() must be overriden by subclass");
+        }
         template <typename TupleT> static void lockAllAxis(TupleT &drivers);
         template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
         template <typename TupleT> static void setHotendTemp(TupleT &drivers, CelciusType temp);

@@ -133,6 +133,7 @@ template <typename Drv> class State {
                 state.scheduler.schedPwm(pin, duty, maxPeriod);
             }
     };
+    struct State__setFanRate; //forward declare a type used internally in setFanRate() function
     struct State__onIdleCpu; //forward declare a type used internally in onIdleCpu() function
     typedef Scheduler<SchedInterface> SchedType;
     typedef decltype(std::declval<Drv>().getIoDrivers()) IODriverTypes;
@@ -680,22 +681,20 @@ template <typename Drv> bool State<Drv>::isHotendReady() {
     }
     return !_isWaitingForHotend;
 }
+
 /* State utility class for setting the fan rate (State::setFanRate).
 Note: could be replaced with a generic lambda in C++14 (gcc-4.9) */
-template <typename SchedT> struct State_setFanRate {
-    SchedT &sched;
-    float rate;
-    State_setFanRate(SchedT &s, float rate) : sched(s), rate(rate) {}
-    template <typename T> void operator()(std::size_t index, const T &f) {
-        (void)index; //unused
-        if (f.isFan()) {
-            sched.schedPwm(f.getPwmPin(), rate, f.fanPwmPeriod());
+template <typename Drv> struct State<Drv>::State__setFanRate {
+    template <typename T> void operator()(std::size_t index, T &fan, State *_this, float rate) {
+        if (fan.isFan()) {
+            fan.setFanDutyCycle(DriverCallbackInterface(*_this, index), rate);
         }
     }
 };
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
-    callOnAll(ioDrivers, State_setFanRate<SchedType>(scheduler, rate));
+    //callOnAll(ioDrivers, State_setFanRate<SchedType>(scheduler, rate));
+    callOnAll(ioDrivers, State__setFanRate(), this, rate);
 }
 
 #endif

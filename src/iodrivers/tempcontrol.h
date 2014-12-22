@@ -89,9 +89,6 @@ template <TempControlType HotType, typename Thermistor, typename PID=PID, typena
         inline CelciusType getTargetTemperature() const {
             return _destTemp;
         }
-        inline const IoPin& getPwmPin() const { //Note: will be able to handle PWMing multiple pins, too, if one were just to use a wrapper and pass it as the Driver type.
-            return _heater;
-        }
         inline float heaterPwmPeriod() const { 
             return _pwmPeriod; 
         }
