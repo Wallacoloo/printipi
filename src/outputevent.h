@@ -34,7 +34,7 @@
 #include "platforms/auto/chronoclock.h" //for EventClockT
 #include "platforms/auto/primitiveiopin.h"
 #include "iodrivers/iopin.h"
-#include "compileflags.h" //for GpioPinIdType
+#include "compileflags.h" //for IoLevel
 
 class OutputEvent {
     EventClockT::time_point _time;
@@ -50,8 +50,8 @@ class OutputEvent {
         inline EventClockT::time_point time() const {
             return _time;
         }
-        inline GpioPinIdType pinId() const {
-            return _pin.id();
+        inline const PrimitiveIoPin& primitiveIoPin() const {
+            return _pin;
         }
         inline bool state() const {
             return _state;

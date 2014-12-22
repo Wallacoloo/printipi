@@ -361,7 +361,7 @@ void HardwareScheduler::queue(int pin, int mode, uint64_t micros) {
     }
 }
 
-void HardwareScheduler::queuePwm(int pin, float ratio, float idealPeriod) {
+void HardwareScheduler::queuePwm(const PrimitiveIoPin &pin, float ratio, float idealPeriod) {
     //PWM is achieved through changing the values that each source frame is reset to.
     //the way to choose which frames are '1' and which are '0' CAN be done like so (but it ISN'T, so read on!):
     //  Keep a counter, which is set to 0.
@@ -402,6 +402,7 @@ void HardwareScheduler::queuePwm(int pin, float ratio, float idealPeriod) {
     //  if charge < 0: out = 0
     //  if charge > 0 && transitionCharge > L: out = 1
     //  charge -= out
+    auto pinId = pin.id();
     float minPeriod = idealPeriod*(float)(FRAMES_PER_SEC);
     float charge=0;
     float transitionCharge=0;
@@ -416,8 +417,8 @@ void HardwareScheduler::queuePwm(int pin, float ratio, float idealPeriod) {
             transitionCharge -= minPeriod;
         }
         charge -= out;
-        srcClrArray[idx].writeGpSet(pin, out); //if OUT, then set SET and clear CLR
-        srcClrArray[idx].writeGpClr(pin, !out); //if !OUT, then clr SET and set CLR
+        srcClrArray[idx].writeGpSet(pinId, out); //if OUT, then set SET and clear CLR
+        srcClrArray[idx].writeGpClr(pinId, !out); //if !OUT, then clr SET and set CLR
     }
 }
 

@@ -89,22 +89,11 @@ template <typename Drv> class State {
                 bool stateNeedsCpu = _state.onIdleCpu(interval);
                 return hwNeedsCpu || stateNeedsCpu;
             }
-            struct __iterPwmPins {
-                template <typename T, typename Func> void operator()(std::size_t index, T &driver, float dutyCycle, Func &f) {
-                    (void)index; //unused
-                    const iodrv::IoPin &p = driver.getPwmPin();
-                    f(p.id(), p.areWritesInverted() ? 1-dutyCycle : dutyCycle);
-                }
-            };
-            template <typename Func> void iterPwmPins(AxisIdType axis, float dutyCycle, Func f) {
-                //call a function, f, for each pin owned by the driver stored at index 'axis' in the ioDrivers object
-                return tupleCallOnIndex(_state.ioDrivers, __iterPwmPins(), axis, dutyCycle, f);
-            }
             inline void queue(const OutputEvent &evt) {
                 //schedule an event to happen at some time in the future (relay message to hardware scheduler)
                 _hardwareScheduler.queue(evt);
             }
-            inline void queuePwm(int pin, float duty, float maxPeriod) {
+            inline void queuePwm(const PrimitiveIoPin &pin, float duty, float maxPeriod) {
                 //configure hardware pin with id 'pin' for PWM, and ensure the PWM period is < maxPeriod (if possible)
                 _hardwareScheduler.queuePwm(pin, duty, maxPeriod);
             }
@@ -695,8 +684,9 @@ template <typename SchedT> struct State_setFanRate {
     float rate;
     State_setFanRate(SchedT &s, float rate) : sched(s), rate(rate) {}
     template <typename T> void operator()(std::size_t index, const T &f) {
+        (void)index; //unused
         if (f.isFan()) {
-            sched.schedPwm(index, rate, f.fanPwmPeriod());
+            sched.schedPwm(f.getPwmPin(), rate, f.fanPwmPeriod());
         }
     }
 };

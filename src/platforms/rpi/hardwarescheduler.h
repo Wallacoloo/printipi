@@ -346,6 +346,8 @@
 namespace plat {
 namespace rpi {
 
+class PrimitiveIoPin; //forward declaration
+
 struct DmaChannelHeader {
     //Note: dma channels 7-15 are 'LITE' dma engines (or is it 8-15?), with reduced performance & functionality.
     //Note: only CS, CONBLK_AD and DEBUG are directly writeable
@@ -542,9 +544,9 @@ class HardwareScheduler {
             return EventClockT::time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
         }
         inline void queue(const OutputEvent &evt) {
-            queue(evt.pinId(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
+            queue(evt.primitiveIoPin().id(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
         }
-        void queuePwm(int pin, float ratio, float maxPeriod);
+        void queuePwm(const PrimitiveIoPin &pin, float ratio, float maxPeriod);
         bool onIdleCpu(OnIdleCpuIntervalT interval);
     private:
         void makeMaps();

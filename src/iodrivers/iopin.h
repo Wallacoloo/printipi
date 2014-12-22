@@ -86,11 +86,18 @@ class IoPin {
             livingPins.insert(this);
         }*/
         ~IoPin();
-        inline bool isNull() const { return _pin.isNull(); }
-        inline GpioPinIdType id() const { return _pin.id(); } //TODO: remove this
-        inline bool areWritesInverted() const { return _invertWrites; } //TODO: remove this
-        inline IoLevel translateWriteToPrimitive(IoLevel lev) const { return _invertWrites ? !lev : lev; }
-        inline const PrimitiveIoPin& primitiveIoPin() const { return _pin; }
+        inline bool isNull() const { 
+            return _pin.isNull(); 
+        }
+        inline IoLevel translateWriteToPrimitive(IoLevel lev) const { 
+            return _invertWrites ? !lev : lev; 
+        }
+        inline float translateDutyCycleToPrimitive(float pwm) const {
+            return _invertWrites ? 1-pwm : pwm;
+        }
+        inline const PrimitiveIoPin& primitiveIoPin() const { 
+            return _pin; 
+        }
         //wrapper functions that take the burden of inversions, etc off the platform-specific drivers:
         inline void makeDigitalOutput(IoLevel lev) {
             //set the pin as a digital output, and give it the specified state.

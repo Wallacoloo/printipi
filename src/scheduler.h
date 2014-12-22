@@ -41,6 +41,8 @@
 #include "common/intervaltimer.h"
 #include "compileflags.h"
 #include "platforms/auto/thisthreadsleep.h" //for SleepT
+#include "platforms/auto/primitiveiopin.h"
+#include "iodrivers/iopin.h"
 
 #if USE_PTHREAD
     #include <pthread.h> //for pthread_setschedparam
@@ -63,7 +65,8 @@ template <typename Interface> class Scheduler : public SchedulerBase {
     bool hasActiveEvent;
     public:
         void queue(const OutputEvent &evt);
-        void schedPwm(AxisIdType idx, float duty, float maxPeriod);
+        //void schedPwm(AxisIdType idx, float duty, float maxPeriod);
+        void schedPwm(const iodrv::IoPin &idx, float duty, float maxPeriod);
         template <typename T> void setMaxSleep(T duration) {
             MAX_SLEEP = std::chrono::duration_cast<EventClockT::duration>(duration);
         }
@@ -95,9 +98,9 @@ template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent
     hasActiveEvent = false;
 }
 
-template <typename Interface> void Scheduler<Interface>::schedPwm(AxisIdType idx, float duty, float idealPeriod) {
+template <typename Interface> void Scheduler<Interface>::schedPwm(const iodrv::IoPin &pin, float duty, float maxPeriod) {
     duty = std::min(1.f, std::max(0.f, duty)); //clamp pwm between [0, 1]
-    interface.iterPwmPins(idx, duty, [this, idealPeriod](int pin_, float duty_) {this->interface.queuePwm(pin_, duty_, idealPeriod); }); //note: some physical pins may be inverted, indicating duty must be switched, hence why it occurs as a parameter to the lambda
+    this->interface.queuePwm(pin.primitiveIoPin(), pin.translateDutyCycleToPrimitive(duty), maxPeriod);
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {

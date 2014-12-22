@@ -4,6 +4,7 @@
 #include <cassert> //for assert
 
 #include "platforms/auto/chronoclock.h" //for EventClockT
+#include "platforms/auto/primitiveiopin.h"
 #include "schedulerbase.h" //for OnIdleCpuIntervalT (cannot forward-declare an enum)
 
 class OutputEvent; //forward declare for class defined in outputevent.h
@@ -18,7 +19,7 @@ struct HardwareScheduler {
         //assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queue!
         LOGW("Warning: default platforms/generic/hardwarescheduler.h cannot queue()\n");
     }
-    inline void queuePwm(int pin, float ratio, float idealPeriod) {
+    inline void queuePwm(const PrimitiveIoPin &pin, float ratio, float idealPeriod) {
         //Set the given pin to a pwm duty-cycle of `ratio` using a maximum period of maxPeriod (irrelevant if using PCM algorithm). Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.
         (void)pin; (void)ratio; (void)idealPeriod; //unused
         //assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queuePwm!
