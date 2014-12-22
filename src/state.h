@@ -465,9 +465,6 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         this->queueMovement(x, y, z, e);
         return gparse::Response::Ok;
-    //} else if (cmd.isG2()) { //clockwise arc from current position to (x, y, z) with center at (i, j, k)
-    //    LOG("Clockwise arcs not supported; use G3 (CCW arc)\n");
-    //    return gparse::Response::Ok;
     } else if (cmd.isG2() || cmd.isG3()) {
         LOGW("Warning: G3 is experimental\n");
         //first, get the end coordinate and optional feed-rate:
@@ -693,7 +690,6 @@ template <typename Drv> struct State<Drv>::State__setFanRate {
 };
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
-    //callOnAll(ioDrivers, State_setFanRate<SchedType>(scheduler, rate));
     callOnAll(ioDrivers, State__setFanRate(), this, rate);
 }
 

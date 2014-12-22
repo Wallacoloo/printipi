@@ -35,7 +35,6 @@
 
 #include <cassert> //for assert
 #include <array>
-//#include "event.h"
 #include "outputevent.h"
 #include "common/logging.h"
 #include "common/intervaltimer.h"
@@ -49,23 +48,12 @@
 #endif
 #include "schedulerbase.h"
 
-struct NullSchedAdjuster {
-    //void reset() {}
-    EventClockT::time_point adjust(EventClockT::time_point tp) const {
-        return tp;
-    }
-    //void update(EventClockT::time_point) {}
-};
-
 template <typename Interface> class Scheduler : public SchedulerBase {
-    typedef NullSchedAdjuster SchedAdjuster;
     EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
     Interface interface;
-    SchedAdjuster schedAdjuster;
     bool hasActiveEvent;
     public:
         void queue(const OutputEvent &evt);
-        //void schedPwm(AxisIdType idx, float duty, float maxPeriod);
         void schedPwm(const iodrv::IoPin &idx, float duty, float maxPeriod);
         template <typename T> void setMaxSleep(T duration) {
             MAX_SLEEP = std::chrono::duration_cast<EventClockT::duration>(duration);
@@ -155,8 +143,7 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const O
     //need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
     auto sleepUntil = EventClockT::now() + MAX_SLEEP;
     if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
-        //auto evtTime = schedAdjuster.adjust(evt->time());
-        auto evtTime = interface.schedTime(schedAdjuster.adjust(evt->time()));
+        auto evtTime = interface.schedTime(evt->time());
         if (evtTime < sleepUntil) {
             sleepUntil = evtTime;
         }
@@ -167,11 +154,11 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const O
 
 template <typename Interface> bool Scheduler<Interface>::isEventNear(const OutputEvent &evt) const {
     auto thresh = EventClockT::now() + std::chrono::microseconds(20);
-    return interface.schedTime(schedAdjuster.adjust(evt.time())) <= thresh;
+    return interface.schedTime(evt.time()) <= thresh;
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventTime(const OutputEvent &evt) const {
-    return interface.schedTime(schedAdjuster.adjust(evt.time())) <= EventClockT::now();
+    return interface.schedTime(evt.time()) <= EventClockT::now();
 }
 
 #endif
