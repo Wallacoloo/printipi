@@ -123,9 +123,12 @@ template <typename Drv> class State {
     //Drivers need certain extra information within their onIdleCpu handlers, etc.
     class DriverCallbackInterface {
         State<Drv> &state;
-        AxisIdType index;
+        //AxisIdType index;
         public:
-            DriverCallbackInterface(State<Drv> &state, AxisIdType index) : state(state), index(index) {}
+            //DriverCallbackInterface(State<Drv> &state, AxisIdType index) : state(state), index(index) {}
+            DriverCallbackInterface(State<Drv> &state, AxisIdType index) : state(state) {
+                (void)index; //unused
+            }
             void schedPwm(const iodrv::IoPin &pin, float duty, float maxPeriod) const {
                 state.scheduler.schedPwm(pin, duty, maxPeriod);
             }
