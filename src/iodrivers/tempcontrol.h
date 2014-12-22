@@ -46,7 +46,7 @@
 
 namespace iodrv {
 
-//enum passed as template parameter to define the TempControl instance as either controlling a Hotend or a Heated Bed.
+//enum passed to instructor to define the TempControl instance as either controlling a Hotend or a Heated Bed.
 //Functionally, they work the same, but each type responds to different G-codes.
 enum TempControlType {
     HotendType,
