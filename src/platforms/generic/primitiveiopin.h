@@ -18,7 +18,8 @@ class PrimitiveIoPin {
 		}
 
 		//do-nothing implementations for basic functions
-		inline GpioPinIdType id() const { return -1; }
+		//Note: the return type of id() is platform-specific, though it must never be void.
+		inline int id() const { return -1; }
 		inline void makeDigitalOutput(IoLevel) {}
 	    //configure the pin to be an input
 	    inline void makeDigitalInput() {}

@@ -37,8 +37,6 @@
 
 //Now expose some primitive typedefs:
 typedef uint8_t AxisIdType;
-//TODO: remove GpioPinIdType (https://github.com/Wallacoloo/printipi/issues/51)
-typedef int GpioPinIdType; //Even if a machine only has 64 gpio pins, they may be separated into, say, 2 side-by-side bytes. So use an int by default.
 typedef float CelciusType;
 typedef bool IoLevel;
 #define IoLow false

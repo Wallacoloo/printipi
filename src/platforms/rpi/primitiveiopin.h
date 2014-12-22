@@ -21,7 +21,7 @@ class PrimitiveIoPin {
 		  : PinIdx(pinIdx), PullUpDown(pullUpDown) {
 			mitpi::init();
 		}
-		inline GpioPinIdType id() const {
+		inline mitpi::GpioPin id() const {
             return PinIdx;
         }
         //configure the pin as an output, and set its output state
