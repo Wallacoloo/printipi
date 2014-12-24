@@ -19,7 +19,7 @@ git config user.email $GIT_EMAIL
 #make changes
 touch travis-test.txt
 git add travis-test.txt
-git commit -m"test Travis-CI push"
+git commit -m"test Travis-CI push" || true #attempting to make a commit with no changes will raise an error
 git push -q $deploy_url $deploy_branch
 #cleanup
 rm -rf $(pwd)
