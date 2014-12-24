@@ -11,7 +11,7 @@ make clean
 #at least g++-4.6, g++-4.7, clang++-3.4, clang++-3.5
 #must test both release & debug builds,
 #as sometimes having the NDEBUG flag present alters the code path
-for compiler in "g++-4.6" "g++-4.7" "clang++-3.4" "clang++-3.5"
+for compiler in "clang++" "g++-4.6" "g++-4.7"
 do
 	for machine in "generic/cartesian.h" "rpi/kosselrampsfd.h"
 	do
