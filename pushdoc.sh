@@ -15,9 +15,11 @@ pushd `mktemp -d`
 git clone --branch $deploy_branch $repo .
 git config user.name $GIT_NAME
 git config user.email $GIT_EMAIL
-#make changes:
+#make changes
 touch travis-test.txt
 git add travis-test.txt
 git commit -m"test Travis-CI push"
 git push -q $deploy_url $deploy_branch
+#cleanup
+rm -rf $(pwd)
 popd
