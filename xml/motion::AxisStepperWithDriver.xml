@@ -18,7 +18,7 @@
       <type name="decltype(this-&gt;driver-&gt;getEventOutputSequence(absoluteTime, this-&gt;direction))" />
     </return>
     <argument id="motion::AxisStepperWithDriver::getStepOutputEventSequence::absoluteTime" name="absoluteTime">
-      <type name="plat::generic::ChronoClock::time_point" />
+      <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </argument>
   </method>
 </classtemplate>

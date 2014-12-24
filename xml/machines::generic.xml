@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namespace id="machines::generic" name="generic" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <class name="cartesian" ref="machines::generic::cartesian#machines::generic::cartesian">
+    <brief>for Acceleration &amp; such</brief>
+  </class>
+</namespace>

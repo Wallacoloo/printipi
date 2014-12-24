@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="plat::rpi::PrimitiveIoPin" name="PrimitiveIoPin" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+    <argument id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin::pinIdx" name="pinIdx">
+      <type name="mitpi::GpioPin" ref="mitpi#mitpi::GpioPin" />
+    </argument>
+    <argument id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin::pullUpDown" name="pullUpDown">
+      <type name="mitpi::GpioPull" ref="mitpi#mitpi::GpioPull" />
+    </argument>
+  </constructor>
+  <method id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+    <brief>read the pin's input value (assumes pin is configured as digital)</brief>
+    <return>
+      <type name="IoLevel" ref="index#IoLevel" />
+    </return>
+  </method>
+  <method id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::PrimitiveIoPin::digitalWrite::lev" name="lev">
+      <type name="IoLevel" ref="index#IoLevel" />
+    </argument>
+  </method>
+  <method id="plat::rpi::PrimitiveIoPin::id" name="id">
+    <return>
+      <type name="mitpi::GpioPin" ref="mitpi#mitpi::GpioPin" />
+    </return>
+  </method>
+  <method id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="plat::rpi::PrimitiveIoPin::makeDigitalInput" name="makeDigitalInput">
+    <brief>configure the pin to be an input</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+    <brief>configure the pin as an output, and set its output state</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::PrimitiveIoPin::makeDigitalOutput::lev" name="lev">
+      <type name="IoLevel" ref="index#IoLevel" />
+    </argument>
+  </method>
+  <method id="plat::rpi::PrimitiveIoPin::null" name="null" static="yes">
+    <return>
+      <type name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
+    </return>
+  </method>
+</class>

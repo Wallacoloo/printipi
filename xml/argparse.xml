@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namespace id="argparse" name="argparse" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <function id="argparse::cmdOptionExists" name="cmdOptionExists">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="argparse::cmdOptionExists::begin" name="begin">
+      <type builtin="yes" name="char" qualifier="**" />
+    </argument>
+    <argument id="argparse::cmdOptionExists::end" name="end">
+      <type builtin="yes" name="char" qualifier="**" />
+    </argument>
+    <argument id="argparse::cmdOptionExists::option" name="option">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+  </function>
+  <function id="argparse::getCmdOption" name="getCmdOption">
+    <return>
+      <type builtin="yes" name="char" qualifier="*" />
+    </return>
+    <argument id="argparse::getCmdOption::begin" name="begin">
+      <type builtin="yes" name="char" qualifier="**" />
+    </argument>
+    <argument id="argparse::getCmdOption::end" name="end">
+      <type builtin="yes" name="char" qualifier="**" />
+    </argument>
+    <argument id="argparse::getCmdOption::option" name="option">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+  </function>
+</namespace>

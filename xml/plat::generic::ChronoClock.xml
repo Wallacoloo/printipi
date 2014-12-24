@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="plat::generic::ChronoClock" name="ChronoClock" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <variable id="plat::generic::ChronoClock::is_steady" name="is_steady">
+    <type builtin="yes" name="bool" qualifier=" const" />
+  </variable>
+  <typedef id="plat::generic::ChronoClock::duration" name="duration">
+    <type name="std::chrono::nanoseconds" />
+  </typedef>
+  <typedef id="plat::generic::ChronoClock::period" name="period">
+    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000000&gt; &gt;::period" />
+  </typedef>
+  <typedef id="plat::generic::ChronoClock::rep" name="rep">
+    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000000&gt; &gt;::rep" />
+  </typedef>
+  <typedef id="plat::generic::ChronoClock::time_point" name="time_point">
+    <type name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
+  </typedef>
+  <method id="plat::generic::ChronoClock::now" name="now" static="yes">
+    <return>
+      <type name="time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
+    </return>
+  </method>
+</class>

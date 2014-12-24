@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="machines::Machine" name="Machine" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <subclass access="public" name="rpi::kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
+    <brief>for Acceleration &amp; such</brief>
+  </subclass>
+  <subclass access="public" name="generic::cartesian" ref="machines::generic::cartesian#machines::generic::cartesian">
+    <brief>for Acceleration &amp; such</brief>
+  </subclass>
   <method id="machines::Machine::clampHomeRate" name="clampHomeRate">
     <return>
       <type builtin="yes" name="float" />

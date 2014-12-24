@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="iodrv" name="iodrv" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>for StepDirection</brief>
+  <brief>for assert</brief>
   <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
   <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
   <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
@@ -32,12 +32,12 @@
     <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
     <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
       <default>
-        <type name="PID" />
+        <type name="PID" ref="PID#PID" />
       </default>
     </templatetypeparameter>
     <templatetypeparameter id="iodrv::TempControl::Filter" name="Filter">
       <default>
-        <type name="NoFilter" />
+        <type name="NoFilter" ref="NoFilter#NoFilter" />
       </default>
     </templatetypeparameter>
   </classtemplate>

@@ -1,0 +1,189 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namespace id="mitpi" name="mitpi" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>for uint32_t</brief>
+  <struct name="InitMitpiType" ref="mitpi::InitMitpiType#mitpi::InitMitpiType" />
+  <enum anonymous="yes" id="mitpi::GpioPin" name="GpioPin">
+    <enumvalue id="mitpi::V1_GPIO_P1_03" name="V1_GPIO_P1_03" value="0">
+      <brief>There are 2 board revisions (and now the model A+/B+), which have slightly different I/O wiring.</brief>
+      <doc>P1 header (2x13 pins) for version 1 (i.e. before Sept 2012:
+looking down at the board with the P1 header in the upper right,
+The upper-left pin is P1_01,
+The upper-right pin is P1_02 (so, odds are left, evens are right)
+numbering increases as you go vertically down</doc>
+    </enumvalue>
+    <enumvalue id="mitpi::V1_GPIO_P1_05" name="V1_GPIO_P1_05" value="1">
+      <brief>(i.e., physical pin #3 is addressed in software as #0)</brief>
+    </enumvalue>
+    <enumvalue id="mitpi::V1_GPIO_P1_07" name="V1_GPIO_P1_07" value="4" />
+    <enumvalue id="mitpi::V1_GPIO_P1_08" name="V1_GPIO_P1_08" value="14" />
+    <enumvalue id="mitpi::V1_GPIO_P1_10" name="V1_GPIO_P1_10" value="15" />
+    <enumvalue id="mitpi::V1_GPIO_P1_11" name="V1_GPIO_P1_11" value="17" />
+    <enumvalue id="mitpi::V1_GPIO_P1_12" name="V1_GPIO_P1_12" value="18" />
+    <enumvalue id="mitpi::V1_GPIO_P1_13" name="V1_GPIO_P1_13" value="21" />
+    <enumvalue id="mitpi::V1_GPIO_P1_15" name="V1_GPIO_P1_15" value="22" />
+    <enumvalue id="mitpi::V1_GPIO_P1_16" name="V1_GPIO_P1_16" value="23" />
+    <enumvalue id="mitpi::V1_GPIO_P1_18" name="V1_GPIO_P1_18" value="24" />
+    <enumvalue id="mitpi::V1_GPIO_P1_19" name="V1_GPIO_P1_19" value="10" />
+    <enumvalue id="mitpi::V1_GPIO_P1_21" name="V1_GPIO_P1_21" value="9" />
+    <enumvalue id="mitpi::V1_GPIO_P1_22" name="V1_GPIO_P1_22" value="25" />
+    <enumvalue id="mitpi::V1_GPIO_P1_23" name="V1_GPIO_P1_23" value="11" />
+    <enumvalue id="mitpi::V1_GPIO_P1_24" name="V1_GPIO_P1_24" value="8" />
+    <enumvalue id="mitpi::V1_GPIO_P1_26" name="V1_GPIO_P1_26" value="7" />
+    <enumvalue id="mitpi::V2_GPIO_P1_03" name="V2_GPIO_P1_03" value="2">
+      <brief>The P1 header for revision 2:</brief>
+      <doc>same physical numbering as before</doc>
+    </enumvalue>
+    <enumvalue id="mitpi::V2_GPIO_P1_05" name="V2_GPIO_P1_05" value="3" />
+    <enumvalue id="mitpi::V2_GPIO_P1_07" name="V2_GPIO_P1_07" value="4" />
+    <enumvalue id="mitpi::V2_GPIO_P1_08" name="V2_GPIO_P1_08" value="14" />
+    <enumvalue id="mitpi::V2_GPIO_P1_10" name="V2_GPIO_P1_10" value="15" />
+    <enumvalue id="mitpi::V2_GPIO_P1_11" name="V2_GPIO_P1_11" value="17" />
+    <enumvalue id="mitpi::V2_GPIO_P1_12" name="V2_GPIO_P1_12" value="18" />
+    <enumvalue id="mitpi::V2_GPIO_P1_13" name="V2_GPIO_P1_13" value="27" />
+    <enumvalue id="mitpi::V2_GPIO_P1_15" name="V2_GPIO_P1_15" value="22" />
+    <enumvalue id="mitpi::V2_GPIO_P1_16" name="V2_GPIO_P1_16" value="23" />
+    <enumvalue id="mitpi::V2_GPIO_P1_18" name="V2_GPIO_P1_18" value="24" />
+    <enumvalue id="mitpi::V2_GPIO_P1_19" name="V2_GPIO_P1_19" value="10" />
+    <enumvalue id="mitpi::V2_GPIO_P1_21" name="V2_GPIO_P1_21" value="9" />
+    <enumvalue id="mitpi::V2_GPIO_P1_22" name="V2_GPIO_P1_22" value="25" />
+    <enumvalue id="mitpi::V2_GPIO_P1_23" name="V2_GPIO_P1_23" value="11" />
+    <enumvalue id="mitpi::V2_GPIO_P1_24" name="V2_GPIO_P1_24" value="8" />
+    <enumvalue id="mitpi::V2_GPIO_P1_26" name="V2_GPIO_P1_26" value="7" />
+    <enumvalue id="mitpi::V2_GPIO_P5_03" name="V2_GPIO_P5_03" value="28">
+      <brief>Revision 2 has another 2x4 header called 'P5'.</brief>
+      <doc>This doesn't have any pins soldered on by default, so (trivial) physical modification is required to use them
+Physical numbering is ordered ... how?</doc>
+    </enumvalue>
+    <enumvalue id="mitpi::V2_GPIO_P5_04" name="V2_GPIO_P5_04" value="29" />
+    <enumvalue id="mitpi::V2_GPIO_P5_05" name="V2_GPIO_P5_05" value="30" />
+    <enumvalue id="mitpi::V2_GPIO_P5_06" name="V2_GPIO_P5_06" value="31" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_03" name="PLUS_GPIO_P1_03" value="2">
+      <brief>The addition of the model A+ and B+ brought a 40-pin GPIO header.</brief>
+      <doc>The first 26 pins are identical to the model A/B Revision 2, with the latter 14 exposing additional GPIOs</doc>
+    </enumvalue>
+    <enumvalue id="mitpi::PLUS_GPIO_P1_05" name="PLUS_GPIO_P1_05" value="3" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_07" name="PLUS_GPIO_P1_07" value="4" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_08" name="PLUS_GPIO_P1_08" value="14" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_10" name="PLUS_GPIO_P1_10" value="15" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_11" name="PLUS_GPIO_P1_11" value="17" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_12" name="PLUS_GPIO_P1_12" value="18" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_13" name="PLUS_GPIO_P1_13" value="27" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_15" name="PLUS_GPIO_P1_15" value="22" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_16" name="PLUS_GPIO_P1_16" value="23" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_18" name="PLUS_GPIO_P1_18" value="24" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_19" name="PLUS_GPIO_P1_19" value="10" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_21" name="PLUS_GPIO_P1_21" value="9" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_22" name="PLUS_GPIO_P1_22" value="25" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_23" name="PLUS_GPIO_P1_23" value="11" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_24" name="PLUS_GPIO_P1_24" value="8" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_26" name="PLUS_GPIO_P1_26" value="7" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_29" name="PLUS_GPIO_P1_29" value="5" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_31" name="PLUS_GPIO_P1_31" value="6" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_32" name="PLUS_GPIO_P1_32" value="12" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_33" name="PLUS_GPIO_P1_33" value="13" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_35" name="PLUS_GPIO_P1_35" value="19" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_36" name="PLUS_GPIO_P1_36" value="16" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_37" name="PLUS_GPIO_P1_37" value="26" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_38" name="PLUS_GPIO_P1_38" value="20" />
+    <enumvalue id="mitpi::PLUS_GPIO_P1_40" name="PLUS_GPIO_P1_40" value="21" />
+    <enumvalue id="mitpi::NULL_GPIO_PIN" name="NULL_GPIO_PIN" value="127" />
+  </enum>
+  <enum anonymous="yes" id="mitpi::GpioPull" name="GpioPull">
+    <enumvalue id="mitpi::GPIOPULL_NONE" name="GPIOPULL_NONE" value="0">
+      <brief>Internal pull-up / down resistors</brief>
+    </enumvalue>
+    <enumvalue id="mitpi::GPIOPULL_DOWN" name="GPIOPULL_DOWN" value="1" />
+    <enumvalue id="mitpi::GPIOPULL_UP" name="GPIOPULL_UP" value="2" />
+  </enum>
+  <function id="mitpi::init" name="init">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </function>
+  <function id="mitpi::makeInput" name="makeInput">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::makeInput::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </function>
+  <function id="mitpi::makeOutput" name="makeOutput">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::makeOutput::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </function>
+  <function id="mitpi::mapPeripheral" name="mapPeripheral">
+    <return>
+      <type name="uint32_t" qualifier="*" />
+    </return>
+    <argument id="mitpi::mapPeripheral::memfd" name="memfd">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="mitpi::mapPeripheral::addr" name="addr">
+      <type builtin="yes" name="int" />
+    </argument>
+  </function>
+  <function id="mitpi::readPinState" name="readPinState">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="mitpi::readPinState::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </function>
+  <function id="mitpi::readSysTime" name="readSysTime">
+    <return>
+      <type name="uint64_t" />
+    </return>
+  </function>
+  <function id="mitpi::setPinHigh" name="setPinHigh">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPinHigh::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </function>
+  <function id="mitpi::setPinLow" name="setPinLow">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPinLow::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </function>
+  <function id="mitpi::setPinPull" name="setPinPull">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPinPull::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="mitpi::setPinPull::pull" name="pull">
+      <type name="GpioPull" ref="mitpi#mitpi::GpioPull" />
+    </argument>
+  </function>
+  <function id="mitpi::setPinState" name="setPinState">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPinState::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="mitpi::setPinState::state" name="state">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </function>
+  <function id="mitpi::usleep" name="usleep">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::usleep::us" name="us">
+      <type builtin="yes" name="unsigned int" />
+    </argument>
+  </function>
+</namespace>

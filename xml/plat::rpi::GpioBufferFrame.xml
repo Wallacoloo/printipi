@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="plat::rpi::GpioBufferFrame" name="GpioBufferFrame" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <field id="plat::rpi::GpioBufferFrame::gpset" name="gpset">
+    <brief>custom structure used for storing the GPIO buffer.</brief>
+    <doc>These BufferFrame's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility</doc>
+    <type size="1">
+      <type name="uint32_t" />
+    </type>
+  </field>
+  <field id="plat::rpi::GpioBufferFrame::gpclr" name="gpclr">
+    <type size="1">
+      <type name="uint32_t" />
+    </type>
+  </field>
+  <method id="plat::rpi::GpioBufferFrame::gpclrForPin" name="gpclrForPin">
+    <return>
+      <type name="uint32_t" qualifier="*" />
+    </return>
+    <argument id="plat::rpi::GpioBufferFrame::gpclrForPin::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </method>
+  <method id="plat::rpi::GpioBufferFrame::gpsetForPin" name="gpsetForPin">
+    <return>
+      <type name="uint32_t" qualifier="*" />
+    </return>
+    <argument id="plat::rpi::GpioBufferFrame::gpsetForPin::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </method>
+  <method id="plat::rpi::GpioBufferFrame::writeGpClr" name="writeGpClr">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::GpioBufferFrame::writeGpClr::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </method>
+  <method id="plat::rpi::GpioBufferFrame::writeGpClr" name="writeGpClr">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::GpioBufferFrame::writeGpClr::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="plat::rpi::GpioBufferFrame::writeGpClr::val" name="val">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </method>
+  <method id="plat::rpi::GpioBufferFrame::writeGpSet" name="writeGpSet">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::GpioBufferFrame::writeGpSet::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+  </method>
+  <method id="plat::rpi::GpioBufferFrame::writeGpSet" name="writeGpSet">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::GpioBufferFrame::writeGpSet::pin" name="pin">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="plat::rpi::GpioBufferFrame::writeGpSet::val" name="val">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </method>
+</struct>

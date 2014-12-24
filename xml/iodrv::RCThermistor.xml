@@ -38,7 +38,7 @@
   </method>
   <method id="iodrv::RCThermistor::timeSinceStartRead" name="timeSinceStartRead">
     <return>
-      <type name="plat::generic::ChronoClock::duration" />
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </return>
   </method>
   <method id="iodrv::RCThermistor::value" name="value">

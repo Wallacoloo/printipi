@@ -1,0 +1,314 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="State" name="State" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="State::Drv" name="Drv" />
+  <method id="State::DEFAULT_HOTEND_TEMP" name="DEFAULT_HOTEND_TEMP" static="yes">
+    <brief>so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)</brief>
+    <return>
+      <type name="CelciusType" ref="index#CelciusType" />
+    </return>
+  </method>
+  <method id="State::DEFAULT_BED_TEMP" name="DEFAULT_BED_TEMP" static="yes">
+    <brief>&lt; absolute 0</brief>
+    <return>
+      <type name="CelciusType" ref="index#CelciusType" />
+    </return>
+  </method>
+  <constructor id="State::State&lt;Drv&gt;" name="State&lt;Drv&gt;">
+    <brief>Initialize the state:</brief>
+    <doc>Needs a driver object (drv), a communications channel (com), and needs to know whether or not the com channel must be persistent
+M32 command allows branching to another, local gcode file. By default, this will PAUSE reading/writing from the previous com channel.
+But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
+This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.</doc>
+    <argument id="State::State&lt;Drv&gt;::drv" name="drv">
+      <type name="Drv" qualifier=" &amp;" />
+    </argument>
+    <argument id="State::State&lt;Drv&gt;::fs" name="fs">
+      <type name="FileSystem" qualifier=" &amp;" ref="FileSystem#FileSystem" />
+    </argument>
+    <argument id="State::State&lt;Drv&gt;::com" name="com">
+      <type name="gparse::Com" ref="gparse::Com#gparse::Com" />
+    </argument>
+    <argument id="State::State&lt;Drv&gt;::needPersistentCom" name="needPersistentCom">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </constructor>
+  <method id="State::positionMode" name="positionMode">
+    <brief>Control interpretation of positions from the host as relative or absolute</brief>
+    <return>
+      <type name="PositionMode" ref="index#PositionMode" />
+    </return>
+  </method>
+  <method id="State::setPositionMode" name="setPositionMode">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::setPositionMode::mode" name="mode">
+      <type name="PositionMode" ref="index#PositionMode" />
+    </argument>
+  </method>
+  <method id="State::extruderPosMode" name="extruderPosMode">
+    <brief> Control interpretation of *extruder* positions from the host as relative or absolute.</brief>
+    <doc>If not explicitly set, it will default to the same as the XYZ position mode.</doc>
+    <return>
+      <type name="PositionMode" ref="index#PositionMode" />
+    </return>
+  </method>
+  <method id="State::setExtruderPosMode" name="setExtruderPosMode">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::setExtruderPosMode::mode" name="mode">
+      <type name="PositionMode" ref="index#PositionMode" />
+    </argument>
+  </method>
+  <method id="State::setUnitMode" name="setUnitMode">
+    <brief>Control interpretation of distances sent by the host as inches or millimeters</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::setUnitMode::mode" name="mode">
+      <type name="LengthUnit" ref="index#LengthUnit" />
+    </argument>
+  </method>
+  <method id="State::xUnitToAbsolute" name="xUnitToAbsolute">
+    <brief>Convert an x/y/z/e value sent from the host to its absolute value, in the case that the host is sending relative positions</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::xUnitToAbsolute::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::yUnitToAbsolute" name="yUnitToAbsolute">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::yUnitToAbsolute::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::zUnitToAbsolute" name="zUnitToAbsolute">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::zUnitToAbsolute::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::eUnitToAbsolute" name="eUnitToAbsolute">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::eUnitToAbsolute::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::posUnitToMM" name="posUnitToMM">
+    <brief>Convert an x/y/z/e value sent from the host to MM, in the case that the host is sending inches</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::posUnitToMM::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::xUnitToPrimitive" name="xUnitToPrimitive">
+    <brief> Convert an x/y/z/e value sent from the host to whatever primitive value we're using internally</brief>
+    <doc>Acts similarly as a shortcut for posUnitToMM(xUnitToAbsolute(x)), though it may apply transformations in the future.</doc>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::xUnitToPrimitive::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::yUnitToPrimitive" name="yUnitToPrimitive">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::yUnitToPrimitive::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::zUnitToPrimitive" name="zUnitToPrimitive">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::zUnitToPrimitive::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::eUnitToPrimitive" name="eUnitToPrimitive">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::eUnitToPrimitive::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::fUnitToPrimitive" name="fUnitToPrimitive">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="State::fUnitToPrimitive::posUnit" name="posUnit">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::destXPrimitive" name="destXPrimitive">
+    <brief>Get the last queued position (X, Y, Z, E). Future queued commands may depend on this</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="State::destYPrimitive" name="destYPrimitive">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="State::destZPrimitive" name="destZPrimitive">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="State::destEPrimitive" name="destEPrimitive">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="State::destMoveRatePrimitive" name="destMoveRatePrimitive">
+    <brief>Control the move rate (AKA "feed rate")</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="State::setDestMoveRatePrimitive" name="setDestMoveRatePrimitive">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::setDestMoveRatePrimitive::f" name="f">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::setHostZeroPos" name="setHostZeroPos">
+    <brief>The host can set the current physical position to be a reference to an arbitrary point (like 0)</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::setHostZeroPos::x" name="x">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::setHostZeroPos::y" name="y">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::setHostZeroPos::z" name="z">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::setHostZeroPos::e" name="e">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::onIdleCpu" name="onIdleCpu">
+    <brief>Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="State::onIdleCpu::interval" name="interval">
+      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
+    </argument>
+  </method>
+  <method id="State::eventLoop" name="eventLoop">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="State::tendComChannel" name="tendComChannel">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::tendComChannel::com" name="com">
+      <type name="gparse::Com" qualifier=" &amp;" ref="gparse::Com#gparse::Com" />
+    </argument>
+  </method>
+  <method id="State::execute" name="execute">
+    <brief> execute the GCode on a Driver object that supports a well-defined interface.</brief>
+    <doc>returns a Command to send back to the host.</doc>
+    <return>
+      <type name="gparse::Response" ref="gparse::Response#gparse::Response" />
+    </return>
+    <argument id="State::execute::cmd" name="cmd">
+      <type name="gparse::Command" qualifier=" const &amp;" ref="gparse::Command#gparse::Command" />
+    </argument>
+    <argument id="State::execute::com" name="com">
+      <type name="gparse::Com" qualifier=" &amp;" ref="gparse::Com#gparse::Com" />
+    </argument>
+  </method>
+  <method id="State::queueArc" name="queueArc">
+    <brief>make an arc from the current position to (x, y, z), maintaining a constant distance from (cX, cY, cZ)</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::queueArc::x" name="x">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueArc::y" name="y">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueArc::z" name="z">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueArc::e" name="e">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueArc::cX" name="cX">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueArc::cY" name="cY">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueArc::cZ" name="cZ">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueArc::isCW" name="isCW">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </method>
+  <method id="State::queueMovement" name="queueMovement">
+    <brief>Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::queueMovement::x" name="x">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueMovement::y" name="y">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueMovement::z" name="z">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="State::queueMovement::e" name="e">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="State::homeEndstops" name="homeEndstops">
+    <brief>Home to the endstops.</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="State::isHotendReady" name="isHotendReady">
+    <brief>Check if M109 (set temperature and wait until reached) has been satisfied.</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="State::setFanRate" name="setFanRate">
+    <brief>Set the hotend fan to a duty cycle between 0.0 and 1.0</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::setFanRate::rate" name="rate">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+</classtemplate>

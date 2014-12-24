@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="plat::generic::PrimitiveIoPin" name="PrimitiveIoPin" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <methodtemplate id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+    <brief>We want to use this PrimitiveIoPin on any architecture,</brief>
+    <doc>so let it be constructed with whatever platform-specific arguments the config file uses with its IO pins</doc>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::PrimitiveIoPin::PrimitiveIoPin::args" name="args">
+      <type name="T..." />
+    </argument>
+    <templatetypeparameter id="plat::generic::PrimitiveIoPin::PrimitiveIoPin::T" name="T" />
+  </methodtemplate>
+  <method id="plat::generic::PrimitiveIoPin::digitalRead" name="digitalRead">
+    <brief>read the pin's input value (assumes pin is configured as digital)</brief>
+    <return>
+      <type name="IoLevel" ref="index#IoLevel" />
+    </return>
+  </method>
+  <method id="plat::generic::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::PrimitiveIoPin::digitalWrite::" name="">
+      <type name="IoLevel" ref="index#IoLevel" />
+    </argument>
+  </method>
+  <method id="plat::generic::PrimitiveIoPin::id" name="id">
+    <brief>do-nothing implementations for basic functions</brief>
+    <doc>Note: the return type of id() is platform-specific, though it must never be void.</doc>
+    <return>
+      <type builtin="yes" name="int" />
+    </return>
+  </method>
+  <method id="plat::generic::PrimitiveIoPin::isNull" name="isNull">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="plat::generic::PrimitiveIoPin::makeDigitalInput" name="makeDigitalInput">
+    <brief>configure the pin to be an input</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="plat::generic::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::PrimitiveIoPin::makeDigitalOutput::" name="">
+      <type name="IoLevel" ref="index#IoLevel" />
+    </argument>
+  </method>
+  <method id="plat::generic::PrimitiveIoPin::null" name="null" static="yes">
+    <return>
+      <type name="PrimitiveIoPin" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin" />
+    </return>
+  </method>
+</class>

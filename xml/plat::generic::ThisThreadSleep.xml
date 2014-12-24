@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="plat::generic::ThisThreadSleep" name="ThisThreadSleep" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <methodtemplate id="plat::generic::ThisThreadSleep::sleep_for" name="sleep_for" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::ThisThreadSleep::sleep_for::dur" name="dur">
+      <type name="std::chrono::duration&lt;_Rep, _Period&gt;" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="plat::generic::ThisThreadSleep::sleep_for::Rep" name="Rep" />
+    <templatetypeparameter id="plat::generic::ThisThreadSleep::sleep_for::Period" name="Period" />
+  </methodtemplate>
+  <methodtemplate id="plat::generic::ThisThreadSleep::sleep_until" name="sleep_until" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::ThisThreadSleep::sleep_until::sleep_time" name="sleep_time">
+      <type name="std::chrono::time_point&lt;_Clock, _Dur&gt;" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="plat::generic::ThisThreadSleep::sleep_until::Clock" name="Clock" />
+    <templatetypeparameter id="plat::generic::ThisThreadSleep::sleep_until::Duration" name="Duration" />
+  </methodtemplate>
+</class>

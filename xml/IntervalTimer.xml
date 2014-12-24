@@ -16,12 +16,12 @@
   <constructor id="IntervalTimer::IntervalTimer" name="IntervalTimer" />
   <method id="IntervalTimer::clock" name="clock">
     <return>
-      <type name="plat::generic::ChronoClock::time_point" qualifier=" const &amp;" />
+      <type name="plat::generic::ChronoClock::time_point" qualifier=" const &amp;" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </return>
   </method>
   <method id="IntervalTimer::get" name="get">
     <return>
-      <type name="plat::generic::ChronoClock::time_point" qualifier=" const &amp;" />
+      <type name="plat::generic::ChronoClock::time_point" qualifier=" const &amp;" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </return>
   </method>
   <method id="IntervalTimer::reset" name="reset">

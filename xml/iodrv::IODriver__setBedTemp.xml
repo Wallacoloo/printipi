@@ -12,7 +12,7 @@
       <type name="T" qualifier=" &amp;" />
     </argument>
     <argument id="iodrv::IODriver__setBedTemp::operator()::temp" name="temp">
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </argument>
     <templatetypeparameter id="iodrv::IODriver__setBedTemp::operator()::T" name="T" />
   </methodtemplate>

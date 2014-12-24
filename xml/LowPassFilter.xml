@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="LowPassFilter" name="LowPassFilter" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief> http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter</brief>
+  <doc>y[n] = y[n-1] + a(x[n] - y[n-1]), where x=input, y=output, n=sample number, a = dt / (RC + dt)
+http://www.dsplog.com/2007/12/02/digital-implementation-of-rc-low-pass-filter/
+y[n] = y[n-1] + k(x[n-1] - y[n-1]), where k=1/(RC)
+Lower k = tighter frequency response
+Will need to convert this to work with seconds, and not sample numbers.</doc>
+  <constructor id="LowPassFilter::LowPassFilter" name="LowPassFilter">
+    <argument id="LowPassFilter::LowPassFilter::RC" name="RC">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method id="LowPassFilter::feed" name="feed">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="LowPassFilter::feed::inp" name="inp">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+</class>

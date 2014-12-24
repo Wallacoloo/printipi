@@ -97,6 +97,7 @@
     <templatetypeparameter id="tupleReduceLogicalOr::Func" name="Func" />
     <templatetypeparameter id="tupleReduceLogicalOr::Args" name="Args" />
   </functiontemplate>
+  <namespace name="argparse" ref="argparse#argparse" />
   <namespace name="gparse" ref="gparse#gparse">
     <brief>#List of commands on Reprap Wiki:</brief>
     <class name="Com" ref="gparse::Com#gparse::Com" />
@@ -104,7 +105,7 @@
     <class name="Response" ref="gparse::Response#gparse::Response" />
   </namespace>
   <namespace name="iodrv" ref="iodrv#iodrv">
-    <brief>for StepDirection</brief>
+    <brief>for assert</brief>
     <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
     <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
     <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
@@ -140,21 +141,35 @@
       <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
       <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
         <default>
-          <type name="PID" />
+          <type name="PID" ref="PID#PID" />
         </default>
       </templatetypeparameter>
       <templatetypeparameter id="iodrv::TempControl::Filter" name="Filter">
         <default>
-          <type name="NoFilter" />
+          <type name="NoFilter" ref="NoFilter#NoFilter" />
         </default>
       </templatetypeparameter>
     </classtemplate>
   </namespace>
   <namespace name="logging" ref="logging#logging" />
   <namespace name="machines" ref="machines#machines">
+    <namespace name="generic" ref="machines::generic#machines::generic">
+      <class name="cartesian" ref="machines::generic::cartesian#machines::generic::cartesian">
+        <brief>for Acceleration &amp; such</brief>
+      </class>
+    </namespace>
+    <namespace name="rpi" ref="machines::rpi#machines::rpi">
+      <class name="kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
+        <brief>for Acceleration &amp; such</brief>
+      </class>
+    </namespace>
     <class name="Machine" ref="machines::Machine#machines::Machine" />
   </namespace>
   <namespace name="mathutil" ref="mathutil#mathutil" />
+  <namespace name="mitpi" ref="mitpi#mitpi">
+    <brief>for uint32_t</brief>
+    <struct name="InitMitpiType" ref="mitpi::InitMitpiType#mitpi::InitMitpiType" />
+  </namespace>
   <namespace name="motion" ref="motion#motion">
     <brief>forward declare for class in "endstop.h"</brief>
     <structtemplate name="_AxisStepper__getNextTime" ref="motion::_AxisStepper__getNextTime#motion::_AxisStepper__getNextTime">
@@ -252,6 +267,26 @@
     </classtemplate>
     <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
   </namespace>
+  <namespace name="plat" ref="plat#plat">
+    <brief>for GpioPin</brief>
+    <namespace name="generic" ref="plat::generic#plat::generic">
+      <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
+      <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
+      <class name="PrimitiveIoPin" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin" />
+      <class name="ThisThreadSleep" ref="plat::generic::ThisThreadSleep#plat::generic::ThisThreadSleep" />
+    </namespace>
+    <namespace name="rpi" ref="plat::rpi#plat::rpi">
+      <class name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
+      <struct name="DmaChannelHeader" ref="plat::rpi::DmaChannelHeader#plat::rpi::DmaChannelHeader">
+        <brief>forward declaration</brief>
+      </struct>
+      <struct name="DmaControlBlock" ref="plat::rpi::DmaControlBlock#plat::rpi::DmaControlBlock" />
+      <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame" />
+      <class name="HardwareScheduler" ref="plat::rpi::HardwareScheduler#plat::rpi::HardwareScheduler" />
+      <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
+      <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />
+    </namespace>
+  </namespace>
   <structtemplate name="__callOnAll" ref="__callOnAll#__callOnAll">
     <brief>callOnAll helper functions:</brief>
     <templatetypeparameter id="__callOnAll::TupleT" name="TupleT" />
@@ -287,10 +322,30 @@
       <type name="std::size_t" />
     </templatenontypeparameter>
   </structtemplate>
+  <class name="FileSystem" ref="FileSystem#FileSystem" />
   <class name="IntervalTimer" ref="IntervalTimer#IntervalTimer">
     <brief>for EventClockT</brief>
   </class>
+  <class name="LowPassFilter" ref="LowPassFilter#LowPassFilter">
+    <brief> http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter</brief>
+  </class>
   <class name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+  <struct name="NoFilter" ref="NoFilter#NoFilter" />
+  <class name="OutputEvent" ref="OutputEvent#OutputEvent">
+    <brief>for IoLevel</brief>
+  </class>
+  <class name="PID" ref="PID#PID">
+    <brief>for EventClockT</brief>
+  </class>
+  <classtemplate name="Scheduler" ref="Scheduler#Scheduler">
+    <templatetypeparameter id="Scheduler::Interface" name="Interface" />
+  </classtemplate>
+  <class name="SchedulerBase" ref="SchedulerBase#SchedulerBase">
+    <brief> Base class from which all templated schedulers derive.</brief>
+  </class>
+  <classtemplate name="State" ref="State#State">
+    <templatetypeparameter id="State::Drv" name="Drv" />
+  </classtemplate>
   <classtemplate name="ThisThreadSleepAdapter" ref="ThisThreadSleepAdapter#ThisThreadSleepAdapter">
     <templatetypeparameter id="ThisThreadSleepAdapter::ClockT" name="ClockT" />
     <templatetypeparameter id="ThisThreadSleepAdapter::SleepT" name="SleepT" />
@@ -298,6 +353,41 @@
   <classtemplate name="Vector3" ref="Vector3#Vector3">
     <templatetypeparameter id="Vector3::F" name="F" />
   </classtemplate>
+  <enum anonymous="yes" id="LengthUnit" name="LengthUnit">
+    <enumvalue id="UNIT_MM" name="UNIT_MM" value="0" />
+    <enumvalue id="UNIT_IN" name="UNIT_IN" value="1" />
+  </enum>
+  <enum anonymous="yes" id="OnIdleCpuIntervalT" name="OnIdleCpuIntervalT">
+    <brief>Scheduler::Interface::onIdleCpu() can be called with a flag indicating (roughly) how long it's been since it was last called.</brief>
+    <enumvalue id="OnIdleCpuIntervalShort" name="OnIdleCpuIntervalShort" value="0" />
+    <enumvalue id="OnIdleCpuIntervalWide" name="OnIdleCpuIntervalWide" value="1" />
+  </enum>
+  <enum anonymous="yes" id="PositionMode" name="PositionMode">
+    <enumvalue id="POS_ABSOLUTE" name="POS_ABSOLUTE" value="0" />
+    <enumvalue id="POS_RELATIVE" name="POS_RELATIVE" value="1" />
+  </enum>
+  <typedef id="AxisIdType" name="AxisIdType">
+    <brief>Now expose some primitive typedefs:</brief>
+    <type name="uint8_t" />
+  </typedef>
+  <typedef id="CelciusType" name="CelciusType">
+    <type builtin="yes" name="float" />
+  </typedef>
+  <typedef id="EventClockT" name="EventClockT">
+    <type name="plat::generic::ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
+  </typedef>
+  <typedef id="HardwareScheduler" name="HardwareScheduler">
+    <type name="plat::generic::HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
+  </typedef>
+  <typedef id="IoLevel" name="IoLevel">
+    <type builtin="yes" name="bool" />
+  </typedef>
+  <typedef id="PrimitiveIoPin" name="PrimitiveIoPin">
+    <type name="plat::generic::PrimitiveIoPin" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin" />
+  </typedef>
+  <typedef id="SleepT" name="SleepT">
+    <type name="plat::generic::ThisThreadSleep" ref="plat::generic::ThisThreadSleep#plat::generic::ThisThreadSleep" />
+  </typedef>
   <typedef id="Vector3d" name="Vector3d">
     <type name="Vector3&lt;double&gt;" />
   </typedef>

@@ -23,7 +23,7 @@
   </method>
   <method id="motion::MotionPlanner::nextOutputEvent" name="nextOutputEvent">
     <return>
-      <type name="OutputEvent" />
+      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
     </return>
   </method>
   <method id="motion::MotionPlanner::moveTo" name="moveTo">
@@ -31,7 +31,7 @@
       <type builtin="yes" name="void" />
     </return>
     <argument id="motion::MotionPlanner::moveTo::baseTime" name="baseTime">
-      <type name="plat::generic::ChronoClock::time_point" />
+      <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </argument>
     <argument id="motion::MotionPlanner::moveTo::x" name="x">
       <type builtin="yes" name="float" />
@@ -60,7 +60,7 @@
       <type builtin="yes" name="void" />
     </return>
     <argument id="motion::MotionPlanner::homeEndstops::baseTime" name="baseTime">
-      <type name="plat::generic::ChronoClock::time_point" />
+      <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </argument>
     <argument id="motion::MotionPlanner::homeEndstops::maxVelXyz" name="maxVelXyz">
       <type builtin="yes" name="float" />
@@ -71,7 +71,7 @@
       <type builtin="yes" name="void" />
     </return>
     <argument id="motion::MotionPlanner::arcTo::baseTime" name="baseTime">
-      <type name="plat::generic::ChronoClock::time_point" />
+      <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </argument>
     <argument id="motion::MotionPlanner::arcTo::x" name="x">
       <type builtin="yes" name="float" />

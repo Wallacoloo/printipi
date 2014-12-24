@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="machines::generic::cartesian" name="cartesian" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>for Acceleration &amp; such</brief>
+  <base access="public">
+    <type name="Machine" ref="machines::Machine#machines::Machine" />
+  </base>
+  <method id="machines::generic::cartesian::clampHomeRate" name="clampHomeRate" override="yes">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="machines::generic::cartesian::clampHomeRate::inp" name="inp">
+      <type builtin="yes" name="float" />
+    </argument>
+    <override name="Machine::clampHomeRate" ref="machines::Machine#machines::Machine::clampHomeRate" />
+  </method>
+  <method id="machines::generic::cartesian::clampMoveRate" name="clampMoveRate" override="yes">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="machines::generic::cartesian::clampMoveRate::inp" name="inp">
+      <type builtin="yes" name="float" />
+    </argument>
+    <override name="Machine::clampMoveRate" ref="machines::Machine#machines::Machine::clampMoveRate" />
+  </method>
+  <method id="machines::generic::cartesian::defaultMoveRate" name="defaultMoveRate" override="yes">
+    <brief>Expose default and maximum velocities:</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <override name="Machine::defaultMoveRate" ref="machines::Machine#machines::Machine::defaultMoveRate" />
+  </method>
+  <method id="machines::generic::cartesian::getAccelerationProfile" name="getAccelerationProfile">
+    <return>
+      <type name="motion::ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
+    </return>
+  </method>
+  <method id="machines::generic::cartesian::getCoordMap" name="getCoordMap">
+    <return>
+      <type name="motion::LinearCoordMap&lt;iodrv::A4988, iodrv::A4988, iodrv::A4988, iodrv::A4988, Matrix3x3&gt;" />
+    </return>
+  </method>
+  <method id="machines::generic::cartesian::getIoDrivers" name="getIoDrivers">
+    <return>
+      <type name="std::tuple&lt;iodrv::Fan, iodrv::TempControl&lt;iodrv::RCThermistor, PID, LowPassFilter&gt; &gt;" />
+    </return>
+  </method>
+  <method id="machines::generic::cartesian::maxExtrudeRate" name="maxExtrudeRate" override="yes">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <override name="Machine::maxExtrudeRate" ref="machines::Machine#machines::Machine::maxExtrudeRate" />
+  </method>
+  <method id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate" override="yes">
+    <brief>currently have to be satisfied with mins/maxes - can't achieve more without muddying the interface.</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <override name="Machine::maxRetractRate" ref="machines::Machine#machines::Machine::maxRetractRate" />
+  </method>
+</class>

@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="plat::rpi::DmaChannelHeader" name="DmaChannelHeader" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>forward declaration</brief>
+  <field id="plat::rpi::DmaChannelHeader::CS" name="CS">
+    <brief>Note: dma channels 7-15 are 'LITE' dma engines (or is it 8-15?), with reduced performance &amp; functionality.</brief>
+    <doc>Note: only CS, CONBLK_AD and DEBUG are directly writeable</doc>
+    <type name="uint32_t" />
+  </field>
+  <field id="plat::rpi::DmaChannelHeader::CONBLK_AD" name="CONBLK_AD">
+    <brief>Control and Status</brief>
+    <doc>31    RESET; set to 1 to reset DMA
+30    ABORT; set to 1 to abort current DMA control block (next one will be loaded &amp; continue)
+29    DISDEBUG; set to 1 and DMA won't be paused when debug signal is sent
+28    WAIT_FOR_OUTSTANDING_WRITES(0x10000000); set to 1 and DMA will wait until peripheral says all writes have gone through before loading next CB
+24-74 reserved
+20-23 PANIC_PRIORITY; 0 is lowest priority
+16-19 PRIORITY; bus scheduling priority. 0 is lowest
+9-15  reserved
+8     ERROR; read as 1 when error is encountered. error can be found in DEBUG register.
+7     reserved
+6     WAITING_FOR_OUTSTANDING_WRITES; read as 1 when waiting for outstanding writes
+5     DREQ_STOPS_DMA(0x20); read as 1 if DREQ is currently preventing DMA
+4     PAUSED(0x10); read as 1 if DMA is paused
+3     DREQ; copy of the data request signal from the peripheral, if DREQ is enabled. reads as 1 if data is being requested (or PERMAP=0), else 0
+2     INT; set when current CB ends and its INTEN=1. Write a 1 to this register to clear it
+1     END; set when the transfer defined by current CB is complete. Write 1 to clear.
+0     ACTIVE(0x01); write 1 to activate DMA (load the CB before hand)</doc>
+    <type name="uint32_t" />
+  </field>
+  <field id="plat::rpi::DmaChannelHeader::TI" name="TI">
+    <brief>Control Block Address</brief>
+    <type name="uint32_t" />
+  </field>
+  <field id="plat::rpi::DmaChannelHeader::SOURCE_AD" name="SOURCE_AD">
+    <brief>transfer information; see DmaControlBlock.TI for description</brief>
+    <type name="uint32_t" />
+  </field>
+  <field id="plat::rpi::DmaChannelHeader::DEST_AD" name="DEST_AD">
+    <brief>Source address</brief>
+    <type name="uint32_t" />
+  </field>
+  <field id="plat::rpi::DmaChannelHeader::TXFR_LEN" name="TXFR_LEN">
+    <brief>Destination address</brief>
+    <type name="uint32_t" />
+  </field>
+  <field id="plat::rpi::DmaChannelHeader::STRIDE" name="STRIDE">
+    <brief>transfer length. ONLY THE LOWER 16 BITS ARE USED IN LITE DMA ENGINES</brief>
+    <type name="uint32_t" />
+  </field>
+  <field id="plat::rpi::DmaChannelHeader::NEXTCONBK" name="NEXTCONBK">
+    <brief>2D Mode Stride. Only used if TI.TDMODE = 1. NOT AVAILABLE IN LITE DMA ENGINES</brief>
+    <type name="uint32_t" />
+  </field>
+  <field id="plat::rpi::DmaChannelHeader::DEBUG" name="DEBUG">
+    <brief>Next control block. Must be 256-bit aligned (32 bytes; 8 words)</brief>
+    <type name="uint32_t" />
+  </field>
+</struct>

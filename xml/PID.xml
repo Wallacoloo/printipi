@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class abstract="true" id="PID" name="PID" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>for EventClockT</brief>
+  <constructor id="PID::PID" name="PID">
+    <argument id="PID::PID::P" name="P">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="PID::PID::I" name="I">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="PID::PID::D" name="D">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method abstract="yes" id="PID::feed" name="feed">
+    <brief> notify PID controller of a newly-read error value.</brief>
+    <doc>Returns a recalculated output</doc>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="PID::feed::setpoint" name="setpoint">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="PID::feed::pv" name="pv">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+</class>

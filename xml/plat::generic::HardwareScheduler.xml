@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="plat::generic::HardwareScheduler" name="HardwareScheduler" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <method id="plat::generic::HardwareScheduler::onIdleCpu" name="onIdleCpu">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="plat::generic::HardwareScheduler::onIdleCpu::interval" name="interval">
+      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
+    </argument>
+  </method>
+  <method id="plat::generic::HardwareScheduler::queue" name="queue">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::HardwareScheduler::queue::" name="">
+      <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
+    </argument>
+  </method>
+  <method id="plat::generic::HardwareScheduler::queuePwm" name="queuePwm">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::HardwareScheduler::queuePwm::pin" name="pin">
+      <type name="PrimitiveIoPin" qualifier=" const &amp;" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin" />
+    </argument>
+    <argument id="plat::generic::HardwareScheduler::queuePwm::ratio" name="ratio">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="plat::generic::HardwareScheduler::queuePwm::idealPeriod" name="idealPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="plat::generic::HardwareScheduler::schedTime" name="schedTime">
+    <return>
+      <type name="ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
+    </return>
+    <argument id="plat::generic::HardwareScheduler::schedTime::evtTime" name="evtTime">
+      <type name="ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
+    </argument>
+  </method>
+</struct>

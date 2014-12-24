@@ -14,7 +14,7 @@
     <templatetypeparameter id="iodrv::IODriver__getHotendTemp::operator()::T" name="T" />
   </methodtemplate>
   <field id="iodrv::IODriver__getHotendTemp::value" name="value">
-    <type name="CelciusType" />
+    <type name="CelciusType" ref="index#CelciusType" />
   </field>
   <constructor id="iodrv::IODriver__getHotendTemp::IODriver__getHotendTemp" name="IODriver__getHotendTemp" />
 </struct>

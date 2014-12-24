@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="Scheduler" name="Scheduler" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="SchedulerBase" ref="SchedulerBase#SchedulerBase" />
+    <brief> Base class from which all templated schedulers derive.</brief>
+  </base>
+  <templatetypeparameter id="Scheduler::Interface" name="Interface" />
+  <method id="Scheduler::queue" name="queue">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Scheduler::queue::evt" name="evt">
+      <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
+    </argument>
+  </method>
+  <method id="Scheduler::schedPwm" name="schedPwm">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Scheduler::schedPwm::idx" name="idx">
+      <type name="iodrv::IoPin" qualifier=" const &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
+    </argument>
+    <argument id="Scheduler::schedPwm::duty" name="duty">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Scheduler::schedPwm::maxPeriod" name="maxPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <methodtemplate id="Scheduler::setMaxSleep" name="setMaxSleep">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Scheduler::setMaxSleep::duration" name="duration">
+      <type name="T" />
+    </argument>
+    <templatetypeparameter id="Scheduler::setMaxSleep::T" name="T" />
+  </methodtemplate>
+  <method id="Scheduler::setDefaultMaxSleep" name="setDefaultMaxSleep">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <constructor id="Scheduler::Scheduler&lt;Interface&gt;" name="Scheduler&lt;Interface&gt;">
+    <argument id="Scheduler::Scheduler&lt;Interface&gt;::interface" name="interface">
+      <type name="Interface" />
+    </argument>
+  </constructor>
+  <method id="Scheduler::initSchedThread" name="initSchedThread">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
+    <brief>call this from whatever threads call nextEvent to optimize that thread's priority.</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="Scheduler::eventLoop" name="eventLoop">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="Scheduler::yield" name="yield">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Scheduler::yield::evt" name="evt">
+      <type name="OutputEvent" qualifier=" const *" ref="OutputEvent#OutputEvent" />
+    </argument>
+  </method>
+</classtemplate>

@@ -19,7 +19,7 @@
       <type name="std::array&lt;OutputEvent, 3&gt;" />
     </return>
     <argument id="iodrv::A4988::getEventOutputSequence::evtTime" name="evtTime">
-      <type name="plat::generic::ChronoClock::time_point" />
+      <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </argument>
     <argument id="iodrv::A4988::getEventOutputSequence::dir" name="dir">
       <type name="motion::StepDirection" ref="motion#motion::StepDirection" />

@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="plat::rpi::ChronoClock" name="ChronoClock" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <variable id="plat::rpi::ChronoClock::is_steady" name="is_steady">
+    <type builtin="yes" name="bool" qualifier=" const" />
+  </variable>
+  <typedef id="plat::rpi::ChronoClock::duration" name="duration">
+    <type name="std::chrono::microseconds" />
+  </typedef>
+  <typedef id="plat::rpi::ChronoClock::period" name="period">
+    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000&gt; &gt;::period" />
+  </typedef>
+  <typedef id="plat::rpi::ChronoClock::rep" name="rep">
+    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000&gt; &gt;::rep" />
+  </typedef>
+  <typedef id="plat::rpi::ChronoClock::time_point" name="time_point">
+    <type name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
+  </typedef>
+  <method id="plat::rpi::ChronoClock::now" name="now" static="yes">
+    <return>
+      <type name="time_point" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock::time_point" />
+    </return>
+  </method>
+</class>

@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class abstract="true" id="plat::rpi::HardwareScheduler" name="HardwareScheduler" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <constructor id="plat::rpi::HardwareScheduler::HardwareScheduler" name="HardwareScheduler" />
+  <method id="plat::rpi::HardwareScheduler::canWriteOutputs" name="canWriteOutputs">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="plat::rpi::HardwareScheduler::cleanup" name="cleanup" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="plat::rpi::HardwareScheduler::onIdleCpu" name="onIdleCpu">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="plat::rpi::HardwareScheduler::onIdleCpu::interval" name="interval">
+      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
+    </argument>
+  </method>
+  <method id="plat::rpi::HardwareScheduler::queue" name="queue">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::HardwareScheduler::queue::evt" name="evt">
+      <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
+    </argument>
+  </method>
+  <method id="plat::rpi::HardwareScheduler::queuePwm" name="queuePwm">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::HardwareScheduler::queuePwm::pin" name="pin">
+      <type name="PrimitiveIoPin" qualifier=" const &amp;" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
+    </argument>
+    <argument id="plat::rpi::HardwareScheduler::queuePwm::ratio" name="ratio">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="plat::rpi::HardwareScheduler::queuePwm::maxPeriod" name="maxPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="plat::rpi::HardwareScheduler::schedTime" name="schedTime">
+    <return>
+      <type name="generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
+    </return>
+    <argument id="plat::rpi::HardwareScheduler::schedTime::evtTime" name="evtTime">
+      <type name="generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
+    </argument>
+  </method>
+</class>

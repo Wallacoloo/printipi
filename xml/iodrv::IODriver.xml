@@ -2,11 +2,11 @@
 <class id="iodrv::IODriver" name="IODriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <subclass access="public" name="Fan" ref="iodrv::Fan#iodrv::Fan" />
   <subclass access="public" name="TempControl" ref="iodrv::TempControl#iodrv::TempControl" />
-  <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
   <subclass access="public" name="A4988" ref="iodrv::A4988#iodrv::A4988" />
+  <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
   <methodtemplate id="iodrv::IODriver::getBedTemp" name="getBedTemp" static="yes">
     <return>
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </return>
     <argument id="iodrv::IODriver::getBedTemp::drivers" name="drivers">
       <type name="TupleT" qualifier=" &amp;" />
@@ -16,7 +16,7 @@
   </methodtemplate>
   <methodtemplate id="iodrv::IODriver::getHotendTargetTemp" name="getHotendTargetTemp" static="yes">
     <return>
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </return>
     <argument id="iodrv::IODriver::getHotendTargetTemp::drivers" name="drivers">
       <type name="TupleT" qualifier=" &amp;" />
@@ -26,7 +26,7 @@
   </methodtemplate>
   <methodtemplate id="iodrv::IODriver::getHotendTemp" name="getHotendTemp" static="yes">
     <return>
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </return>
     <argument id="iodrv::IODriver::getHotendTemp::drivers" name="drivers">
       <type name="TupleT" qualifier=" &amp;" />
@@ -64,7 +64,7 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
     <argument id="iodrv::IODriver::setBedTemp::temp" name="temp">
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </argument>
     <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
@@ -90,7 +90,7 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
     <argument id="iodrv::IODriver::setHotendTemp::temp" name="temp">
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </argument>
     <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
@@ -108,12 +108,12 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
   <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
   <method id="iodrv::IODriver::getMeasuredTemperature" name="getMeasuredTemperature">
     <return>
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </return>
   </method>
   <method id="iodrv::IODriver::getTargetTemperature" name="getTargetTemperature">
     <return>
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </return>
   </method>
   <method id="iodrv::IODriver::isFan" name="isFan">
@@ -146,7 +146,7 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
       <type builtin="yes" name="void" />
     </return>
     <argument id="iodrv::IODriver::setTargetTemperature::" name="">
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </argument>
   </method>
   <method id="iodrv::IODriver::unlockAxis" name="unlockAxis">

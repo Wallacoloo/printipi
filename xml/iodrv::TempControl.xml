@@ -6,12 +6,12 @@
   <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
   <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
     <default>
-      <type name="PID" />
+      <type name="PID" ref="PID#PID" />
     </default>
   </templatetypeparameter>
   <templatetypeparameter id="iodrv::TempControl::Filter" name="Filter">
     <default>
-      <type name="NoFilter" />
+      <type name="NoFilter" ref="NoFilter#NoFilter" />
     </default>
   </templatetypeparameter>
   <constructor id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;" name="TempControl&lt;Thermistor, PID, Filter&gt;">
@@ -52,19 +52,19 @@
       <type builtin="yes" name="void" />
     </return>
     <argument id="iodrv::TempControl::setTargetTemperature::t" name="t">
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </argument>
     <override name="IODriver::setTargetTemperature" ref="iodrv::IODriver#iodrv::IODriver::setTargetTemperature" />
   </method>
   <method id="iodrv::TempControl::getMeasuredTemperature" name="getMeasuredTemperature" override="yes">
     <return>
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </return>
     <override name="IODriver::getMeasuredTemperature" ref="iodrv::IODriver#iodrv::IODriver::getMeasuredTemperature" />
   </method>
   <method id="iodrv::TempControl::getTargetTemperature" name="getTargetTemperature" override="yes">
     <return>
-      <type name="CelciusType" />
+      <type name="CelciusType" ref="index#CelciusType" />
     </return>
     <override name="IODriver::getTargetTemperature" ref="iodrv::IODriver#iodrv::IODriver::getTargetTemperature" />
   </method>
