@@ -1,0 +1,308 @@
+<?xml version='1.0' encoding='utf-8'?>
+<index xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <functiontemplate id="callOnAll" name="callOnAll">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="callOnAll::t" name="t">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="callOnAll::f" name="f">
+      <type name="Func" />
+    </argument>
+    <argument id="callOnAll::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="callOnAll::TupleT" name="TupleT" />
+    <templatetypeparameter id="callOnAll::Func" name="Func" />
+    <templatetypeparameter id="callOnAll::Args" name="Args" />
+  </functiontemplate>
+  <functiontemplate id="callOnAll" name="callOnAll">
+    <brief>This second version allows to pass a function object by pointer, so that it can perhaps be modified. TODO: Maybe just use an auto reference (Func &amp;&amp;f)?</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="callOnAll::t" name="t">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="callOnAll::f" name="f">
+      <type name="Func" qualifier="*" />
+    </argument>
+    <argument id="callOnAll::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="callOnAll::TupleT" name="TupleT" />
+    <templatetypeparameter id="callOnAll::Func" name="Func" />
+    <templatetypeparameter id="callOnAll::Args" name="Args" />
+  </functiontemplate>
+  <functiontemplate id="tupleCallOnIndex" name="tupleCallOnIndex">
+    <return>
+      <type name="decltype(__callOnIndex&lt;TupleT, std::tuple_size&lt;TupleT&gt;::value, Func, Args...&gt;()(t, f, idx, args...))" />
+    </return>
+    <argument id="tupleCallOnIndex::t" name="t">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="tupleCallOnIndex::f" name="f">
+      <type name="Func" />
+    </argument>
+    <argument id="tupleCallOnIndex::idx" name="idx">
+      <type name="std::size_t" />
+    </argument>
+    <argument id="tupleCallOnIndex::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="tupleCallOnIndex::TupleT" name="TupleT" />
+    <templatetypeparameter id="tupleCallOnIndex::Func" name="Func" />
+    <templatetypeparameter id="tupleCallOnIndex::Args" name="Args" />
+  </functiontemplate>
+  <functiontemplate id="tupleReduce" name="tupleReduce">
+    <return>
+      <type name="decltype(d)" />
+    </return>
+    <argument id="tupleReduce::t" name="t">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="tupleReduce::f" name="f">
+      <type name="Func" />
+    </argument>
+    <argument id="tupleReduce::r" name="r">
+      <type name="Reduce" />
+    </argument>
+    <argument id="tupleReduce::d" name="d">
+      <type name="ReducedDefault" />
+    </argument>
+    <argument id="tupleReduce::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="tupleReduce::TupleT" name="TupleT" />
+    <templatetypeparameter id="tupleReduce::Func" name="Func" />
+    <templatetypeparameter id="tupleReduce::Reduce" name="Reduce" />
+    <templatetypeparameter id="tupleReduce::ReducedDefault" name="ReducedDefault" />
+    <templatetypeparameter id="tupleReduce::Args" name="Args" />
+  </functiontemplate>
+  <functiontemplate id="tupleReduceLogicalOr" name="tupleReduceLogicalOr">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="tupleReduceLogicalOr::t" name="t">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="tupleReduceLogicalOr::f" name="f">
+      <type name="Func" />
+    </argument>
+    <argument id="tupleReduceLogicalOr::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="tupleReduceLogicalOr::TupleT" name="TupleT" />
+    <templatetypeparameter id="tupleReduceLogicalOr::Func" name="Func" />
+    <templatetypeparameter id="tupleReduceLogicalOr::Args" name="Args" />
+  </functiontemplate>
+  <namespace name="gparse" ref="gparse#gparse">
+    <brief>#List of commands on Reprap Wiki:</brief>
+    <class name="Com" ref="gparse::Com#gparse::Com" />
+    <class name="Command" ref="gparse::Command#gparse::Command" />
+    <class name="Response" ref="gparse::Response#gparse::Response" />
+  </namespace>
+  <namespace name="iodrv" ref="iodrv#iodrv">
+    <brief>for StepDirection</brief>
+    <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
+    <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
+    <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
+    <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+    <struct name="IODriver__getBedTemp" ref="iodrv::IODriver__getBedTemp#iodrv::IODriver__getBedTemp">
+      <brief>IODriver::getBedTemp helper functions:</brief>
+    </struct>
+    <struct name="IODriver__getHotendTargetTemp" ref="iodrv::IODriver__getHotendTargetTemp#iodrv::IODriver__getHotendTargetTemp">
+      <brief>IODriver::getHotendTargetTemp helper functions:</brief>
+    </struct>
+    <struct name="IODriver__getHotendTemp" ref="iodrv::IODriver__getHotendTemp#iodrv::IODriver__getHotendTemp">
+      <brief>IODriver::getHotendTemp helper functions:</brief>
+    </struct>
+    <struct name="IODriver__lockAllAxis" ref="iodrv::IODriver__lockAllAxis#iodrv::IODriver__lockAllAxis">
+      <brief>IODriver::lockAllAxis helper functions:</brief>
+    </struct>
+    <struct name="IODriver__setBedTemp" ref="iodrv::IODriver__setBedTemp#iodrv::IODriver__setBedTemp">
+      <brief>IODriver::setBedTemp helper functions:</brief>
+    </struct>
+    <struct name="IODriver__setHotendTemp" ref="iodrv::IODriver__setHotendTemp#iodrv::IODriver__setHotendTemp">
+      <brief>IODriver::setHotendTemp helper functions:</brief>
+    </struct>
+    <struct name="IODriver__unlockAllAxis" ref="iodrv::IODriver__unlockAllAxis#iodrv::IODriver__unlockAllAxis">
+      <brief>IODriver::unlockAllAxis helper functions:</brief>
+    </struct>
+    <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin">
+      <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
+        <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
+      </class>
+    </class>
+    <class name="RCThermistor" ref="iodrv::RCThermistor#iodrv::RCThermistor" />
+    <classtemplate name="TempControl" ref="iodrv::TempControl#iodrv::TempControl">
+      <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
+      <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
+        <default>
+          <type name="PID" />
+        </default>
+      </templatetypeparameter>
+      <templatetypeparameter id="iodrv::TempControl::Filter" name="Filter">
+        <default>
+          <type name="NoFilter" />
+        </default>
+      </templatetypeparameter>
+    </classtemplate>
+  </namespace>
+  <namespace name="logging" ref="logging#logging" />
+  <namespace name="machines" ref="machines#machines">
+    <class name="Machine" ref="machines::Machine#machines::Machine" />
+  </namespace>
+  <namespace name="mathutil" ref="mathutil#mathutil" />
+  <namespace name="motion" ref="motion#motion">
+    <brief>forward declare for class in "endstop.h"</brief>
+    <structtemplate name="_AxisStepper__getNextTime" ref="motion::_AxisStepper__getNextTime#motion::_AxisStepper__getNextTime">
+      <brief>Helper classes for AxisStepper::getNextTime method</brief>
+      <templatetypeparameter id="motion::_AxisStepper__getNextTime::TupleT" name="TupleT" />
+      <templatenontypeparameter id="motion::_AxisStepper__getNextTime::idx" name="idx">
+        <type builtin="yes" name="int" />
+      </templatenontypeparameter>
+    </structtemplate>
+    <struct name="_AxisStepper__initAxisArcSteppers" ref="motion::_AxisStepper__initAxisArcSteppers#motion::_AxisStepper__initAxisArcSteppers">
+      <brief>Helper classes for AxisStepper::initAxisArcSteppers</brief>
+    </struct>
+    <struct name="_AxisStepper__initAxisHomeSteppers" ref="motion::_AxisStepper__initAxisHomeSteppers#motion::_AxisStepper__initAxisHomeSteppers">
+      <brief>Helper classes for AxisStepper::initAxisHomeSteppers</brief>
+    </struct>
+    <struct name="_AxisStepper__initAxisSteppers" ref="motion::_AxisStepper__initAxisSteppers#motion::_AxisStepper__initAxisSteppers">
+      <brief>Helper classes for AxisStepper::initAxisSteppers</brief>
+    </struct>
+    <struct name="_AxisStepper__nextStep" ref="motion::_AxisStepper__nextStep#motion::_AxisStepper__nextStep">
+      <brief>Helper classes for AxisStepper::nextStep method</brief>
+    </struct>
+    <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
+    <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
+      <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
+    </structtemplate>
+    <class name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper">
+      <structtemplate name="GetArcStepperTypes" ref="motion::AxisStepper::GetArcStepperTypes#motion::AxisStepper::GetArcStepperTypes">
+        <brief>Arc steppers:</brief>
+        <templatetypeparameter id="motion::AxisStepper::GetArcStepperTypes::Types" name="Types" />
+      </structtemplate>
+      <structtemplate name="GetHomeStepperTypes" ref="motion::AxisStepper::GetHomeStepperTypes#motion::AxisStepper::GetHomeStepperTypes">
+        <brief>homing steppers. GetHomeStepperTypes&amp;lt;std::tuple&lt;StepperT, ...&amp;gt; &gt;::HomeStepperTypes is equivalent to std::tuple&amp;lt;StepperT::HomeStepperT, ...&amp;gt;</brief>
+        <templatetypeparameter id="motion::AxisStepper::GetHomeStepperTypes::Types" name="Types" />
+      </structtemplate>
+    </class>
+    <classtemplate name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver">
+      <templatetypeparameter id="motion::AxisStepperWithDriver::StepperDriver" name="StepperDriver" />
+    </classtemplate>
+    <class name="ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
+    <class name="CoordMap" ref="motion::CoordMap#motion::CoordMap" />
+    <classtemplate name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap">
+      <templatetypeparameter id="motion::LinearCoordMap::Stepper1" name="Stepper1" />
+      <templatetypeparameter id="motion::LinearCoordMap::Stepper2" name="Stepper2" />
+      <templatetypeparameter id="motion::LinearCoordMap::Stepper3" name="Stepper3" />
+      <templatetypeparameter id="motion::LinearCoordMap::Stepper4" name="Stepper4" />
+      <templatetypeparameter id="motion::LinearCoordMap::BedLevelT" name="BedLevelT">
+        <default>
+          <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+        </default>
+      </templatetypeparameter>
+    </classtemplate>
+    <classtemplate name="LinearDeltaArcStepper" ref="motion::LinearDeltaArcStepper#motion::LinearDeltaArcStepper">
+      <templatetypeparameter id="motion::LinearDeltaArcStepper::StepperDriverT" name="StepperDriverT" />
+      <templatenontypeparameter id="motion::LinearDeltaArcStepper::AxisIdx" name="AxisIdx">
+        <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
+      </templatenontypeparameter>
+    </classtemplate>
+    <classtemplate name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap">
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper1" name="Stepper1" />
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper2" name="Stepper2" />
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper3" name="Stepper3" />
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper4" name="Stepper4" />
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::BedLevelT" name="BedLevelT">
+        <default>
+          <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+        </default>
+      </templatetypeparameter>
+    </classtemplate>
+    <classtemplate name="LinearDeltaStepper" ref="motion::LinearDeltaStepper#motion::LinearDeltaStepper">
+      <templatetypeparameter id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT" />
+      <templatenontypeparameter id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
+        <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
+      </templatenontypeparameter>
+    </classtemplate>
+    <classtemplate name="LinearHomeStepper" ref="motion::LinearHomeStepper#motion::LinearHomeStepper">
+      <templatetypeparameter id="motion::LinearHomeStepper::StepperDriverT" name="StepperDriverT" />
+      <templatenontypeparameter default="std" id="motion::LinearHomeStepper::AxisIdx" name="AxisIdx">
+        <type name="std::size_t" />
+      </templatenontypeparameter>
+    </classtemplate>
+    <classtemplate name="LinearStepper" ref="motion::LinearStepper#motion::LinearStepper">
+      <templatetypeparameter id="motion::LinearStepper::StepperDriverT" name="StepperDriverT" />
+      <templatenontypeparameter id="motion::LinearStepper::CoordType" name="CoordType">
+        <type name="motion::CartesianAxis" ref="motion#motion::CartesianAxis" />
+      </templatenontypeparameter>
+    </classtemplate>
+    <classtemplate name="MaxOutputEventSequenceSize" ref="motion::MaxOutputEventSequenceSize#motion::MaxOutputEventSequenceSize">
+      <templatetypeparameter id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes" />
+      <templatenontypeparameter default="std" id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
+        <type name="std::size_t" />
+      </templatenontypeparameter>
+    </classtemplate>
+    <classtemplate name="MotionPlanner" ref="motion::MotionPlanner#motion::MotionPlanner">
+      <templatetypeparameter id="motion::MotionPlanner::Interface" name="Interface" />
+    </classtemplate>
+    <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
+  </namespace>
+  <structtemplate name="__callOnAll" ref="__callOnAll#__callOnAll">
+    <brief>callOnAll helper functions:</brief>
+    <templatetypeparameter id="__callOnAll::TupleT" name="TupleT" />
+    <templatenontypeparameter default="std" id="__callOnAll::IdxPlusOne" name="IdxPlusOne">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="__callOnAll::Func" name="Func" />
+    <templatetypeparameter id="__callOnAll::Args" name="Args" />
+  </structtemplate>
+  <structtemplate name="__callOnAllReduce" ref="__callOnAllReduce#__callOnAllReduce">
+    <brief>tupleReduce helper functions:</brief>
+    <templatetypeparameter id="__callOnAllReduce::TupleT" name="TupleT" />
+    <templatenontypeparameter default="std" id="__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="__callOnAllReduce::Func" name="Func" />
+    <templatetypeparameter id="__callOnAllReduce::Reduce" name="Reduce" />
+    <templatetypeparameter id="__callOnAllReduce::ReducedDefault" name="ReducedDefault" />
+    <templatetypeparameter id="__callOnAllReduce::Args" name="Args" />
+  </structtemplate>
+  <structtemplate name="__callOnIndex" ref="__callOnIndex#__callOnIndex">
+    <brief>callOnIndex helper functions:</brief>
+    <templatetypeparameter id="__callOnIndex::TupleT" name="TupleT" />
+    <templatenontypeparameter default="std" id="__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="__callOnIndex::Func" name="Func" />
+    <templatetypeparameter id="__callOnIndex::Args" name="Args" />
+  </structtemplate>
+  <structtemplate name="CVTemplateWrapper" ref="CVTemplateWrapper#CVTemplateWrapper">
+    <brief>TODO: consider replacing CVTemplateWrapper with std::integral_constant</brief>
+    <templatenontypeparameter default="std" id="CVTemplateWrapper::Value" name="Value">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </structtemplate>
+  <class name="IntervalTimer" ref="IntervalTimer#IntervalTimer">
+    <brief>for EventClockT</brief>
+  </class>
+  <class name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+  <classtemplate name="ThisThreadSleepAdapter" ref="ThisThreadSleepAdapter#ThisThreadSleepAdapter">
+    <templatetypeparameter id="ThisThreadSleepAdapter::ClockT" name="ClockT" />
+    <templatetypeparameter id="ThisThreadSleepAdapter::SleepT" name="SleepT" />
+  </classtemplate>
+  <classtemplate name="Vector3" ref="Vector3#Vector3">
+    <templatetypeparameter id="Vector3::F" name="F" />
+  </classtemplate>
+  <typedef id="Vector3d" name="Vector3d">
+    <type name="Vector3&lt;double&gt;" />
+  </typedef>
+  <typedef id="Vector3f" name="Vector3f">
+    <type name="Vector3&lt;float&gt;" />
+  </typedef>
+  <report name="Documentation generator" ref="report" />
+</index>

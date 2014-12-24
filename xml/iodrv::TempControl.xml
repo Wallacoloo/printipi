@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="iodrv::TempControl" name="TempControl" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  </base>
+  <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
+  <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
+    <default>
+      <type name="PID" />
+    </default>
+  </templatetypeparameter>
+  <templatetypeparameter id="iodrv::TempControl::Filter" name="Filter">
+    <default>
+      <type name="NoFilter" />
+    </default>
+  </templatetypeparameter>
+  <constructor id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;" name="TempControl&lt;Thermistor, PID, Filter&gt;">
+    <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::hotType" name="hotType">
+      <type name="TempControlType" ref="iodrv#iodrv::TempControlType" />
+    </argument>
+    <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::heater" name="heater">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::therm" name="therm">
+      <type name="Thermistor &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::pid" name="pid">
+      <type name="const PID" qualifier=" const &amp;" />
+    </argument>
+    <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::filter" name="filter">
+      <type name="const Filter" qualifier=" const &amp;" />
+    </argument>
+    <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::pwmPeriod" name="pwmPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method id="iodrv::TempControl::isHotend" name="isHotend" override="yes">
+    <brief>register as the correct device type:</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <override name="IODriver::isHotend" ref="iodrv::IODriver#iodrv::IODriver::isHotend" />
+  </method>
+  <method id="iodrv::TempControl::isHeatedBed" name="isHeatedBed" override="yes">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <override name="IODriver::isHeatedBed" ref="iodrv::IODriver#iodrv::IODriver::isHeatedBed" />
+  </method>
+  <method id="iodrv::TempControl::setTargetTemperature" name="setTargetTemperature" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::TempControl::setTargetTemperature::t" name="t">
+      <type name="CelciusType" />
+    </argument>
+    <override name="IODriver::setTargetTemperature" ref="iodrv::IODriver#iodrv::IODriver::setTargetTemperature" />
+  </method>
+  <method id="iodrv::TempControl::getMeasuredTemperature" name="getMeasuredTemperature" override="yes">
+    <return>
+      <type name="CelciusType" />
+    </return>
+    <override name="IODriver::getMeasuredTemperature" ref="iodrv::IODriver#iodrv::IODriver::getMeasuredTemperature" />
+  </method>
+  <method id="iodrv::TempControl::getTargetTemperature" name="getTargetTemperature" override="yes">
+    <return>
+      <type name="CelciusType" />
+    </return>
+    <override name="IODriver::getTargetTemperature" ref="iodrv::IODriver#iodrv::IODriver::getTargetTemperature" />
+  </method>
+  <methodtemplate id="iodrv::TempControl::onIdleCpu" name="onIdleCpu" override="yes">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::TempControl::onIdleCpu::cbInterface" name="cbInterface">
+      <type name="CallbackInterface" qualifier=" &amp;" />
+    </argument>
+    <override name="IODriver::onIdleCpu" ref="iodrv::IODriver#iodrv::IODriver::onIdleCpu" />
+    <templatetypeparameter id="iodrv::TempControl::onIdleCpu::CallbackInterface" name="CallbackInterface" />
+  </methodtemplate>
+</classtemplate>

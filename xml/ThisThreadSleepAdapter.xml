@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="ThisThreadSleepAdapter" name="ThisThreadSleepAdapter" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="ThisThreadSleepAdapter::ClockT" name="ClockT" />
+  <templatetypeparameter id="ThisThreadSleepAdapter::SleepT" name="SleepT" />
+  <methodtemplate id="ThisThreadSleepAdapter::sleep_until" name="sleep_until" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="ThisThreadSleepAdapter::sleep_until::sleep_time" name="sleep_time">
+      <type name="std::chrono::time_point&lt;_Clock, _Dur&gt;" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="ThisThreadSleepAdapter::sleep_until::Clock" name="Clock" />
+    <templatetypeparameter id="ThisThreadSleepAdapter::sleep_until::Duration" name="Duration" />
+  </methodtemplate>
+  <methodtemplate id="ThisThreadSleepAdapter::sleep_for" name="sleep_for" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="ThisThreadSleepAdapter::sleep_for::dur" name="dur">
+      <type name="std::chrono::duration&lt;_Rep, _Period&gt;" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="ThisThreadSleepAdapter::sleep_for::Rep" name="Rep" />
+    <templatetypeparameter id="ThisThreadSleepAdapter::sleep_for::Period" name="Period" />
+  </methodtemplate>
+</classtemplate>

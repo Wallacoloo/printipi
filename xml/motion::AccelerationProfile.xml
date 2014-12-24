@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="motion::AccelerationProfile" name="AccelerationProfile" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <subclass access="public" name="ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
+  <subclass access="public" name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
+  <method id="motion::AccelerationProfile::begin" name="begin">
+    <brief>Optional, but almost surely needed:</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AccelerationProfile::begin::moveDuration" name="moveDuration">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AccelerationProfile::begin::Vmax" name="Vmax">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+</struct>

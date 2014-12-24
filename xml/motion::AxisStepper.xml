@@ -1,0 +1,180 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="motion::AxisStepper" name="AxisStepper" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <subclass access="public" name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver" />
+  <methodtemplate id="motion::AxisStepper::getNextTime" name="getNextTime" static="yes">
+    <brief>standard initializer:</brief>
+    <doc>template &amp;lt;typename CoordMapT, std::size\_t sz&amp;gt; AxisStepper(int idx, const CoordMapT &amp;/*map*/, const std::array&amp;lt;int, sz&amp;gt;&amp; /*curPos*/, float /*vx*/, float /*vy*/, float /*vz*/, float /*ve*/)
+: _index(idx) {}
+initializer when homing to endstops:
+template &amp;lt;typename CoordMapT&amp;gt; AxisStepper(int idx, const CoordMapT &amp;/*map*/, float /*vHome*/) : _index(idx) {}</doc>
+    <return>
+      <type name="AxisStepper" qualifier=" &amp;" ref="motion::AxisStepper#motion::AxisStepper" />
+    </return>
+    <argument id="motion::AxisStepper::getNextTime::axes" name="axes">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="motion::AxisStepper::getNextTime::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::AxisStepper::getNextTime::TupleT" name="TupleT" />
+  </methodtemplate>
+  <methodtemplate id="motion::AxisStepper::initAxisArcSteppers" name="initAxisArcSteppers" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::steppers" name="steppers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::curPos" name="curPos">
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::xCenter" name="xCenter">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::yCenter" name="yCenter">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::zCenter" name="zCenter">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::ux" name="ux">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::uy" name="uy">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::uz" name="uz">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::vx" name="vx">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::vy" name="vy">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::vz" name="vz">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::arcRad" name="arcRad">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::arcVel" name="arcVel">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisArcSteppers::extVel" name="extVel">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="motion::AxisStepper::initAxisArcSteppers::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::AxisStepper::initAxisArcSteppers::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="motion::AxisStepper::initAxisArcSteppers::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::AxisStepper::initAxisArcSteppers::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+  <methodtemplate id="motion::AxisStepper::initAxisHomeSteppers" name="initAxisHomeSteppers" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AxisStepper::initAxisHomeSteppers::steppers" name="steppers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisHomeSteppers::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisHomeSteppers::vHome" name="vHome">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="motion::AxisStepper::initAxisHomeSteppers::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::AxisStepper::initAxisHomeSteppers::CoordMapT" name="CoordMapT" />
+    <templatetypeparameter id="motion::AxisStepper::initAxisHomeSteppers::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::AxisStepper::initAxisHomeSteppers::CoordMapT" name="CoordMapT" />
+  </methodtemplate>
+  <methodtemplate id="motion::AxisStepper::initAxisSteppers" name="initAxisSteppers" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AxisStepper::initAxisSteppers::steppers" name="steppers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisSteppers::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisSteppers::curPos" name="curPos">
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisSteppers::vx" name="vx">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisSteppers::vy" name="vy">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisSteppers::vz" name="vz">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AxisStepper::initAxisSteppers::ve" name="ve">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="motion::AxisStepper::initAxisSteppers::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::AxisStepper::initAxisSteppers::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::AxisStepper::initAxisSteppers::MechSize" name="MechSize">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="motion::AxisStepper::initAxisSteppers::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::AxisStepper::initAxisSteppers::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::AxisStepper::initAxisSteppers::MechSize" name="MechSize">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+  <methodtemplate id="motion::AxisStepper::nextStep" name="nextStep">
+    <brief>Event getEvent() const; //NOT TO BE OVERRIDEN</brief>
+    <doc>Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN</doc>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AxisStepper::nextStep::axes" name="axes">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="motion::AxisStepper::nextStep::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::AxisStepper::nextStep::TupleT" name="TupleT" />
+  </methodtemplate>
+  <structtemplate name="GetArcStepperTypes" ref="motion::AxisStepper::GetArcStepperTypes#motion::AxisStepper::GetArcStepperTypes">
+    <brief>Arc steppers:</brief>
+    <templatetypeparameter id="motion::AxisStepper::GetArcStepperTypes::Types" name="Types" />
+  </structtemplate>
+  <structtemplate name="GetHomeStepperTypes" ref="motion::AxisStepper::GetHomeStepperTypes#motion::AxisStepper::GetHomeStepperTypes">
+    <brief>homing steppers. GetHomeStepperTypes&amp;lt;std::tuple&lt;StepperT, ...&amp;gt; &gt;::HomeStepperTypes is equivalent to std::tuple&amp;lt;StepperT::HomeStepperT, ...&amp;gt;</brief>
+    <templatetypeparameter id="motion::AxisStepper::GetHomeStepperTypes::Types" name="Types" />
+  </structtemplate>
+  <field id="motion::AxisStepper::time" name="time">
+    <type builtin="yes" name="float" />
+  </field>
+  <field id="motion::AxisStepper::direction" name="direction">
+    <brief>time of next step</brief>
+    <type name="StepDirection" ref="motion#motion::StepDirection" />
+  </field>
+  <constructor id="motion::AxisStepper::AxisStepper" name="AxisStepper">
+    <brief>NOT TO BE OVERRIDEN</brief>
+  </constructor>
+  <method id="motion::AxisStepper::index" name="index">
+    <brief>direction of next step</brief>
+    <return>
+      <type builtin="yes" name="int" />
+    </return>
+  </method>
+  <constructor access="protected" id="motion::AxisStepper::AxisStepper" name="AxisStepper">
+    <argument id="motion::AxisStepper::AxisStepper::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </argument>
+  </constructor>
+  <method access="protected" id="motion::AxisStepper::_nextStep" name="_nextStep">
+    <brief>only callable via children</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+</class>

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="iodrv::IODriver__getBedTemp" name="IODriver__getBedTemp" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>IODriver::getBedTemp helper functions:</brief>
+  <methodtemplate id="iodrv::IODriver__getBedTemp::operator()" name="operator()">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver__getBedTemp::operator()::" name="">
+      <type name="std::size_t" />
+    </argument>
+    <argument id="iodrv::IODriver__getBedTemp::operator()::driver" name="driver">
+      <type name="T" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver__getBedTemp::operator()::T" name="T" />
+  </methodtemplate>
+  <field id="iodrv::IODriver__getBedTemp::value" name="value">
+    <type name="CelciusType" />
+  </field>
+  <constructor id="iodrv::IODriver__getBedTemp::IODriver__getBedTemp" name="IODriver__getBedTemp" />
+</struct>

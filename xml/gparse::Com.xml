@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="gparse::Com" name="Com" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <variable id="gparse::Com::NULL_FILE_STR" name="NULL_FILE_STR">
+    <brief>initialize static consts:</brief>
+    <type name="std::string" qualifier=" const" />
+  </variable>
+  <constructor id="gparse::Com::Com" name="Com" />
+  <constructor id="gparse::Com::Com" name="Com">
+    <argument id="gparse::Com::Com::fileR" name="fileR">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <constructor id="gparse::Com::Com" name="Com">
+    <argument id="gparse::Com::Com::fileR" name="fileR">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+    <argument id="gparse::Com::Com::fileW" name="fileW">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="gparse::Com::getCommand" name="getCommand">
+    <return>
+      <type name="Command" qualifier=" const &amp;" ref="gparse::Command#gparse::Command" />
+    </return>
+  </method>
+  <method id="gparse::Com::hasReadFile" name="hasReadFile">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Com::hasWriteFile" name="hasWriteFile">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Com::reply" name="reply">
+    <brief>void reply(const Command &amp;response);</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="gparse::Com::reply::resp" name="resp">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Com::reply" name="reply">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="gparse::Com::reply::resp" name="resp">
+      <type name="Response" qualifier=" const &amp;" ref="gparse::Response#gparse::Response" />
+    </argument>
+  </method>
+  <method id="gparse::Com::tendCom" name="tendCom">
+    <brief>returns true if there is a command ready to be interpreted.</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+</class>

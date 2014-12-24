@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="motion::NoAcceleration" name="NoAcceleration" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
+  </base>
+  <method id="motion::NoAcceleration::transform" name="transform">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::NoAcceleration::transform::inp" name="inp">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+</struct>

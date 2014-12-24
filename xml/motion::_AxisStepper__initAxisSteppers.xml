@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="motion::_AxisStepper__initAxisSteppers" name="_AxisStepper__initAxisSteppers" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>Helper classes for AxisStepper::initAxisSteppers</brief>
+  <methodtemplate id="motion::_AxisStepper__initAxisSteppers::operator()" name="operator()">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::_myIdx" name="_myIdx">
+      <type name="CVTemplateWrapper&lt;Value&gt;" ref="CVTemplateWrapper#CVTemplateWrapper" />
+    </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::stepper" name="stepper">
+      <type name="T" qualifier=" &amp;" />
+    </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::steppers" name="steppers">
+      <type name="TupleT" qualifier="*" />
+    </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::map" name="map">
+      <type name="const CoordMapT" qualifier=" const *" />
+    </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::curPos" name="curPos">
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" &amp;" />
+    </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::vx" name="vx">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::vy" name="vy">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::vz" name="vz">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::ve" name="ve">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatenontypeparameter default="std" id="motion::_AxisStepper__initAxisSteppers::operator()::MyIdx" name="MyIdx">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="motion::_AxisStepper__initAxisSteppers::operator()::TupleT" name="TupleT" />
+    <templatetypeparameter id="motion::_AxisStepper__initAxisSteppers::operator()::T" name="T" />
+    <templatetypeparameter id="motion::_AxisStepper__initAxisSteppers::operator()::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::_AxisStepper__initAxisSteppers::operator()::MechSize" name="MechSize">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+</struct>

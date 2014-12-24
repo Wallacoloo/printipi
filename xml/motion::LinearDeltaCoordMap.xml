@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="motion::LinearDeltaCoordMap" name="LinearDeltaCoordMap" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="CoordMap" ref="motion::CoordMap#motion::CoordMap" />
+  </base>
+  <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper1" name="Stepper1" />
+  <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper2" name="Stepper2" />
+  <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper3" name="Stepper3" />
+  <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper4" name="Stepper4" />
+  <templatetypeparameter id="motion::LinearDeltaCoordMap::BedLevelT" name="BedLevelT">
+    <default>
+      <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+    </default>
+  </templatetypeparameter>
+  <method id="motion::LinearDeltaCoordMap::r" name="r">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="motion::LinearDeltaCoordMap::L" name="L">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="motion::LinearDeltaCoordMap::h" name="h">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="motion::LinearDeltaCoordMap::buildrad" name="buildrad">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="motion::LinearDeltaCoordMap::STEPS_MM" name="STEPS_MM">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::STEPS_MM::axisIdx" name="axisIdx">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <method id="motion::LinearDeltaCoordMap::MM_STEPS" name="MM_STEPS">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::MM_STEPS::axisIdx" name="axisIdx">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <constructor id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;" name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;">
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::r" name="r">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::L" name="L">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::h" name="h">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::buildrad" name="buildrad">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::STEPS_MM" name="STEPS_MM">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::STEPS_MM_EXT" name="STEPS_MM_EXT">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper1" name="stepper1">
+      <type name="Stepper1 &amp;&amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper2" name="stepper2">
+      <type name="Stepper2 &amp;&amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper3" name="stepper3">
+      <type name="Stepper3 &amp;&amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper4" name="stepper4">
+      <type name="Stepper4 &amp;&amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::endstopA" name="endstopA">
+      <type name="iodrv::Endstop &amp;&amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::endstopB" name="endstopB">
+      <type name="iodrv::Endstop &amp;&amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::endstopC" name="endstopC">
+      <type name="iodrv::Endstop &amp;&amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::t" name="t">
+      <type name="const BedLevelT" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="motion::LinearDeltaCoordMap::getAxisSteppers" name="getAxisSteppers" override="yes">
+    <return>
+      <type name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_AxisStepperTypes" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap::_AxisStepperTypes" />
+    </return>
+    <override name="CoordMap::getAxisSteppers" ref="motion::CoordMap#motion::CoordMap::getAxisSteppers" />
+  </method>
+  <method id="motion::LinearDeltaCoordMap::getHomeSteppers" name="getHomeSteppers" override="yes">
+    <return>
+      <type name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_HomeStepperTypes" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap::_HomeStepperTypes" />
+    </return>
+    <override name="CoordMap::getHomeSteppers" ref="motion::CoordMap#motion::CoordMap::getHomeSteppers" />
+  </method>
+  <method id="motion::LinearDeltaCoordMap::getArcSteppers" name="getArcSteppers" override="yes">
+    <return>
+      <type name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_ArcStepperTypes" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap::_ArcStepperTypes" />
+    </return>
+    <override name="CoordMap::getArcSteppers" ref="motion::CoordMap#motion::CoordMap::getArcSteppers" />
+  </method>
+  <method id="motion::LinearDeltaCoordMap::numAxis" name="numAxis" override="yes" static="yes">
+    <return>
+      <type name="std::size_t" />
+    </return>
+    <override name="CoordMap::numAxis" ref="motion::CoordMap#motion::CoordMap::numAxis" />
+  </method>
+  <method id="motion::LinearDeltaCoordMap::getAxisPosition" name="getAxisPosition">
+    <return>
+      <type builtin="yes" name="int" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::getAxisPosition::cur" name="cur">
+      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaCoordMap::getAxisPosition::axis" name="axis">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <method id="motion::LinearDeltaCoordMap::getEndstop" name="getEndstop" override="yes">
+    <return>
+      <type name="iodrv::Endstop" qualifier=" const &amp;" ref="iodrv::Endstop#iodrv::Endstop" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::getEndstop::axis" name="axis">
+      <type name="std::size_t" />
+    </argument>
+    <override name="CoordMap::getEndstop" ref="motion::CoordMap#motion::CoordMap::getEndstop" />
+  </method>
+  <methodtemplate id="motion::LinearDeltaCoordMap::getStepperDriver" name="getStepperDriver">
+    <return>
+      <type name="const typename std::tuple_element&lt;idx, StepperDriverTypes&gt;::type" qualifier=" const &amp;" />
+    </return>
+    <templatenontypeparameter default="std" id="motion::LinearDeltaCoordMap::getStepperDriver::idx" name="idx">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+  <method id="motion::LinearDeltaCoordMap::getHomePosition" name="getHomePosition" override="yes">
+    <return>
+      <type name="std::array&lt;int, 4&gt;" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::getHomePosition::cur" name="cur">
+      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+    </argument>
+    <override name="CoordMap::getHomePosition" ref="motion::CoordMap#motion::CoordMap::getHomePosition" />
+  </method>
+  <method id="motion::LinearDeltaCoordMap::applyLeveling" name="applyLeveling" override="yes">
+    <return>
+      <type name="std::tuple&lt;float, float, float&gt;" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::applyLeveling::xyz" name="xyz">
+      <type name="std::tuple&lt;float, float, float&gt;" qualifier=" const &amp;" />
+    </argument>
+    <override name="CoordMap::applyLeveling" ref="motion::CoordMap#motion::CoordMap::applyLeveling" />
+  </method>
+  <method id="motion::LinearDeltaCoordMap::bound" name="bound" override="yes">
+    <return>
+      <type name="std::tuple&lt;float, float, float, float&gt;" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::bound::xyze" name="xyze">
+      <type name="std::tuple&lt;float, float, float, float&gt;" qualifier=" const &amp;" />
+    </argument>
+    <override name="CoordMap::bound" ref="motion::CoordMap#motion::CoordMap::bound" />
+  </method>
+  <method id="motion::LinearDeltaCoordMap::xyzeFromMechanical" name="xyzeFromMechanical" override="yes">
+    <return>
+      <type name="std::tuple&lt;float, float, float, float&gt;" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::xyzeFromMechanical::mech" name="mech">
+      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+    </argument>
+    <override name="CoordMap::xyzeFromMechanical" ref="motion::CoordMap#motion::CoordMap::xyzeFromMechanical" />
+  </method>
+</classtemplate>

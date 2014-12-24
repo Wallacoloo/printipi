@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="iodrv::IODriver__unlockAllAxis" name="IODriver__unlockAllAxis" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>IODriver::unlockAllAxis helper functions:</brief>
+  <methodtemplate id="iodrv::IODriver__unlockAllAxis::operator()" name="operator()">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver__unlockAllAxis::operator()::index" name="index">
+      <type name="std::size_t" />
+    </argument>
+    <argument id="iodrv::IODriver__unlockAllAxis::operator()::driver" name="driver">
+      <type name="T" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver__unlockAllAxis::operator()::T" name="T" />
+  </methodtemplate>
+</struct>

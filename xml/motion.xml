@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namespace id="motion" name="motion" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>forward declare for class in "endstop.h"</brief>
+  <functiontemplate id="motion::stepDirFromSign" name="stepDirFromSign">
+    <return>
+      <type name="StepDirection" ref="motion#motion::StepDirection" />
+    </return>
+    <argument id="motion::stepDirFromSign::dir" name="dir">
+      <type name="T" />
+    </argument>
+    <templatetypeparameter id="motion::stepDirFromSign::T" name="T" />
+  </functiontemplate>
+  <structtemplate name="_AxisStepper__getNextTime" ref="motion::_AxisStepper__getNextTime#motion::_AxisStepper__getNextTime">
+    <brief>Helper classes for AxisStepper::getNextTime method</brief>
+    <templatetypeparameter id="motion::_AxisStepper__getNextTime::TupleT" name="TupleT" />
+    <templatenontypeparameter id="motion::_AxisStepper__getNextTime::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </templatenontypeparameter>
+  </structtemplate>
+  <struct name="_AxisStepper__initAxisArcSteppers" ref="motion::_AxisStepper__initAxisArcSteppers#motion::_AxisStepper__initAxisArcSteppers">
+    <brief>Helper classes for AxisStepper::initAxisArcSteppers</brief>
+  </struct>
+  <struct name="_AxisStepper__initAxisHomeSteppers" ref="motion::_AxisStepper__initAxisHomeSteppers#motion::_AxisStepper__initAxisHomeSteppers">
+    <brief>Helper classes for AxisStepper::initAxisHomeSteppers</brief>
+  </struct>
+  <struct name="_AxisStepper__initAxisSteppers" ref="motion::_AxisStepper__initAxisSteppers#motion::_AxisStepper__initAxisSteppers">
+    <brief>Helper classes for AxisStepper::initAxisSteppers</brief>
+  </struct>
+  <struct name="_AxisStepper__nextStep" ref="motion::_AxisStepper__nextStep#motion::_AxisStepper__nextStep">
+    <brief>Helper classes for AxisStepper::nextStep method</brief>
+  </struct>
+  <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
+  <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
+    <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
+  </structtemplate>
+  <class name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper" />
+  <classtemplate name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver">
+    <templatetypeparameter id="motion::AxisStepperWithDriver::StepperDriver" name="StepperDriver" />
+  </classtemplate>
+  <class name="ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
+  <class name="CoordMap" ref="motion::CoordMap#motion::CoordMap" />
+  <classtemplate name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap">
+    <templatetypeparameter id="motion::LinearCoordMap::Stepper1" name="Stepper1" />
+    <templatetypeparameter id="motion::LinearCoordMap::Stepper2" name="Stepper2" />
+    <templatetypeparameter id="motion::LinearCoordMap::Stepper3" name="Stepper3" />
+    <templatetypeparameter id="motion::LinearCoordMap::Stepper4" name="Stepper4" />
+    <templatetypeparameter id="motion::LinearCoordMap::BedLevelT" name="BedLevelT">
+      <default>
+        <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+      </default>
+    </templatetypeparameter>
+  </classtemplate>
+  <classtemplate name="LinearDeltaArcStepper" ref="motion::LinearDeltaArcStepper#motion::LinearDeltaArcStepper">
+    <templatetypeparameter id="motion::LinearDeltaArcStepper::StepperDriverT" name="StepperDriverT" />
+    <templatenontypeparameter id="motion::LinearDeltaArcStepper::AxisIdx" name="AxisIdx">
+      <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
+    </templatenontypeparameter>
+  </classtemplate>
+  <classtemplate name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap">
+    <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper1" name="Stepper1" />
+    <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper2" name="Stepper2" />
+    <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper3" name="Stepper3" />
+    <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper4" name="Stepper4" />
+    <templatetypeparameter id="motion::LinearDeltaCoordMap::BedLevelT" name="BedLevelT">
+      <default>
+        <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+      </default>
+    </templatetypeparameter>
+  </classtemplate>
+  <classtemplate name="LinearDeltaStepper" ref="motion::LinearDeltaStepper#motion::LinearDeltaStepper">
+    <templatetypeparameter id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT" />
+    <templatenontypeparameter id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
+      <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
+    </templatenontypeparameter>
+  </classtemplate>
+  <classtemplate name="LinearHomeStepper" ref="motion::LinearHomeStepper#motion::LinearHomeStepper">
+    <templatetypeparameter id="motion::LinearHomeStepper::StepperDriverT" name="StepperDriverT" />
+    <templatenontypeparameter default="std" id="motion::LinearHomeStepper::AxisIdx" name="AxisIdx">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </classtemplate>
+  <classtemplate name="LinearStepper" ref="motion::LinearStepper#motion::LinearStepper">
+    <templatetypeparameter id="motion::LinearStepper::StepperDriverT" name="StepperDriverT" />
+    <templatenontypeparameter id="motion::LinearStepper::CoordType" name="CoordType">
+      <type name="motion::CartesianAxis" ref="motion#motion::CartesianAxis" />
+    </templatenontypeparameter>
+  </classtemplate>
+  <classtemplate name="MaxOutputEventSequenceSize" ref="motion::MaxOutputEventSequenceSize#motion::MaxOutputEventSequenceSize">
+    <templatetypeparameter id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes" />
+    <templatenontypeparameter default="std" id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </classtemplate>
+  <classtemplate name="MotionPlanner" ref="motion::MotionPlanner#motion::MotionPlanner">
+    <templatetypeparameter id="motion::MotionPlanner::Interface" name="Interface" />
+  </classtemplate>
+  <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
+  <enum anonymous="yes" id="motion::CartesianAxis" name="CartesianAxis">
+    <enumvalue id="motion::CARTESIAN_AXIS_X" name="CARTESIAN_AXIS_X" value="0" />
+    <enumvalue id="motion::CARTESIAN_AXIS_Y" name="CARTESIAN_AXIS_Y" value="1" />
+    <enumvalue id="motion::CARTESIAN_AXIS_Z" name="CARTESIAN_AXIS_Z" value="2" />
+    <enumvalue id="motion::CARTESIAN_AXIS_E" name="CARTESIAN_AXIS_E" value="3" />
+  </enum>
+  <enum anonymous="yes" id="motion::DeltaAxis" name="DeltaAxis">
+    <enumvalue id="motion::DELTA_AXIS_A" name="DELTA_AXIS_A" value="0" />
+    <enumvalue id="motion::DELTA_AXIS_B" name="DELTA_AXIS_B" value="1" />
+    <enumvalue id="motion::DELTA_AXIS_C" name="DELTA_AXIS_C" value="2" />
+    <enumvalue id="motion::DELTA_AXIS_E" name="DELTA_AXIS_E" value="3" />
+  </enum>
+  <enum anonymous="yes" id="motion::MotionType" name="MotionType">
+    <brief>There are 3 distinct types of motion that can occur at any given time:</brief>
+    <enumvalue id="motion::MotionNone" name="MotionNone" value="0" />
+    <enumvalue id="motion::MotionLinear" name="MotionLinear" value="1" />
+    <enumvalue id="motion::MotionArc" name="MotionArc" value="2" />
+    <enumvalue id="motion::MotionHome" name="MotionHome" value="3" />
+  </enum>
+  <enum anonymous="yes" id="motion::StepDirection" name="StepDirection">
+    <enumvalue id="motion::StepBackward" name="StepBackward" value="0" />
+    <enumvalue id="motion::StepForward" name="StepForward" value="1" />
+    <functiontemplate id="motion::stepDirToSigned" name="stepDirToSigned">
+      <return>
+        <type name="T" />
+      </return>
+      <argument id="motion::stepDirToSigned::dir" name="dir">
+        <type name="StepDirection" ref="motion#motion::StepDirection" />
+      </argument>
+      <templatetypeparameter id="motion::stepDirToSigned::T" name="T" />
+    </functiontemplate>
+  </enum>
+</namespace>

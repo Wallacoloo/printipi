@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="gparse::Response" name="Response" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <variable id="gparse::Response::Null" name="Null">
+    <type name="Response" qualifier=" const" ref="gparse::Response#gparse::Response" />
+  </variable>
+  <variable id="gparse::Response::Ok" name="Ok">
+    <type name="Response" qualifier=" const" ref="gparse::Response#gparse::Response" />
+  </variable>
+  <constructor id="gparse::Response::Response" name="Response">
+    <argument id="gparse::Response::Response::nCode" name="nCode">
+      <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
+    </argument>
+  </constructor>
+  <constructor id="gparse::Response::Response" name="Response">
+    <argument id="gparse::Response::Response::nCode" name="nCode">
+      <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
+    </argument>
+    <argument id="gparse::Response::Response::nRest" name="nRest">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="gparse::Response::isNull" name="isNull">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Response::toString" name="toString">
+    <return>
+      <type name="std::string" />
+    </return>
+  </method>
+</class>

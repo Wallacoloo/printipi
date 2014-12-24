@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="iodrv::Fan" name="Fan" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  </base>
+  <methodtemplate id="iodrv::Fan::setFanDutyCycle" name="setFanDutyCycle" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::Fan::setFanDutyCycle::interface" name="interface">
+      <type name="const CallbackInterface" qualifier=" const &amp;" />
+    </argument>
+    <argument id="iodrv::Fan::setFanDutyCycle::dutyCycle" name="dutyCycle">
+      <type builtin="yes" name="float" />
+    </argument>
+    <override name="IODriver::setFanDutyCycle" ref="iodrv::IODriver#iodrv::IODriver::setFanDutyCycle" />
+    <templatetypeparameter id="iodrv::Fan::setFanDutyCycle::CallbackInterface" name="CallbackInterface" />
+  </methodtemplate>
+  <constructor id="iodrv::Fan::Fan" name="Fan">
+    <argument id="iodrv::Fan::Fan::pin" name="pin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::Fan::Fan::period" name="period">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method id="iodrv::Fan::isFan" name="isFan" override="yes">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <override name="IODriver::isFan" ref="iodrv::IODriver#iodrv::IODriver::isFan" />
+  </method>
+</class>

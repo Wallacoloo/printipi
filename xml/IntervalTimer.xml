@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="IntervalTimer" name="IntervalTimer" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>for EventClockT</brief>
+  <methodtemplate id="IntervalTimer::clockCmp" name="clockCmp">
+    <return>
+      <type builtin="yes" name="int" />
+    </return>
+    <argument id="IntervalTimer::clockCmp::cmp" name="cmp">
+      <type name="const DurT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="IntervalTimer::clockCmp::dflt" name="dflt">
+      <type builtin="yes" name="int" />
+    </argument>
+    <templatetypeparameter id="IntervalTimer::clockCmp::DurT" name="DurT" />
+  </methodtemplate>
+  <constructor id="IntervalTimer::IntervalTimer" name="IntervalTimer" />
+  <method id="IntervalTimer::clock" name="clock">
+    <return>
+      <type name="plat::generic::ChronoClock::time_point" qualifier=" const &amp;" />
+    </return>
+  </method>
+  <method id="IntervalTimer::get" name="get">
+    <return>
+      <type name="plat::generic::ChronoClock::time_point" qualifier=" const &amp;" />
+    </return>
+  </method>
+  <method id="IntervalTimer::reset" name="reset">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+</class>

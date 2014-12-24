@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="iodrv::IODriver" name="IODriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <subclass access="public" name="Fan" ref="iodrv::Fan#iodrv::Fan" />
+  <subclass access="public" name="TempControl" ref="iodrv::TempControl#iodrv::TempControl" />
+  <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
+  <subclass access="public" name="A4988" ref="iodrv::A4988#iodrv::A4988" />
+  <methodtemplate id="iodrv::IODriver::getBedTemp" name="getBedTemp" static="yes">
+    <return>
+      <type name="CelciusType" />
+    </return>
+    <argument id="iodrv::IODriver::getBedTemp::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::getBedTemp::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::getBedTemp::TupleT" name="TupleT" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::getHotendTargetTemp" name="getHotendTargetTemp" static="yes">
+    <return>
+      <type name="CelciusType" />
+    </return>
+    <argument id="iodrv::IODriver::getHotendTargetTemp::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::getHotendTemp" name="getHotendTemp" static="yes">
+    <return>
+      <type name="CelciusType" />
+    </return>
+    <argument id="iodrv::IODriver::getHotendTemp::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::lockAllAxis" name="lockAllAxis" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::lockAllAxis::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::lockAllAxis::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::lockAllAxis::TupleT" name="TupleT" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
+    <brief> called when the scheduler has extra time,</brief>
+    <doc>Can be used to check the status of inputs, etc.
+Return true if object needs to continue to be serviced, false otherwise.</doc>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::IODriver::onIdleCpu::" name="">
+      <type name="const CallbackInterface" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::onIdleCpu::CallbackInterface" name="CallbackInterface" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::setBedTemp" name="setBedTemp" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::setBedTemp::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="iodrv::IODriver::setBedTemp::temp" name="temp">
+      <type name="CelciusType" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::setFanDutyCycle" name="setFanDutyCycle">
+    <brief>OVERRIDE THIS</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::setFanDutyCycle::interface" name="interface">
+      <type name="const CallbackInterface" qualifier=" const &amp;" />
+    </argument>
+    <argument id="iodrv::IODriver::setFanDutyCycle::dutyCycle" name="dutyCycle">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::setFanDutyCycle::CallbackInterface" name="CallbackInterface" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::setHotendTemp" name="setHotendTemp" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::setHotendTemp::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="iodrv::IODriver::setHotendTemp::temp" name="temp">
+      <type name="CelciusType" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::unlockAllAxis" name="unlockAllAxis" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::unlockAllAxis::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::unlockAllAxis::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::unlockAllAxis::TupleT" name="TupleT" />
+  </methodtemplate>
+  <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
+  <method id="iodrv::IODriver::getMeasuredTemperature" name="getMeasuredTemperature">
+    <return>
+      <type name="CelciusType" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::getTargetTemperature" name="getTargetTemperature">
+    <return>
+      <type name="CelciusType" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::isFan" name="isFan">
+    <brief>OVERRIDE THIS (stepper motor drivers only)</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::isHeatedBed" name="isHeatedBed">
+    <brief>OVERRIDE THIS (hotends only: return true)</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::isHotend" name="isHotend">
+    <brief>OVERRIDE THIS (fans only: return true)</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::lockAxis" name="lockAxis">
+    <brief>called by M17; Enable/power all stepper motors</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::setTargetTemperature" name="setTargetTemperature">
+    <brief>OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::setTargetTemperature::" name="">
+      <type name="CelciusType" />
+    </argument>
+  </method>
+  <method id="iodrv::IODriver::unlockAxis" name="unlockAxis">
+    <brief>OVERRIDE THIS (stepper motor drivers only)</brief>
+    <doc>called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise.</doc>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+</class>

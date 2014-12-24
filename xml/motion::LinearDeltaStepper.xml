@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="motion::LinearDeltaStepper" name="LinearDeltaStepper" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="" />
+  </base>
+  <templatetypeparameter id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT" />
+  <templatenontypeparameter id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
+    <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
+  </templatenontypeparameter>
+  <typedef id="motion::LinearDeltaStepper::HomeStepperT" name="HomeStepperT">
+    <type name="StepperDriverT" />
+  </typedef>
+  <typedef id="motion::LinearDeltaStepper::ArcStepperT" name="ArcStepperT">
+    <type name="StepperDriverT" />
+  </typedef>
+  <constructor id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" />
+  <methodtemplate id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::curPos" name="curPos">
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vx" name="vx">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vy" name="vy">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vz" name="vz">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::ve" name="ve">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+  <method id="motion::LinearDeltaStepper::getTerm1AndRootParam" name="getTerm1AndRootParam">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::LinearDeltaStepper::getTerm1AndRootParam::term1" name="term1">
+      <type builtin="yes" name="float" qualifier=" &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::getTerm1AndRootParam::rootParam" name="rootParam">
+      <type builtin="yes" name="float" qualifier=" &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::getTerm1AndRootParam::s" name="s">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="motion::LinearDeltaStepper::testDir" name="testDir">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::LinearDeltaStepper::testDir::s" name="s">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="motion::LinearDeltaStepper::_nextStep" name="_nextStep">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+</classtemplate>

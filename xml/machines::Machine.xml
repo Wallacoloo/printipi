@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="machines::Machine" name="Machine" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <method id="machines::Machine::clampHomeRate" name="clampHomeRate">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="machines::Machine::clampHomeRate::inp" name="inp">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="machines::Machine::clampMoveRate" name="clampMoveRate">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="machines::Machine::clampMoveRate::inp" name="inp">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="machines::Machine::defaultMoveRate" name="defaultMoveRate">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="machines::Machine::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="machines::Machine::maxExtrudeRate" name="maxExtrudeRate">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="machines::Machine::maxRetractRate" name="maxRetractRate">
+    <brief>currently have to be satisfied with mins/maxes - can't achieve more without muddying the interface, and I see little reason for having more.</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+</class>

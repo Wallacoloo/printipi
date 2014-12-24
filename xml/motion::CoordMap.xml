@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="motion::CoordMap" name="CoordMap" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <subclass access="public" name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap" />
+  <subclass access="public" name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap" />
+  <method id="motion::CoordMap::applyLeveling" name="applyLeveling">
+    <return>
+      <type name="std::tuple&lt;float, float, float&gt;" />
+    </return>
+    <argument id="motion::CoordMap::applyLeveling::xyz" name="xyz">
+      <type name="std::tuple&lt;float, float, float&gt;" qualifier=" const &amp;" />
+    </argument>
+  </method>
+  <method id="motion::CoordMap::bound" name="bound">
+    <return>
+      <type name="std::tuple&lt;float, float, float, float&gt;" />
+    </return>
+    <argument id="motion::CoordMap::bound::xyze" name="xyze">
+      <type name="std::tuple&lt;float, float, float, float&gt;" qualifier=" const &amp;" />
+    </argument>
+  </method>
+  <method id="motion::CoordMap::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="motion::CoordMap::getArcSteppers" name="getArcSteppers">
+    <return>
+      <type name="std::tuple&lt;&gt;" />
+    </return>
+  </method>
+  <method id="motion::CoordMap::getAxisSteppers" name="getAxisSteppers">
+    <return>
+      <type name="std::tuple&lt;&gt;" />
+    </return>
+  </method>
+  <method id="motion::CoordMap::getEndstop" name="getEndstop">
+    <return>
+      <type name="iodrv::Endstop" qualifier=" const &amp;" ref="iodrv::Endstop#iodrv::Endstop" />
+    </return>
+    <argument id="motion::CoordMap::getEndstop::axis" name="axis">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <method id="motion::CoordMap::getHomePosition" name="getHomePosition">
+    <return>
+      <type name="std::array&lt;int, 0&gt;" />
+    </return>
+    <argument id="motion::CoordMap::getHomePosition::" name="">
+      <type name="std::array&lt;int, 0&gt;" qualifier=" const &amp;" />
+    </argument>
+  </method>
+  <method id="motion::CoordMap::getHomeSteppers" name="getHomeSteppers">
+    <return>
+      <type name="std::tuple&lt;&gt;" />
+    </return>
+  </method>
+  <method id="motion::CoordMap::numAxis" name="numAxis" static="yes">
+    <return>
+      <type name="std::size_t" />
+    </return>
+  </method>
+  <method id="motion::CoordMap::xyzeFromMechanical" name="xyzeFromMechanical">
+    <return>
+      <type name="std::tuple&lt;float, float, float, float&gt;" />
+    </return>
+    <argument id="motion::CoordMap::xyzeFromMechanical::mech" name="mech">
+      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+    </argument>
+  </method>
+</class>

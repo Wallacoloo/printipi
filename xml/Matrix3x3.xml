@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="Matrix3x3" name="Matrix3x3" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <constructor id="Matrix3x3::Matrix3x3" name="Matrix3x3" />
+  <constructor id="Matrix3x3::Matrix3x3" name="Matrix3x3">
+    <argument id="Matrix3x3::Matrix3x3::a00" name="a00">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Matrix3x3::Matrix3x3::a01" name="a01">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Matrix3x3::Matrix3x3::a02" name="a02">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Matrix3x3::Matrix3x3::a10" name="a10">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Matrix3x3::Matrix3x3::a11" name="a11">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Matrix3x3::Matrix3x3::a12" name="a12">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Matrix3x3::Matrix3x3::a20" name="a20">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Matrix3x3::Matrix3x3::a21" name="a21">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="Matrix3x3::Matrix3x3::a22" name="a22">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method id="Matrix3x3::transform" name="transform">
+    <return>
+      <type name="std::tuple&lt;float, float, float&gt;" />
+    </return>
+    <argument id="Matrix3x3::transform::xyz" name="xyz">
+      <type name="std::tuple&lt;float, float, float&gt;" qualifier=" const &amp;" />
+    </argument>
+  </method>
+</class>

@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="iodrv::RCThermistor" name="RCThermistor" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <constructor id="iodrv::RCThermistor::RCThermistor" name="RCThermistor">
+    <argument id="iodrv::RCThermistor::RCThermistor::pin" name="pin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::RCThermistor::RCThermistor::R_OHMS" name="R_OHMS">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor::RCThermistor::C_FARADS" name="C_FARADS">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor::RCThermistor::VCC_V" name="VCC_V">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor::RCThermistor::V_TOGGLE_V" name="V_TOGGLE_V">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor::RCThermistor::T0_C" name="T0_C">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor::RCThermistor::R0_OHMS" name="R0_OHMS">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor::RCThermistor::BETA" name="BETA">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method id="iodrv::RCThermistor::isReady" name="isReady">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::RCThermistor::startRead" name="startRead">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::RCThermistor::timeSinceStartRead" name="timeSinceStartRead">
+    <return>
+      <type name="plat::generic::ChronoClock::duration" />
+    </return>
+  </method>
+  <method id="iodrv::RCThermistor::value" name="value">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+</class>

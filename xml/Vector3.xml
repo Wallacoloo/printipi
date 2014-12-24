@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="Vector3" name="Vector3" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="Vector3::F" name="F" />
+  <constructor id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;" />
+  <constructor id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
+    <argument id="Vector3::Vector3&lt;F&gt;::x" name="x">
+      <type name="F" />
+    </argument>
+    <argument id="Vector3::Vector3&lt;F&gt;::y" name="y">
+      <type name="F" />
+    </argument>
+    <argument id="Vector3::Vector3&lt;F&gt;::z" name="z">
+      <type name="F" />
+    </argument>
+  </constructor>
+  <methodtemplate id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Vector3::Vector3&lt;F&gt;::v" name="v">
+      <type name="const Other" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="Vector3::Vector3&lt;F&gt;::Other" name="Other" />
+  </methodtemplate>
+  <method id="Vector3::x" name="x">
+    <brief>accessors:</brief>
+    <return>
+      <type name="F" />
+    </return>
+  </method>
+  <method id="Vector3::y" name="y">
+    <return>
+      <type name="F" />
+    </return>
+  </method>
+  <method id="Vector3::z" name="z">
+    <return>
+      <type name="F" />
+    </return>
+  </method>
+  <method id="Vector3::magSq" name="magSq">
+    <return>
+      <type name="F" />
+    </return>
+  </method>
+  <method id="Vector3::mag" name="mag">
+    <return>
+      <type name="F" />
+    </return>
+  </method>
+  <method id="Vector3::operator-" name="operator-">
+    <brief>unary operators</brief>
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+  </method>
+  <method id="Vector3::norm" name="norm">
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+  </method>
+  <method id="Vector3::operator+" name="operator+">
+    <brief>operators:</brief>
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::operator+::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::operator+=" name="operator+=">
+    <return>
+      <type name="Vector3&lt;F&gt;" qualifier=" &amp;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::operator+=::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::operator-" name="operator-">
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::operator-::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::operator-=" name="operator-=">
+    <return>
+      <type name="Vector3&lt;F&gt;" qualifier=" &amp;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::operator-=::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::operator*" name="operator*">
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::operator*::s" name="s">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector3::operator*=" name="operator*=">
+    <return>
+      <type name="Vector3&lt;F&gt;" qualifier=" &amp;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::operator*=::s" name="s">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector3::operator/" name="operator/">
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::operator/::s" name="s">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector3::operator/=" name="operator/=">
+    <return>
+      <type name="Vector3&lt;F&gt;" qualifier=" &amp;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::operator/=::s" name="s">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector3::dot" name="dot">
+    <return>
+      <type name="F" />
+    </return>
+    <argument id="Vector3::dot::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::cross" name="cross">
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::cross::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::scalarProj" name="scalarProj">
+    <return>
+      <type name="F" />
+    </return>
+    <argument id="Vector3::scalarProj::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::proj" name="proj">
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::proj::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+</classtemplate>

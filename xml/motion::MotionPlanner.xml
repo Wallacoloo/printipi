@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="motion::MotionPlanner" name="MotionPlanner" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="motion::MotionPlanner::Interface" name="Interface" />
+  <constructor id="motion::MotionPlanner::MotionPlanner&lt;Interface&gt;" name="MotionPlanner&lt;Interface&gt;">
+    <argument id="motion::MotionPlanner::MotionPlanner&lt;Interface&gt;::interface" name="interface">
+      <type name="const Interface" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="motion::MotionPlanner::readyForNextMove" name="readyForNextMove">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="motion::MotionPlanner::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="motion::MotionPlanner::isHoming" name="isHoming">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="motion::MotionPlanner::nextOutputEvent" name="nextOutputEvent">
+    <return>
+      <type name="OutputEvent" />
+    </return>
+  </method>
+  <method id="motion::MotionPlanner::moveTo" name="moveTo">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::MotionPlanner::moveTo::baseTime" name="baseTime">
+      <type name="plat::generic::ChronoClock::time_point" />
+    </argument>
+    <argument id="motion::MotionPlanner::moveTo::x" name="x">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::moveTo::y" name="y">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::moveTo::z" name="z">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::moveTo::e" name="e">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::moveTo::maxVelXyz" name="maxVelXyz">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::moveTo::minVelE" name="minVelE">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::moveTo::maxVelE" name="maxVelE">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="motion::MotionPlanner::homeEndstops" name="homeEndstops">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::MotionPlanner::homeEndstops::baseTime" name="baseTime">
+      <type name="plat::generic::ChronoClock::time_point" />
+    </argument>
+    <argument id="motion::MotionPlanner::homeEndstops::maxVelXyz" name="maxVelXyz">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="motion::MotionPlanner::arcTo" name="arcTo">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::MotionPlanner::arcTo::baseTime" name="baseTime">
+      <type name="plat::generic::ChronoClock::time_point" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::x" name="x">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::y" name="y">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::z" name="z">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::e" name="e">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::centerX_" name="centerX_">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::centerY_" name="centerY_">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::centerZ_" name="centerZ_">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::maxVelXyz" name="maxVelXyz">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::minVelE" name="minVelE">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::maxVelE" name="maxVelE">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::isCW" name="isCW">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </method>
+</classtemplate>

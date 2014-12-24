@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="motion::MaxOutputEventSequenceSize" name="MaxOutputEventSequenceSize" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes" />
+  <templatenontypeparameter default="std" id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
+    <type name="std::size_t" />
+  </templatenontypeparameter>
+  <method id="motion::MaxOutputEventSequenceSize::maxSize" name="maxSize" static="yes">
+    <return>
+      <type name="std::size_t" />
+    </return>
+  </method>
+</classtemplate>

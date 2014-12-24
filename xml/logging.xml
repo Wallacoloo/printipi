@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namespace id="logging" name="logging" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <variable id="logging::_debug" name="_debug">
+    <type builtin="yes" name="bool" />
+  </variable>
+  <variable id="logging::_info" name="_info">
+    <type builtin="yes" name="bool" />
+  </variable>
+  <variable id="logging::_verbose" name="_verbose">
+    <type builtin="yes" name="bool" />
+  </variable>
+  <function id="logging::disable" name="disable">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </function>
+  <function id="logging::enableDebug" name="enableDebug">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </function>
+  <function id="logging::enableVerbose" name="enableVerbose">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </function>
+  <function id="logging::isDebugEnabled" name="isDebugEnabled">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </function>
+  <function id="logging::isInfoEnabled" name="isInfoEnabled">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </function>
+  <function id="logging::isVerboseEnabled" name="isVerboseEnabled">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </function>
+</namespace>

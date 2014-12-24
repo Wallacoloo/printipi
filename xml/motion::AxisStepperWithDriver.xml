@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="motion::AxisStepperWithDriver" name="AxisStepperWithDriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper" />
+  </base>
+  <templatetypeparameter id="motion::AxisStepperWithDriver::StepperDriver" name="StepperDriver" />
+  <constructor id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;" name="AxisStepperWithDriver&lt;StepperDriver&gt;" />
+  <constructor id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;" name="AxisStepperWithDriver&lt;StepperDriver&gt;">
+    <argument id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;::d" name="d">
+      <type name="const StepperDriver" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="motion::AxisStepperWithDriver::getStepOutputEventSequence" name="getStepOutputEventSequence">
+    <return>
+      <type name="decltype(this-&gt;driver-&gt;getEventOutputSequence(absoluteTime, this-&gt;direction))" />
+    </return>
+    <argument id="motion::AxisStepperWithDriver::getStepOutputEventSequence::absoluteTime" name="absoluteTime">
+      <type name="plat::generic::ChronoClock::time_point" />
+    </argument>
+  </method>
+</classtemplate>

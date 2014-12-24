@@ -1,0 +1,1025 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="gparse::Command" name="Command" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <field id="gparse::Command::opcodeStr" name="opcodeStr">
+    <brief>std::string opcode;</brief>
+    <type name="uint32_t" />
+  </field>
+  <field id="gparse::Command::arguments" name="arguments">
+    <brief>opcode still encoded as a 4-character string. MSB=first char, LSB=last char. String is right-adjusted (ie, the MSBs are 0 in the case that opcode isn't full 4 characters).</brief>
+    <doc>std::vector&amp;lt;std::string&amp;gt; pieces; //the command when split on spaces. Eg "G1 X2 Y3" -&gt; ["G1", "X2", "Y3"]</doc>
+    <type name="std::array&lt;float, 26&gt;" />
+  </field>
+  <field id="gparse::Command::filepathParam" name="filepathParam">
+    <brief>26 alphabetic possible arguments per Gcode. Case insensitive. Internally, this will default to NaN</brief>
+    <doc>sadly, M32 and the like use an unnamed string parameter for the filename
+I think it's relatively safe to say that there can only be one unnamed str param per gcode, as parameter order is irrelevant for all other commands, so unnamed parameters would have undefined orders.
+That assumption allows for significant performance benefits (ie, only one string, rather than a vector of strings)
+and if it turns out to be false, one can just join all the parameters into a single string with a defined delimiter (ie, a space)</doc>
+    <type name="std::string" />
+  </field>
+  <constructor id="gparse::Command::Command" name="Command">
+    <brief>initialize the command object from a line of GCode</brief>
+  </constructor>
+  <constructor id="gparse::Command::Command" name="Command">
+    <argument id="gparse::Command::Command::" name="">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="gparse::Command::empty" name="empty">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::getE" name="getE">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getE::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getE" name="getE">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getE::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getF" name="getF">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getF::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getF" name="getF">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getF::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getFilepathParam" name="getFilepathParam">
+    <return>
+      <type name="std::string" qualifier=" const &amp;" />
+    </return>
+  </method>
+  <method id="gparse::Command::getFloatParam" name="getFloatParam">
+    <brief>float Command::getFloatParam(char label) const {</brief>
+    <doc>return arguments[upper(label)-'A'];
+}</doc>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getFloatParam::label" name="label">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="gparse::Command::getFloatParam::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="gparse::Command::getFloatParam::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getFloatParam" name="getFloatParam">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getFloatParam::label" name="label">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="gparse::Command::getFloatParam::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getFloatParam" name="getFloatParam">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getFloatParam::label" name="label">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="gparse::Command::getFloatParam::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getI" name="getI">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getI::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getI" name="getI">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getI::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getJ" name="getJ">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getJ::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getJ" name="getJ">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getJ::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getK" name="getK">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getK::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getK" name="getK">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getK::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getOpcode" name="getOpcode">
+    <return>
+      <type name="std::string" />
+    </return>
+  </method>
+  <method id="gparse::Command::getS" name="getS">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getS::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getS" name="getS">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getS::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getX" name="getX">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getX::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getX" name="getX">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getX::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getY" name="getY">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getY::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getY" name="getY">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getY::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getZ" name="getZ">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getZ::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getZ" name="getZ">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getZ::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
+  <method id="gparse::Command::hasAnyXYZEParam" name="hasAnyXYZEParam">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasAnyXYZParam" name="hasAnyXYZParam">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasE" name="hasE">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasF" name="hasF">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasParam" name="hasParam">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="gparse::Command::hasParam::label" name="label">
+      <type builtin="yes" name="char" />
+    </argument>
+  </method>
+  <method id="gparse::Command::hasS" name="hasS">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasX" name="hasX">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasY" name="hasY">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasZ" name="hasZ">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG0" name="isG0">
+    <brief>Use these routines to check gcodes, as they potentially allow more optimization than casting the opcode to a string or int.</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG1" name="isG1">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG2" name="isG2">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG3" name="isG3">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG4" name="isG4">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG10" name="isG10">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG20" name="isG20">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG21" name="isG21">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG28" name="isG28">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG29" name="isG29">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG30" name="isG30">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG31" name="isG31">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG32" name="isG32">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG90" name="isG90">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG91" name="isG91">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isG92" name="isG92">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM0" name="isM0">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM1" name="isM1">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM3" name="isM3">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM4" name="isM4">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM5" name="isM5">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM7" name="isM7">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM8" name="isM8">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM9" name="isM9">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM10" name="isM10">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM11" name="isM11">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM17" name="isM17">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM18" name="isM18">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM20" name="isM20">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM21" name="isM21">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM22" name="isM22">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM23" name="isM23">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM24" name="isM24">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM25" name="isM25">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM26" name="isM26">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM27" name="isM27">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM28" name="isM28">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM29" name="isM29">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM30" name="isM30">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM32" name="isM32">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM40" name="isM40">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM41" name="isM41">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM42" name="isM42">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM43" name="isM43">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM80" name="isM80">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM81" name="isM81">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM82" name="isM82">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM83" name="isM83">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM84" name="isM84">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM92" name="isM92">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM98" name="isM98">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM99" name="isM99">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM103" name="isM103">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM104" name="isM104">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM105" name="isM105">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM106" name="isM106">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM107" name="isM107">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM108" name="isM108">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM109" name="isM109">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM110" name="isM110">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM111" name="isM111">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM112" name="isM112">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM113" name="isM113">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM114" name="isM114">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM115" name="isM115">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM116" name="isM116">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM117" name="isM117">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM118" name="isM118">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM119" name="isM119">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM120" name="isM120">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM121" name="isM121">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM122" name="isM122">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM123" name="isM123">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM124" name="isM124">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM126" name="isM126">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM127" name="isM127">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM128" name="isM128">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM129" name="isM129">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM130" name="isM130">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM131" name="isM131">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM132" name="isM132">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM133" name="isM133">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM134" name="isM134">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM135" name="isM135">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM136" name="isM136">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM140" name="isM140">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM141" name="isM141">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM142" name="isM142">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM143" name="isM143">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM144" name="isM144">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM160" name="isM160">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM190" name="isM190">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM200" name="isM200">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM201" name="isM201">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM202" name="isM202">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM203" name="isM203">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM204" name="isM204">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM205" name="isM205">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM206" name="isM206">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM207" name="isM207">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM208" name="isM208">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM209" name="isM209">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM210" name="isM210">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM220" name="isM220">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM221" name="isM221">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM226" name="isM226">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM227" name="isM227">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM228" name="isM228">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM229" name="isM229">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM230" name="isM230">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM240" name="isM240">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM241" name="isM241">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM245" name="isM245">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM246" name="isM246">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM280" name="isM280">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM300" name="isM300">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM301" name="isM301">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM302" name="isM302">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM303" name="isM303">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM304" name="isM304">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM305" name="isM305">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM400" name="isM400">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM420" name="isM420">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM540" name="isM540">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM550" name="isM550">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM551" name="isM551">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM552" name="isM552">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM553" name="isM553">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM554" name="isM554">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM555" name="isM555">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM556" name="isM556">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM557" name="isM557">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM558" name="isM558">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM559" name="isM559">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM560" name="isM560">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM561" name="isM561">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM562" name="isM562">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM563" name="isM563">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM564" name="isM564">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM565" name="isM565">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM566" name="isM566">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM567" name="isM567">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM568" name="isM568">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM569" name="isM569">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM665" name="isM665">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM906" name="isM906">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM998" name="isM998">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isM999" name="isM999">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::isTxxx" name="isTxxx">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::toGCode" name="toGCode">
+    <return>
+      <type name="std::string" />
+    </return>
+  </method>
+</class>

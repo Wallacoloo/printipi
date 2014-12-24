@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namespace id="iodrv" name="iodrv" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>for StepDirection</brief>
+  <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
+  <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
+  <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
+  <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  <struct name="IODriver__getBedTemp" ref="iodrv::IODriver__getBedTemp#iodrv::IODriver__getBedTemp">
+    <brief>IODriver::getBedTemp helper functions:</brief>
+  </struct>
+  <struct name="IODriver__getHotendTargetTemp" ref="iodrv::IODriver__getHotendTargetTemp#iodrv::IODriver__getHotendTargetTemp">
+    <brief>IODriver::getHotendTargetTemp helper functions:</brief>
+  </struct>
+  <struct name="IODriver__getHotendTemp" ref="iodrv::IODriver__getHotendTemp#iodrv::IODriver__getHotendTemp">
+    <brief>IODriver::getHotendTemp helper functions:</brief>
+  </struct>
+  <struct name="IODriver__lockAllAxis" ref="iodrv::IODriver__lockAllAxis#iodrv::IODriver__lockAllAxis">
+    <brief>IODriver::lockAllAxis helper functions:</brief>
+  </struct>
+  <struct name="IODriver__setBedTemp" ref="iodrv::IODriver__setBedTemp#iodrv::IODriver__setBedTemp">
+    <brief>IODriver::setBedTemp helper functions:</brief>
+  </struct>
+  <struct name="IODriver__setHotendTemp" ref="iodrv::IODriver__setHotendTemp#iodrv::IODriver__setHotendTemp">
+    <brief>IODriver::setHotendTemp helper functions:</brief>
+  </struct>
+  <struct name="IODriver__unlockAllAxis" ref="iodrv::IODriver__unlockAllAxis#iodrv::IODriver__unlockAllAxis">
+    <brief>IODriver::unlockAllAxis helper functions:</brief>
+  </struct>
+  <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
+  <class name="RCThermistor" ref="iodrv::RCThermistor#iodrv::RCThermistor" />
+  <classtemplate name="TempControl" ref="iodrv::TempControl#iodrv::TempControl">
+    <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
+    <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
+      <default>
+        <type name="PID" />
+      </default>
+    </templatetypeparameter>
+    <templatetypeparameter id="iodrv::TempControl::Filter" name="Filter">
+      <default>
+        <type name="NoFilter" />
+      </default>
+    </templatetypeparameter>
+  </classtemplate>
+  <enum anonymous="yes" id="iodrv::IoPinInversions" name="IoPinInversions">
+    <enumvalue id="iodrv::NO_INVERSIONS" name="NO_INVERSIONS" value="0">
+      <brief>bitfield that can be used to indicate whether a pin has logically-inverted reads/writes</brief>
+    </enumvalue>
+    <enumvalue id="iodrv::INVERT_READS" name="INVERT_READS" value="1" />
+    <enumvalue id="iodrv::INVERT_WRITES" name="INVERT_WRITES" value="2" />
+  </enum>
+  <enum anonymous="yes" id="iodrv::TempControlType" name="TempControlType">
+    <brief>enum passed to instructor to define the TempControl instance as either controlling a Hotend or a Heated Bed.</brief>
+    <doc>Functionally, they work the same, but each type responds to different G-codes.</doc>
+    <enumvalue id="iodrv::HotendType" name="HotendType" value="0" />
+    <enumvalue id="iodrv::HeatedBedType" name="HeatedBedType" value="1" />
+  </enum>
+</namespace>

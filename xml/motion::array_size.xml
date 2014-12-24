@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<structtemplate id="motion::array_size" name="array_size" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
+</structtemplate>

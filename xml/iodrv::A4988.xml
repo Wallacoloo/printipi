@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="iodrv::A4988" name="A4988" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  </base>
+  <constructor id="iodrv::A4988::A4988" name="A4988">
+    <argument id="iodrv::A4988::A4988::stepPin" name="stepPin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::A4988::A4988::dirPin" name="dirPin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::A4988::A4988::enablePin" name="enablePin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+  </constructor>
+  <method id="iodrv::A4988::getEventOutputSequence" name="getEventOutputSequence">
+    <return>
+      <type name="std::array&lt;OutputEvent, 3&gt;" />
+    </return>
+    <argument id="iodrv::A4988::getEventOutputSequence::evtTime" name="evtTime">
+      <type name="plat::generic::ChronoClock::time_point" />
+    </argument>
+    <argument id="iodrv::A4988::getEventOutputSequence::dir" name="dir">
+      <type name="motion::StepDirection" ref="motion#motion::StepDirection" />
+    </argument>
+  </method>
+  <method id="iodrv::A4988::lockAxis" name="lockAxis" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <override name="IODriver::lockAxis" ref="iodrv::IODriver#iodrv::IODriver::lockAxis" />
+  </method>
+  <method id="iodrv::A4988::unlockAxis" name="unlockAxis" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <override name="IODriver::unlockAxis" ref="iodrv::IODriver#iodrv::IODriver::unlockAxis" />
+  </method>
+</class>

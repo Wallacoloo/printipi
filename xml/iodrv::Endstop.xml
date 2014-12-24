@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="iodrv::Endstop" name="Endstop" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  </base>
+  <constructor id="iodrv::Endstop::Endstop" name="Endstop" />
+  <constructor id="iodrv::Endstop::Endstop" name="Endstop">
+    <argument id="iodrv::Endstop::Endstop::pin" name="pin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+  </constructor>
+  <method id="iodrv::Endstop::isNull" name="isNull">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::Endstop::isTriggered" name="isTriggered">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+</class>

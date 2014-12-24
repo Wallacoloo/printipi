@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class abstract="true" id="iodrv::IoPin" name="IoPin" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <subclass access="public" name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
+    <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
+  </subclass>
+  <methodtemplate id="iodrv::IoPin::IoPin" name="IoPin">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IoPin::IoPin::inversions" name="inversions">
+      <type name="IoPinInversions" ref="iodrv#iodrv::IoPinInversions" />
+    </argument>
+    <argument id="iodrv::IoPin::IoPin::defaultState" name="defaultState">
+      <type name="IoLevel" />
+    </argument>
+    <argument id="iodrv::IoPin::IoPin::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="iodrv::IoPin::IoPin::Args" name="Args" />
+  </methodtemplate>
+  <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
+    <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
+  </class>
+  <constructor abstract="yes" id="iodrv::IoPin::IoPin" name="IoPin">
+    <brief>prevent copy operations to make pin lifetime-tracking easier.</brief>
+    <doc>otherwise, we end up with a pin resetting itself everytime its copied</doc>
+    <argument id="iodrv::IoPin::IoPin::other" name="other">
+      <type name="IoPin" qualifier=" const &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
+    </argument>
+  </constructor>
+  <constructor id="iodrv::IoPin::IoPin" name="IoPin">
+    <brief>allow the move constructor &amp; move assignment:</brief>
+    <argument id="iodrv::IoPin::IoPin::other" name="other">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+  </constructor>
+  <destructor id="iodrv::IoPin::~IoPin" name="~IoPin">
+    <brief>template &amp;lt;typename ...Args&amp;gt; IoPin(Args... args)</brief>
+    <doc>: _pin(args...), _invertReads(false), _invertWrites(false), _defaultState(IoLow) {
+ registerExitHandler();
+ livingPins.insert(this);
+}</doc>
+  </destructor>
+  <method id="iodrv::IoPin::deactivateAll" name="deactivateAll" static="yes">
+    <brief>set all pins to their (safe) default output:</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IoPin::digitalRead" name="digitalRead">
+    <return>
+      <type name="IoLevel" />
+    </return>
+  </method>
+  <method id="iodrv::IoPin::digitalWrite" name="digitalWrite">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IoPin::digitalWrite::lev" name="lev">
+      <type name="IoLevel" />
+    </argument>
+  </method>
+  <method id="iodrv::IoPin::isNull" name="isNull">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IoPin::makeDigitalInput" name="makeDigitalInput">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
+    <brief>wrapper functions that take the burden of inversions, etc off the platform-specific drivers:</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IoPin::makeDigitalOutput::lev" name="lev">
+      <type name="IoLevel" />
+    </argument>
+  </method>
+  <method abstract="yes" id="iodrv::IoPin::operator=" name="operator=">
+    <return>
+      <type name="IoPin" qualifier=" &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
+    </return>
+    <argument id="iodrv::IoPin::operator=::other" name="other">
+      <type name="IoPin" qualifier=" const &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
+    </argument>
+  </method>
+  <method id="iodrv::IoPin::operator=" name="operator=">
+    <return>
+      <type name="IoPin" qualifier=" &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
+    </return>
+    <argument id="iodrv::IoPin::operator=::other" name="other">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+  </method>
+  <method id="iodrv::IoPin::primitiveIoPin" name="primitiveIoPin">
+    <return>
+      <type name="PrimitiveIoPin" qualifier=" const &amp;" />
+    </return>
+  </method>
+  <method id="iodrv::IoPin::registerExitHandler" name="registerExitHandler" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IoPin::setToDefault" name="setToDefault">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IoPin::translateDutyCycleToPrimitive" name="translateDutyCycleToPrimitive">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="iodrv::IoPin::translateDutyCycleToPrimitive::pwm" name="pwm">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
+    <return>
+      <type name="IoLevel" />
+    </return>
+    <argument id="iodrv::IoPin::translateWriteToPrimitive::lev" name="lev">
+      <type name="IoLevel" />
+    </argument>
+  </method>
+</class>

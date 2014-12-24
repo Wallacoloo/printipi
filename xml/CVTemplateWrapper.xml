@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='utf-8'?>
+<structtemplate id="CVTemplateWrapper" name="CVTemplateWrapper" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>TODO: consider replacing CVTemplateWrapper with std::integral_constant</brief>
+  <templatenontypeparameter default="std" id="CVTemplateWrapper::Value" name="Value">
+    <type name="std::size_t" />
+  </templatenontypeparameter>
+  <variable id="CVTemplateWrapper::value" name="value">
+    <brief>Const-Value template wrapper.</brief>
+    <doc>callOnAll function gives an object and a tuple index, both are which are compile-time constants - as function arguments
+One can template on the object *type*, but one can't template on the index (a *value*). So in order for the user function to know the index as a compile-time constant, we must wrap it as a type. Hence CVTemplateWrapper&amp;lt;index&amp;gt;</doc>
+    <type name="std::size_t" qualifier=" const" />
+  </variable>
+  <constructor id="CVTemplateWrapper::CVTemplateWrapper&lt;Value&gt;" name="CVTemplateWrapper&lt;Value&gt;">
+    <argument id="CVTemplateWrapper::CVTemplateWrapper&lt;Value&gt;::v" name="v">
+      <type name="std::size_t" />
+    </argument>
+  </constructor>
+  <conversionfunction id="CVTemplateWrapper::operator unsigned long" name="operator unsigned long">
+    <return>
+      <type name="std::size_t" />
+    </return>
+  </conversionfunction>
+</structtemplate>

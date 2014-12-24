@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namespace id="mathutil" name="mathutil" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+Printipi/common/mathutil.h
+
+This file provides some useful conversion (mm to inches, celcius to kelvin, etc), mathematical constants, and basic mathematical functions for convenience.
+</doc>
+  <functiontemplate id="mathutil::CtoK" name="CtoK">
+    <brief>It appears that by definition, there are EXACTLY 25.4 mm per inch.</brief>
+    <return>
+      <type name="T" />
+    </return>
+    <argument id="mathutil::CtoK::C" name="C">
+      <type name="T" />
+    </argument>
+    <templatetypeparameter id="mathutil::CtoK::T" name="T" />
+  </functiontemplate>
+  <functiontemplate id="mathutil::KtoC" name="KtoC">
+    <return>
+      <type name="T" />
+    </return>
+    <argument id="mathutil::KtoC::K" name="K">
+      <type name="T" />
+    </argument>
+    <templatetypeparameter id="mathutil::KtoC::T" name="T" />
+  </functiontemplate>
+  <variable id="mathutil::MM_PER_IN" name="MM_PER_IN">
+    <type builtin="yes" name="float" qualifier=" const" />
+  </variable>
+</namespace>

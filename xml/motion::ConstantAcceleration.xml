@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="motion::ConstantAcceleration" name="ConstantAcceleration" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
+  </base>
+  <constructor id="motion::ConstantAcceleration::ConstantAcceleration" name="ConstantAcceleration">
+    <argument id="motion::ConstantAcceleration::ConstantAcceleration::accel" name="accel">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method id="motion::ConstantAcceleration::begin" name="begin" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::ConstantAcceleration::begin::moveDuration" name="moveDuration">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::ConstantAcceleration::begin::Vmax" name="Vmax">
+      <type builtin="yes" name="float" />
+    </argument>
+    <override name="AccelerationProfile::begin" ref="motion::AccelerationProfile#motion::AccelerationProfile::begin" />
+  </method>
+  <method id="motion::ConstantAcceleration::transform" name="transform">
+    <brief>float transform(float time, float moveDuration, float Vmax) {</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::ConstantAcceleration::transform::time" name="time">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+</class>
