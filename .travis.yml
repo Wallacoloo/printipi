@@ -10,7 +10,7 @@ before_install:
 - sudo add-apt-repository -y ppa:dr-graef/llvm-3.1.precise
 - sudo apt-get update -qq
 install:
-- sudo apt-get install -qq g++-4.7 libclang-dev
+- sudo apt-get install -qq g++-4.7 libclang-dev clang
 - sudo pip install cldoc
 
 env:
