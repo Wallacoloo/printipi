@@ -18,5 +18,6 @@ echo "https://$GH_TOKEN:@github.com" >> .git/credentials
 git branch $doc_branch origin/$doc_branch
 touch travis-test.txt
 git add travis-test.txt
+git commit -m"test Travis-CI push"
 git push origin $doc_branch
 rm .git/credentials
