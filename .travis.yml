@@ -16,6 +16,8 @@ install:
 - cd cldoc
 - sudo make install
 - popd
+- echo $PATH
+- ls /home/travis/.local/bin
 
 env:
   global:
