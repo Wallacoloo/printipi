@@ -6,6 +6,7 @@
 #include "platforms/auto/chronoclock.h" //for EventClockT
 #include "platforms/auto/primitiveiopin.h"
 #include "schedulerbase.h" //for OnIdleCpuIntervalT (cannot forward-declare an enum)
+#include "common/logging.h"
 
 class OutputEvent; //forward declare for class defined in outputevent.h
 

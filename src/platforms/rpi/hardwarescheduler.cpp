@@ -12,6 +12,7 @@
 #include <pthread.h> //for pthread_setschedparam
 #include <chrono>
 
+#include "primitiveiopin.h"
 #include "mitpi.h"
 #include "schedulerbase.h"
 #include "common/logging.h"

@@ -3,6 +3,8 @@
 
 #include <tuple>
 
+#include "compileflags.h" //for IoLevel
+
 namespace plat {
 namespace generic {
 
