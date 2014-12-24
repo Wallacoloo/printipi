@@ -35,7 +35,7 @@ cp -r $gitroot/doc .
 
 #commit the changes
 git add --all
-git commit -m"Travis CI auto-update documentation" || true #attempting to make a commit with no changes will raise an error
+git commit -m"Travis CI auto-update documentation" || true #attempting to make a commit with no changes will otherwise raise an error
 git push -q $deploy_url $deploy_branch
 
 #cleanup
