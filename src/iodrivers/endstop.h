@@ -35,6 +35,7 @@
 #include <utility> //for std::move
 #include "iodriver.h"
 #include "iopin.h"
+#include "common/logging.h"
 
 namespace iodrv {
 

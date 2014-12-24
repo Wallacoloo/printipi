@@ -39,6 +39,7 @@
 #include "accelerationprofile.h"
 #include "axisstepper.h"
 #include "common/vector3.h"
+#include "common/logging.h"
 
 namespace motion {
 

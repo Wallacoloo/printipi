@@ -33,6 +33,8 @@
 #ifndef MOTION_CONSTANTACCELERATION_H
 #define MOTION_CONSTANTACCELERATION_H
 
+#include <cmath> //for std::isnan
+#include <algorithm> //for std::min
 #include "accelerationprofile.h"
 #include "common/logging.h"
 

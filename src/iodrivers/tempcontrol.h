@@ -43,6 +43,7 @@
 #include "iodrivers/iopin.h"
 #include "compileflags.h" //for CelciusType
 #include "pid.h" //for default template parameter
+#include "common/logging.h"
 
 namespace iodrv {
 

@@ -1,6 +1,8 @@
 #ifndef BOILERPLATE_THISTHREADSLEEPADAPTER_H
 #define BOILERPLATE_THISTHREADSLEEPADAPTER_H
 
+#include <chrono>
+
 template <typename ClockT, typename SleepT> class ThisThreadSleepAdapter {
     //allows for sleeping to an absolute time when the custom clock (EventClockT) has a different offset than the system clock (which is otherwise used for measuring sleep times).
     //ClockT is the clock to which absolute times should be compared.
