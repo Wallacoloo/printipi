@@ -72,7 +72,8 @@ UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-
 CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
 #Extra flags to apply JUST to main.cpp (eg -fwhole-program)
 MAINCFLAGS=
-LD=ld
+#Use the C++ compiler to generate archives, instead of AR or LD, so as to be compatible with clang
+MAKEARCHIVE=$(CXX) -Wl,-r -nostdlib $(LTOFLAG) -o
 LDFLAGS= $(LTOFLAG)
 #-lrt is the realtime posix library. Appears to be needed for things like clock_nanosleep
 LIBS=-lrt
@@ -145,22 +146,22 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 #  Thus, if you're targeting the Raspberry Pi (rpi), any source files under platforms/rpi/* will be compiled into the executable
 %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard $(MACHINE_CLASS_DIR)/*.cpp))) %/empty.o
 	@mkdir -p $(@D)
-	$(LD) -r $^ -o $@ $(LDFLAGS)
+	$(MAKEARCHIVE) $@ $^
 	
 %/iodrivers/iodrivers.a: %/iodrivers/iopin.o
-	$(LD) -r $^ -o $@ $(LDFLAGS)
+	$(MAKEARCHIVE) $@ $^
 
 %/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
-	$(LD) -r $^ -o $@ $(LDFLAGS)
+	$(MAKEARCHIVE) $@ $^
 	
 %/common/common.a: %/common/logging.o
-	$(LD) -r $^ -o $@ $(LDFLAGS)
+	$(MAKEARCHIVE) $@ $^
 
 %/motion/motion.a: %/motion/axisstepper.o
-	$(LD) -r $^ -o $@ $(LDFLAGS)
+	$(MAKEARCHIVE) $@ $^
 	
 %/rest.a: %/argparse.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o 
-	$(LD) -r $^ -o $@ $(LDFLAGS)
+	$(MAKEARCHIVE) $@ $^
 %/main.cpp: $(MACHINE_PATH)
 	
 #Prevent the automatic deletion of "intermediate" .o files after the build by nulling .SECONDARY as follows.

@@ -17,4 +17,13 @@ make CXX=g++-4.7 MACHINE=rpi/kosselrampsfd.h debug
 make CXX=g++-4.7 MACHINE=rpi/kosselrampsfd.h release
 make CXX=g++-4.7 MACHINE=generic/cartesian.h debug
 make CXX=g++-4.7 MACHINE=generic/cartesian.h release
+
+make CXX=clang++-3.4 MACHINE=rpi/kosselrampsfd.h debug
+make CXX=clang++-3.4 MACHINE=rpi/kosselrampsfd.h release
+make CXX=clang++-3.4 MACHINE=generic/cartesian.h debug
+make CXX=clang++-3.4 MACHINE=generic/cartesian.h release
+make CXX=clang++-3.5 MACHINE=rpi/kosselrampsfd.h debug
+make CXX=clang++-3.5 MACHINE=rpi/kosselrampsfd.h release
+make CXX=clang++-3.5 MACHINE=generic/cartesian.h debug
+make CXX=clang++-3.5 MACHINE=generic/cartesian.h release
 popd

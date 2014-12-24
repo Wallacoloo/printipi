@@ -5,11 +5,10 @@ compiler:
 script: "./travis-hook.sh"
 
 before_install:
-- if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test;
-  fi
+- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 - sudo apt-get update -qq
 install:
-- if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.7; fi
+- sudo apt-get install -qq g++-4.7 clang-3.4 clang-3.5
 
 env:
   global:
