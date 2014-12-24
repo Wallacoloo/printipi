@@ -5,7 +5,7 @@
 #used as reference: http://awestruct.org/auto-deploy-to-github-pages/
 
 set -e #exit script if any of the commands error
-set -x #echo each command
+set +x #DON'T echo the next few commands
 
 deploy_branch="gh-pages"
 repo=`git config remote.origin.url | sed "s/^git:/https:/"`
@@ -18,6 +18,8 @@ pushd `mktemp -d`
 git clone --branch $deploy_branch $repo .
 git config user.name $GIT_NAME
 git config user.email $GIT_EMAIL
+
+set -x #echo future commands
 
 #cldoc fix for https://github.com/jessevdk/cldoc/issues/2
 #pushd /usr/bin/x86_64-linux-gnu
