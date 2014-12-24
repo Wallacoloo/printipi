@@ -113,7 +113,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
             return endstops[axis];
         }
-        template <std::size_t idx> const auto getStepperDriver() const
+        template <std::size_t idx> auto getStepperDriver() const
          -> const typename std::tuple_element<idx, StepperDriverTypes>::type& {
             return std::get<idx>(stepperDrivers);
         }

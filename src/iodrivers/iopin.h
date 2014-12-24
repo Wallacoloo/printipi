@@ -55,7 +55,7 @@ class IoPin {
     public:
         //forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly
         //null() cannot be implemented as a function, as it would necessitate a copy, which is prohibited
-        struct null;
+        class null;
 
         //set all pins to their (safe) default output:
         static void deactivateAll();
