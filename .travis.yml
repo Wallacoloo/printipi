@@ -14,7 +14,7 @@ install:
 - pushd `mktemp -d`
 - git clone https://github.com/jessevdk/cldoc.git
 - cd cldoc
-- sudo make install
+- make install
 #- cd /usr/local/bin
 #- sudo ln -s /home/travis/.local/bin/cldoc .
 - popd
