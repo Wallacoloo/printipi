@@ -10,7 +10,12 @@ before_install:
 - sudo apt-get update -qq
 install:
 - sudo apt-get install -qq libclang-3.4-dev clang-3.4 libclang1-3.4 libclang-common-3.4-dev
-- sudo pip install cldoc
+#- sudo pip install cldoc
+- pushd `mktemp -d`
+- git clone https://github.com/jessevdk/cldoc.git
+- cd cldoc
+- sudo make install
+- popd
 
 env:
   global:
