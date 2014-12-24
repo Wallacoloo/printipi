@@ -6,7 +6,7 @@
 set -e #exit script if any of the commands error
 
 doc_branch="gh-pages"
-repo=`git config remote.origin.url` | sed "s/^git:/https:/"
+repo=`git config remote.origin.url | sed "s/^git:/https:/"`
 
 git remote set-url --push origin $repo
 git remote set-branches --add origin $doc_branch
