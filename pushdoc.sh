@@ -5,6 +5,7 @@
 #used as reference: http://awestruct.org/auto-deploy-to-github-pages/
 
 set -e #exit script if any of the commands error
+set -x #echo each command
 
 deploy_branch="gh-pages"
 repo=`git config remote.origin.url | sed "s/^git:/https:/"`

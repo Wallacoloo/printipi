@@ -2,6 +2,8 @@
 #This script tests a few different build settings to make sure nothing's broken
 #This script is called from .travis.yml after each push to github.
 set -e #exit script if any of the commands error
+set -x #echo each command
+
 pushd src
 make clean
 #things to test:
