@@ -1,14 +1,16 @@
 language: cpp
 compiler:
-  - gcc
-script: ./buildtest.sh
+- gcc
+
+script: "./travis-hook.sh"
 
 before_install:
-  # g++4.7.3
-  - if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test; fi
-
-  - sudo apt-get update -qq
-
+- if [ "$CXX" == "g++" ]; then sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test;
+  fi
+- sudo apt-get update -qq
 install:
-  # g++4.7.3
-  - if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.7; fi
+- if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.7; fi
+
+env:
+  global:
+    secure: eyWLuwf/6zIIKECSRZdJM2SW1ai0/FYEiPDtg604OkdmoNZAAUqfFrL1mBzu32gGxZWOHasCMD4DHdtWU7Kf/vIdich4mTAg5nfMux+QPSGNn6xUHYtTGtbj6/baCmAzXUJoIONFbBnj+anOazpaBURpozsMOiHoK5giCHyooLk=
