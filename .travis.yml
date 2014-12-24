@@ -9,7 +9,11 @@ before_install:
 - sudo apt-get update -qq
 install:
 - sudo apt-get install -qq g++-4.7 libclang-dev
-- sudo pip install cldoc
+- pushd `mktemp -d`
+- git clone https://github.com/jessevdk/cldoc.git
+- cd cldoc
+- make install
+- popd
 
 env:
   global:

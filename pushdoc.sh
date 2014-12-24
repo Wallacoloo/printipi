@@ -20,9 +20,9 @@ git config user.name $GIT_NAME
 git config user.email $GIT_EMAIL
 
 #cldoc fix for https://github.com/jessevdk/cldoc/issues/2
-pushd /usr/bin/x86_64-linux-gnu
-sudo ln -s libclang.so.1 libclang.so
-popd
+#pushd /usr/bin/x86_64-linux-gnu
+#sudo ln -s libclang.so.1 libclang.so
+#popd
 
 #build the documentation:
 mkdir doc
