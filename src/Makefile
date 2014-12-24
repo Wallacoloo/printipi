@@ -163,11 +163,16 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 %/rest.a: %/argparse.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o 
 	$(MAKEARCHIVE) $@ $^
 %/main.cpp: $(MACHINE_PATH)
+
+#Make documentation:
+doc:
+	rm -rf ../doc
+	cldoc generate -std=c++0x -I. -DMACHINE_PATH='"machines/generic/cartesian.h"' -DMACHINE="generic::cartesian" -- --report --merge docs --output ../doc **/*.cpp **/*.h
 	
 #Prevent the automatic deletion of "intermediate" .o files after the build by nulling .SECONDARY as follows.
 .SECONDARY:
 
-.PHONY: clean cleandebug cleanrelease cleanprofile cleanminsize debug release profile minsize
+.PHONY: clean cleandebug cleanrelease cleanprofile cleanminsize debug debugrel release profile minsize doc
 cleandebug:
 	rm -rf $(DEBUGDIR_BASE)-*
 cleandebugrel:

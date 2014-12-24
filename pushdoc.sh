@@ -11,16 +11,33 @@ deploy_branch="gh-pages"
 repo=`git config remote.origin.url | sed "s/^git:/https:/"`
 deploy_url=`echo $repo | sed "s|https://|https://$GH_TOKEN@|"`
 
+gitroot=$PWD
+
 #checkout the deploy branch in a temporary directory
 pushd `mktemp -d`
 git clone --branch $deploy_branch $repo .
 git config user.name $GIT_NAME
 git config user.email $GIT_EMAIL
-#make changes
-touch travis-test.txt
-git add travis-test.txt
-git commit -m"test Travis-CI push" || true #attempting to make a commit with no changes will raise an error
+
+#cldoc fix for https://github.com/jessevdk/cldoc/issues/2
+pushd /usr/bin/x86_64-linux-gnu
+sudo ln -s libclang.so.1 libclang.so
+popd
+
+#build the documentation:
+mkdir doc
+pushd $gitroot/src
+make doc
+popd
+#copy the documentation into the gh-pages branch
+git rm -rf **
+cp -r $gitroot/doc .
+
+#commit the changes
+git add --all
+git commit -m"Travis CI auto-update documentation" || true #attempting to make a commit with no changes will raise an error
 git push -q $deploy_url $deploy_branch
+
 #cleanup
 rm -rf $(pwd)
 popd

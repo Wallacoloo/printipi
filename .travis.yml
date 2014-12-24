@@ -8,7 +8,8 @@ before_install:
 - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 - sudo apt-get update -qq
 install:
-- sudo apt-get install -qq g++-4.7
+- sudo apt-get install -qq g++-4.7 libclang-dev
+- sudo pip install cldoc
 
 env:
   global:
