@@ -18,7 +18,6 @@ install:
 #- cd /usr/local/bin
 #- sudo ln -s /home/travis/.local/bin/cldoc .
 - popd
-- PATH=PATH:/home/travis/.local/bin/cldoc
 - echo $PATH
 - sudo ls /home/travis/.local/bin
 
