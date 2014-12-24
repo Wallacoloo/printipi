@@ -167,7 +167,8 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 #Make documentation:
 doc:
 	rm -rf ../doc
-	cldoc generate -v -std=c++0x -I. -DMACHINE_PATH='"machines/generic/cartesian.h"' -DMACHINE="generic::cartesian" -- --report --merge docs --output ../doc **/*.cpp **/*.h
+	ls -l /usr/include/clang
+	cldoc generate -v -std=c++0x -I. -I/usr/include/clang/3.4 -DMACHINE_PATH='"machines/generic/cartesian.h"' -DMACHINE="generic::cartesian" -- --report --merge docs --output ../doc **/*.cpp **/*.h
 	
 #Prevent the automatic deletion of "intermediate" .o files after the build by nulling .SECONDARY as follows.
 .SECONDARY:
