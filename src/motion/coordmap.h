@@ -64,7 +64,7 @@ class CoordMap {
             //return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)
             //Depending on which AxisSteppers your CoordMap uses, you may not need to implement this function.
             (void)axis; //unused
-            return *(iodrv::Endstop*)(NULL);
+            return *(iodrv::Endstop*)(nullptr);
         }
         inline static constexpr std::size_t numAxis() {
             //return the number of axis (physical motors) that we have.

@@ -117,7 +117,7 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
             intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
         } else {
             intervalT = OnIdleCpuIntervalWide; //no cpu is needed; wide delay
-            sleepUntilEvent(NULL);
+            sleepUntilEvent(nullptr);
         }
     }
 }

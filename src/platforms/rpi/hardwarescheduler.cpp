@@ -2,9 +2,9 @@
 
 #include <sys/mman.h> //for mmap
 #include <sys/time.h> //for timespec
-#include <time.h> //for timespec / nanosleep / usleep (need -std=gnu99)
+#include <time.h> //for timespec / nanosleep
 #include <signal.h> //for sigaction
-#include <unistd.h> //for NULL
+#include <unistd.h> //for lseek, read, etc.
 #include <stdlib.h> //for exit
 #include <cassert>
 #include <fcntl.h> //for file opening
@@ -52,7 +52,7 @@ uintptr_t physToUncached(uintptr_t phys) {
 uint8_t* makeLockedMem(size_t size) {
     size = ceilToPage(size);
     void *mem = mmap(
-        NULL,   //let kernel place memory where it wants
+        nullptr,   //let kernel place memory where it wants
         size,   //length
         PROT_WRITE | PROT_READ, //ask for read and write permissions to memory
         MAP_SHARED | 
@@ -119,7 +119,7 @@ void HardwareScheduler::cleanup() {
     //disable DMA. Otherwise, it will continue to run in the background, potentially overwriting future user data.
     if(dmaHeader) {
         writeBitmasked(&dmaHeader->CS, DMA_CS_ACTIVE, 0);
-        usleep(100);
+        mitpi::usleep(100);
         writeBitmasked(&dmaHeader->CS, DMA_CS_RESET, DMA_CS_RESET);
     }
     //TODO: could also disable PWM, but that's not imperative.
@@ -200,7 +200,7 @@ uint8_t* HardwareScheduler::makeUncachedMemView(void* virtaddr, size_t bytes) co
     bytes = ceilToPage(bytes);
     //first, just allocate enough *virtual* memory for the operation. This is done so that we can do the later mapping to a contiguous range of virtual memory:
     void *mem = mmap(
-        NULL,   //let kernel place memory where it wants
+        nullptr,   //let kernel place memory where it wants
         bytes,   //length
         PROT_WRITE | PROT_READ, //ask for read and write permissions to memory
         MAP_SHARED | 
@@ -262,10 +262,10 @@ void HardwareScheduler::initPwm() {
     
     pwmHeader->DMAC = 0; //disable DMA
     pwmHeader->CTL |= PWM_CTL_CLRFIFO; //clear pwm
-    usleep(100);
+    mitpi::usleep(100);
     
     pwmHeader->STA = PWM_STA_ERRS; //clear PWM errors
-    usleep(100);
+    mitpi::usleep(100);
     
     pwmHeader->DMAC = PWM_DMAC_EN | PWM_DMAC_DREQ(PWM_FIFO_SIZE) | PWM_DMAC_PANIC(PWM_FIFO_SIZE); //DREQ is activated at queue < PWM_FIFO_SIZE
     pwmHeader->RNG1 = BITS_PER_CLOCK; //used only for timing purposes; #writes to PWM FIFO/sec = PWM CLOCK / RNG1
@@ -281,10 +281,10 @@ void HardwareScheduler::initDma() {
     //abort any previous DMA:
     //dmaHeader->NEXTCONBK = 0; //NEXTCONBK is read-only.
     dmaHeader->CS |= DMA_CS_ABORT; //make sure to disable dma first.
-    usleep(100); //give time for the abort command to be handled.
+    mitpi::usleep(100); //give time for the abort command to be handled.
     
     dmaHeader->CS = DMA_CS_RESET;
-    usleep(100);
+    mitpi::usleep(100);
     
     writeBitmasked(&dmaHeader->CS, DMA_CS_END, DMA_CS_END); //clear the end flag
     dmaHeader->DEBUG = DMA_DEBUG_READ_ERROR | DMA_DEBUG_FIFO_ERROR | DMA_DEBUG_READ_LAST_NOT_SET_ERROR; // clear debug error flags

@@ -52,7 +52,7 @@ template <typename StepperDriverT, std::size_t AxisIdx> class LinearHomeStepper 
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
     public:
-        inline LinearHomeStepper() : endstop(NULL) {}
+        inline LinearHomeStepper() : endstop(nullptr) {}
         template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome)
           : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()), endstop(&map.getEndstop(AxisIdx)) {
             (void)map; //unused

@@ -40,17 +40,17 @@ void SchedulerBase::configureExitHandlers() {
     sigIntHandler.sa_handler = ctrlCOrZHandler;
     sigemptyset(&sigIntHandler.sa_mask);
     sigIntHandler.sa_flags = 0;
-    sigaction(SIGINT, &sigIntHandler, NULL); //register ctrl+c
-    sigaction(SIGTSTP, &sigIntHandler, NULL); //register ctrl+z
-    sigaction(SIGABRT, &sigIntHandler, NULL); //register SIGABRT, which is triggered for critical errors (eg glibc detects double-free)
-    sigaction(SIGTERM, &sigIntHandler, NULL); //register SIGTERM
+    sigaction(SIGINT, &sigIntHandler, nullptr); //register ctrl+c
+    sigaction(SIGTSTP, &sigIntHandler, nullptr); //register ctrl+z
+    sigaction(SIGABRT, &sigIntHandler, nullptr); //register SIGABRT, which is triggered for critical errors (eg glibc detects double-free)
+    sigaction(SIGTERM, &sigIntHandler, nullptr); //register SIGTERM
     
     struct sigaction sa;
     //memset(&sa, 0, sizeof(sigaction));
     sigemptyset(&sa.sa_mask);
     sa.sa_sigaction = segfaultHandler;
     sa.sa_flags   = SA_SIGINFO;
-    sigaction(SIGSEGV, &sa, NULL); //register segfault listener
+    sigaction(SIGSEGV, &sa, nullptr); //register segfault listener
 }
 
 bool SchedulerBase::registerExitHandler(void (*handler)(), unsigned level) {

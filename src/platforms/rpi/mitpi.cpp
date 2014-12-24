@@ -29,8 +29,8 @@
 
 #include <sys/mman.h> //for mmap
 #include <sys/time.h> 
-#include <time.h> //for nanosleep / usleep (need -std=gnu99)
-#include <unistd.h> //for NULL
+#include <time.h> //for nanosleep / usleep (if have -std=gnu99)
+#include <unistd.h> //for usleep
 #include <stdlib.h> //for exit
 #include <cassert> //for assert
 #include <fcntl.h> //for file opening
@@ -39,8 +39,8 @@
 
 namespace mitpi {
 
-volatile uint32_t *gpioBaseMem = NULL;
-volatile uint32_t *timerBaseMem = NULL;
+volatile uint32_t *gpioBaseMem = nullptr;
+volatile uint32_t *timerBaseMem = nullptr;
 
 void assertValidPin(int pin) {
     (void)pin; //unused when assertions are disabled.
@@ -65,7 +65,7 @@ volatile uint32_t* mapPeripheral(int memfd, int addr) {
     //PROT_READ|PROT_WRITE means give us read and write priveliges to the memory
     //MAP_SHARED means updates to the mapped memory should be written back to the file & shared with other processes
     //addr = offset in file to map
-    void *mapped = mmap(NULL, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
+    void *mapped = mmap(nullptr, PAGE_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, memfd, addr);
     //now, *mapped = memory at physical address of addr.
     if (mapped == MAP_FAILED) {
         LOGE("MitPi::mapPeripheral failed to map memory (did you remember to run as root?)\n");

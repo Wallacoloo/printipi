@@ -22,7 +22,7 @@
                 timespec tsSleepUntil;
                 tsSleepUntil.tv_sec = durSec.count();
                 tsSleepUntil.tv_nsec = durNsec.count();
-                clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &tsSleepUntil, NULL);
+                clock_nanosleep(CLOCK_MONOTONIC, TIMER_ABSTIME, &tsSleepUntil, nullptr);
             }
             template <class Rep, class Period> static void sleep_for(const std::chrono::duration<Rep, Period> &dur) {
                 auto durSec = std::chrono::duration_cast<std::chrono::seconds>(dur);
@@ -30,7 +30,7 @@
                 timespec tsSleepUntil;
                 tsSleepUntil.tv_sec = durSec.count();
                 tsSleepUntil.tv_nsec = durNsec.count();
-                clock_nanosleep(CLOCK_MONOTONIC, 0, &tsSleepUntil, NULL); //0 = time given is relative.
+                clock_nanosleep(CLOCK_MONOTONIC, 0, &tsSleepUntil, nullptr); //0 = time given is relative.
             }
     };
 
