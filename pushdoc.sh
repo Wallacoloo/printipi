@@ -7,9 +7,6 @@
 set -e #exit script if any of the commands error
 set +x #DON'T echo the next few commands
 
-#If running in Travis CI:
-PATH=$PATH:/home/travis/.local/bin/cldoc
-
 deploy_branch="gh-pages"
 repo=`git config remote.origin.url | sed "s/^git:/https:/"`
 deploy_url=`echo $repo | sed "s|https://|https://$GH_TOKEN@|"`
@@ -23,6 +20,9 @@ git config user.name $GIT_NAME
 git config user.email $GIT_EMAIL
 
 set -x #echo future commands
+
+#If running in Travis CI:
+PATH=$PATH:/home/travis/.local/bin
 
 #cldoc fix for https://github.com/jessevdk/cldoc/issues/2
 #pushd /usr/bin/x86_64-linux-gnu
