@@ -7,8 +7,8 @@
 set -e #exit script if any of the commands error
 set +x #DON'T echo the next few commands
 
-#If running in Travis CI:Z
-PATH=PATH:/home/travis/.local/bin/cldoc
+#If running in Travis CI:
+PATH=$PATH:/home/travis/.local/bin/cldoc
 
 deploy_branch="gh-pages"
 repo=`git config remote.origin.url | sed "s/^git:/https:/"`
