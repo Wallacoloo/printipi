@@ -1,23 +1,23 @@
 #!/bin/bash
 #Whenever Travis CI runs on our repository
 # we have the opportunity to have it update the documentation and push that to gh-pages
+#used as reference: https://evansosenko.com/posts/automatic-publishing-github-pages-travis-ci/
 #used as reference: http://awestruct.org/auto-deploy-to-github-pages/
 
 set -e #exit script if any of the commands error
 
-doc_branch="gh-pages"
+deploy_branch="gh-pages"
 repo=`git config remote.origin.url | sed "s/^git:/https:/"`
+deploy_url=`echo $repo | sed "s|https://|https://$GH_TOKEN@|"`
 
-git remote set-url --push origin $repo
-git remote set-branches --add origin $doc_branch
-git fetch -q
+#checkout the deploy branch in a temporary directory
+pushd `mktemp -d`
+git clone --branch $deploy_branch $repo .
 git config user.name $GIT_NAME
 git config user.email $GIT_EMAIL
-git config credential.helper "store --file=.git/credentials"
-echo "https://$GH_TOKEN:@github.com" >> .git/credentials
-git branch $doc_branch origin/$doc_branch
+#make changes:
 touch travis-test.txt
 git add travis-test.txt
 git commit -m"test Travis-CI push"
-git push origin $doc_branch
-rm .git/credentials
+git push -q $deploy_url $deploy_branch
+popd
