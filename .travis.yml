@@ -15,9 +15,10 @@ install:
 - git clone https://github.com/jessevdk/cldoc.git
 - cd cldoc
 - sudo make install
-- cd /usr/local/bin
-- sudo ln -s /home/travis/.local/bin/cldoc .
+#- cd /usr/local/bin
+#- sudo ln -s /home/travis/.local/bin/cldoc .
 - popd
+- PATH=PATH:/home/travis/.local/bin/cldoc
 - echo $PATH
 - sudo ls /home/travis/.local/bin
 
