@@ -6,24 +6,17 @@ pushd src
 make clean
 #things to test:
 #Multiple machines
-#at least g++-4.6, g++-4.7
+#at least g++-4.6, g++-4.7, clang++-3.4, clang++-3.5
 #must test both release & debug builds,
 #as sometimes having the NDEBUG flag present alters the code path
-make CXX=g++-4.6 MACHINE=rpi/kosselrampsfd.h debug
-make CXX=g++-4.6 MACHINE=rpi/kosselrampsfd.h release
-make CXX=g++-4.6 MACHINE=generic/cartesian.h debug
-make CXX=g++-4.6 MACHINE=generic/cartesian.h release
-make CXX=g++-4.7 MACHINE=rpi/kosselrampsfd.h debug
-make CXX=g++-4.7 MACHINE=rpi/kosselrampsfd.h release
-make CXX=g++-4.7 MACHINE=generic/cartesian.h debug
-make CXX=g++-4.7 MACHINE=generic/cartesian.h release
-
-make CXX=clang++-3.4 MACHINE=rpi/kosselrampsfd.h debug
-make CXX=clang++-3.4 MACHINE=rpi/kosselrampsfd.h release
-make CXX=clang++-3.4 MACHINE=generic/cartesian.h debug
-make CXX=clang++-3.4 MACHINE=generic/cartesian.h release
-make CXX=clang++-3.5 MACHINE=rpi/kosselrampsfd.h debug
-make CXX=clang++-3.5 MACHINE=rpi/kosselrampsfd.h release
-make CXX=clang++-3.5 MACHINE=generic/cartesian.h debug
-make CXX=clang++-3.5 MACHINE=generic/cartesian.h release
+for compiler in "g++-4.6" "g++-4.7" "clang++-3.4" "clang++-3.5"
+do
+	for machine in "generic/cartesian.h" "rpi/kosselrampsfd.h"
+	do
+		for target in "debug" "release"
+		do
+			make CXX=$compiler MACHINE=$machine $target
+		done
+	done
+done
 popd
