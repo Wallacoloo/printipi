@@ -168,7 +168,7 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 doc:
 	rm -rf ../doc
 	@mkdir -p ../doc
-	cldoc generate -std=c++0x -I. -DMACHINE_PATH='"machines/generic/cartesian.h"' -DMACHINE="generic::cartesian" -- --report --merge docs --output ../doc **/*.cpp **/*.h
+	cldoc generate -std=c++0x -I. -DMACHINE_PATH='"machines/generic/cartesian.h"' -DMACHINE="generic::cartesian" -- --report --merge docs --output ../doc `find . -type f -name '*.cpp'` `find . -type f -name '*.h'`
 	
 #Prevent the automatic deletion of "intermediate" .o files after the build by nulling .SECONDARY as follows.
 .SECONDARY:
@@ -185,4 +185,5 @@ cleanprofile:
 cleanminsize:
 	rm -rf $(MINSIZEDIR_BASE)-*
 clean: cleandebug cleandebugrel cleanrelease cleanprofile cleanminsize
-	rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
+	rm -rf `find . -type f -name '*.d'` `find $(MACHINE_CLASS_DIR) -type f -name '*.d'`
+#rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
