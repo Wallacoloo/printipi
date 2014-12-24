@@ -30,13 +30,12 @@ PATH=$PATH:/home/travis/.local/bin
 #popd
 
 #build the documentation:
-mkdir doc
 pushd $gitroot/src
 make doc
 popd
 #copy the documentation into the gh-pages branch
 git rm -rf **
-cp -r $gitroot/doc .
+cp -r $gitroot/doc/* .
 
 #commit the changes
 git add --all
