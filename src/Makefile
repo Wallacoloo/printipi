@@ -143,7 +143,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 %/empty.cpp:
 	touch $@
 	
-%/$(NAME): %/common/common.a %/iodrivers/iodrivers.a %/gparse/gparse.a %/motion/motion.a %/rest.a %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a
+%/$(NAME): %/common/logging.o %/iodrivers/iopin.o %/gparse/com.o %/gparse/command.o %/gparse/response.o %/motion/axisstepper.o %/argparse.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o  %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
@@ -158,21 +158,8 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard $(MACHINE_CLASS_DIR)/*.cpp))) %/empty.o
 	@mkdir -p $(@D)
 	$(MAKEARCHIVE) $@ $^
-	
-%/iodrivers/iodrivers.a: %/iodrivers/iopin.o
-	$(MAKEARCHIVE) $@ $^
 
-%/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
-	$(MAKEARCHIVE) $@ $^
-	
-%/common/common.a: %/common/logging.o
-	$(MAKEARCHIVE) $@ $^
-
-%/motion/motion.a: %/motion/axisstepper.o
-	$(MAKEARCHIVE) $@ $^
-	
-%/rest.a: %/argparse.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o 
-	$(MAKEARCHIVE) $@ $^
+#main.cpp dynamically #includes the MACHINE, so we want to make that an explicit dependency.	
 %/main.cpp: $(MACHINE_PATH)
 
 #Make documentation:
