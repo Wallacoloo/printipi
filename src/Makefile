@@ -12,21 +12,28 @@ CXX=g++
 #Check if using gcc >= 4.7; Then we can use -flto flag. 4.6 and lower support lto, but have errors (specifically when "functional" is included)
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
 GCC_GTEQ_490 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40900)
+
+#Allow user to pass flags related to logging defaults:
+LOGFLAGS=-DDNO_LOG_M105
+DEFINES:=$(DEFINES) $(LOGFLAGS)
+
 #Allow user to pass USE_PTHREAD=0 for a system that doesn't support pthreads (it's only used for upping the priority)
 ifneq "$(USE_PTHREAD)" "0"
 	DEFINES:=$(DEFINES) -DDUSE_PTHREAD
+else
+	NAME_EXT:=-NO_PTHREAD$(NAME_EXT)
 endif
+
 ifeq "$(DO_TESTS)" "1"
 	DEFINES:=$(DEFINES) -DDDO_TESTS
 	NAME_EXT:=-DO_TESTS$(NAME_EXT)
 endif
-LOGFLAGS=-DDNO_LOG_M105
-PROFFLAGS=
+
+#gcc < 4.9 doesn't support colorized diagnostics (error messages)
 ifeq "$(GCC_GTEQ_490)" "1"
 	DIAGFLAG=-fdiagnostics-color=auto
-else
-	DIAGFLAG= #gcc < 4.9 doesn't support colorized diagnostics (error messages)
 endif
+
 ifeq "$(GCC_GTEQ_470)" "1"
 	LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
@@ -74,12 +81,11 @@ DEFINES:=$(DEFINES) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"'
 #-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
-CFLAGS=-std=c++0x -I$(SRCDIR) -I$(SRCDIR)/../lib -Wall -Wextra -Wundef -Wwrite-strings -Wno-unused-result $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) $(DEFINES) -DBUILD_TYPE_$(TARGET)
+CFLAGS=-std=c++0x -I$(SRCDIR) -I$(SRCDIR)/../lib -Wall -Wextra -Wundef -Wwrite-strings -Wno-unused-result $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) $(DEFINES) -DBUILD_TYPE_$(TARGET)
 #Extra flags to apply JUST to main.cpp (eg -fwhole-program)
 MAINCFLAGS=
 #Use the C++ compiler to generate archives, instead of AR or LD, so as to be compatible with clang
 MAKEARCHIVE=$(CXX) -Wl,-r -nostdlib $(LTOFLAG) -o
-LDFLAGS= $(LTOFLAG)
 #-lrt is the realtime posix library. Appears to be needed for things like clock_nanosleep
 LIBS=-lrt
 BUILDROOT=../build
@@ -191,4 +197,3 @@ cleanminsize:
 	rm -rf $(MINSIZEDIR_BASE)-*
 clean: cleandebug cleandebugrel cleanrelease cleanprofile cleanminsize
 	rm -rf `find . -type f -name '*.d'` `find $(MACHINE_CLASS_DIR) -type f -name '*.d'`
-#rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
