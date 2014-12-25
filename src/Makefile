@@ -14,7 +14,11 @@ GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\
 GCC_GTEQ_490 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40900)
 #Allow user to pass USE_PTHREAD=0 for a system that doesn't support pthreads (it's only used for upping the priority)
 ifneq "$(USE_PTHREAD)" "0"
-    USE_PTHREAD := 1
+	DEFINES:=$(DEFINES) -DDUSE_PTHREAD
+endif
+ifeq "$(DO_TESTS)" "1"
+	DEFINES:=$(DEFINES) -DDDO_TESTS
+	NAME_EXT:=-DO_TESTS$(NAME_EXT)
 endif
 LOGFLAGS=-DDNO_LOG_M105
 PROFFLAGS=
@@ -59,6 +63,7 @@ endif
 ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/primitiveiopin.h)","")
     DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"platforms/$(MACHINE_CLASS)/primitiveiopin.h"'
 endif
+DEFINES:=$(DEFINES) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)"
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
@@ -69,7 +74,7 @@ endif
 #-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
-CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
+CFLAGS=-std=c++0x -I$(SRCDIR) -I$(SRCDIR)/../lib -Wall -Wextra -Wundef -Wwrite-strings -Wno-unused-result $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) $(DEFINES) -DBUILD_TYPE_$(TARGET)
 #Extra flags to apply JUST to main.cpp (eg -fwhole-program)
 MAINCFLAGS=
 #Use the C++ compiler to generate archives, instead of AR or LD, so as to be compatible with clang
@@ -82,9 +87,9 @@ BUILDROOT=../build
 NAMELINK=printipi
 #NAME_EXT is the version-info that should be tagged onto the binary name
 #Note: explicitly prefix with MACHINE_CLASS, because it's possible to build (eg) a rpi Machine with the generic platform implementation
-NAME_EXT=$(MACHINE_CLASS)-$(subst /,-,$(MACHINEPARSED))-$(CXX)
+NAME_EXT:=-$(MACHINE_CLASS)-$(subst /,-,$(MACHINEPARSED))-$(CXX)$(NAME_EXT)
 #NAME of binary file:
-NAME=$(NAMELINK)-$(NAME_EXT)
+NAME=$(NAMELINK)$(NAME_EXT)
 
 DEBUGDIR_BASE=$(BUILDROOT)/debug
 DEBUGRELDIR_BASE=$(BUILDROOT)/debugrel
@@ -92,11 +97,11 @@ RELEASEDIR_BASE=$(BUILDROOT)/release
 PROFILEDIR_BASE=$(BUILDROOT)/prof
 MINSIZEDIR_BASE=$(BUILDROOT)/minsize
 
-DEBUGDIR=$(DEBUGDIR_BASE)-$(NAME_EXT)
-DEBUGRELDIR=$(DEBUGRELDIR_BASE)-$(NAME_EXT)
-RELEASEDIR=$(RELEASEDIR_BASE)-$(NAME_EXT)
-PROFILEDIR=$(PROFILEDIR_BASE)-$(NAME_EXT)
-MINSIZEDIR=$(MINSIZEDIR_BASE)-$(NAME_EXT)
+DEBUGDIR=$(DEBUGDIR_BASE)$(NAME_EXT)
+DEBUGRELDIR=$(DEBUGRELDIR_BASE)$(NAME_EXT)
+RELEASEDIR=$(RELEASEDIR_BASE)$(NAME_EXT)
+PROFILEDIR=$(PROFILEDIR_BASE)$(NAME_EXT)
+MINSIZEDIR=$(MINSIZEDIR_BASE)$(NAME_EXT)
 
 
 

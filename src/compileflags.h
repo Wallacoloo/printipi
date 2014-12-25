@@ -22,16 +22,26 @@
 #define TARGET_PLATFORM_LOWER DTARGET_PLATFORM_LOWER
 
 //pthread isn't required, but can provide higher-elevated thread priority
-#define USE_PTHREAD DUSE_PTHREAD
+#ifdef DUSE_PTHREAD
+	#define USE_PTHREAD 1
+#else
+	#define USE_PTHREAD 0
+#endif
 
 #ifdef DNO_DMA
     #define NO_DMA
 #endif
 
-#if BUILD_TYPE_release
+#ifdef BUILD_TYPE_release
 	//on a debug build, we might want to let exceptions raise all the way up into the OS
 	//but on a release build, we want to catch them and display our own error message.
     #define CLEAN_EXIT
+#endif
+
+#ifdef DDO_TESTS
+	#define DO_TESTS 1
+#else
+	#define DO_TESTS 0
 #endif
 
 

@@ -36,6 +36,15 @@
 
 
 #define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
+
+#include "compileflags.h"
+
+//if we're compiling with unit tests, then include the code to run those tests.
+#if DO_TESTS
+  #define CATCH_CONFIG_RUNNER
+  #include "catch.hpp"
+#endif
+
 #include <string>
 #include <sys/mman.h> //for mlockall
 #include "common/logging.h"
@@ -56,12 +65,13 @@ void printUsage(char* cmd) {
     LOGE("examples:\n");
     LOGE("  print a gcode file: %s file.gcode\n", cmd);
     LOGE("  mock serial port: %s /dev/tty3dpm /dev/tty3dps\n", cmd);
-    //std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
-    //#endif
-    //exit(1);
 }
 
 int main_(int argc, char** argv) {
+    #if DO_TESTS
+        int result = Catch::Session().run(argc, argv);
+        return result;
+    #endif
     std::string defaultSerialFile("/dev/stdin");
     std::string serialFileName;
     std::string outFile = gparse::Com::NULL_FILE_STR;
