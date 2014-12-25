@@ -1,6 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="iodrv" name="iodrv" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <brief>for assert</brief>
+  <variable id="iodrv::_intervalThresh" name="_intervalThresh">
+    <type name="std::chrono::microseconds" qualifier=" const" />
+  </variable>
+  <variable id="iodrv::_maxRead" name="_maxRead">
+    <type name="std::chrono::microseconds" qualifier=" const" />
+  </variable>
+  <variable id="iodrv::_readInterval" name="_readInterval">
+    <type name="std::chrono::microseconds" qualifier=" const" />
+  </variable>
   <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
   <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
   <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />

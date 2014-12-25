@@ -268,7 +268,7 @@
     <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
   </namespace>
   <namespace name="plat" ref="plat#plat">
-    <brief>for GpioPin</brief>
+    <brief>for IoLevel</brief>
     <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
       <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />

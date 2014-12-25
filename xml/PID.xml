@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class abstract="true" id="PID" name="PID" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<class id="PID" name="PID" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <brief>for EventClockT</brief>
   <constructor id="PID::PID" name="PID">
     <argument id="PID::PID::P" name="P">
@@ -12,7 +12,7 @@
       <type builtin="yes" name="float" />
     </argument>
   </constructor>
-  <method abstract="yes" id="PID::feed" name="feed">
+  <method id="PID::feed" name="feed">
     <brief> notify PID controller of a newly-read error value.</brief>
     <doc>Returns a recalculated output</doc>
     <return>
