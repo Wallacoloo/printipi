@@ -101,7 +101,7 @@ return values.
     </type>
     <type documented="2" name="typedef" undocumented="23">
       <undocumented id="CelciusType" name="CelciusType">
-        <location column="1" file="compileflags.h" line="40" />
+        <location column="1" file="compileflags.h" line="50" />
       </undocumented>
       <undocumented id="EventClockT" name="EventClockT">
         <location column="5" file="platforms/auto/chronoclock.h" line="14" />
@@ -110,7 +110,7 @@ return values.
         <location column="5" file="platforms/auto/hardwarescheduler.h" line="11" />
       </undocumented>
       <undocumented id="IoLevel" name="IoLevel">
-        <location column="1" file="compileflags.h" line="41" />
+        <location column="1" file="compileflags.h" line="51" />
       </undocumented>
       <undocumented id="PrimitiveIoPin" name="PrimitiveIoPin">
         <location column="5" file="platforms/auto/primitiveiopin.h" line="11" />
