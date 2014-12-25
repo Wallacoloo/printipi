@@ -160,15 +160,14 @@ template <typename Drv> class State {
     FileSystem &filesystem;
     IODriverTypes ioDrivers;
     public:
-        //so-called "Primitive" units represent a cartesian coordinate from the origin, using some primitive unit (mm)
-        static constexpr CelciusType DEFAULT_HOTEND_TEMP() { return -300; } // < absolute 0
-        static constexpr CelciusType DEFAULT_BED_TEMP() { return -300; }
         //Initialize the state:
         //  Needs a driver object (drv), a communications channel (com), and needs to know whether or not the com channel must be persistent
         //  M32 command allows branching to another, local gcode file. By default, this will PAUSE reading/writing from the previous com channel.
         //  But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
         //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
         State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom);
+        void eventLoop();
+    private:
         /* Control interpretation of positions from the host as relative or absolute */
         PositionMode positionMode() const;
         void setPositionMode(PositionMode mode);
@@ -204,7 +203,6 @@ template <typename Drv> class State {
         void setHostZeroPos(float x, float y, float z, float e);
         /* Reads inputs of any IODrivers, and possible does something with the value (eg feedback loop between thermistor and hotend PWM control */
         bool onIdleCpu(OnIdleCpuIntervalT interval);
-        void eventLoop();
         void tendComChannel(gparse::Com &com);
         /* execute the GCode on a Driver object that supports a well-defined interface.
          * returns a Command to send back to the host. */
