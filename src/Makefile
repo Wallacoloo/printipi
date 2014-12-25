@@ -59,18 +59,18 @@ MACHINE_CLASS_DIR=platforms/$(MACHINE_CLASS)
 
 #Check for platform-specific file overrides:
 ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/chronoclock.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"platforms/$(MACHINE_CLASS)/chronoclock.h"'
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"platforms/$(MACHINE_CLASS)/chronoclock.h"'
 endif
 ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/hardwarescheduler.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"platforms/$(MACHINE_CLASS)/hardwarescheduler.h"'
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"platforms/$(MACHINE_CLASS)/hardwarescheduler.h"'
 endif
 ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/thisthreadsleep.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"platforms/$(MACHINE_CLASS)/thisthreadsleep.h"'
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"platforms/$(MACHINE_CLASS)/thisthreadsleep.h"'
 endif
 ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/primitiveiopin.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"platforms/$(MACHINE_CLASS)/primitiveiopin.h"'
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"platforms/$(MACHINE_CLASS)/primitiveiopin.h"'
 endif
-DEFINES:=$(DEFINES) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)"
+PLAT_DEFINES:=$(PLAT_DEFINES) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)"
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
@@ -81,7 +81,9 @@ DEFINES:=$(DEFINES) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"'
 #-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
-CFLAGS=-std=c++0x -I$(SRCDIR) -I$(SRCDIR)/../lib -Wall -Wextra -Wundef -Wwrite-strings -Wno-unused-result $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) $(DEFINES) -DBUILD_TYPE_$(TARGET)
+INCFLAGS=-I$(SRCDIR) -I$(SRCDIR)/../lib
+STDFLAGS=-std=c++0x
+CFLAGS=$(STDFLAGS) -Wall -Wextra -Wundef -Wwrite-strings -Wno-unused-result $(INCFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) $(DEFINES) $(PLAT_DEFINES) -DBUILD_TYPE_$(TARGET)
 #Extra flags to apply JUST to main.cpp (eg -fwhole-program)
 MAINCFLAGS=
 #Use the C++ compiler to generate archives, instead of AR or LD, so as to be compatible with clang
@@ -163,10 +165,11 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 %/main.cpp: $(MACHINE_PATH)
 
 #Make documentation:
+doc: TARGET=doc
 doc:
 	rm -rf ../doc
 	@mkdir -p ../doc
-	cldoc generate -std=c++0x -I. -DMACHINE_PATH='"machines/generic/cartesian.h"' -DMACHINE="generic::cartesian" -- --report --merge docs --output ../doc `find . -type f -name '*.cpp'` `find . -type f -name '*.h'`
+	cldoc generate $(STDFLAGS) $(INCFLAGS) $(DEFINES) -DMACHINE_PATH='"machines/generic/cartesian.h"' -DMACHINE="generic::cartesian" -- --report --merge docs --output ../doc `find . -type f -name '*.cpp'` `find . -type f -name '*.h'`
 	
 #Prevent the automatic deletion of "intermediate" .o files after the build by nulling .SECONDARY as follows.
 .SECONDARY:
