@@ -34,7 +34,6 @@
     </return>
   </method>
   <method id="gparse::Com::reply" name="reply">
-    <brief>void reply(const Command &amp;response);</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>

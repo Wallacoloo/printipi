@@ -70,4 +70,9 @@
       <type name="OutputEvent" qualifier=" const *" ref="OutputEvent#OutputEvent" />
     </argument>
   </method>
+  <method id="Scheduler::exitEventLoop" name="exitEventLoop">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
 </classtemplate>

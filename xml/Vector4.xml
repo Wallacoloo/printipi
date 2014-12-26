@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="Vector4" name="Vector4" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="Vector4::T" name="T" />
+  <constructor id="Vector4::Vector4&lt;T&gt;" name="Vector4&lt;T&gt;">
+    <brief>initialize to all 0's</brief>
+  </constructor>
+  <constructor id="Vector4::Vector4&lt;T&gt;" name="Vector4&lt;T&gt;">
+    <brief>initialize from components</brief>
+    <argument id="Vector4::Vector4&lt;T&gt;::x" name="x">
+      <type name="T" />
+    </argument>
+    <argument id="Vector4::Vector4&lt;T&gt;::y" name="y">
+      <type name="T" />
+    </argument>
+    <argument id="Vector4::Vector4&lt;T&gt;::z" name="z">
+      <type name="T" />
+    </argument>
+    <argument id="Vector4::Vector4&lt;T&gt;::e" name="e">
+      <type name="T" />
+    </argument>
+  </constructor>
+  <methodtemplate id="Vector4::Vector4&lt;T&gt;" name="Vector4&lt;T&gt;">
+    <brief>initialize from a cartesian (x, y, z) point plus an extruder coordinate</brief>
+    <doc>allow for initialization from a different precision (eg a Vector3&amp;lt;double&amp;gt;)</doc>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Vector4::Vector4&lt;T&gt;::xyz" name="xyz">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+    <argument id="Vector4::Vector4&lt;T&gt;::e" name="e">
+      <type name="T2" />
+    </argument>
+    <templatetypeparameter id="Vector4::Vector4&lt;T&gt;::T2" name="T2" />
+  </methodtemplate>
+  <methodtemplate id="Vector4::Vector4&lt;T&gt;" name="Vector4&lt;T&gt;">
+    <brief>initialize from another Vector4, possibly of a different precision</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Vector4::Vector4&lt;T&gt;::v" name="v">
+      <type name="Vector4&lt;T&gt;" qualifier=" const &amp;" ref="Vector4#Vector4" />
+    </argument>
+    <templatetypeparameter id="Vector4::Vector4&lt;T&gt;::T2" name="T2" />
+  </methodtemplate>
+  <method id="Vector4::xyz" name="xyz">
+    <brief>return the x, y, z components as a <ref ref="Vector3#Vector3">Vector3</ref>
+    </brief>
+    <return>
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </return>
+  </method>
+  <method id="Vector4::e" name="e">
+    <brief>return the e (extruder) component</brief>
+    <return>
+      <type name="const T" qualifier=" const" />
+    </return>
+  </method>
+  <method id="Vector4::x" name="x">
+    <brief>return the x component</brief>
+    <return>
+      <type name="const T" qualifier=" const" />
+    </return>
+  </method>
+  <method id="Vector4::y" name="y">
+    <brief>return the y component</brief>
+    <return>
+      <type name="const T" qualifier=" const" />
+    </return>
+  </method>
+  <method id="Vector4::z" name="z">
+    <brief>return the z component</brief>
+    <return>
+      <type name="const T" qualifier=" const" />
+    </return>
+  </method>
+</classtemplate>

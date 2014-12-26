@@ -1,8 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="Vector3" name="Vector3" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <templatetypeparameter id="Vector3::F" name="F" />
-  <constructor id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;" />
   <constructor id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
+    <brief>default initialize: all components are zeroed</brief>
+  </constructor>
+  <constructor id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
+    <brief>initialize from components</brief>
     <argument id="Vector3::Vector3&lt;F&gt;::x" name="x">
       <type name="F" />
     </argument>
@@ -14,13 +17,14 @@
     </argument>
   </constructor>
   <methodtemplate id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
+    <brief>initialize from another Vector3, possibly of a different precision</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
     <argument id="Vector3::Vector3&lt;F&gt;::v" name="v">
-      <type name="const Other" qualifier=" const &amp;" />
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
     </argument>
-    <templatetypeparameter id="Vector3::Vector3&lt;F&gt;::Other" name="Other" />
+    <templatetypeparameter id="Vector3::Vector3&lt;F&gt;::T2" name="T2" />
   </methodtemplate>
   <method id="Vector3::x" name="x">
     <brief>accessors:</brief>

@@ -7,6 +7,7 @@
     </argument>
   </constructor>
   <method id="motion::MotionPlanner::readyForNextMove" name="readyForNextMove">
+    <brief>readForNextMove returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems)</brief>
     <return>
       <type builtin="yes" name="bool" />
     </return>
@@ -14,6 +15,14 @@
   <method id="motion::MotionPlanner::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
     <return>
       <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="motion::MotionPlanner::actualCartesianPosition" name="actualCartesianPosition">
+    <brief>return the actual cartesian position of the effector/hotend</brief>
+    <doc>Note that if there is a move in progress, this position is based off the last step event
+that's been retrieved from <ref ref="motion::MotionPlanner#motion::MotionPlanner::nextOutputEvent">motion::MotionPlanner::nextOutputEvent</ref></doc>
+    <return>
+      <type name="Vector4f" ref="index#Vector4f" />
     </return>
   </method>
   <method id="motion::MotionPlanner::isHoming" name="isHoming">

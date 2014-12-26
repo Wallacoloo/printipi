@@ -105,7 +105,7 @@
     <class name="Response" ref="gparse::Response#gparse::Response" />
   </namespace>
   <namespace name="iodrv" ref="iodrv#iodrv">
-    <brief>for assert</brief>
+    <brief>for the testsuite</brief>
     <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
     <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
     <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
@@ -353,6 +353,9 @@
   <classtemplate name="Vector3" ref="Vector3#Vector3">
     <templatetypeparameter id="Vector3::F" name="F" />
   </classtemplate>
+  <classtemplate name="Vector4" ref="Vector4#Vector4">
+    <templatetypeparameter id="Vector4::T" name="T" />
+  </classtemplate>
   <enum anonymous="yes" id="LengthUnit" name="LengthUnit">
     <enumvalue id="UNIT_MM" name="UNIT_MM" value="0" />
     <enumvalue id="UNIT_IN" name="UNIT_IN" value="1" />
@@ -389,10 +392,20 @@
     <type name="plat::generic::ThisThreadSleep" ref="plat::generic::ThisThreadSleep#plat::generic::ThisThreadSleep" />
   </typedef>
   <typedef id="Vector3d" name="Vector3d">
+    <brief>3-component (x, y, z) vector using higher precision (64-bit) doubles</brief>
     <type name="Vector3&lt;double&gt;" />
   </typedef>
   <typedef id="Vector3f" name="Vector3f">
+    <brief>3-component (x, y, z) vector using (32-bit) floats</brief>
     <type name="Vector3&lt;float&gt;" />
+  </typedef>
+  <typedef id="Vector4d" name="Vector4d">
+    <brief>4-component (x, y, z) vector using higher precision (64-bit) doubles</brief>
+    <type name="Vector4&lt;double&gt;" />
+  </typedef>
+  <typedef id="Vector4f" name="Vector4f">
+    <brief>4-component (x, y, z) vector using (32-bit) floats</brief>
+    <type name="Vector4&lt;float&gt;" />
   </typedef>
   <report name="Documentation generator" ref="report" />
 </index>
