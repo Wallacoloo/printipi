@@ -35,20 +35,16 @@
  */
 
 
-#define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
+#define COMPILING_MAIN //used elsewhere to do one-time warnings, etc.
 
 #include "compileflags.h"
 
-//if we're compiling with unit tests, then include the code to run those tests.
-#if DO_TESTS
-  #include <iostream>
-  #include <fstream>
-  #include <thread>
-  #include <string>
-  #include <memory>
-  #define CATCH_CONFIG_RUNNER
-  #include "catch.hpp"
-#endif
+//Includes for the CATCH testing framework
+#include <iostream>
+#include <fstream> //for ifstream, ofstream
+#include <thread>
+#define CATCH_CONFIG_RUNNER
+#include "catch.hpp"
 
 #include <string>
 #include <sys/mman.h> //for mlockall
@@ -161,18 +157,6 @@ int main(int argc, char** argv) {
 
 
 
-#if DO_TESTS
-
-std::string readLine(std::ifstream &outputFile) {
-    std::string tempRead;
-    do {
-        if (outputFile.eof()) {
-            outputFile.clear();
-        }
-    } while (!std::getline(outputFile, tempRead));
-    return tempRead;
-}
-
 SCENARIO("State will respond correctly to gcode commands", "[state]") {
     GIVEN("A State with Driver, Filesystem & Com interfaces") {
         //setup code:
@@ -184,6 +168,17 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
         outputFile.rdbuf()->pubsetbuf(0, 0);
         //must open with the ::out flag to automatically create the file if it doesn't exist
         outputFile.open("PRINTIPI_TEST_OUTPUT", std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+        //convenience function to read and wait for the next line from Printipi's output
+        auto readLine = [&]() {
+            std::string tempRead;
+            do {
+                if (outputFile.eof()) {
+                    outputFile.clear();
+                }
+            } while (!std::getline(outputFile, tempRead));
+            return tempRead;
+        };
 
         std::thread eventThread([](){ 
             machines::MACHINE driver;
@@ -198,16 +193,13 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
         WHEN("The command to home axis, G28, is sent") {
             inputFile << "G28\n";
             THEN("It should be acknowledged with 'ok'") {
-                //LOGV("recv: '%s'", readLine(outputFile).c_str());
-                REQUIRE(readLine(outputFile) == "ok");
+                REQUIRE(readLine() == "ok");
             }
         }
 
         //Teardown code:
         inputFile << "M0\n";
-        REQUIRE(readLine(outputFile) == "ok");
+        REQUIRE(readLine() == "ok");
         eventThread.join();
     }
 }
-
-#endif
