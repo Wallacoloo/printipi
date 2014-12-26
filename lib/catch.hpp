@@ -14,9 +14,13 @@
 	#define INTERNAL_CATCH_UNIQUE_NAME( name ) INTERNAL_CATCH_UNIQUE_NAME_LINE( name, __LINE__ )
 	//reimplement public catch functions as nop's:
 	#define TEST_CASE(...) static inline void INTERNAL_CATCH_UNIQUE_NAME(__DEAD_TEST_CODE)()
+	#define SCENARIO(...) TEST_CASE()
 	#define SECTION(...) if (false)
-	#define REQUIRE(...) do {} while (false);
-	#define Approx(...) 0
+	#define GIVEN(...) SECTION()
+	#define WHEN(...) SECTION()
+	#define THEN(...) SECTION()
+	#define REQUIRE(...) do { __VA_ARGS__; } while (false)
+	#define Approx(x) x
 #endif
 
 
