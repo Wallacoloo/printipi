@@ -59,7 +59,6 @@ class Com {
         //returns true if there is a command ready to be interpreted.
         bool tendCom();
         const Command& getCommand() const;
-        //void reply(const Command &response);
         void reply(const std::string &resp);
         void reply(const Response &resp);
         inline bool hasReadFile() const {
