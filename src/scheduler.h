@@ -52,6 +52,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
     EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
     Interface interface;
     bool hasActiveEvent;
+    bool _doExit;
     public:
         void queue(const OutputEvent &evt);
         void schedPwm(const iodrv::IoPin &idx, float duty, float maxPeriod);
@@ -66,6 +67,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
         bool isRoomInBuffer() const;
         void eventLoop();
         void yield(const OutputEvent *evt);
+        void exitEventLoop();
     private:
         void sleepUntilEvent(const OutputEvent *evt) const;
         bool isEventNear(const OutputEvent &evt) const;
@@ -75,6 +77,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
 template <typename Interface> Scheduler<Interface>::Scheduler(Interface interface) 
     : interface(interface)
     ,hasActiveEvent(false)
+    ,_doExit(false)
     {
     setDefaultMaxSleep();
 }
@@ -111,7 +114,7 @@ template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const 
 template <typename Interface> void Scheduler<Interface>::eventLoop() {
     OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
     int numShortIntervals = 0; //need to track the number of short cpu intervals, because if we just execute short intervals constantly for, say, 1 second, then certain services that only run at long intervals won't occur. So make every, say, 10000th short interval transform into a wide interval.
-    while (1) {
+    while (!_doExit) {
         if (interface.onIdleCpu(intervalT)) {
             //intervalT = OnIdleCpuIntervalShort; //more cpu is needed; no delay
             intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
@@ -137,6 +140,10 @@ template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent
         }
     }
     interface.queue(*evt);
+}
+
+template <typename Interface> void Scheduler<Interface>::exitEventLoop() {
+    _doExit = true;
 }
 
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const OutputEvent *evt) const {

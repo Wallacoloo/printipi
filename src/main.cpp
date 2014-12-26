@@ -41,6 +41,11 @@
 
 //if we're compiling with unit tests, then include the code to run those tests.
 #if DO_TESTS
+  #include <iostream>
+  #include <fstream>
+  #include <thread>
+  #include <string>
+  #include <memory>
   #define CATCH_CONFIG_RUNNER
   #include "catch.hpp"
 #endif
@@ -68,65 +73,66 @@ void printUsage(char* cmd) {
 }
 
 int main_(int argc, char** argv) {
+    //if the program was compiled in test mode, then run the unit tests and exit
     #if DO_TESTS
         int result = Catch::Session().run(argc, argv);
         return result;
-    #endif
-    std::string defaultSerialFile("/dev/stdin");
-    std::string serialFileName;
-    std::string outFile = gparse::Com::NULL_FILE_STR;
-    SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
-    
-    if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
-        logging::disable();
-    }
-    if (argparse::cmdOptionExists(argv, argv+argc, "--debug")) {
-        logging::enableDebug();
-    }
-    if (argparse::cmdOptionExists(argv, argv+argc, "--verbose")) {
-        logging::enableVerbose();
-    }
-    if (argparse::cmdOptionExists(argv, argv+argc, "-h") || argparse::cmdOptionExists(argv, argv+argc, "--help")) {
-        printUsage(argv[0]);
-        return 0;
-    } 
-    
-    char* fsRootArg = argparse::getCmdOption(argv, argv+argc, "--fsroot");
-    std::string fsRoot = fsRootArg ? std::string(fsRootArg) : "/";
-    
-    if (argc < 2 || argv[1][0] == '-') { //if no arguments, or if first argument (and therefore all args) is an option
-        //printUsage(argv[0]);
-        serialFileName = defaultSerialFile;
-    } else {
-        serialFileName = std::string(argv[1]);
-        if (argc >2 && argv[2][0] != '-') { //second argument is for the output file
-            outFile = std::string(argv[2]);
+    #else
+        std::string defaultSerialFile("/dev/stdin");
+        std::string serialFileName;
+        std::string outFile = gparse::Com::NULL_FILE_STR;
+        SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
+        
+        if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
+            logging::disable();
         }
-    }
-    
-    //prevent page-swaps to increase performace:
-    int retval = mlockall(MCL_FUTURE|MCL_CURRENT);
-    if (retval) {
-        LOGW("Warning: mlockall (prevent memory swaps) in main.cpp::main() returned non-zero: %i\n", retval);
-    }
-    
-    //Open the serial device:
-    LOG("Serial file: %s\n", serialFileName.c_str());
-    gparse::Com com = gparse::Com(serialFileName, outFile);
-    
-    //instantiate main driver:
-    typedef machines::MACHINE MachineT;
-    MachineT driver;
-    
-    LOG("Filesystem root: %s\n", fsRoot.c_str());
-    FileSystem fs(fsRoot);
-    
-    //if input is stdin, or a two-way pipe, then it likely means we want to keep this input channel forever,
-    //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
-    State<MachineT> state(driver, fs, com, com.hasWriteFile() || serialFileName == "/dev/stdin");
-    
-    state.eventLoop();
-    return 0;
+        if (argparse::cmdOptionExists(argv, argv+argc, "--debug")) {
+            logging::enableDebug();
+        }
+        if (argparse::cmdOptionExists(argv, argv+argc, "--verbose")) {
+            logging::enableVerbose();
+        }
+        if (argparse::cmdOptionExists(argv, argv+argc, "-h") || argparse::cmdOptionExists(argv, argv+argc, "--help")) {
+            printUsage(argv[0]);
+            return 0;
+        } 
+        
+        char* fsRootArg = argparse::getCmdOption(argv, argv+argc, "--fsroot");
+        std::string fsRoot = fsRootArg ? std::string(fsRootArg) : "/";
+        
+        if (argc < 2 || argv[1][0] == '-') { //if no arguments, or if first argument (and therefore all args) is an option
+            //printUsage(argv[0]);
+            serialFileName = defaultSerialFile;
+        } else {
+            serialFileName = std::string(argv[1]);
+            if (argc >2 && argv[2][0] != '-') { //second argument is for the output file
+                outFile = std::string(argv[2]);
+            }
+        }
+        
+        //prevent page-swaps to increase performace:
+        int retval = mlockall(MCL_FUTURE|MCL_CURRENT);
+        if (retval) {
+            LOGW("Warning: mlockall (prevent memory swaps) in main.cpp::main() returned non-zero: %i\n", retval);
+        }
+        
+        //Open the serial device:
+        LOG("Serial file: %s\n", serialFileName.c_str());
+        gparse::Com com = gparse::Com(serialFileName, outFile);
+        
+        //instantiate main driver:
+        machines::MACHINE driver;
+        
+        LOG("Filesystem root: %s\n", fsRoot.c_str());
+        FileSystem fs(fsRoot);
+        
+        //if input is stdin, or a two-way pipe, then it likely means we want to keep this input channel forever,
+        //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
+        State<machines::MACHINE> state(driver, fs, com, com.hasWriteFile() || serialFileName == "/dev/stdin");
+        
+        state.eventLoop();
+        return 0;
+    #endif
 }
 
 int main(int argc, char** argv) {
@@ -152,3 +158,56 @@ int main(int argc, char** argv) {
         throw;
     }
 }
+
+
+
+#if DO_TESTS
+
+std::string readLine(std::ifstream &outputFile) {
+    std::string tempRead;
+    do {
+        if (outputFile.eof()) {
+            outputFile.clear();
+        }
+    } while (!std::getline(outputFile, tempRead));
+    return tempRead;
+}
+
+SCENARIO("State will respond correctly to gcode commands", "[state]") {
+    GIVEN("A State with Driver, Filesystem & Com interfaces") {
+        //setup code:
+        std::ofstream inputFile;
+        //disable buffering before opening
+        inputFile.rdbuf()->pubsetbuf(0, 0);
+        inputFile.open("PRINTIPI_TEST_INPUT", std::fstream::out | std::fstream::trunc);
+        std::ifstream outputFile;
+        outputFile.rdbuf()->pubsetbuf(0, 0);
+        //must open with the ::out flag to automatically create the file if it doesn't exist
+        outputFile.open("PRINTIPI_TEST_OUTPUT", std::fstream::in | std::fstream::out | std::fstream::trunc);
+
+        std::thread eventThread([](){ 
+            machines::MACHINE driver;
+            FileSystem fs("/tmp/");
+            gparse::Com com = gparse::Com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT");
+            State<machines::MACHINE> state(driver, fs, com, true);
+            state.eventLoop(); 
+        });
+
+        //each WHEN case corresponds to a single test;
+        //the above setup code and the teardown code further below are re-run for EVERY 'when' case.
+        WHEN("The command to home axis, G28, is sent") {
+            inputFile << "G28\n";
+            THEN("It should be acknowledged with 'ok'") {
+                //LOGV("recv: '%s'", readLine(outputFile).c_str());
+                REQUIRE(readLine(outputFile) == "ok");
+            }
+        }
+
+        //Teardown code:
+        inputFile << "M0\n";
+        REQUIRE(readLine(outputFile) == "ok");
+        eventThread.join();
+    }
+}
+
+#endif

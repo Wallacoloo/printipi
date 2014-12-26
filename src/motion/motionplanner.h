@@ -191,7 +191,7 @@ template <typename Interface> class MotionPlanner {
         template <bool T> void _nextStepArc(std::integral_constant<bool, T> ) {
             _nextStep(_arcIters, AxisStepper::getNextTime(_arcIters));
         }
-        void _nextStepArc(std::false_type ){
+        void _nextStepArc(std::false_type ) {
         }
     public:
         bool isHoming() const {

@@ -530,7 +530,8 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isM0()) { //Stop; empty move buffer & exit cleanly
         LOG("recieved M0 command: exiting\n");
-        exit(0);
+        scheduler.exitEventLoop();
+        //exit(0);
         return gparse::Response::Ok;
     } else if (cmd.isM17()) { //enable all stepper motors
         iodrv::IODriver::lockAllAxis(this->ioDrivers);

@@ -27,6 +27,7 @@ endif
 ifeq "$(DO_TESTS)" "1"
 	DEFINES:=$(DEFINES) -DDDO_TESTS
 	NAME_EXT:=-DO_TESTS$(NAME_EXT)
+	LIBS:=$(LIBS) -pthread
 endif
 
 #gcc < 4.9 doesn't support colorized diagnostics (error messages)
@@ -89,7 +90,7 @@ MAINCFLAGS=
 #Use the C++ compiler to generate archives, instead of AR or LD, so as to be compatible with clang
 MAKEARCHIVE=$(CXX) -Wl,-r -nostdlib $(LTOFLAG) -o
 #-lrt is the realtime posix library. Appears to be needed for things like clock_nanosleep
-LIBS=-lrt
+LIBS:=$(LIBS) -lrt
 BUILDROOT=../build
 #NAMELINK will become a symbolic link to the actual binary
 NAMELINK=printipi

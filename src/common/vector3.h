@@ -22,6 +22,7 @@
  */
 
 #ifndef COMMON_VECTOR_H
+#define COMMON_VECTOR_H
 
 #include <cmath>
 
@@ -29,9 +30,12 @@ template <typename F> class Vector3 {
 	//mathematical vector utility
 	F _x, _y, _z;
 	public:
+		//default initialize: all components are zeroed
 		Vector3() : _x(0), _y(0), _z(0) {}
+		//initialize from components
 		Vector3(F x, F y, F z) : _x(x), _y(y), _z(z) {}
-		template <typename Other> Vector3(const Other &v)
+		//initialize from another Vector3, possibly of a different precision
+		template <typename T2> Vector3(const Vector3<T2> &v)
 		  : _x(v.x()), _y(v.y()), _z(v.z()) {}
 
 		//accessors:
@@ -112,7 +116,9 @@ template <typename F> class Vector3 {
 		}
 };
 
+//3-component (x, y, z) vector using (32-bit) floats
 typedef Vector3<float> Vector3f;
+//3-component (x, y, z) vector using higher precision (64-bit) doubles
 typedef Vector3<double> Vector3d;
 
 #endif

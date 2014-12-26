@@ -14,6 +14,7 @@ template <typename T> class Vector4 {
 		//initialize from components
 		Vector4(T x, T y, T z, T e) : _xyz(x, y, z), _e(e) {}
 		//initialize from a cartesian (x, y, z) point plus an extruder coordinate
+		//
 		//allow for initialization from a different precision (eg a Vector3<double>)
 		template <typename T2> Vector4(const Vector3<T2> &xyz, T2 e) : _xyz(xyz.x(), xyz.y(), xyz.z()), _e(e) {}
 		//initialize from another Vector4, possibly of a different precision
@@ -40,5 +41,10 @@ template <typename T> class Vector4 {
 		}
 		
 };
+
+//4-component (x, y, z) vector using (32-bit) floats
+typedef Vector4<float> Vector4f;
+//4-component (x, y, z) vector using higher precision (64-bit) doubles
+typedef Vector4<double> Vector4d;
 
 #endif

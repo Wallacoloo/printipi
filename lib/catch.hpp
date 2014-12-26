@@ -8,6 +8,28 @@
 #include "compileflags.h"
 #if DO_TESTS
 	#include "catch/catch.hpp"
+	/*#include <mutex>
+class ThreadSafeJunitReporter : public Catch::JunitReporter {
+public:
+    ThreadSafeJunitReporter(Catch::ReporterConfig const& _config) :
+        Catch::JunitReporter(_config) { }
+
+    static std::string getDescription() {
+        return "Reports test results in an XML format that looks like Ant's junitreport target.\n"
+            "\tThis reporter can be used in a multi-threaded environment";
+    }
+
+    inline virtual bool assertionEnded(Catch::AssertionStats const& assertionStats) override {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        return Catch::JunitReporter::assertionEnded(assertionStats);
+    }
+
+private:
+    std::mutex m_mutex;
+};
+
+INTERNAL_CATCH_REGISTER_REPORTER("junit-thread-safe", ThreadSafeJunitReporter);*/
+
 #else
 //Taken from catch.hpp to generate unique variable/function names:
 #define INTERNAL_CATCH_UNIQUE_NAME_LINE2( name, line ) name##line
