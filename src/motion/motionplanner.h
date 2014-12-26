@@ -39,6 +39,7 @@
 #include "accelerationprofile.h"
 #include "axisstepper.h"
 #include "common/vector3.h"
+#include "common/vector4.h"
 #include "common/logging.h"
 
 namespace motion {
@@ -126,13 +127,21 @@ template <typename Interface> class MotionPlanner {
             outputEventBuffer(),
             curOutputEvent(outputEventBuffer.begin()),
             endOutputEvent(outputEventBuffer.begin()) {}
+        //readForNextMove returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems)
         bool readyForNextMove() const {
-            //returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems)
-            //Note: for now, there isn't actually buffering.
             return _motionType == MotionNone;
         }
         bool doHomeBeforeFirstMovement() const {
             return _coordMapper.doHomeBeforeFirstMovement();
+        }
+        //return the actual cartesian position of the effector/hotend
+        //
+        //Note that if there is a move in progress, this position is based off the last step event 
+        // that's been retrieved from <nextOutputEvent>
+        Vector4f actualCartesianPosition() const {
+            float curX, curY, curZ, curE;
+            std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
+            return Vector4f(curX, curY, curZ, curE);
         }
     private:
         template <typename StepperTypes> void _nextStep(StepperTypes &steppers, AxisStepper &s) {
