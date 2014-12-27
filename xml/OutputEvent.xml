@@ -23,6 +23,11 @@
       <type name="PrimitiveIoPin" qualifier=" const &amp;" ref="index#PrimitiveIoPin" />
     </return>
   </method>
+  <method id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
+    <return>
+      <type name="PrimitiveIoPin" qualifier=" &amp;" ref="index#PrimitiveIoPin" />
+    </return>
+  </method>
   <method id="OutputEvent::state" name="state">
     <return>
       <type builtin="yes" name="bool" />

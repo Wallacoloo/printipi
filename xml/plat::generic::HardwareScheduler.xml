@@ -12,8 +12,8 @@
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="plat::generic::HardwareScheduler::queue::" name="">
-      <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
+    <argument id="plat::generic::HardwareScheduler::queue::evt" name="evt">
+      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
     </argument>
   </method>
   <method id="plat::generic::HardwareScheduler::queuePwm" name="queuePwm">
