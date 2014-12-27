@@ -98,9 +98,10 @@ struct TestClass {
 	            		verifyPosition(-30, 20, 80);
             		}
             	}
-            	//test G92 movement
+            	//test G91 (relative) movement
             	WHEN("The machine is moved a RELATIVE amount (-70, 30, 30) at F=3000") {
-            		sendCommand("G92", "ok");
+            		//put into relative movement mode
+            		sendCommand("G91", "ok");
             		sendCommand("G1 X-70 Y30 Z30 F3000", "ok");
             		THEN("The actual position should be near (-30, 20, 80)") {
 	            		exitOnce(); //force the G1 code to complete
@@ -120,11 +121,52 @@ struct TestClass {
             WHEN("The machine is moved to (40, -10, 50) before being homed, using G0 command") {
             	sendCommand("G0 X40 Y-10 Z50", "ok");
                 THEN("The actual position should be near (40, -10, 50)") {
-	                exitOnce(); //force the G1 code to complete
+	                exitOnce(); //force the G0 code to complete
 	                verifyPosition(40, -10, 50);
             	}
             }
-
+            //test using inch coordinates
+            WHEN("The machine is moved to (-1, 2, 1) in inches") {
+            	//home machine
+            	sendCommand("G28", "ok");
+            	//put into inches mode
+            	sendCommand("G20", "ok");
+            	//move absolute
+            	sendCommand("G1 X-1 Y2 Z1", "ok");
+            	THEN("The actual position (in mm) should be near (-1, 2, 1)*25.4") {
+            		exitOnce(); //force the G1 code to complete
+            		verifyPosition(-1*25.4, 2*25.4, 1*25.4);
+            	}
+            }
+            //test M18; let steppers move freely
+            WHEN("The M18 command is sent to let the steppers move freely") {
+            	sendCommand("M18", "ok");
+            	//"then the machine shouldn't crash"
+            }
+            //test M84; stop idle hold (same as M18)
+            WHEN("The M84 command is sent to stop the idle hold") {
+            	sendCommand("M84", "ok");
+            	//"then the machine shouldn't crash"
+            }
+            WHEN("The M106 command is sent to activate fans") {
+            	sendCommand("M106", "ok");
+            	WHEN("The M107 command is sent to disactivate fans") {
+            		sendCommand("M107", "ok");
+            		//"then the machine shouldn't crash"
+            	}
+            }
+            WHEN("The M106 command is sent to activate fans at a specific PWM between 0.0-1.0") {
+            	sendCommand("M106 S0.7", "ok");
+            	//"then the machine shouldn't crash"
+            }
+            WHEN("The M106 command is sent to activate fans at a specific PWM between 0-255") {
+            	sendCommand("M106 S64", "ok");
+            	//"then the machine shouldn't crash", and S64 should be interpreted as 64/255 duty cycle.
+            }
+            WHEN("The M117 command is sent") {
+            	sendCommand("M117 Hello, World!", "ok");
+            	//"then the machine shouldn't crash"
+            }
             //Teardown code:
             exitOnce();
         }

@@ -563,8 +563,8 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     } else if (cmd.isM83()) { //set extruder relative mode
         setExtruderPosMode(POS_RELATIVE);
         return gparse::Response::Ok;
-    } else if (cmd.isM84()) { //stop idle hold: relax all motors.
-        LOGW("Warning (gparse/state.h): OP_M84 (stop idle hold) not implemented\n");
+    } else if (cmd.isM84()) { //stop idle hold: relax all motors (same as M18)
+        iodrv::IODriver::unlockAllAxis(this->ioDrivers);
         return gparse::Response::Ok;
     } else if (cmd.isM99()) { //return from macro/subprogram
         LOGW("Warning (state.h): OP_M99 (return) not tested\n");
