@@ -25,4 +25,9 @@ This is normally only relevant for communication with a host, like Octoprint, wh
       <type builtin="yes" name="void" />
     </return>
   </method>
+  <method id="State::motionPlanner" name="motionPlanner">
+    <return>
+      <type name="motion::MotionPlanner&lt;Interface&gt;" qualifier=" const &amp;" ref="motion::MotionPlanner#motion::MotionPlanner" />
+    </return>
+  </method>
 </classtemplate>

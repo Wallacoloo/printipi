@@ -26,6 +26,12 @@
     </argument>
     <templatetypeparameter id="Vector3::Vector3&lt;F&gt;::T2" name="T2" />
   </methodtemplate>
+  <conversionfunction id="Vector3::operator basic_string" name="operator basic_string">
+    <brief>string representation</brief>
+    <return>
+      <type name="std::string" />
+    </return>
+  </conversionfunction>
   <method id="Vector3::x" name="x">
     <brief>accessors:</brief>
     <return>
@@ -158,6 +164,28 @@
     </return>
     <argument id="Vector3::proj::v" name="v">
       <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::distance" name="distance">
+    <return>
+      <type name="F" />
+    </return>
+    <argument id="Vector3::distance::v" name="v">
+      <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::distance" name="distance">
+    <return>
+      <type name="F" />
+    </return>
+    <argument id="Vector3::distance::x" name="x">
+      <type name="F" />
+    </argument>
+    <argument id="Vector3::distance::y" name="y">
+      <type name="F" />
+    </argument>
+    <argument id="Vector3::distance::z" name="z">
+      <type name="F" />
     </argument>
   </method>
 </classtemplate>

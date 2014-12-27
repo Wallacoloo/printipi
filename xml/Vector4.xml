@@ -43,6 +43,12 @@
     </argument>
     <templatetypeparameter id="Vector4::Vector4&lt;T&gt;::T2" name="T2" />
   </methodtemplate>
+  <conversionfunction id="Vector4::operator basic_string" name="operator basic_string">
+    <brief>string representation</brief>
+    <return>
+      <type name="std::string" />
+    </return>
+  </conversionfunction>
   <method id="Vector4::xyz" name="xyz">
     <brief>return the x, y, z components as a <ref ref="Vector3#Vector3">Vector3</ref>
     </brief>
