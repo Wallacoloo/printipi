@@ -787,8 +787,8 @@ return values.
         <location column="1" file="machines/rpi/kosselrampsfd.h" line="286" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
-        <location column="5" file="platforms/generic/chronoclock.h" line="15" />
         <location column="1" file="platforms/generic/primitiveiopin.h" line="10" />
+        <location column="5" file="platforms/generic/chronoclock.h" line="15" />
         <location column="5" file="platforms/generic/thisthreadsleep.h" line="14" />
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="15" />
       </undocumented>
@@ -2632,28 +2632,6 @@ return values.
     </type>
   </coverage>
   <arguments>
-    <function id="gparse::bigEndianStr" name="bigEndianStr">
-      <location column="1" file="gparse/command.h" line="55" />
-      <undocumented-return />
-      <undocumented name="a" />
-    </function>
-    <function id="gparse::Command::getFloatParam" name="getFloatParam">
-      <location column="9" file="gparse/command.h" line="93" />
-      <location column="1" file="gparse/command.cpp" line="140" />
-      <undocumented-return />
-      <undocumented name="hasParam" />
-      <undocumented name="def" />
-      <undocumented name="label" />
-    </function>
-    <function id="gparse::Command::isG0" name="isG0">
-      <location column="9" file="gparse/command.h" line="184" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::tendCom" name="tendCom">
-      <location column="9" file="gparse/com.h" line="60" />
-      <location column="1" file="gparse/com.cpp" line="19" />
-      <undocumented-return />
-    </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/generic/primitiveiopin.h" line="19" />
       <undocumented name="args" />
@@ -2685,6 +2663,35 @@ return values.
       <undocumented-return />
       <undocumented name="handler" />
       <undocumented name="level" />
+    </function>
+    <function id="gparse::bigEndianStr" name="bigEndianStr">
+      <location column="1" file="gparse/command.h" line="55" />
+      <undocumented-return />
+      <undocumented name="a" />
+    </function>
+    <function id="gparse::Command::getFloatParam" name="getFloatParam">
+      <location column="9" file="gparse/command.h" line="93" />
+      <location column="1" file="gparse/command.cpp" line="140" />
+      <undocumented-return />
+      <undocumented name="hasParam" />
+      <undocumented name="def" />
+      <undocumented name="label" />
+    </function>
+    <function id="gparse::Command::isG0" name="isG0">
+      <location column="9" file="gparse/command.h" line="184" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::tendCom" name="tendCom">
+      <location column="9" file="gparse/com.h" line="60" />
+      <location column="1" file="gparse/com.cpp" line="19" />
+      <undocumented-return />
+    </function>
+    <function id="PID::feed" name="feed">
+      <location column="9" file="pid.h" line="29" />
+      <location column="1" file="pid.cpp" line="5" />
+      <undocumented-return />
+      <undocumented name="setpoint" />
+      <undocumented name="pv" />
     </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
       <location column="9" file="scheduler.h" line="67" />
@@ -2873,13 +2880,6 @@ return values.
       <location column="9" file="machines/machine.h" line="12" />
       <undocumented-return />
     </function>
-    <function id="PID::feed" name="feed">
-      <location column="9" file="pid.h" line="29" />
-      <location column="1" file="pid.cpp" line="5" />
-      <undocumented-return />
-      <undocumented name="setpoint" />
-      <undocumented name="pv" />
-    </function>
     <function id="iodrv::TempControl::isHotend" name="isHotend">
       <location column="9" file="iodrivers/tempcontrol.h" line="79" />
       <undocumented-return />
@@ -2939,12 +2939,6 @@ return values.
     </function>
   </arguments>
   <references>
-    <field id="gparse::Command::arguments" name="arguments">
-      <location column="5" file="gparse/command.h" line="74" />
-      <doctype name="doc">
-        <ref name="std::string" />
-      </doctype>
-    </field>
     <destructor id="iodrv::IoPin::~IoPin" name="~IoPin">
       <location column="9" file="iodrivers/iopin.h" line="88" />
       <location column="1" file="iodrivers/iopin.cpp" line="25" />
@@ -2952,6 +2946,12 @@ return values.
         <ref name="typename ...Args" />
       </doctype>
     </destructor>
+    <field id="gparse::Command::arguments" name="arguments">
+      <location column="5" file="gparse/command.h" line="74" />
+      <doctype name="doc">
+        <ref name="std::string" />
+      </doctype>
+    </field>
     <variable id="CVTemplateWrapper::value" name="value">
       <location column="5" file="common/tupleutil.h" line="21" />
       <doctype name="doc">
