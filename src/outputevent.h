@@ -53,6 +53,9 @@ class OutputEvent {
         inline const PrimitiveIoPin& primitiveIoPin() const {
             return _pin;
         }
+        inline PrimitiveIoPin& primitiveIoPin() {
+            return _pin;
+        }
         inline bool state() const {
             return _state;
         }

@@ -15,10 +15,11 @@ namespace plat {
 namespace generic {
 
 struct HardwareScheduler {
-    inline void queue(const OutputEvent &) {
+    inline void queue(OutputEvent evt) {
         //add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary
         //assert(false); //DefaultSchedulerInterface::HardwareScheduler cannot queue!
-        LOGW("Warning: default platforms/generic/hardwarescheduler.h cannot queue()\n");
+        //LOGV("Warning: default platforms/generic/hardwarescheduler.h cannot queue()\n");
+        evt.primitiveIoPin().digitalWrite(evt.state());
     }
     inline void queuePwm(const PrimitiveIoPin &pin, float ratio, float idealPeriod) {
         //Set the given pin to a pwm duty-cycle of `ratio` using a maximum period of maxPeriod (irrelevant if using PCM algorithm). Eg queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.

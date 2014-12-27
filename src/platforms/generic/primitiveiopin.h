@@ -4,6 +4,7 @@
 #include <tuple>
 
 #include "compileflags.h" //for IoLevel
+#include "common/logging.h"
 
 namespace plat {
 namespace generic {
@@ -22,12 +23,21 @@ class PrimitiveIoPin {
 		//do-nothing implementations for basic functions
 		//Note: the return type of id() is platform-specific, though it must never be void.
 		inline int id() const { return -1; }
-		inline void makeDigitalOutput(IoLevel) {}
+		inline void makeDigitalOutput(IoLevel) {
+			LOGV("Attempt to makeDigitalOutput() the generic PrimitiveIoPin interface\n");
+		}
 	    //configure the pin to be an input
-	    inline void makeDigitalInput() {}
+	    inline void makeDigitalInput() {
+	    	LOGV("Attempt to makeDigitalInput() the generic PrimitiveIoPin interface\n");
+	    }
 	    //read the pin's input value (assumes pin is configured as digital)
-	    inline IoLevel digitalRead() const { return IoLow; }
-	    inline void digitalWrite(IoLevel) {}
+	    inline IoLevel digitalRead() const { 
+	    	LOGV("Attempt to digitalRead() the generic PrimitiveIoPin interface\n");
+	    	return IoLow; 
+	    }
+	    inline void digitalWrite(IoLevel) {
+	    	LOGV("Attempt to digitalWrite() the generic PrimitiveIoPin interface\n");
+	    }
 };
 
 }
