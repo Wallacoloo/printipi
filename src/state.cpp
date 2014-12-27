@@ -48,11 +48,20 @@ struct TestClass {
                 return tempRead;
             };
 
+            //@cmd g-code command to send to printer (a newline character will be appended)
+            //@expect expected response
             auto sendCommand = [&](const std::string &cmd, const std::string &expect) {
                 INFO("Sending command: '" + cmd + "'");
                 inputFile << cmd << '\n';
                 INFO("It should be acknowledged with '" + expect + "'");
                 REQUIRE(readLine() == expect);
+            };
+
+            //Verify that the position as reported by the motion planner is near (@x, @y, @z)
+            auto verifyPosition = [&](float x, float y, float z) {
+            	Vector4f actualPos = state.motionPlanner().actualCartesianPosition();
+                INFO("Actual position: " + std::string(actualPos));
+                REQUIRE(actualPos.xyz().distance(x, y, z) <= 4);
             };
 
             bool hasExited = false;
@@ -64,19 +73,57 @@ struct TestClass {
                 }
             };
 
-            //each WHEN case corresponds to a single test;
+            //each WHEN/THEN case corresponds to a single test;
             //the above setup code and the teardown code further below are re-run for EVERY 'when' case.
+            //This is also repeated recursively.
+
+            //test homing
             WHEN("The machine is homed") {
                 sendCommand("G28", "ok");
             }
+            //test G1 movement
             WHEN("The machine is homed & moved to (40, -10, 50)") {
                 sendCommand("G28", "ok");
                 sendCommand("G1 X40 Y-10 Z50", "ok");
-                exitOnce(); //force the G1 code to complete
-                Vector4f actualPos = state.motionPlanner().actualCartesianPosition();
-                INFO("Actual position: " + std::string(actualPos));
-                REQUIRE(actualPos.xyz().distance(40, -10, 50) <= 4);
-             }
+                //test G1 movement
+                THEN("The actual position should be near (40, -10, 50)") {
+	                exitOnce(); //force the G1 code to complete
+	                verifyPosition(40, -10, 50);
+            	}
+            	//test successive G1 movements
+            	WHEN("The machine is moved to another absolute position afterward, (-30, 20, 80) at F=3000") {
+            		sendCommand("G1 X-30 Y20 Z80 F3000", "ok");
+            		THEN("The actual position should be near (-30, 20, 80)") {
+	            		exitOnce(); //force the G1 code to complete
+	            		verifyPosition(-30, 20, 80);
+            		}
+            	}
+            	//test G92 movement
+            	WHEN("The machine is moved a RELATIVE amount (-70, 30, 30) at F=3000") {
+            		sendCommand("G92", "ok");
+            		sendCommand("G1 X-70 Y30 Z30 F3000", "ok");
+            		THEN("The actual position should be near (-30, 20, 80)") {
+	            		exitOnce(); //force the G1 code to complete
+	            		verifyPosition(-30, 20, 80);
+            		}
+            	}
+            }
+            //test automatic homing
+            WHEN("The machine is moved to (40, -10, 50) before being homed") {
+            	sendCommand("G1 X40 Y-10 Z50", "ok");
+                THEN("The actual position should be near (40, -10, 50)") {
+	                exitOnce(); //force the G1 code to complete
+	                verifyPosition(40, -10, 50);
+            	}
+            }
+            //test automatic homing using G0
+            WHEN("The machine is moved to (40, -10, 50) before being homed, using G0 command") {
+            	sendCommand("G0 X40 Y-10 Z50", "ok");
+                THEN("The actual position should be near (40, -10, 50)") {
+	                exitOnce(); //force the G1 code to complete
+	                verifyPosition(40, -10, 50);
+            	}
+            }
 
             //Teardown code:
             exitOnce();
