@@ -19,6 +19,8 @@
 	#define GIVEN(...) SECTION()
 	#define WHEN(...) SECTION()
 	#define THEN(...) SECTION()
+	#define AND_WHEN(...) SECTION()
+	#define AND_THEN(...) SECTION()
 	#define REQUIRE(x) (void)(x);
 	#define INFO(x) (void)(x);
 	#define Approx(x) x
