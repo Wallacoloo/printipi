@@ -214,6 +214,7 @@ struct TestClass {
             	//"then the machine shouldn't crash", and S64 should be interpreted as 64/255 duty cycle.
             }
             WHEN("The M117 command is sent") {
+            	//NOTE: failing; M117 cannot parse the string
             	sendCommand("M117 Hello, World!", "ok");
             	//"then the machine shouldn't crash"
             }
