@@ -169,6 +169,14 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
         //must open with the ::out flag to automatically create the file if it doesn't exist
         outputFile.open("PRINTIPI_TEST_OUTPUT", std::fstream::in | std::fstream::out | std::fstream::trunc);
 
+        std::thread eventThread([](){ 
+            machines::MACHINE driver;
+            FileSystem fs("/tmp/");
+            gparse::Com com = gparse::Com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT");
+            State<machines::MACHINE> state(driver, fs, com, true);
+            state.eventLoop(); 
+        });
+
         //convenience function to read and wait for the next line from Printipi's output
         auto readLine = [&]() {
             std::string tempRead;
@@ -178,15 +186,17 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
                 }
             } while (!std::getline(outputFile, tempRead));
             return tempRead;
-        };
+        };        
 
-        std::thread eventThread([](){ 
-            machines::MACHINE driver;
-            FileSystem fs("/tmp/");
-            gparse::Com com = gparse::Com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT");
-            State<machines::MACHINE> state(driver, fs, com, true);
-            state.eventLoop(); 
-        });
+        bool hasExited = false;
+        auto exitOnce = [&]() {
+            if (!hasExited) {
+                inputFile << "M0\n";
+                REQUIRE(readLine() == "ok");
+                eventThread.join();
+                hasExited = true;
+            }
+        };
 
         //each WHEN case corresponds to a single test;
         //the above setup code and the teardown code further below are re-run for EVERY 'when' case.
@@ -198,8 +208,6 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
         }
 
         //Teardown code:
-        inputFile << "M0\n";
-        REQUIRE(readLine() == "ok");
-        eventThread.join();
+        exitOnce();
     }
 }

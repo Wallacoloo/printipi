@@ -137,6 +137,9 @@ template <typename Drv> class State {
     struct State__onIdleCpu; //forward declare a type used internally in onIdleCpu() function
     typedef Scheduler<SchedInterface> SchedType;
     typedef decltype(std::declval<Drv>().getIoDrivers()) IODriverTypes;
+
+    //flag set by M0. Indicates that the machine should shut down after any current moves complete.
+    bool _doExitAfterMoveCompletes;
     PositionMode _positionMode; // = POS_ABSOLUTE;
     PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
     LengthUnit unitMode; // = UNIT_MM;
@@ -221,7 +224,8 @@ template <typename Drv> class State {
 
 
 template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom)
-    : _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
+    : _doExitAfterMoveCompletes(false),
+    _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
     unitMode(UNIT_MM), 
     _destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
     _hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
@@ -405,6 +409,12 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         }
     }
 
+    //check if we have received a command to exit after the current move is complete
+    //if that command has been received, and the current move has been completed, then exit the event loop.
+    if (_doExitAfterMoveCompletes && !motionNeedsCpu) {
+        scheduler.exitEventLoop();
+    }
+
     bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), this);
     return motionNeedsCpu || driversNeedCpu;
 }
@@ -529,9 +539,8 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         setHostZeroPos(actualX, actualY, actualZ, actualE);
         return gparse::Response::Ok;
     } else if (cmd.isM0()) { //Stop; empty move buffer & exit cleanly
-        LOG("recieved M0 command: exiting\n");
-        scheduler.exitEventLoop();
-        //exit(0);
+        LOG("recieved M0 command: finishing moves, then exiting\n");
+        _doExitAfterMoveCompletes = true;
         return gparse::Response::Ok;
     } else if (cmd.isM17()) { //enable all stepper motors
         iodrv::IODriver::lockAllAxis(this->ioDrivers);
