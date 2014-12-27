@@ -268,7 +268,7 @@
     <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
   </namespace>
   <namespace name="plat" ref="plat#plat">
-    <brief>forward declare for class defined in outputevent.h</brief>
+    <brief>for GpioPin</brief>
     <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
       <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
