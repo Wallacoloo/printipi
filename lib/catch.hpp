@@ -19,7 +19,8 @@
 	#define GIVEN(...) SECTION()
 	#define WHEN(...) SECTION()
 	#define THEN(...) SECTION()
-	#define REQUIRE(...) do { __VA_ARGS__; } while (false)
+	#define REQUIRE(x) (void)(x);
+	#define INFO(x) (void)(x);
 	#define Approx(x) x
 #endif
 
