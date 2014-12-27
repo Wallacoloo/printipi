@@ -75,6 +75,7 @@ enum LengthUnit {
 };
 
 template <typename Drv> class State {
+    friend class TestClass;
     //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State by defining a SchedInterface object:
     struct SchedInterface {
         private:
@@ -158,7 +159,7 @@ template <typename Drv> class State {
     //Thus, we need a root com ("com") & an additional file stack ("gcodeFileStack").
     std::stack<gparse::Com> gcodeFileStack;
     SchedType scheduler;
-    motion::MotionPlanner<MotionInterface> motionPlanner;
+    motion::MotionPlanner<MotionInterface> _motionPlanner;
     Drv &driver;
     FileSystem &filesystem;
     IODriverTypes ioDrivers;
@@ -170,6 +171,9 @@ template <typename Drv> class State {
         //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
         State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom);
         void eventLoop();
+        const motion::MotionPlanner<MotionInterface>& motionPlanner() const {
+            return _motionPlanner;
+        }
     private:
         /* Control interpretation of positions from the host as relative or absolute */
         PositionMode positionMode() const;
@@ -233,7 +237,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     _isWaitingForHotend(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
     scheduler(SchedInterface(*this)),
-    motionPlanner(MotionInterface(*this)),
+    _motionPlanner(MotionInterface(*this)),
     driver(drv),
     filesystem(fs),
     ioDrivers(drv.getIoDrivers())
@@ -397,24 +401,23 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
         OutputEvent evt; //check to see if motionPlanner has another event ready
-        if (!motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
-            if (!(evt = motionPlanner.nextOutputEvent()).isNull()) {
+        if (!_motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
+            if (!(evt = _motionPlanner.nextOutputEvent()).isNull()) {
                 this->scheduler.queue(evt);
                 _lastMotionPlannedTime = evt.time();
                 motionNeedsCpu = scheduler.isRoomInBuffer();
             } else { //undo buffer-length changes set in homing
-                //LOGV("State::onIdleCpu() OutputEvent is null. Signals end of move\n");
+                LOGV("State::onIdleCpu() OutputEvent is null. Signals end of move\n");
                 this->scheduler.setDefaultMaxSleep();
+                //check if we have received a command to exit after the current move is complete
+                //if that command has been received, and the current move has been completed, then exit the event loop.
+                if (_doExitAfterMoveCompletes && !motionNeedsCpu) {
+                    scheduler.exitEventLoop();
+                }
             }
         }
+        
     }
-
-    //check if we have received a command to exit after the current move is complete
-    //if that command has been received, and the current move has been completed, then exit the event loop.
-    if (_doExitAfterMoveCompletes && !motionNeedsCpu) {
-        scheduler.exitEventLoop();
-    }
-
     bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), this);
     return motionNeedsCpu || driversNeedCpu;
 }
@@ -443,13 +446,13 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     //process a gcode command received on the given communications channel and return an appropriate response
     std::string opcode = cmd.getOpcode();
     if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
-        if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
+        if (!_motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
             return gparse::Response::Null;
         }
         if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return gparse::Response::Null;
         }
-        if (!_isHomed && motionPlanner.doHomeBeforeFirstMovement()) {
+        if (!_isHomed && _motionPlanner.doHomeBeforeFirstMovement()) {
             this->homeEndstops();
         }
         
@@ -509,7 +512,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         setUnitMode(UNIT_MM);
         return gparse::Response::Ok;
     } else if (cmd.isG28()) { //home to end-stops / zero coordinates
-        if (!motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
+        if (!_motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
             return gparse::Response::Null;
         }
         if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
@@ -652,7 +655,7 @@ template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, flo
     float maxExtRate = this->driver.maxExtrudeRate();
     //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
     auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
-    motionPlanner.arcTo(startTime, x, y, z, e, cX, cY, cZ, velXyz, minExtRate, maxExtRate, isCW);
+    _motionPlanner.arcTo(startTime, x, y, z, e, cX, cY, cZ, velXyz, minExtRate, maxExtRate, isCW);
 }
         
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
@@ -667,13 +670,13 @@ template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z
     float maxExtRate = this->driver.maxExtrudeRate();
     //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
     auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
-    motionPlanner.moveTo(startTime, x, y, z, e, velXyz, minExtRate, maxExtRate);
+    _motionPlanner.moveTo(startTime, x, y, z, e, velXyz, minExtRate, maxExtRate);
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
     //homing is done with real-time scheduling (can't plan far ahead), so instruct the Scheduler to avoid long sleeps
     this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
-    motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
+    _motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
     this->_isHomed = true;
 }
 
