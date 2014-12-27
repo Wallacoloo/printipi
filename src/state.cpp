@@ -29,7 +29,7 @@ struct TestClass {
             outputFile.open("PRINTIPI_TEST_OUTPUT", std::fstream::in | std::fstream::out | std::fstream::trunc);
 
             machines::MACHINE driver;
-            FileSystem fs("/tmp/");
+            FileSystem fs("./");
             gparse::Com com = gparse::Com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT");
             State<machines::MACHINE> state(driver, fs, com, true);
 
@@ -157,7 +157,7 @@ struct TestClass {
             	sendCommand("G28", "ok");
             	//"initialize" the SD card
             	sendCommand("M21", "ok");
-            	std::ofstream gfile("/tmp/test-printipi-m32.gcode", std::fstream::out | std::fstream::trunc);
+            	std::ofstream gfile("test-printipi-m32.gcode", std::fstream::out | std::fstream::trunc);
             	//test newlines / whitespace
             	gfile << "\n";
             	gfile << " \t \n";
