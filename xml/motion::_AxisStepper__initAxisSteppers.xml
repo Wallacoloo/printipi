@@ -18,7 +18,7 @@
       <type name="const CoordMapT" qualifier=" const *" />
     </argument>
     <argument id="motion::_AxisStepper__initAxisSteppers::operator()::curPos" name="curPos">
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" &amp;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" &amp;" />
     </argument>
     <argument id="motion::_AxisStepper__initAxisSteppers::operator()::vx" name="vx">
       <type builtin="yes" name="float" />
