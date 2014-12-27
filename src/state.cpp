@@ -108,6 +108,14 @@ struct TestClass {
 	            		verifyPosition(-30, 20, 80);
             		}
             	}
+            	//test comment parsing
+            	WHEN("A movement command to (30, 10, 30) is coupled with a comment") {
+            		sendCommand("G1 X30 Y10 Z30; HELLO, I am a comment!", "ok");
+            		THEN("The actual position should be near (30, 10, 30)") {
+	            		exitOnce(); //force the G1 code to complete
+	            		verifyPosition(30, 10, 30);
+            		}
+            	}
             }
             //test automatic homing
             WHEN("The machine is moved to (40, -10, 50) before being homed") {
@@ -142,6 +150,32 @@ struct TestClass {
             WHEN("The M18 command is sent to let the steppers move freely") {
             	sendCommand("M18", "ok");
             	//"then the machine shouldn't crash"
+            }
+            //test gcode printing from file
+            WHEN("Commands are read from a file with M32") {
+            	//home
+            	sendCommand("G28", "ok");
+            	//"initialize" the SD card
+            	sendCommand("M21", "ok");
+            	std::ofstream gfile("/tmp/test-printipi-m32.gcode", std::fstream::out | std::fstream::trunc);
+            	//test newlines / whitespace
+            	gfile << "\n";
+            	gfile << " \t \n";
+            	//test comment & G90
+            	gfile << "G90 \t ; comment \n";
+            	gfile << "G1 X40 Y-10 Z50";
+            	//test ending the file without a newline
+            	gfile << std::flush;
+            	//terminate the file with NO
+            	sendCommand("M32 /test-printipi-m32.gcode", "ok");
+            	THEN("The actual position should be near (40, -10, 50)") {
+            		//note: Printipi is able to monitor multiple file inputs simultaneously,
+            		// if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
+            		// there is no way to query the status of this file read, so we must just sleep & hopr
+            		std::this_thread::sleep_for(std::chrono::seconds(1));
+	                exitOnce(); //force the G0 code to complete
+	                verifyPosition(40, -10, 50);
+            	}
             }
             //test M84; stop idle hold (same as M18)
             WHEN("The M84 command is sent to stop the idle hold") {
