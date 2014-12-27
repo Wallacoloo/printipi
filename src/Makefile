@@ -112,12 +112,15 @@ RELEASEDIR=$(RELEASEDIR_BASE)$(NAME_EXT)
 PROFILEDIR=$(PROFILEDIR_BASE)$(NAME_EXT)
 MINSIZEDIR=$(MINSIZEDIR_BASE)$(NAME_EXT)
 
-
+SOURCES=$(wildcard *.cpp common/**.cpp gparse/**.cpp iodrivers/**.cpp machines/*.cpp motion/**.cpp $(MACHINE_CLASS_DIR)/**.cpp)
+OBJECTS=$(SOURCES:%.cpp=%.o)
+DEPFILES=$(SOURCES:%.cpp=%.d)
 
 all: debugrel
 
 #include auto-generated dependencies:
--include $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
+#-include $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
+-include $(DEPFILES)
 
 #Configure debug/release settings:
 debug: TARGET=debug
@@ -142,11 +145,8 @@ minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)-$(TARGET)
 
-#Sometimes need an empty dependency in order to avoid 'no input file' errors, etc:
-%/empty.cpp:
-	touch $@
 	
-%/$(NAME): %/common/logging.o %/iodrivers/iopin.o %/gparse/com.o %/gparse/command.o %/gparse/response.o %/motion/axisstepper.o %/argparse.o %/filesystem.o %/main.o %/pid.o %/schedulerbase.o  %/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a
+%/$(NAME): $(addprefix %/,$(OBJECTS))
 	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
@@ -155,12 +155,6 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	@mkdir -p $(@D)
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-	
-#Detect and build platform dependencies
-#  Thus, if you're targeting the Raspberry Pi (rpi), any source files under platforms/rpi/* will be compiled into the executable
-%/$(MACHINE_CLASS_DIR)/$(MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard $(MACHINE_CLASS_DIR)/*.cpp))) %/empty.o
-	@mkdir -p $(@D)
-	$(MAKEARCHIVE) $@ $^
 
 #main.cpp dynamically #includes the MACHINE, so we want to make that an explicit dependency.	
 %/main.cpp: $(MACHINE_PATH)
