@@ -22,7 +22,7 @@ template <typename T> class Vector4 {
 
 		//string representation
 		operator std::string() const {
-			return "Vector4(" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + std::to_string(e()) + ")";
+			return "Vector4(" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + ", " + std::to_string(e()) + ")";
 		}
 
 		//return the x, y, z components as a <Vector3>
