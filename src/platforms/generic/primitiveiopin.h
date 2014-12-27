@@ -24,19 +24,19 @@ class PrimitiveIoPin {
 		//Note: the return type of id() is platform-specific, though it must never be void.
 		inline int id() const { return -1; }
 		inline void makeDigitalOutput(IoLevel) {
-			LOGV("Attempt to makeDigitalOutput() the generic PrimitiveIoPin interface\n");
+			LOGW_ONCE("Attempt to makeDigitalOutput() the generic PrimitiveIoPin interface\n");
 		}
 	    //configure the pin to be an input
 	    inline void makeDigitalInput() {
-	    	LOGV("Attempt to makeDigitalInput() the generic PrimitiveIoPin interface\n");
+	    	LOGW_ONCE("Attempt to makeDigitalInput() the generic PrimitiveIoPin interface\n");
 	    }
 	    //read the pin's input value (assumes pin is configured as digital)
 	    inline IoLevel digitalRead() const { 
-	    	LOGV("Attempt to digitalRead() the generic PrimitiveIoPin interface\n");
+	    	LOGW_ONCE("Attempt to digitalRead() the generic PrimitiveIoPin interface\n");
 	    	return IoLow; 
 	    }
 	    inline void digitalWrite(IoLevel) {
-	    	LOGV("Attempt to digitalWrite() the generic PrimitiveIoPin interface\n");
+	    	LOGW_ONCE("Attempt to digitalWrite() the generic PrimitiveIoPin interface\n");
 	    }
 };
 
