@@ -75,7 +75,7 @@ enum LengthUnit {
 };
 
 template <typename Drv> class State {
-    friend class TestClass;
+    friend struct TestClass;
     //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State by defining a SchedInterface object:
     struct SchedInterface {
         private:

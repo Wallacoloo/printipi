@@ -14,7 +14,7 @@
 #include MACHINE_PATH
 
 
-//This test must be contained in a class so as to have access to special functions in the State.
+//This test must be contained in a class so as to have access to special functions in the State (if it ever needs that)
 struct TestClass {
     TestClass() {
         GIVEN("A State with Driver, Filesystem & Com interfaces") {
