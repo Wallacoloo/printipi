@@ -31,22 +31,22 @@ return values.
         <location column="1" file="gparse/command.h" line="64" />
       </undocumented>
       <undocumented id="logging::disable" name="disable">
-        <location column="1" file="common/logging.h" line="76" />
+        <location column="5" file="common/logging.h" line="74" />
       </undocumented>
       <undocumented id="logging::enableDebug" name="enableDebug">
-        <location column="1" file="common/logging.h" line="82" />
+        <location column="5" file="common/logging.h" line="80" />
       </undocumented>
       <undocumented id="logging::enableVerbose" name="enableVerbose">
-        <location column="1" file="common/logging.h" line="86" />
+        <location column="5" file="common/logging.h" line="84" />
       </undocumented>
       <undocumented id="logging::isDebugEnabled" name="isDebugEnabled">
-        <location column="1" file="common/logging.h" line="69" />
+        <location column="5" file="common/logging.h" line="67" />
       </undocumented>
       <undocumented id="logging::isInfoEnabled" name="isInfoEnabled">
-        <location column="1" file="common/logging.h" line="66" />
+        <location column="5" file="common/logging.h" line="64" />
       </undocumented>
       <undocumented id="logging::isVerboseEnabled" name="isVerboseEnabled">
-        <location column="1" file="common/logging.h" line="72" />
+        <location column="5" file="common/logging.h" line="70" />
       </undocumented>
       <undocumented id="mitpi::init" name="init">
         <location column="1" file="platforms/rpi/mitpi.h" line="132" />
@@ -103,7 +103,7 @@ return values.
     </type>
     <type documented="6" name="typedef" undocumented="21">
       <undocumented id="CelciusType" name="CelciusType">
-        <location column="1" file="compileflags.h" line="50" />
+        <location column="1" file="compileflags.h" line="61" />
       </undocumented>
       <undocumented id="EventClockT" name="EventClockT">
         <location column="5" file="platforms/auto/chronoclock.h" line="14" />
@@ -112,7 +112,7 @@ return values.
         <location column="5" file="platforms/auto/hardwarescheduler.h" line="11" />
       </undocumented>
       <undocumented id="IoLevel" name="IoLevel">
-        <location column="1" file="compileflags.h" line="51" />
+        <location column="1" file="compileflags.h" line="62" />
       </undocumented>
       <undocumented id="PrimitiveIoPin" name="PrimitiveIoPin">
         <location column="5" file="platforms/auto/primitiveiopin.h" line="11" />
@@ -819,7 +819,7 @@ return values.
         <location column="1" file="argparse.cpp" line="5" />
       </undocumented>
       <undocumented id="logging" name="logging">
-        <location column="1" file="common/logging.h" line="58" />
+        <location column="1" file="common/logging.h" line="56" />
         <location column="1" file="common/logging.cpp" line="3" />
       </undocumented>
       <undocumented id="machines" name="machines">
@@ -2536,15 +2536,15 @@ return values.
         <location column="63" file="iodrivers/tempcontrol.h" line="146" />
       </undocumented>
       <undocumented id="logging::_debug" name="_debug">
-        <location column="1" file="common/logging.h" line="63" />
+        <location column="5" file="common/logging.h" line="61" />
         <location column="1" file="common/logging.cpp" line="8" />
       </undocumented>
       <undocumented id="logging::_info" name="_info">
-        <location column="1" file="common/logging.h" line="62" />
+        <location column="5" file="common/logging.h" line="60" />
         <location column="1" file="common/logging.cpp" line="7" />
       </undocumented>
       <undocumented id="logging::_verbose" name="_verbose">
-        <location column="1" file="common/logging.h" line="64" />
+        <location column="5" file="common/logging.h" line="62" />
         <location column="1" file="common/logging.cpp" line="9" />
       </undocumented>
       <undocumented id="mathutil::MM_PER_IN" name="MM_PER_IN">
