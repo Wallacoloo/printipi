@@ -32,6 +32,17 @@
     #define NO_DMA
 #endif
 
+#ifdef DNO_LOGGING
+    #define DO_LOG 0
+#else
+    #define DO_LOG 1
+#endif
+#ifdef DNO_LOG_M105
+    #define NO_LOG_M105 1
+#else
+    #define NO_LOG_M105 0
+#endif
+
 #ifdef BUILD_TYPE_release
 	//on a debug build, we might want to let exceptions raise all the way up into the OS
 	//but on a release build, we want to catch them and display our own error message.

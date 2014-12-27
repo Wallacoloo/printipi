@@ -10,16 +10,7 @@
  */
 
 #include <stdio.h>
-#ifdef DNO_LOGGING
-    #define DO_LOG 0
-#else
-    #define DO_LOG 1
-#endif
-#ifdef DNO_LOG_M105
-    #define NO_LOG_M105 1
-#else
-    #define NO_LOG_M105 0
-#endif
+#include "compileflags.h"
 
 #if DO_LOG == 1
 
