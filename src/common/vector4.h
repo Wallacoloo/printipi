@@ -19,13 +19,19 @@ template <typename T> class Vector4 {
 		template <typename T2> Vector4(const Vector3<T2> &xyz, T2 e) : _xyz(xyz.x(), xyz.y(), xyz.z()), _e(e) {}
 		//initialize from another Vector4, possibly of a different precision
 		template <typename T2> Vector4(const Vector4<T2> &v) : _xyz(v.x(), v.y(), v.z()), _e(v.e()) {}
+
+		//string representation
+		operator std::string() const {
+			return "Vector4(" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + std::to_string(e()) + ")";
+		}
+
 		//return the x, y, z components as a <Vector3>
 		const Vector3<T>& xyz() const {
 			return _xyz;
 		}
 		//return the e (extruder) component
 		const T e() const {
-			return _xyz.e();
+			return _e;
 		}
 		//return the x component
 		const T x() const {

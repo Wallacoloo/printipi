@@ -25,6 +25,7 @@
 #define COMMON_VECTOR_H
 
 #include <cmath>
+#include <string>
 
 template <typename F> class Vector3 {
 	//mathematical vector utility
@@ -38,6 +39,10 @@ template <typename F> class Vector3 {
 		template <typename T2> Vector3(const Vector3<T2> &v)
 		  : _x(v.x()), _y(v.y()), _z(v.z()) {}
 
+		//string representation
+		operator std::string() const {
+			return "Vector3(" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + ")";
+		}
 		//accessors:
 		F x() const { return _x; }
 		F y() const { return _y; }
@@ -113,6 +118,12 @@ template <typename F> class Vector3 {
 			//This is equivalent to (this->scalarProj(v)) * v.norm(),
 			//  but we explicitly avoid the sqrt operations
 			return v * (this->dot(v) / v.magSq());
+		}
+		F distance(const Vector3<F> &v) const {
+			return (*this - v).mag();
+		}
+		F distance(F x, F y, F z) const {
+			return distance(Vector3<F>(x, y, z));
 		}
 };
 
