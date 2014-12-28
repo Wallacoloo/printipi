@@ -242,9 +242,11 @@ template <typename Interface> class MotionPlanner {
             float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
             float velE = (dest.e() - cur.e())/minDuration;
             float newVelE = std::max(minVelE, std::min(maxVelE, velE));
-            if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
+            
+            //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
+            if (velE != newVelE) { 
                 velE = newVelE;
-                minDuration = (dest.e()-cur.e())/newVelE; //L/(L/t) = t
+                minDuration = (dest.e()-cur.e())/newVelE;
                 maxVelXyz = dist/minDuration;
             }
             
@@ -353,7 +355,7 @@ template <typename Interface> class MotionPlanner {
             //If u x v isn't of the desired sign, then we can just invert v (but keep u the same so as not to change P(t=0))
             float uCrossV_z = u.cross(v).z();
             if ((isCW && uCrossV_z > 0) || (!isCW && uCrossV_z < 0)) { //fix direction:
-                v = v*-1.f;
+                v = -v;
             }
             
             /*LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", 
