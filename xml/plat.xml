@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="plat" name="plat" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>forward declare for class defined in outputevent.h</brief>
+  <brief>for GpioPin</brief>
   <namespace name="generic" ref="plat::generic#plat::generic" />
   <namespace name="rpi" ref="plat::rpi#plat::rpi" />
 </namespace>

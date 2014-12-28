@@ -43,8 +43,24 @@
     </argument>
     <templatetypeparameter id="Vector4::Vector4&lt;T&gt;::T2" name="T2" />
   </methodtemplate>
-  <conversionfunction id="Vector4::operator basic_string" name="operator basic_string">
+  <method id="Vector4::tuple" name="tuple">
+    <brief>cast to a tuple of &amp;lt;x, y, z, e&amp;gt;</brief>
+    <return>
+      <type name="std::tuple&lt;_Elements&gt;" />
+    </return>
+  </method>
+  <conversionfunction id="Vector4::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
+    <return>
+      <type name="std::tuple&lt;_Elements&gt;" />
+    </return>
+  </conversionfunction>
+  <method id="Vector4::str" name="str">
     <brief>string representation</brief>
+    <return>
+      <type name="std::string" />
+    </return>
+  </method>
+  <conversionfunction id="Vector4::operator basic_string" name="operator basic_string">
     <return>
       <type name="std::string" />
     </return>

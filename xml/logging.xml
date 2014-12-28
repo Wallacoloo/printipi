@@ -18,11 +18,25 @@
     <return>
       <type builtin="yes" name="void" />
     </return>
+    <argument id="logging::enableDebug::en" name="en">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </function>
+  <function id="logging::enableInfo" name="enableInfo">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="logging::enableInfo::en" name="en">
+      <type builtin="yes" name="bool" />
+    </argument>
   </function>
   <function id="logging::enableVerbose" name="enableVerbose">
     <return>
       <type builtin="yes" name="void" />
     </return>
+    <argument id="logging::enableVerbose::en" name="en">
+      <type builtin="yes" name="bool" />
+    </argument>
   </function>
   <function id="logging::isDebugEnabled" name="isDebugEnabled">
     <return>

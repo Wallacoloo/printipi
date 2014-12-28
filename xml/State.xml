@@ -21,13 +21,25 @@ This is normally only relevant for communication with a host, like Octoprint, wh
     </argument>
   </constructor>
   <method id="State::eventLoop" name="eventLoop">
+    <brief>Continually service communication channels &amp; execute received commands until we receive a command to exit</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
   <method id="State::motionPlanner" name="motionPlanner">
+    <brief>return a read-only reference to the interal MotionPlanner object</brief>
+    <doc>Useful only for introspection (e.g. when running automated tests)</doc>
     <return>
       <type name="motion::MotionPlanner&lt;Interface&gt;" qualifier=" const &amp;" ref="motion::MotionPlanner#motion::MotionPlanner" />
     </return>
+  </method>
+  <method id="State::setPersistentHostCom" name="setPersistentHostCom">
+    <brief>if set to false, then running a subprogram will cause the main communication channel to not be serviced until the subprogram returns</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::setPersistentHostCom::persistence" name="persistence">
+      <type builtin="yes" name="bool" />
+    </argument>
   </method>
 </classtemplate>

@@ -155,25 +155,25 @@
   </method>
   <method id="motion::LinearDeltaCoordMap::applyLeveling" name="applyLeveling" override="yes">
     <return>
-      <type name="std::tuple&lt;float, float, float&gt;" />
+      <type name="Vector3f" ref="index#Vector3f" />
     </return>
     <argument id="motion::LinearDeltaCoordMap::applyLeveling::xyz" name="xyz">
-      <type name="std::tuple&lt;float, float, float&gt;" qualifier=" const &amp;" />
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
     <override name="CoordMap::applyLeveling" ref="motion::CoordMap#motion::CoordMap::applyLeveling" />
   </method>
   <method id="motion::LinearDeltaCoordMap::bound" name="bound" override="yes">
     <return>
-      <type name="std::tuple&lt;float, float, float, float&gt;" />
+      <type name="Vector4f" ref="index#Vector4f" />
     </return>
     <argument id="motion::LinearDeltaCoordMap::bound::xyze" name="xyze">
-      <type name="std::tuple&lt;float, float, float, float&gt;" qualifier=" const &amp;" />
+      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
     </argument>
     <override name="CoordMap::bound" ref="motion::CoordMap#motion::CoordMap::bound" />
   </method>
   <method id="motion::LinearDeltaCoordMap::xyzeFromMechanical" name="xyzeFromMechanical" override="yes">
     <return>
-      <type name="std::tuple&lt;float, float, float, float&gt;" />
+      <type name="Vector4f" ref="index#Vector4f" />
     </return>
     <argument id="motion::LinearDeltaCoordMap::xyzeFromMechanical::mech" name="mech">
       <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
