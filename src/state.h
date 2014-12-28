@@ -145,6 +145,7 @@ template <typename Drv> class State {
     PositionMode _positionMode; // = POS_ABSOLUTE;
     PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
     LengthUnit unitMode; // = UNIT_MM;
+    //TODO: replace this with Vector4f
     float _destXPrimitive, _destYPrimitive, _destZPrimitive;
     float _destEPrimitive;
     float _destMoveRatePrimitive;
