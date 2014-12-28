@@ -98,7 +98,7 @@ template <typename Interface> class MotionPlanner {
         typedef decltype(std::declval<CoordMapT>().getArcSteppers())  ArcStepperTypes;
         typedef std::array<OutputEvent, MaxOutputEventSequenceSize<AxisStepperTypes, std::tuple_size<AxisStepperTypes>::value>::maxSize()> OutputEventBufferT;
 
-        Interface _interface;
+        //Interface _interface;
         //object that maps from (x, y, z) to mechanical coords (eg A, B, C for a kossel)
         CoordMapT _coordMapper;
         //transforms the constant-velocity motion stream into one that considers acceleration
@@ -118,12 +118,14 @@ template <typename Interface> class MotionPlanner {
         //which type of segment is being planned
         MotionType _motionType; 
         
-        OutputEventBufferT outputEventBuffer; //hold the maximum-sized OutputEvent sequence from any AxisStepper.
+        //hold the maximum-sized OutputEvent sequence from any AxisStepper.
+        OutputEventBufferT outputEventBuffer;
+        //iterators used to allow requesting idividual sequential OutputEvents
         typename OutputEventBufferT::iterator curOutputEvent;
         typename OutputEventBufferT::iterator endOutputEvent;
     public:
         MotionPlanner(const Interface &interface) : 
-            _interface(interface),
+            //_interface(interface),
             _coordMapper(interface.getCoordMap()),
             _accel(interface.getAccelerationProfile()), 
             _destMechanicalPos(), 
