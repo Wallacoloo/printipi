@@ -99,16 +99,24 @@ template <typename Interface> class MotionPlanner {
         typedef std::array<OutputEvent, MaxOutputEventSequenceSize<AxisStepperTypes, std::tuple_size<AxisStepperTypes>::value>::maxSize()> OutputEventBufferT;
 
         Interface _interface;
-        CoordMapT _coordMapper; //object that maps from (x, y, z) to mechanical coords (eg A, B, C for a kossel)
-        AccelerationProfileT _accel; //transforms the constant-velocity motion stream into one that considers acceleration
-        std::array<int, CoordMapT::numAxis()> _destMechanicalPos; //the mechanical position of the last step that was scheduled
-        AxisStepperTypes _iters; //Each axis iterator reports the next time it needs to be stepped. _iters is for linear movement
-        HomeStepperTypes _homeIters; //Axis iterators used when homing
+        //object that maps from (x, y, z) to mechanical coords (eg A, B, C for a kossel)
+        CoordMapT _coordMapper;
+        //transforms the constant-velocity motion stream into one that considers acceleration
+        AccelerationProfileT _accel;
+        //the mechanical position of the last step that was scheduled
+        std::array<int, CoordMapT::numAxis()> _destMechanicalPos;
+        //Each axis iterator reports the next time it needs to be stepped. _iters is for linear movement
+        AxisStepperTypes _iters; 
+        //Axis iterators used when homing
+        HomeStepperTypes _homeIters; 
+        //Axis iterators used when moving in an arc
         ArcStepperTypes _arcIters;
-        //TODO: _baseTime should be a time_point, not a duration
-        EventClockT::duration _baseTime; //The time at which the current path segment began (this will be a fraction of a second before the time which the first step in this path is scheduled for)
-        float _duration; //the estimated duration of the current piece, not taking into account acceleration
-        MotionType _motionType; //which type of segment is being planned
+        //The time at which the current path segment began (this will be a fraction of a second before the time which the first step in this path is scheduled for)
+        EventClockT::time_point _baseTime;
+        //the estimated duration of the current piece, not taking into account acceleration
+        float _duration; 
+        //which type of segment is being planned
+        MotionType _motionType; 
         
         OutputEventBufferT outputEventBuffer; //hold the maximum-sized OutputEvent sequence from any AxisStepper.
         typename OutputEventBufferT::iterator curOutputEvent;
@@ -161,7 +169,7 @@ template <typename Interface> class MotionPlanner {
             EventClockT::duration transformedChronoTime = std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(transformedTime));
             LOGV("Step transformed time: %f\n", transformedTime);
             //update outputEventBuffer member variable:
-            tupleCallOnIndex(steppers, UpdateOutputEvents(), s.index(), this, EventClockT::time_point(_baseTime + transformedChronoTime));            
+            tupleCallOnIndex(steppers, UpdateOutputEvents(), s.index(), this, _baseTime + transformedChronoTime);            
             //Event e = s.getEvent(transformedTime);
             //e.offset(_baseTime); //AxisSteppers report times relative to the start of motion; transform to absolute.
             _destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction); //update the mechanical position tracked in software
@@ -226,7 +234,7 @@ template <typename Interface> class MotionPlanner {
             if (std::tuple_size<AxisStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes
             }
-            this->_baseTime = baseTime.time_since_epoch();
+            this->_baseTime = baseTime;
             Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
             //get the REAL destination, after leveling is applied
             Vector4f dest = Vector4f(_coordMapper.applyLeveling(Vector3f(x, y, z)), e);
@@ -262,7 +270,7 @@ template <typename Interface> class MotionPlanner {
                 return; //Prevents hanging on machines with 0 axes
             }
             AxisStepper::initAxisHomeSteppers(_homeIters, _coordMapper, maxVelXyz);
-            this->_baseTime = baseTime.time_since_epoch();
+            this->_baseTime = baseTime;
             this->_duration = NAN;
             this->_motionType = MotionHome;
             this->_accel.begin(NAN, maxVelXyz);
@@ -273,7 +281,7 @@ template <typename Interface> class MotionPlanner {
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes
             }
-            this->_baseTime = baseTime.time_since_epoch();
+            this->_baseTime = baseTime;
             Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
             //get the REAL (leveled) destination
             Vector4f dest = Vector4f(_coordMapper.applyLeveling(Vector3f(x, y, z)), e);
