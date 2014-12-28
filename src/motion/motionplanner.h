@@ -27,7 +27,7 @@
  * MotionPlanner takes commands from the State (mainly those caused by G1 and G28) and resolves the move into a path via interfacing with a CoordMap, AxisSteppers, and an AccelerationProfile.
  * Once a path is planned, State can call MotionPlanner.nextStep() and be given data in the form of an Event, which can be passed on to a Scheduler.
  * 
- * Interface must have 2 public typedefs: CoordMapT and AxisStepperTypes. These are often provided by the machine driver.
+ * Interface must have 2 public typedefs: CoordMapT and AccelerationProfileT. These are often provided by the machine driver.
  */
 #ifndef MOTION_MOTIONPLANNER_H
 #define MOTION_MOTIONPLANNER_H
@@ -86,7 +86,6 @@ template <typename Interface> class MotionPlanner {
               MotionPlanner<Interface> *_this, EventClockT::time_point baseTime) {
                 (void)myIdx; //unused
                 auto sequence = stepper.getStepOutputEventSequence(baseTime);
-                //LOGV("MotionPlanner::UpdateOutputEvents is sequence[0] null? %i\n", sequence[0].isNull());
                 std::copy(sequence.begin(), sequence.end(), _this->outputEventBuffer.begin());
                 _this->curOutputEvent = _this->outputEventBuffer.begin();
                 _this->endOutputEvent = _this->outputEventBuffer.begin() + sequence.size();
@@ -139,9 +138,6 @@ template <typename Interface> class MotionPlanner {
         //Note that if there is a move in progress, this position is based off the last step event 
         // that's been retrieved from <nextOutputEvent>
         Vector4f actualCartesianPosition() const {
-            //float curX, curY, curZ, curE;
-            //std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
-            //return Vector4f(curX, curY, curZ, curE);
             return _coordMapper.xyzeFromMechanical(_destMechanicalPos);
         }
     private:
@@ -242,7 +238,7 @@ template <typename Interface> class MotionPlanner {
             float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
             float velE = (dest.e() - cur.e())/minDuration;
             float newVelE = std::max(minVelE, std::min(maxVelE, velE));
-            
+
             //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
             if (velE != newVelE) { 
                 velE = newVelE;
