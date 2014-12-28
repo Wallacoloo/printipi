@@ -567,13 +567,14 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         iodrv::IODriver::unlockAllAxis(this->ioDrivers);
         return gparse::Response::Ok;
     } else if (cmd.isM99()) { //return from macro/subprogram
-        LOGW("Warning (state.h): OP_M99 (return) not tested\n");
+        LOGW("(state.h): M99 (return from macro/subprogram) not tested\n");
         //note: can't simply pop the top file, because then that causes memory access errors when trying to send it a reply.
         //Need to check if com channel that received this command is the top one. If yes, then pop it and return Response::Null so that no response will be sent.
         //  else, pop it and return Response::Ok.
         if (gcodeFileStack.empty()) { //return from the main I/O routine = kill program
-            exit(0);
-            return gparse::Response::Null;
+            LOGW("M99 received, but not in a macro/subprogam; exiting\n");
+            _doExitAfterMoveCompletes = true;
+            return gparse::Response::Ok;
         } else {
             if (&gcodeFileStack.top() == &com) { //popping the com channel that sent this = cannot reply
                 //Note: MUST compare com to .top() before popping, otherwise com will become an invalid reference.
@@ -608,7 +609,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         setFanRate(0);
         return gparse::Response::Ok;
     } else if (cmd.isM109()) { //set extruder temperature to S param and wait.
-        LOGW("Warning (gparse/state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
+        LOGW("(state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
         bool hasS;
         float t = cmd.getS(hasS);
         if (hasS) {
@@ -617,7 +618,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         _isWaitingForHotend = true;
         return gparse::Response::Ok;
     } else if (cmd.isM110()) { //set current line number
-        LOGW("Warning (state.h): OP_M110 (set current line number) not implemented\n");
+        LOGW("(state.h): OP_M110 (set current line number) not implemented\n");
         return gparse::Response::Ok;
     } else if (cmd.isM112()) { //emergency stop
         exit(1);
@@ -628,7 +629,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     } else if (cmd.isM117()) { //print message
         return gparse::Response::Ok;
     } else if (cmd.isM140()) { //set BED temp and return immediately.
-        LOGW("Warning (gparse/state.h): OP_M140 (set bed temp) is untested\n");
+        LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");
         bool hasS;
         float t = cmd.getS(hasS);
         if (hasS) {
@@ -636,7 +637,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         }
         return gparse::Response::Ok;
     } else if (cmd.isTxxx()) { //set tool number
-        LOGW("Warning (gparse/state.h): OP_T[n] (set tool number) not implemented\n");
+        LOGW("(gparse/state.h): OP_T[n] (set tool number) not implemented\n");
         return gparse::Response::Ok;
     } else {
         throw std::runtime_error(std::string("unrecognized gcode opcode: '") + cmd.getOpcode() + "'");
