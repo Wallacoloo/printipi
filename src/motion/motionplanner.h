@@ -232,16 +232,12 @@ template <typename Interface> class MotionPlanner {
             }
             this->_baseTime = baseTime.time_since_epoch();
             Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
-            //float curX, curY, curZ, curE;
-            //std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos).tuple();
+            //get the REAL destination, after leveling is applied
             Vector4f dest = Vector4f(_coordMapper.applyLeveling(Vector3f(x, y, z)), e);
+            //fix impossible coordinates
             dest = _coordMapper.bound(dest);
-            //std::tie(x, y, z) = _coordMapper.applyLeveling(Vector3f(x, y, z)).tuple(); //get the REAL destination.
-            //std::tie(x, y, z, e) = _coordMapper.bound(Vector4f(x, y, z, e)).tuple(); //Fix impossible coordinates
             
             //Calculate velocities in x, y, z, e directions, and the duration of the linear movement:
-            //float distSq = (dest.x()-cur.x())*(dest.x()-cur.x()) + (dest.y()-cur.y())*(dest.y()-cur.y()) + (dest.z()-cur.z())*(dest.z()-cur.z());
-            //float dist = sqrt(distSq);
             float dist = cur.xyz().distance(dest.xyz());
             float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
             float velE = (dest.e() - cur.e())/minDuration;
@@ -252,13 +248,9 @@ template <typename Interface> class MotionPlanner {
                 maxVelXyz = dist/minDuration;
             }
             
-            //float vx = (dest.x()-cur.x())/minDuration;
-            //float vy = (dest.y()-cur.y())/minDuration;
-            //float vz = (dest.z()-cur.z())/minDuration;
             Vector3f vel = (dest.xyz()-cur.xyz())/minDuration;
             LOGD("MotionPlanner::moveTo %s -> %s\n", cur.str().c_str(), dest.str().c_str());
             LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
-            //LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
             AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, vel.x(), vel.y(), vel.z(), velE);
             this->_duration = minDuration;
             this->_motionType = MotionLinear;
@@ -280,20 +272,21 @@ template <typename Interface> class MotionPlanner {
         void arcTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float centerX_, float centerY_, float centerZ_, float maxVelXyz, float minVelE, float maxVelE, bool isCW) {
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
-            /*if (std::tuple_size<ArcStepperTypes>::value == 0) {
+            if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes
-            }*/
+            }
             this->_baseTime = baseTime.time_since_epoch();
-            float curX, curY, curZ, curE;
-            std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos).tuple();
-            std::tie(x, y, z) = _coordMapper.applyLeveling(Vector3f(x, y, z)).tuple(); //get the REAL destination.
-            std::tie(x, y, z, e) = _coordMapper.bound(Vector4f(x, y, z, e)).tuple(); //Fix impossible coordinates
-            std::tie(centerX_, centerY_, centerZ_) = _coordMapper.applyLeveling(Vector3f(centerX_, centerY_, centerZ_)).tuple(); //get the level'd center
+            Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
+            //get the REAL (leveled) destination
+            Vector4f dest = Vector4f(_coordMapper.applyLeveling(Vector3f(x, y, z)), e);
+            //Fix impossible coordinates
+            dest = _coordMapper.bound(dest);
             
             //The 3 points, (centerX_, centerY_, centerZ_), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
-            Vector3f center(centerX_, centerY_, centerZ_);
-            Vector3f a(curX-centerX_, curY-centerY_, curZ-centerZ_);
-            Vector3f b(x-centerX_, y-centerY_, z-centerZ_);
+            //get the REAL (leveled) center
+            Vector3f center = _coordMapper.applyLeveling(Vector3f(centerX_, centerY_, centerZ_));
+            Vector3f a = cur.xyz()-center;
+            Vector3f b = dest.xyz()-center;
 
             //Need to adjust the center point such that it is equidistant from a and b.
             //Note: the set of points equidistant from a and b is described by the normal vector, n = (b-a)
@@ -316,10 +309,8 @@ template <typename Interface> class MotionPlanner {
             center += projcmpn;
             
             //recalculate our a and b vectors, relative to this new center-point:
-            //a = Vector3f(curX-centerX, curY-centerY, curZ-centerZ); //relative *current* coordinates
-            //b = Vector3f(x-centerX, y-centerY, z-centerZ); //relative *desired* coordinates
-            a = Vector3f(curX, curY, curZ) - center; //relative *current* coordinates
-            b = Vector3f(x, y, z) - center; //relative *desired* coordinates
+            a = cur.xyz() - center; //relative *current* coordinates
+            b = dest.xyz() - center; //relative *desired* coordinates
             //now solve for the arcLength and arcAngle
             //To get the arclength, we take the arcangle * arcRad.
             //a . b = |a| |b| cos(theta), so we can find the arcangle with arccos(a . b / |a| / |b|).
@@ -331,11 +322,11 @@ template <typename Interface> class MotionPlanner {
             
             //Now that we have the arcLength, we can determine the optimal velocity:
             float minDuration = arcLength/maxVelXyz; //duration, should there be no acceleration
-            float velE = (e-curE)/minDuration;
+            float velE = (dest.e()-cur.e())/minDuration;
             float newVelE = std::max(minVelE, std::min(maxVelE, velE));
             if (velE != newVelE) { //limit cartesian velocity if it forces extrusion velocity to exceed a doable value
                 velE = newVelE;
-                minDuration = (e-curE)/newVelE;
+                minDuration = (dest.e()-cur.e())/newVelE;
                 maxVelXyz = arcLength/minDuration;
             }
             float arcVel = maxVelXyz / arcRad;
@@ -365,16 +356,16 @@ template <typename Interface> class MotionPlanner {
                 v = v*-1.f;
             }
             
-            LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", 
+            /*LOGD("MotionPlanner arc center (%f,%f,%f) current (%f,%f,%f) desired (%f,%f,%f) u (%f,%f,%f) v (%f,%f,%f) rad %f vel %f velE %f dur %f\n", 
                   center.x(), center.y(), center.z(), curX, curY, curZ, x, y, z, 
                   u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE, minDuration);
             LOGD("MotionPlanner arc orig center (%f,%f,%f), proj (%f,%f,%f) n(%f,%f,%f), mp(%f,%f,%f)\n", 
                 centerX_, centerY_, centerZ_, projcmpn.x(), projcmpn.y(), projcmpn.z(),
-                n.x(), n.y(), n.z(), mp.x(), mp.y(), mp.z());
+                n.x(), n.y(), n.z(), mp.x(), mp.y(), mp.z());*/
             AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, center.x(), center.y(), center.z(), u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE);
-            if (std::tuple_size<ArcStepperTypes>::value == 0) {
+            /*if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
-            }
+            }*/
             this->_duration = minDuration;
             this->_motionType = MotionArc;
             this->_accel.begin(minDuration, maxVelXyz);
