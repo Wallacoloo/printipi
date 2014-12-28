@@ -48,6 +48,8 @@ pretty = "\n".join("        %s" %f for f in funcs)
 print pretty
 */
 
+
+
 namespace gparse {
 
 //bigEndianStr turns a series of characters into a uint32_t for fast string-comparisons.
@@ -72,16 +74,20 @@ class Command {
     uint32_t opcodeStr; //opcode still encoded as a 4-character string. MSB=first char, LSB=last char. String is right-adjusted (ie, the MSBs are 0 in the case that opcode isn't full 4 characters).
     //std::vector<std::string> pieces; //the command when split on spaces. Eg "G1 X2 Y3" -> ["G1", "X2", "Y3"]
     std::array<float, 26> arguments; //26 alphabetic possible arguments per Gcode. Case insensitive. Internally, this will default to NaN
-    //sadly, M32 and the like use an unnamed string parameter for the filename
+    //sadly, M32, M117 and the like use an unnamed string parameter for the filename
     //I think it's relatively safe to say that there can only be one unnamed str param per gcode, as parameter order is irrelevant for all other commands, so unnamed parameters would have undefined orders.
     //  That assumption allows for significant performance benefits (ie, only one string, rather than a vector of strings)
     //  and if it turns out to be false, one can just join all the parameters into a single string with a defined delimiter (ie, a space)
-    std::string filepathParam;
+    //format: M32 filename.gco
+    //format: M117 Message To Display
+    //both of these are valid commands, and the ONLY way to reliably parse M117 is to detect the opcode, and then store everything that follows (up until a comment) into one string.
+    std::string specialStringParam;
     public:
-        //initialize the command object from a line of GCode
+        //default initialization. All parameters will be initialized to GPARSE_ARG_NOT_PRESENT (typically NaN)
         inline Command() : opcodeStr(0) {
             arguments.fill(GPARSE_ARG_NOT_PRESENT); //initialize all arguments to default value
         }
+        //initialize the command object from a line of GCode
         Command(std::string const&);
         inline bool empty() const {
             return opcodeStr == 0;
@@ -99,8 +105,8 @@ class Command {
             return getFloatParam(label, NAN, hasParam);
         }
         
-        inline const std::string& getFilepathParam() const {
-            return filepathParam;
+        inline const std::string& getSpecialStringParam() const {
+            return specialStringParam;
         }
         inline float getE(float def=NAN) const { //extrusion distance
             return getFloatParam('E', def);

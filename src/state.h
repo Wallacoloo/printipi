@@ -559,8 +559,8 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         return gparse::Response::Ok;
     } else if (cmd.isM32()) { //select file on SD card and print:
-        LOGD("loading gcode: %s\n", cmd.getFilepathParam().c_str());
-        gcodeFileStack.push(gparse::Com(filesystem.relGcodePathToAbs(cmd.getFilepathParam()), gparse::Com::NULL_FILE_STR, true));
+        LOGD("loading gcode: %s\n", cmd.getSpecialStringParam().c_str());
+        gcodeFileStack.push(gparse::Com(filesystem.relGcodePathToAbs(cmd.getSpecialStringParam()), gparse::Com::NULL_FILE_STR, true));
         return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);
@@ -632,6 +632,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         _isWaitingForHotend = true;
         return gparse::Response::Ok;
     } else if (cmd.isM117()) { //print message
+        LOG("M117 message: '%s'\n", cmd.getSpecialStringParam().c_str());
         return gparse::Response::Ok;
     } else if (cmd.isM140()) { //set BED temp and return immediately.
         LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");

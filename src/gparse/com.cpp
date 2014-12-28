@@ -3,8 +3,6 @@
 #include <unistd.h> //for (file) read() and write()
 #include <fcntl.h> //needed for (file) open()
 
-#include "common/logging.h"
-
 namespace gparse {
 
 //initialize static consts:
@@ -17,7 +15,6 @@ Com::Com(const std::string &fileR, const std::string &fileW, bool dieOnEof)
   , _writeFd(fileW == NULL_FILE_STR ? NO_HANDLE : open(fileW.c_str(), O_RDWR | O_NONBLOCK))
   , _dieOnEof(dieOnEof)
   , _isAtEof(false) {
-    LOG("Com init. _writeFd=%i. fileW=%s. fileW == NULL_FILE_STR: %i\n", _writeFd, fileW.c_str(), fileW == NULL_FILE_STR);
   }
 
 bool Com::tendCom() {
