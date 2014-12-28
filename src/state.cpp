@@ -168,7 +168,7 @@ struct TestClass {
 	            	//test ending the file WITHOUT a newline
 	            	gfile << "\n" << std::flush;
 	            	//load & run the file
-	            	sendCommand("M32 /test-printipi-m32.gcode", "ok");
+	            	sendCommand("M32 test-printipi-m32.gcode", "ok");
 	            	THEN("The actual position should be near (40, -10, 50)") {
 	            		//note: Printipi is able to monitor multiple file inputs simultaneously,
 	            		// if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
@@ -182,7 +182,7 @@ struct TestClass {
 	            	//test ending the file WITHOUT a newline
 	            	gfile << std::flush;
 	            	//load & run the file
-	            	sendCommand("M32 /test-printipi-m32.gcode", "ok");
+	            	sendCommand("M32 test-printipi-m32.gcode", "ok");
 	            	THEN("The actual position should be near (40, -10, 50)") {
 	            		//note: Printipi is able to monitor multiple file inputs simultaneously,
 	            		// if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
@@ -192,6 +192,21 @@ struct TestClass {
 		                verifyPosition(40, -10, 50);
 	            	}
 	            }
+                AND_WHEN("The file contains more commands after a M99 command") {
+                    gfile << "\n";
+                    gfile << "M99\n";
+                    gfile << "G1 X0 Y0 Z50\n" << std::flush;
+                    //load & run the file
+                    sendCommand("M32 test-printipi-m32.gcode", "ok");
+                    THEN("The no commands past M99 should be processed & the actual position should be near (40, -10, 50)") {
+                        //note: Printipi is able to monitor multiple file inputs simultaneously,
+                        // if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
+                        // there is no way to query the status of this file read, so we must just sleep & hopr
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        exitOnce(); //force the G0 code to complete
+                        verifyPosition(40, -10, 50);
+                    }
+                }
             }
             //test M84; stop idle hold (same as M18)
             WHEN("The M84 command is sent to stop the idle hold") {
