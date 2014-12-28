@@ -6,19 +6,21 @@
   </variable>
   <constructor id="gparse::Com::Com" name="Com" />
   <constructor id="gparse::Com::Com" name="Com">
-    <argument id="gparse::Com::Com::fileR" name="fileR">
-      <type name="std::string" qualifier=" const &amp;" />
-    </argument>
-  </constructor>
-  <constructor id="gparse::Com::Com" name="Com">
+    <brief>set @dieOnEof=true when reading from an actual, fix-length file, instead of a stream.</brief>
+    <doc>useful when dealing with "subprograms" (printing from a file), in which the replies don't need to be sent back to the main com channel.</doc>
     <argument id="gparse::Com::Com::fileR" name="fileR">
       <type name="std::string" qualifier=" const &amp;" />
     </argument>
     <argument id="gparse::Com::Com::fileW" name="fileW">
       <type name="std::string" qualifier=" const &amp;" />
     </argument>
+    <argument id="gparse::Com::Com::dieOnEof" name="dieOnEof">
+      <type builtin="yes" name="bool" />
+    </argument>
   </constructor>
   <method id="gparse::Com::getCommand" name="getCommand">
+    <brief>returns any pending command.</brief>
+    <doc>sequential calls to getCommand() will all return the same command, until reply() is called, at which point the next command will be parsed.</doc>
     <return>
       <type name="Command" qualifier=" const &amp;" ref="gparse::Command#gparse::Command" />
     </return>
@@ -29,6 +31,13 @@
     </return>
   </method>
   <method id="gparse::Com::hasWriteFile" name="hasWriteFile">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Com::isAtEof" name="isAtEof">
+    <brief>if reading with dieOnEof=true, and the last command has been parsed (but not necessarily responded to),</brief>
+    <doc>then this function will return true</doc>
     <return>
       <type builtin="yes" name="bool" />
     </return>
