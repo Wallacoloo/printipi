@@ -108,14 +108,14 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({{0, 0, 0, cur[3]}});
         }
-        inline std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
+        inline Vector3f applyLeveling(const Vector3f &xyz) const {
             return bedLevel.transform(xyz);
         }
-        inline std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
+        inline Vector4f bound(const Vector4f &xyze) const {
             return xyze; //no bounding.
         }
-        inline std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
-            return std::make_tuple(mech[CARTESIAN_AXIS_X]*_MM_STEPS_X, 
+        inline Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
+            return Vector4f(mech[CARTESIAN_AXIS_X]*_MM_STEPS_X, 
                                    mech[CARTESIAN_AXIS_Y]*_MM_STEPS_Y, 
                                    mech[CARTESIAN_AXIS_Z]*_MM_STEPS_Z, 
                                    mech[CARTESIAN_AXIS_E]*_MM_STEPS_E);

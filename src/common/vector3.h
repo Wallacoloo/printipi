@@ -26,6 +26,7 @@
 
 #include <cmath>
 #include <string>
+#include <tuple>
 
 template <typename F> class Vector3 {
 	//mathematical vector utility
@@ -39,9 +40,21 @@ template <typename F> class Vector3 {
 		template <typename T2> Vector3(const Vector3<T2> &v)
 		  : _x(v.x()), _y(v.y()), _z(v.z()) {}
 
+		//cast to a tuple of <x, y, z>
+		std::tuple<F, F, F> tuple() const {
+			return std::make_tuple(x(), y(), z());
+		}
+		operator std::tuple<F, F, F>() const {
+			return tuple();
+		}
+		
+
 		//string representation
-		operator std::string() const {
+		std::string str() const {
 			return "Vector3(" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + ")";
+		}
+		operator std::string() const {
+			return str();
 		}
 		//accessors:
 		F x() const { return _x; }

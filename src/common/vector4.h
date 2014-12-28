@@ -20,9 +20,20 @@ template <typename T> class Vector4 {
 		//initialize from another Vector4, possibly of a different precision
 		template <typename T2> Vector4(const Vector4<T2> &v) : _xyz(v.x(), v.y(), v.z()), _e(v.e()) {}
 
+		//cast to a tuple of <x, y, z, e>
+		std::tuple<T, T, T, T> tuple() const {
+			return std::make_tuple(x(), y(), z(), e());
+		}
+		operator std::tuple<T, T, T, T>() const {
+			return tuple();
+		}
+
 		//string representation
-		operator std::string() const {
+		std::string str() const {
 			return "Vector4(" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + ", " + std::to_string(e()) + ")";
+		}
+		operator std::string() const {
+			return str();
 		}
 
 		//return the x, y, z components as a <Vector3>

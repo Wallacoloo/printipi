@@ -18,7 +18,7 @@
  * Plus, with auto bed-leveling, that's all done at runtime anyway.
  */
 
-#include <tuple>
+//#include <tuple>
 
 class Matrix3x3 {
     float a00, a01, a02;
@@ -32,12 +32,19 @@ class Matrix3x3 {
             a00(a00), a01(a01), a02(a02),
             a10(a10), a11(a11), a12(a12),
             a20(a20), a21(a21), a22(a22) {}
-        inline std::tuple<float, float, float> transform(const std::tuple<float, float, float> &xyz) const {
+        /*inline std::tuple<float, float, float> transform(const std::tuple<float, float, float> &xyz) const {
             return std::tuple<float, float, float>(
                   a00*std::get<0>(xyz) + a01*std::get<1>(xyz) + a02*std::get<2>(xyz),
                   a10*std::get<0>(xyz) + a11*std::get<1>(xyz) + a12*std::get<2>(xyz),
                   a20*std::get<0>(xyz) + a21*std::get<1>(xyz) + a22*std::get<2>(xyz));
-        }
+        }*/
+        template <typename VecT> VecT transform(const VecT &xyz) const {
+            return VecT(
+                a00*xyz.x() + a01*xyz.y() + a02*xyz.z(),
+                a10*xyz.x() + a11*xyz.y() + a12*xyz.z(),
+                a20*xyz.x() + a21*xyz.y() + a22*xyz.z()
+            );
+    }
 
 };
 

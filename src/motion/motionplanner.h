@@ -139,9 +139,10 @@ template <typename Interface> class MotionPlanner {
         //Note that if there is a move in progress, this position is based off the last step event 
         // that's been retrieved from <nextOutputEvent>
         Vector4f actualCartesianPosition() const {
-            float curX, curY, curZ, curE;
-            std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
-            return Vector4f(curX, curY, curZ, curE);
+            //float curX, curY, curZ, curE;
+            //std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
+            //return Vector4f(curX, curY, curZ, curE);
+            return _coordMapper.xyzeFromMechanical(_destMechanicalPos);
         }
     private:
         template <typename StepperTypes> void _nextStep(StepperTypes &steppers, AxisStepper &s) {
@@ -154,9 +155,8 @@ template <typename Interface> class MotionPlanner {
                     _destMechanicalPos = _coordMapper.getHomePosition(_destMechanicalPos);
                 }
                 //log debug info:
-                float x, y, z, e;
-                std::tie(x, y, z, e) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
-                LOGD("MotionPlanner::moveTo Got (x,y,z,e) %f, %f, %f, %f\n", x, y, z, e);
+                Vector4f pos = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
+                LOGD("MotionPlanner::moveTo Got: %s\n", pos.str().c_str());
                 LOGD("MotionPlanner _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
                 _motionType = MotionNone; //motion is over.
                 return;
@@ -231,30 +231,35 @@ template <typename Interface> class MotionPlanner {
                 return; //Prevents hanging on machines with 0 axes
             }
             this->_baseTime = baseTime.time_since_epoch();
-            float curX, curY, curZ, curE;
-            std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
-            std::tie(x, y, z) = _coordMapper.applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
-            std::tie(x, y, z, e) = _coordMapper.bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
+            Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
+            //float curX, curY, curZ, curE;
+            //std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos).tuple();
+            Vector4f dest = Vector4f(_coordMapper.applyLeveling(Vector3f(x, y, z)), e);
+            dest = _coordMapper.bound(dest);
+            //std::tie(x, y, z) = _coordMapper.applyLeveling(Vector3f(x, y, z)).tuple(); //get the REAL destination.
+            //std::tie(x, y, z, e) = _coordMapper.bound(Vector4f(x, y, z, e)).tuple(); //Fix impossible coordinates
             
             //Calculate velocities in x, y, z, e directions, and the duration of the linear movement:
-            float distSq = (x-curX)*(x-curX) + (y-curY)*(y-curY) + (z-curZ)*(z-curZ);
-            float dist = sqrt(distSq);
+            //float distSq = (dest.x()-cur.x())*(dest.x()-cur.x()) + (dest.y()-cur.y())*(dest.y()-cur.y()) + (dest.z()-cur.z())*(dest.z()-cur.z());
+            //float dist = sqrt(distSq);
+            float dist = cur.xyz().distance(dest.xyz());
             float minDuration = dist/maxVelXyz; //duration, should there be no acceleration
-            float velE = (e-curE)/minDuration;
+            float velE = (dest.e() - cur.e())/minDuration;
             float newVelE = std::max(minVelE, std::min(maxVelE, velE));
             if (velE != newVelE) { //in the case that newXYZ = currentXYZ, but extrusion is different, regulate that.
                 velE = newVelE;
-                minDuration = (e-curE)/newVelE; //L/(L/t) = t
+                minDuration = (dest.e()-cur.e())/newVelE; //L/(L/t) = t
                 maxVelXyz = dist/minDuration;
             }
             
-            float vx = (x-curX)/minDuration;
-            float vy = (y-curY)/minDuration;
-            float vz = (z-curZ)/minDuration;
-            LOGD("MotionPlanner::moveTo (%f, %f, %f, %f) -> (%f, %f, %f, %f)\n", curX, curY, curZ, curE, x, y, z, e);
+            //float vx = (dest.x()-cur.x())/minDuration;
+            //float vy = (dest.y()-cur.y())/minDuration;
+            //float vz = (dest.z()-cur.z())/minDuration;
+            Vector3f vel = (dest.xyz()-cur.xyz())/minDuration;
+            LOGD("MotionPlanner::moveTo %s -> %s\n", cur.str().c_str(), dest.str().c_str());
             LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
             //LOGD("MotionPlanner::moveTo V:%f, vx:%f, vy:%f, vz:%f, ve:%f dur:%f\n", maxVelXyz, vx, vy, vz, velE, minDuration);
-            AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, vx, vy, vz, velE);
+            AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, vel.x(), vel.y(), vel.z(), velE);
             this->_duration = minDuration;
             this->_motionType = MotionLinear;
             this->_accel.begin(minDuration, maxVelXyz);
@@ -280,10 +285,10 @@ template <typename Interface> class MotionPlanner {
             }*/
             this->_baseTime = baseTime.time_since_epoch();
             float curX, curY, curZ, curE;
-            std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
-            std::tie(x, y, z) = _coordMapper.applyLeveling(std::make_tuple(x, y, z)); //get the REAL destination.
-            std::tie(x, y, z, e) = _coordMapper.bound(std::make_tuple(x, y, z, e)); //Fix impossible coordinates
-            std::tie(centerX_, centerY_, centerZ_) = _coordMapper.applyLeveling(std::make_tuple(centerX_, centerY_, centerZ_)); //get the level'd center
+            std::tie(curX, curY, curZ, curE) = _coordMapper.xyzeFromMechanical(_destMechanicalPos).tuple();
+            std::tie(x, y, z) = _coordMapper.applyLeveling(Vector3f(x, y, z)).tuple(); //get the REAL destination.
+            std::tie(x, y, z, e) = _coordMapper.bound(Vector4f(x, y, z, e)).tuple(); //Fix impossible coordinates
+            std::tie(centerX_, centerY_, centerZ_) = _coordMapper.applyLeveling(Vector3f(centerX_, centerY_, centerZ_)).tuple(); //get the level'd center
             
             //The 3 points, (centerX_, centerY_, centerZ_), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
             Vector3f center(centerX_, centerY_, centerZ_);

@@ -332,9 +332,8 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
                 (void)ve; //unused
                 static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
                 this->time = 0; //this may NOT be zero-initialized by parent.
-                float x0, y0, z0, e_;
-                //map.xyzeFromMechanical(curPos, this->x0, this->y0, this->z0, e_);
-                std::tie(x0, y0, z0, e_) = map.xyzeFromMechanical(curPos);
+                float x0, y0, z0;
+                std::tie(x0, y0, z0) = map.xyzeFromMechanical(curPos).xyz().tuple();
                 //precompute as much as possible:
                 _almostRootParamV2S = 2*M0 - 2*z0;
                 if (AxisIdx == DELTA_AXIS_A) {

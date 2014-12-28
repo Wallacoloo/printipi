@@ -44,6 +44,9 @@
 #include <array>
 #include <cassert> //for assert
 
+#include "common/vector3.h"
+#include "common/vector4.h"
+
 namespace iodrv { class Endstop; } //forward declare for class in "endstop.h"
 
 namespace motion {
@@ -75,20 +78,20 @@ class CoordMap {
             //return the true motor coordinates.
             return std::array<int, 0>();
         }
-        inline std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
+        inline Vector3f applyLeveling(const Vector3f &xyz) const {
             //apply some leveling transformation to the [x,y,z] cartesian coordinate to compensate for an unlevel bed.
             //Note: this is only applied to the endpoints of a line, so a non-planar bed cannot properly be leveled.
             return xyz;
         }
-        inline std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
+        inline Vector4f bound(const Vector4f &xyze) const {
             //ensure that the desired coordinate is accessible. (i.e. motors won't ram the endstops, etc).
             return xyze;
         }
-        inline std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
+        inline Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
             //given axis coordinates &mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.
             (void)mech; //unused in this stub
             assert(false);
-            return std::tuple<float, float, float, float>(0, 0, 0, 0);
+            return Vector4f(0, 0, 0, 0);
         }
         inline bool doHomeBeforeFirstMovement() const {
             //if we get a G1 before the first G28, then we *probably* want to home first,

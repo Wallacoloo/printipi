@@ -120,23 +120,23 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({{(int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), cur[3]}});
         }
-        inline std::tuple<float, float, float> applyLeveling(const std::tuple<float, float, float> &xyz) const {
+        inline Vector3f applyLeveling(const Vector3f &xyz) const {
             return bedLevel.transform(xyz);
         }
-        inline std::tuple<float, float, float, float> bound(const std::tuple<float, float, float, float> &xyze) const {
+        inline Vector4f bound(const Vector4f &xyze) const {
             //bound z:
-            float z = std::max(MIN_Z(), std::min((float)((h()+sqrt(L()*L()-r()*r()))*STEPS_MM()), std::get<2>(xyze)));
-            float x = std::get<0>(xyze);
-            float y = std::get<1>(xyze);
+            float z = std::max(MIN_Z(), std::min((float)((h()+sqrt(L()*L()-r()*r()))*STEPS_MM()), xyze.z()));
+            float x = xyze.x();
+            float y = xyze.y();
             if (x*x + y*y > buildrad()*buildrad()) { //bring x, y onto the platform.
                 float ratio = std::sqrt(buildrad()*buildrad() / (x*x + y*y));
                 x *= ratio;
                 y *= ratio;
             }
             //TODO: force x & y to be on the platform.
-            return std::make_tuple(x, y, z, std::get<3>(xyze));
+            return Vector4f(x, y, z, xyze.e());
         }
-        inline std::tuple<float, float, float, float> xyzeFromMechanical(const std::array<int, 4> &mech) const {
+        inline Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
             float e = mech[DELTA_AXIS_E]*MM_STEPS_EXT();
             float x, y, z;
             float A = mech[DELTA_AXIS_A]*MM_STEPS(); //convert mechanical positions (steps) to MM.
@@ -179,7 +179,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                 x = ((B - C)*(B + C - 2*z))/(2*sqrt(3)*r());
                 y = -((-2*A*A + B*B + C*C + 4*A*z - 2*B*z - 2*C*z)/(6*r()));
             }
-            return std::make_tuple(x, y, z, e);
+            return Vector4f(x, y, z, e);
         }
 
 };
