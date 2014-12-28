@@ -396,6 +396,10 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         if (!gcodeFileStack.empty()) {
             LOGV("Tending gcodeFileStack top\n");
             tendComChannel(gcodeFileStack.top());
+            //Remove all gcode files that have been fully read
+            /*while (!gcodeFileStack.empty() && gcodeFileStack.top().isAtEof()) {
+                gcodeFileStack.pop();
+            }*/
         }
     }
     bool motionNeedsCpu = false;
@@ -439,6 +443,7 @@ template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
             }
             com.reply(resp);
         }
+        //else: since we skipped the reply, a future call to com.getCommand() will return the same command we just read (as opposed to the next line)
     }
 }
 
@@ -555,7 +560,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         return gparse::Response::Ok;
     } else if (cmd.isM32()) { //select file on SD card and print:
         LOGD("loading gcode: %s\n", cmd.getFilepathParam().c_str());
-        gcodeFileStack.push(gparse::Com(filesystem.relGcodePathToAbs(cmd.getFilepathParam())));
+        gcodeFileStack.push(gparse::Com(filesystem.relGcodePathToAbs(cmd.getFilepathParam()), gparse::Com::NULL_FILE_STR, true));
         return gparse::Response::Ok;
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);

@@ -48,25 +48,41 @@ namespace gparse {
 class Com {
     int _readFd;
     int _writeFd;
+    //store any partially-received line that hasn't been fully parsed
     std::string _pending;
+    //The last parsed command that is awaiting a reply
     Command _parsed;
+    //Most of the time, the files being read from are actually streams of some sort, and so an EOF just means the data isn't yet ready.
+    //But when reading from an ACTUAL file, an EOF actually does indicate the end of commands.
+    bool _dieOnEof;
+    bool _isAtEof;
     public:
         static const std::string NULL_FILE_STR;
     public:
         Com();
-        Com(const std::string &fileR);
-        Com(const std::string &fileR, const std::string &fileW);
+
+        //set @dieOnEof=true when reading from an actual, fix-length file, instead of a stream.
+        //useful when dealing with "subprograms" (printing from a file), in which the replies don't need to be sent back to the main com channel.
+        Com(const std::string &fileR, const std::string &fileW=NULL_FILE_STR, bool dieOnEof=false);
+
         //returns true if there is a command ready to be interpreted.
         bool tendCom();
+
+        bool hasReadFile() const;
+        bool hasWriteFile() const;
+
+        //if reading with dieOnEof=true, and the last command has been parsed (but not necessarily responded to),
+        //then this function will return true
+        bool isAtEof() const;
+
+        //returns any pending command.
+        //
+        // sequential calls to getCommand() will all return the same command, until reply() is called, at which point the next command will be parsed.
         const Command& getCommand() const;
+        
         void reply(const std::string &resp);
         void reply(const Response &resp);
-        inline bool hasReadFile() const {
-            return _readFd != NO_HANDLE;
-        }
-        inline bool hasWriteFile() const {
-            return _writeFd != NO_HANDLE;
-        }
+        
             
 };
 

@@ -26,11 +26,11 @@ struct TestClass {
             std::ifstream outputFile;
             outputFile.rdbuf()->pubsetbuf(0, 0);
             //must open with the ::out flag to automatically create the file if it doesn't exist
-            outputFile.open("PRINTIPI_TEST_OUTPUT", std::fstream::in | std::fstream::out | std::fstream::trunc);
+            outputFile.open("PRINTIPI_TEST_OUTPUT", std::fstream::out | std::fstream::in | std::fstream::trunc);
 
             machines::MACHINE driver;
             FileSystem fs("./");
-            gparse::Com com = gparse::Com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT");
+            gparse::Com com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT");
             State<machines::MACHINE> state(driver, fs, com, true);
 
             std::thread eventThread([&](){ 
