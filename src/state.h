@@ -46,8 +46,7 @@
 #include <stdexcept> //for runtime_error
 #include <cmath> //for isnan
 #include <utility> //for std::declval
-#include <array>
-#include <stack>
+#include <vector>
 #include "common/logging.h"
 #include "gparse/command.h"
 #include "gparse/com.h"
@@ -151,13 +150,13 @@ template <typename Drv> class State {
     bool _isHomed; //Need to know if our absolute coordinates are accurate, which changes when power is lost or stepper motors are deactivated.
     bool _isWaitingForHotend;
     EventClockT::time_point _lastMotionPlannedTime;
-    gparse::Com com;
     //M32 allows a gcode file to call subroutines, essentially.
     //  These subroutines can then call more subroutines, so what we have is essentially a call stack.
     //  We only read the top file on the stack, until it's done, and then pop it and return to the next one.
     //BUT, we still need to maintain a com channel to the host (especially for emergency stop, etc).
-    //Thus, we need a root com ("com") & an additional file stack ("gcodeFileStack").
-    std::stack<gparse::Com> gcodeFileStack;
+    //so we store Com channels in a vector & include a flag that tells us whether the root one should act as a special always-active host com
+    bool _isRootComPersistent;
+    std::vector<gparse::Com> gcodeFileStack;
     SchedType scheduler;
     motion::MotionPlanner<MotionInterface> _motionPlanner;
     Drv &driver;
@@ -170,7 +169,11 @@ template <typename Drv> class State {
         //  But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
         //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
         State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom);
+        //Continually service communication channels & execute received commands until we receive a command to exit
         void eventLoop();
+        //return a read-only reference to the interal MotionPlanner object
+        //
+        //Useful only for introspection (e.g. when running automated tests)
         const motion::MotionPlanner<MotionInterface>& motionPlanner() const {
             return _motionPlanner;
         }
@@ -213,7 +216,7 @@ template <typename Drv> class State {
         void tendComChannel(gparse::Com &com);
         /* execute the GCode on a Driver object that supports a well-defined interface.
          * returns a Command to send back to the host. */
-        gparse::Response execute(gparse::Command const& cmd, gparse::Com &com);
+        template <typename ReplyFunc> void execute(gparse::Command const& cmd, ReplyFunc replyFunc);
         // make an arc from the current position to (x, y, z), maintaining a constant distance from (cX, cY, cZ)
         void queueArc(float x, float y, float z, float e, float cX, float cY, float cZ, bool isCW=false);
         /* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
@@ -222,7 +225,7 @@ template <typename Drv> class State {
         void homeEndstops();
         //Check if M109 (set temperature and wait until reached) has been satisfied.
         bool isHotendReady();
-        /* Set the hotend fan to a duty cycle between 0.0 and 1.0 */
+        /* Set the hotend (and bed) fan to a duty cycle between 0.0 and 1.0 (if value > 1, it will assume a scale from 0-255) */
         void setFanRate(float rate);
 };
 
@@ -236,6 +239,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     _isHomed(false),
     _isWaitingForHotend(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
+    _isRootComPersistent(needPersistentCom),
     scheduler(SchedInterface(*this)),
     _motionPlanner(MotionInterface(*this)),
     driver(drv),
@@ -243,11 +247,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     ioDrivers(drv.getIoDrivers())
     {
     this->setDestMoveRatePrimitive(this->driver.defaultMoveRate());
-    if (needPersistentCom) {
-        this->com = com;
-    } else {
-        this->gcodeFileStack.push(com);
-    }
+    this->gcodeFileStack.push_back(com);
 }
 
 
@@ -392,14 +392,20 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
     //Only check the communications periodically because calling execute(com.getCommand()) DOES add up.
     //One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
     if (interval == OnIdleCpuIntervalWide) {
-        tendComChannel(com);
         if (!gcodeFileStack.empty()) {
-            LOGV("Tending gcodeFileStack top\n");
-            tendComChannel(gcodeFileStack.top());
-            //Remove all gcode files that have been fully read
-            /*while (!gcodeFileStack.empty() && gcodeFileStack.top().isAtEof()) {
-                gcodeFileStack.pop();
-            }*/
+            if (_isRootComPersistent) {
+                tendComChannel(gcodeFileStack.front());
+            }
+            //LOGV("Tending gcodeFileStack top\n");
+            //now tend the top channel, although it's possible that it's been popped and there are no more com channels
+            if (!gcodeFileStack.empty()) {
+                //it's OK if we tend the same com channel twice.
+                tendComChannel(gcodeFileStack.back());
+                //Remove all gcode files that have been fully read
+                while (!gcodeFileStack.empty() && gcodeFileStack.back().isAtEof()) {
+                    gcodeFileStack.pop_back();
+                }
+            }
         }
     }
     bool motionNeedsCpu = false;
@@ -435,27 +441,29 @@ template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
     if (com.tendCom()) {
         //note: may want to optimize this; once there is a pending command, this involves a lot of extra work.
         auto cmd = com.getCommand();
-        gparse::Response resp = execute(cmd, com);
-        if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
+        
+        execute(cmd, [&](const gparse::Response &resp) {
+            //if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
             if (!NO_LOG_M105 || !cmd.isM105()) {
                 LOG("command: %s\n", cmd.toGCode().c_str());
                 LOG("response: %s", resp.toString().c_str());
             }
             com.reply(resp);
-        }
-        //else: since we skipped the reply, a future call to com.getCommand() will return the same command we just read (as opposed to the next line)
+            //}
+        });
+        //if the above callback isn't called (because the command isn't ready to be serviced), 
+        // then a future call to com.getCommand() will return the same command we just read (as opposed to the next line)
     }
 }
 
-template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command const &cmd, gparse::Com &com) {
+template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(gparse::Command const &cmd, ReplyFunc reply) {
     //process a gcode command received on the given communications channel and return an appropriate response
-    std::string opcode = cmd.getOpcode();
     if (cmd.isG0() || cmd.isG1()) { //rapid movement / controlled (linear) movement (currently uses same code)
         if (!_motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
-            return gparse::Response::Null;
+            return;
         }
         if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
-            return gparse::Response::Null;
+            return;
         }
         if (!_isHomed && _motionPlanner.doHomeBeforeFirstMovement()) {
             this->homeEndstops();
@@ -480,7 +488,7 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
             this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
         }
         this->queueMovement(x, y, z, e);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isG2() || cmd.isG3()) {
         LOGW("Warning: G3 is experimental\n");
         //first, get the end coordinate and optional feed-rate:
@@ -509,30 +517,30 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         float k = cmd.getK(hasK);
         k = hasK ? zUnitToPrimitive(k) : curZ;
         this->queueArc(x, y, z, e, i, j, k, cmd.isG2());
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
         setUnitMode(UNIT_IN);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isG21()) { //g-code coordinates will now be interpreted as millimeters.
         setUnitMode(UNIT_MM);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isG28()) { //home to end-stops / zero coordinates
         if (!_motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
-            return gparse::Response::Null;
+            return;
         }
         if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
-            return gparse::Response::Null;
+            return;
         }
         this->homeEndstops();
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isG90()) { //set g-code coordinates to absolute
         setPositionMode(POS_ABSOLUTE);
         setExtruderPosMode(POS_ABSOLUTE);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isG91()) { //set g-code coordinates to relative
         setPositionMode(POS_RELATIVE);
         setExtruderPosMode(POS_RELATIVE);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isG92()) { //set current position = 0
         float actualX, actualY, actualZ, actualE;
         bool hasXYZE = cmd.hasAnyXYZEParam();
@@ -545,50 +553,43 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
             actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : destEPrimitive() - _hostZeroE; //_hostZeroE;
         }
         setHostZeroPos(actualX, actualY, actualZ, actualE);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM0()) { //Stop; empty move buffer & exit cleanly
         LOG("recieved M0 command: finishing moves, then exiting\n");
         _doExitAfterMoveCompletes = true;
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM17()) { //enable all stepper motors
         iodrv::IODriver::lockAllAxis(this->ioDrivers);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM18()) { //allow stepper motors to move 'freely'
         iodrv::IODriver::unlockAllAxis(this->ioDrivers);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM32()) { //select file on SD card and print:
         LOGD("loading gcode: %s\n", cmd.getSpecialStringParam().c_str());
-        gcodeFileStack.push(gparse::Com(filesystem.relGcodePathToAbs(cmd.getSpecialStringParam()), gparse::Com::NULL_FILE_STR, true));
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
+        gcodeFileStack.push_back(gparse::Com(filesystem.relGcodePathToAbs(cmd.getSpecialStringParam()), gparse::Com::NULL_FILE_STR, true));
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM83()) { //set extruder relative mode
         setExtruderPosMode(POS_RELATIVE);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM84()) { //stop idle hold: relax all motors (same as M18)
         iodrv::IODriver::unlockAllAxis(this->ioDrivers);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM99()) { //return from macro/subprogram
-        //note: can't simply pop the top file, because then that causes memory access errors when trying to send it a reply.
+        //note: can't simply pop the top file, because then that causes memory access errors when trying to send it areply.
         //Need to check if com channel that received this command is the top one. If yes, then pop it and return Response::Null so that no response will be sent.
         //  else, pop it and return Response::Ok.
         if (gcodeFileStack.empty()) { //return from the main I/O routine = kill program
             LOGW("M99 received, but not in a macro/subprogam; exiting\n");
             _doExitAfterMoveCompletes = true;
-            return gparse::Response::Ok;
+            reply(gparse::Response::Ok);
         } else {
-            if (&gcodeFileStack.top() == &com) { //popping the com channel that sent this = cannot reply
-                //Note: MUST compare com to .top() before popping, otherwise com will become an invalid reference.
-                //We can get away with comparing just the pointers, because com objects are only ever stored in one place.
-                gcodeFileStack.pop();
-                return gparse::Response::Null;
-            } else { //popping a different com channel than the one that sent this request.
-                gcodeFileStack.pop();
-                return gparse::Response::Ok;
-            }
+            reply(gparse::Response::Ok);
+            gcodeFileStack.pop_back();
         }
     } else if (cmd.isM104()) { //set hotend temperature and return immediately.
         bool hasS;
@@ -596,22 +597,22 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         if (hasS) {
             iodrv::IODriver::setHotendTemp(ioDrivers, t);
         }
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM105()) { //get temperature, in C
         CelciusType t, b;
         t = iodrv::IODriver::getHotendTemp(ioDrivers);
         b = iodrv::IODriver::getBedTemp(ioDrivers);
-        return gparse::Response(gparse::ResponseOk, "T:" + std::to_string(t) + " B:" + std::to_string(b));
+        reply(gparse::Response(gparse::ResponseOk, "T:" + std::to_string(t) + " B:" + std::to_string(b)));
     } else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
         float s = cmd.getS(1.0); //PWM duty cycle
         if (s > 1) { //host thinks we're working from 0 to 255
             s = s/256.0; //TODO: move this logic into cmd.getSNorm()
         }
         setFanRate(s);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM107()) { //set fan = off.
         setFanRate(0);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM109()) { //set extruder temperature to S param and wait.
         LOGW("(state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
         bool hasS;
@@ -620,19 +621,19 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
             iodrv::IODriver::setHotendTemp(ioDrivers, t);
         }
         _isWaitingForHotend = true;
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM110()) { //set current line number
         LOGW("(state.h): OP_M110 (set current line number) not implemented\n");
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM112()) { //emergency stop
         exit(1);
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM116()) { //Wait for all heaters (and slow moving variables) to reach target
         _isWaitingForHotend = true;
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM117()) { //print message
         LOG("M117 message: '%s'\n", cmd.getSpecialStringParam().c_str());
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isM140()) { //set BED temp and return immediately.
         LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");
         bool hasS;
@@ -640,10 +641,10 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         if (hasS) {
             iodrv::IODriver::setBedTemp(ioDrivers, t);
         }
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else if (cmd.isTxxx()) { //set tool number
         LOGW("(gparse/state.h): OP_T[n] (set tool number) not implemented\n");
-        return gparse::Response::Ok;
+        reply(gparse::Response::Ok);
     } else {
         throw std::runtime_error(std::string("unrecognized gcode opcode: '") + cmd.getOpcode() + "'");
     }
