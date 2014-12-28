@@ -63,11 +63,13 @@
 #include "filesystem.h"
 #include "outputevent.h"
 
+//g-code coordinates can either be interpreted as absolute or relative to the last coordinates received
 enum PositionMode {
     POS_ABSOLUTE,
     POS_RELATIVE
 };
 
+//g-code coordinates can either be interpreted as having units of millimeters or units of inches
 enum LengthUnit {
     UNIT_MM,
     UNIT_IN
@@ -176,6 +178,10 @@ template <typename Drv> class State {
         //Useful only for introspection (e.g. when running automated tests)
         const motion::MotionPlanner<MotionInterface>& motionPlanner() const {
             return _motionPlanner;
+        }
+        //if set to false, then running a subprogram will cause the main communication channel to not be serviced until the subprogram returns
+        void setPersistentHostCom(bool persistence) {
+            _isRootComPersistent = persistence;
         }
     private:
         /* Control interpretation of positions from the host as relative or absolute */
@@ -566,6 +572,9 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         reply(gparse::Response::Ok);
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         reply(gparse::Response::Ok);
+    } else if (cmd.isM22()) {
+        //"release SD card" (nothing to do).
+        reply(gparse::Response::Ok);
     } else if (cmd.isM32()) { //select file on SD card and print:
         LOGD("loading gcode: %s\n", cmd.getSpecialStringParam().c_str());
         reply(gparse::Response::Ok);
@@ -625,9 +634,17 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if (cmd.isM110()) { //set current line number
         LOGW("(state.h): OP_M110 (set current line number) not implemented\n");
         reply(gparse::Response::Ok);
-    } else if (cmd.isM112()) { //emergency stop
-        exit(1);
+    } else if (cmd.isM111()) {
+        //set debug info.
+        //the S parameter is a bitfield indicating log level. bit 0 = verbose, bit 1 = debug, bit 2 = info+errors
+        int bitfield = cmd.getS();
+        logging::enableVerbose(bitfield & 1);
+        logging::enableDebug(bitfield & 2);
+        logging::enableInfo(bitfield & 4);
         reply(gparse::Response::Ok);
+    } else if (cmd.isM112()) { //emergency stop
+        reply(gparse::Response::Ok);
+        exit(1);
     } else if (cmd.isM116()) { //Wait for all heaters (and slow moving variables) to reach target
         _isWaitingForHotend = true;
         reply(gparse::Response::Ok);

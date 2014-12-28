@@ -77,14 +77,17 @@ namespace logging {
         _verbose = false;
     }
 
-    inline void enableDebug() {
-        _debug = true;
-        LOG("debug logging enabled\n");
+    inline void enableDebug(bool en=true) {
+        _debug = en;
+        LOG("debug logging set to: %i\n", en);
     }
-    inline void enableVerbose() {
-        enableDebug();
-        _verbose = true;
-        LOG("verbose logging enabled\n");
+    inline void enableVerbose(bool en=true) {
+        _verbose = en;
+        LOG("verbose logging set to: %i\n", en);
+    }
+    inline void enableInfo(bool en=true) {
+        _info = en;
+        LOG("info logging set to: %i\n", en);
     }
 
 #else
@@ -99,9 +102,15 @@ namespace logging {
         return false;
     }
 
-    inline void disable() {}
-    inline void enableVerbose() {}
-    inline void enableDebug() {}
+    inline void disable(bool en=true) {
+        (void)en; 
+    }
+    inline void enableVerbose(bool en=true) {
+        (void)en; 
+    }
+    inline void enableDebug(bool en=true) {
+        (void)en; 
+    }
 
 #endif
 

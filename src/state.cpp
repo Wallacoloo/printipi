@@ -172,7 +172,7 @@ struct TestClass {
 	            	THEN("The actual position should be near (40, -10, 50)") {
 	            		//note: Printipi is able to monitor multiple file inputs simultaneously,
 	            		// if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
-	            		// there is no way to query the status of this file read, so we must just sleep & hopr
+	            		// there is no way to query the status of this file read, so we must just sleep & hope
 	            		std::this_thread::sleep_for(std::chrono::seconds(1));
 		                exitOnce(); //force the G0 code to complete
 		                verifyPosition(40, -10, 50);
@@ -186,7 +186,7 @@ struct TestClass {
 	            	THEN("The actual position should be near (40, -10, 50)") {
 	            		//note: Printipi is able to monitor multiple file inputs simultaneously,
 	            		// if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
-	            		// there is no way to query the status of this file read, so we must just sleep & hopr
+	            		// there is no way to query the status of this file read, so we must just sleep & hope
 	            		std::this_thread::sleep_for(std::chrono::seconds(1));
 		                exitOnce(); //force the G0 code to complete
 		                verifyPosition(40, -10, 50);
@@ -201,7 +201,7 @@ struct TestClass {
                     THEN("The no commands past M99 should be processed & the actual position should be near (40, -10, 50)") {
                         //note: Printipi is able to monitor multiple file inputs simultaneously,
                         // if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
-                        // there is no way to query the status of this file read, so we must just sleep & hopr
+                        // there is no way to query the status of this file read, so we must just sleep & hope
                         std::this_thread::sleep_for(std::chrono::seconds(1));
                         exitOnce(); //force the G0 code to complete
                         verifyPosition(40, -10, 50);
