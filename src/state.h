@@ -572,7 +572,6 @@ template <typename Drv> gparse::Response State<Drv>::execute(gparse::Command con
         iodrv::IODriver::unlockAllAxis(this->ioDrivers);
         return gparse::Response::Ok;
     } else if (cmd.isM99()) { //return from macro/subprogram
-        LOGW("(state.h): M99 (return from macro/subprogram) not tested\n");
         //note: can't simply pop the top file, because then that causes memory access errors when trying to send it a reply.
         //Need to check if com channel that received this command is the top one. If yes, then pop it and return Response::Null so that no response will be sent.
         //  else, pop it and return Response::Ok.
