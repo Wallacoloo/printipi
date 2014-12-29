@@ -259,7 +259,7 @@ template <typename Interface> class MotionPlanner {
             Vector3f vel = (dest.xyz()-cur.xyz())/minDuration;
             LOGD("MotionPlanner::moveTo %s -> %s\n", cur.str().c_str(), dest.str().c_str());
             LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
-            AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, vel.x(), vel.y(), vel.z(), velE);
+            AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, Vector4f(vel, velE));
             this->_duration = minDuration;
             this->_motionType = MotionLinear;
             this->_accel.begin(minDuration, maxVelXyz);
@@ -286,7 +286,7 @@ template <typename Interface> class MotionPlanner {
             this->_baseTime = baseTime;
             Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
             //get the REAL (leveled) destination
-            Vector4f dest = Vector4f(_coordMapper.applyLeveling(dest_.xyz()), dest.e());
+            Vector4f dest = Vector4f(_coordMapper.applyLeveling(dest_.xyz()), dest_.e());
             //Fix impossible coordinates
             dest = _coordMapper.bound(dest);
             
@@ -370,7 +370,7 @@ template <typename Interface> class MotionPlanner {
             LOGD("MotionPlanner arc orig center (%f,%f,%f), proj (%f,%f,%f) n(%f,%f,%f), mp(%f,%f,%f)\n", 
                 centerX_, centerY_, centerZ_, projcmpn.x(), projcmpn.y(), projcmpn.z(),
                 n.x(), n.y(), n.z(), mp.x(), mp.y(), mp.z());*/
-            AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, center.x(), center.y(), center.z(), u.x(), u.y(), u.z(), v.x(), v.y(), v.z(), arcRad, arcVel, velE);
+            AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, center, u, v, arcRad, arcVel, velE);
             /*if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
             }*/

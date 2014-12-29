@@ -175,14 +175,14 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcSteppe
         float arcRad; //radius of arc
         float m; //angular velocity of the arc.
         float w; //angle of this axis. CW from +y axis
-        float x0, y0, z0; //center point of arc
+        float x0, y0, z0; //center point of arc. TODO: unused?
         inline float r() const { return _r; }
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
     public:
         inline LinearDeltaArcStepper() : _r(0), _L(0), _MM_STEPS(0) {}
         template <typename CoordMapT, std::size_t sz> LinearDeltaArcStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, 
-        float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, 
+        const Vector3f &center, const Vector3f &u, const Vector3f &v,  
         float arcRad, float arcVel, float extVel)
         : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()),
           _r(map.r()),
@@ -190,15 +190,15 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcSteppe
           _MM_STEPS(map.MM_STEPS(AxisIdx)),
           M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
           sTotal(0),
-          xc(xCenter),
-          yc(yCenter),
-          zc(zCenter),
-          ux(ux),
-          uy(uy),
-          uz(uz),
-          vx(vx),
-          vy(vy),
-          vz(vz),
+          xc(center.x()),
+          yc(center.y()),
+          zc(center.z()),
+          ux(u.x()),
+          uy(u.y()),
+          uz(u.z()),
+          vx(v.x()),
+          vy(v.y()),
+          vz(v.z()),
           arcRad(arcRad),
           m(arcVel),
           w(AxisIdx*2*M_PI/3) {
@@ -320,18 +320,19 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
         typedef LinearDeltaArcStepper<StepperDriverT, AxisIdx> ArcStepperT;
         inline LinearDeltaStepper() : _r(0), _L(0), _MM_STEPS(0) {}
         template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, 
-        float vx, float vy, float vz, float ve)
+        const Vector4f &vel)
         : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()),
              _r(map.r()), _L(map.L()), _MM_STEPS(map.MM_STEPS(AxisIdx)),
              M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
              sTotal(0),
              //vx(vx), vy(vy), vz(vz),
              //v2(vx*vx + vy*vy + vz*vz), 
-             inv_v2(1/(vx*vx + vy*vy + vz*vz)),
-             vz_over_v2(vz*inv_v2) {
-                (void)ve; //unused
+             inv_v2(1/(vel.xyz().magSq())),
+             vz_over_v2(vel.z()*inv_v2) {
                 static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
                 this->time = 0; //this may NOT be zero-initialized by parent.
+                float vx, vy, vz;
+                std::tie(vx, vy, vz) = vel.xyz().tuple();
                 float x0, y0, z0;
                 std::tie(x0, y0, z0) = map.xyzeFromMechanical(curPos).xyz().tuple();
                 //precompute as much as possible:

@@ -85,10 +85,9 @@ UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-
 INCFLAGS=-I$(SRCDIR) -I$(SRCDIR)/../lib
 STDFLAGS=-std=c++0x
 CFLAGS=$(STDFLAGS) -Wall -Wextra -Wundef -Wwrite-strings -Wno-unused-result $(INCFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) $(DEFINES) $(PLAT_DEFINES) -DBUILD_TYPE_$(TARGET)
+LDFLAGS=-Wl,--no-as-needed
 #Extra flags to apply JUST to main.cpp (eg -fwhole-program)
 MAINCFLAGS=
-#Use the C++ compiler to generate archives, instead of AR or LD, so as to be compatible with clang
-MAKEARCHIVE=$(CXX) -Wl,-r -nostdlib $(LTOFLAG) -o
 #-lrt is the realtime posix library. Appears to be needed for things like clock_nanosleep
 LIBS:=$(LIBS) -lrt
 BUILDROOT=../build
@@ -147,7 +146,7 @@ minsize: $(MINSIZEDIR)/$(NAME)
 
 	
 %/$(NAME): $(addprefix %/,$(OBJECTS))
-	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
+	$(CXX) $^ -o $@ $(CFLAGS) $(LDFLAGS) $(MAINCFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
 	

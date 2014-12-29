@@ -85,34 +85,34 @@ template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper 
                   (CoordType==CARTESIAN_AXIS_Z ? z : 
                   (CoordType==CARTESIAN_AXIS_E ? e : 0) ) );
         }
-        template <typename CoordMapT> float TIME_PER_STEP(const CoordMapT &map, float vx, float vy, float vz, float ve) const {
+        template <typename CoordMapT> float TIME_PER_STEP(const CoordMapT &map, const Vector4f &vel) const {
             //return units of time. v is mm/sec, STEPS_MM is steps/mm.
             //therefore v*STEPS_MM = steps/sec.
             //1/(v*STEPS_MM) is sec/steps.
             //multiplied by 1 step and units are sec. Therefore t = 1/(v*STEPS_MM);
             //NOTE: this may return a NEGATIVE time, indicating that the stepping direction is backward.
-            return 1./ (GET_COORD(vx, vy, vz, ve) * map.STEPS_MM(CoordType));
+            return 1./ (GET_COORD(vel.x(), vel.y(), vel.z(), vel.e()) * map.STEPS_MM(CoordType));
         }
     public:
         //default constructor
         inline LinearStepper() {}
         //Linear movement constructor
         template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, 
-          float vx, float vy, float vz, float ve)
+          const Vector4f &vel)
         : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<CoordType>()),
-          timePerStep(std::fabs( TIME_PER_STEP(map, vx, vy, vz, ve) )) {
+          timePerStep(std::fabs( TIME_PER_STEP(map, vel) )) {
                 (void)map; (void)curPos; //unused
                 this->time = 0;
-                this->direction = stepDirFromSign( TIME_PER_STEP(map, vx, vy, vz, ve) );
+                this->direction = stepDirFromSign( TIME_PER_STEP(map, vel) );
             }
         //Arc movement constructor
         template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, 
-          float centerX, float centerY, float centerZ, float ux, float uy, float uz, float vx, float vy, float vz, 
+          const Vector3f &center, const Vector3f &u, const Vector3f &v,  
           float arcRad, float arcVel, float extVel)
         : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<CoordType>()), 
           timePerStep(std::fabs(1./ (extVel * map.STEPS_MM(CoordType)))) {
-            (void)map; (void)idx; (void)curPos; (void)centerX; (void)centerY; (void)centerZ; (void)ux; (void)uy; (void)uz; (void)vx; (void)vy; (void)vz; (void)arcRad; (void)arcVel; //unused
-            assert(CoordType == CARTESIAN_AXIS_E); //can only use a LinearStepper as an Arc implementation for the extruder axis. 
+            (void)map; (void)idx; (void)curPos; (void)center; (void)u; (void)v; (void)arcRad; (void)arcVel; //unused
+            assert(CoordType == CARTESIAN_AXIS_E); //can only use a LinearStepper as an Arc implementation for the extruder axis, since that moves at const velocity
             this->time = 0;
             this->direction = stepDirFromSign(extVel);
         }

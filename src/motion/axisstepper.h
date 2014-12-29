@@ -38,16 +38,19 @@
 #ifndef MOTION_AXISSTEPPER_H
 #define MOTION_AXISSTEPPER_H
 
-#include "compileflags.h" //for AxisIdType
 #include <tuple>
 #include <array>
 #include <cmath> //for isnan
 #include <utility> //for std::move
+#include <cassert>
 
+#include "compileflags.h" //for AxisIdType
 #include "platforms/auto/chronoclock.h"
 #include "common/tupleutil.h"
 #include "outputevent.h"
-#include <cassert>
+
+#include "common/vector3.h"
+#include "common/vector4.h"
 
 namespace motion {
 
@@ -71,24 +74,14 @@ class AxisStepper {
         StepDirection direction; //direction of next step
         inline int index() const { return _index; } //NOT TO BE OVERRIDEN
         inline AxisStepper() {}
-        //standard initializer:
-        //template <typename CoordMapT, std::size_t sz> AxisStepper(int idx, const CoordMapT &/*map*/, const std::array<int, sz>& /*curPos*/, float /*vx*/, float /*vy*/, float /*vz*/, float /*ve*/)
-        //    : _index(idx) {}
-        //initializer when homing to endstops:
-       // template <typename CoordMapT> AxisStepper(int idx, const CoordMapT &/*map*/, float /*vHome*/) : _index(idx) {}
         
         template <typename TupleT> static AxisStepper& getNextTime(TupleT &axes);
-        template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve);
-        template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisArcSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel);
+        template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector4f &vel);
+        template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisArcSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel);
         template <typename TupleT, typename CoordMapT> static void initAxisHomeSteppers(TupleT &steppers, const CoordMapT &map, float vHome);
         //Event getEvent() const; //NOT TO BE OVERRIDEN
         //Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN
         template <typename TupleT> void nextStep(TupleT &axes); //NOT TO BE OVERRIDEN
-        /*inline std::array<OutputEvent, 3> getStepOutputEventSequence(EventClockT::duration absoluteTime) {
-            (void)absoluteTime; //unused.
-            assert(false);
-            return {{OutputEvent(), OutputEvent(), OutputEvent()}};
-        }*/
     protected:
         AxisStepper(int idx) : _index(idx) {} //only callable via children
         inline void _nextStep(); //OVERRIDE THIS. And yes, it will be called upon initialization too.
@@ -147,21 +140,21 @@ template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
     return _AxisStepper__getNextTime<TupleT, std::tuple_size<TupleT>::value-1>()(axes);
 }
 
-//Helper classes for AxisStepper::initAxisSteppers
+//Helper class for AxisStepper::initAxisSteppers
 
 struct _AxisStepper__initAxisSteppers {
-    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
+    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector4f &vel) {
         (void)_myIdx; (void)stepper; //unused
-        std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, curPos, vx, vy, vz, ve));
+        std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, curPos, vel));
         std::get<MyIdx>(*steppers)._nextStep();
     }
 };
 
-template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisStepper::initAxisSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, float vx, float vy, float vz, float ve) {
-    callOnAll(steppers, _AxisStepper__initAxisSteppers(), &steppers, &map, curPos, vx, vy, vz, ve);
+template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisStepper::initAxisSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector4f &vel) {
+    callOnAll(steppers, _AxisStepper__initAxisSteppers(), &steppers, &map, curPos, vel);
 }
 
-//Helper classes for AxisStepper::initAxisHomeSteppers
+//Helper class for AxisStepper::initAxisHomeSteppers
 
 struct _AxisStepper__initAxisHomeSteppers {
     template <std::size_t MyIdx, typename T, typename TupleT, typename CoordMapT> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, float vHome) {
@@ -175,21 +168,21 @@ template <typename TupleT, typename CoordMapT> void AxisStepper::initAxisHomeSte
     callOnAll(steppers, _AxisStepper__initAxisHomeSteppers(), &steppers, &map, vHome);
 }
 
-//Helper classes for AxisStepper::initAxisArcSteppers
+//Helper class for AxisStepper::initAxisArcSteppers
 
 struct _AxisStepper__initAxisArcSteppers {
-    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) {
+    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel) {
         (void)_myIdx; (void)stepper; //unused
-        std::get<MyIdx>(*steppers) = T(MyIdx, *map, curPos, xCenter, yCenter, zCenter, ux, uy, uz, vx, vy, vz, arcRad, arcVel, extVel);
+        std::get<MyIdx>(*steppers) = T(MyIdx, *map, curPos, center, u, v, arcRad, arcVel, extVel);
         std::get<MyIdx>(*steppers)._nextStep();
     }
 };
 
-template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisStepper::initAxisArcSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, float xCenter, float yCenter, float zCenter, float ux, float uy, float uz, float vx, float vy, float vz, float arcRad, float arcVel, float extVel) {
-    callOnAll(steppers, _AxisStepper__initAxisArcSteppers(), &steppers, &map, curPos, xCenter, yCenter, zCenter, ux, uy, uz, vx, vy, vz, arcRad, arcVel, extVel);
+template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisStepper::initAxisArcSteppers(TupleT &steppers, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel) {
+    callOnAll(steppers, _AxisStepper__initAxisArcSteppers(), &steppers, &map, curPos, center, u, v, arcRad, arcVel, extVel);
 }
 
-//Helper classes for AxisStepper::nextStep method
+//Helper class for AxisStepper::nextStep method
 //this iterates through all steppers and checks if their index is equal to the index of the desired stepper to step.
 //if so, it calls _nextStep().
 //This allows for _nextStep to act as if it were virtual (by defining a method of that name in a derived type), but without using a vtable.
