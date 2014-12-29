@@ -13,7 +13,7 @@ namespace mathutil {
 //By definition, there are EXACTLY 25.4 mm per inch.
 const float MM_PER_IN = 25.4;
 //It is impossible for any temperature to be < this value, in Celcius
-const float ABSOLUTE_ZERO_C = -273.15;
+const float ABSOLUTE_ZERO_CELCIUS = -273.15;
 
 //Convert from Celcius temperature to Kelvin
 template <typename T> constexpr T CtoK(T C) {
