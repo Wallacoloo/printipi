@@ -325,53 +325,6 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="425" />
       </undocumented>
     </type>
-    <type documented="0" name="classtemplate" undocumented="15">
-      <undocumented id="Scheduler" name="Scheduler">
-        <location column="1" file="scheduler.h" line="51" />
-      </undocumented>
-      <undocumented id="State" name="State">
-        <location column="1" file="state.h" line="79" />
-      </undocumented>
-      <undocumented id="ThisThreadSleepAdapter" name="ThisThreadSleepAdapter">
-        <location column="1" file="boilerplate/thisthreadsleepadapter.h" line="6" />
-      </undocumented>
-      <undocumented id="Vector3" name="Vector3">
-        <location column="1" file="common/vector3.h" line="31" />
-      </undocumented>
-      <undocumented id="Vector4" name="Vector4">
-        <location column="1" file="common/vector4.h" line="6" />
-      </undocumented>
-      <undocumented id="iodrv::TempControl" name="TempControl">
-        <location column="1" file="iodrivers/tempcontrol.h" line="57" />
-      </undocumented>
-      <undocumented id="motion::AxisStepperWithDriver" name="AxisStepperWithDriver">
-        <location column="1" file="motion/axisstepper.h" line="102" />
-      </undocumented>
-      <undocumented id="motion::LinearCoordMap" name="LinearCoordMap">
-        <location column="1" file="motion/linearcoordmap.h" line="49" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaArcStepper" name="LinearDeltaArcStepper">
-        <location column="1" file="motion/lineardeltastepper.h" line="167" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap" name="LinearDeltaCoordMap">
-        <location column="1" file="motion/lineardeltacoordmap.h" line="59" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaStepper" name="LinearDeltaStepper">
-        <location column="1" file="motion/lineardeltastepper.h" line="305" />
-      </undocumented>
-      <undocumented id="motion::LinearHomeStepper" name="LinearHomeStepper">
-        <location column="1" file="motion/linearstepper.h" line="51" />
-      </undocumented>
-      <undocumented id="motion::LinearStepper" name="LinearStepper">
-        <location column="1" file="motion/linearstepper.h" line="74" />
-      </undocumented>
-      <undocumented id="motion::MaxOutputEventSequenceSize" name="MaxOutputEventSequenceSize">
-        <location column="1" file="motion/motionplanner.h" line="60" />
-      </undocumented>
-      <undocumented id="motion::MotionPlanner" name="MotionPlanner">
-        <location column="1" file="motion/motionplanner.h" line="82" />
-      </undocumented>
-    </type>
     <type documented="0" name="templatetypeparameter" undocumented="143">
       <undocumented id="Drv" name="Drv">
         <location column="11" file="state.h" line="395" />
@@ -850,8 +803,8 @@ return values.
         <location column="1" file="machines/rpi/kosselrampsfd.h" line="298" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
-        <location column="1" file="platforms/generic/primitiveiopin.h" line="10" />
         <location column="5" file="platforms/generic/chronoclock.h" line="15" />
+        <location column="1" file="platforms/generic/primitiveiopin.h" line="10" />
         <location column="5" file="platforms/generic/thisthreadsleep.h" line="14" />
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="15" />
       </undocumented>
@@ -863,12 +816,54 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="24" />
       </undocumented>
     </type>
-    <type documented="7" name="structtemplate" undocumented="1">
-      <undocumented id="motion::array_size" name="array_size">
-        <location column="1" file="motion/motionplanner.h" line="55" />
+    <type documented="0" name="classtemplate" undocumented="15">
+      <undocumented id="Scheduler" name="Scheduler">
+        <location column="1" file="scheduler.h" line="51" />
+      </undocumented>
+      <undocumented id="State" name="State">
+        <location column="1" file="state.h" line="79" />
+      </undocumented>
+      <undocumented id="ThisThreadSleepAdapter" name="ThisThreadSleepAdapter">
+        <location column="1" file="boilerplate/thisthreadsleepadapter.h" line="6" />
+      </undocumented>
+      <undocumented id="Vector3" name="Vector3">
+        <location column="1" file="common/vector3.h" line="31" />
+      </undocumented>
+      <undocumented id="Vector4" name="Vector4">
+        <location column="1" file="common/vector4.h" line="6" />
+      </undocumented>
+      <undocumented id="iodrv::TempControl" name="TempControl">
+        <location column="1" file="iodrivers/tempcontrol.h" line="57" />
+      </undocumented>
+      <undocumented id="motion::AxisStepperWithDriver" name="AxisStepperWithDriver">
+        <location column="1" file="motion/axisstepper.h" line="102" />
+      </undocumented>
+      <undocumented id="motion::LinearCoordMap" name="LinearCoordMap">
+        <location column="1" file="motion/linearcoordmap.h" line="49" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaArcStepper" name="LinearDeltaArcStepper">
+        <location column="1" file="motion/lineardeltastepper.h" line="167" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap" name="LinearDeltaCoordMap">
+        <location column="1" file="motion/lineardeltacoordmap.h" line="59" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaStepper" name="LinearDeltaStepper">
+        <location column="1" file="motion/lineardeltastepper.h" line="305" />
+      </undocumented>
+      <undocumented id="motion::LinearHomeStepper" name="LinearHomeStepper">
+        <location column="1" file="motion/linearstepper.h" line="51" />
+      </undocumented>
+      <undocumented id="motion::LinearStepper" name="LinearStepper">
+        <location column="1" file="motion/linearstepper.h" line="74" />
+      </undocumented>
+      <undocumented id="motion::MaxOutputEventSequenceSize" name="MaxOutputEventSequenceSize">
+        <location column="1" file="motion/motionplanner.h" line="60" />
+      </undocumented>
+      <undocumented id="motion::MotionPlanner" name="MotionPlanner">
+        <location column="1" file="motion/motionplanner.h" line="82" />
       </undocumented>
     </type>
-    <type documented="62" name="method" undocumented="363">
+    <type documented="66" name="method" undocumented="359">
       <undocumented id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
         <location column="9" file="filesystem.h" line="10" />
         <location column="1" file="filesystem.cpp" line="6" />
@@ -1977,18 +1972,6 @@ return values.
       <undocumented id="plat::rpi::HardwareScheduler::schedTime" name="schedTime">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="543" />
       </undocumented>
-      <undocumented id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-        <location column="9" file="platforms/rpi/primitiveiopin.h" line="49" />
-      </undocumented>
-      <undocumented id="plat::rpi::PrimitiveIoPin::id" name="id">
-        <location column="3" file="platforms/rpi/primitiveiopin.h" line="33" />
-      </undocumented>
-      <undocumented id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
-        <location column="3" file="platforms/rpi/primitiveiopin.h" line="24" />
-      </undocumented>
-      <undocumented id="plat::rpi::PrimitiveIoPin::null" name="null">
-        <location column="3" file="platforms/rpi/primitiveiopin.h" line="21" />
-      </undocumented>
     </type>
     <type documented="0" name="templatenontypeparameter" undocumented="29">
       <undocumented id="CVTemplateWrapper::Value" name="Value">
@@ -2117,6 +2100,11 @@ return values.
         <location column="5" file="platforms/rpi/hardwarescheduler.h" line="466" />
       </undocumented>
     </type>
+    <type documented="7" name="structtemplate" undocumented="1">
+      <undocumented id="motion::array_size" name="array_size">
+        <location column="1" file="motion/motionplanner.h" line="55" />
+      </undocumented>
+    </type>
     <type documented="2" name="functiontemplate" undocumented="7">
       <undocumented id="callOnAll" name="callOnAll">
         <location column="1" file="common/tupleutil.h" line="43" />
@@ -2140,7 +2128,7 @@ return values.
         <location column="1" file="common/tupleutil.h" line="73" />
       </undocumented>
     </type>
-    <type documented="14" name="constructor" undocumented="40">
+    <type documented="15" name="constructor" undocumented="39">
       <undocumented id="CVTemplateWrapper::CVTemplateWrapper&lt;Value&gt;" name="CVTemplateWrapper&lt;Value&gt;">
         <location column="5" file="common/tupleutil.h" line="22" />
       </undocumented>
@@ -2262,9 +2250,6 @@ return values.
       <undocumented id="plat::rpi::HardwareScheduler::HardwareScheduler" name="HardwareScheduler">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="537" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="107" />
-      </undocumented>
-      <undocumented id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-        <location column="3" file="platforms/rpi/primitiveiopin.h" line="28" />
       </undocumented>
     </type>
     <type documented="2" name="variable" undocumented="11">
@@ -2674,6 +2659,57 @@ return values.
     </type>
   </coverage>
   <arguments>
+    <function id="gparse::bigEndianStr" name="bigEndianStr">
+      <location column="1" file="gparse/command.h" line="57" />
+      <undocumented-return />
+      <undocumented name="a" />
+    </function>
+    <function id="gparse::Command::Command" name="Command">
+      <location column="9" file="gparse/command.h" line="91" />
+      <location column="1" file="gparse/command.cpp" line="6" />
+      <undocumented name="" />
+    </function>
+    <function id="gparse::Command::getFloatParam" name="getFloatParam">
+      <location column="9" file="gparse/command.h" line="99" />
+      <location column="1" file="gparse/command.cpp" line="155" />
+      <undocumented-return />
+      <undocumented name="hasParam" />
+      <undocumented name="def" />
+      <undocumented name="label" />
+    </function>
+    <function id="gparse::Command::isG0" name="isG0">
+      <location column="9" file="gparse/command.h" line="190" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::Com" name="Com">
+      <location column="9" file="gparse/com.h" line="66" />
+      <location column="1" file="gparse/com.cpp" line="13" />
+      <undocumented name="fileR" />
+      <undocumented name="fileW" />
+      <undocumented name="dieOnEof" />
+    </function>
+    <function id="gparse::Com::tendCom" name="tendCom">
+      <location column="9" file="gparse/com.h" line="69" />
+      <location column="1" file="gparse/com.cpp" line="20" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::isAtEof" name="isAtEof">
+      <location column="9" file="gparse/com.h" line="76" />
+      <location column="1" file="gparse/com.cpp" line="52" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::getCommand" name="getCommand">
+      <location column="9" file="gparse/com.h" line="81" />
+      <location column="1" file="gparse/com.cpp" line="55" />
+      <undocumented-return />
+    </function>
+    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
+      <location column="9" file="schedulerbase.h" line="65" />
+      <location column="1" file="schedulerbase.cpp" line="56" />
+      <undocumented-return />
+      <undocumented name="handler" />
+      <undocumented name="level" />
+    </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/generic/primitiveiopin.h" line="19" />
       <undocumented name="args" />
@@ -2700,12 +2736,55 @@ return values.
       <location column="1" file="iodrivers/iopin.cpp" line="63" />
       <undocumented name="lev" />
     </function>
-    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="65" />
-      <location column="1" file="schedulerbase.cpp" line="56" />
+    <function id="plat::rpi::makeLockedMem" name="makeLockedMem">
+      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="474" />
+      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="53" />
       <undocumented-return />
-      <undocumented name="handler" />
-      <undocumented name="level" />
+      <undocumented name="size" />
+    </function>
+    <function id="plat::rpi::freeLockedMem" name="freeLockedMem">
+      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="476" />
+      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="75" />
+      <undocumented name="mem" />
+      <undocumented name="size" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="16" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="20" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
+      <undocumented name="pinIdx" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="36" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="40" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/rpi/primitiveiopin.h" line="49" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="53" />
+      <undocumented name="lev" />
+    </function>
+    <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
+      <location column="9" file="scheduler.h" line="67" />
+      <location column="1" file="scheduler.h" line="109" />
+      <undocumented-return />
+    </function>
+    <function id="motion::AccelerationProfile::begin" name="begin">
+      <location column="5" file="motion/accelerationprofile.h" line="45" />
+      <undocumented name="Vmax" />
+      <undocumented name="moveDuration" />
     </function>
     <function id="callOnAll" name="callOnAll">
       <location column="1" file="common/tupleutil.h" line="47" />
@@ -2832,80 +2911,6 @@ return values.
       <location column="9" file="motion/axisstepper.h" line="84" />
       <location column="1" file="motion/axisstepper.h" line="198" />
       <undocumented name="axes" />
-    </function>
-    <function id="plat::rpi::makeLockedMem" name="makeLockedMem">
-      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="474" />
-      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="53" />
-      <undocumented-return />
-      <undocumented name="size" />
-    </function>
-    <function id="plat::rpi::freeLockedMem" name="freeLockedMem">
-      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="476" />
-      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="75" />
-      <undocumented name="mem" />
-      <undocumented name="size" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="37" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/rpi/primitiveiopin.h" line="46" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::bigEndianStr" name="bigEndianStr">
-      <location column="1" file="gparse/command.h" line="57" />
-      <undocumented-return />
-      <undocumented name="a" />
-    </function>
-    <function id="gparse::Command::Command" name="Command">
-      <location column="9" file="gparse/command.h" line="91" />
-      <location column="1" file="gparse/command.cpp" line="6" />
-      <undocumented name="" />
-    </function>
-    <function id="gparse::Command::getFloatParam" name="getFloatParam">
-      <location column="9" file="gparse/command.h" line="99" />
-      <location column="1" file="gparse/command.cpp" line="155" />
-      <undocumented-return />
-      <undocumented name="hasParam" />
-      <undocumented name="def" />
-      <undocumented name="label" />
-    </function>
-    <function id="gparse::Command::isG0" name="isG0">
-      <location column="9" file="gparse/command.h" line="190" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::Com" name="Com">
-      <location column="9" file="gparse/com.h" line="66" />
-      <location column="1" file="gparse/com.cpp" line="13" />
-      <undocumented name="fileR" />
-      <undocumented name="fileW" />
-      <undocumented name="dieOnEof" />
-    </function>
-    <function id="gparse::Com::tendCom" name="tendCom">
-      <location column="9" file="gparse/com.h" line="69" />
-      <location column="1" file="gparse/com.cpp" line="20" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::isAtEof" name="isAtEof">
-      <location column="9" file="gparse/com.h" line="76" />
-      <location column="1" file="gparse/com.cpp" line="52" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::getCommand" name="getCommand">
-      <location column="9" file="gparse/com.h" line="81" />
-      <location column="1" file="gparse/com.cpp" line="55" />
-      <undocumented-return />
-    </function>
-    <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
-      <location column="9" file="scheduler.h" line="67" />
-      <location column="1" file="scheduler.h" line="109" />
-      <undocumented-return />
-    </function>
-    <function id="motion::AccelerationProfile::begin" name="begin">
-      <location column="5" file="motion/accelerationprofile.h" line="45" />
-      <undocumented name="Vmax" />
-      <undocumented name="moveDuration" />
     </function>
     <function id="motion::MotionPlanner::readyForNextMove" name="readyForNextMove">
       <location column="9" file="motion/motionplanner.h" line="140" />
@@ -3046,6 +3051,25 @@ return values.
     </function>
   </arguments>
   <references>
+    <field id="gparse::Command::arguments" name="arguments">
+      <location column="5" file="gparse/command.h" line="76" />
+      <doctype name="doc">
+        <ref name="std::string" />
+      </doctype>
+    </field>
+    <variable id="plat::rpi::ChronoClock::_i" name="_i">
+      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
+      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
+      <doctype name="brief">
+        <ref name="..." />
+      </doctype>
+    </variable>
+    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
+      <doctype component="pullUpDown" name="params">
+        <ref name="IoPin" />
+      </doctype>
+    </constructor>
     <variable id="CVTemplateWrapper::value" name="value">
       <location column="5" file="common/tupleutil.h" line="21" />
       <doctype name="doc">
@@ -3077,25 +3101,6 @@ return values.
         <ref name="StepperT::HomeStepperT, ..." />
       </doctype>
     </structtemplate>
-    <variable id="plat::rpi::ChronoClock::_i" name="_i">
-      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
-      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
-      <doctype name="brief">
-        <ref name="..." />
-      </doctype>
-    </variable>
-    <field id="plat::rpi::PrimitiveIoPin::pullUpDown" name="pullUpDown">
-      <location column="5" file="platforms/rpi/primitiveiopin.h" line="19" />
-      <doctype name="doc">
-        <ref name="IoPin" />
-      </doctype>
-    </field>
-    <field id="gparse::Command::arguments" name="arguments">
-      <location column="5" file="gparse/command.h" line="76" />
-      <doctype name="doc">
-        <ref name="std::string" />
-      </doctype>
-    </field>
     <method id="motion::MaxOutputEventSequenceSize::mySize" name="mySize">
       <location column="5" file="motion/motionplanner.h" line="63" />
       <doctype name="brief">

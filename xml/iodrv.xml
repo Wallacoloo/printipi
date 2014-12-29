@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="iodrv" name="iodrv" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>for the testsuite</brief>
+  <brief>for StepDirection</brief>
   <variable id="iodrv::_intervalThresh" name="_intervalThresh">
     <type name="std::chrono::microseconds" qualifier=" const" />
   </variable>

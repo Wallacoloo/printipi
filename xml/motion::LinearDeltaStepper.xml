@@ -25,7 +25,7 @@
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vel" name="vel">
       <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />

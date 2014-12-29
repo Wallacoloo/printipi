@@ -1,20 +1,28 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="plat::rpi::PrimitiveIoPin" name="PrimitiveIoPin" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+    <brief>@pinIdx *logical* index of the pin</brief>
     <argument id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin::pinIdx" name="pinIdx">
       <type name="mitpi::GpioPin" ref="mitpi#mitpi::GpioPin" />
     </argument>
     <argument id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin::pullUpDown" name="pullUpDown">
+      <doc>direct this pin to either pull up to 3.3v, down to gnd, or no pull at all.
+Note that this pull direction will be applied **even when operating as an output pin**.
+The rpi's pull resistors preserve state across reboots.
+This makes it so that when the Pi resets, its pins will still be in a defined state (no runaway heater while the Pi is still booting)
+Of course, it's still a VERY GOOD IDEA to use hardware pull resistors as well.
+**Also note:** @pullUpDown acts the same regardless of the &amp;lt;IoPin&amp;gt;'s read/write inversions.</doc>
       <type name="mitpi::GpioPull" ref="mitpi#mitpi::GpioPull" />
     </argument>
   </constructor>
   <method id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-    <brief>read the pin's input value (assumes pin is configured as digital)</brief>
+    <brief>read the pin's input value (must call makeDigitalInput beforehand)</brief>
     <return>
       <type name="IoLevel" ref="index#IoLevel" />
     </return>
   </method>
   <method id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+    <brief>write a digital value to the pin. IoHigh = 3.3v, IoLow = 0v. Must call makeDigitalOutput beforehand</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -23,11 +31,13 @@
     </argument>
   </method>
   <method id="plat::rpi::PrimitiveIoPin::id" name="id">
+    <brief>@return the logical index of the pin (for use with other platform-specific functions)</brief>
     <return>
       <type name="mitpi::GpioPin" ref="mitpi#mitpi::GpioPin" />
     </return>
   </method>
   <method id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+    <brief>@return true if the pin is equal to the one constructed by the <ref ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin::null">plat::rpi::PrimitiveIoPin::null</ref> function.</brief>
     <return>
       <type builtin="yes" name="bool" />
     </return>
@@ -48,6 +58,8 @@
     </argument>
   </method>
   <method id="plat::rpi::PrimitiveIoPin::null" name="null" static="yes">
+    <brief>@return a pin with an invalid output</brief>
+    <doc>Note that it is undefined to call any function on a null pin except for <ref ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin::isNull">plat::rpi::PrimitiveIoPin::isNull</ref> and <ref ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin::id">plat::rpi::PrimitiveIoPin::id</ref>.</doc>
     <return>
       <type name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
     </return>
