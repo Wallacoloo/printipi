@@ -106,7 +106,7 @@ return values.
     </type>
     <type documented="6" name="typedef" undocumented="21">
       <undocumented id="CelciusType" name="CelciusType">
-        <location column="1" file="compileflags.h" line="61" />
+        <location column="1" file="compileflags.h" line="63" />
       </undocumented>
       <undocumented id="EventClockT" name="EventClockT">
         <location column="5" file="platforms/auto/chronoclock.h" line="14" />
@@ -115,7 +115,7 @@ return values.
         <location column="5" file="platforms/auto/hardwarescheduler.h" line="11" />
       </undocumented>
       <undocumented id="IoLevel" name="IoLevel">
-        <location column="1" file="compileflags.h" line="62" />
+        <location column="1" file="compileflags.h" line="64" />
       </undocumented>
       <undocumented id="PrimitiveIoPin" name="PrimitiveIoPin">
         <location column="5" file="platforms/auto/primitiveiopin.h" line="11" />
@@ -192,53 +192,53 @@ return values.
         <location column="9" file="iodrivers/fan.h" line="51" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getBedTemp" name="getBedTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="83" />
-        <location column="1" file="iodrivers/iodriver.h" line="175" />
+        <location column="9" file="iodrivers/iodriver.h" line="84" />
+        <location column="1" file="iodrivers/iodriver.h" line="176" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTargetTemp" name="getHotendTargetTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="82" />
-        <location column="1" file="iodrivers/iodriver.h" line="160" />
+        <location column="9" file="iodrivers/iodriver.h" line="83" />
+        <location column="1" file="iodrivers/iodriver.h" line="161" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTemp" name="getHotendTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="81" />
-        <location column="1" file="iodrivers/iodriver.h" line="144" />
+        <location column="9" file="iodrivers/iodriver.h" line="82" />
+        <location column="1" file="iodrivers/iodriver.h" line="145" />
       </undocumented>
       <undocumented id="iodrv::IODriver::lockAllAxis" name="lockAllAxis">
-        <location column="9" file="iodrivers/iodriver.h" line="77" />
-        <location column="1" file="iodrivers/iodriver.h" line="93" />
+        <location column="9" file="iodrivers/iodriver.h" line="78" />
+        <location column="1" file="iodrivers/iodriver.h" line="94" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setBedTemp" name="setBedTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="80" />
-        <location column="1" file="iodrivers/iodriver.h" line="129" />
+        <location column="9" file="iodrivers/iodriver.h" line="81" />
+        <location column="1" file="iodrivers/iodriver.h" line="130" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setHotendTemp" name="setHotendTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="79" />
-        <location column="1" file="iodrivers/iodriver.h" line="117" />
+        <location column="9" file="iodrivers/iodriver.h" line="80" />
+        <location column="1" file="iodrivers/iodriver.h" line="118" />
       </undocumented>
       <undocumented id="iodrv::IODriver::unlockAllAxis" name="unlockAllAxis">
-        <location column="9" file="iodrivers/iodriver.h" line="78" />
-        <location column="1" file="iodrivers/iodriver.h" line="104" />
+        <location column="9" file="iodrivers/iodriver.h" line="79" />
+        <location column="1" file="iodrivers/iodriver.h" line="105" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getBedTemp::operator()" name="operator()">
-        <location column="5" file="iodrivers/iodriver.h" line="169" />
+        <location column="5" file="iodrivers/iodriver.h" line="170" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getHotendTargetTemp::operator()" name="operator()">
-        <location column="5" file="iodrivers/iodriver.h" line="153" />
+        <location column="5" file="iodrivers/iodriver.h" line="154" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getHotendTemp::operator()" name="operator()">
-        <location column="5" file="iodrivers/iodriver.h" line="137" />
+        <location column="5" file="iodrivers/iodriver.h" line="138" />
       </undocumented>
       <undocumented id="iodrv::IODriver__lockAllAxis::operator()" name="operator()">
-        <location column="5" file="iodrivers/iodriver.h" line="88" />
+        <location column="5" file="iodrivers/iodriver.h" line="89" />
       </undocumented>
       <undocumented id="iodrv::IODriver__setBedTemp::operator()" name="operator()">
-        <location column="5" file="iodrivers/iodriver.h" line="122" />
+        <location column="5" file="iodrivers/iodriver.h" line="123" />
       </undocumented>
       <undocumented id="iodrv::IODriver__setHotendTemp::operator()" name="operator()">
-        <location column="5" file="iodrivers/iodriver.h" line="110" />
+        <location column="5" file="iodrivers/iodriver.h" line="111" />
       </undocumented>
       <undocumented id="iodrv::IODriver__unlockAllAxis::operator()" name="operator()">
-        <location column="5" file="iodrivers/iodriver.h" line="99" />
+        <location column="5" file="iodrivers/iodriver.h" line="100" />
       </undocumented>
       <undocumented id="iodrv::IoPin::IoPin" name="IoPin">
         <location column="9" file="iodrivers/iopin.h" line="79" />
@@ -444,73 +444,73 @@ return values.
         <location column="19" file="iodrivers/fan.h" line="51" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getBedTemp::TupleT" name="TupleT">
-        <location column="19" file="iodrivers/iodriver.h" line="83" />
+        <location column="19" file="iodrivers/iodriver.h" line="84" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getBedTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="175" />
+        <location column="11" file="iodrivers/iodriver.h" line="176" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT">
+        <location column="19" file="iodrivers/iodriver.h" line="83" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT">
+        <location column="11" file="iodrivers/iodriver.h" line="161" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="82" />
       </undocumented>
-      <undocumented id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="160" />
-      </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT">
-        <location column="19" file="iodrivers/iodriver.h" line="81" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="144" />
+        <location column="11" file="iodrivers/iodriver.h" line="145" />
       </undocumented>
       <undocumented id="iodrv::IODriver::lockAllAxis::TupleT" name="TupleT">
-        <location column="19" file="iodrivers/iodriver.h" line="77" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::lockAllAxis::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="93" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::onIdleCpu::CallbackInterface" name="CallbackInterface">
-        <location column="19" file="iodrivers/iodriver.h" line="71" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT">
-        <location column="19" file="iodrivers/iodriver.h" line="80" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="129" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::setFanDutyCycle::CallbackInterface" name="CallbackInterface">
-        <location column="19" file="iodrivers/iodriver.h" line="72" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT">
-        <location column="19" file="iodrivers/iodriver.h" line="79" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="117" />
-      </undocumented>
-      <undocumented id="iodrv::IODriver::unlockAllAxis::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="78" />
       </undocumented>
+      <undocumented id="iodrv::IODriver::lockAllAxis::TupleT" name="TupleT">
+        <location column="11" file="iodrivers/iodriver.h" line="94" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::onIdleCpu::CallbackInterface" name="CallbackInterface">
+        <location column="19" file="iodrivers/iodriver.h" line="72" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT">
+        <location column="19" file="iodrivers/iodriver.h" line="81" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT">
+        <location column="11" file="iodrivers/iodriver.h" line="130" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::setFanDutyCycle::CallbackInterface" name="CallbackInterface">
+        <location column="19" file="iodrivers/iodriver.h" line="73" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT">
+        <location column="19" file="iodrivers/iodriver.h" line="80" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT">
+        <location column="11" file="iodrivers/iodriver.h" line="118" />
+      </undocumented>
       <undocumented id="iodrv::IODriver::unlockAllAxis::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="104" />
+        <location column="19" file="iodrivers/iodriver.h" line="79" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::unlockAllAxis::TupleT" name="TupleT">
+        <location column="11" file="iodrivers/iodriver.h" line="105" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getBedTemp::operator()::T" name="T">
-        <location column="15" file="iodrivers/iodriver.h" line="169" />
+        <location column="15" file="iodrivers/iodriver.h" line="170" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getHotendTargetTemp::operator()::T" name="T">
-        <location column="15" file="iodrivers/iodriver.h" line="153" />
+        <location column="15" file="iodrivers/iodriver.h" line="154" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getHotendTemp::operator()::T" name="T">
-        <location column="15" file="iodrivers/iodriver.h" line="137" />
+        <location column="15" file="iodrivers/iodriver.h" line="138" />
       </undocumented>
       <undocumented id="iodrv::IODriver__lockAllAxis::operator()::T" name="T">
-        <location column="15" file="iodrivers/iodriver.h" line="88" />
+        <location column="15" file="iodrivers/iodriver.h" line="89" />
       </undocumented>
       <undocumented id="iodrv::IODriver__setBedTemp::operator()::T" name="T">
-        <location column="15" file="iodrivers/iodriver.h" line="122" />
+        <location column="15" file="iodrivers/iodriver.h" line="123" />
       </undocumented>
       <undocumented id="iodrv::IODriver__setHotendTemp::operator()::T" name="T">
-        <location column="15" file="iodrivers/iodriver.h" line="110" />
+        <location column="15" file="iodrivers/iodriver.h" line="111" />
       </undocumented>
       <undocumented id="iodrv::IODriver__unlockAllAxis::operator()::T" name="T">
-        <location column="15" file="iodrivers/iodriver.h" line="99" />
+        <location column="15" file="iodrivers/iodriver.h" line="100" />
       </undocumented>
       <undocumented id="iodrv::IoPin::IoPin::Args" name="Args">
         <location column="19" file="iodrivers/iopin.h" line="79" />
@@ -531,10 +531,10 @@ return values.
         <location column="19" file="iodrivers/tempcontrol.h" line="131" />
       </undocumented>
       <undocumented id="mathutil::CtoK::T" name="T">
-        <location column="11" file="common/mathutil.h" line="15" />
+        <location column="11" file="common/mathutil.h" line="19" />
       </undocumented>
       <undocumented id="mathutil::KtoC::T" name="T">
-        <location column="11" file="common/mathutil.h" line="18" />
+        <location column="11" file="common/mathutil.h" line="24" />
       </undocumented>
       <undocumented id="motion::AxisStepper::GetArcStepperTypes::Types" name="Types">
         <location column="19" file="motion/axisstepper.h" line="95" />
@@ -809,11 +809,11 @@ return values.
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="15" />
       </undocumented>
       <undocumented id="plat::rpi" name="rpi">
-        <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
-        <location column="1" file="platforms/rpi/chronoclock.cpp" line="4" />
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="347" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="7" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="24" />
+        <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
+        <location column="1" file="platforms/rpi/chronoclock.cpp" line="4" />
       </undocumented>
     </type>
     <type documented="0" name="classtemplate" undocumented="15">
@@ -1612,10 +1612,10 @@ return values.
         <location column="9" file="iodrivers/fan.h" line="49" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getMeasuredTemperature" name="getMeasuredTemperature">
-        <location column="9" file="iodrivers/iodriver.h" line="63" />
+        <location column="9" file="iodrivers/iodriver.h" line="64" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getTargetTemperature" name="getTargetTemperature">
-        <location column="9" file="iodrivers/iodriver.h" line="58" />
+        <location column="9" file="iodrivers/iodriver.h" line="59" />
       </undocumented>
       <undocumented id="iodrv::IoPin::digitalRead" name="digitalRead">
         <location column="9" file="iodrivers/iopin.h" line="104" />
@@ -2064,13 +2064,13 @@ return values.
     </type>
     <type documented="28" name="field" undocumented="12">
       <undocumented id="iodrv::IODriver__getBedTemp::value" name="value">
-        <location column="5" file="iodrivers/iodriver.h" line="167" />
+        <location column="5" file="iodrivers/iodriver.h" line="168" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getHotendTargetTemp::value" name="value">
-        <location column="5" file="iodrivers/iodriver.h" line="151" />
+        <location column="5" file="iodrivers/iodriver.h" line="152" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getHotendTemp::value" name="value">
-        <location column="5" file="iodrivers/iodriver.h" line="135" />
+        <location column="5" file="iodrivers/iodriver.h" line="136" />
       </undocumented>
       <undocumented id="motion::AxisStepper::time" name="time">
         <location column="9" file="motion/axisstepper.h" line="73" />
@@ -2105,12 +2105,9 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="55" />
       </undocumented>
     </type>
-    <type documented="2" name="functiontemplate" undocumented="7">
+    <type documented="3" name="functiontemplate" undocumented="6">
       <undocumented id="callOnAll" name="callOnAll">
         <location column="1" file="common/tupleutil.h" line="43" />
-      </undocumented>
-      <undocumented id="mathutil::KtoC" name="KtoC">
-        <location column="1" file="common/mathutil.h" line="18" />
       </undocumented>
       <undocumented id="motion::stepDirFromSign" name="stepDirFromSign">
         <location column="1" file="motion/axisstepper.h" line="62" />
@@ -2190,16 +2187,16 @@ return values.
         <location column="9" file="iodrivers/fan.h" line="45" />
       </undocumented>
       <undocumented id="iodrv::IODriver::IODriver" name="IODriver">
-        <location column="9" file="iodrivers/iodriver.h" line="49" />
+        <location column="9" file="iodrivers/iodriver.h" line="50" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getBedTemp::IODriver__getBedTemp" name="IODriver__getBedTemp">
-        <location column="5" file="iodrivers/iodriver.h" line="168" />
+        <location column="5" file="iodrivers/iodriver.h" line="169" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getHotendTargetTemp::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp">
-        <location column="5" file="iodrivers/iodriver.h" line="152" />
+        <location column="5" file="iodrivers/iodriver.h" line="153" />
       </undocumented>
       <undocumented id="iodrv::IODriver__getHotendTemp::IODriver__getHotendTemp" name="IODriver__getHotendTemp">
-        <location column="5" file="iodrivers/iodriver.h" line="136" />
+        <location column="5" file="iodrivers/iodriver.h" line="137" />
       </undocumented>
       <undocumented id="iodrv::IoPin::null::null" name="null">
         <location column="9" file="iodrivers/iopin.h" line="112" />
@@ -2252,7 +2249,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="107" />
       </undocumented>
     </type>
-    <type documented="2" name="variable" undocumented="11">
+    <type documented="4" name="variable" undocumented="10">
       <undocumented id="gparse::Response::Null" name="Null">
         <location column="9" file="gparse/response.h" line="52" />
         <location column="1" file="gparse/response.cpp" line="6" />
@@ -2281,9 +2278,6 @@ return values.
       <undocumented id="logging::_verbose" name="_verbose">
         <location column="5" file="common/logging.h" line="62" />
         <location column="1" file="common/logging.cpp" line="9" />
-      </undocumented>
-      <undocumented id="mathutil::MM_PER_IN" name="MM_PER_IN">
-        <location column="1" file="common/mathutil.h" line="13" />
       </undocumented>
       <undocumented id="plat::generic::ChronoClock::is_steady" name="is_steady">
         <location column="17" file="platforms/generic/chronoclock.h" line="22" />
@@ -2617,7 +2611,7 @@ return values.
         <location column="1" file="iodrivers/fan.h" line="41" />
       </undocumented>
       <undocumented id="iodrv::IODriver" name="IODriver">
-        <location column="1" file="iodrivers/iodriver.h" line="47" />
+        <location column="1" file="iodrivers/iodriver.h" line="48" />
       </undocumented>
       <undocumented id="iodrv::IoPin" name="IoPin">
         <location column="1" file="iodrivers/iopin.h" line="54" />
@@ -2703,13 +2697,6 @@ return values.
       <location column="1" file="gparse/com.cpp" line="55" />
       <undocumented-return />
     </function>
-    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="65" />
-      <location column="1" file="schedulerbase.cpp" line="56" />
-      <undocumented-return />
-      <undocumented name="handler" />
-      <undocumented name="level" />
-    </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/generic/primitiveiopin.h" line="19" />
       <undocumented name="args" />
@@ -2736,45 +2723,12 @@ return values.
       <location column="1" file="iodrivers/iopin.cpp" line="63" />
       <undocumented name="lev" />
     </function>
-    <function id="plat::rpi::makeLockedMem" name="makeLockedMem">
-      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="474" />
-      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="53" />
+    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
+      <location column="9" file="schedulerbase.h" line="65" />
+      <location column="1" file="schedulerbase.cpp" line="56" />
       <undocumented-return />
-      <undocumented name="size" />
-    </function>
-    <function id="plat::rpi::freeLockedMem" name="freeLockedMem">
-      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="476" />
-      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="75" />
-      <undocumented name="mem" />
-      <undocumented name="size" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="16" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="20" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
-      <undocumented name="pinIdx" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="36" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="40" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/rpi/primitiveiopin.h" line="49" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="53" />
-      <undocumented name="lev" />
+      <undocumented name="handler" />
+      <undocumented name="level" />
     </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
       <location column="9" file="scheduler.h" line="67" />
@@ -2921,33 +2875,38 @@ return values.
       <undocumented-return />
     </function>
     <function id="mathutil::CtoK" name="CtoK">
-      <location column="1" file="common/mathutil.h" line="15" />
+      <location column="1" file="common/mathutil.h" line="19" />
       <undocumented-return />
       <undocumented name="C" />
     </function>
-    <function id="iodrv::IODriver::isFan" name="isFan">
-      <location column="9" file="iodrivers/iodriver.h" line="54" />
+    <function id="mathutil::KtoC" name="KtoC">
+      <location column="1" file="common/mathutil.h" line="24" />
       <undocumented-return />
+      <undocumented name="K" />
     </function>
-    <function id="iodrv::IODriver::isHotend" name="isHotend">
+    <function id="iodrv::IODriver::isFan" name="isFan">
       <location column="9" file="iodrivers/iodriver.h" line="55" />
       <undocumented-return />
     </function>
-    <function id="iodrv::IODriver::isHeatedBed" name="isHeatedBed">
+    <function id="iodrv::IODriver::isHotend" name="isHotend">
       <location column="9" file="iodrivers/iodriver.h" line="56" />
       <undocumented-return />
     </function>
-    <function id="iodrv::IODriver::setTargetTemperature" name="setTargetTemperature">
+    <function id="iodrv::IODriver::isHeatedBed" name="isHeatedBed">
       <location column="9" file="iodrivers/iodriver.h" line="57" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IODriver::setTargetTemperature" name="setTargetTemperature">
+      <location column="9" file="iodrivers/iodriver.h" line="58" />
       <undocumented name="" />
     </function>
     <function id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
-      <location column="9" file="iodrivers/iodriver.h" line="71" />
+      <location column="9" file="iodrivers/iodriver.h" line="72" />
       <undocumented-return />
       <undocumented name="" />
     </function>
     <function id="iodrv::IODriver::setFanDutyCycle" name="setFanDutyCycle">
-      <location column="9" file="iodrivers/iodriver.h" line="72" />
+      <location column="9" file="iodrivers/iodriver.h" line="73" />
       <undocumented name="interface" />
       <undocumented name="dutyCycle" />
     </function>
@@ -3024,6 +2983,46 @@ return values.
       <location column="9" file="machines/generic/cartesian.h" line="171" />
       <undocumented-return />
     </function>
+    <function id="plat::rpi::makeLockedMem" name="makeLockedMem">
+      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="474" />
+      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="53" />
+      <undocumented-return />
+      <undocumented name="size" />
+    </function>
+    <function id="plat::rpi::freeLockedMem" name="freeLockedMem">
+      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="476" />
+      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="75" />
+      <undocumented name="mem" />
+      <undocumented name="size" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="16" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="20" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
+      <undocumented name="pinIdx" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="36" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="40" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/rpi/primitiveiopin.h" line="49" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="53" />
+      <undocumented name="lev" />
+    </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
       <location column="9" file="motion/lineardeltastepper.h" line="210" />
       <undocumented-return />
@@ -3057,19 +3056,6 @@ return values.
         <ref name="std::string" />
       </doctype>
     </field>
-    <variable id="plat::rpi::ChronoClock::_i" name="_i">
-      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
-      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
-      <doctype name="brief">
-        <ref name="..." />
-      </doctype>
-    </variable>
-    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
-      <doctype component="pullUpDown" name="params">
-        <ref name="IoPin" />
-      </doctype>
-    </constructor>
     <variable id="CVTemplateWrapper::value" name="value">
       <location column="5" file="common/tupleutil.h" line="21" />
       <doctype name="doc">
@@ -3132,6 +3118,19 @@ return values.
         <ref name="float, float, float" />
       </doctype>
     </methodtemplate>
+    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
+      <doctype component="pullUpDown" name="params">
+        <ref name="IoPin" />
+      </doctype>
+    </constructor>
+    <variable id="plat::rpi::ChronoClock::_i" name="_i">
+      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
+      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
+      <doctype name="brief">
+        <ref name="..." />
+      </doctype>
+    </variable>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">
       <location column="9" file="motion/lineardeltastepper.h" line="174" />
       <doctype name="brief">

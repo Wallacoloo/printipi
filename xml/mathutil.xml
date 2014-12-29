@@ -5,8 +5,12 @@ Printipi/common/mathutil.h
 
 This file provides some useful conversion (mm to inches, celcius to kelvin, etc), mathematical constants, and basic mathematical functions for convenience.
 </doc>
+  <variable id="mathutil::ABSOLUTE_ZERO_CELCIUS" name="ABSOLUTE_ZERO_CELCIUS">
+    <brief>It is impossible for any temperature to be &lt; this value, in Celcius</brief>
+    <type builtin="yes" name="float" qualifier=" const" />
+  </variable>
   <functiontemplate id="mathutil::CtoK" name="CtoK">
-    <brief>It appears that by definition, there are EXACTLY 25.4 mm per inch.</brief>
+    <brief>Convert from Celcius temperature to Kelvin</brief>
     <return>
       <type name="T" />
     </return>
@@ -16,6 +20,7 @@ This file provides some useful conversion (mm to inches, celcius to kelvin, etc)
     <templatetypeparameter id="mathutil::CtoK::T" name="T" />
   </functiontemplate>
   <functiontemplate id="mathutil::KtoC" name="KtoC">
+    <brief>Convert from Kelvin temperature to Celcius</brief>
     <return>
       <type name="T" />
     </return>
@@ -25,6 +30,7 @@ This file provides some useful conversion (mm to inches, celcius to kelvin, etc)
     <templatetypeparameter id="mathutil::KtoC::T" name="T" />
   </functiontemplate>
   <variable id="mathutil::MM_PER_IN" name="MM_PER_IN">
+    <brief>By definition, there are EXACTLY 25.4 mm per inch.</brief>
     <type builtin="yes" name="float" qualifier=" const" />
   </variable>
 </namespace>

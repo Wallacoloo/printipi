@@ -268,7 +268,7 @@
     <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
   </namespace>
   <namespace name="plat" ref="plat#plat">
-    <brief>for GpioPin</brief>
+    <brief>forward declare for class defined in outputevent.h</brief>
     <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
       <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
@@ -375,7 +375,8 @@
     <enumvalue id="POS_RELATIVE" name="POS_RELATIVE" value="1" />
   </enum>
   <typedef id="AxisIdType" name="AxisIdType">
-    <brief>Now expose some primitive typedefs:</brief>
+    <brief>This determines the maximum number of axis we can have on the machine</brief>
+    <doc>Since most machines only need 3-6 degrees of freedom, an 8-bit integer is PLENTY</doc>
     <type name="uint8_t" />
   </typedef>
   <typedef id="CelciusType" name="CelciusType">
