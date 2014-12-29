@@ -72,12 +72,12 @@ class Com {
         bool hasWriteFile() const;
 
         //if reading with dieOnEof=true, and the last command has been parsed (but not necessarily responded to),
-        //then this function will return true
+        //  then this function will return true
         bool isAtEof() const;
 
         //returns any pending command.
         //
-        // sequential calls to getCommand() will all return the same command, until reply() is called, at which point the next command will be parsed.
+        //sequential calls to getCommand() will all return the same command, until reply() is called, at which point the next command will be parsed.
         const Command& getCommand() const;
         
         void reply(const std::string &resp);
