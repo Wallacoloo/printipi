@@ -42,17 +42,8 @@ that's been retrieved from <ref ref="motion::MotionPlanner#motion::MotionPlanner
     <argument id="motion::MotionPlanner::moveTo::baseTime" name="baseTime">
       <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </argument>
-    <argument id="motion::MotionPlanner::moveTo::x" name="x">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::MotionPlanner::moveTo::y" name="y">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::MotionPlanner::moveTo::z" name="z">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::MotionPlanner::moveTo::e" name="e">
-      <type builtin="yes" name="float" />
+    <argument id="motion::MotionPlanner::moveTo::dest_" name="dest_">
+      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
     </argument>
     <argument id="motion::MotionPlanner::moveTo::maxVelXyz" name="maxVelXyz">
       <type builtin="yes" name="float" />
@@ -82,26 +73,11 @@ that's been retrieved from <ref ref="motion::MotionPlanner#motion::MotionPlanner
     <argument id="motion::MotionPlanner::arcTo::baseTime" name="baseTime">
       <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </argument>
-    <argument id="motion::MotionPlanner::arcTo::x" name="x">
-      <type builtin="yes" name="float" />
+    <argument id="motion::MotionPlanner::arcTo::dest_" name="dest_">
+      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
     </argument>
-    <argument id="motion::MotionPlanner::arcTo::y" name="y">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::MotionPlanner::arcTo::z" name="z">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::MotionPlanner::arcTo::e" name="e">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::MotionPlanner::arcTo::centerX_" name="centerX_">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::MotionPlanner::arcTo::centerY_" name="centerY_">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::MotionPlanner::arcTo::centerZ_" name="centerZ_">
-      <type builtin="yes" name="float" />
+    <argument id="motion::MotionPlanner::arcTo::center_" name="center_">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
     <argument id="motion::MotionPlanner::arcTo::maxVelXyz" name="maxVelXyz">
       <type builtin="yes" name="float" />

@@ -180,7 +180,7 @@ return values.
         <location column="5" file="state.h" line="321" />
       </undocumented>
       <undocumented id="State::State__setFanRate::operator()" name="operator()">
-        <location column="5" file="state.h" line="645" />
+        <location column="5" file="state.h" line="635" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::sleep_for" name="sleep_for">
         <location column="9" file="boilerplate/thisthreadsleepadapter.h" line="16" />
@@ -344,7 +344,7 @@ return values.
         <location column="15" file="state.h" line="321" />
       </undocumented>
       <undocumented id="State::State__setFanRate::operator()::T" name="T">
-        <location column="15" file="state.h" line="645" />
+        <location column="15" file="state.h" line="635" />
       </undocumented>
       <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
         <location column="19" file="state.h" line="217" />
@@ -856,7 +856,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="82" />
       </undocumented>
     </type>
-    <type documented="56" name="method" undocumented="365">
+    <type documented="62" name="method" undocumented="362">
       <undocumented id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
         <location column="9" file="filesystem.h" line="10" />
         <location column="1" file="filesystem.cpp" line="6" />
@@ -944,52 +944,43 @@ return values.
         <location column="13" file="state.h" line="103" />
       </undocumented>
       <undocumented id="Vector3::cross" name="cross">
-        <location column="3" file="common/vector3.h" line="115" />
+        <location column="3" file="common/vector3.h" line="129" />
       </undocumented>
       <undocumented id="Vector3::distance" name="distance">
-        <location column="3" file="common/vector3.h" line="135" />
+        <location column="3" file="common/vector3.h" line="149" />
       </undocumented>
       <undocumented id="Vector3::distance" name="distance">
-        <location column="3" file="common/vector3.h" line="138" />
+        <location column="3" file="common/vector3.h" line="152" />
       </undocumented>
       <undocumented id="Vector3::dot" name="dot">
-        <location column="3" file="common/vector3.h" line="111" />
-      </undocumented>
-      <undocumented id="Vector3::mag" name="mag">
-        <location column="3" file="common/vector3.h" line="68" />
-      </undocumented>
-      <undocumented id="Vector3::magSq" name="magSq">
-        <location column="3" file="common/vector3.h" line="63" />
-      </undocumented>
-      <undocumented id="Vector3::norm" name="norm">
-        <location column="3" file="common/vector3.h" line="77" />
+        <location column="3" file="common/vector3.h" line="125" />
       </undocumented>
       <undocumented id="Vector3::operator*" name="operator*">
-        <location column="3" file="common/vector3.h" line="97" />
+        <location column="3" file="common/vector3.h" line="111" />
       </undocumented>
       <undocumented id="Vector3::operator*=" name="operator*=">
-        <location column="3" file="common/vector3.h" line="100" />
+        <location column="3" file="common/vector3.h" line="114" />
       </undocumented>
       <undocumented id="Vector3::operator+=" name="operator+=">
-        <location column="3" file="common/vector3.h" line="86" />
+        <location column="3" file="common/vector3.h" line="100" />
       </undocumented>
       <undocumented id="Vector3::operator-" name="operator-">
-        <location column="3" file="common/vector3.h" line="90" />
-      </undocumented>
-      <undocumented id="Vector3::operator-=" name="operator-=">
-        <location column="3" file="common/vector3.h" line="93" />
-      </undocumented>
-      <undocumented id="Vector3::operator/" name="operator/">
         <location column="3" file="common/vector3.h" line="104" />
       </undocumented>
-      <undocumented id="Vector3::operator/=" name="operator/=">
+      <undocumented id="Vector3::operator-=" name="operator-=">
         <location column="3" file="common/vector3.h" line="107" />
       </undocumented>
+      <undocumented id="Vector3::operator/" name="operator/">
+        <location column="3" file="common/vector3.h" line="118" />
+      </undocumented>
+      <undocumented id="Vector3::operator/=" name="operator/=">
+        <location column="3" file="common/vector3.h" line="121" />
+      </undocumented>
       <undocumented id="Vector3::proj" name="proj">
-        <location column="3" file="common/vector3.h" line="128" />
+        <location column="3" file="common/vector3.h" line="142" />
       </undocumented>
       <undocumented id="Vector3::scalarProj" name="scalarProj">
-        <location column="3" file="common/vector3.h" line="123" />
+        <location column="3" file="common/vector3.h" line="137" />
       </undocumented>
       <undocumented id="Vector3::y" name="y">
         <location column="3" file="common/vector3.h" line="61" />
@@ -2647,49 +2638,12 @@ return values.
     </type>
   </coverage>
   <arguments>
-    <function id="gparse::bigEndianStr" name="bigEndianStr">
-      <location column="1" file="gparse/command.h" line="57" />
+    <function id="PID::feed" name="feed">
+      <location column="9" file="pid.h" line="29" />
+      <location column="1" file="pid.cpp" line="5" />
       <undocumented-return />
-      <undocumented name="a" />
-    </function>
-    <function id="gparse::Command::Command" name="Command">
-      <location column="9" file="gparse/command.h" line="91" />
-      <location column="1" file="gparse/command.cpp" line="6" />
-      <undocumented name="" />
-    </function>
-    <function id="gparse::Command::getFloatParam" name="getFloatParam">
-      <location column="9" file="gparse/command.h" line="99" />
-      <location column="1" file="gparse/command.cpp" line="155" />
-      <undocumented-return />
-      <undocumented name="hasParam" />
-      <undocumented name="def" />
-      <undocumented name="label" />
-    </function>
-    <function id="gparse::Command::isG0" name="isG0">
-      <location column="9" file="gparse/command.h" line="190" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::Com" name="Com">
-      <location column="9" file="gparse/com.h" line="66" />
-      <location column="1" file="gparse/com.cpp" line="13" />
-      <undocumented name="fileR" />
-      <undocumented name="fileW" />
-      <undocumented name="dieOnEof" />
-    </function>
-    <function id="gparse::Com::tendCom" name="tendCom">
-      <location column="9" file="gparse/com.h" line="69" />
-      <location column="1" file="gparse/com.cpp" line="20" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::isAtEof" name="isAtEof">
-      <location column="9" file="gparse/com.h" line="76" />
-      <location column="1" file="gparse/com.cpp" line="52" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::getCommand" name="getCommand">
-      <location column="9" file="gparse/com.h" line="81" />
-      <location column="1" file="gparse/com.cpp" line="55" />
-      <undocumented-return />
+      <undocumented name="setpoint" />
+      <undocumented name="pv" />
     </function>
     <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
       <location column="9" file="schedulerbase.h" line="65" />
@@ -2741,6 +2695,50 @@ return values.
     </function>
     <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
       <location column="6" file="platforms/rpi/primitiveiopin.h" line="38" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::bigEndianStr" name="bigEndianStr">
+      <location column="1" file="gparse/command.h" line="57" />
+      <undocumented-return />
+      <undocumented name="a" />
+    </function>
+    <function id="gparse::Command::Command" name="Command">
+      <location column="9" file="gparse/command.h" line="91" />
+      <location column="1" file="gparse/command.cpp" line="6" />
+      <undocumented name="" />
+    </function>
+    <function id="gparse::Command::getFloatParam" name="getFloatParam">
+      <location column="9" file="gparse/command.h" line="99" />
+      <location column="1" file="gparse/command.cpp" line="155" />
+      <undocumented-return />
+      <undocumented name="hasParam" />
+      <undocumented name="def" />
+      <undocumented name="label" />
+    </function>
+    <function id="gparse::Command::isG0" name="isG0">
+      <location column="9" file="gparse/command.h" line="190" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::Com" name="Com">
+      <location column="9" file="gparse/com.h" line="66" />
+      <location column="1" file="gparse/com.cpp" line="13" />
+      <undocumented name="fileR" />
+      <undocumented name="fileW" />
+      <undocumented name="dieOnEof" />
+    </function>
+    <function id="gparse::Com::tendCom" name="tendCom">
+      <location column="9" file="gparse/com.h" line="69" />
+      <location column="1" file="gparse/com.cpp" line="20" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::isAtEof" name="isAtEof">
+      <location column="9" file="gparse/com.h" line="76" />
+      <location column="1" file="gparse/com.cpp" line="52" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::getCommand" name="getCommand">
+      <location column="9" file="gparse/com.h" line="81" />
+      <location column="1" file="gparse/com.cpp" line="55" />
       <undocumented-return />
     </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
@@ -2796,12 +2794,39 @@ return values.
       <location column="3" file="common/vector3.h" line="60" />
       <undocumented-return />
     </function>
+    <function id="Vector3::magSq" name="magSq">
+      <location column="3" file="common/vector3.h" line="65" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::mag" name="mag">
+      <location column="3" file="common/vector3.h" line="69" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::withX" name="withX">
+      <location column="3" file="common/vector3.h" line="75" />
+      <undocumented-return />
+      <undocumented name="x" />
+    </function>
+    <function id="Vector3::withY" name="withY">
+      <location column="3" file="common/vector3.h" line="79" />
+      <undocumented-return />
+      <undocumented name="y" />
+    </function>
+    <function id="Vector3::withZ" name="withZ">
+      <location column="3" file="common/vector3.h" line="83" />
+      <undocumented-return />
+      <undocumented name="z" />
+    </function>
     <function id="Vector3::operator-" name="operator-">
-      <location column="3" file="common/vector3.h" line="74" />
+      <location column="3" file="common/vector3.h" line="88" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::norm" name="norm">
+      <location column="3" file="common/vector3.h" line="92" />
       <undocumented-return />
     </function>
     <function id="Vector3::operator+" name="operator+">
-      <location column="3" file="common/vector3.h" line="83" />
+      <location column="3" file="common/vector3.h" line="97" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
@@ -2960,13 +2985,6 @@ return values.
       <location column="9" file="machines/machine.h" line="12" />
       <undocumented-return />
     </function>
-    <function id="PID::feed" name="feed">
-      <location column="9" file="pid.h" line="29" />
-      <location column="1" file="pid.cpp" line="5" />
-      <undocumented-return />
-      <undocumented name="setpoint" />
-      <undocumented name="pv" />
-    </function>
     <function id="iodrv::TempControl::isHotend" name="isHotend">
       <location column="9" file="iodrivers/tempcontrol.h" line="79" />
       <undocumented-return />
@@ -3006,19 +3024,6 @@ return values.
     </function>
   </arguments>
   <references>
-    <field id="gparse::Command::arguments" name="arguments">
-      <location column="5" file="gparse/command.h" line="76" />
-      <doctype name="doc">
-        <ref name="std::string" />
-      </doctype>
-    </field>
-    <variable id="plat::rpi::ChronoClock::_i" name="_i">
-      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
-      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
-      <doctype name="brief">
-        <ref name="..." />
-      </doctype>
-    </variable>
     <destructor id="iodrv::IoPin::~IoPin" name="~IoPin">
       <location column="9" file="iodrivers/iopin.h" line="88" />
       <location column="1" file="iodrivers/iopin.cpp" line="25" />
@@ -3026,6 +3031,19 @@ return values.
         <ref name="typename ...Args" />
       </doctype>
     </destructor>
+    <variable id="plat::rpi::ChronoClock::_i" name="_i">
+      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
+      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
+      <doctype name="brief">
+        <ref name="..." />
+      </doctype>
+    </variable>
+    <field id="gparse::Command::arguments" name="arguments">
+      <location column="5" file="gparse/command.h" line="76" />
+      <doctype name="doc">
+        <ref name="std::string" />
+      </doctype>
+    </field>
     <variable id="CVTemplateWrapper::value" name="value">
       <location column="5" file="common/tupleutil.h" line="21" />
       <doctype name="doc">

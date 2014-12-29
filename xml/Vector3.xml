@@ -65,22 +65,54 @@
     </return>
   </method>
   <method id="Vector3::magSq" name="magSq">
+    <brief>the square of the magnitude (length) of the vector.</brief>
+    <doc>equivalent to this-&gt;mag() * this-&gt;mag(), but less verbose and explicitly avoids the sqrt operation.</doc>
     <return>
       <type name="F" />
     </return>
   </method>
   <method id="Vector3::mag" name="mag">
+    <brief>magnitude (length) of the vector</brief>
     <return>
       <type name="F" />
     </return>
   </method>
+  <method id="Vector3::withX" name="withX">
+    <brief>psuedo-modifiers</brief>
+    <doc>return the equivalent vector, but with @_x=@x</doc>
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::withX::x" name="x">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector3::withY" name="withY">
+    <brief>return the equivalent vector, but with @_y=@y</brief>
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::withY::y" name="y">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector3::withZ" name="withZ">
+    <brief>return the equivalent vector, but with @_y=@y</brief>
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::withZ::z" name="z">
+      <type name="F" />
+    </argument>
+  </method>
   <method id="Vector3::operator-" name="operator-">
-    <brief>unary operators</brief>
+    <brief>unary negation operator (x = -y)</brief>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
   </method>
   <method id="Vector3::norm" name="norm">
+    <brief>Normalize the vector; return a vector of magnitude 1, but with the same direction as `this'</brief>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
