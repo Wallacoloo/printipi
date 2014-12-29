@@ -194,18 +194,21 @@ template <typename Drv> class State {
         /* Control interpretation of distances sent by the host as inches or millimeters */
         void setUnitMode(LengthUnit mode);
         /* Convert an x/y/z/e value sent from the host to its absolute value, in the case that the host is sending relative positions */
-        float xUnitToAbsolute(float posUnit) const;
+        Vector4f coordToAbsolute(const Vector4f &coord) const;
+        /*float xUnitToAbsolute(float posUnit) const;
         float yUnitToAbsolute(float posUnit) const;
         float zUnitToAbsolute(float posUnit) const;
-        float eUnitToAbsolute(float posUnit) const;
+        float eUnitToAbsolute(float posUnit) const;*/
+        Vector4f coordToMm(const Vector4f &coord) const;
         /* Convert an x/y/z/e value sent from the host to MM, in the case that the host is sending inches */
         float posUnitToMM(float posUnit) const;
         /* Convert an x/y/z/e value sent from the host to whatever primitive value we're using internally
          * Acts similarly as a shortcut for posUnitToMM(xUnitToAbsolute(x)), though it may apply transformations in the future.*/
-        float xUnitToPrimitive(float posUnit) const;
+        Vector4f coordToPrimitive(const Vector4f &coord) const;
+        /*float xUnitToPrimitive(float posUnit) const;
         float yUnitToPrimitive(float posUnit) const;
         float zUnitToPrimitive(float posUnit) const;
-        float eUnitToPrimitive(float posUnit) const;
+        float eUnitToPrimitive(float posUnit) const;*/
         float fUnitToPrimitive(float posUnit) const;
         /* Get the last queued position (X, Y, Z, E). Future queued commands may depend on this */
         Vector4f destMm() const;
@@ -272,54 +275,27 @@ template <typename Drv> void State<Drv>::setUnitMode(LengthUnit mode) {
     this->unitMode = mode;
 }
 
-template <typename Drv> float State<Drv>::xUnitToAbsolute(float posUnit) const {
-    //if we're set to interpret coordinates as relative, then translate to absolute:
+template <typename Drv> Vector4f State<Drv>::coordToAbsolute(const Vector4f &posUnit) const {
     switch (this->positionMode()) {
         case POS_RELATIVE:
-            posUnit += this->_destMm.x();
-            break;
+            return posUnit + destMm();
         case POS_ABSOLUTE:
         default:
-            break; //no transformation needed.
+            return posUnit; //no transformation needed.
     }
-    return posUnit;
 }
-template <typename Drv> float State<Drv>::yUnitToAbsolute(float posUnit) const {
-    //if we're set to interpret coordinates as relative, then translate to absolute:
-    switch (this->positionMode()) {
-        case POS_RELATIVE:
-            posUnit += this->_destMm.y();
-            break;
-        case POS_ABSOLUTE:
-        default:
-            break; //no transformation needed.
+
+template <typename Drv> Vector4f State<Drv>::coordToMm(const Vector4f &coord) const {
+    //If we're set to interpret coordinates as inches, then convert to mm:
+    switch (this->unitMode) {
+        case UNIT_IN:
+            return coord * mathutil::MM_PER_IN;
+        case UNIT_MM:
+        default: //impossible case.
+            return coord;
     }
-    return posUnit;
 }
-template <typename Drv> float State<Drv>::zUnitToAbsolute(float posUnit) const {
-    //if we're set to interpret coordinates as relative, then translate to absolute:
-    switch (this->positionMode()) {
-        case POS_RELATIVE:
-            posUnit += this->_destMm.z();
-            break;
-        case POS_ABSOLUTE:
-        default:
-            break; //no transformation needed.
-    }
-    return posUnit;
-}
-template <typename Drv> float State<Drv>::eUnitToAbsolute(float posUnit) const {
-    //if we're set to interpret coordinates as relative, then translate to absolute:
-    switch (this->extruderPosMode()) {
-        case POS_RELATIVE:
-            posUnit += this->_destMm.e();
-            break;
-        case POS_ABSOLUTE:
-        default:
-            break; //no transformation needed.
-    }
-    return posUnit;
-}
+
 template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
     //If we're set to interpret coordinates as inches, then convert to mm:
     switch (this->unitMode) {
@@ -330,8 +306,11 @@ template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
             return posUnit;
     }
 }
+template <typename Drv> Vector4f State<Drv>::coordToPrimitive(const Vector4f &coord) const {
+    return coordToMm(coordToAbsolute(coord)) + _hostZeroOffset;
+}
 
-template <typename Drv> float State<Drv>::xUnitToPrimitive(float posUnit) const {
+/*template <typename Drv> float State<Drv>::xUnitToPrimitive(float posUnit) const {
     //Convert the gcode unit to absolute MM, compensated for the zero setpoint
     return posUnitToMM(xUnitToAbsolute(posUnit)) + this->_hostZeroOffset.x();
 }
@@ -346,7 +325,7 @@ template <typename Drv> float State<Drv>::zUnitToPrimitive(float posUnit) const 
 template <typename Drv> float State<Drv>::eUnitToPrimitive(float posUnit) const {
     //Convert the gcode unit to absolute MM, compensated for the zero setpoint
     return posUnitToMM(eUnitToAbsolute(posUnit)) + this->_hostZeroOffset.e();
-}
+}*/
 template <typename Drv> float State<Drv>::fUnitToPrimitive(float posUnit) const {
     return posUnitToMM(posUnit/60); //feed rate is given in mm/minute, or in/minute.
 }
@@ -469,10 +448,11 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float z = cmd.getZ(hasZ); //new z-coordinate.
         float e = cmd.getE(hasE); //extrusion amount.
         float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
-        x = hasX ? xUnitToPrimitive(x) : curX;
-        y = hasY ? yUnitToPrimitive(y) : curY;
-        z = hasZ ? zUnitToPrimitive(z) : curZ;
-        e = hasE ? eUnitToPrimitive(e) : curE;
+        std::tie(x, y, z, e) = coordToPrimitive(Vector4f(x, y, z, e)).tuple();
+        x = hasX ? x : curX;
+        y = hasY ? y : curY;
+        z = hasZ ? z : curZ;
+        e = hasE ? e : curE;
         if (hasF) {
             this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
         }
@@ -490,19 +470,21 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float z = cmd.getZ(hasZ); //new z-coordinate.
         float e = cmd.getE(hasE); //extrusion amount.
         float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
-        x = hasX ? xUnitToPrimitive(x) : curX;
-        y = hasY ? yUnitToPrimitive(y) : curY;
-        z = hasZ ? zUnitToPrimitive(z) : curZ;
-        e = hasE ? eUnitToPrimitive(e) : curE;
+        std::tie(x, y, z, e) = coordToPrimitive(Vector4f(x, y, z, e)).tuple();
+        x = hasX ? x : curX;
+        y = hasY ? y : curY;
+        z = hasZ ? z : curZ;
+        e = hasE ? e : curE;
         if (hasF) {
             this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
         }
         //Now get the center-point coordinate:
         bool hasK; //center-z is optional.
-        float i = xUnitToPrimitive(cmd.getI());
-        float j = yUnitToPrimitive(cmd.getJ());
+        float i = cmd.getI();
+        float j = cmd.getJ();
         float k = cmd.getK(hasK);
-        k = hasK ? zUnitToPrimitive(k) : curZ;
+        std::tie(i, j, k) = coordToPrimitive(Vector4f(i, j, k, 0)).xyz().tuple();
+        k = hasK ? k : curZ;
         this->queueArc(x, y, z, e, i, j, k, cmd.isG2());
         reply(gparse::Response::Ok);
     } else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
