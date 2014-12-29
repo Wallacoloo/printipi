@@ -19,34 +19,16 @@
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::xCenter" name="xCenter">
-      <type builtin="yes" name="float" />
+    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::center" name="center">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::yCenter" name="yCenter">
-      <type builtin="yes" name="float" />
+    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::u" name="u">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::zCenter" name="zCenter">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::ux" name="ux">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::uy" name="uy">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::uz" name="uz">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::vx" name="vx">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::vy" name="vy">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::vz" name="vz">
-      <type builtin="yes" name="float" />
+    <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::v" name="v">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
     <argument id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::arcRad" name="arcRad">
       <type builtin="yes" name="float" />

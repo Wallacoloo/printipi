@@ -10,9 +10,6 @@
     <argument id="iodrv::IoPin::IoPin::inversions" name="inversions">
       <type name="IoPinInversions" ref="iodrv#iodrv::IoPinInversions" />
     </argument>
-    <argument id="iodrv::IoPin::IoPin::defaultState" name="defaultState">
-      <type name="IoLevel" ref="index#IoLevel" />
-    </argument>
     <argument id="iodrv::IoPin::IoPin::args" name="args">
       <type name="Args..." />
     </argument>
@@ -34,13 +31,7 @@
       <type name="IoPin &amp;&amp;" />
     </argument>
   </constructor>
-  <destructor id="iodrv::IoPin::~IoPin" name="~IoPin">
-    <brief>template &amp;lt;typename ...Args&amp;gt; IoPin(Args... args)</brief>
-    <doc>: _pin(args...), _invertReads(false), _invertWrites(false), _defaultState(IoLow) {
- registerExitHandler();
- livingPins.insert(this);
-}</doc>
-  </destructor>
+  <destructor id="iodrv::IoPin::~IoPin" name="~IoPin" />
   <method id="iodrv::IoPin::deactivateAll" name="deactivateAll" static="yes">
     <brief>set all pins to their (safe) default output:</brief>
     <return>
@@ -104,6 +95,14 @@
     <return>
       <type builtin="yes" name="void" />
     </return>
+  </method>
+  <method id="iodrv::IoPin::setDefaultState" name="setDefaultState">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IoPin::setDefaultState::state" name="state">
+      <type name="DefaultIoState" ref="iodrv#iodrv::DefaultIoState" />
+    </argument>
   </method>
   <method id="iodrv::IoPin::setToDefault" name="setToDefault">
     <return>

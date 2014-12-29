@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="motion::_AxisStepper__initAxisArcSteppers" name="_AxisStepper__initAxisArcSteppers" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>Helper classes for AxisStepper::initAxisArcSteppers</brief>
+  <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
   <methodtemplate id="motion::_AxisStepper__initAxisArcSteppers::operator()" name="operator()">
     <return>
       <type builtin="yes" name="void" />
@@ -18,34 +18,16 @@
       <type name="const CoordMapT" qualifier=" const *" />
     </argument>
     <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" &amp;" />
     </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::xCenter" name="xCenter">
-      <type builtin="yes" name="float" />
+    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::center" name="center">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::yCenter" name="yCenter">
-      <type builtin="yes" name="float" />
+    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::u" name="u">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::zCenter" name="zCenter">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::ux" name="ux">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::uy" name="uy">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::uz" name="uz">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::vx" name="vx">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::vy" name="vy">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::vz" name="vz">
-      <type builtin="yes" name="float" />
+    <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::v" name="v">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
     <argument id="motion::_AxisStepper__initAxisArcSteppers::operator()::arcRad" name="arcRad">
       <type builtin="yes" name="float" />

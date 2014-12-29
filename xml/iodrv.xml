@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="iodrv" name="iodrv" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>for the testsuite</brief>
+  <brief>for StepDirection</brief>
   <variable id="iodrv::_intervalThresh" name="_intervalThresh">
     <type name="std::chrono::microseconds" qualifier=" const" />
   </variable>
@@ -50,6 +50,12 @@
       </default>
     </templatetypeparameter>
   </classtemplate>
+  <enum anonymous="yes" id="iodrv::DefaultIoState" name="DefaultIoState">
+    <enumvalue id="iodrv::IO_DEFAULT_NONE" name="IO_DEFAULT_NONE" value="0" />
+    <enumvalue id="iodrv::IO_DEFAULT_HIGH_IMPEDANCE" name="IO_DEFAULT_HIGH_IMPEDANCE" value="1" />
+    <enumvalue id="iodrv::IO_DEFAULT_LOW" name="IO_DEFAULT_LOW" value="2" />
+    <enumvalue id="iodrv::IO_DEFAULT_HIGH" name="IO_DEFAULT_HIGH" value="3" />
+  </enum>
   <enum anonymous="yes" id="iodrv::IoPinInversions" name="IoPinInversions">
     <enumvalue id="iodrv::NO_INVERSIONS" name="NO_INVERSIONS" value="0">
       <brief>bitfield that can be used to indicate whether a pin has logically-inverted reads/writes</brief>

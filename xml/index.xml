@@ -105,7 +105,7 @@
     <class name="Response" ref="gparse::Response#gparse::Response" />
   </namespace>
   <namespace name="iodrv" ref="iodrv#iodrv">
-    <brief>for the testsuite</brief>
+    <brief>for StepDirection</brief>
     <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
     <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
     <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
@@ -180,16 +180,16 @@
       </templatenontypeparameter>
     </structtemplate>
     <struct name="_AxisStepper__initAxisArcSteppers" ref="motion::_AxisStepper__initAxisArcSteppers#motion::_AxisStepper__initAxisArcSteppers">
-      <brief>Helper classes for AxisStepper::initAxisArcSteppers</brief>
+      <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
     </struct>
     <struct name="_AxisStepper__initAxisHomeSteppers" ref="motion::_AxisStepper__initAxisHomeSteppers#motion::_AxisStepper__initAxisHomeSteppers">
-      <brief>Helper classes for AxisStepper::initAxisHomeSteppers</brief>
+      <brief>Helper class for AxisStepper::initAxisHomeSteppers</brief>
     </struct>
     <struct name="_AxisStepper__initAxisSteppers" ref="motion::_AxisStepper__initAxisSteppers#motion::_AxisStepper__initAxisSteppers">
-      <brief>Helper classes for AxisStepper::initAxisSteppers</brief>
+      <brief>Helper class for AxisStepper::initAxisSteppers</brief>
     </struct>
     <struct name="_AxisStepper__nextStep" ref="motion::_AxisStepper__nextStep#motion::_AxisStepper__nextStep">
-      <brief>Helper classes for AxisStepper::nextStep method</brief>
+      <brief>Helper class for AxisStepper::nextStep method</brief>
     </struct>
     <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
     <structtemplate name="array_size" ref="motion::array_size#motion::array_size">

@@ -25,19 +25,10 @@
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vx" name="vx">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vy" name="vy">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vz" name="vz">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::ve" name="ve">
-      <type builtin="yes" name="float" />
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vel" name="vel">
+      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
     </argument>
     <templatetypeparameter id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT" />
     <templatenontypeparameter default="std" id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">

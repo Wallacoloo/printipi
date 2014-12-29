@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="motion::_AxisStepper__initAxisHomeSteppers" name="_AxisStepper__initAxisHomeSteppers" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>Helper classes for AxisStepper::initAxisHomeSteppers</brief>
+  <brief>Helper class for AxisStepper::initAxisHomeSteppers</brief>
   <methodtemplate id="motion::_AxisStepper__initAxisHomeSteppers::operator()" name="operator()">
     <return>
       <type builtin="yes" name="void" />

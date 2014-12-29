@@ -20,6 +20,9 @@
     <argument id="iodrv::Fan::Fan::pin" name="pin">
       <type name="IoPin &amp;&amp;" />
     </argument>
+    <argument id="iodrv::Fan::Fan::defaultState" name="defaultState">
+      <type name="DefaultIoState" ref="iodrv#iodrv::DefaultIoState" />
+    </argument>
     <argument id="iodrv::Fan::Fan::period" name="period">
       <type builtin="yes" name="float" />
     </argument>

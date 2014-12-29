@@ -2,11 +2,6 @@
 <class id="motion::AxisStepper" name="AxisStepper" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <subclass access="public" name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver" />
   <methodtemplate id="motion::AxisStepper::getNextTime" name="getNextTime" static="yes">
-    <brief>standard initializer:</brief>
-    <doc>template &amp;lt;typename CoordMapT, std::size\_t sz&amp;gt; AxisStepper(int idx, const CoordMapT &amp;/*map*/, const std::array&amp;lt;int, sz&amp;gt;&amp; /*curPos*/, float /*vx*/, float /*vy*/, float /*vz*/, float /*ve*/)
-: _index(idx) {}
-initializer when homing to endstops:
-template &amp;lt;typename CoordMapT&amp;gt; AxisStepper(int idx, const CoordMapT &amp;/*map*/, float /*vHome*/) : _index(idx) {}</doc>
     <return>
       <type name="AxisStepper" qualifier=" &amp;" ref="motion::AxisStepper#motion::AxisStepper" />
     </return>
@@ -27,34 +22,16 @@ template &amp;lt;typename CoordMapT&amp;gt; AxisStepper(int idx, const CoordMapT
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AxisStepper::initAxisArcSteppers::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::xCenter" name="xCenter">
-      <type builtin="yes" name="float" />
+    <argument id="motion::AxisStepper::initAxisArcSteppers::center" name="center">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::yCenter" name="yCenter">
-      <type builtin="yes" name="float" />
+    <argument id="motion::AxisStepper::initAxisArcSteppers::u" name="u">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::zCenter" name="zCenter">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::ux" name="ux">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::uy" name="uy">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::uz" name="uz">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::vx" name="vx">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::vy" name="vy">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::vz" name="vz">
-      <type builtin="yes" name="float" />
+    <argument id="motion::AxisStepper::initAxisArcSteppers::v" name="v">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
     <argument id="motion::AxisStepper::initAxisArcSteppers::arcRad" name="arcRad">
       <type builtin="yes" name="float" />
@@ -105,19 +82,10 @@ template &amp;lt;typename CoordMapT&amp;gt; AxisStepper(int idx, const CoordMapT
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AxisStepper::initAxisSteppers::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::AxisStepper::initAxisSteppers::vx" name="vx">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisSteppers::vy" name="vy">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisSteppers::vz" name="vz">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisSteppers::ve" name="ve">
-      <type builtin="yes" name="float" />
+    <argument id="motion::AxisStepper::initAxisSteppers::vel" name="vel">
+      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
     </argument>
     <templatetypeparameter id="motion::AxisStepper::initAxisSteppers::TupleT" name="TupleT" />
     <templatetypeparameter id="motion::AxisStepper::initAxisSteppers::CoordMapT" name="CoordMapT" />
