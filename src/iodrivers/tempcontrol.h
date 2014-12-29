@@ -73,6 +73,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
         inline TempControl(TempControlType hotType, IoPin &&heater, Thermistor &&therm, const PID &pid, const Filter &filter, float pwmPeriod=1./25000) 
          : IODriver(), _hotType(hotType), _heater(std::move(heater)), _therm(std::move(therm)), _pid(pid), _filter(filter), _pwmPeriod(pwmPeriod), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
+            _heater.setDefaultState(IO_DEFAULT_LOW);
             _heater.makeDigitalOutput(IoLow);
         }
         //register as the correct device type:

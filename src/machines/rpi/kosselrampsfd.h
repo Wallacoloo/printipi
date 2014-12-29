@@ -251,7 +251,7 @@
 //#define PIN_THERMISTOR         mitpi::V2_GPIO_P1_18    //maps to FD Shield ?
 #define PIN_FAN                   mitpi::V2_GPIO_P1_08    //maps to FD Shield D10 (Extruder 2 / Fan)
 #define PIN_FAN_INVERSIONS        INVERT_WRITES
-#define PIN_FAN_DEFAULT_STATE     IoDefaultLow
+#define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
 #define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
 #define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
 #define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
@@ -337,8 +337,7 @@ class kosselrampsfd : public Machine {
         
         inline _IODriverTypes getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN_DEFAULT_STATE, PIN_FAN), 
-                    FAN_MIN_PWM_PERIOD));
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD));
                 //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>(
                 //    iodrv::HotendType, _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                 //    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));
@@ -360,24 +359,24 @@ class kosselrampsfd : public Machine {
             return LinearDeltaCoordMap<A4988, A4988, A4988, A4988>(
                 R_MM, L_MM, H_MM, BUILDRAD_MM, STEPS_MM, STEPS_MM_EXT, 
                 //A tower:
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_A_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_A_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_A_EN)),
+                A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_A_STEP), 
+                      IoPin(NO_INVERSIONS, PIN_STEPPER_A_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_A_EN)),
                 //B tower:
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_B_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_B_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_B_EN)),
+                A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_B_STEP), 
+                      IoPin(NO_INVERSIONS, PIN_STEPPER_B_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_B_EN)),
                 //C tower:
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_C_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_C_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_C_EN)),
+                A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_C_STEP), 
+                      IoPin(NO_INVERSIONS, PIN_STEPPER_C_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_C_EN)),
                 //Extruder axis:
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_E_EN)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_A)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_B)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_C)),
+                A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_E_STEP), 
+                      IoPin(NO_INVERSIONS, PIN_STEPPER_E_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_E_EN)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_A)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_B)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_C)),
                 Matrix3x3(
                 0.999975003, 0.000005356, -0.007070522, 
                 0.000005356, 0.999998852, 0.001515111, 

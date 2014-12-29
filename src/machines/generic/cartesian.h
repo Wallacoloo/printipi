@@ -74,7 +74,7 @@
 #define PIN_THERMISTOR            -1  
 #define PIN_FAN                   -1    
 #define PIN_FAN_INVERSIONS        INVERT_WRITES
-#define PIN_FAN_DEFAULT_STATE     IoDefaultLow
+#define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
 #define FAN_MIN_PWM_PERIOD        0.01                    
 #define PIN_HOTEND                -1    
 #define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
@@ -128,21 +128,21 @@ class cartesian : public Machine {
         inline LinearCoordMap<A4988, A4988, A4988, A4988> getCoordMap() const {
             return LinearCoordMap<A4988, A4988, A4988, A4988>(
                 STEPS_MM_X, STEPS_MM_Y, STEPS_MM_Z, STEPS_MM_EXT,
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_X_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_X_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_X_EN)),
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_Y_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_Y_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_Y_EN)),
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_Z_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_Z_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_Z_EN)),
-                A4988(IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_STEP), 
-                      IoPin(NO_INVERSIONS, IoDefaultLow, PIN_STEPPER_E_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, IoLow, PIN_STEPPER_E_EN)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_X)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_Y)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, IoDefaultOpenCircuit, PIN_ENDSTOP_Z)),
+                A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_X_STEP), 
+                      IoPin(NO_INVERSIONS, PIN_STEPPER_X_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_X_EN)),
+                A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_Y_STEP), 
+                      IoPin(NO_INVERSIONS, PIN_STEPPER_Y_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_Y_EN)),
+                A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_Z_STEP), 
+                      IoPin(NO_INVERSIONS, PIN_STEPPER_Z_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_Z_EN)),
+                A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_E_STEP), 
+                      IoPin(NO_INVERSIONS, PIN_STEPPER_E_DIR), 
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_E_EN)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_X)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_Y)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_Z)),
                 Matrix3x3( //bed level matrix. Coordinates are leveled by multiplying them with this matrix: P(leveled) = M*P(unleveled)
             1, 0, 0,
             0, 1, 0,
@@ -151,13 +151,12 @@ class cartesian : public Machine {
         inline std::tuple<Fan, TempControl<RCThermistor, PID, LowPassFilter> > 
           getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN_DEFAULT_STATE, PIN_FAN), 
-                    FAN_MIN_PWM_PERIOD),
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD),
                 TempControl<RCThermistor, PID, LowPassFilter>(
                     iodrv::HotendType,
-                    IoPin(PIN_HOTEND_INVERSIONS, IoDefaultLow, PIN_HOTEND), 
+                    IoPin(PIN_HOTEND_INVERSIONS, PIN_HOTEND), 
                     RCThermistor(
-                        IoPin(NO_INVERSIONS, IoDefaultOpenCircuit, PIN_THERMISTOR),
+                        IoPin(NO_INVERSIONS, PIN_THERMISTOR),
                         THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                     PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), 
                     LowPassFilter(3.000)

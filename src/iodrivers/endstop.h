@@ -45,6 +45,7 @@ class Endstop : public IODriver {
     public:
         inline Endstop() : pin(IoPin::null()) {}
         inline Endstop(IoPin &&pin) : IODriver(), pin(std::move(pin)) {
+            this->pin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
             this->pin.makeDigitalInput();
         }
         inline bool isNull() const {

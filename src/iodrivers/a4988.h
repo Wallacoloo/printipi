@@ -54,6 +54,12 @@ class A4988 : public IODriver {
     public:
         inline A4988(IoPin &&stepPin, IoPin &&dirPin, IoPin &&enablePin) : IODriver(), 
           enablePin(std::move(enablePin)), stepPin(std::move(stepPin)), dirPin(std::move(dirPin)) {
+            //default to disabled
+            this->enablePin.setDefaultState(IO_DEFAULT_LOW);
+            //we want to avoid the step/dir pins from being in a floating state.
+            this->stepPin.setDefaultState(IO_DEFAULT_LOW);
+            this->dirPin.setDefaultState(IO_DEFAULT_LOW);
+
             this->stepPin.makeDigitalOutput(IoLow);
             this->dirPin.makeDigitalOutput(IoLow);
             this->enablePin.makeDigitalOutput(IoHigh); //set as output and enable.

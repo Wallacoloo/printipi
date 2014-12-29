@@ -74,6 +74,7 @@ class RCThermistor {
           MIN_R(0), MAX_R(R0_OHMS*2), 
           pin(std::move(pin)) {}
         inline void startRead() {
+            pin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
             pin.makeDigitalInput();
             _startReadTime = EventClockT::now();
         }

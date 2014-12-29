@@ -62,8 +62,8 @@ typedef float CelciusType;
 typedef bool IoLevel;
 #define IoLow false
 #define IoHigh true
-#define IoDefaultLow IoLow
-#define IoDefaultHigh IoHigh
-#define IoDefaultOpenCircuit IoDefaultLow //TODO: misleading! make an open-circuit (high-impedance input) default actually possible.
+//#define IoDefaultLow IoLow
+//#define IoDefaultHigh IoHigh
+//#define IoDefaultOpenCircuit IoDefaultLow //TODO: misleading! make an open-circuit (high-impedance input) default actually possible.
 
 #endif

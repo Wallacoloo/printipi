@@ -42,7 +42,8 @@ class Fan : public IODriver {
     IoPin pin;
     float period;
     public:
-        inline Fan(IoPin &&pin, float period=0) : IODriver(), pin(std::move(pin)), period(period) {
+        inline Fan(IoPin &&pin, DefaultIoState defaultState=IO_DEFAULT_NONE, float period=0) : IODriver(), pin(std::move(pin)), period(period) {
+            this->pin.setDefaultState(defaultState);
             this->pin.makeDigitalOutput(IoLow);
         }
         inline bool isFan() const { return true; }

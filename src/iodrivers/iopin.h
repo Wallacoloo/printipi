@@ -44,11 +44,18 @@ enum IoPinInversions {
     INVERT_WRITES = 2
 };
 
+enum DefaultIoState {
+    IO_DEFAULT_NONE,
+    IO_DEFAULT_HIGH_IMPEDANCE,
+    IO_DEFAULT_LOW,
+    IO_DEFAULT_HIGH
+};
+
 class IoPin {
     PrimitiveIoPin _pin;
     bool _invertReads;
     bool _invertWrites;
-    IoLevel _defaultState;
+    DefaultIoState _defaultState;
 
     static std::set<IoPin*> livingPins;
 
@@ -69,8 +76,10 @@ class IoPin {
         IoPin(IoPin &&other);
         IoPin& operator=(IoPin &&other);
 
-        template <typename ...Args> IoPin(IoPinInversions inversions, IoLevel defaultState, Args... args)
-          : _pin(args...),  _invertReads((inversions & INVERT_READS) != 0), _invertWrites((inversions & INVERT_WRITES) != 0), _defaultState(defaultState) {
+        template <typename ...Args> IoPin(IoPinInversions inversions, Args... args)
+          : _pin(args...),  
+          _invertReads((inversions & INVERT_READS) != 0), _invertWrites((inversions & INVERT_WRITES) != 0), 
+          _defaultState(IO_DEFAULT_NONE) {
             //We need to tell the scheduler to deactivate all pins at shutdown, but only once:
             //Note: this is done in a separate, non-templated function to avoid a bug in gcc-4.7 with the -flto flag
             //Note: only registerExitHandler if this pin is NOT null,
@@ -80,53 +89,27 @@ class IoPin {
                 livingPins.insert(this);
             }
         }
-        /*template <typename ...Args> IoPin(Args... args)
-          : _pin(args...), _invertReads(false), _invertWrites(false), _defaultState(IoLow) {
-            registerExitHandler();
-            livingPins.insert(this);
-        }*/
+
         ~IoPin();
-        inline bool isNull() const { 
-            return _pin.isNull(); 
-        }
-        inline IoLevel translateWriteToPrimitive(IoLevel lev) const { 
-            return _invertWrites ? !lev : lev; 
-        }
-        inline float translateDutyCycleToPrimitive(float pwm) const {
-            return _invertWrites ? 1-pwm : pwm;
-        }
-        inline const PrimitiveIoPin& primitiveIoPin() const { 
-            return _pin; 
-        }
+
+        void setDefaultState(DefaultIoState state);
+
+        bool isNull() const;
+        IoLevel translateWriteToPrimitive(IoLevel lev) const;
+        float translateDutyCycleToPrimitive(float pwm) const;
+        const PrimitiveIoPin& primitiveIoPin() const;
         //wrapper functions that take the burden of inversions, etc off the platform-specific drivers:
-        inline void makeDigitalOutput(IoLevel lev) {
-            //set the pin as a digital output, and give it the specified state.
-            //Doing these two actions together allow us to prevent the pin from ever being in an undefined state.
-            _pin.makeDigitalOutput(translateWriteToPrimitive(lev));
-        }
-        inline void makeDigitalInput() {
-            _pin.makeDigitalInput();
-        }
-        inline IoLevel digitalRead() const {
-            //relay the call to the real pin, performing any inversions necessary
-            return _invertReads ? !_pin.digitalRead() : _pin.digitalRead();
-        }
-        inline void digitalWrite(IoLevel lev) {
-            //relay the call to the real pin, performing any inversions necessary
-            _pin.digitalWrite(translateWriteToPrimitive(lev));
-        }
-        inline void setToDefault() {
-            //set the pin to a "safe" default state:
-            if (!_pin.isNull()) {
-                digitalWrite(_defaultState);
-            }
-        }
+        void makeDigitalOutput(IoLevel lev);
+        void makeDigitalInput();
+        IoLevel digitalRead() const;
+        void digitalWrite(IoLevel lev);
+        void setToDefault();
 };
 
 class IoPin::null : public IoPin {
     static null _null;
     public:
-        inline null() : IoPin(NO_INVERSIONS, IoLow, PrimitiveIoPin::null()) {}
+        inline null() : IoPin(NO_INVERSIONS, PrimitiveIoPin::null()) {}
         inline static const null& ref() {
             return _null;
         }
