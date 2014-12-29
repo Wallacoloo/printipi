@@ -40,6 +40,7 @@
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
+#include "common/mathutil.h" //for mathutil::ABSOLUTE_ZERO_CELCIUS
 #include "iopin.h"
 
 namespace iodrv {
@@ -58,12 +59,12 @@ class IODriver {
         inline CelciusType getTargetTemperature() const { 
             //OVERRIDE THIS (hotends / beds only)
             assert(false && "IoDriver::getTargetTemperature() must be overriden by subclass."); 
-            return -300; //for when assertions are disabled.
+            return mathutil::ABSOLUTE_ZERO_CELCIUS; //for when assertions are disabled.
         }
         inline CelciusType getMeasuredTemperature() const { 
             //OVERRIDE THIS (hotends / beds only)
             assert(false && "IoDriver::getMeasuredTemperature() must be overriden by subclass."); 
-            return -300; //for when assertions are disabled.
+            return mathutil::ABSOLUTE_ZERO_CELCIUS; //for when assertions are disabled.
         } 
         /* called when the scheduler has extra time,
         Can be used to check the status of inputs, etc.
@@ -133,7 +134,7 @@ template <typename TupleT> void IODriver::setBedTemp(TupleT &drivers, CelciusTyp
 //IODriver::getHotendTemp helper functions:
 struct IODriver__getHotendTemp {
     CelciusType value;
-    IODriver__getHotendTemp() : value(-300) {}
+    IODriver__getHotendTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
     template <typename T> void operator()(std::size_t index, T &driver) {
         (void)index; //unused;
         if (driver.isHotend()) {
@@ -149,7 +150,7 @@ template <typename TupleT> CelciusType IODriver::getHotendTemp(TupleT &drivers) 
 //IODriver::getHotendTargetTemp helper functions:
 struct IODriver__getHotendTargetTemp {
     CelciusType value;
-    IODriver__getHotendTargetTemp() : value(-300) {}
+    IODriver__getHotendTargetTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
     template <typename T> void operator()(std::size_t index, T &driver) {
         (void)index; //unused;
         if (driver.isHotend()) {
@@ -165,7 +166,7 @@ template <typename TupleT> CelciusType IODriver::getHotendTargetTemp(TupleT &dri
 //IODriver::getBedTemp helper functions:
 struct IODriver__getBedTemp {
     CelciusType value;
-    IODriver__getBedTemp() : value(-300) {}
+    IODriver__getBedTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
     template <typename T> void operator()(std::size_t /*index*/, T &driver) {
         if (driver.isHeatedBed()) {
             value = driver.getMeasuredTemperature();
