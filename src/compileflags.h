@@ -42,7 +42,9 @@
 #ifdef BUILD_TYPE_release
 	//on a debug build, we might want to let exceptions raise all the way up into the OS
 	//but on a release build, we want to catch them and display our own error message.
-    #define CLEAN_EXIT
+    #define CLEAN_EXIT 1
+#else
+    #define CLEAN_EXIT 0
 #endif
 
 #ifdef DDO_TESTS

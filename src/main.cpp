@@ -133,19 +133,19 @@ int main(int argc, char** argv) {
         return main_(argc, argv);
     } catch (const std::exception *e) {
         LOGE("caught std::exception*: %s. ... Exiting\n", e->what());
-        #ifdef CLEAN_EXIT
+        #if CLEAN_EXIT
             return 1; //don't rethrow exceptions; return an error code instead
         #endif
         throw;
     } catch (const std::exception &e) {
         LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
-        #ifdef CLEAN_EXIT
+        #if CLEAN_EXIT
             return 1; //don't rethrow exceptions; return an error code instead
         #endif
         throw;
     } catch (...) {
         LOGE("caught unknown exception. Exiting\n");
-        #ifdef CLEAN_EXIT
+        #if CLEAN_EXIT
             return 1; //don't rethrow exceptions; return an error code instead
         #endif
         throw;
