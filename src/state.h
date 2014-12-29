@@ -62,6 +62,7 @@
 #include "common/tupleutil.h"
 #include "filesystem.h"
 #include "outputevent.h"
+#include "common/vector4.h"
 
 //g-code coordinates can either be interpreted as absolute or relative to the last coordinates received
 enum PositionMode {
@@ -195,20 +196,11 @@ template <typename Drv> class State {
         void setUnitMode(LengthUnit mode);
         /* Convert an x/y/z/e value sent from the host to its absolute value, in the case that the host is sending relative positions */
         Vector4f coordToAbsolute(const Vector4f &coord) const;
-        /*float xUnitToAbsolute(float posUnit) const;
-        float yUnitToAbsolute(float posUnit) const;
-        float zUnitToAbsolute(float posUnit) const;
-        float eUnitToAbsolute(float posUnit) const;*/
-        Vector4f coordToMm(const Vector4f &coord) const;
         /* Convert an x/y/z/e value sent from the host to MM, in the case that the host is sending inches */
-        float posUnitToMM(float posUnit) const;
+        Vector4f coordToMm(const Vector4f &coord) const;
         /* Convert an x/y/z/e value sent from the host to whatever primitive value we're using internally
          * Acts similarly as a shortcut for posUnitToMM(xUnitToAbsolute(x)), though it may apply transformations in the future.*/
         Vector4f coordToPrimitive(const Vector4f &coord) const;
-        /*float xUnitToPrimitive(float posUnit) const;
-        float yUnitToPrimitive(float posUnit) const;
-        float zUnitToPrimitive(float posUnit) const;
-        float eUnitToPrimitive(float posUnit) const;*/
         float fUnitToPrimitive(float posUnit) const;
         /* Get the last queued position (X, Y, Z, E). Future queued commands may depend on this */
         Vector4f destMm() const;
@@ -296,38 +288,12 @@ template <typename Drv> Vector4f State<Drv>::coordToMm(const Vector4f &coord) co
     }
 }
 
-template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
-    //If we're set to interpret coordinates as inches, then convert to mm:
-    switch (this->unitMode) {
-        case UNIT_IN:
-            return mathutil::MM_PER_IN * posUnit;
-        case UNIT_MM:
-        default: //impossible case.
-            return posUnit;
-    }
-}
 template <typename Drv> Vector4f State<Drv>::coordToPrimitive(const Vector4f &coord) const {
     return coordToMm(coordToAbsolute(coord)) + _hostZeroOffset;
 }
 
-/*template <typename Drv> float State<Drv>::xUnitToPrimitive(float posUnit) const {
-    //Convert the gcode unit to absolute MM, compensated for the zero setpoint
-    return posUnitToMM(xUnitToAbsolute(posUnit)) + this->_hostZeroOffset.x();
-}
-template <typename Drv> float State<Drv>::yUnitToPrimitive(float posUnit) const {
-    //Convert the gcode unit to absolute MM, compensated for the zero setpoint
-    return posUnitToMM(yUnitToAbsolute(posUnit)) + this->_hostZeroOffset.y();
-}
-template <typename Drv> float State<Drv>::zUnitToPrimitive(float posUnit) const {
-    //Convert the gcode unit to absolute MM, compensated for the zero setpoint
-    return posUnitToMM(zUnitToAbsolute(posUnit)) + this->_hostZeroOffset.z();
-}
-template <typename Drv> float State<Drv>::eUnitToPrimitive(float posUnit) const {
-    //Convert the gcode unit to absolute MM, compensated for the zero setpoint
-    return posUnitToMM(eUnitToAbsolute(posUnit)) + this->_hostZeroOffset.e();
-}*/
 template <typename Drv> float State<Drv>::fUnitToPrimitive(float posUnit) const {
-    return posUnitToMM(posUnit/60); //feed rate is given in mm/minute, or in/minute.
+    return coordToMm(Vector4f(posUnit/60, 0, 0, 0)).x(); //feed rate is given in mm/minute, or in/minute.
 }
 
 template <typename Drv> Vector4f State<Drv>::destMm() const {
@@ -514,12 +480,14 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float actualX, actualY, actualZ, actualE;
         bool hasXYZE = cmd.hasAnyXYZEParam();
         if (!hasXYZE) { //make current position (0, 0, 0, 0)
-            actualX = actualY = actualZ = actualE = posUnitToMM(0);
+            actualX = actualY = actualZ = actualE = 0; 
         } else {
-            actualX = cmd.hasX() ? posUnitToMM(cmd.getX()) : destMm().x() - _hostZeroOffset.x(); 
-            actualY = cmd.hasY() ? posUnitToMM(cmd.getY()) : destMm().y() - _hostZeroOffset.y();
-            actualZ = cmd.hasZ() ? posUnitToMM(cmd.getZ()) : destMm().z() - _hostZeroOffset.z();
-            actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : destMm().e() - _hostZeroOffset.e();
+            Vector4f cmdPosMm = coordToMm(Vector4f(cmd.getX(), cmd.getY(), cmd.getZ(), cmd.getE()));
+            Vector4f curZeroPos = destMm() - _hostZeroOffset;
+            actualX = cmd.hasX() ? cmdPosMm.x() : curZeroPos.x();
+            actualY = cmd.hasY() ? cmdPosMm.y() : curZeroPos.y();
+            actualZ = cmd.hasZ() ? cmdPosMm.z() : curZeroPos.z();
+            actualE = cmd.hasE() ? cmdPosMm.e() : curZeroPos.e();
         }
         setHostZeroPos(actualX, actualY, actualZ, actualE);
         reply(gparse::Response::Ok);
