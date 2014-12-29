@@ -39,7 +39,7 @@
 class OutputEvent {
     EventClockT::time_point _time;
     PrimitiveIoPin _pin;
-    IoLevel _state; //1=HIGH, 0=LOW
+    IoLevel _state;
     public:
         inline OutputEvent()
         : _time(std::chrono::seconds(0)), _pin(PrimitiveIoPin::null()), _state(IoLow) {

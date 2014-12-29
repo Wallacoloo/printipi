@@ -247,15 +247,23 @@
 #define PIN_ENDSTOP_A             mitpi::V2_GPIO_P1_18    //maps to FD Shield D22 (X-MIN)
 #define PIN_ENDSTOP_B             mitpi::V2_GPIO_P5_03    //maps to FD Shield D24 (Y-MIN)
 #define PIN_ENDSTOP_C             mitpi::V2_GPIO_P1_15    //maps to FD Shield D26 (Z-MIN)
+//endstops expects a HIGH input when the endstop is reached
 #define PIN_ENDSTOP_INVERSIONS    NO_INVERSIONS
+#define PIN_ENDSTOP_PULL          mitpi::GPIOPULL_UP
 //#define PIN_THERMISTOR         mitpi::V2_GPIO_P1_18    //maps to FD Shield ?
 #define PIN_FAN                   mitpi::V2_GPIO_P1_08    //maps to FD Shield D10 (Extruder 2 / Fan)
 #define PIN_FAN_INVERSIONS        INVERT_WRITES
 #define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
+//during RPi boot, fan can be set to be either on or off by using internal pull resistors
+#define PIN_FAN_PULL              mitpi::GPIOPULL_UP
 #define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
 #define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
 #define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
-#define HOTEND_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
+//hotend state during boot, if hardware pull resistors weren't present.
+//NOTE: if you have a hotend that is active LOW, then you want the pull resistor to pull HIGH!
+#define PIN_HOTEND_PULL           mitpi::GPIOPULL_DOWN
+//MOSFETS have a limited switching frequency, which can be accounted for with a minimum PWM_PERIOD
+#define HOTEND_MIN_PWM_PERIOD        0.01                 
 
 #define PIN_STEPPER_A_EN          mitpi::V2_GPIO_P5_04    //maps to FD Shield D48  (X_EN)
 #define PIN_STEPPER_A_STEP        mitpi::V2_GPIO_P1_22    //maps to FD Shield AD9  (X_STEP)
@@ -272,7 +280,11 @@
 #define PIN_STEPPER_E_EN          mitpi::V2_GPIO_P1_16    //maps to FD Shield D42  (E0_EN)
 #define PIN_STEPPER_E_STEP        mitpi::V2_GPIO_P1_03    //maps to FD Shield D36  (E0_STEP)
 #define PIN_STEPPER_E_DIR         mitpi::V2_GPIO_P1_05    //maps to FD Shield D28  (E0_DIR)
+//A4988 EN pin is logically inverted (writing HIGH to the /EN pin disables the stepper motor)
 #define PIN_STEPPER_EN_INVERSIONS INVERT_WRITES
+//Set the pin to pull HIGH so that the stepper is disabled during RPi boot
+#define PIN_STEPPER_EN_PULL       mitpi::GPIOPULL_UP
+
 
 //PID thermistor->hotend feedback settings
 //  We need to take the current temperature and use that to drive how much power we are sending to the hotend.
@@ -337,7 +349,7 @@ class kosselrampsfd : public Machine {
         
         inline _IODriverTypes getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD));
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD));
                 //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>(
                 //    iodrv::HotendType, _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                 //    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));
@@ -361,22 +373,22 @@ class kosselrampsfd : public Machine {
                 //A tower:
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_A_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_A_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_A_EN)),
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_A_EN, PIN_STEPPER_EN_PULL)),
                 //B tower:
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_B_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_B_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_B_EN)),
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_B_EN, PIN_STEPPER_EN_PULL)),
                 //C tower:
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_C_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_C_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_C_EN)),
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_C_EN, PIN_STEPPER_EN_PULL)),
                 //Extruder axis:
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_E_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_E_DIR), 
-                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_E_EN)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_A)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_B)),
-                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_C)),
+                      IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_E_EN, PIN_STEPPER_EN_PULL)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_A, PIN_ENDSTOP_PULL)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_B, PIN_ENDSTOP_PULL)),
+                Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_C, PIN_ENDSTOP_PULL)),
                 Matrix3x3(
                 0.999975003, 0.000005356, -0.007070522, 
                 0.000005356, 0.999998852, 0.001515111, 
