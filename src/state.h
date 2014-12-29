@@ -145,9 +145,7 @@ template <typename Drv> class State {
     PositionMode _positionMode; // = POS_ABSOLUTE;
     PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
     LengthUnit unitMode; // = UNIT_MM;
-    //TODO: replace this with Vector4f
-    float _destXPrimitive, _destYPrimitive, _destZPrimitive;
-    float _destEPrimitive;
+    Vector4f _destMm;
     float _destMoveRatePrimitive;
     float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
     bool _isHomed; //Need to know if our absolute coordinates are accurate, which changes when power is lost or stepper motors are deactivated.
@@ -241,7 +239,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     : _doExitAfterMoveCompletes(false),
     _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
     unitMode(UNIT_MM), 
-    _destXPrimitive(0), _destYPrimitive(0), _destZPrimitive(0), _destEPrimitive(0),
+    _destMm(0, 0, 0, 0),
     _hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
     _isHomed(false),
     _isWaitingForHotend(false),
@@ -280,7 +278,7 @@ template <typename Drv> float State<Drv>::xUnitToAbsolute(float posUnit) const {
     //if we're set to interpret coordinates as relative, then translate to absolute:
     switch (this->positionMode()) {
         case POS_RELATIVE:
-            posUnit += this->_destXPrimitive;
+            posUnit += this->_destMm.x();
             break;
         case POS_ABSOLUTE:
         default:
@@ -292,7 +290,7 @@ template <typename Drv> float State<Drv>::yUnitToAbsolute(float posUnit) const {
     //if we're set to interpret coordinates as relative, then translate to absolute:
     switch (this->positionMode()) {
         case POS_RELATIVE:
-            posUnit += this->_destYPrimitive;
+            posUnit += this->_destMm.y();
             break;
         case POS_ABSOLUTE:
         default:
@@ -304,7 +302,7 @@ template <typename Drv> float State<Drv>::zUnitToAbsolute(float posUnit) const {
     //if we're set to interpret coordinates as relative, then translate to absolute:
     switch (this->positionMode()) {
         case POS_RELATIVE:
-            posUnit += this->_destZPrimitive;
+            posUnit += this->_destMm.z();
             break;
         case POS_ABSOLUTE:
         default:
@@ -316,7 +314,7 @@ template <typename Drv> float State<Drv>::eUnitToAbsolute(float posUnit) const {
     //if we're set to interpret coordinates as relative, then translate to absolute:
     switch (this->extruderPosMode()) {
         case POS_RELATIVE:
-            posUnit += this->_destEPrimitive;
+            posUnit += this->_destMm.e();
             break;
         case POS_ABSOLUTE:
         default:
@@ -356,16 +354,16 @@ template <typename Drv> float State<Drv>::fUnitToPrimitive(float posUnit) const 
 }
 
 template <typename Drv> float State<Drv>::destXPrimitive() const {
-    return this->_destXPrimitive;
+    return this->_destMm.x();
 }
 template <typename Drv> float State<Drv>::destYPrimitive() const {
-    return this->_destYPrimitive;
+    return this->_destMm.y();
 }
 template <typename Drv> float State<Drv>::destZPrimitive() const {
-    return this->_destZPrimitive;
+    return this->_destMm.z();
 }
 template <typename Drv> float State<Drv>::destEPrimitive() const {
-    return this->_destEPrimitive;
+    return this->_destMm.e();
 }
 template <typename Drv> float State<Drv>::destMoveRatePrimitive() const {
     return this->_destMoveRatePrimitive;
@@ -670,10 +668,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
 
 template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, float e, float cX, float cY, float cZ, bool isCW) {
     //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
-    _destXPrimitive = x;
-    _destYPrimitive = y;
-    _destZPrimitive = z;
-    _destEPrimitive = e;
+    _destMm = Vector4f(x, y, z, e);
     //now determine the velocity of the move. We just calculate limits & relay the info to the motionPlanner
     float velXyz = destMoveRatePrimitive();
     float minExtRate = -this->driver.maxRetractRate();
@@ -685,10 +680,7 @@ template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, flo
         
 template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
     //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
-    _destXPrimitive = x;
-    _destYPrimitive = y;
-    _destZPrimitive = z;
-    _destEPrimitive = e;
+    _destMm = Vector4f(x, y, z, e);
     //now determine the velocity of the move. We just calculate limits & relay the info to the motionPlanner
     float velXyz = destMoveRatePrimitive();
     float minExtRate = -this->driver.maxRetractRate();
