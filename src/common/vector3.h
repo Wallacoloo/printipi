@@ -60,22 +60,36 @@ template <typename F> class Vector3 {
 		F x() const { return _x; }
 		F y() const { return _y; }
 		F z() const { return _z; }
+		//the square of the magnitude (length) of the vector.
+		//equivalent to this->mag() * this->mag(), but less verbose and explicitly avoids the sqrt operation.
 		F magSq() const { 
-			//the square of the magnitude (length) of the vector.
-			//equivalent to this->mag() * this->mag(), but less verbose and explicitly avoids the sqrt operation.
 			return this->dot(*this); 
 		}
+		//magnitude (length) of the vector
 		F mag() const { 
-			//magnitude (length) of the vector
 			return sqrt(magSq()); 
 		}
 
-		//unary operators
+		//psuedo-modifiers
+		//return the equivalent vector, but with @_x=@x
+		Vector3<F> withX(F x) {
+			return Vector3<F>(x, y(), z());
+		}
+		//return the equivalent vector, but with @_y=@y
+		Vector3<F> withY(F y) {
+			return Vector3<F>(x(), y, z());
+		}
+		//return the equivalent vector, but with @_y=@y
+		Vector3<F> withZ(F z) {
+			return Vector3<F>(x(), y(), z);
+		}
+
+		//unary negation operator (x = -y)
 		Vector3<F> operator-() const {
 			return *this * -1;
 		}
+		//Normalize the vector; return a vector of magnitude 1, but with the same direction as `this'
 		Vector3<F> norm() const {
-			//Normalize the vector; return a vector of magnitude 1, but with the same direction as `this'
 			return *this / mag();
 		}
 

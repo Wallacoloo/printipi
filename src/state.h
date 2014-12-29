@@ -216,9 +216,9 @@ template <typename Drv> class State {
          * returns a Command to send back to the host. */
         template <typename ReplyFunc> void execute(gparse::Command const& cmd, ReplyFunc replyFunc);
         // make an arc from the current position to (x, y, z), maintaining a constant distance from (cX, cY, cZ)
-        void queueArc(float x, float y, float z, float e, float cX, float cY, float cZ, bool isCW=false);
+        void queueArc(const Vector4f &dest, const Vector3f &center, bool isCW=false);
         /* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
-        void queueMovement(float x, float y, float z, float e);
+        void queueMovement(const Vector4f &dest);
         /* Home to the endstops. */
         void homeEndstops();
         //Check if M109 (set temperature and wait until reached) has been satisfied.
@@ -409,20 +409,15 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         bool hasF;
         float curX, curY, curZ, curE;
         std::tie(curX, curY, curZ, curE) = destMm().tuple();
-        float x = cmd.getX(hasX); //new x-coordinate.
-        float y = cmd.getY(hasY); //new y-coordinate.
-        float z = cmd.getZ(hasZ); //new z-coordinate.
-        float e = cmd.getE(hasE); //extrusion amount.
         float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
-        std::tie(x, y, z, e) = coordToPrimitive(Vector4f(x, y, z, e)).tuple();
-        x = hasX ? x : curX;
-        y = hasY ? y : curY;
-        z = hasZ ? z : curZ;
-        e = hasE ? e : curE;
+        Vector4f cmdDest(cmd.getX(hasX), cmd.getY(hasY), cmd.getZ(hasZ), cmd.getE(hasE));
+
+        cmdDest = coordToPrimitive(cmdDest);
+        Vector4f trueDest = Vector4f(hasX ? cmdDest.x() : curX, hasY ? cmdDest.y() : curY, hasZ ? cmdDest.z() : curZ, hasE ? cmdDest.e() : curE);
         if (hasF) {
             this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
         }
-        this->queueMovement(x, y, z, e);
+        this->queueMovement(trueDest);
         reply(gparse::Response::Ok);
     } else if (cmd.isG2() || cmd.isG3()) {
         LOGW("Warning: G3 is experimental\n");
@@ -431,16 +426,11 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         bool hasF;
         float curX, curY, curZ, curE;
         std::tie(curX, curY, curZ, curE) = destMm().tuple();
-        float x = cmd.getX(hasX); //new x-coordinate.
-        float y = cmd.getY(hasY); //new y-coordinate.
-        float z = cmd.getZ(hasZ); //new z-coordinate.
-        float e = cmd.getE(hasE); //extrusion amount.
         float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
-        std::tie(x, y, z, e) = coordToPrimitive(Vector4f(x, y, z, e)).tuple();
-        x = hasX ? x : curX;
-        y = hasY ? y : curY;
-        z = hasZ ? z : curZ;
-        e = hasE ? e : curE;
+        Vector4f cmdDest(cmd.getX(hasX), cmd.getY(hasY), cmd.getZ(hasZ), cmd.getE(hasE));
+
+        cmdDest = coordToPrimitive(cmdDest);
+        Vector4f trueDest = Vector4f(hasX ? cmdDest.x() : curX, hasY ? cmdDest.y() : curY, hasZ ? cmdDest.z() : curZ, hasE ? cmdDest.e() : curE);
         if (hasF) {
             this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
         }
@@ -449,9 +439,9 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float i = cmd.getI();
         float j = cmd.getJ();
         float k = cmd.getK(hasK);
-        std::tie(i, j, k) = coordToPrimitive(Vector4f(i, j, k, 0)).xyz().tuple();
-        k = hasK ? k : curZ;
-        this->queueArc(x, y, z, e, i, j, k, cmd.isG2());
+        Vector3f center = coordToPrimitive(Vector4f(i, j, k, 0)).xyz();
+        center = center.withZ(hasK ? center.z() : curZ);
+        this->queueArc(trueDest, center, cmd.isG2());
         reply(gparse::Response::Ok);
     } else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
         setUnitMode(UNIT_IN);
@@ -598,28 +588,28 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     }
 }
 
-template <typename Drv> void State<Drv>::queueArc(float x, float y, float z, float e, float cX, float cY, float cZ, bool isCW) {
+template <typename Drv> void State<Drv>::queueArc(const Vector4f &dest, const Vector3f &center, bool isCW) {
     //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
-    _destMm = Vector4f(x, y, z, e);
+    _destMm = dest;
     //now determine the velocity of the move. We just calculate limits & relay the info to the motionPlanner
     float velXyz = destMoveRatePrimitive();
     float minExtRate = -this->driver.maxRetractRate();
     float maxExtRate = this->driver.maxExtrudeRate();
     //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
     auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
-    _motionPlanner.arcTo(startTime, x, y, z, e, cX, cY, cZ, velXyz, minExtRate, maxExtRate, isCW);
+    _motionPlanner.arcTo(startTime, dest, center, velXyz, minExtRate, maxExtRate, isCW);
 }
         
-template <typename Drv> void State<Drv>::queueMovement(float x, float y, float z, float e) {
+template <typename Drv> void State<Drv>::queueMovement(const Vector4f &dest) {
     //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
-    _destMm = Vector4f(x, y, z, e);
+    _destMm = dest;
     //now determine the velocity of the move. We just calculate limits & relay the info to the motionPlanner
     float velXyz = destMoveRatePrimitive();
     float minExtRate = -this->driver.maxRetractRate();
     float maxExtRate = this->driver.maxExtrudeRate();
     //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
     auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
-    _motionPlanner.moveTo(startTime, x, y, z, e, velXyz, minExtRate, maxExtRate);
+    _motionPlanner.moveTo(startTime, dest, velXyz, minExtRate, maxExtRate);
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {

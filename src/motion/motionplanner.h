@@ -230,7 +230,7 @@ template <typename Interface> class MotionPlanner {
                 return OutputEvent();
             }
         }
-        void moveTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float maxVelXyz, float minVelE, float maxVelE) {
+        void moveTo(EventClockT::time_point baseTime, const Vector4f &dest_, float maxVelXyz, float minVelE, float maxVelE) {
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             if (std::tuple_size<AxisStepperTypes>::value == 0) {
@@ -239,7 +239,7 @@ template <typename Interface> class MotionPlanner {
             this->_baseTime = baseTime;
             Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
             //get the REAL destination, after leveling is applied
-            Vector4f dest = Vector4f(_coordMapper.applyLeveling(Vector3f(x, y, z)), e);
+            Vector4f dest = Vector4f(_coordMapper.applyLeveling(dest_.xyz()), dest_.e());
             //fix impossible coordinates
             dest = _coordMapper.bound(dest);
             
@@ -277,7 +277,7 @@ template <typename Interface> class MotionPlanner {
             this->_motionType = MotionHome;
             this->_accel.begin(NAN, maxVelXyz);
         }
-        void arcTo(EventClockT::time_point baseTime, float x, float y, float z, float e, float centerX_, float centerY_, float centerZ_, float maxVelXyz, float minVelE, float maxVelE, bool isCW) {
+        void arcTo(EventClockT::time_point baseTime, const Vector4f &dest_, const Vector3f &center_, float maxVelXyz, float minVelE, float maxVelE, bool isCW) {
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
@@ -286,13 +286,13 @@ template <typename Interface> class MotionPlanner {
             this->_baseTime = baseTime;
             Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
             //get the REAL (leveled) destination
-            Vector4f dest = Vector4f(_coordMapper.applyLeveling(Vector3f(x, y, z)), e);
+            Vector4f dest = Vector4f(_coordMapper.applyLeveling(dest_.xyz()), dest.e());
             //Fix impossible coordinates
             dest = _coordMapper.bound(dest);
             
             //The 3 points, (centerX_, centerY_, centerZ_), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
             //get the REAL (leveled) center
-            Vector3f center = _coordMapper.applyLeveling(Vector3f(centerX_, centerY_, centerZ_));
+            Vector3f center = _coordMapper.applyLeveling(center_);
             Vector3f a = cur.xyz()-center;
             Vector3f b = dest.xyz()-center;
 
