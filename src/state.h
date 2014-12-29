@@ -147,7 +147,8 @@ template <typename Drv> class State {
     LengthUnit unitMode; // = UNIT_MM;
     Vector4f _destMm;
     float _destMoveRatePrimitive;
-    float _hostZeroX, _hostZeroY, _hostZeroZ, _hostZeroE; //the host can set any arbitrary point to be referenced as 0.
+    //the host can set any arbitrary point to be referenced as 0.
+    Vector4f _hostZeroOffset;
     bool _isHomed; //Need to know if our absolute coordinates are accurate, which changes when power is lost or stepper motors are deactivated.
     bool _isWaitingForHotend;
     EventClockT::time_point _lastMotionPlannedTime;
@@ -240,7 +241,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
     unitMode(UNIT_MM), 
     _destMm(0, 0, 0, 0),
-    _hostZeroX(0), _hostZeroY(0), _hostZeroZ(0), _hostZeroE(0),
+    _hostZeroOffset(0, 0, 0, 0),
     _isHomed(false),
     _isWaitingForHotend(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
@@ -335,19 +336,19 @@ template <typename Drv> float State<Drv>::posUnitToMM(float posUnit) const {
 
 template <typename Drv> float State<Drv>::xUnitToPrimitive(float posUnit) const {
     //Convert the gcode unit to absolute MM, compensated for the zero setpoint
-    return posUnitToMM(xUnitToAbsolute(posUnit)) + this->_hostZeroX;
+    return posUnitToMM(xUnitToAbsolute(posUnit)) + this->_hostZeroOffset.x();
 }
 template <typename Drv> float State<Drv>::yUnitToPrimitive(float posUnit) const {
     //Convert the gcode unit to absolute MM, compensated for the zero setpoint
-    return posUnitToMM(yUnitToAbsolute(posUnit)) + this->_hostZeroY;
+    return posUnitToMM(yUnitToAbsolute(posUnit)) + this->_hostZeroOffset.y();
 }
 template <typename Drv> float State<Drv>::zUnitToPrimitive(float posUnit) const {
     //Convert the gcode unit to absolute MM, compensated for the zero setpoint
-    return posUnitToMM(zUnitToAbsolute(posUnit)) + this->_hostZeroZ;
+    return posUnitToMM(zUnitToAbsolute(posUnit)) + this->_hostZeroOffset.z();
 }
 template <typename Drv> float State<Drv>::eUnitToPrimitive(float posUnit) const {
     //Convert the gcode unit to absolute MM, compensated for the zero setpoint
-    return posUnitToMM(eUnitToAbsolute(posUnit)) + this->_hostZeroE;
+    return posUnitToMM(eUnitToAbsolute(posUnit)) + this->_hostZeroOffset.e();
 }
 template <typename Drv> float State<Drv>::fUnitToPrimitive(float posUnit) const {
     return posUnitToMM(posUnit/60); //feed rate is given in mm/minute, or in/minute.
@@ -377,10 +378,7 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
     //note that x, y, z, e are already in mm.
     //thus, x + _hostZeroX (new) == _destXPrimitive
     //so, _hostZeroX = _destXPrimitive - x
-    _hostZeroX = destXPrimitive() - x;
-    _hostZeroY = destYPrimitive() - y;
-    _hostZeroZ = destZPrimitive() - z;
-    _hostZeroE = destEPrimitive() - e;
+    _hostZeroOffset = _destMm - Vector4f(x, y, z, e);
     //What x value makes _hostZeroX (new) == _hostZeroX (old) ?
     //_destXPrimitive - x = _hostZeroX
     //x = _destXPrimitive - _hostZeroX;
@@ -552,10 +550,10 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (!hasXYZE) { //make current position (0, 0, 0, 0)
             actualX = actualY = actualZ = actualE = posUnitToMM(0);
         } else {
-            actualX = cmd.hasX() ? posUnitToMM(cmd.getX()) : destXPrimitive() - _hostZeroX; //_hostZeroX;
-            actualY = cmd.hasY() ? posUnitToMM(cmd.getY()) : destYPrimitive() - _hostZeroY; //_hostZeroY;
-            actualZ = cmd.hasZ() ? posUnitToMM(cmd.getZ()) : destZPrimitive() - _hostZeroZ; //_hostZeroZ;
-            actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : destEPrimitive() - _hostZeroE; //_hostZeroE;
+            actualX = cmd.hasX() ? posUnitToMM(cmd.getX()) : destXPrimitive() - _hostZeroOffset.x(); 
+            actualY = cmd.hasY() ? posUnitToMM(cmd.getY()) : destYPrimitive() - _hostZeroOffset.y();
+            actualZ = cmd.hasZ() ? posUnitToMM(cmd.getZ()) : destZPrimitive() - _hostZeroOffset.z();
+            actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : destEPrimitive() - _hostZeroOffset.e();
         }
         setHostZeroPos(actualX, actualY, actualZ, actualE);
         reply(gparse::Response::Ok);

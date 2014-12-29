@@ -3,16 +3,16 @@
 
 #include "vector3.h"
 
-template <typename T> class Vector4 {
+template <typename F> class Vector4 {
 	//cartesian (x, y, z) point
-	Vector3<T> _xyz;
+	Vector3<F> _xyz;
 	//extruder location
-	T _e;
+	F _e;
 	public:
 		//initialize to all 0's
 		Vector4() : _xyz(), _e(0) {}
 		//initialize from components
-		Vector4(T x, T y, T z, T e) : _xyz(x, y, z), _e(e) {}
+		Vector4(F x, F y, F z, F e) : _xyz(x, y, z), _e(e) {}
 		//initialize from a cartesian (x, y, z) point plus an extruder coordinate
 		//
 		//allow for initialization from a different precision (eg a Vector3<double>)
@@ -21,10 +21,10 @@ template <typename T> class Vector4 {
 		template <typename T2> Vector4(const Vector4<T2> &v) : _xyz(v.x(), v.y(), v.z()), _e(v.e()) {}
 
 		//cast to a tuple of <x, y, z, e>
-		std::tuple<T, T, T, T> tuple() const {
+		std::tuple<F, F, F, F> tuple() const {
 			return std::make_tuple(x(), y(), z(), e());
 		}
-		operator std::tuple<T, T, T, T>() const {
+		operator std::tuple<F, F, F, F>() const {
 			return tuple();
 		}
 
@@ -37,24 +37,58 @@ template <typename T> class Vector4 {
 		}
 
 		//return the x, y, z components as a <Vector3>
-		const Vector3<T>& xyz() const {
+		const Vector3<F>& xyz() const {
 			return _xyz;
 		}
 		//return the e (extruder) component
-		const T e() const {
+		const F e() const {
 			return _e;
 		}
 		//return the x component
-		const T x() const {
+		const F x() const {
 			return _xyz.x();
 		}
 		//return the y component
-		const T y() const {
+		const F y() const {
 			return _xyz.y();
 		}
 		//return the z component
-		const T z() const {
+		const F z() const {
 			return _xyz.z();
+		}
+
+		//unary negation operator (x = -y)
+		Vector4<F> operator-() const {
+			return *this * -1;
+		}
+
+		//operators:
+		Vector4<F> operator+(const Vector4<F> &v) const {
+			return Vector4<F>(x() + v.x(), y() + v.y(), z() + v.z(), e() + v.e());
+		}
+		Vector4<F>& operator+=(const Vector4<F> &v) {
+			return *this = (*this + v);
+		}
+
+		Vector4<F> operator-(const Vector4<F> &v) const {
+			return *this + (-v);
+		}
+		Vector4<F>& operator-=(const Vector4<F> &v) {
+			return *this = (*this - v);
+		}
+
+		Vector4<F> operator*(F s) const {
+			return Vector4<F>(s*x(), s*y(), s*z(), s*e());
+		}
+		Vector4<F>& operator*=(F s) {
+			return *this = (*this * s);
+		}
+
+		Vector4<F> operator/(F s) const {
+			return *this * ((F)1. / s);
+		}
+		Vector4<F>& operator/=(F s) {
+			return *this = (*this / s);
 		}
 		
 };
