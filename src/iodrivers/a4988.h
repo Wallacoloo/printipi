@@ -64,10 +64,12 @@ class A4988 : public IODriver {
             this->dirPin.makeDigitalOutput(IoLow);
             this->enablePin.makeDigitalOutput(IoHigh); //set as output and enable.
         }
+        //@inherit
         inline void lockAxis() {
             //restrict stepper motors from moving
             enablePin.digitalWrite(IoHigh);
         }
+        //@inherit
         inline void unlockAxis() {
             //let stepper motors move freely
             enablePin.digitalWrite(IoLow);
