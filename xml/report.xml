@@ -863,7 +863,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="82" />
       </undocumented>
     </type>
-    <type documented="66" name="method" undocumented="359">
+    <type documented="68" name="method" undocumented="357">
       <undocumented id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
         <location column="9" file="filesystem.h" line="10" />
         <location column="1" file="filesystem.cpp" line="6" />
@@ -1594,13 +1594,7 @@ return values.
         <location column="9" file="gparse/response.h" line="57" />
       </undocumented>
       <undocumented id="iodrv::A4988::getEventOutputSequence" name="getEventOutputSequence">
-        <location column="9" file="iodrivers/a4988.h" line="75" />
-      </undocumented>
-      <undocumented id="iodrv::A4988::lockAxis" name="lockAxis">
-        <location column="9" file="iodrivers/a4988.h" line="67" />
-      </undocumented>
-      <undocumented id="iodrv::A4988::unlockAxis" name="unlockAxis">
-        <location column="9" file="iodrivers/a4988.h" line="71" />
+        <location column="9" file="iodrivers/a4988.h" line="77" />
       </undocumented>
       <undocumented id="iodrv::Endstop::isNull" name="isNull">
         <location column="9" file="iodrivers/endstop.h" line="51" />

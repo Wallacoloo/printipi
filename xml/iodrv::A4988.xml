@@ -26,12 +26,15 @@
     </argument>
   </method>
   <method id="iodrv::A4988::lockAxis" name="lockAxis" override="yes">
+    <brief>called by M17; Enable/power all stepper motors</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
     <override name="IODriver::lockAxis" ref="iodrv::IODriver#iodrv::IODriver::lockAxis" />
   </method>
   <method id="iodrv::A4988::unlockAxis" name="unlockAxis" override="yes">
+    <brief>OVERRIDE THIS (stepper motor drivers only)</brief>
+    <doc>called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise.</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>
