@@ -85,6 +85,7 @@ UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-
 INCFLAGS=-I$(SRCDIR) -I$(SRCDIR)/../lib
 STDFLAGS=-std=c++0x
 CFLAGS=$(STDFLAGS) -Wall -Wextra -Wundef -Wwrite-strings -Wno-unused-result $(INCFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) $(DEFINES) $(PLAT_DEFINES) -DBUILD_TYPE_$(TARGET)
+#Need the --no-as-needed flag to fix bug in some gcc versions when compiling with multithreading (for tests): http://stackoverflow.com/questions/19463602/compiling-multithread-code-with-g
 LDFLAGS=-Wl,--no-as-needed
 #Extra flags to apply JUST to main.cpp (eg -fwhole-program)
 MAINCFLAGS=
