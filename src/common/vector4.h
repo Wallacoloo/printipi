@@ -3,8 +3,9 @@
 
 #include "vector3.h"
 
+//4-Vector composed of an (x, y, z) point in cartesian space plus an e (Extruded-length) component
 template <typename F> class Vector4 {
-	//cartesian (x, y, z) point
+	//cartesian components
 	Vector3<F> _xyz;
 	//extruder location
 	F _e;
@@ -24,14 +25,16 @@ template <typename F> class Vector4 {
 		std::tuple<F, F, F, F> tuple() const {
 			return std::make_tuple(x(), y(), z(), e());
 		}
+		//cast to a tuple of <x, y, z, e>
 		operator std::tuple<F, F, F, F>() const {
 			return tuple();
 		}
 
-		//string representation
+		//string representation: "Vector4f(x, y, z, e)"
 		std::string str() const {
 			return "Vector4(" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + ", " + std::to_string(e()) + ")";
 		}
+		//string representation: "Vector4f(x, y, z, e)"
 		operator std::string() const {
 			return str();
 		}

@@ -28,8 +28,8 @@
 #include <string>
 #include <tuple>
 
+//mathematical vector utility
 template <typename F> class Vector3 {
-	//mathematical vector utility
 	F _x, _y, _z;
 	public:
 		//default initialize: all components are zeroed
@@ -44,42 +44,47 @@ template <typename F> class Vector3 {
 		std::tuple<F, F, F> tuple() const {
 			return std::make_tuple(x(), y(), z());
 		}
+		//cast to a tuple of <x, y, z>
 		operator std::tuple<F, F, F>() const {
 			return tuple();
 		}
 		
 
-		//string representation
+		//string representation: "Vector3(x, y, z)"
 		std::string str() const {
 			return "Vector3(" + std::to_string(x()) + ", " + std::to_string(y()) + ", " + std::to_string(z()) + ")";
 		}
+		//string representation: "Vector3(x, y, z)"
 		operator std::string() const {
 			return str();
 		}
-		//accessors:
+		//@return x component
 		F x() const { return _x; }
+		//@return y component
 		F y() const { return _y; }
+		//@return z component
 		F z() const { return _z; }
-		//the square of the magnitude (length) of the vector.
+		//@return the square of the magnitude (length) of the vector.
 		//equivalent to this->mag() * this->mag(), but less verbose and explicitly avoids the sqrt operation.
 		F magSq() const { 
 			return this->dot(*this); 
 		}
-		//magnitude (length) of the vector
+		//@return magnitude (length) of the vector
 		F mag() const { 
 			return sqrt(magSq()); 
 		}
 
 		//psuedo-modifiers
-		//return the equivalent vector, but with @_x=@x
+
+		//@return return the equivalent vector, but with @_x=@x
 		Vector3<F> withX(F x) {
 			return Vector3<F>(x, y(), z());
 		}
-		//return the equivalent vector, but with @_y=@y
+		//@return the equivalent vector, but with @_y=@y
 		Vector3<F> withY(F y) {
 			return Vector3<F>(x(), y, z());
 		}
-		//return the equivalent vector, but with @_y=@y
+		//@return the equivalent vector, but with @_y=@y
 		Vector3<F> withZ(F z) {
 			return Vector3<F>(x(), y(), z);
 		}
@@ -88,12 +93,14 @@ template <typename F> class Vector3 {
 		Vector3<F> operator-() const {
 			return *this * -1;
 		}
-		//Normalize the vector; return a vector of magnitude 1, but with the same direction as `this'
+		//Normalize the vector
+		//@return a vector of magnitude 1, but with the same direction as `this'
 		Vector3<F> norm() const {
 			return *this / mag();
 		}
 
 		//operators:
+
 		Vector3<F> operator+(const Vector3<F> &v) const {
 			return Vector3<F>(x() + v.x(), y() + v.y(), z() + v.z());
 		}
@@ -122,33 +129,35 @@ template <typename F> class Vector3 {
 			return *this = (*this / s);
 		}
 
+		//The vector dot product: this . v
 		F dot(const Vector3<F> &v) const {
-			//The vector dot product: this . v
 			return x() * v.x() + y() * v.y() + z() * v.z();
 		}
+		//The vector cross product: this x v
+		//|   i   j   k   |
+		//|   ux  uy  uz  |
+		//|   vx  vy  vz  |
+		// = <uy*vz - uz*vy, uz*vx - ux*vz, ux*vy - uy*vx>
 		Vector3<F> cross(const Vector3<F> &v) const {
-			//The vector cross product: this x v
-			//|   i   j   k   |
-			//|   ux  uy  uz  |
-			//|   vx  vy  vz  |
-			// = <uy*vz - uz*vy, uz*vx - ux*vz, ux*vy - uy*vx>
 			return Vector3<F>(y()*v.z() - z()*v.y(), z()*v.x() - x()*v.z(), x()*v.y() - y()*v.x());
 		}
+		//The scalar projection of `this' onto v.
+		//That is, the scalar component of `this' in the direction of v.
 		F scalarProj(const Vector3<F> &v) const {
-			//the scalar projection of `this' onto v.
-			//That is, the scalar component of `this' in the direction of v.
 			return this->dot(v) / v.mag();
 		}
+		//projection of `this' onto v.
+		//That is, the vector componenent of `this' in the direction of v.
+		//This is equivalent to (this->scalarProj(v)) * v.norm(),
+		//  but we explicitly avoid the sqrt operations
 		Vector3<F> proj(const Vector3<F> &v) const {
-			//projection of `this' onto v.
-			//That is, the vector componenent of `this' in the direction of v.
-			//This is equivalent to (this->scalarProj(v)) * v.norm(),
-			//  but we explicitly avoid the sqrt operations
 			return v * (this->dot(v) / v.magSq());
 		}
+		//@return the distance from @this to @v
 		F distance(const Vector3<F> &v) const {
 			return (*this - v).mag();
 		}
+		//@return the distance from @this to the point indicated by (@x, @y, @z)
 		F distance(F x, F y, F z) const {
 			return distance(Vector3<F>(x, y, z));
 		}
