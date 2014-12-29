@@ -208,10 +208,7 @@ template <typename Drv> class State {
         float eUnitToPrimitive(float posUnit) const;
         float fUnitToPrimitive(float posUnit) const;
         /* Get the last queued position (X, Y, Z, E). Future queued commands may depend on this */
-        float destXPrimitive() const; 
-        float destYPrimitive() const;
-        float destZPrimitive() const;
-        float destEPrimitive() const;
+        Vector4f destMm() const;
         /* Control the move rate (AKA "feed rate") */
         float destMoveRatePrimitive() const;
         void setDestMoveRatePrimitive(float f);
@@ -354,17 +351,8 @@ template <typename Drv> float State<Drv>::fUnitToPrimitive(float posUnit) const 
     return posUnitToMM(posUnit/60); //feed rate is given in mm/minute, or in/minute.
 }
 
-template <typename Drv> float State<Drv>::destXPrimitive() const {
-    return this->_destMm.x();
-}
-template <typename Drv> float State<Drv>::destYPrimitive() const {
-    return this->_destMm.y();
-}
-template <typename Drv> float State<Drv>::destZPrimitive() const {
-    return this->_destMm.z();
-}
-template <typename Drv> float State<Drv>::destEPrimitive() const {
-    return this->_destMm.e();
+template <typename Drv> Vector4f State<Drv>::destMm() const {
+    return this->_destMm;
 }
 template <typename Drv> float State<Drv>::destMoveRatePrimitive() const {
     return this->_destMoveRatePrimitive;
@@ -474,10 +462,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         
         bool hasX, hasY, hasZ, hasE;
         bool hasF;
-        float curX = destXPrimitive();
-        float curY = destYPrimitive();
-        float curZ = destZPrimitive();
-        float curE = destEPrimitive();
+        float curX, curY, curZ, curE;
+        std::tie(curX, curY, curZ, curE) = destMm().tuple();
         float x = cmd.getX(hasX); //new x-coordinate.
         float y = cmd.getY(hasY); //new y-coordinate.
         float z = cmd.getZ(hasZ); //new z-coordinate.
@@ -497,10 +483,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         //first, get the end coordinate and optional feed-rate:
         bool hasX, hasY, hasZ, hasE;
         bool hasF;
-        float curX = destXPrimitive();
-        float curY = destYPrimitive();
-        float curZ = destZPrimitive();
-        float curE = destEPrimitive();
+        float curX, curY, curZ, curE;
+        std::tie(curX, curY, curZ, curE) = destMm().tuple();
         float x = cmd.getX(hasX); //new x-coordinate.
         float y = cmd.getY(hasY); //new y-coordinate.
         float z = cmd.getZ(hasZ); //new z-coordinate.
@@ -550,10 +534,10 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (!hasXYZE) { //make current position (0, 0, 0, 0)
             actualX = actualY = actualZ = actualE = posUnitToMM(0);
         } else {
-            actualX = cmd.hasX() ? posUnitToMM(cmd.getX()) : destXPrimitive() - _hostZeroOffset.x(); 
-            actualY = cmd.hasY() ? posUnitToMM(cmd.getY()) : destYPrimitive() - _hostZeroOffset.y();
-            actualZ = cmd.hasZ() ? posUnitToMM(cmd.getZ()) : destZPrimitive() - _hostZeroOffset.z();
-            actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : destEPrimitive() - _hostZeroOffset.e();
+            actualX = cmd.hasX() ? posUnitToMM(cmd.getX()) : destMm().x() - _hostZeroOffset.x(); 
+            actualY = cmd.hasY() ? posUnitToMM(cmd.getY()) : destMm().y() - _hostZeroOffset.y();
+            actualZ = cmd.hasZ() ? posUnitToMM(cmd.getZ()) : destMm().z() - _hostZeroOffset.z();
+            actualE = cmd.hasE() ? posUnitToMM(cmd.getE()) : destMm().e() - _hostZeroOffset.e();
         }
         setHostZeroPos(actualX, actualY, actualZ, actualE);
         reply(gparse::Response::Ok);
