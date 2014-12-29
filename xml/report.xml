@@ -375,19 +375,19 @@ return values.
         <location column="31" file="boilerplate/thisthreadsleepadapter.h" line="11" />
       </undocumented>
       <undocumented id="Vector3::F" name="F">
-        <location column="11" file="common/vector3.h" line="31" />
+        <location column="11" file="common/vector3.h" line="32" />
       </undocumented>
       <undocumented id="Vector3::Vector3&lt;F&gt;::T2" name="T2">
         <location column="13" file="common/vector3.h" line="40" />
       </undocumented>
       <undocumented id="Vector4::F" name="F">
-        <location column="11" file="common/vector4.h" line="6" />
+        <location column="11" file="common/vector4.h" line="7" />
       </undocumented>
       <undocumented id="Vector4::Vector4&lt;F&gt;::T2" name="T2">
-        <location column="13" file="common/vector4.h" line="19" />
+        <location column="13" file="common/vector4.h" line="20" />
       </undocumented>
       <undocumented id="Vector4::Vector4&lt;F&gt;::T2" name="T2">
-        <location column="13" file="common/vector4.h" line="21" />
+        <location column="13" file="common/vector4.h" line="22" />
       </undocumented>
       <undocumented id="__callOnAll::Args" name="Args">
         <location column="67" file="common/tupleutil.h" line="31" />
@@ -816,7 +816,7 @@ return values.
         <location column="1" file="platforms/rpi/chronoclock.cpp" line="4" />
       </undocumented>
     </type>
-    <type documented="0" name="classtemplate" undocumented="15">
+    <type documented="2" name="classtemplate" undocumented="13">
       <undocumented id="Scheduler" name="Scheduler">
         <location column="1" file="scheduler.h" line="51" />
       </undocumented>
@@ -825,12 +825,6 @@ return values.
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter" name="ThisThreadSleepAdapter">
         <location column="1" file="boilerplate/thisthreadsleepadapter.h" line="6" />
-      </undocumented>
-      <undocumented id="Vector3" name="Vector3">
-        <location column="1" file="common/vector3.h" line="31" />
-      </undocumented>
-      <undocumented id="Vector4" name="Vector4">
-        <location column="1" file="common/vector4.h" line="6" />
       </undocumented>
       <undocumented id="iodrv::TempControl" name="TempControl">
         <location column="1" file="iodrivers/tempcontrol.h" line="57" />
@@ -863,7 +857,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="82" />
       </undocumented>
     </type>
-    <type documented="68" name="method" undocumented="357">
+    <type documented="76" name="method" undocumented="349">
       <undocumented id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
         <location column="9" file="filesystem.h" line="10" />
         <location column="1" file="filesystem.cpp" line="6" />
@@ -950,71 +944,47 @@ return values.
       <undocumented id="State::SchedInterface::schedTime" name="schedTime">
         <location column="13" file="state.h" line="103" />
       </undocumented>
-      <undocumented id="Vector3::cross" name="cross">
-        <location column="3" file="common/vector3.h" line="129" />
-      </undocumented>
-      <undocumented id="Vector3::distance" name="distance">
-        <location column="3" file="common/vector3.h" line="149" />
-      </undocumented>
-      <undocumented id="Vector3::distance" name="distance">
-        <location column="3" file="common/vector3.h" line="152" />
-      </undocumented>
-      <undocumented id="Vector3::dot" name="dot">
-        <location column="3" file="common/vector3.h" line="125" />
-      </undocumented>
       <undocumented id="Vector3::operator*" name="operator*">
-        <location column="3" file="common/vector3.h" line="111" />
-      </undocumented>
-      <undocumented id="Vector3::operator*=" name="operator*=">
-        <location column="3" file="common/vector3.h" line="114" />
-      </undocumented>
-      <undocumented id="Vector3::operator+=" name="operator+=">
-        <location column="3" file="common/vector3.h" line="100" />
-      </undocumented>
-      <undocumented id="Vector3::operator-" name="operator-">
-        <location column="3" file="common/vector3.h" line="104" />
-      </undocumented>
-      <undocumented id="Vector3::operator-=" name="operator-=">
-        <location column="3" file="common/vector3.h" line="107" />
-      </undocumented>
-      <undocumented id="Vector3::operator/" name="operator/">
         <location column="3" file="common/vector3.h" line="118" />
       </undocumented>
-      <undocumented id="Vector3::operator/=" name="operator/=">
+      <undocumented id="Vector3::operator*=" name="operator*=">
         <location column="3" file="common/vector3.h" line="121" />
       </undocumented>
-      <undocumented id="Vector3::proj" name="proj">
-        <location column="3" file="common/vector3.h" line="142" />
+      <undocumented id="Vector3::operator+=" name="operator+=">
+        <location column="3" file="common/vector3.h" line="107" />
       </undocumented>
-      <undocumented id="Vector3::scalarProj" name="scalarProj">
-        <location column="3" file="common/vector3.h" line="137" />
+      <undocumented id="Vector3::operator-" name="operator-">
+        <location column="3" file="common/vector3.h" line="111" />
       </undocumented>
-      <undocumented id="Vector3::y" name="y">
-        <location column="3" file="common/vector3.h" line="61" />
+      <undocumented id="Vector3::operator-=" name="operator-=">
+        <location column="3" file="common/vector3.h" line="114" />
       </undocumented>
-      <undocumented id="Vector3::z" name="z">
-        <location column="3" file="common/vector3.h" line="62" />
+      <undocumented id="Vector3::operator/" name="operator/">
+        <location column="3" file="common/vector3.h" line="125" />
+      </undocumented>
+      <undocumented id="Vector3::operator/=" name="operator/=">
+        <location column="3" file="common/vector3.h" line="128" />
       </undocumented>
       <undocumented id="Vector4::operator*" name="operator*">
-        <location column="3" file="common/vector4.h" line="80" />
-      </undocumented>
-      <undocumented id="Vector4::operator*=" name="operator*=">
         <location column="3" file="common/vector4.h" line="83" />
       </undocumented>
+      <undocumented id="Vector4::operator*=" name="operator*=">
+        <location column="3" file="common/vector4.h" line="86" />
+      </undocumented>
       <undocumented id="Vector4::operator+=" name="operator+=">
-        <location column="3" file="common/vector4.h" line="69" />
+        <location column="3" file="common/vector4.h" line="72" />
       </undocumented>
       <undocumented id="Vector4::operator-" name="operator-">
-        <location column="3" file="common/vector4.h" line="73" />
-      </undocumented>
-      <undocumented id="Vector4::operator-=" name="operator-=">
         <location column="3" file="common/vector4.h" line="76" />
       </undocumented>
+      <undocumented id="Vector4::operator-=" name="operator-=">
+        <location column="3" file="common/vector4.h" line="79" />
+      </undocumented>
       <undocumented id="Vector4::operator/" name="operator/">
-        <location column="3" file="common/vector4.h" line="87" />
+        <location column="3" file="common/vector4.h" line="90" />
       </undocumented>
       <undocumented id="Vector4::operator/=" name="operator/=">
-        <location column="3" file="common/vector4.h" line="90" />
+        <location column="3" file="common/vector4.h" line="93" />
       </undocumented>
       <undocumented id="__callOnAll::operator()" name="operator()">
         <location column="5" file="common/tupleutil.h" line="32" />
@@ -2280,21 +2250,9 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="52" />
       </undocumented>
     </type>
-    <type documented="0" name="conversionfunction" undocumented="5">
+    <type documented="4" name="conversionfunction" undocumented="1">
       <undocumented id="CVTemplateWrapper::operator unsigned long" name="operator unsigned long">
         <location column="5" file="common/tupleutil.h" line="26" />
-      </undocumented>
-      <undocumented id="Vector3::operator basic_string" name="operator basic_string">
-        <location column="3" file="common/vector3.h" line="56" />
-      </undocumented>
-      <undocumented id="Vector3::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
-        <location column="3" file="common/vector3.h" line="47" />
-      </undocumented>
-      <undocumented id="Vector4::operator basic_string" name="operator basic_string">
-        <location column="3" file="common/vector4.h" line="35" />
-      </undocumented>
-      <undocumented id="Vector4::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
-        <location column="3" file="common/vector4.h" line="27" />
       </undocumented>
     </type>
     <type documented="7" name="enumvalue" undocumented="92">
@@ -2754,100 +2712,157 @@ return values.
       <location column="3" file="common/vector3.h" line="44" />
       <undocumented-return />
     </function>
+    <function id="Vector3::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
+      <location column="3" file="common/vector3.h" line="48" />
+      <undocumented-return />
+    </function>
     <function id="Vector3::str" name="str">
-      <location column="3" file="common/vector3.h" line="53" />
+      <location column="3" file="common/vector3.h" line="54" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::operator basic_string" name="operator basic_string">
+      <location column="3" file="common/vector3.h" line="58" />
       <undocumented-return />
     </function>
     <function id="Vector3::x" name="x">
-      <location column="3" file="common/vector3.h" line="60" />
+      <location column="3" file="common/vector3.h" line="62" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::y" name="y">
+      <location column="3" file="common/vector3.h" line="64" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::z" name="z">
+      <location column="3" file="common/vector3.h" line="66" />
       <undocumented-return />
     </function>
     <function id="Vector3::magSq" name="magSq">
-      <location column="3" file="common/vector3.h" line="65" />
-      <undocumented-return />
-    </function>
-    <function id="Vector3::mag" name="mag">
       <location column="3" file="common/vector3.h" line="69" />
       <undocumented-return />
     </function>
+    <function id="Vector3::mag" name="mag">
+      <location column="3" file="common/vector3.h" line="73" />
+      <undocumented-return />
+    </function>
     <function id="Vector3::withX" name="withX">
-      <location column="3" file="common/vector3.h" line="75" />
+      <location column="3" file="common/vector3.h" line="80" />
       <undocumented-return />
       <undocumented name="x" />
     </function>
     <function id="Vector3::withY" name="withY">
-      <location column="3" file="common/vector3.h" line="79" />
+      <location column="3" file="common/vector3.h" line="84" />
       <undocumented-return />
       <undocumented name="y" />
     </function>
     <function id="Vector3::withZ" name="withZ">
-      <location column="3" file="common/vector3.h" line="83" />
+      <location column="3" file="common/vector3.h" line="88" />
       <undocumented-return />
       <undocumented name="z" />
     </function>
     <function id="Vector3::operator-" name="operator-">
-      <location column="3" file="common/vector3.h" line="88" />
+      <location column="3" file="common/vector3.h" line="93" />
       <undocumented-return />
     </function>
     <function id="Vector3::norm" name="norm">
-      <location column="3" file="common/vector3.h" line="92" />
+      <location column="3" file="common/vector3.h" line="98" />
       <undocumented-return />
+      <misspelled name="return" />
     </function>
     <function id="Vector3::operator+" name="operator+">
-      <location column="3" file="common/vector3.h" line="97" />
+      <location column="3" file="common/vector3.h" line="104" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
+    <function id="Vector3::dot" name="dot">
+      <location column="3" file="common/vector3.h" line="133" />
+      <undocumented-return />
+      <undocumented name="v" />
+    </function>
+    <function id="Vector3::cross" name="cross">
+      <location column="3" file="common/vector3.h" line="141" />
+      <undocumented-return />
+      <undocumented name="v" />
+    </function>
+    <function id="Vector3::scalarProj" name="scalarProj">
+      <location column="3" file="common/vector3.h" line="146" />
+      <undocumented-return />
+      <undocumented name="v" />
+    </function>
+    <function id="Vector3::proj" name="proj">
+      <location column="3" file="common/vector3.h" line="153" />
+      <undocumented-return />
+      <undocumented name="v" />
+    </function>
+    <function id="Vector3::distance" name="distance">
+      <location column="3" file="common/vector3.h" line="157" />
+      <undocumented-return />
+      <undocumented name="v" />
+    </function>
+    <function id="Vector3::distance" name="distance">
+      <location column="3" file="common/vector3.h" line="161" />
+      <undocumented-return />
+      <undocumented name="y" />
+      <undocumented name="x" />
+      <undocumented name="z" />
+    </function>
     <function id="Vector4::Vector4&lt;F&gt;" name="Vector4&lt;F&gt;">
-      <location column="3" file="common/vector4.h" line="15" />
+      <location column="3" file="common/vector4.h" line="16" />
       <undocumented name="y" />
       <undocumented name="x" />
       <undocumented name="z" />
       <undocumented name="e" />
     </function>
     <function id="Vector4::Vector4&lt;F&gt;" name="Vector4&lt;F&gt;">
-      <location column="3" file="common/vector4.h" line="19" />
+      <location column="3" file="common/vector4.h" line="20" />
       <undocumented name="xyz" />
       <undocumented name="e" />
     </function>
     <function id="Vector4::Vector4&lt;F&gt;" name="Vector4&lt;F&gt;">
-      <location column="3" file="common/vector4.h" line="21" />
+      <location column="3" file="common/vector4.h" line="22" />
       <undocumented name="v" />
     </function>
     <function id="Vector4::tuple" name="tuple">
-      <location column="3" file="common/vector4.h" line="24" />
+      <location column="3" file="common/vector4.h" line="25" />
+      <undocumented-return />
+    </function>
+    <function id="Vector4::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
+      <location column="3" file="common/vector4.h" line="29" />
       <undocumented-return />
     </function>
     <function id="Vector4::str" name="str">
-      <location column="3" file="common/vector4.h" line="32" />
+      <location column="3" file="common/vector4.h" line="34" />
+      <undocumented-return />
+    </function>
+    <function id="Vector4::operator basic_string" name="operator basic_string">
+      <location column="3" file="common/vector4.h" line="38" />
       <undocumented-return />
     </function>
     <function id="Vector4::xyz" name="xyz">
-      <location column="3" file="common/vector4.h" line="40" />
+      <location column="3" file="common/vector4.h" line="43" />
       <undocumented-return />
     </function>
     <function id="Vector4::e" name="e">
-      <location column="3" file="common/vector4.h" line="44" />
+      <location column="3" file="common/vector4.h" line="47" />
       <undocumented-return />
     </function>
     <function id="Vector4::x" name="x">
-      <location column="3" file="common/vector4.h" line="48" />
+      <location column="3" file="common/vector4.h" line="51" />
       <undocumented-return />
     </function>
     <function id="Vector4::y" name="y">
-      <location column="3" file="common/vector4.h" line="52" />
+      <location column="3" file="common/vector4.h" line="55" />
       <undocumented-return />
     </function>
     <function id="Vector4::z" name="z">
-      <location column="3" file="common/vector4.h" line="56" />
+      <location column="3" file="common/vector4.h" line="59" />
       <undocumented-return />
     </function>
     <function id="Vector4::operator-" name="operator-">
-      <location column="3" file="common/vector4.h" line="61" />
+      <location column="3" file="common/vector4.h" line="64" />
       <undocumented-return />
     </function>
     <function id="Vector4::operator+" name="operator+">
-      <location column="3" file="common/vector4.h" line="66" />
+      <location column="3" file="common/vector4.h" line="69" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
@@ -3062,18 +3077,36 @@ return values.
         <ref name="x, y, z" />
       </doctype>
     </method>
+    <conversionfunction id="Vector3::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
+      <location column="3" file="common/vector3.h" line="48" />
+      <doctype name="brief">
+        <ref name="x, y, z" />
+      </doctype>
+    </conversionfunction>
+    <method id="Vector3::cross" name="cross">
+      <location column="3" file="common/vector3.h" line="141" />
+      <doctype name="doc">
+        <ref name="uy*vz - uz*vy, uz*vx - ux*vz, ux*vy - uy*vx" />
+      </doctype>
+    </method>
     <methodtemplate id="Vector4::Vector4&lt;F&gt;" name="Vector4&lt;F&gt;">
-      <location column="3" file="common/vector4.h" line="19" />
+      <location column="3" file="common/vector4.h" line="20" />
       <doctype name="doc">
         <ref name="double" />
       </doctype>
     </methodtemplate>
     <method id="Vector4::tuple" name="tuple">
-      <location column="3" file="common/vector4.h" line="24" />
+      <location column="3" file="common/vector4.h" line="25" />
       <doctype name="brief">
         <ref name="x, y, z, e" />
       </doctype>
     </method>
+    <conversionfunction id="Vector4::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
+      <location column="3" file="common/vector4.h" line="29" />
+      <doctype name="brief">
+        <ref name="x, y, z, e" />
+      </doctype>
+    </conversionfunction>
     <structtemplate id="motion::AxisStepper::GetHomeStepperTypes" name="GetHomeStepperTypes">
       <location column="9" file="motion/axisstepper.h" line="90" />
       <doctype name="brief">

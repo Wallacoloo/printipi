@@ -354,9 +354,11 @@
     <templatetypeparameter id="ThisThreadSleepAdapter::SleepT" name="SleepT" />
   </classtemplate>
   <classtemplate name="Vector3" ref="Vector3#Vector3">
+    <brief>mathematical vector utility</brief>
     <templatetypeparameter id="Vector3::F" name="F" />
   </classtemplate>
   <classtemplate name="Vector4" ref="Vector4#Vector4">
+    <brief>4-Vector composed of an (x, y, z) point in cartesian space plus an e (Extruded-length) component</brief>
     <templatetypeparameter id="Vector4::F" name="F" />
   </classtemplate>
   <enum anonymous="yes" id="LengthUnit" name="LengthUnit">

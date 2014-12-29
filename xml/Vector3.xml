@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="Vector3" name="Vector3" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>mathematical vector utility</brief>
   <templatetypeparameter id="Vector3::F" name="F" />
   <constructor id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
     <brief>default initialize: all components are zeroed</brief>
@@ -33,53 +34,56 @@
     </return>
   </method>
   <conversionfunction id="Vector3::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
+    <brief>cast to a tuple of &amp;lt;x, y, z&amp;gt;</brief>
     <return>
       <type name="std::tuple&lt;_Elements&gt;" />
     </return>
   </conversionfunction>
   <method id="Vector3::str" name="str">
-    <brief>string representation</brief>
+    <brief>string representation: "Vector3(x, y, z)"</brief>
     <return>
       <type name="std::string" />
     </return>
   </method>
   <conversionfunction id="Vector3::operator basic_string" name="operator basic_string">
+    <brief>string representation: "Vector3(x, y, z)"</brief>
     <return>
       <type name="std::string" />
     </return>
   </conversionfunction>
   <method id="Vector3::x" name="x">
-    <brief>accessors:</brief>
+    <brief>@return x component</brief>
     <return>
       <type name="F" />
     </return>
   </method>
   <method id="Vector3::y" name="y">
+    <brief>@return y component</brief>
     <return>
       <type name="F" />
     </return>
   </method>
   <method id="Vector3::z" name="z">
+    <brief>@return z component</brief>
     <return>
       <type name="F" />
     </return>
   </method>
   <method id="Vector3::magSq" name="magSq">
-    <brief>the square of the magnitude (length) of the vector.</brief>
+    <brief>@return the square of the magnitude (length) of the vector.</brief>
     <doc>equivalent to this-&gt;mag() * this-&gt;mag(), but less verbose and explicitly avoids the sqrt operation.</doc>
     <return>
       <type name="F" />
     </return>
   </method>
   <method id="Vector3::mag" name="mag">
-    <brief>magnitude (length) of the vector</brief>
+    <brief>@return magnitude (length) of the vector</brief>
     <return>
       <type name="F" />
     </return>
   </method>
   <method id="Vector3::withX" name="withX">
-    <brief>psuedo-modifiers</brief>
-    <doc>return the equivalent vector, but with @_x=@x</doc>
+    <brief>@return return the equivalent vector, but with @_x=@x</brief>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
@@ -88,7 +92,7 @@
     </argument>
   </method>
   <method id="Vector3::withY" name="withY">
-    <brief>return the equivalent vector, but with @_y=@y</brief>
+    <brief>@return the equivalent vector, but with @_y=@y</brief>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
@@ -97,7 +101,7 @@
     </argument>
   </method>
   <method id="Vector3::withZ" name="withZ">
-    <brief>return the equivalent vector, but with @_y=@y</brief>
+    <brief>@return the equivalent vector, but with @_y=@y</brief>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
@@ -112,7 +116,7 @@
     </return>
   </method>
   <method id="Vector3::norm" name="norm">
-    <brief>Normalize the vector; return a vector of magnitude 1, but with the same direction as `this'</brief>
+    <brief>Normalize the vector</brief>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
@@ -183,6 +187,7 @@
     </argument>
   </method>
   <method id="Vector3::dot" name="dot">
+    <brief>The vector dot product: this . v</brief>
     <return>
       <type name="F" />
     </return>
@@ -191,6 +196,11 @@
     </argument>
   </method>
   <method id="Vector3::cross" name="cross">
+    <brief>The vector cross product: this x v</brief>
+    <doc>|   i   j   k   |
+|   ux  uy  uz  |
+|   vx  vy  vz  |
+= &amp;lt;uy\*vz - uz\*vy, uz\*vx - ux\*vz, ux\*vy - uy\*vx&amp;gt;</doc>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
@@ -199,6 +209,8 @@
     </argument>
   </method>
   <method id="Vector3::scalarProj" name="scalarProj">
+    <brief>The scalar projection of `this' onto v.</brief>
+    <doc>That is, the scalar component of `this' in the direction of v.</doc>
     <return>
       <type name="F" />
     </return>
@@ -207,6 +219,10 @@
     </argument>
   </method>
   <method id="Vector3::proj" name="proj">
+    <brief>projection of `this' onto v.</brief>
+    <doc>That is, the vector componenent of `this' in the direction of v.
+This is equivalent to (this-&gt;scalarProj(v)) * v.norm(),
+but we explicitly avoid the sqrt operations</doc>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
@@ -215,6 +231,7 @@
     </argument>
   </method>
   <method id="Vector3::distance" name="distance">
+    <brief>@return the distance from @this to @v</brief>
     <return>
       <type name="F" />
     </return>
@@ -223,6 +240,7 @@
     </argument>
   </method>
   <method id="Vector3::distance" name="distance">
+    <brief>@return the distance from @this to the point indicated by (@x, @y, @z)</brief>
     <return>
       <type name="F" />
     </return>
