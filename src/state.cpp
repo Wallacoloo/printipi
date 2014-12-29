@@ -9,6 +9,7 @@
 #include "compileflags.h"
 #include "filesystem.h"
 #include "gparse/com.h"
+#include "platforms/auto/thisthreadsleep.h"
 
 //MACHINE_PATH is calculated in the Makefile and then passed as a define through the make system (ie gcc -DMACHINEPATH='"path"')
 #include MACHINE_PATH
@@ -173,7 +174,7 @@ struct TestClass {
 	            		//note: Printipi is able to monitor multiple file inputs simultaneously,
 	            		// if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
 	            		// there is no way to query the status of this file read, so we must just sleep & hope
-	            		std::this_thread::sleep_for(std::chrono::seconds(1));
+	            		SleepT::sleep_for(std::chrono::seconds(1));
 		                exitOnce(); //force the G0 code to complete
 		                verifyPosition(40, -10, 50);
 	            	}
@@ -187,7 +188,7 @@ struct TestClass {
 	            		//note: Printipi is able to monitor multiple file inputs simultaneously,
 	            		// if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
 	            		// there is no way to query the status of this file read, so we must just sleep & hope
-	            		std::this_thread::sleep_for(std::chrono::seconds(1));
+	            		SleepT::sleep_for(std::chrono::seconds(1));
 		                exitOnce(); //force the G0 code to complete
 		                verifyPosition(40, -10, 50);
 	            	}
@@ -202,7 +203,7 @@ struct TestClass {
                         //note: Printipi is able to monitor multiple file inputs simultaneously,
                         // if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
                         // there is no way to query the status of this file read, so we must just sleep & hope
-                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                        SleepT::sleep_for(std::chrono::seconds(1));
                         exitOnce(); //force the G0 code to complete
                         verifyPosition(40, -10, 50);
                     }
