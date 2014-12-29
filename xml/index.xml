@@ -357,7 +357,7 @@
     <templatetypeparameter id="Vector3::F" name="F" />
   </classtemplate>
   <classtemplate name="Vector4" ref="Vector4#Vector4">
-    <templatetypeparameter id="Vector4::T" name="T" />
+    <templatetypeparameter id="Vector4::F" name="F" />
   </classtemplate>
   <enum anonymous="yes" id="LengthUnit" name="LengthUnit">
     <brief>g-code coordinates can either be interpreted as having units of millimeters or units of inches</brief>

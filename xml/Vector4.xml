@@ -1,47 +1,47 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="Vector4" name="Vector4" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <templatetypeparameter id="Vector4::T" name="T" />
-  <constructor id="Vector4::Vector4&lt;T&gt;" name="Vector4&lt;T&gt;">
+  <templatetypeparameter id="Vector4::F" name="F" />
+  <constructor id="Vector4::Vector4&lt;F&gt;" name="Vector4&lt;F&gt;">
     <brief>initialize to all 0's</brief>
   </constructor>
-  <constructor id="Vector4::Vector4&lt;T&gt;" name="Vector4&lt;T&gt;">
+  <constructor id="Vector4::Vector4&lt;F&gt;" name="Vector4&lt;F&gt;">
     <brief>initialize from components</brief>
-    <argument id="Vector4::Vector4&lt;T&gt;::x" name="x">
-      <type name="T" />
+    <argument id="Vector4::Vector4&lt;F&gt;::x" name="x">
+      <type name="F" />
     </argument>
-    <argument id="Vector4::Vector4&lt;T&gt;::y" name="y">
-      <type name="T" />
+    <argument id="Vector4::Vector4&lt;F&gt;::y" name="y">
+      <type name="F" />
     </argument>
-    <argument id="Vector4::Vector4&lt;T&gt;::z" name="z">
-      <type name="T" />
+    <argument id="Vector4::Vector4&lt;F&gt;::z" name="z">
+      <type name="F" />
     </argument>
-    <argument id="Vector4::Vector4&lt;T&gt;::e" name="e">
-      <type name="T" />
+    <argument id="Vector4::Vector4&lt;F&gt;::e" name="e">
+      <type name="F" />
     </argument>
   </constructor>
-  <methodtemplate id="Vector4::Vector4&lt;T&gt;" name="Vector4&lt;T&gt;">
+  <methodtemplate id="Vector4::Vector4&lt;F&gt;" name="Vector4&lt;F&gt;">
     <brief>initialize from a cartesian (x, y, z) point plus an extruder coordinate</brief>
     <doc>allow for initialization from a different precision (eg a Vector3&amp;lt;double&amp;gt;)</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="Vector4::Vector4&lt;T&gt;::xyz" name="xyz">
+    <argument id="Vector4::Vector4&lt;F&gt;::xyz" name="xyz">
       <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
     </argument>
-    <argument id="Vector4::Vector4&lt;T&gt;::e" name="e">
+    <argument id="Vector4::Vector4&lt;F&gt;::e" name="e">
       <type name="T2" />
     </argument>
-    <templatetypeparameter id="Vector4::Vector4&lt;T&gt;::T2" name="T2" />
+    <templatetypeparameter id="Vector4::Vector4&lt;F&gt;::T2" name="T2" />
   </methodtemplate>
-  <methodtemplate id="Vector4::Vector4&lt;T&gt;" name="Vector4&lt;T&gt;">
+  <methodtemplate id="Vector4::Vector4&lt;F&gt;" name="Vector4&lt;F&gt;">
     <brief>initialize from another Vector4, possibly of a different precision</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="Vector4::Vector4&lt;T&gt;::v" name="v">
-      <type name="Vector4&lt;T&gt;" qualifier=" const &amp;" ref="Vector4#Vector4" />
+    <argument id="Vector4::Vector4&lt;F&gt;::v" name="v">
+      <type name="Vector4&lt;F&gt;" qualifier=" const &amp;" ref="Vector4#Vector4" />
     </argument>
-    <templatetypeparameter id="Vector4::Vector4&lt;T&gt;::T2" name="T2" />
+    <templatetypeparameter id="Vector4::Vector4&lt;F&gt;::T2" name="T2" />
   </methodtemplate>
   <method id="Vector4::tuple" name="tuple">
     <brief>cast to a tuple of &amp;lt;x, y, z, e&amp;gt;</brief>
@@ -75,25 +75,96 @@
   <method id="Vector4::e" name="e">
     <brief>return the e (extruder) component</brief>
     <return>
-      <type name="const T" qualifier=" const" />
+      <type name="const F" qualifier=" const" />
     </return>
   </method>
   <method id="Vector4::x" name="x">
     <brief>return the x component</brief>
     <return>
-      <type name="const T" qualifier=" const" />
+      <type name="const F" qualifier=" const" />
     </return>
   </method>
   <method id="Vector4::y" name="y">
     <brief>return the y component</brief>
     <return>
-      <type name="const T" qualifier=" const" />
+      <type name="const F" qualifier=" const" />
     </return>
   </method>
   <method id="Vector4::z" name="z">
     <brief>return the z component</brief>
     <return>
-      <type name="const T" qualifier=" const" />
+      <type name="const F" qualifier=" const" />
     </return>
+  </method>
+  <method id="Vector4::operator-" name="operator-">
+    <brief>unary negation operator (x = -y)</brief>
+    <return>
+      <type name="Vector4&lt;F&gt;" ref="Vector4#Vector4" />
+    </return>
+  </method>
+  <method id="Vector4::operator+" name="operator+">
+    <brief>operators:</brief>
+    <return>
+      <type name="Vector4&lt;F&gt;" ref="Vector4#Vector4" />
+    </return>
+    <argument id="Vector4::operator+::v" name="v">
+      <type name="Vector4&lt;F&gt;" qualifier=" const &amp;" ref="Vector4#Vector4" />
+    </argument>
+  </method>
+  <method id="Vector4::operator+=" name="operator+=">
+    <return>
+      <type name="Vector4&lt;F&gt;" qualifier=" &amp;" ref="Vector4#Vector4" />
+    </return>
+    <argument id="Vector4::operator+=::v" name="v">
+      <type name="Vector4&lt;F&gt;" qualifier=" const &amp;" ref="Vector4#Vector4" />
+    </argument>
+  </method>
+  <method id="Vector4::operator-" name="operator-">
+    <return>
+      <type name="Vector4&lt;F&gt;" ref="Vector4#Vector4" />
+    </return>
+    <argument id="Vector4::operator-::v" name="v">
+      <type name="Vector4&lt;F&gt;" qualifier=" const &amp;" ref="Vector4#Vector4" />
+    </argument>
+  </method>
+  <method id="Vector4::operator-=" name="operator-=">
+    <return>
+      <type name="Vector4&lt;F&gt;" qualifier=" &amp;" ref="Vector4#Vector4" />
+    </return>
+    <argument id="Vector4::operator-=::v" name="v">
+      <type name="Vector4&lt;F&gt;" qualifier=" const &amp;" ref="Vector4#Vector4" />
+    </argument>
+  </method>
+  <method id="Vector4::operator*" name="operator*">
+    <return>
+      <type name="Vector4&lt;F&gt;" ref="Vector4#Vector4" />
+    </return>
+    <argument id="Vector4::operator*::s" name="s">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector4::operator*=" name="operator*=">
+    <return>
+      <type name="Vector4&lt;F&gt;" qualifier=" &amp;" ref="Vector4#Vector4" />
+    </return>
+    <argument id="Vector4::operator*=::s" name="s">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector4::operator/" name="operator/">
+    <return>
+      <type name="Vector4&lt;F&gt;" ref="Vector4#Vector4" />
+    </return>
+    <argument id="Vector4::operator/::s" name="s">
+      <type name="F" />
+    </argument>
+  </method>
+  <method id="Vector4::operator/=" name="operator/=">
+    <return>
+      <type name="Vector4&lt;F&gt;" qualifier=" &amp;" ref="Vector4#Vector4" />
+    </return>
+    <argument id="Vector4::operator/=::s" name="s">
+      <type name="F" />
+    </argument>
   </method>
 </classtemplate>
