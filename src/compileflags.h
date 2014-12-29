@@ -28,10 +28,6 @@
 	#define USE_PTHREAD 0
 #endif
 
-#ifdef DNO_DMA
-    #define NO_DMA
-#endif
-
 #ifdef DNO_LOGGING
     #define DO_LOG 0
 #else
@@ -57,13 +53,14 @@
 
 
 //Now expose some primitive typedefs:
+
+//This determines the maximum number of axis we can have on the machine
+//
+// Since most machines only need 3-6 degrees of freedom, an 8-bit integer is PLENTY
 typedef uint8_t AxisIdType;
 typedef float CelciusType;
 typedef bool IoLevel;
 #define IoLow false
 #define IoHigh true
-//#define IoDefaultLow IoLow
-//#define IoDefaultHigh IoHigh
-//#define IoDefaultOpenCircuit IoDefaultLow //TODO: misleading! make an open-circuit (high-impedance input) default actually possible.
 
 #endif
