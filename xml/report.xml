@@ -841,17 +841,17 @@ return values.
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="4" />
         <location column="1" file="machines/generic/cartesian.h" line="117" />
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="285" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="297" />
       </undocumented>
       <undocumented id="machines::generic" name="generic">
         <location column="1" file="machines/generic/cartesian.h" line="118" />
       </undocumented>
       <undocumented id="machines::rpi" name="rpi">
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="286" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="298" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
-        <location column="5" file="platforms/generic/chronoclock.h" line="15" />
         <location column="1" file="platforms/generic/primitiveiopin.h" line="10" />
+        <location column="5" file="platforms/generic/chronoclock.h" line="15" />
         <location column="5" file="platforms/generic/thisthreadsleep.h" line="14" />
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="15" />
       </undocumented>
@@ -1730,13 +1730,13 @@ return values.
         <location column="9" file="machines/generic/cartesian.h" line="174" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::clampHomeRate" name="clampHomeRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="400" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="412" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::clampMoveRate" name="clampMoveRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="397" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="409" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::maxExtrudeRate" name="maxExtrudeRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="394" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="406" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::getStepOutputEventSequence" name="getStepOutputEventSequence">
         <location column="9" file="motion/axisstepper.h" line="107" />
@@ -1978,16 +1978,16 @@ return values.
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="543" />
       </undocumented>
       <undocumented id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-        <location column="9" file="platforms/rpi/primitiveiopin.h" line="41" />
+        <location column="9" file="platforms/rpi/primitiveiopin.h" line="49" />
       </undocumented>
       <undocumented id="plat::rpi::PrimitiveIoPin::id" name="id">
-        <location column="3" file="platforms/rpi/primitiveiopin.h" line="24" />
+        <location column="3" file="platforms/rpi/primitiveiopin.h" line="33" />
       </undocumented>
       <undocumented id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
-        <location column="3" file="platforms/rpi/primitiveiopin.h" line="16" />
+        <location column="3" file="platforms/rpi/primitiveiopin.h" line="24" />
       </undocumented>
       <undocumented id="plat::rpi::PrimitiveIoPin::null" name="null">
-        <location column="3" file="platforms/rpi/primitiveiopin.h" line="13" />
+        <location column="3" file="platforms/rpi/primitiveiopin.h" line="21" />
       </undocumented>
     </type>
     <type documented="0" name="templatenontypeparameter" undocumented="29">
@@ -2264,7 +2264,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="107" />
       </undocumented>
       <undocumented id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-        <location column="3" file="platforms/rpi/primitiveiopin.h" line="20" />
+        <location column="3" file="platforms/rpi/primitiveiopin.h" line="28" />
       </undocumented>
     </type>
     <type documented="2" name="variable" undocumented="11">
@@ -2674,20 +2674,6 @@ return values.
     </type>
   </coverage>
   <arguments>
-    <function id="PID::feed" name="feed">
-      <location column="9" file="pid.h" line="29" />
-      <location column="1" file="pid.cpp" line="5" />
-      <undocumented-return />
-      <undocumented name="setpoint" />
-      <undocumented name="pv" />
-    </function>
-    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="65" />
-      <location column="1" file="schedulerbase.cpp" line="56" />
-      <undocumented-return />
-      <undocumented name="handler" />
-      <undocumented name="level" />
-    </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/generic/primitiveiopin.h" line="19" />
       <undocumented name="args" />
@@ -2714,25 +2700,12 @@ return values.
       <location column="1" file="iodrivers/iopin.cpp" line="63" />
       <undocumented name="lev" />
     </function>
-    <function id="plat::rpi::makeLockedMem" name="makeLockedMem">
-      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="474" />
-      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="53" />
+    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
+      <location column="9" file="schedulerbase.h" line="65" />
+      <location column="1" file="schedulerbase.cpp" line="56" />
       <undocumented-return />
-      <undocumented name="size" />
-    </function>
-    <function id="plat::rpi::freeLockedMem" name="freeLockedMem">
-      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="476" />
-      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="75" />
-      <undocumented name="mem" />
-      <undocumented name="size" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="28" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/rpi/primitiveiopin.h" line="38" />
-      <undocumented-return />
+      <undocumented name="handler" />
+      <undocumented name="level" />
     </function>
     <function id="callOnAll" name="callOnAll">
       <location column="1" file="common/tupleutil.h" line="47" />
@@ -2859,6 +2832,26 @@ return values.
       <location column="9" file="motion/axisstepper.h" line="84" />
       <location column="1" file="motion/axisstepper.h" line="198" />
       <undocumented name="axes" />
+    </function>
+    <function id="plat::rpi::makeLockedMem" name="makeLockedMem">
+      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="474" />
+      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="53" />
+      <undocumented-return />
+      <undocumented name="size" />
+    </function>
+    <function id="plat::rpi::freeLockedMem" name="freeLockedMem">
+      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="476" />
+      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="75" />
+      <undocumented name="mem" />
+      <undocumented name="size" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="37" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/rpi/primitiveiopin.h" line="46" />
+      <undocumented-return />
     </function>
     <function id="gparse::bigEndianStr" name="bigEndianStr">
       <location column="1" file="gparse/command.h" line="57" />
@@ -3007,6 +3000,13 @@ return values.
       <location column="9" file="machines/machine.h" line="12" />
       <undocumented-return />
     </function>
+    <function id="PID::feed" name="feed">
+      <location column="9" file="pid.h" line="29" />
+      <location column="1" file="pid.cpp" line="5" />
+      <undocumented-return />
+      <undocumented name="setpoint" />
+      <undocumented name="pv" />
+    </function>
     <function id="iodrv::TempControl::isHotend" name="isHotend">
       <location column="9" file="iodrivers/tempcontrol.h" line="80" />
       <undocumented-return />
@@ -3025,34 +3025,27 @@ return values.
       <undocumented name="s" />
     </function>
     <function id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="338" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="350" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::getAccelerationProfile" name="getAccelerationProfile">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="347" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="359" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::getCoordMap" name="getCoordMap">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="354" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="366" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::defaultMoveRate" name="defaultMoveRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="387" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="399" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="391" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="403" />
       <undocumented-return />
     </function>
   </arguments>
   <references>
-    <variable id="plat::rpi::ChronoClock::_i" name="_i">
-      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
-      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
-      <doctype name="brief">
-        <ref name="..." />
-      </doctype>
-    </variable>
     <variable id="CVTemplateWrapper::value" name="value">
       <location column="5" file="common/tupleutil.h" line="21" />
       <doctype name="doc">
@@ -3084,6 +3077,19 @@ return values.
         <ref name="StepperT::HomeStepperT, ..." />
       </doctype>
     </structtemplate>
+    <variable id="plat::rpi::ChronoClock::_i" name="_i">
+      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
+      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
+      <doctype name="brief">
+        <ref name="..." />
+      </doctype>
+    </variable>
+    <field id="plat::rpi::PrimitiveIoPin::pullUpDown" name="pullUpDown">
+      <location column="5" file="platforms/rpi/primitiveiopin.h" line="19" />
+      <doctype name="doc">
+        <ref name="IoPin" />
+      </doctype>
+    </field>
     <field id="gparse::Command::arguments" name="arguments">
       <location column="5" file="gparse/command.h" line="76" />
       <doctype name="doc">
