@@ -82,7 +82,7 @@ template <typename AxisStepperTypes> struct MaxOutputEventSequenceSize<AxisStepp
 template <typename Interface> class MotionPlanner {
     private:
         struct UpdateOutputEvents {
-            template <std::size_t MyIdx, typename T> void operator()(CVTemplateWrapper<MyIdx> myIdx, T &stepper, 
+            template <std::size_t MyIdx, typename T> void operator()(std::integral_constant<std::size_t, MyIdx> myIdx, T &stepper, 
               MotionPlanner<Interface> *_this, EventClockT::time_point baseTime) {
                 (void)myIdx; //unused
                 auto sequence = stepper.getStepOutputEventSequence(baseTime);

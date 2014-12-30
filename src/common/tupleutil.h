@@ -12,26 +12,15 @@
 #include <tuple>
 #include <cassert>
 #include <utility> //for std::forward
+#include <type_traits> //for std::integral_constant
 
-//TODO: consider replacing CVTemplateWrapper with std::integral_constant
-template <std::size_t Value> struct CVTemplateWrapper {
-    //Const-Value template wrapper.
-    //callOnAll function gives an object and a tuple index, both are which are compile-time constants - as function arguments
-    //One can template on the object *type*, but one can't template on the index (a *value*). So in order for the user function to know the index as a compile-time constant, we must wrap it as a type. Hence CVTemplateWrapper<index>
-    static constexpr std::size_t value = Value;
-    CVTemplateWrapper(std::size_t v) {
-        (void)v; //unused when assertions are disabled.
-        assert(v == Value);
-    }
-    operator std::size_t() const { return Value; }
-};
 
 //callOnAll helper functions:
 
 template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename ...Args> struct __callOnAll {
     void operator()(TupleT &t, Func &f, Args... args) {
         __callOnAll<TupleT, IdxPlusOne-1, Func, Args...>()(t, f, args...); //call on all previous indices
-        f(CVTemplateWrapper<IdxPlusOne-1>(IdxPlusOne-1), std::get<IdxPlusOne-1>(t), args...); //call on our index.
+        f(std::integral_constant<std::size_t, IdxPlusOne-1>(), std::get<IdxPlusOne-1>(t), args...); //call on our index.
     }
 };
 
@@ -80,16 +69,16 @@ template <typename TupleT, typename Func, typename ...Args> bool tupleReduceLogi
 
 template <typename TupleT, std::size_t MyIdxPlusOne, typename Func, typename ...Args> struct __callOnIndex {
     auto operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args)
-       -> decltype(f(CVTemplateWrapper<MyIdxPlusOne-1>(MyIdxPlusOne-1), std::get<MyIdxPlusOne-1>(t), args...)) {
+       -> decltype(f(std::integral_constant<std::size_t, MyIdxPlusOne-1>(), std::get<MyIdxPlusOne-1>(t), args...)) {
         return desiredIdx < MyIdxPlusOne-1 ? __callOnIndex<TupleT, MyIdxPlusOne-1, Func, Args...>()(t, f, desiredIdx, args...)
-                                           : f(CVTemplateWrapper<MyIdxPlusOne-1>(MyIdxPlusOne-1), std::get<MyIdxPlusOne-1>(t), args...);
+                                           : f(std::integral_constant<std::size_t, MyIdxPlusOne-1>(), std::get<MyIdxPlusOne-1>(t), args...);
     }
 };
 //recursion base case:
 template <typename TupleT, typename Func, typename ...Args> struct __callOnIndex<TupleT, 1, Func, Args...> {
-    auto operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args) -> decltype(f(CVTemplateWrapper<0>(0), std::get<0>(t), args...)) {
+    auto operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args) -> decltype(f(std::integral_constant<std::size_t, 0>(), std::get<0>(t), args...)) {
         (void)desiredIdx; //unused
-        return f(CVTemplateWrapper<0>(0), std::get<0>(t), args...);
+        return f(std::integral_constant<std::size_t, 0>(), std::get<0>(t), args...);
     }
 };
 //special case for TupleT::size == 0 (auto return type doesn't work, so we use void)

@@ -143,7 +143,7 @@ template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
 //Helper class for AxisStepper::initAxisSteppers
 
 struct _AxisStepper__initAxisSteppers {
-    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector4f &vel) {
+    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector4f &vel) {
         (void)_myIdx; (void)stepper; //unused
         std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, curPos, vel));
         std::get<MyIdx>(*steppers)._nextStep();
@@ -157,7 +157,7 @@ template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisSt
 //Helper class for AxisStepper::initAxisHomeSteppers
 
 struct _AxisStepper__initAxisHomeSteppers {
-    template <std::size_t MyIdx, typename T, typename TupleT, typename CoordMapT> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, float vHome) {
+    template <std::size_t MyIdx, typename T, typename TupleT, typename CoordMapT> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, float vHome) {
         (void)_myIdx; (void)stepper; //unused
         std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, vHome));
         std::get<MyIdx>(*steppers)._nextStep();
@@ -171,7 +171,7 @@ template <typename TupleT, typename CoordMapT> void AxisStepper::initAxisHomeSte
 //Helper class for AxisStepper::initAxisArcSteppers
 
 struct _AxisStepper__initAxisArcSteppers {
-    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(CVTemplateWrapper<MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel) {
+    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel) {
         (void)_myIdx; (void)stepper; //unused
         std::get<MyIdx>(*steppers) = T(MyIdx, *map, curPos, center, u, v, arcRad, arcVel, extVel);
         std::get<MyIdx>(*steppers)._nextStep();
