@@ -244,19 +244,48 @@
 //RPI:GND to FD:GND
 //12V to FD:P108 (V_POWER; mosfet power suuply) (1st blue terminal from corner). Pin closest to corner is ground.
 //12V tp FD:P107 (MOT_IN) (2nd blue terminal from corner). Pin closest to corner is ground.
+
+
+//define the endstops:
+//  These endstops are wired as a switch, with one end tied to the 3.3V supply and the other 
+//    connected to a resistor of 1k-50k ohms, and then fed to the input. 
+//    The endstop is interpreted as triggered when the switch is OPEN 
+//    (so if you have a 3-pin endstop, use the common pin and the open pin)
+//  The resistor is technically optional, but without it, you run the risk of
+//    shorting Vcc to ground if the pin EVER gets misconfigured as an output 
+//    (this would destroy the pin & possibly damage the Pi).
 #define PIN_ENDSTOP_A             mitpi::V2_GPIO_P1_18    //maps to FD Shield D22 (X-MIN)
 #define PIN_ENDSTOP_B             mitpi::V2_GPIO_P5_03    //maps to FD Shield D24 (Y-MIN)
 #define PIN_ENDSTOP_C             mitpi::V2_GPIO_P1_15    //maps to FD Shield D26 (Z-MIN)
 //endstops expects a HIGH input when the endstop is reached
 #define PIN_ENDSTOP_INVERSIONS    NO_INVERSIONS
 #define PIN_ENDSTOP_PULL          mitpi::GPIOPULL_UP
+
+//define the thermistor:
+//  The Raspberry Pi lacks an analog to digital converter, so we use a resistor-capacitor circuit to 
+//    measure the time it takes a fully charged capacitor of known capacitance to discharge through the thermistor.
+//  We have a single pin here, and we configure it as output(HIGH) to charge the capacitor, 
+//    and then configure it as input and measure the time it takes for the logic level to drop to 
+//    low while the capacitor discharges through a parallel connection to ground (through Ra).
 //#define PIN_THERMISTOR         mitpi::V2_GPIO_P1_18    //maps to FD Shield ?
+
+//define the fan:
+//  The fan is controlled in a PWM way - set HIGH for full power, set LOW for off, 
+//    toggle rapidly for something in-between.
+//  One should not attempt to directly drive a fan off of the Pi's GPIOs.
+//  Instead, obtain a transistor, wire base to 12V, collector to the GPIO, and emitter should be
+//    connected through the fan and into ground.
 #define PIN_FAN                   mitpi::V2_GPIO_P1_08    //maps to FD Shield D10 (Extruder 2 / Fan)
 #define PIN_FAN_INVERSIONS        INVERT_WRITES
 #define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
 //during RPi boot, fan can be set to be either on or off by using internal pull resistors
 #define PIN_FAN_PULL              mitpi::GPIOPULL_UP
 #define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
+
+//define the hotend:
+//  The hotend is controlled in precisely the same manner as the fan.
+//  Please note that this is currently set to inverted mode, so a logic-level HIGH should 
+//    result in 0 power delivered to the hotend.
 #define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
 #define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
 //hotend state during boot, if hardware pull resistors weren't present.
@@ -298,56 +327,15 @@ namespace machines {
 namespace rpi {
 
 using namespace iodrv; //for all the drivers
-using namespace motion; //for Acceleration & such
+using namespace motion; //for ConstantAcceleration & such
 
 class kosselrampsfd : public Machine {
-    private:
-        //define one pin to enable/disable ALL steppers.
-        //  This pin should be connected directly to the EN pin of each stepper motor driver chip in use.
-        //  it defaults to HIGH=disabled, LOW=enabled.
-        
-        //define the endstops:
-        //  These endstops are wired as a switch, with one end tied to the 3.3V supply and the other 
-        //    connected to a resistor of 1k-50k ohms, and then fed to the input. 
-        //    The endstop is interpreted as triggered when the switch is OPEN 
-        //    (so if you have a 3-pin endstop, use the common pin and the open pin)
-        //  The resistor is technically optional, but without it, you run the risk of
-        //    shorting Vcc to ground if the pin EVER gets misconfigured as an output 
-        //    (this would destroy the pin & possibly damage the Pi).
-
-        
-        //define the thermistor:
-        //  The Raspberry Pi lacks an analog to digital converter, so we use a resistor-capacitor circuit to 
-        //    measure the time it takes a fully charged capacitor of known capacitance to discharge through the thermistor.
-        //  We have a single pin here, and we configure it as output(HIGH) to charge the capacitor, 
-        //    and then configure it as input and measure the time it takes for the logic level to drop to 
-        //    low while the capacitor discharges through a parallel connection to ground (through Ra).
-        
-        //define the fan:
-        //  The fan is controlled in a PWM way - set HIGH for full power, set LOW for off, 
-        //    toggle rapidly for something in-between.
-        //  One should not attempt to directly drive a fan off of the Pi's GPIOs.
-        //  Instead, obtain a transistor, wire base to 12V, collector to the GPIO, and emitter should be
-        //    connected through the fan and into ground.
-        
-        //define the hotend:
-        //  The hotend is controlled in precisely the same manner as the fan.
-        //  Please note that this is currently set to inverted mode, so a logic-level HIGH should 
-        //    result in 0 power delivered to the hotend.
-        
-        
-        
-        //Gather all the I/O controlled devices:
-        //  Additionally, tie the thermistor to the hotend as a feedback source.
-        typedef std::tuple<
-            Fan    //Hotend fan
-            //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>
-            > _IODriverTypes;
     public:
-        //getXXX defines wrappers for all the above types. 
+        //getXXX define wrappers for all the above types. 
         //  Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
         
-        inline _IODriverTypes getIoDrivers() const {
+        //return a list of miscellaneous IoDrivers (Endstops & A4988 drivers are reachable via <getCoordMap>)
+        inline std::tuple<Fan> getIoDrivers() const {
             return std::make_tuple(
                 Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD));
                 //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>(
