@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="machines::rpi::kosselrampsfd" name="kosselrampsfd" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>for Acceleration &amp; such</brief>
+  <brief>for ConstantAcceleration &amp; such</brief>
   <base access="public">
     <type name="Machine" ref="machines::Machine#machines::Machine" />
   </base>
@@ -44,10 +44,9 @@ attached to an end effector via fixed-length, rotatable rods.</doc>
     </return>
   </method>
   <method id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
-    <brief>getXXX defines wrappers for all the above types.</brief>
-    <doc>Note that these should serve more as "factory" methods - creating objects - rather than as accessors.</doc>
+    <brief>return a list of miscellaneous IoDrivers (Endstops &amp; A4988 drivers are reachable via <ref ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd::getCoordMap">machines::rpi::kosselrampsfd::getCoordMap</ref>)</brief>
     <return>
-      <type name="_IODriverTypes" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd::_IODriverTypes" />
+      <type name="std::tuple&lt;iodrv::Fan&gt;" />
     </return>
   </method>
   <method id="machines::rpi::kosselrampsfd::maxExtrudeRate" name="maxExtrudeRate" override="yes">

@@ -6,7 +6,7 @@
       <type builtin="yes" name="void" />
     </return>
     <argument id="motion::_AxisStepper__initAxisSteppers::operator()::_myIdx" name="_myIdx">
-      <type name="CVTemplateWrapper&lt;Value&gt;" ref="CVTemplateWrapper#CVTemplateWrapper" />
+      <type name="std::integral_constant&lt;_Tp, __v&gt;" />
     </argument>
     <argument id="motion::_AxisStepper__initAxisSteppers::operator()::stepper" name="stepper">
       <type name="T" qualifier=" &amp;" />

@@ -3,6 +3,9 @@
   <subclass access="public" name="Fan" ref="iodrv::Fan#iodrv::Fan" />
   <subclass access="public" name="TempControl" ref="iodrv::TempControl#iodrv::TempControl" />
   <subclass access="public" name="A4988" ref="iodrv::A4988#iodrv::A4988" />
+  <subclass access="public" name="Servo" ref="iodrv::Servo#iodrv::Servo">
+    <brief>Controls a Servo motor.</brief>
+  </subclass>
   <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
   <methodtemplate id="iodrv::IODriver::getBedTemp" name="getBedTemp" static="yes">
     <return>

@@ -133,10 +133,10 @@ return values.
         <location column="13" file="motion/axisstepper.h" line="91" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::ArcStepperT" name="ArcStepperT">
-        <location column="9" file="motion/lineardeltastepper.h" line="320" />
+        <location column="9" file="motion/lineardeltastepper.h" line="319" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::HomeStepperT" name="HomeStepperT">
-        <location column="9" file="motion/lineardeltastepper.h" line="319" />
+        <location column="9" file="motion/lineardeltastepper.h" line="318" />
       </undocumented>
       <undocumented id="motion::LinearStepper::ArcStepperT" name="ArcStepperT">
         <location column="9" file="motion/linearstepper.h" line="79" />
@@ -266,13 +266,13 @@ return values.
         <location column="9" file="motion/linearcoordmap.h" line="100" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="184" />
+        <location column="9" file="motion/lineardeltastepper.h" line="183" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::getStepperDriver" name="getStepperDriver">
         <location column="9" file="motion/lineardeltacoordmap.h" line="116" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="322" />
+        <location column="9" file="motion/lineardeltastepper.h" line="321" />
       </undocumented>
       <undocumented id="motion::LinearHomeStepper::LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;">
         <location column="9" file="motion/linearstepper.h" line="56" />
@@ -390,55 +390,55 @@ return values.
         <location column="13" file="common/vector4.h" line="22" />
       </undocumented>
       <undocumented id="__callOnAll::Args" name="Args">
-        <location column="67" file="common/tupleutil.h" line="31" />
+        <location column="67" file="common/tupleutil.h" line="20" />
       </undocumented>
       <undocumented id="__callOnAll::Func" name="Func">
-        <location column="52" file="common/tupleutil.h" line="31" />
+        <location column="52" file="common/tupleutil.h" line="20" />
       </undocumented>
       <undocumented id="__callOnAll::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="31" />
+        <location column="11" file="common/tupleutil.h" line="20" />
       </undocumented>
       <undocumented id="__callOnAllReduce::Args" name="Args">
-        <location column="109" file="common/tupleutil.h" line="53" />
+        <location column="109" file="common/tupleutil.h" line="42" />
       </undocumented>
       <undocumented id="__callOnAllReduce::Func" name="Func">
-        <location column="52" file="common/tupleutil.h" line="53" />
+        <location column="52" file="common/tupleutil.h" line="42" />
       </undocumented>
       <undocumented id="__callOnAllReduce::Reduce" name="Reduce">
-        <location column="67" file="common/tupleutil.h" line="53" />
+        <location column="67" file="common/tupleutil.h" line="42" />
       </undocumented>
       <undocumented id="__callOnAllReduce::ReducedDefault" name="ReducedDefault">
-        <location column="84" file="common/tupleutil.h" line="53" />
+        <location column="84" file="common/tupleutil.h" line="42" />
       </undocumented>
       <undocumented id="__callOnAllReduce::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="53" />
+        <location column="11" file="common/tupleutil.h" line="42" />
       </undocumented>
       <undocumented id="__callOnIndex::Args" name="Args">
-        <location column="69" file="common/tupleutil.h" line="81" />
+        <location column="69" file="common/tupleutil.h" line="70" />
       </undocumented>
       <undocumented id="__callOnIndex::Func" name="Func">
-        <location column="54" file="common/tupleutil.h" line="81" />
+        <location column="54" file="common/tupleutil.h" line="70" />
       </undocumented>
       <undocumented id="__callOnIndex::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="81" />
+        <location column="11" file="common/tupleutil.h" line="70" />
       </undocumented>
       <undocumented id="callOnAll::Args" name="Args">
-        <location column="43" file="common/tupleutil.h" line="43" />
+        <location column="43" file="common/tupleutil.h" line="32" />
       </undocumented>
       <undocumented id="callOnAll::Args" name="Args">
-        <location column="43" file="common/tupleutil.h" line="47" />
+        <location column="43" file="common/tupleutil.h" line="36" />
       </undocumented>
       <undocumented id="callOnAll::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="43" />
+        <location column="28" file="common/tupleutil.h" line="32" />
       </undocumented>
       <undocumented id="callOnAll::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="47" />
+        <location column="28" file="common/tupleutil.h" line="36" />
       </undocumented>
       <undocumented id="callOnAll::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="43" />
+        <location column="11" file="common/tupleutil.h" line="32" />
       </undocumented>
       <undocumented id="callOnAll::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="47" />
+        <location column="11" file="common/tupleutil.h" line="36" />
       </undocumented>
       <undocumented id="iodrv::Fan::setFanDutyCycle::CallbackInterface" name="CallbackInterface">
         <location column="19" file="iodrivers/fan.h" line="51" />
@@ -609,7 +609,7 @@ return values.
         <location column="68" file="motion/linearcoordmap.h" line="49" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="184" />
+        <location column="19" file="motion/lineardeltastepper.h" line="183" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::StepperDriverT" name="StepperDriverT">
         <location column="11" file="motion/lineardeltastepper.h" line="167" />
@@ -630,10 +630,10 @@ return values.
         <location column="68" file="motion/lineardeltacoordmap.h" line="59" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="322" />
+        <location column="19" file="motion/lineardeltastepper.h" line="321" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT">
-        <location column="11" file="motion/lineardeltastepper.h" line="305" />
+        <location column="11" file="motion/lineardeltastepper.h" line="304" />
       </undocumented>
       <undocumented id="motion::LinearHomeStepper::LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT">
         <location column="19" file="motion/linearstepper.h" line="56" />
@@ -723,37 +723,37 @@ return values.
         <location column="35" file="platforms/generic/thisthreadsleep.h" line="18" />
       </undocumented>
       <undocumented id="tupleCallOnIndex::Args" name="Args">
-        <location column="43" file="common/tupleutil.h" line="101" />
+        <location column="43" file="common/tupleutil.h" line="90" />
       </undocumented>
       <undocumented id="tupleCallOnIndex::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="101" />
+        <location column="28" file="common/tupleutil.h" line="90" />
       </undocumented>
       <undocumented id="tupleCallOnIndex::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="101" />
+        <location column="11" file="common/tupleutil.h" line="90" />
       </undocumented>
       <undocumented id="tupleReduce::Args" name="Args">
-        <location column="85" file="common/tupleutil.h" line="68" />
+        <location column="85" file="common/tupleutil.h" line="57" />
       </undocumented>
       <undocumented id="tupleReduce::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="68" />
+        <location column="28" file="common/tupleutil.h" line="57" />
       </undocumented>
       <undocumented id="tupleReduce::Reduce" name="Reduce">
-        <location column="43" file="common/tupleutil.h" line="68" />
+        <location column="43" file="common/tupleutil.h" line="57" />
       </undocumented>
       <undocumented id="tupleReduce::ReducedDefault" name="ReducedDefault">
-        <location column="60" file="common/tupleutil.h" line="68" />
+        <location column="60" file="common/tupleutil.h" line="57" />
       </undocumented>
       <undocumented id="tupleReduce::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="68" />
+        <location column="11" file="common/tupleutil.h" line="57" />
       </undocumented>
       <undocumented id="tupleReduceLogicalOr::Args" name="Args">
-        <location column="43" file="common/tupleutil.h" line="73" />
+        <location column="43" file="common/tupleutil.h" line="62" />
       </undocumented>
       <undocumented id="tupleReduceLogicalOr::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="73" />
+        <location column="28" file="common/tupleutil.h" line="62" />
       </undocumented>
       <undocumented id="tupleReduceLogicalOr::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="73" />
+        <location column="11" file="common/tupleutil.h" line="62" />
       </undocumented>
     </type>
     <type documented="5" name="enum" undocumented="8">
@@ -794,13 +794,13 @@ return values.
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="4" />
         <location column="1" file="machines/generic/cartesian.h" line="117" />
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="297" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="326" />
       </undocumented>
       <undocumented id="machines::generic" name="generic">
         <location column="1" file="machines/generic/cartesian.h" line="118" />
       </undocumented>
       <undocumented id="machines::rpi" name="rpi">
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="298" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="327" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
         <location column="5" file="platforms/generic/chronoclock.h" line="15" />
@@ -842,7 +842,7 @@ return values.
         <location column="1" file="motion/lineardeltacoordmap.h" line="59" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper" name="LinearDeltaStepper">
-        <location column="1" file="motion/lineardeltastepper.h" line="305" />
+        <location column="1" file="motion/lineardeltastepper.h" line="304" />
       </undocumented>
       <undocumented id="motion::LinearHomeStepper" name="LinearHomeStepper">
         <location column="1" file="motion/linearstepper.h" line="51" />
@@ -987,13 +987,13 @@ return values.
         <location column="3" file="common/vector4.h" line="93" />
       </undocumented>
       <undocumented id="__callOnAll::operator()" name="operator()">
-        <location column="5" file="common/tupleutil.h" line="32" />
+        <location column="5" file="common/tupleutil.h" line="21" />
       </undocumented>
       <undocumented id="__callOnAllReduce::operator()" name="operator()">
-        <location column="5" file="common/tupleutil.h" line="54" />
+        <location column="5" file="common/tupleutil.h" line="43" />
       </undocumented>
       <undocumented id="__callOnIndex::operator()" name="operator()">
-        <location column="5" file="common/tupleutil.h" line="82" />
+        <location column="5" file="common/tupleutil.h" line="71" />
       </undocumented>
       <undocumented id="gparse::Com::hasReadFile" name="hasReadFile">
         <location column="9" file="gparse/com.h" line="71" />
@@ -1689,13 +1689,13 @@ return values.
         <location column="9" file="machines/generic/cartesian.h" line="174" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::clampHomeRate" name="clampHomeRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="412" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="400" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::clampMoveRate" name="clampMoveRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="409" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="397" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::maxExtrudeRate" name="maxExtrudeRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="406" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="394" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::getStepOutputEventSequence" name="getStepOutputEventSequence">
         <location column="9" file="motion/axisstepper.h" line="107" />
@@ -1767,7 +1767,7 @@ return values.
         <location column="9" file="motion/linearcoordmap.h" line="117" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/lineardeltastepper.h" line="262" />
+        <location column="9" file="motion/lineardeltastepper.h" line="261" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::L" name="L">
         <location column="9" file="motion/lineardeltacoordmap.h" line="83" />
@@ -1818,13 +1818,13 @@ return values.
         <location column="9" file="motion/lineardeltacoordmap.h" line="139" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/lineardeltastepper.h" line="393" />
+        <location column="9" file="motion/lineardeltastepper.h" line="392" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::getTerm1AndRootParam" name="getTerm1AndRootParam">
-        <location column="9" file="motion/lineardeltastepper.h" line="359" />
+        <location column="9" file="motion/lineardeltastepper.h" line="358" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::testDir" name="testDir">
-        <location column="9" file="motion/lineardeltastepper.h" line="377" />
+        <location column="9" file="motion/lineardeltastepper.h" line="376" />
       </undocumented>
       <undocumented id="motion::LinearHomeStepper::_nextStep" name="_nextStep">
         <location column="9" file="motion/linearstepper.h" line="64" />
@@ -1937,18 +1937,15 @@ return values.
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="543" />
       </undocumented>
     </type>
-    <type documented="0" name="templatenontypeparameter" undocumented="29">
-      <undocumented id="CVTemplateWrapper::Value" name="Value">
-        <location column="11" file="common/tupleutil.h" line="17" />
-      </undocumented>
+    <type documented="0" name="templatenontypeparameter" undocumented="28">
       <undocumented id="__callOnAll::IdxPlusOne" name="IdxPlusOne">
-        <location column="28" file="common/tupleutil.h" line="31" />
+        <location column="28" file="common/tupleutil.h" line="20" />
       </undocumented>
       <undocumented id="__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
-        <location column="28" file="common/tupleutil.h" line="53" />
+        <location column="28" file="common/tupleutil.h" line="42" />
       </undocumented>
       <undocumented id="__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
-        <location column="28" file="common/tupleutil.h" line="81" />
+        <location column="28" file="common/tupleutil.h" line="70" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
         <location column="56" file="motion/axisstepper.h" line="80" />
@@ -1969,16 +1966,16 @@ return values.
         <location column="36" file="motion/lineardeltastepper.h" line="167" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
-        <location column="39" file="motion/lineardeltastepper.h" line="184" />
+        <location column="39" file="motion/lineardeltastepper.h" line="183" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::getStepperDriver::idx" name="idx">
         <location column="19" file="motion/lineardeltacoordmap.h" line="116" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
-        <location column="36" file="motion/lineardeltastepper.h" line="305" />
+        <location column="36" file="motion/lineardeltastepper.h" line="304" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
-        <location column="39" file="motion/lineardeltastepper.h" line="322" />
+        <location column="39" file="motion/lineardeltastepper.h" line="321" />
       </undocumented>
       <undocumented id="motion::LinearHomeStepper::AxisIdx" name="AxisIdx">
         <location column="36" file="motion/linearstepper.h" line="51" />
@@ -2064,14 +2061,14 @@ return values.
         <location column="5" file="platforms/rpi/hardwarescheduler.h" line="466" />
       </undocumented>
     </type>
-    <type documented="7" name="structtemplate" undocumented="1">
+    <type documented="6" name="structtemplate" undocumented="1">
       <undocumented id="motion::array_size" name="array_size">
         <location column="1" file="motion/motionplanner.h" line="55" />
       </undocumented>
     </type>
     <type documented="3" name="functiontemplate" undocumented="6">
       <undocumented id="callOnAll" name="callOnAll">
-        <location column="1" file="common/tupleutil.h" line="43" />
+        <location column="1" file="common/tupleutil.h" line="32" />
       </undocumented>
       <undocumented id="motion::stepDirFromSign" name="stepDirFromSign">
         <location column="1" file="motion/axisstepper.h" line="62" />
@@ -2080,19 +2077,16 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="65" />
       </undocumented>
       <undocumented id="tupleCallOnIndex" name="tupleCallOnIndex">
-        <location column="1" file="common/tupleutil.h" line="101" />
+        <location column="1" file="common/tupleutil.h" line="90" />
       </undocumented>
       <undocumented id="tupleReduce" name="tupleReduce">
-        <location column="1" file="common/tupleutil.h" line="68" />
+        <location column="1" file="common/tupleutil.h" line="57" />
       </undocumented>
       <undocumented id="tupleReduceLogicalOr" name="tupleReduceLogicalOr">
-        <location column="1" file="common/tupleutil.h" line="73" />
+        <location column="1" file="common/tupleutil.h" line="62" />
       </undocumented>
     </type>
-    <type documented="15" name="constructor" undocumented="39">
-      <undocumented id="CVTemplateWrapper::CVTemplateWrapper&lt;Value&gt;" name="CVTemplateWrapper&lt;Value&gt;">
-        <location column="5" file="common/tupleutil.h" line="22" />
-      </undocumented>
+    <type documented="15" name="constructor" undocumented="38">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="9" />
         <location column="1" file="filesystem.cpp" line="3" />
@@ -2187,13 +2181,13 @@ return values.
         <location column="9" file="motion/linearcoordmap.h" line="76" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="183" />
+        <location column="9" file="motion/lineardeltastepper.h" line="182" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;" name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;">
         <location column="9" file="motion/lineardeltacoordmap.h" line="88" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="321" />
+        <location column="9" file="motion/lineardeltastepper.h" line="320" />
       </undocumented>
       <undocumented id="motion::LinearHomeStepper::LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;">
         <location column="9" file="motion/linearstepper.h" line="55" />
@@ -2213,7 +2207,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="107" />
       </undocumented>
     </type>
-    <type documented="4" name="variable" undocumented="10">
+    <type documented="3" name="variable" undocumented="10">
       <undocumented id="gparse::Response::Null" name="Null">
         <location column="9" file="gparse/response.h" line="52" />
         <location column="1" file="gparse/response.cpp" line="6" />
@@ -2250,11 +2244,7 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="52" />
       </undocumented>
     </type>
-    <type documented="4" name="conversionfunction" undocumented="1">
-      <undocumented id="CVTemplateWrapper::operator unsigned long" name="operator unsigned long">
-        <location column="5" file="common/tupleutil.h" line="26" />
-      </undocumented>
-    </type>
+    <type documented="4" name="conversionfunction" undocumented="0" />
     <type documented="7" name="enumvalue" undocumented="92">
       <undocumented id="OnIdleCpuIntervalShort" name="OnIdleCpuIntervalShort">
         <location column="5" file="schedulerbase.h" line="48" />
@@ -2539,7 +2529,7 @@ return values.
         <location column="1" file="iodrivers/iopin.cpp" line="25" />
       </undocumented>
     </type>
-    <type documented="9" name="class" undocumented="20">
+    <type documented="10" name="class" undocumented="20">
       <undocumented id="FileSystem" name="FileSystem">
         <location column="1" file="filesystem.h" line="6" />
       </undocumented>
@@ -2693,7 +2683,7 @@ return values.
       <undocumented name="moveDuration" />
     </function>
     <function id="callOnAll" name="callOnAll">
-      <location column="1" file="common/tupleutil.h" line="47" />
+      <location column="1" file="common/tupleutil.h" line="36" />
       <undocumented name="args" />
       <undocumented name="t" />
       <undocumented name="f" />
@@ -3033,28 +3023,28 @@ return values.
       <undocumented name="lev" />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
-      <location column="9" file="motion/lineardeltastepper.h" line="210" />
+      <location column="9" file="motion/lineardeltastepper.h" line="209" />
       <undocumented-return />
       <undocumented name="s" />
     </function>
     <function id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="350" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="338" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::getAccelerationProfile" name="getAccelerationProfile">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="359" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="347" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::getCoordMap" name="getCoordMap">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="366" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="354" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::defaultMoveRate" name="defaultMoveRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="399" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="387" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="403" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="391" />
       <undocumented-return />
     </function>
   </arguments>
@@ -3065,12 +3055,6 @@ return values.
         <ref name="std::string" />
       </doctype>
     </field>
-    <variable id="CVTemplateWrapper::value" name="value">
-      <location column="5" file="common/tupleutil.h" line="21" />
-      <doctype name="doc">
-        <ref name="index" />
-      </doctype>
-    </variable>
     <method id="Vector3::tuple" name="tuple">
       <location column="3" file="common/vector3.h" line="44" />
       <doctype name="brief">

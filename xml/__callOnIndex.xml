@@ -9,7 +9,7 @@
   <templatetypeparameter id="__callOnIndex::Args" name="Args" />
   <method id="__callOnIndex::operator()" name="operator()">
     <return>
-      <type name="decltype(f(CVTemplateWrapper&lt;MyIdxPlusOne - 1&gt;(MyIdxPlusOne - 1), std::get&lt;MyIdxPlusOne - 1&gt;(t), args...))" />
+      <type name="decltype(f(std::integral_constant&lt;std::size_t, MyIdxPlusOne - 1&gt;(), std::get&lt;MyIdxPlusOne - 1&gt;(t), args...))" />
     </return>
     <argument id="__callOnIndex::operator()::t" name="t">
       <type name="TupleT" qualifier=" &amp;" />

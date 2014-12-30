@@ -37,6 +37,9 @@
   </struct>
   <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
   <class name="RCThermistor" ref="iodrv::RCThermistor#iodrv::RCThermistor" />
+  <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
+    <brief>Controls a Servo motor.</brief>
+  </class>
   <classtemplate name="TempControl" ref="iodrv::TempControl#iodrv::TempControl">
     <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
     <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
