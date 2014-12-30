@@ -13,7 +13,7 @@ namespace iodrv {
 //Typical pulse length varies from 1ms to 2ms for the full control range,
 // while the pulses must occur between 40-200 times per second.
 //
-//See discussion @ https://github.com/Wallacoloo/printipi/issues/62
+//Not yet ready for use; see discussion @ https://github.com/Wallacoloo/printipi/issues/62
 class Servo : public IODriver {
 
 };
