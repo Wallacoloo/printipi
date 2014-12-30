@@ -175,7 +175,6 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcSteppe
         float arcRad; //radius of arc
         float m; //angular velocity of the arc.
         float w; //angle of this axis. CW from +y axis
-        float x0, y0, z0; //center point of arc. TODO: unused?
         inline float r() const { return _r; }
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
