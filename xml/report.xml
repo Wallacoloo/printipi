@@ -12,7 +12,7 @@ return values.
 3. [References](#report/references): Unresolved cross references.
 </doc>
   <coverage>
-    <type documented="4" name="function" undocumented="25">
+    <type documented="2" name="function" undocumented="23">
       <undocumented id="argparse::cmdOptionExists" name="cmdOptionExists">
         <location column="1" file="argparse.h" line="39" />
         <location column="1" file="argparse.cpp" line="16" />
@@ -94,14 +94,6 @@ return values.
       <undocumented id="mitpi::usleep" name="usleep">
         <location column="1" file="platforms/rpi/mitpi.h" line="141" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="139" />
-      </undocumented>
-      <undocumented id="plat::rpi::ceilToPage" name="ceilToPage">
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="472" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="40" />
-      </undocumented>
-      <undocumented id="plat::rpi::writeBitmasked" name="writeBitmasked">
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="471" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="29" />
       </undocumented>
     </type>
     <type documented="7" name="typedef" undocumented="17">
@@ -286,7 +278,7 @@ return values.
         <location column="13" file="platforms/generic/thisthreadsleep.h" line="18" />
       </undocumented>
     </type>
-    <type documented="12" name="struct" undocumented="7">
+    <type documented="13" name="struct" undocumented="6">
       <undocumented id="mitpi::InitMitpiType" name="InitMitpiType">
         <location column="1" file="platforms/rpi/mitpi.h" line="145" />
       </undocumented>
@@ -300,13 +292,12 @@ return values.
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="17" />
       </undocumented>
       <undocumented id="plat::rpi::DmaControlBlock" name="DmaControlBlock">
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="392" />
-      </undocumented>
-      <undocumented id="plat::rpi::GpioBufferFrame" name="GpioBufferFrame">
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="478" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="188" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="233" />
       </undocumented>
       <undocumented id="plat::rpi::PwmHeader" name="PwmHeader">
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="425" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="189" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="266" />
       </undocumented>
     </type>
     <type documented="0" name="templatetypeparameter" undocumented="137">
@@ -775,9 +766,9 @@ return values.
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="15" />
       </undocumented>
       <undocumented id="plat::rpi" name="rpi">
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="347" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="183" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="7" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="24" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="187" />
         <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
         <location column="1" file="platforms/rpi/chronoclock.cpp" line="4" />
       </undocumented>
@@ -820,7 +811,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="93" />
       </undocumented>
     </type>
-    <type documented="87" name="method" undocumented="340">
+    <type documented="87" name="method" undocumented="333">
       <undocumented id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
         <location column="9" file="filesystem.h" line="10" />
         <location column="1" file="filesystem.cpp" line="6" />
@@ -883,7 +874,7 @@ return values.
         <location column="1" file="scheduler.h" line="128" />
       </undocumented>
       <undocumented id="SchedulerBase::configureExitHandlers" name="configureExitHandlers">
-        <location column="9" file="schedulerbase.h" line="63" />
+        <location column="9" file="schedulerbase.h" line="64" />
         <location column="1" file="schedulerbase.cpp" line="36" />
       </undocumented>
       <undocumented id="State::CoordMapInterface::actualCartesianPosition" name="actualCartesianPosition">
@@ -1825,52 +1816,31 @@ return values.
       <undocumented id="plat::rpi::ChronoClock::now" name="now">
         <location column="9" file="platforms/rpi/chronoclock.h" line="53" />
       </undocumented>
-      <undocumented id="plat::rpi::GpioBufferFrame::gpclrForPin" name="gpclrForPin">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="488" />
-      </undocumented>
-      <undocumented id="plat::rpi::GpioBufferFrame::gpsetForPin" name="gpsetForPin">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="483" />
-      </undocumented>
-      <undocumented id="plat::rpi::GpioBufferFrame::writeGpClr" name="writeGpClr">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="501" />
-      </undocumented>
-      <undocumented id="plat::rpi::GpioBufferFrame::writeGpClr" name="writeGpClr">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="505" />
-      </undocumented>
-      <undocumented id="plat::rpi::GpioBufferFrame::writeGpSet" name="writeGpSet">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="493" />
-      </undocumented>
-      <undocumented id="plat::rpi::GpioBufferFrame::writeGpSet" name="writeGpSet">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="497" />
-      </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::physAddrAtByteOffset" name="physAddrAtByteOffset">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="519" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="91" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="200" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="407" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::virtToPhys" name="virtToPhys">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="520" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="95" />
-      </undocumented>
-      <undocumented id="plat::rpi::HardwareScheduler::canWriteOutputs" name="canWriteOutputs">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="539" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="201" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="411" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::cleanup" name="cleanup">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="538" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="118" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="219" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="434" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::onIdleCpu" name="onIdleCpu">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="550" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="330" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="227" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="646" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::queue" name="queue">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="546" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="223" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::queuePwm" name="queuePwm">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="549" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="365" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="226" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="681" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::schedTime" name="schedTime">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="543" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="220" />
       </undocumented>
     </type>
     <type documented="0" name="templatenontypeparameter" undocumented="25">
@@ -1950,7 +1920,7 @@ return values.
         <location column="15" file="motion/axisstepper.h" line="140" />
       </undocumented>
     </type>
-    <type documented="28" name="field" undocumented="12">
+    <type documented="5" name="field" undocumented="7">
       <undocumented id="iodrv::IODriver__getBedTemp::value" name="value">
         <location column="5" file="iodrivers/iodriver.h" line="168" />
       </undocumented>
@@ -1963,29 +1933,14 @@ return values.
       <undocumented id="motion::AxisStepper::time" name="time">
         <location column="9" file="motion/axisstepper.h" line="73" />
       </undocumented>
-      <undocumented id="plat::rpi::DmaControlBlock::TI" name="TI">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="393" />
-      </undocumented>
-      <undocumented id="plat::rpi::GpioBufferFrame::gpclr" name="gpclr">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="482" />
-      </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::numPages" name="numPages">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="517" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="198" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::pageMap" name="pageMap">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="518" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="199" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::virtL2Coherent" name="virtL2Coherent">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="516" />
-      </undocumented>
-      <undocumented id="plat::rpi::PwmHeader::CTL" name="CTL">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="426" />
-      </undocumented>
-      <undocumented id="plat::rpi::PwmHeader::RNG1" name="RNG1">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="459" />
-      </undocumented>
-      <undocumented id="plat::rpi::PwmHeader::RNG2" name="RNG2">
-        <location column="5" file="platforms/rpi/hardwarescheduler.h" line="466" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="197" />
       </undocumented>
     </type>
     <type documented="5" name="structtemplate" undocumented="1">
@@ -2132,15 +2087,15 @@ return values.
         <location column="9" file="motion/motionplanner.h" line="137" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::DmaMem" name="DmaMem">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="521" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="202" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::DmaMem" name="DmaMem">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="522" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="81" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="203" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="397" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::HardwareScheduler" name="HardwareScheduler">
-        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="537" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="107" />
+        <location column="9" file="platforms/rpi/hardwarescheduler.h" line="218" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="423" />
       </undocumented>
     </type>
     <type documented="3" name="variable" undocumented="12">
@@ -2190,10 +2145,10 @@ return values.
     <type documented="6" name="conversionfunction" undocumented="0" />
     <type documented="7" name="enumvalue" undocumented="95">
       <undocumented id="OnIdleCpuIntervalShort" name="OnIdleCpuIntervalShort">
-        <location column="5" file="schedulerbase.h" line="48" />
+        <location column="5" file="schedulerbase.h" line="49" />
       </undocumented>
       <undocumented id="OnIdleCpuIntervalWide" name="OnIdleCpuIntervalWide">
-        <location column="5" file="schedulerbase.h" line="49" />
+        <location column="5" file="schedulerbase.h" line="50" />
       </undocumented>
       <undocumented id="POS_ABSOLUTE" name="POS_ABSOLUTE">
         <location column="5" file="state.h" line="70" />
@@ -2538,10 +2493,10 @@ return values.
         <location column="1" file="platforms/rpi/chronoclock.h" line="44" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler" name="HardwareScheduler">
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="512" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="193" />
       </undocumented>
       <undocumented id="plat::rpi::PrimitiveIoPin" name="PrimitiveIoPin">
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="349" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="185" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="9" />
       </undocumented>
     </type>
@@ -2618,7 +2573,7 @@ return values.
       <undocumented name="lev" />
     </function>
     <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="65" />
+      <location column="9" file="schedulerbase.h" line="66" />
       <location column="1" file="schedulerbase.cpp" line="56" />
       <undocumented-return />
       <undocumented name="handler" />
@@ -3009,18 +2964,6 @@ return values.
     <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/generic/cartesian.h" line="171" />
       <undocumented-return />
-    </function>
-    <function id="plat::rpi::makeLockedMem" name="makeLockedMem">
-      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="474" />
-      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="53" />
-      <undocumented-return />
-      <undocumented name="size" />
-    </function>
-    <function id="plat::rpi::freeLockedMem" name="freeLockedMem">
-      <location column="1" file="platforms/rpi/hardwarescheduler.h" line="476" />
-      <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="75" />
-      <undocumented name="mem" />
-      <undocumented name="size" />
     </function>
     <function id="plat::rpi::PrimitiveIoPin::null" name="null">
       <location column="3" file="platforms/rpi/primitiveiopin.h" line="16" />

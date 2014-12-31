@@ -271,10 +271,12 @@
     <namespace name="rpi" ref="plat::rpi#plat::rpi">
       <class name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
       <struct name="DmaChannelHeader" ref="plat::rpi::DmaChannelHeader#plat::rpi::DmaChannelHeader">
-        <brief>forward declaration</brief>
+        <brief>defined in primitiveiopin.h</brief>
       </struct>
       <struct name="DmaControlBlock" ref="plat::rpi::DmaControlBlock#plat::rpi::DmaControlBlock" />
-      <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame" />
+      <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame">
+        <brief>custom structure used for storing the GPIO buffer.</brief>
+      </struct>
       <class name="HardwareScheduler" ref="plat::rpi::HardwareScheduler#plat::rpi::HardwareScheduler" />
       <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
       <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />

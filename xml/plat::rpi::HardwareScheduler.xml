@@ -1,11 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class abstract="true" id="plat::rpi::HardwareScheduler" name="HardwareScheduler" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <constructor id="plat::rpi::HardwareScheduler::HardwareScheduler" name="HardwareScheduler" />
-  <method id="plat::rpi::HardwareScheduler::canWriteOutputs" name="canWriteOutputs">
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-  </method>
   <method id="plat::rpi::HardwareScheduler::cleanup" name="cleanup" static="yes">
     <return>
       <type builtin="yes" name="void" />

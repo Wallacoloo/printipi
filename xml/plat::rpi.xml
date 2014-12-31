@@ -2,54 +2,13 @@
 <namespace id="plat::rpi" name="rpi" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <class name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
   <struct name="DmaChannelHeader" ref="plat::rpi::DmaChannelHeader#plat::rpi::DmaChannelHeader">
-    <brief>forward declaration</brief>
+    <brief>defined in primitiveiopin.h</brief>
   </struct>
   <struct name="DmaControlBlock" ref="plat::rpi::DmaControlBlock#plat::rpi::DmaControlBlock" />
-  <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame" />
+  <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame">
+    <brief>custom structure used for storing the GPIO buffer.</brief>
+  </struct>
   <class name="HardwareScheduler" ref="plat::rpi::HardwareScheduler#plat::rpi::HardwareScheduler" />
   <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
   <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />
-  <function id="plat::rpi::ceilToPage" name="ceilToPage">
-    <return>
-      <type name="size_t" />
-    </return>
-    <argument id="plat::rpi::ceilToPage::size" name="size">
-      <type name="size_t" />
-    </argument>
-  </function>
-  <function id="plat::rpi::freeLockedMem" name="freeLockedMem">
-    <brief>free memory allocated with makeLockedMem</brief>
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="plat::rpi::freeLockedMem::mem" name="mem">
-      <type builtin="yes" name="void" qualifier="*" />
-    </argument>
-    <argument id="plat::rpi::freeLockedMem::size" name="size">
-      <type name="size_t" />
-    </argument>
-  </function>
-  <function id="plat::rpi::makeLockedMem" name="makeLockedMem">
-    <brief>allocate some memory and lock it so that its physical address will never change</brief>
-    <return>
-      <type name="uint8_t" qualifier="*" />
-    </return>
-    <argument id="plat::rpi::makeLockedMem::size" name="size">
-      <type name="size_t" />
-    </argument>
-  </function>
-  <function id="plat::rpi::writeBitmasked" name="writeBitmasked">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="plat::rpi::writeBitmasked::dest" name="dest">
-      <type name="uint32_t" qualifier="*" />
-    </argument>
-    <argument id="plat::rpi::writeBitmasked::mask" name="mask">
-      <type name="uint32_t" />
-    </argument>
-    <argument id="plat::rpi::writeBitmasked::value" name="value">
-      <type name="uint32_t" />
-    </argument>
-  </function>
 </namespace>
