@@ -149,9 +149,12 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="51" />
       </undocumented>
     </type>
-    <type documented="11" name="methodtemplate" undocumented="39">
+    <type documented="10" name="methodtemplate" undocumented="40">
       <undocumented id="IntervalTimer::clockCmp" name="clockCmp">
         <location column="9" file="common/intervaltimer.h" line="27" />
+      </undocumented>
+      <undocumented id="Matrix3x3::transform" name="transform">
+        <location column="9" file="common/matrix.h" line="22" />
       </undocumented>
       <undocumented id="Scheduler::setMaxSleep" name="setMaxSleep">
         <location column="9" file="scheduler.h" line="59" />
@@ -308,7 +311,7 @@ return values.
         <location column="19" file="common/intervaltimer.h" line="27" />
       </undocumented>
       <undocumented id="Matrix3x3::transform::VecT" name="VecT">
-        <location column="19" file="common/matrix.h" line="41" />
+        <location column="19" file="common/matrix.h" line="22" />
       </undocumented>
       <undocumented id="OptionalArg::T" name="T">
         <location column="11" file="common/optionalarg.h" line="10" />
@@ -1980,10 +1983,10 @@ return values.
         <location column="9" file="common/filters/lowpassfilter.h" line="30" />
       </undocumented>
       <undocumented id="Matrix3x3::Matrix3x3" name="Matrix3x3">
-        <location column="9" file="common/matrix.h" line="28" />
+        <location column="9" file="common/matrix.h" line="15" />
       </undocumented>
       <undocumented id="Matrix3x3::Matrix3x3" name="Matrix3x3">
-        <location column="9" file="common/matrix.h" line="29" />
+        <location column="9" file="common/matrix.h" line="16" />
       </undocumented>
       <undocumented id="OptionalArg::OptionalArg&lt;T&gt;" name="OptionalArg&lt;T&gt;">
         <location column="3" file="common/optionalarg.h" line="15" />
@@ -2791,7 +2794,7 @@ return values.
     </function>
     <function id="motion::AxisStepper::_nextStep" name="_nextStep">
       <location column="9" file="motion/axisstepper.h" line="86" />
-      <location column="1" file="motion/axisstepper.cpp" line="14" />
+      <location column="1" file="motion/axisstepper.cpp" line="7" />
       <undocumented name="useEndstops" />
     </function>
     <function id="motion::operator|" name="operator|">
@@ -2913,11 +2916,6 @@ return values.
     <function id="motion::CoordMap::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
       <location column="9" file="motion/coordmap.h" line="103" />
       <undocumented-return />
-    </function>
-    <function id="Matrix3x3::transform" name="transform">
-      <location column="9" file="common/matrix.h" line="41" />
-      <undocumented-return />
-      <undocumented name="xyz" />
     </function>
     <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
       <location column="9" file="motion/linearstepper.h" line="71" />
@@ -3111,31 +3109,6 @@ return values.
         <ref name="MotionPlanner" />
       </doctype>
     </typedef>
-    <class id="Matrix3x3" name="Matrix3x3">
-      <location column="1" file="common/matrix.h" line="23" />
-      <doctype name="brief">
-        <ref name="tuple" />
-      </doctype>
-    </class>
-    <methodtemplate id="Matrix3x3::transform" name="transform">
-      <location column="9" file="common/matrix.h" line="41" />
-      <doctype name="doc">
-        <ref name="float, float, float" />
-        <ref name="0" />
-        <ref name="1" />
-        <ref name="2" />
-        <ref name="0" />
-        <ref name="1" />
-        <ref name="2" />
-        <ref name="0" />
-        <ref name="1" />
-        <ref name="2" />
-      </doctype>
-      <doctype name="brief">
-        <ref name="float, float, float" />
-        <ref name="float, float, float" />
-      </doctype>
-    </methodtemplate>
     <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
       <doctype component="pullUpDown" name="params">

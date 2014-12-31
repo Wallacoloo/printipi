@@ -1,13 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="Matrix3x3" name="Matrix3x3" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>#include &amp;lt;tuple&amp;gt;</brief>
+  <doc>
+Matrices are useful in applying linear transformations.
+Notably, they can be used to adjust coordinates to a different coordinate-space in order to account for an unlevel bed.
+</doc>
   <methodtemplate id="Matrix3x3::transform" name="transform">
-    <brief>inline std::tuple&amp;lt;float, float, float&amp;gt; transform(const std::tuple&amp;lt;float, float, float&amp;gt; &amp;xyz) const {</brief>
-    <doc>return std::tuple&amp;lt;float, float, float&amp;gt;(
-       a00*std::get&amp;lt;0&amp;gt;(xyz) + a01*std::get&amp;lt;1&amp;gt;(xyz) + a02*std::get&amp;lt;2&amp;gt;(xyz),
-       a10*std::get&amp;lt;0&amp;gt;(xyz) + a11*std::get&amp;lt;1&amp;gt;(xyz) + a12*std::get&amp;lt;2&amp;gt;(xyz),
-       a20*std::get&amp;lt;0&amp;gt;(xyz) + a21*std::get&amp;lt;1&amp;gt;(xyz) + a22*std::get&amp;lt;2&amp;gt;(xyz));
-}</doc>
     <return>
       <type name="VecT" />
     </return>

@@ -319,9 +319,7 @@
   <class name="LowPassFilter" ref="LowPassFilter#LowPassFilter">
     <brief> http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter</brief>
   </class>
-  <class name="Matrix3x3" ref="Matrix3x3#Matrix3x3">
-    <brief>#include &amp;lt;tuple&amp;gt;</brief>
-  </class>
+  <class name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
   <struct name="NoFilter" ref="NoFilter#NoFilter" />
   <classtemplate name="OptionalArg" ref="OptionalArg#OptionalArg">
     <brief>allow for a function default value that is not a constant.</brief>
