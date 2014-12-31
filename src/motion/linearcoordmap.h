@@ -52,7 +52,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                        LinearStepper<Stepper2, CARTESIAN_AXIS_Y>, 
                        LinearStepper<Stepper3, CARTESIAN_AXIS_Z>, 
                        LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef typename AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
     typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
 
     float _STEPS_MM_X, _MM_STEPS_X;
@@ -88,9 +87,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
         }
-        inline _HomeStepperTypes getHomeSteppers() const {
-            return _HomeStepperTypes();
-        }
         inline _ArcStepperTypes getArcSteppers() const {
             return _ArcStepperTypes();
         }
@@ -104,6 +100,17 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
 
         inline static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder
+        }
+        template <typename Interface> void executeHomeRoutine(Interface &interface) {
+            //must disable buffering so that endstops can be reliably checked
+            //interface.setUnbufferedMove(true);
+            Vector4f curPos = interface.actualCartesianPosition();
+            //try to move each axis towards the endstops
+            Vector4f destPos = curPos + Vector4f(-1000, -1000, -1000, 0);
+            interface.moveTo(destPos, 10, motion::USE_ENDSTOPS | motion::NO_LEVELING | motion::NO_BOUNDING); //TODO: remove magic-number 10 (velocity of home movement)
+            //reset the indexed axis positions:
+            interface.resetAxisPositions(getHomePosition(interface.axisPositions()));
+            //interface.setUnbufferedMove(false);
         }
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({{0, 0, 0, cur[3]}});

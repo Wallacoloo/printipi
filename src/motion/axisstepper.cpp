@@ -11,8 +11,9 @@ Event AxisStepper::getEvent(float realTime) const {
     return Event::StepperEvent(realTime, this->index(), this->direction);
 }*/
 
-void AxisStepper::_nextStep() {
+void AxisStepper::_nextStep(bool useEndstops) {
     //should be implemented in derivatives.
+    (void)useEndstops;
     assert(false && "AxisStepper::_nextStep() must be overriden in any child classes");
 }
 

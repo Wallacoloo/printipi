@@ -63,39 +63,44 @@ class CoordMap {
         inline std::tuple<> getArcSteppers() const {
             return std::tuple<>();
         }
+        //return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)
+        //Depending on which AxisSteppers your CoordMap uses, you may not need to implement this function.
         inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
-            //return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)
-            //Depending on which AxisSteppers your CoordMap uses, you may not need to implement this function.
             (void)axis; //unused
             return *(iodrv::Endstop*)(nullptr);
         }
+        //return the number of axis (physical motors) that we have.
         inline static constexpr std::size_t numAxis() {
-            //return the number of axis (physical motors) that we have.
             return 0;
         }
+        //Home the machine by sending commands to @interface
+        template <typename Interface> void executeHomeRoutine(Interface &interface) {
+            interface.resetAxisPositions(getHomePosition(interface.axisPositions()));
+        }
+        //given the current tracked motor coordinates, and knowing that we are at home position,
+        //@return the true motor coordinates.
         inline std::array<int, 0> getHomePosition(const std::array<int, 0> &/*cur*/) const {
-            //given the current tracked motor coordinates, and knowing that we are at home position,
-            //return the true motor coordinates.
+            
             return std::array<int, 0>();
         }
+        //apply some leveling transformation to the [x,y,z] cartesian coordinate to compensate for an unlevel bed.
+        //Note: this is only applied to the endpoints of a line, so a non-planar bed cannot properly be leveled.
         inline Vector3f applyLeveling(const Vector3f &xyz) const {
-            //apply some leveling transformation to the [x,y,z] cartesian coordinate to compensate for an unlevel bed.
-            //Note: this is only applied to the endpoints of a line, so a non-planar bed cannot properly be leveled.
             return xyz;
         }
+        //ensure that the desired coordinate is accessible. (i.e. motors won't ram the endstops, etc).
         inline Vector4f bound(const Vector4f &xyze) const {
-            //ensure that the desired coordinate is accessible. (i.e. motors won't ram the endstops, etc).
             return xyze;
         }
+        //given axis coordinates &mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.
         inline Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
-            //given axis coordinates &mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.
             (void)mech; //unused in this stub
             assert(false);
             return Vector4f(0, 0, 0, 0);
         }
+        //if we get a G1 before the first G28, then we *probably* want to home first,
+        //    but feel free to override this in other implementations.
         inline bool doHomeBeforeFirstMovement() const {
-            //if we get a G1 before the first G28, then we *probably* want to home first,
-            //  but feel free to override this in other implementations.
             return true;
         }
 };

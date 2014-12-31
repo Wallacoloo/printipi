@@ -49,8 +49,19 @@ enum MotionType {
     MotionNone,
     MotionLinear,
     MotionArc,
-    MotionHome
 };
+
+//bitwise-or'd flags providing more context for movements
+enum MotionFlags {
+    MOTIONFLAGS_DEFAULT=0,
+    NO_LEVELING=1,
+    NO_BOUNDING=2,
+    USE_ENDSTOPS=4,
+};
+//bitwise OR operator for MotionFlags, to avoid NO_LEVELING | NO_BOUNDING resulting in an integer type instead of a MotionFlags type.
+inline MotionFlags operator|(MotionFlags a, MotionFlags b) {
+    return static_cast<MotionFlags>(static_cast<int>(a) | static_cast<int>(b));
+}
 
 template<typename ArrayT> struct array_size;
 template<typename ElementT, std::size_t Size> struct array_size<std::array<ElementT, Size> > {
@@ -94,7 +105,6 @@ template <typename Interface> class MotionPlanner {
         typedef typename Interface::CoordMapT CoordMapT;
         typedef typename Interface::AccelerationProfileT AccelerationProfileT;
         typedef decltype(std::declval<CoordMapT>().getAxisSteppers()) AxisStepperTypes;
-        typedef decltype(std::declval<CoordMapT>().getHomeSteppers()) HomeStepperTypes;
         typedef decltype(std::declval<CoordMapT>().getArcSteppers())  ArcStepperTypes;
         typedef std::array<OutputEvent, MaxOutputEventSequenceSize<AxisStepperTypes, std::tuple_size<AxisStepperTypes>::value>::maxSize()> OutputEventBufferT;
 
@@ -107,8 +117,6 @@ template <typename Interface> class MotionPlanner {
         std::array<int, CoordMapT::numAxis()> _destMechanicalPos;
         //Each axis iterator reports the next time it needs to be stepped. _iters is for linear movement
         AxisStepperTypes _iters; 
-        //Axis iterators used when homing
-        HomeStepperTypes _homeIters; 
         //Axis iterators used when moving in an arc
         ArcStepperTypes _arcIters;
         //The time at which the current path segment began (this will be a fraction of a second before the time which the first step in this path is scheduled for)
@@ -117,6 +125,8 @@ template <typename Interface> class MotionPlanner {
         float _duration; 
         //which type of segment is being planned
         MotionType _motionType; 
+        //whether or not to check endstops before each step (typically only useful in homing/autocalibration)
+        bool _useEndstops;
         
         //hold the maximum-sized OutputEvent sequence from any AxisStepper.
         OutputEventBufferT outputEventBuffer;
@@ -129,13 +139,20 @@ template <typename Interface> class MotionPlanner {
             _coordMapper(interface.getCoordMap()),
             _accel(interface.getAccelerationProfile()), 
             _destMechanicalPos(), 
-            _iters(_coordMapper.getAxisSteppers()), _homeIters(_coordMapper.getHomeSteppers()), _arcIters(_coordMapper.getArcSteppers()),
+            _iters(_coordMapper.getAxisSteppers()), _arcIters(_coordMapper.getArcSteppers()),
             _baseTime(), 
             _duration(NAN),
             _motionType(MotionNone),
+            _useEndstops(false),
             outputEventBuffer(),
             curOutputEvent(outputEventBuffer.begin()),
             endOutputEvent(outputEventBuffer.begin()) {}
+        const CoordMapT& coordMap() const {
+            return _coordMapper;
+        }
+        CoordMapT& coordMap() {
+            return _coordMapper;
+        }
         //readForNextMove returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems)
         bool readyForNextMove() const {
             return _motionType == MotionNone;
@@ -150,16 +167,18 @@ template <typename Interface> class MotionPlanner {
         Vector4f actualCartesianPosition() const {
             return _coordMapper.xyzeFromMechanical(_destMechanicalPos);
         }
+        const std::array<int, CoordMapT::numAxis()> & axisPositions() const {
+            return _destMechanicalPos;
+        }
+        void resetAxisPositions(const std::array<int, CoordMapT::numAxis()> &pos) {
+            _destMechanicalPos = pos;
+        }
     private:
         template <typename StepperTypes> void _nextStep(StepperTypes &steppers, AxisStepper &s) {
             LOGV("MotionPlanner::nextStep() is: %i at %g of %g\n", s.index(), s.time, _duration);
             if (s.time > _duration || s.time <= 0 || std::isnan(s.time)) { //if the next time the given axis wants to step is invalid or past the movement length, then end the motion
                 //Note: don't combine s.time <= 0 || isnan(s.time) to !(s.time > 0) because that might be broken during optimizations.
                 //Note: This conditional causes the MotionPlanner to always undershoot the desired position, when it may be desireable to overshoot some of them - see https://github.com/Wallacoloo/printipi/issues/15
-                if (isHoming()) { 
-                    //if homing, then we now know the axis mechanical positions; fetch them
-                    _destMechanicalPos = _coordMapper.getHomePosition(_destMechanicalPos);
-                }
                 //log debug info:
                 Vector4f pos = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
                 LOGD("MotionPlanner::moveTo Got: %s\n", pos.str().c_str());
@@ -176,18 +195,12 @@ template <typename Interface> class MotionPlanner {
             //e.offset(_baseTime); //AxisSteppers report times relative to the start of motion; transform to absolute.
             _destMechanicalPos[s.index()] += stepDirToSigned<int>(s.direction); //update the mechanical position tracked in software
             //advance the respective AxisStepper to its next step:
-            s.nextStep(steppers);
+            s.nextStep(steppers, _useEndstops);
             LOGV("MotionPlanner::nextStep() generated %zu OutputEvents\n", (endOutputEvent-curOutputEvent));
         }
         //black magic to get nextStep to work when either AxisStepperTypes or HomeStepperTypes have length 0:
         //If they are length zero, then _nextStep* just returns an empty event and a compilation error is avoided.
         //Otherwise, the templated function is called, and _nextStep is run as usual:
-        template <bool T> void _nextStepHome(std::integral_constant<bool, T> ) {
-            _nextStep(_homeIters, AxisStepper::getNextTime(_homeIters));
-        }
-        void _nextStepHome(std::false_type ) {
-        }
-
         template <bool T> void _nextStepLinear(std::integral_constant<bool, T> ) {
             _nextStep(_iters, AxisStepper::getNextTime(_iters));
         }
@@ -200,16 +213,11 @@ template <typename Interface> class MotionPlanner {
         void _nextStepArc(std::false_type ) {
         }
     public:
-        bool isHoming() const {
-            return _motionType == MotionHome;
-        }
         OutputEvent nextOutputEvent() {
             //called by State to query the next step in the current path segment
             if (curOutputEvent == endOutputEvent) { //we have some OutputEvents buffered.
                 switch (_motionType) {
-                    case MotionHome:
-                        _nextStepHome(std::integral_constant<bool, std::tuple_size<HomeStepperTypes>::value != 0>());
-                        break;
+
                     case MotionLinear:
                         _nextStepLinear(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
                         break;
@@ -230,18 +238,24 @@ template <typename Interface> class MotionPlanner {
                 return OutputEvent();
             }
         }
-        void moveTo(EventClockT::time_point baseTime, const Vector4f &dest_, float maxVelXyz, float minVelE, float maxVelE) {
+        void moveTo(EventClockT::time_point baseTime, const Vector4f &dest_, float maxVelXyz, float minVelE, float maxVelE, MotionFlags flags=MOTIONFLAGS_DEFAULT) {
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             if (std::tuple_size<AxisStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes
             }
             this->_baseTime = baseTime;
+            this->_useEndstops = flags & USE_ENDSTOPS;
             Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
-            //get the REAL destination, after leveling is applied
-            Vector4f dest = Vector4f(_coordMapper.applyLeveling(dest_.xyz()), dest_.e());
-            //fix impossible coordinates
-            dest = _coordMapper.bound(dest);
+            Vector4f dest = dest_;
+            if (! (flags & NO_LEVELING)) {
+                //get the REAL destination, after leveling is applied
+                dest = Vector4f(_coordMapper.applyLeveling(dest_.xyz()), dest_.e());
+            }
+            if (! (flags & NO_BOUNDING)) {
+                //fix impossible coordinates
+                dest = _coordMapper.bound(dest);
+            }
             
             //Calculate velocities in x, y, z, e directions, and the duration of the linear movement:
             float dist = cur.xyz().distance(dest.xyz());
@@ -259,40 +273,34 @@ template <typename Interface> class MotionPlanner {
             Vector3f vel = (dest.xyz()-cur.xyz())/minDuration;
             LOGD("MotionPlanner::moveTo %s -> %s\n", cur.str().c_str(), dest.str().c_str());
             LOGD("MotionPlanner::moveTo _destMechanicalPos: (%i, %i, %i, %i)\n", _destMechanicalPos[0], _destMechanicalPos[1], _destMechanicalPos[2], _destMechanicalPos[3]);
-            AxisStepper::initAxisSteppers(_iters, _coordMapper, _destMechanicalPos, Vector4f(vel, velE));
+            AxisStepper::initAxisSteppers(_iters, _useEndstops, _coordMapper, _destMechanicalPos, Vector4f(vel, velE));
             this->_duration = minDuration;
             this->_motionType = MotionLinear;
             this->_accel.begin(minDuration, maxVelXyz);
         }
 
-        void homeEndstops(EventClockT::time_point baseTime, float maxVelXyz) {
-            //Called by State to begin a motion that homes to the endstops (and stays there)
-            //Note: it is illegal to call this if readyForNextMove() != true
-            if (std::tuple_size<HomeStepperTypes>::value == 0) {
-                return; //Prevents hanging on machines with 0 axes
-            }
-            AxisStepper::initAxisHomeSteppers(_homeIters, _coordMapper, maxVelXyz);
-            this->_baseTime = baseTime;
-            this->_duration = NAN;
-            this->_motionType = MotionHome;
-            this->_accel.begin(NAN, maxVelXyz);
-        }
-        void arcTo(EventClockT::time_point baseTime, const Vector4f &dest_, const Vector3f &center_, float maxVelXyz, float minVelE, float maxVelE, bool isCW) {
+        void arcTo(EventClockT::time_point baseTime, const Vector4f &dest_, const Vector3f &center_, float maxVelXyz, float minVelE, float maxVelE, bool isCW, MotionFlags flags=MOTIONFLAGS_DEFAULT) {
             //called by State to queue a movement from the current destination to a new one at (x, y, z, e), with the desired motion beginning at baseTime
             //Note: it is illegal to call this if readyForNextMove() != true
             if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes
             }
             this->_baseTime = baseTime;
+            this->_useEndstops = flags & USE_ENDSTOPS;
             Vector4f cur = _coordMapper.xyzeFromMechanical(_destMechanicalPos);
-            //get the REAL (leveled) destination
-            Vector4f dest = Vector4f(_coordMapper.applyLeveling(dest_.xyz()), dest_.e());
-            //Fix impossible coordinates
-            dest = _coordMapper.bound(dest);
+            Vector4f dest = dest_;
+            if (! (flags & NO_LEVELING)) {
+                //get the REAL destination, after leveling is applied
+                dest = Vector4f(_coordMapper.applyLeveling(dest_.xyz()), dest_.e());
+            }
+            if (! (flags & NO_BOUNDING)) {
+                //fix impossible coordinates
+                dest = _coordMapper.bound(dest);
+            }
             
             //The 3 points, (centerX_, centerY_, centerZ_), (curX, curY, curZ) and (x, y, z) form a plane where the arc will reside.
             //get the REAL (leveled) center
-            Vector3f center = _coordMapper.applyLeveling(center_);
+            Vector3f center = (flags & NO_LEVELING) ? center_ : _coordMapper.applyLeveling(center_);
             Vector3f a = cur.xyz()-center;
             Vector3f b = dest.xyz()-center;
 
@@ -370,7 +378,7 @@ template <typename Interface> class MotionPlanner {
             LOGD("MotionPlanner arc orig center (%f,%f,%f), proj (%f,%f,%f) n(%f,%f,%f), mp(%f,%f,%f)\n", 
                 centerX_, centerY_, centerZ_, projcmpn.x(), projcmpn.y(), projcmpn.z(),
                 n.x(), n.y(), n.z(), mp.x(), mp.y(), mp.z());*/
-            AxisStepper::initAxisArcSteppers(_arcIters, _coordMapper, _destMechanicalPos, center, u, v, arcRad, arcVel, velE);
+            AxisStepper::initAxisArcSteppers(_arcIters, _useEndstops, _coordMapper, _destMechanicalPos, center, u, v, arcRad, arcVel, velE);
             /*if (std::tuple_size<ArcStepperTypes>::value == 0) {
                 return; //Prevents hanging on machines with 0 axes. Place this as far along as possible so one can test most algorithms on the Example machine.
             }*/

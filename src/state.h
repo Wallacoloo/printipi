@@ -63,6 +63,7 @@
 #include "filesystem.h"
 #include "outputevent.h"
 #include "common/vector4.h"
+#include "common/optionalarg.h"
 
 //g-code coordinates can either be interpreted as absolute or relative to the last coordinates received
 enum PositionMode {
@@ -78,6 +79,12 @@ enum LengthUnit {
 
 template <typename Drv> class State {
     friend struct TestClass;
+    //Derive the types for various Machine-specific subtypes:
+    //Do this by applying decltype on the functions that create these types.
+    //Note: In order to avoid any assumptions about the Machine's constructor, but still be able to access its member functions,
+    //  we use declval<Drv>() to create a dummy instance of the Machine.
+    typedef decltype(std::declval<Drv>().getCoordMap()) CoordMapT;
+    typedef decltype(std::declval<Drv>().getAccelerationProfile()) AccelerationProfileT;
     //The scheduler needs to have certain callback functions, so we expose them without exposing the entire State by defining a SchedInterface object:
     struct SchedInterface {
         private:
@@ -109,12 +116,10 @@ template <typename Drv> class State {
     class MotionInterface {
         State<Drv> &state;
         public:
-            //Derive the types for various Machine-specific subtypes:
-            //Do this by applying decltype on the functions that create these types.
-            //Note: In order to avoid any assumptions about the Machine's constructor, but still be able to access its member functions,
-            //  we use declval<Drv>() to create a dummy instance of the Machine.
-            typedef decltype(std::declval<Drv>().getCoordMap()) CoordMapT;
-            typedef decltype(std::declval<Drv>().getAccelerationProfile()) AccelerationProfileT;
+            //expose CoordMapT typedef to <MotionPlanner>
+            typedef State<Drv>::CoordMapT CoordMapT;
+            //expose AccelerationProfileT typedef to <MotionPlanner>
+            typedef State<Drv>::AccelerationProfileT AccelerationProfileT;
             MotionInterface(State<Drv> &state) : state(state) {}
             AccelerationProfileT getAccelerationProfile() const {
                 return state.driver.getAccelerationProfile();
@@ -126,14 +131,34 @@ template <typename Drv> class State {
     //Drivers need certain extra information within their onIdleCpu handlers, etc.
     class DriverCallbackInterface {
         State<Drv> &state;
-        //AxisIdType index;
         public:
-            //DriverCallbackInterface(State<Drv> &state, AxisIdType index) : state(state), index(index) {}
             DriverCallbackInterface(State<Drv> &state, AxisIdType index) : state(state) {
                 (void)index; //unused
             }
             void schedPwm(const iodrv::IoPin &pin, float duty, float maxPeriod) const {
                 state.scheduler.schedPwm(pin, duty, maxPeriod);
+            }
+    };
+    //The CoordMap needs extra information when homing
+    class CoordMapInterface {
+        State<Drv> &state;
+        public:
+            CoordMapInterface(State<Drv> &state) : state(state) {}
+            Vector4f actualCartesianPosition() const {
+                return state.motionPlanner().actualCartesianPosition();
+            }
+            //blocking moveTo (linear cartesian movement with acceleration) function
+            void moveTo(const Vector4f &position, OptionalArg<float> velXyz=OptionalArg<float>::NotPresent, const motion::MotionFlags flags=motion::MOTIONFLAGS_DEFAULT) {
+                state.queueMovement(position, velXyz, flags);
+                //retain control until the movement is complete.
+                state._doExitEventLoopAfterMoveCompletes = true;
+                state.eventLoop();
+            }
+            const std::array<int, CoordMapT::numAxis()> & axisPositions() const {
+                return state.motionPlanner().axisPositions();
+            }
+            void resetAxisPositions(const std::array<int, CoordMapT::numAxis()> &pos) {
+                state._motionPlanner.resetAxisPositions(pos);
             }
     };
     struct State__setFanRate; //forward declare a type used internally in setFanRate() function
@@ -142,10 +167,18 @@ template <typename Drv> class State {
     typedef decltype(std::declval<Drv>().getIoDrivers()) IODriverTypes;
 
     //flag set by M0. Indicates that the machine should shut down after any current moves complete.
-    bool _doExitAfterMoveCompletes;
-    PositionMode _positionMode; // = POS_ABSOLUTE;
-    PositionMode _extruderPosMode; // = POS_RELATIVE; //set via M82 and M83
-    LengthUnit unitMode; // = UNIT_MM;
+    bool _doShutdownAfterMoveCompletes;
+    //used in recursive eventLoops in order to do a synchronous movement
+    bool _doExitEventLoopAfterMoveCompletes;
+    //when we're homing, for example, we need to check endstops before each step, which means no buffering of movements.
+    bool _doBufferMoves;
+    //Are g-code coordinates to be interpreted as relative or absolute? Default: POS_ABSOLUTE
+    PositionMode _positionMode;
+    //Are g-code extruder coordinates to be interpreted as relative or absolute? Default: POS_RELATIVE. Set via M82 or M83
+    PositionMode _extruderPosMode;
+    //Are g-code coordinates to be interpreted as inches or mm? Default: UNIT_MM
+    LengthUnit unitMode;
+    //absolute (x, y, z, e) destination in millimeters. Doesn't take into account leveling. Purpose of this variable is to allow for relative movements.
     Vector4f _destMm;
     float _destMoveRatePrimitive;
     //the host can set any arbitrary point to be referenced as 0.
@@ -185,6 +218,7 @@ template <typename Drv> class State {
             _isRootComPersistent = persistence;
         }
     private:
+        void setMoveBuffering(bool doBufferMoves);
         /* Control interpretation of positions from the host as relative or absolute */
         PositionMode positionMode() const;
         void setPositionMode(PositionMode mode);
@@ -218,7 +252,7 @@ template <typename Drv> class State {
         // make an arc from the current position to (x, y, z), maintaining a constant distance from (cX, cY, cZ)
         void queueArc(const Vector4f &dest, const Vector3f &center, bool isCW=false);
         /* Calculate and schedule a movement to absolute-valued x, y, z, e coords from the last queued position */
-        void queueMovement(const Vector4f &dest);
+        void queueMovement(const Vector4f &dest, OptionalArg<float> velXyz=OptionalArg<float>::NotPresent, const motion::MotionFlags flags=motion::MOTIONFLAGS_DEFAULT);
         /* Home to the endstops. */
         void homeEndstops();
         //Check if M109 (set temperature and wait until reached) has been satisfied.
@@ -229,7 +263,8 @@ template <typename Drv> class State {
 
 
 template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom)
-    : _doExitAfterMoveCompletes(false),
+    : _doShutdownAfterMoveCompletes(false),
+    _doExitEventLoopAfterMoveCompletes(false), 
     _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
     unitMode(UNIT_MM), 
     _destMm(0, 0, 0, 0),
@@ -248,6 +283,14 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     this->gcodeFileStack.push_back(com);
 }
 
+template <typename Drv> void State<Drv>::setMoveBuffering(bool doBufferMoves) {
+    _doBufferMoves = doBufferMoves;
+    if (doBufferMoves) {
+        this->scheduler.setDefaultMaxSleep();
+    } else {
+        this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
+    }
+}
 
 template <typename Drv> PositionMode State<Drv>::positionMode() const {
     return this->_positionMode;
@@ -347,17 +390,19 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
         OutputEvent evt; //check to see if motionPlanner has another event ready
-        if (!_motionPlanner.isHoming() || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing, we don't want to queue the next step until the current one has actually completed.
+        if (_doBufferMoves || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing (doBufferMoves()==false), we don't want to queue the next step until the current one has actually completed.
             if (!(evt = _motionPlanner.nextOutputEvent()).isNull()) {
                 this->scheduler.queue(evt);
                 _lastMotionPlannedTime = evt.time();
                 motionNeedsCpu = scheduler.isRoomInBuffer();
             } else { //undo buffer-length changes set in homing
                 LOGV("State::onIdleCpu() OutputEvent is null. Signals end of move\n");
-                this->scheduler.setDefaultMaxSleep();
+                //this->scheduler.setDefaultMaxSleep();
                 //check if we have received a command to exit after the current move is complete
                 //if that command has been received, and the current move has been completed, then exit the event loop.
-                if (_doExitAfterMoveCompletes && !motionNeedsCpu) {
+                if ((_doShutdownAfterMoveCompletes || _doExitEventLoopAfterMoveCompletes) && !motionNeedsCpu) {
+                    //reset the event loop exit flag (but not the shutdown flag!)
+                    _doExitEventLoopAfterMoveCompletes = false;
                     scheduler.exitEventLoop();
                 }
             }
@@ -456,8 +501,9 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return;
         }
-        this->homeEndstops();
+        //reply before homing, because homing may hang.
         reply(gparse::Response::Ok);
+        this->homeEndstops();
     } else if (cmd.isG90()) { //set g-code coordinates to absolute
         setPositionMode(POS_ABSOLUTE);
         setExtruderPosMode(POS_ABSOLUTE);
@@ -483,7 +529,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         reply(gparse::Response::Ok);
     } else if (cmd.isM0()) { //Stop; empty move buffer & exit cleanly
         LOG("recieved M0 command: finishing moves, then exiting\n");
-        _doExitAfterMoveCompletes = true;
+        _doShutdownAfterMoveCompletes = true;
         reply(gparse::Response::Ok);
     } else if (cmd.isM17()) { //enable all stepper motors
         iodrv::IODriver::lockAllAxis(this->ioDrivers);
@@ -515,7 +561,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         //  else, pop it and return Response::Ok.
         if (gcodeFileStack.empty()) { //return from the main I/O routine = kill program
             LOGW("M99 received, but not in a macro/subprogam; exiting\n");
-            _doExitAfterMoveCompletes = true;
+            _doShutdownAfterMoveCompletes = true;
             reply(gparse::Response::Ok);
         } else {
             reply(gparse::Response::Ok);
@@ -600,23 +646,29 @@ template <typename Drv> void State<Drv>::queueArc(const Vector4f &dest, const Ve
     _motionPlanner.arcTo(startTime, dest, center, velXyz, minExtRate, maxExtRate, isCW);
 }
         
-template <typename Drv> void State<Drv>::queueMovement(const Vector4f &dest) {
+template <typename Drv> void State<Drv>::queueMovement(const Vector4f &dest, OptionalArg<float> velXyz, const motion::MotionFlags flags) {
     //track the desired position to minimize drift over time caused by relative movements when we can't precisely reach the given coordinates:
     _destMm = dest;
-    //now determine the velocity of the move. We just calculate limits & relay the info to the motionPlanner
-    float velXyz = destMoveRatePrimitive();
+    //now determine the velocity limits & relay the info to the motionPlanner
     float minExtRate = -this->driver.maxRetractRate();
     float maxExtRate = this->driver.maxExtrudeRate();
     //start the next move at the time that the previous move is scheduled to complete, unless that time is in the past
     auto startTime = std::max(_lastMotionPlannedTime, EventClockT::now());
-    _motionPlanner.moveTo(startTime, dest, velXyz, minExtRate, maxExtRate);
+    _motionPlanner.moveTo(startTime, dest, velXyz.get(destMoveRatePrimitive()), minExtRate, maxExtRate, flags);
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
     //homing is done with real-time scheduling (can't plan far ahead), so instruct the Scheduler to avoid long sleeps
-    this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
-    _motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
+    //this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
+    //_motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
+    bool restoreMoveBuffering = _doBufferMoves;
+    setMoveBuffering(false);
+    //this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
+    CoordMapInterface interface(*this);
+    _motionPlanner.coordMap().executeHomeRoutine(interface);
     this->_isHomed = true;
+    setMoveBuffering(restoreMoveBuffering);
+    //this->scheduler.setDefaultMaxSleep();
 }
 
 template <typename Drv> bool State<Drv>::isHotendReady() {

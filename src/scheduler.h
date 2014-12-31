@@ -116,13 +116,13 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
     int numShortIntervals = 0; //need to track the number of short cpu intervals, because if we just execute short intervals constantly for, say, 1 second, then certain services that only run at long intervals won't occur. So make every, say, 10000th short interval transform into a wide interval.
     while (!_doExit) {
         if (interface.onIdleCpu(intervalT)) {
-            //intervalT = OnIdleCpuIntervalShort; //more cpu is needed; no delay
             intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
-        } else {
+        } else if (!_doExit) { //must recheck _doExit flag, since it could have been modified in the call to onIdleCpu
             intervalT = OnIdleCpuIntervalWide; //no cpu is needed; wide delay
             sleepUntilEvent(nullptr);
         }
     }
+    _doExit = false;
 }
 
 template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent *evt) {

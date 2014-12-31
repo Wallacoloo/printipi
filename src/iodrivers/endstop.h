@@ -52,7 +52,8 @@ class Endstop : public IODriver {
             return pin.isNull();
         }
         inline bool isTriggered() const {
-            bool t = pin.digitalRead() == IoHigh;
+            //if the endstop is NULL, then always return triggered.
+            bool t = isNull() ? true : pin.digitalRead();
             LOGV("LeverEndstop is %i\n", t);
             return t;
         }

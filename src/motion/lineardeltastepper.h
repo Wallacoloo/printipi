@@ -166,6 +166,7 @@ enum DeltaAxis {
 
 template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepperWithDriver<StepperDriverT> {
     private:
+        const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
         float _r, _L, _MM_STEPS; //calibration settings which will be obtained from the CoordMap
         float M0; //initial coordinate of THIS axis.
         int sTotal; //current step offset from M0
@@ -179,11 +180,12 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcSteppe
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
     public:
-        inline LinearDeltaArcStepper() : _r(0), _L(0), _MM_STEPS(0) {}
+        inline LinearDeltaArcStepper() : endstop(nullptr), _r(0), _L(0), _MM_STEPS(0) {}
         template <typename CoordMapT, std::size_t sz> LinearDeltaArcStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, 
         const Vector3f &center, const Vector3f &u, const Vector3f &v,  
         float arcRad, float arcVel, float extVel)
         : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()),
+          endstop(&map.getEndstop(AxisIdx)),
           _r(map.r()),
           _L(map.L()),
           _MM_STEPS(map.MM_STEPS(AxisIdx)),
@@ -258,44 +260,48 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcSteppe
             else if (t2 < this->time) { return t1; }
             else { return std::min(t1, t2); }
         }
-        inline void _nextStep() {
+        inline void _nextStep(bool useEndstops) {
             //called to set this->time and this->direction; the time (in seconds) and the direction at which the next step should occur for this axis
             //General formula is outlined in comments at the top of this file.
             //First, we test the time at which a forward step (sTotal + 1) should occur given constant angular velocity.
             //Then we test that time for a backward step (sTotal - 1).
             //We choose the nearest resulting time as our next step.
             //This is necessary because axis velocity can actually reverse direction during a circular cartesian movement.
-            float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
-            float posTime = testDir((this->sTotal+1)*MM_STEPS());
-            if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
-                if (posTime > this->time) {
-                    LOGV("LinearDeltaArcStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
-                    this->time = posTime;
-                    this->direction = StepForward;
-                    ++this->sTotal;
-                } else {
-                    this->time = NAN;
-                }
-            } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
-                if (negTime > this->time) {
-                    LOGV("LinearDeltaArcStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
-                    this->time = negTime;
-                    this->direction = StepBackward;
-                    --this->sTotal;
-                } else {
-                    this->time = NAN;
-                }
-            } else { //neither time is invalid
-                if (negTime < posTime) {
-                    LOGV("LinearDeltaArcStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
-                    this->time = negTime;
-                    this->direction = StepBackward;
-                    --this->sTotal;
-                } else {
-                    LOGV("LinearDeltaArcStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
-                    this->time = posTime;
-                    this->direction = StepForward;
-                    ++this->sTotal;
+            if (useEndstops && endstop->isTriggered()) {
+                this->time = NAN; //at endstop; no more steps.
+            } else {
+                float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
+                float posTime = testDir((this->sTotal+1)*MM_STEPS());
+                if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
+                    if (posTime > this->time) {
+                        LOGV("LinearDeltaArcStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
+                        this->time = posTime;
+                        this->direction = StepForward;
+                        ++this->sTotal;
+                    } else {
+                        this->time = NAN;
+                    }
+                } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
+                    if (negTime > this->time) {
+                        LOGV("LinearDeltaArcStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
+                        this->time = negTime;
+                        this->direction = StepBackward;
+                        --this->sTotal;
+                    } else {
+                        this->time = NAN;
+                    }
+                } else { //neither time is invalid
+                    if (negTime < posTime) {
+                        LOGV("LinearDeltaArcStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
+                        this->time = negTime;
+                        this->direction = StepBackward;
+                        --this->sTotal;
+                    } else {
+                        LOGV("LinearDeltaArcStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
+                        this->time = posTime;
+                        this->direction = StepForward;
+                        ++this->sTotal;
+                    }
                 }
             }
         }
@@ -303,6 +309,7 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcSteppe
 
 template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
     private:
+        const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
         float _r, _L, _MM_STEPS; //settings which will be obtained from the CoordMap
         float M0; //initial coordinate of THIS axis.
         int sTotal; //current step offset from M0
@@ -315,12 +322,12 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
     public:
-        typedef LinearHomeStepper<StepperDriverT, AxisIdx> HomeStepperT;
         typedef LinearDeltaArcStepper<StepperDriverT, AxisIdx> ArcStepperT;
-        inline LinearDeltaStepper() : _r(0), _L(0), _MM_STEPS(0) {}
+        inline LinearDeltaStepper() : endstop(nullptr), _r(0), _L(0), _MM_STEPS(0) {}
         template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, 
         const Vector4f &vel)
         : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()),
+             endstop(&map.getEndstop(AxisIdx)),
              _r(map.r()), _L(map.L()), _MM_STEPS(map.MM_STEPS(AxisIdx)),
              M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
              sTotal(0),
@@ -389,44 +396,48 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
                 return t1 > this->time ? t1 : (t2 > this->time ? t2 : NAN); //ensure no value < time is returned.
             }
         }
-        inline void _nextStep() {
+        inline void _nextStep(bool useEndstops) {
             //called to set this->time and this->direction; the time (in seconds) and the direction at which the next step should occur for this axis
             //General formula is outlined in comments at the top of this file.
             //First, we test the time at which a forward step (sTotal + 1) should occur given constant cartesian velocity.
             //Then we test that time for a backward step (sTotal - 1).
             //We choose the nearest resulting time as our next step.
             //This is necessary because axis velocity can actually reverse direction during a linear cartesian movement.
-            float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
-            float posTime = testDir((this->sTotal+1)*MM_STEPS());
-            if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
-                if (posTime > this->time) {
-                    //LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
-                    this->time = posTime;
-                    this->direction = StepForward;
-                    ++this->sTotal;
-                } else {
-                    this->time = NAN;
-                }
-            } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
-                if (negTime > this->time) {
-                    //LOGV("LinearDeltaStepper<%u>::chose %f (neg)\n", AxisIdx, negTime);
-                    this->time = negTime;
-                    this->direction = StepBackward;
-                    --this->sTotal;
-                } else {
-                    this->time = NAN;
-                }
-            } else { //neither time is invalid
-                if (negTime < posTime) {
-                    //LOGV("LinearDeltaStepper<%u>::chose %f (neg)\n", AxisIdx, negTime);
-                    this->time = negTime;
-                    this->direction = StepBackward;
-                    --this->sTotal;
-                } else {
-                    //LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
-                    this->time = posTime;
-                    this->direction = StepForward;
-                    ++this->sTotal;
+            if (useEndstops && endstop->isTriggered()) {
+                this->time = NAN; //at endstop; no more steps.
+            } else {
+                float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
+                float posTime = testDir((this->sTotal+1)*MM_STEPS());
+                if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
+                    if (posTime > this->time) {
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
+                        this->time = posTime;
+                        this->direction = StepForward;
+                        ++this->sTotal;
+                    } else {
+                        this->time = NAN;
+                    }
+                } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
+                    if (negTime > this->time) {
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg)\n", AxisIdx, negTime);
+                        this->time = negTime;
+                        this->direction = StepBackward;
+                        --this->sTotal;
+                    } else {
+                        this->time = NAN;
+                    }
+                } else { //neither time is invalid
+                    if (negTime < posTime) {
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg)\n", AxisIdx, negTime);
+                        this->time = negTime;
+                        this->direction = StepBackward;
+                        --this->sTotal;
+                    } else {
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos)\n", AxisIdx, posTime);
+                        this->time = posTime;
+                        this->direction = StepForward;
+                        ++this->sTotal;
+                    }
                 }
             }
         }

@@ -62,7 +62,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                        LinearDeltaStepper<Stepper2, DELTA_AXIS_B>, 
                        LinearDeltaStepper<Stepper3, DELTA_AXIS_C>, 
                        LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef typename AxisStepper::GetHomeStepperTypes<_AxisStepperTypes>::HomeStepperTypes _HomeStepperTypes;
     typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
 
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
@@ -97,9 +96,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
         }
-        inline _HomeStepperTypes getHomeSteppers() const {
-            return _HomeStepperTypes();
-        }
         inline _ArcStepperTypes getArcSteppers() const {
             return _ArcStepperTypes();
         }
@@ -116,6 +112,17 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         template <std::size_t idx> auto getStepperDriver() const
          -> const typename std::tuple_element<idx, StepperDriverTypes>::type& {
             return std::get<idx>(stepperDrivers);
+        }
+        template <typename Interface> void executeHomeRoutine(Interface &interface) {
+            //must disable buffering so that endstops can be reliably checked
+            //interface.setUnbufferedMove(true);
+            Vector4f curPos = interface.actualCartesianPosition();
+            //try to move to <here> + <height> & will stop along the way if we hit an endstop.
+            Vector4f destPos = curPos + Vector4f(0, 0, h(), 0);
+            interface.moveTo(destPos, 10, motion::USE_ENDSTOPS | motion::NO_LEVELING | motion::NO_BOUNDING); //TODO: remove magic-number 10 (velocity of home movement)
+            //reset the indexed axis positions:
+            interface.resetAxisPositions(getHomePosition(interface.axisPositions()));
+            //interface.setUnbufferedMove(false);
         }
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             return std::array<int, 4>({{(int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), cur[3]}});

@@ -48,38 +48,16 @@ enum CartesianAxis {
     CARTESIAN_AXIS_E=3
 };
 
-template <typename StepperDriverT, std::size_t AxisIdx> class LinearHomeStepper : public AxisStepperWithDriver<StepperDriverT> {
+
+template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper : public AxisStepperWithDriver<StepperDriverT> {
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
     public:
-        inline LinearHomeStepper() : endstop(nullptr) {}
-        template <typename CoordMapT> LinearHomeStepper(int idx, const CoordMapT &map, float vHome)
-          : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()), endstop(&map.getEndstop(AxisIdx)) {
-            (void)map; //unused
-            this->time = 0;
-            this->direction = StepForward;
-            this->timePerStep = 1./ (vHome*map.STEPS_MM(AxisIdx));
-        }
-        
-        inline void _nextStep() {
-            if (endstop->isNull() || endstop->isTriggered()) {
-                this->time = NAN; //at endstop; no more steps.
-            } else {
-                this->time += timePerStep;
-            }
-        }
-};
-
-
-template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper : public AxisStepperWithDriver<StepperDriverT> {
-    private:
-        float timePerStep;
-    public:
-        typedef LinearHomeStepper<StepperDriverT, CoordType> HomeStepperT;
         typedef LinearStepper<StepperDriverT, CoordType> ArcStepperT;
     protected:
         inline float GET_COORD(float x, float y, float z, float e) const {
-            //static_assert(CoordType==CARTESIAN_AXIS_X || CoordType==CARTESIAN_AXIS_Y || CoordType==CARTESIAN_AXIS_Z || CoordType==CARTESIAN_AXIS_E, "CoordType can only be x, y, z, or e");
+            //TODO: replace with `return Vector4f(x, y, z, e).array()[CoordType]`;
+            assert(CoordType==CARTESIAN_AXIS_X || CoordType==CARTESIAN_AXIS_Y || CoordType==CARTESIAN_AXIS_Z || CoordType==CARTESIAN_AXIS_E);
             return CoordType==CARTESIAN_AXIS_X ? x : \
                   (CoordType==CARTESIAN_AXIS_Y ? y : \
                   (CoordType==CARTESIAN_AXIS_Z ? z : 
@@ -95,11 +73,12 @@ template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper 
         }
     public:
         //default constructor
-        inline LinearStepper() {}
+        inline LinearStepper() : endstop(nullptr) {}
         //Linear movement constructor
         template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, 
           const Vector4f &vel)
         : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<CoordType>()),
+          endstop(&map.getEndstop(CoordType)),
           timePerStep(std::fabs( TIME_PER_STEP(map, vel) )) {
                 (void)map; (void)curPos; //unused
                 this->time = 0;
@@ -110,6 +89,7 @@ template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper 
           const Vector3f &center, const Vector3f &u, const Vector3f &v,  
           float arcRad, float arcVel, float extVel)
         : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<CoordType>()), 
+          endstop(&map.getEndstop(CoordType)),
           timePerStep(std::fabs(1./ (extVel * map.STEPS_MM(CoordType)))) {
             (void)map; (void)idx; (void)curPos; (void)center; (void)u; (void)v; (void)arcRad; (void)arcVel; //unused
             assert(CoordType == CARTESIAN_AXIS_E); //can only use a LinearStepper as an Arc implementation for the extruder axis, since that moves at const velocity
@@ -117,8 +97,12 @@ template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper 
             this->direction = stepDirFromSign(extVel);
         }
     //protected:
-        inline void _nextStep() {
-            this->time += timePerStep;
+        inline void _nextStep(bool useEndstops) {
+            if (useEndstops && endstop->isTriggered()) {
+                this->time = NAN; //at endstop; no more steps.
+            } else {
+                this->time += timePerStep;
+            }
         }
 };
 
