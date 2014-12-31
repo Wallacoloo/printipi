@@ -10,15 +10,6 @@
  */
 
 
-/*
- * In general, it is difficult to apply static operations to matrixes (add, mul, etc at compile-time).
- * There is this library for templated floats: http://www.edwardrosten.com/code/fp_template.html
- *   But it claims a mere 8 FLOPS during compilation (opteron 2.6)
- * So it's probably best to do everything at runtime. A smart compiler may still be able to optimize it.
- * Plus, with auto bed-leveling, that's all done at runtime anyway.
- */
-
-//#include <tuple>
 
 class Matrix3x3 {
     float a00, a01, a02;
@@ -32,12 +23,6 @@ class Matrix3x3 {
             a00(a00), a01(a01), a02(a02),
             a10(a10), a11(a11), a12(a12),
             a20(a20), a21(a21), a22(a22) {}
-        /*inline std::tuple<float, float, float> transform(const std::tuple<float, float, float> &xyz) const {
-            return std::tuple<float, float, float>(
-                  a00*std::get<0>(xyz) + a01*std::get<1>(xyz) + a02*std::get<2>(xyz),
-                  a10*std::get<0>(xyz) + a11*std::get<1>(xyz) + a12*std::get<2>(xyz),
-                  a20*std::get<0>(xyz) + a21*std::get<1>(xyz) + a22*std::get<2>(xyz));
-        }*/
         template <typename VecT> VecT transform(const VecT &xyz) const {
             return VecT(
                 a00*xyz.x() + a01*xyz.y() + a02*xyz.z(),

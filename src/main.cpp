@@ -57,7 +57,7 @@
 //or, call make MACHINE=<machine>, eg MACHINE=rpi::KosselPi (case-sensitive) and the path will be calculated from that (src/machines/rpi/kossel.h)
 #include MACHINE_PATH
 
-void printUsage(char* cmd) {
+static void printUsage(char* cmd) {
     //#ifndef NO_USAGE_INFO
     LOGE("usage: %s [input file=/dev/stdin] [output file=/dev/null] [--help] [--quiet] [--verbose]\n", cmd);
     LOGE("examples:\n");
