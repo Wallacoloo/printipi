@@ -167,7 +167,6 @@
 //#define SOURCE_BUFFER_FRAMES 16384
 //#define SOURCE_BUFFER_FRAMES 32768
 #define SOURCE_BUFFER_FRAMES 65536
-#define SCHED_PRIORITY 30 //Linux scheduler priority. Higher = more realtime
 
 #define NOMINAL_CLOCK_FREQ 500000000 //PWM Clock runs at 500 MHz, unless overclocking
 #define BITS_PER_CLOCK 10 //# of bits to be used in each PWM cycle. Effectively acts as a clock divisor for us, since the PWM clock is in bits/second

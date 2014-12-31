@@ -35,6 +35,7 @@
 
 
 #ifndef SCHED_PRIORITY
+    //Linux scheduler priority. Higher = more realtime
     #define SCHED_PRIORITY 30
 #endif
 #ifndef SCHED_NUM_EXIT_HANDLER_LEVELS
