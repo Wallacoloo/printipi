@@ -13,7 +13,7 @@
 	#define INTERNAL_CATCH_UNIQUE_NAME_LINE( name, line ) INTERNAL_CATCH_UNIQUE_NAME_LINE2( name, line )
 	#define INTERNAL_CATCH_UNIQUE_NAME( name ) INTERNAL_CATCH_UNIQUE_NAME_LINE( name, __LINE__ )
 	//reimplement public catch functions as nop's:
-	#define TEST_CASE(...) static inline void INTERNAL_CATCH_UNIQUE_NAME(__DEAD_TEST_CODE)()
+	#define TEST_CASE(...) static inline void INTERNAL_CATCH_UNIQUE_NAME(_DEAD_TEST_CODE)()
 	#define SCENARIO(...) TEST_CASE()
 	#define SECTION(...) if (false)
 	#define GIVEN(...) SECTION()
