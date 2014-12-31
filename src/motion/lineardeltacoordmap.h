@@ -53,6 +53,7 @@
 #include "common/matrix.h"
 #include "lineardeltastepper.h"
 #include "iodrivers/endstop.h"
+#include "motion/motionplanner.h" //for motion::USE_ENDSTOPS
 
 namespace motion {
 
