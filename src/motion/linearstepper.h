@@ -55,21 +55,14 @@ template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper 
     public:
         typedef LinearStepper<StepperDriverT, CoordType> ArcStepperT;
     protected:
-        inline float GET_COORD(float x, float y, float z, float e) const {
-            //TODO: replace with `return Vector4f(x, y, z, e).array()[CoordType]`;
-            assert(CoordType==CARTESIAN_AXIS_X || CoordType==CARTESIAN_AXIS_Y || CoordType==CARTESIAN_AXIS_Z || CoordType==CARTESIAN_AXIS_E);
-            return CoordType==CARTESIAN_AXIS_X ? x : \
-                  (CoordType==CARTESIAN_AXIS_Y ? y : \
-                  (CoordType==CARTESIAN_AXIS_Z ? z : 
-                  (CoordType==CARTESIAN_AXIS_E ? e : 0) ) );
-        }
         template <typename CoordMapT> float TIME_PER_STEP(const CoordMapT &map, const Vector4f &vel) const {
             //return units of time. v is mm/sec, STEPS_MM is steps/mm.
             //therefore v*STEPS_MM = steps/sec.
             //1/(v*STEPS_MM) is sec/steps.
             //multiplied by 1 step and units are sec. Therefore t = 1/(v*STEPS_MM);
             //NOTE: this may return a NEGATIVE time, indicating that the stepping direction is backward.
-            return 1./ (GET_COORD(vel.x(), vel.y(), vel.z(), vel.e()) * map.STEPS_MM(CoordType));
+            assert(CoordType==CARTESIAN_AXIS_X || CoordType==CARTESIAN_AXIS_Y || CoordType==CARTESIAN_AXIS_Z || CoordType==CARTESIAN_AXIS_E);
+            return 1./ (vel.array()[CoordType] * map.STEPS_MM(CoordType));
         }
     public:
         //default constructor
