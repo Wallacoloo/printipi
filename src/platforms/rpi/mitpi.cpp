@@ -39,15 +39,15 @@
 
 namespace mitpi {
 
-volatile uint32_t *gpioBaseMem = nullptr;
-volatile uint32_t *timerBaseMem = nullptr;
+static volatile uint32_t *gpioBaseMem = nullptr;
+static volatile uint32_t *timerBaseMem = nullptr;
 
-void assertValidPin(int pin) {
+static void assertValidPin(int pin) {
     (void)pin; //unused when assertions are disabled.
     assert(pin >= 0 && pin < 64);
 }
 
-void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
+static void writeBitmasked(volatile uint32_t *dest, uint32_t mask, uint32_t value) {
     //set bits designated by (mask) at the address (dest) to (value), without affecting the other bits
     //eg if x = 0b11001100
     //  writeBitmasked(&x, 0b00000110, 0b11110011),
