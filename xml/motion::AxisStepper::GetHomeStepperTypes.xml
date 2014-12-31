@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<structtemplate id="motion::AxisStepper::GetHomeStepperTypes" name="GetHomeStepperTypes" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>homing steppers. GetHomeStepperTypes&amp;lt;std::tuple&lt;StepperT, ...&amp;gt; &gt;::HomeStepperTypes is equivalent to std::tuple&amp;lt;StepperT::HomeStepperT, ...&amp;gt;</brief>
-  <templatetypeparameter id="motion::AxisStepper::GetHomeStepperTypes::Types" name="Types" />
-  <typedef id="motion::AxisStepper::GetHomeStepperTypes::HomeStepperTypes" name="HomeStepperTypes">
-    <type name="Types" />
-  </typedef>
-</structtemplate>

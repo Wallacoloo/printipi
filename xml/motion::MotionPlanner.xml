@@ -6,6 +6,16 @@
       <type name="const Interface" qualifier=" const &amp;" />
     </argument>
   </constructor>
+  <method id="motion::MotionPlanner::coordMap" name="coordMap">
+    <return>
+      <type name="MotionPlanner&lt;Interface&gt;::CoordMapT" qualifier=" const &amp;" ref="motion::MotionPlanner#motion::MotionPlanner::CoordMapT" />
+    </return>
+  </method>
+  <method id="motion::MotionPlanner::coordMap" name="coordMap">
+    <return>
+      <type name="MotionPlanner&lt;Interface&gt;::CoordMapT" qualifier=" &amp;" ref="motion::MotionPlanner#motion::MotionPlanner::CoordMapT" />
+    </return>
+  </method>
   <method id="motion::MotionPlanner::readyForNextMove" name="readyForNextMove">
     <brief>readForNextMove returns true if a call to moveTo() or homeEndstops() wouldn't hang, false if it would hang (or cause other problems)</brief>
     <return>
@@ -25,10 +35,18 @@ that's been retrieved from <ref ref="motion::MotionPlanner#motion::MotionPlanner
       <type name="Vector4f" ref="index#Vector4f" />
     </return>
   </method>
-  <method id="motion::MotionPlanner::isHoming" name="isHoming">
+  <method id="motion::MotionPlanner::axisPositions" name="axisPositions">
     <return>
-      <type builtin="yes" name="bool" />
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </return>
+  </method>
+  <method id="motion::MotionPlanner::resetAxisPositions" name="resetAxisPositions">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::MotionPlanner::resetAxisPositions::pos" name="pos">
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+    </argument>
   </method>
   <method id="motion::MotionPlanner::nextOutputEvent" name="nextOutputEvent">
     <return>
@@ -54,16 +72,8 @@ that's been retrieved from <ref ref="motion::MotionPlanner#motion::MotionPlanner
     <argument id="motion::MotionPlanner::moveTo::maxVelE" name="maxVelE">
       <type builtin="yes" name="float" />
     </argument>
-  </method>
-  <method id="motion::MotionPlanner::homeEndstops" name="homeEndstops">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="motion::MotionPlanner::homeEndstops::baseTime" name="baseTime">
-      <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
-    </argument>
-    <argument id="motion::MotionPlanner::homeEndstops::maxVelXyz" name="maxVelXyz">
-      <type builtin="yes" name="float" />
+    <argument id="motion::MotionPlanner::moveTo::flags" name="flags">
+      <type name="MotionFlags" ref="motion#motion::MotionFlags" />
     </argument>
   </method>
   <method id="motion::MotionPlanner::arcTo" name="arcTo">
@@ -90,6 +100,9 @@ that's been retrieved from <ref ref="motion::MotionPlanner#motion::MotionPlanner
     </argument>
     <argument id="motion::MotionPlanner::arcTo::isCW" name="isCW">
       <type builtin="yes" name="bool" />
+    </argument>
+    <argument id="motion::MotionPlanner::arcTo::flags" name="flags">
+      <type name="MotionFlags" ref="motion#motion::MotionFlags" />
     </argument>
   </method>
 </classtemplate>

@@ -41,6 +41,9 @@
     <argument id="motion::LinearCoordMap::LinearCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::STEPS_MM_E" name="STEPS_MM_E">
       <type builtin="yes" name="float" />
     </argument>
+    <argument id="motion::LinearCoordMap::LinearCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::homeVelocity" name="homeVelocity">
+      <type builtin="yes" name="float" />
+    </argument>
     <argument id="motion::LinearCoordMap::LinearCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper1" name="stepper1">
       <type name="Stepper1 &amp;&amp;" />
     </argument>
@@ -72,12 +75,6 @@
     </return>
     <override name="CoordMap::getAxisSteppers" ref="motion::CoordMap#motion::CoordMap::getAxisSteppers" />
   </method>
-  <method id="motion::LinearCoordMap::getHomeSteppers" name="getHomeSteppers" override="yes">
-    <return>
-      <type name="LinearCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_HomeStepperTypes" ref="motion::LinearCoordMap#motion::LinearCoordMap::_HomeStepperTypes" />
-    </return>
-    <override name="CoordMap::getHomeSteppers" ref="motion::CoordMap#motion::CoordMap::getHomeSteppers" />
-  </method>
   <method id="motion::LinearCoordMap::getArcSteppers" name="getArcSteppers" override="yes">
     <return>
       <type name="LinearCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_ArcStepperTypes" ref="motion::LinearCoordMap#motion::LinearCoordMap::_ArcStepperTypes" />
@@ -107,6 +104,16 @@
     </return>
     <override name="CoordMap::numAxis" ref="motion::CoordMap#motion::CoordMap::numAxis" />
   </method>
+  <methodtemplate id="motion::LinearCoordMap::executeHomeRoutine" name="executeHomeRoutine" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::LinearCoordMap::executeHomeRoutine::interface" name="interface">
+      <type name="Interface" qualifier=" &amp;" />
+    </argument>
+    <override name="CoordMap::executeHomeRoutine" ref="motion::CoordMap#motion::CoordMap::executeHomeRoutine" />
+    <templatetypeparameter id="motion::LinearCoordMap::executeHomeRoutine::Interface" name="Interface" />
+  </methodtemplate>
   <method id="motion::LinearCoordMap::getHomePosition" name="getHomePosition" override="yes">
     <return>
       <type name="std::array&lt;int, 4&gt;" />

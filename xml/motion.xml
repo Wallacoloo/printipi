@@ -20,9 +20,6 @@
   <struct name="_AxisStepper__initAxisArcSteppers" ref="motion::_AxisStepper__initAxisArcSteppers#motion::_AxisStepper__initAxisArcSteppers">
     <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
   </struct>
-  <struct name="_AxisStepper__initAxisHomeSteppers" ref="motion::_AxisStepper__initAxisHomeSteppers#motion::_AxisStepper__initAxisHomeSteppers">
-    <brief>Helper class for AxisStepper::initAxisHomeSteppers</brief>
-  </struct>
   <struct name="_AxisStepper__initAxisSteppers" ref="motion::_AxisStepper__initAxisSteppers#motion::_AxisStepper__initAxisSteppers">
     <brief>Helper class for AxisStepper::initAxisSteppers</brief>
   </struct>
@@ -73,12 +70,6 @@
       <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
     </templatenontypeparameter>
   </classtemplate>
-  <classtemplate name="LinearHomeStepper" ref="motion::LinearHomeStepper#motion::LinearHomeStepper">
-    <templatetypeparameter id="motion::LinearHomeStepper::StepperDriverT" name="StepperDriverT" />
-    <templatenontypeparameter default="std" id="motion::LinearHomeStepper::AxisIdx" name="AxisIdx">
-      <type name="std::size_t" />
-    </templatenontypeparameter>
-  </classtemplate>
   <classtemplate name="LinearStepper" ref="motion::LinearStepper#motion::LinearStepper">
     <templatetypeparameter id="motion::LinearStepper::StepperDriverT" name="StepperDriverT" />
     <templatenontypeparameter id="motion::LinearStepper::CoordType" name="CoordType">
@@ -107,12 +98,30 @@
     <enumvalue id="motion::DELTA_AXIS_C" name="DELTA_AXIS_C" value="2" />
     <enumvalue id="motion::DELTA_AXIS_E" name="DELTA_AXIS_E" value="3" />
   </enum>
+  <enum anonymous="yes" id="motion::MotionFlags" name="MotionFlags">
+    <brief>bitwise-or'd flags providing more context for movements</brief>
+    <enumvalue id="motion::MOTIONFLAGS_DEFAULT" name="MOTIONFLAGS_DEFAULT" value="0" />
+    <enumvalue id="motion::NO_LEVELING" name="NO_LEVELING" value="1" />
+    <enumvalue id="motion::NO_BOUNDING" name="NO_BOUNDING" value="2" />
+    <enumvalue id="motion::USE_ENDSTOPS" name="USE_ENDSTOPS" value="4" />
+    <function id="motion::operator|" name="operator|">
+      <brief>bitwise OR operator for MotionFlags, to avoid NO_LEVELING | NO_BOUNDING resulting in an integer type instead of a MotionFlags type.</brief>
+      <return>
+        <type name="MotionFlags" ref="motion#motion::MotionFlags" />
+      </return>
+      <argument id="motion::operator|::a" name="a">
+        <type name="MotionFlags" ref="motion#motion::MotionFlags" />
+      </argument>
+      <argument id="motion::operator|::b" name="b">
+        <type name="MotionFlags" ref="motion#motion::MotionFlags" />
+      </argument>
+    </function>
+  </enum>
   <enum anonymous="yes" id="motion::MotionType" name="MotionType">
     <brief>There are 3 distinct types of motion that can occur at any given time:</brief>
     <enumvalue id="motion::MotionNone" name="MotionNone" value="0" />
     <enumvalue id="motion::MotionLinear" name="MotionLinear" value="1" />
     <enumvalue id="motion::MotionArc" name="MotionArc" value="2" />
-    <enumvalue id="motion::MotionHome" name="MotionHome" value="3" />
   </enum>
   <enum anonymous="yes" id="motion::StepDirection" name="StepDirection">
     <enumvalue id="motion::StepBackward" name="StepBackward" value="0" />

@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="OptionalArg" name="OptionalArg" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>allow for a function default value that is not a constant.</brief>
+  <doc>Example:
+void f(OptionalArg&amp;lt;float&amp;gt; velocity=OptionalArg&amp;lt;float&amp;gt;::NotPresent) {
+doSomething(velocity.get(this-&gt;currentVelocity()));
+}
+</doc>
+  <templatetypeparameter id="OptionalArg::T" name="T" />
+  <variable id="OptionalArg::NotPresent" name="NotPresent">
+    <type name="OptionalArg&lt;T&gt;" qualifier=" const" ref="OptionalArg#OptionalArg" />
+  </variable>
+  <constructor id="OptionalArg::OptionalArg&lt;T&gt;" name="OptionalArg&lt;T&gt;" />
+  <constructor id="OptionalArg::OptionalArg&lt;T&gt;" name="OptionalArg&lt;T&gt;">
+    <argument id="OptionalArg::OptionalArg&lt;T&gt;::value" name="value">
+      <type name="const T" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="OptionalArg::get" name="get">
+    <brief>get the OptionalArg's value. If the argument wasn't passed, then return @fallback</brief>
+    <return>
+      <type name="T" />
+    </return>
+    <argument id="OptionalArg::get::fallback" name="fallback">
+      <type name="const T" qualifier=" const &amp;" />
+    </argument>
+  </method>
+</classtemplate>

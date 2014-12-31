@@ -67,6 +67,9 @@
     <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::STEPS_MM_EXT" name="STEPS_MM_EXT">
       <type builtin="yes" name="float" />
     </argument>
+    <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::homeVelocity" name="homeVelocity">
+      <type builtin="yes" name="float" />
+    </argument>
     <argument id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper1" name="stepper1">
       <type name="Stepper1 &amp;&amp;" />
     </argument>
@@ -97,12 +100,6 @@
       <type name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_AxisStepperTypes" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap::_AxisStepperTypes" />
     </return>
     <override name="CoordMap::getAxisSteppers" ref="motion::CoordMap#motion::CoordMap::getAxisSteppers" />
-  </method>
-  <method id="motion::LinearDeltaCoordMap::getHomeSteppers" name="getHomeSteppers" override="yes">
-    <return>
-      <type name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_HomeStepperTypes" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap::_HomeStepperTypes" />
-    </return>
-    <override name="CoordMap::getHomeSteppers" ref="motion::CoordMap#motion::CoordMap::getHomeSteppers" />
   </method>
   <method id="motion::LinearDeltaCoordMap::getArcSteppers" name="getArcSteppers" override="yes">
     <return>
@@ -143,6 +140,16 @@
     <templatenontypeparameter default="std" id="motion::LinearDeltaCoordMap::getStepperDriver::idx" name="idx">
       <type name="std::size_t" />
     </templatenontypeparameter>
+  </methodtemplate>
+  <methodtemplate id="motion::LinearDeltaCoordMap::executeHomeRoutine" name="executeHomeRoutine" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::LinearDeltaCoordMap::executeHomeRoutine::interface" name="interface">
+      <type name="Interface" qualifier=" &amp;" />
+    </argument>
+    <override name="CoordMap::executeHomeRoutine" ref="motion::CoordMap#motion::CoordMap::executeHomeRoutine" />
+    <templatetypeparameter id="motion::LinearDeltaCoordMap::executeHomeRoutine::Interface" name="Interface" />
   </methodtemplate>
   <method id="motion::LinearDeltaCoordMap::getHomePosition" name="getHomePosition" override="yes">
     <return>

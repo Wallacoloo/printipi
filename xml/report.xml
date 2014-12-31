@@ -12,7 +12,7 @@ return values.
 3. [References](#report/references): Unresolved cross references.
 </doc>
   <coverage>
-    <type documented="3" name="function" undocumented="25">
+    <type documented="4" name="function" undocumented="25">
       <undocumented id="argparse::cmdOptionExists" name="cmdOptionExists">
         <location column="1" file="argparse.h" line="39" />
         <location column="1" file="argparse.cpp" line="16" />
@@ -104,7 +104,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="29" />
       </undocumented>
     </type>
-    <type documented="6" name="typedef" undocumented="21">
+    <type documented="7" name="typedef" undocumented="17">
       <undocumented id="CelciusType" name="CelciusType">
         <location column="1" file="compileflags.h" line="63" />
       </undocumented>
@@ -123,26 +123,14 @@ return values.
       <undocumented id="SleepT" name="SleepT">
         <location column="9" file="platforms/auto/thisthreadsleep.h" line="19" />
       </undocumented>
-      <undocumented id="State::MotionInterface::AccelerationProfileT" name="AccelerationProfileT">
-        <location column="13" file="state.h" line="117" />
-      </undocumented>
       <undocumented id="motion::AxisStepper::GetArcStepperTypes::ArcStepperTypes" name="ArcStepperTypes">
-        <location column="13" file="motion/axisstepper.h" line="96" />
-      </undocumented>
-      <undocumented id="motion::AxisStepper::GetHomeStepperTypes::HomeStepperTypes" name="HomeStepperTypes">
-        <location column="13" file="motion/axisstepper.h" line="91" />
+        <location column="13" file="motion/axisstepper.h" line="90" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::ArcStepperT" name="ArcStepperT">
-        <location column="9" file="motion/lineardeltastepper.h" line="319" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaStepper::HomeStepperT" name="HomeStepperT">
-        <location column="9" file="motion/lineardeltastepper.h" line="318" />
+        <location column="9" file="motion/lineardeltastepper.h" line="325" />
       </undocumented>
       <undocumented id="motion::LinearStepper::ArcStepperT" name="ArcStepperT">
-        <location column="9" file="motion/linearstepper.h" line="79" />
-      </undocumented>
-      <undocumented id="motion::LinearStepper::HomeStepperT" name="HomeStepperT">
-        <location column="9" file="motion/linearstepper.h" line="78" />
+        <location column="9" file="motion/linearstepper.h" line="56" />
       </undocumented>
       <undocumented id="plat::generic::ChronoClock::duration" name="duration">
         <location column="17" file="platforms/generic/chronoclock.h" line="18" />
@@ -169,7 +157,7 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="51" />
       </undocumented>
     </type>
-    <type documented="10" name="methodtemplate" undocumented="40">
+    <type documented="11" name="methodtemplate" undocumented="39">
       <undocumented id="IntervalTimer::clockCmp" name="clockCmp">
         <location column="9" file="common/intervaltimer.h" line="27" />
       </undocumented>
@@ -177,10 +165,10 @@ return values.
         <location column="9" file="scheduler.h" line="59" />
       </undocumented>
       <undocumented id="State::State__onIdleCpu::operator()" name="operator()">
-        <location column="5" file="state.h" line="321" />
+        <location column="5" file="state.h" line="364" />
       </undocumented>
       <undocumented id="State::State__setFanRate::operator()" name="operator()">
-        <location column="5" file="state.h" line="635" />
+        <location column="5" file="state.h" line="687" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::sleep_for" name="sleep_for">
         <location column="9" file="boilerplate/thisthreadsleepadapter.h" line="16" />
@@ -248,52 +236,48 @@ return values.
       </undocumented>
       <undocumented id="motion::AxisStepper::getNextTime" name="getNextTime">
         <location column="9" file="motion/axisstepper.h" line="78" />
-        <location column="1" file="motion/axisstepper.h" line="139" />
+        <location column="1" file="motion/axisstepper.h" line="133" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers" name="initAxisArcSteppers">
         <location column="9" file="motion/axisstepper.h" line="80" />
-        <location column="1" file="motion/axisstepper.h" line="181" />
-      </undocumented>
-      <undocumented id="motion::AxisStepper::initAxisHomeSteppers" name="initAxisHomeSteppers">
-        <location column="9" file="motion/axisstepper.h" line="81" />
-        <location column="1" file="motion/axisstepper.h" line="167" />
+        <location column="1" file="motion/axisstepper.h" line="161" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisSteppers" name="initAxisSteppers">
         <location column="9" file="motion/axisstepper.h" line="79" />
-        <location column="1" file="motion/axisstepper.h" line="153" />
+        <location column="1" file="motion/axisstepper.h" line="147" />
+      </undocumented>
+      <undocumented id="motion::LinearCoordMap::executeHomeRoutine" name="executeHomeRoutine">
+        <location column="9" file="motion/linearcoordmap.h" line="107" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::getStepperDriver" name="getStepperDriver">
-        <location column="9" file="motion/linearcoordmap.h" line="100" />
+        <location column="9" file="motion/linearcoordmap.h" line="99" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="183" />
+        <location column="9" file="motion/lineardeltastepper.h" line="184" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::executeHomeRoutine" name="executeHomeRoutine">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="119" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::getStepperDriver" name="getStepperDriver">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="116" />
+        <location column="9" file="motion/lineardeltacoordmap.h" line="115" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="321" />
-      </undocumented>
-      <undocumented id="motion::LinearHomeStepper::LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/linearstepper.h" line="56" />
+        <location column="9" file="motion/lineardeltastepper.h" line="327" />
       </undocumented>
       <undocumented id="motion::LinearStepper::TIME_PER_STEP" name="TIME_PER_STEP">
-        <location column="9" file="motion/linearstepper.h" line="88" />
+        <location column="9" file="motion/linearstepper.h" line="58" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::UpdateOutputEvents::operator()" name="operator()">
-        <location column="13" file="motion/motionplanner.h" line="85" />
+        <location column="13" file="motion/motionplanner.h" line="96" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisArcSteppers::operator()" name="operator()">
-        <location column="5" file="motion/axisstepper.h" line="174" />
-      </undocumented>
-      <undocumented id="motion::_AxisStepper__initAxisHomeSteppers::operator()" name="operator()">
-        <location column="5" file="motion/axisstepper.h" line="160" />
+        <location column="5" file="motion/axisstepper.h" line="154" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisSteppers::operator()" name="operator()">
-        <location column="5" file="motion/axisstepper.h" line="146" />
+        <location column="5" file="motion/axisstepper.h" line="140" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__nextStep::operator()" name="operator()">
-        <location column="5" file="motion/axisstepper.h" line="192" />
+        <location column="5" file="motion/axisstepper.h" line="172" />
       </undocumented>
       <undocumented id="plat::generic::ThisThreadSleep::sleep_for" name="sleep_for">
         <location column="13" file="platforms/generic/thisthreadsleep.h" line="27" />
@@ -302,7 +286,7 @@ return values.
         <location column="13" file="platforms/generic/thisthreadsleep.h" line="18" />
       </undocumented>
     </type>
-    <type documented="13" name="struct" undocumented="7">
+    <type documented="12" name="struct" undocumented="7">
       <undocumented id="mitpi::InitMitpiType" name="InitMitpiType">
         <location column="1" file="platforms/rpi/mitpi.h" line="145" />
       </undocumented>
@@ -325,15 +309,18 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="425" />
       </undocumented>
     </type>
-    <type documented="0" name="templatetypeparameter" undocumented="143">
+    <type documented="0" name="templatetypeparameter" undocumented="137">
       <undocumented id="Drv" name="Drv">
-        <location column="11" file="state.h" line="395" />
+        <location column="11" file="state.h" line="440" />
       </undocumented>
       <undocumented id="IntervalTimer::clockCmp::DurT" name="DurT">
         <location column="19" file="common/intervaltimer.h" line="27" />
       </undocumented>
       <undocumented id="Matrix3x3::transform::VecT" name="VecT">
         <location column="19" file="common/matrix.h" line="41" />
+      </undocumented>
+      <undocumented id="OptionalArg::T" name="T">
+        <location column="11" file="common/optionalarg.h" line="10" />
       </undocumented>
       <undocumented id="Scheduler::Interface" name="Interface">
         <location column="11" file="scheduler.h" line="51" />
@@ -342,19 +329,19 @@ return values.
         <location column="19" file="scheduler.h" line="59" />
       </undocumented>
       <undocumented id="State::Drv" name="Drv">
-        <location column="11" file="state.h" line="79" />
+        <location column="11" file="state.h" line="80" />
       </undocumented>
       <undocumented id="State::State__onIdleCpu::operator()::T" name="T">
-        <location column="15" file="state.h" line="321" />
+        <location column="15" file="state.h" line="364" />
       </undocumented>
       <undocumented id="State::State__setFanRate::operator()::T" name="T">
-        <location column="15" file="state.h" line="635" />
+        <location column="15" file="state.h" line="687" />
       </undocumented>
       <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
-        <location column="19" file="state.h" line="217" />
+        <location column="19" file="state.h" line="251" />
       </undocumented>
       <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
-        <location column="35" file="state.h" line="395" />
+        <location column="35" file="state.h" line="440" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::ClockT" name="ClockT">
         <location column="11" file="boilerplate/thisthreadsleepadapter.h" line="6" />
@@ -375,10 +362,10 @@ return values.
         <location column="31" file="boilerplate/thisthreadsleepadapter.h" line="11" />
       </undocumented>
       <undocumented id="Vector3::F" name="F">
-        <location column="11" file="common/vector3.h" line="32" />
+        <location column="11" file="common/vector3.h" line="33" />
       </undocumented>
       <undocumented id="Vector3::Vector3&lt;F&gt;::T2" name="T2">
-        <location column="13" file="common/vector3.h" line="40" />
+        <location column="13" file="common/vector3.h" line="41" />
       </undocumented>
       <undocumented id="Vector4::F" name="F">
         <location column="11" file="common/vector4.h" line="7" />
@@ -537,169 +524,148 @@ return values.
         <location column="11" file="common/mathutil.h" line="24" />
       </undocumented>
       <undocumented id="motion::AxisStepper::GetArcStepperTypes::Types" name="Types">
-        <location column="19" file="motion/axisstepper.h" line="95" />
-      </undocumented>
-      <undocumented id="motion::AxisStepper::GetHomeStepperTypes::Types" name="Types">
-        <location column="19" file="motion/axisstepper.h" line="90" />
+        <location column="19" file="motion/axisstepper.h" line="89" />
       </undocumented>
       <undocumented id="motion::AxisStepper::getNextTime::TupleT" name="TupleT">
         <location column="19" file="motion/axisstepper.h" line="78" />
       </undocumented>
       <undocumented id="motion::AxisStepper::getNextTime::TupleT" name="TupleT">
-        <location column="11" file="motion/axisstepper.h" line="139" />
+        <location column="11" file="motion/axisstepper.h" line="133" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::CoordMapT" name="CoordMapT">
         <location column="36" file="motion/axisstepper.h" line="80" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::CoordMapT" name="CoordMapT">
-        <location column="28" file="motion/axisstepper.h" line="181" />
+        <location column="28" file="motion/axisstepper.h" line="161" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::TupleT" name="TupleT">
         <location column="19" file="motion/axisstepper.h" line="80" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::TupleT" name="TupleT">
-        <location column="11" file="motion/axisstepper.h" line="181" />
-      </undocumented>
-      <undocumented id="motion::AxisStepper::initAxisHomeSteppers::CoordMapT" name="CoordMapT">
-        <location column="36" file="motion/axisstepper.h" line="81" />
-      </undocumented>
-      <undocumented id="motion::AxisStepper::initAxisHomeSteppers::CoordMapT" name="CoordMapT">
-        <location column="28" file="motion/axisstepper.h" line="167" />
-      </undocumented>
-      <undocumented id="motion::AxisStepper::initAxisHomeSteppers::TupleT" name="TupleT">
-        <location column="19" file="motion/axisstepper.h" line="81" />
-      </undocumented>
-      <undocumented id="motion::AxisStepper::initAxisHomeSteppers::TupleT" name="TupleT">
-        <location column="11" file="motion/axisstepper.h" line="167" />
+        <location column="11" file="motion/axisstepper.h" line="161" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisSteppers::CoordMapT" name="CoordMapT">
         <location column="36" file="motion/axisstepper.h" line="79" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisSteppers::CoordMapT" name="CoordMapT">
-        <location column="28" file="motion/axisstepper.h" line="153" />
+        <location column="28" file="motion/axisstepper.h" line="147" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisSteppers::TupleT" name="TupleT">
         <location column="19" file="motion/axisstepper.h" line="79" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisSteppers::TupleT" name="TupleT">
-        <location column="11" file="motion/axisstepper.h" line="153" />
+        <location column="11" file="motion/axisstepper.h" line="147" />
       </undocumented>
       <undocumented id="motion::AxisStepper::nextStep::TupleT" name="TupleT">
-        <location column="19" file="motion/axisstepper.h" line="84" />
+        <location column="19" file="motion/axisstepper.h" line="83" />
       </undocumented>
       <undocumented id="motion::AxisStepper::nextStep::TupleT" name="TupleT">
-        <location column="11" file="motion/axisstepper.h" line="198" />
+        <location column="11" file="motion/axisstepper.h" line="178" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::StepperDriver" name="StepperDriver">
-        <location column="11" file="motion/axisstepper.h" line="102" />
+        <location column="11" file="motion/axisstepper.h" line="96" />
+      </undocumented>
+      <undocumented id="motion::CoordMap::executeHomeRoutine::Interface" name="Interface">
+        <location column="19" file="motion/coordmap.h" line="77" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::BedLevelT" name="BedLevelT">
-        <location column="87" file="motion/linearcoordmap.h" line="49" />
+        <location column="87" file="motion/linearcoordmap.h" line="50" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::Stepper1" name="Stepper1">
-        <location column="11" file="motion/linearcoordmap.h" line="49" />
+        <location column="11" file="motion/linearcoordmap.h" line="50" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::Stepper2" name="Stepper2">
-        <location column="30" file="motion/linearcoordmap.h" line="49" />
+        <location column="30" file="motion/linearcoordmap.h" line="50" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::Stepper3" name="Stepper3">
-        <location column="49" file="motion/linearcoordmap.h" line="49" />
+        <location column="49" file="motion/linearcoordmap.h" line="50" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::Stepper4" name="Stepper4">
-        <location column="68" file="motion/linearcoordmap.h" line="49" />
+        <location column="68" file="motion/linearcoordmap.h" line="50" />
+      </undocumented>
+      <undocumented id="motion::LinearCoordMap::executeHomeRoutine::Interface" name="Interface">
+        <location column="19" file="motion/linearcoordmap.h" line="107" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="183" />
+        <location column="19" file="motion/lineardeltastepper.h" line="184" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::StepperDriverT" name="StepperDriverT">
         <location column="11" file="motion/lineardeltastepper.h" line="167" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::BedLevelT" name="BedLevelT">
-        <location column="87" file="motion/lineardeltacoordmap.h" line="59" />
+        <location column="87" file="motion/lineardeltacoordmap.h" line="60" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::Stepper1" name="Stepper1">
-        <location column="11" file="motion/lineardeltacoordmap.h" line="59" />
+        <location column="11" file="motion/lineardeltacoordmap.h" line="60" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::Stepper2" name="Stepper2">
-        <location column="30" file="motion/lineardeltacoordmap.h" line="59" />
+        <location column="30" file="motion/lineardeltacoordmap.h" line="60" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::Stepper3" name="Stepper3">
-        <location column="49" file="motion/lineardeltacoordmap.h" line="59" />
+        <location column="49" file="motion/lineardeltacoordmap.h" line="60" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::Stepper4" name="Stepper4">
-        <location column="68" file="motion/lineardeltacoordmap.h" line="59" />
+        <location column="68" file="motion/lineardeltacoordmap.h" line="60" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::executeHomeRoutine::Interface" name="Interface">
+        <location column="19" file="motion/lineardeltacoordmap.h" line="119" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="321" />
+        <location column="19" file="motion/lineardeltastepper.h" line="327" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT">
-        <location column="11" file="motion/lineardeltastepper.h" line="304" />
-      </undocumented>
-      <undocumented id="motion::LinearHomeStepper::LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/linearstepper.h" line="56" />
-      </undocumented>
-      <undocumented id="motion::LinearHomeStepper::StepperDriverT" name="StepperDriverT">
-        <location column="11" file="motion/linearstepper.h" line="51" />
+        <location column="11" file="motion/lineardeltastepper.h" line="310" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/linearstepper.h" line="100" />
+        <location column="19" file="motion/linearstepper.h" line="71" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/linearstepper.h" line="109" />
+        <location column="19" file="motion/linearstepper.h" line="81" />
       </undocumented>
       <undocumented id="motion::LinearStepper::StepperDriverT" name="StepperDriverT">
-        <location column="11" file="motion/linearstepper.h" line="74" />
+        <location column="11" file="motion/linearstepper.h" line="52" />
       </undocumented>
       <undocumented id="motion::LinearStepper::TIME_PER_STEP::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/linearstepper.h" line="88" />
+        <location column="19" file="motion/linearstepper.h" line="58" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes">
-        <location column="11" file="motion/motionplanner.h" line="60" />
+        <location column="11" file="motion/motionplanner.h" line="71" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::Interface" name="Interface">
-        <location column="11" file="motion/motionplanner.h" line="82" />
+        <location column="11" file="motion/motionplanner.h" line="93" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::UpdateOutputEvents::operator()::T" name="T">
-        <location column="42" file="motion/motionplanner.h" line="85" />
+        <location column="42" file="motion/motionplanner.h" line="96" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::_nextStep::StepperTypes" name="StepperTypes">
-        <location column="19" file="motion/motionplanner.h" line="154" />
+        <location column="19" file="motion/motionplanner.h" line="177" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__getNextTime::TupleT" name="TupleT">
-        <location column="11" file="motion/axisstepper.h" line="116" />
+        <location column="11" file="motion/axisstepper.h" line="110" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisArcSteppers::operator()::CoordMapT" name="CoordMapT">
-        <location column="63" file="motion/axisstepper.h" line="174" />
+        <location column="63" file="motion/axisstepper.h" line="154" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisArcSteppers::operator()::T" name="T">
-        <location column="51" file="motion/axisstepper.h" line="174" />
+        <location column="51" file="motion/axisstepper.h" line="154" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisArcSteppers::operator()::TupleT" name="TupleT">
-        <location column="34" file="motion/axisstepper.h" line="174" />
-      </undocumented>
-      <undocumented id="motion::_AxisStepper__initAxisHomeSteppers::operator()::CoordMapT" name="CoordMapT">
-        <location column="63" file="motion/axisstepper.h" line="160" />
-      </undocumented>
-      <undocumented id="motion::_AxisStepper__initAxisHomeSteppers::operator()::T" name="T">
-        <location column="34" file="motion/axisstepper.h" line="160" />
-      </undocumented>
-      <undocumented id="motion::_AxisStepper__initAxisHomeSteppers::operator()::TupleT" name="TupleT">
-        <location column="46" file="motion/axisstepper.h" line="160" />
+        <location column="34" file="motion/axisstepper.h" line="154" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisSteppers::operator()::CoordMapT" name="CoordMapT">
-        <location column="63" file="motion/axisstepper.h" line="146" />
+        <location column="63" file="motion/axisstepper.h" line="140" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisSteppers::operator()::T" name="T">
-        <location column="51" file="motion/axisstepper.h" line="146" />
+        <location column="51" file="motion/axisstepper.h" line="140" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisSteppers::operator()::TupleT" name="TupleT">
-        <location column="34" file="motion/axisstepper.h" line="146" />
+        <location column="34" file="motion/axisstepper.h" line="140" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__nextStep::operator()::T" name="T">
-        <location column="15" file="motion/axisstepper.h" line="192" />
+        <location column="15" file="motion/axisstepper.h" line="172" />
       </undocumented>
       <undocumented id="motion::array_size::ArrayT" name="ArrayT">
-        <location column="10" file="motion/motionplanner.h" line="55" />
+        <location column="10" file="motion/motionplanner.h" line="66" />
       </undocumented>
       <undocumented id="motion::stepDirFromSign::T" name="T">
         <location column="11" file="motion/axisstepper.h" line="62" />
@@ -756,7 +722,7 @@ return values.
         <location column="11" file="common/tupleutil.h" line="62" />
       </undocumented>
     </type>
-    <type documented="5" name="enum" undocumented="8">
+    <type documented="6" name="enum" undocumented="8">
       <undocumented id="gparse::ResponseCode" name="ResponseCode">
         <location column="1" file="gparse/response.h" line="42" />
       </undocumented>
@@ -816,12 +782,12 @@ return values.
         <location column="1" file="platforms/rpi/chronoclock.cpp" line="4" />
       </undocumented>
     </type>
-    <type documented="2" name="classtemplate" undocumented="13">
+    <type documented="3" name="classtemplate" undocumented="12">
       <undocumented id="Scheduler" name="Scheduler">
         <location column="1" file="scheduler.h" line="51" />
       </undocumented>
       <undocumented id="State" name="State">
-        <location column="1" file="state.h" line="79" />
+        <location column="1" file="state.h" line="80" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter" name="ThisThreadSleepAdapter">
         <location column="1" file="boilerplate/thisthreadsleepadapter.h" line="6" />
@@ -830,34 +796,31 @@ return values.
         <location column="1" file="iodrivers/tempcontrol.h" line="57" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver" name="AxisStepperWithDriver">
-        <location column="1" file="motion/axisstepper.h" line="102" />
+        <location column="1" file="motion/axisstepper.h" line="96" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap" name="LinearCoordMap">
-        <location column="1" file="motion/linearcoordmap.h" line="49" />
+        <location column="1" file="motion/linearcoordmap.h" line="50" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper" name="LinearDeltaArcStepper">
         <location column="1" file="motion/lineardeltastepper.h" line="167" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap" name="LinearDeltaCoordMap">
-        <location column="1" file="motion/lineardeltacoordmap.h" line="59" />
+        <location column="1" file="motion/lineardeltacoordmap.h" line="60" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper" name="LinearDeltaStepper">
-        <location column="1" file="motion/lineardeltastepper.h" line="304" />
-      </undocumented>
-      <undocumented id="motion::LinearHomeStepper" name="LinearHomeStepper">
-        <location column="1" file="motion/linearstepper.h" line="51" />
+        <location column="1" file="motion/lineardeltastepper.h" line="310" />
       </undocumented>
       <undocumented id="motion::LinearStepper" name="LinearStepper">
-        <location column="1" file="motion/linearstepper.h" line="74" />
+        <location column="1" file="motion/linearstepper.h" line="52" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize" name="MaxOutputEventSequenceSize">
-        <location column="1" file="motion/motionplanner.h" line="60" />
+        <location column="1" file="motion/motionplanner.h" line="71" />
       </undocumented>
       <undocumented id="motion::MotionPlanner" name="MotionPlanner">
-        <location column="1" file="motion/motionplanner.h" line="82" />
+        <location column="1" file="motion/motionplanner.h" line="93" />
       </undocumented>
     </type>
-    <type documented="76" name="method" undocumented="349">
+    <type documented="87" name="method" undocumented="340">
       <undocumented id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
         <location column="9" file="filesystem.h" line="10" />
         <location column="1" file="filesystem.cpp" line="6" />
@@ -923,68 +886,77 @@ return values.
         <location column="9" file="schedulerbase.h" line="63" />
         <location column="1" file="schedulerbase.cpp" line="36" />
       </undocumented>
+      <undocumented id="State::CoordMapInterface::actualCartesianPosition" name="actualCartesianPosition">
+        <location column="13" file="state.h" line="147" />
+      </undocumented>
+      <undocumented id="State::CoordMapInterface::axisPositions" name="axisPositions">
+        <location column="13" file="state.h" line="157" />
+      </undocumented>
+      <undocumented id="State::CoordMapInterface::resetAxisPositions" name="resetAxisPositions">
+        <location column="13" file="state.h" line="160" />
+      </undocumented>
       <undocumented id="State::DriverCallbackInterface::schedPwm" name="schedPwm">
-        <location column="13" file="state.h" line="135" />
+        <location column="13" file="state.h" line="138" />
       </undocumented>
       <undocumented id="State::MotionInterface::getAccelerationProfile" name="getAccelerationProfile">
-        <location column="13" file="state.h" line="119" />
+        <location column="13" file="state.h" line="124" />
       </undocumented>
       <undocumented id="State::MotionInterface::getCoordMap" name="getCoordMap">
-        <location column="13" file="state.h" line="122" />
+        <location column="13" file="state.h" line="127" />
       </undocumented>
       <undocumented id="State::SchedInterface::onIdleCpu" name="onIdleCpu">
-        <location column="13" file="state.h" line="88" />
-      </undocumented>
-      <undocumented id="State::SchedInterface::queue" name="queue">
         <location column="13" file="state.h" line="95" />
       </undocumented>
+      <undocumented id="State::SchedInterface::queue" name="queue">
+        <location column="13" file="state.h" line="102" />
+      </undocumented>
       <undocumented id="State::SchedInterface::queuePwm" name="queuePwm">
-        <location column="13" file="state.h" line="99" />
+        <location column="13" file="state.h" line="106" />
       </undocumented>
       <undocumented id="State::SchedInterface::schedTime" name="schedTime">
-        <location column="13" file="state.h" line="103" />
+        <location column="13" file="state.h" line="110" />
       </undocumented>
       <undocumented id="Vector3::operator*" name="operator*">
-        <location column="3" file="common/vector3.h" line="118" />
+        <location column="3" file="common/vector3.h" line="127" />
       </undocumented>
       <undocumented id="Vector3::operator*=" name="operator*=">
-        <location column="3" file="common/vector3.h" line="121" />
+        <location column="3" file="common/vector3.h" line="130" />
       </undocumented>
       <undocumented id="Vector3::operator+=" name="operator+=">
-        <location column="3" file="common/vector3.h" line="107" />
+        <location column="3" file="common/vector3.h" line="116" />
       </undocumented>
       <undocumented id="Vector3::operator-" name="operator-">
-        <location column="3" file="common/vector3.h" line="111" />
+        <location column="3" file="common/vector3.h" line="120" />
       </undocumented>
       <undocumented id="Vector3::operator-=" name="operator-=">
-        <location column="3" file="common/vector3.h" line="114" />
+        <location column="3" file="common/vector3.h" line="123" />
       </undocumented>
       <undocumented id="Vector3::operator/" name="operator/">
-        <location column="3" file="common/vector3.h" line="125" />
+        <location column="3" file="common/vector3.h" line="134" />
       </undocumented>
       <undocumented id="Vector3::operator/=" name="operator/=">
-        <location column="3" file="common/vector3.h" line="128" />
+        <location column="3" file="common/vector3.h" line="137" />
       </undocumented>
       <undocumented id="Vector4::operator*" name="operator*">
-        <location column="3" file="common/vector4.h" line="83" />
+        <location column="3" file="common/vector4.h" line="91" />
       </undocumented>
       <undocumented id="Vector4::operator*=" name="operator*=">
-        <location column="3" file="common/vector4.h" line="86" />
+        <location column="3" file="common/vector4.h" line="94" />
       </undocumented>
       <undocumented id="Vector4::operator+=" name="operator+=">
-        <location column="3" file="common/vector4.h" line="72" />
+        <location column="3" file="common/vector4.h" line="80" />
       </undocumented>
       <undocumented id="Vector4::operator-" name="operator-">
-        <location column="3" file="common/vector4.h" line="76" />
+        <location column="3" file="common/vector4.h" line="84" />
       </undocumented>
       <undocumented id="Vector4::operator-=" name="operator-=">
-        <location column="3" file="common/vector4.h" line="79" />
+        <location column="3" file="common/vector4.h" line="87" />
       </undocumented>
       <undocumented id="Vector4::operator/" name="operator/">
-        <location column="3" file="common/vector4.h" line="90" />
+        <location column="3" file="common/vector4.h" line="98" />
       </undocumented>
       <undocumented id="Vector4::operator/=" name="operator/=">
-        <location column="3" file="common/vector4.h" line="93" />
+        <location column="3" file="common/vector4.h" line="101" />
       </undocumented>
       <undocumented id="__callOnAll::operator()" name="operator()">
         <location column="5" file="common/tupleutil.h" line="21" />
@@ -1655,9 +1627,6 @@ return values.
       <undocumented id="iodrv::TempControl::setTargetTemperature" name="setTargetTemperature">
         <location column="9" file="iodrivers/tempcontrol.h" line="86" />
       </undocumented>
-      <undocumented id="machines::Machine::clampHomeRate" name="clampHomeRate">
-        <location column="9" file="machines/machine.h" line="21" />
-      </undocumented>
       <undocumented id="machines::Machine::clampMoveRate" name="clampMoveRate">
         <location column="9" file="machines/machine.h" line="18" />
       </undocumented>
@@ -1665,13 +1634,10 @@ return values.
         <location column="9" file="machines/machine.h" line="8" />
       </undocumented>
       <undocumented id="machines::Machine::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
-        <location column="9" file="machines/machine.h" line="24" />
+        <location column="9" file="machines/machine.h" line="21" />
       </undocumented>
       <undocumented id="machines::Machine::maxExtrudeRate" name="maxExtrudeRate">
         <location column="9" file="machines/machine.h" line="15" />
-      </undocumented>
-      <undocumented id="machines::generic::cartesian::clampHomeRate" name="clampHomeRate">
-        <location column="9" file="machines/generic/cartesian.h" line="180" />
       </undocumented>
       <undocumented id="machines::generic::cartesian::clampMoveRate" name="clampMoveRate">
         <location column="9" file="machines/generic/cartesian.h" line="177" />
@@ -1688,9 +1654,6 @@ return values.
       <undocumented id="machines::generic::cartesian::maxExtrudeRate" name="maxExtrudeRate">
         <location column="9" file="machines/generic/cartesian.h" line="174" />
       </undocumented>
-      <undocumented id="machines::rpi::kosselrampsfd::clampHomeRate" name="clampHomeRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="400" />
-      </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::clampMoveRate" name="clampMoveRate">
         <location column="9" file="machines/rpi/kosselrampsfd.h" line="397" />
       </undocumented>
@@ -1698,19 +1661,10 @@ return values.
         <location column="9" file="machines/rpi/kosselrampsfd.h" line="394" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::getStepOutputEventSequence" name="getStepOutputEventSequence">
-        <location column="9" file="motion/axisstepper.h" line="107" />
+        <location column="9" file="motion/axisstepper.h" line="101" />
       </undocumented>
       <undocumented id="motion::ConstantAcceleration::begin" name="begin">
         <location column="9" file="motion/constantacceleration.h" line="52" />
-      </undocumented>
-      <undocumented id="motion::CoordMap::applyLeveling" name="applyLeveling">
-        <location column="9" file="motion/coordmap.h" line="81" />
-      </undocumented>
-      <undocumented id="motion::CoordMap::bound" name="bound">
-        <location column="9" file="motion/coordmap.h" line="86" />
-      </undocumented>
-      <undocumented id="motion::CoordMap::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
-        <location column="9" file="motion/coordmap.h" line="96" />
       </undocumented>
       <undocumented id="motion::CoordMap::getArcSteppers" name="getArcSteppers">
         <location column="9" file="motion/coordmap.h" line="63" />
@@ -1718,146 +1672,128 @@ return values.
       <undocumented id="motion::CoordMap::getAxisSteppers" name="getAxisSteppers">
         <location column="9" file="motion/coordmap.h" line="56" />
       </undocumented>
-      <undocumented id="motion::CoordMap::getEndstop" name="getEndstop">
-        <location column="9" file="motion/coordmap.h" line="66" />
-      </undocumented>
-      <undocumented id="motion::CoordMap::getHomePosition" name="getHomePosition">
-        <location column="9" file="motion/coordmap.h" line="76" />
-      </undocumented>
       <undocumented id="motion::CoordMap::getHomeSteppers" name="getHomeSteppers">
         <location column="9" file="motion/coordmap.h" line="60" />
       </undocumented>
-      <undocumented id="motion::CoordMap::numAxis" name="numAxis">
-        <location column="9" file="motion/coordmap.h" line="72" />
-      </undocumented>
-      <undocumented id="motion::CoordMap::xyzeFromMechanical" name="xyzeFromMechanical">
-        <location column="9" file="motion/coordmap.h" line="90" />
-      </undocumented>
       <undocumented id="motion::LinearCoordMap::MM_STEPS" name="MM_STEPS">
-        <location column="9" file="motion/linearcoordmap.h" line="71" />
+        <location column="9" file="motion/linearcoordmap.h" line="72" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::STEPS_MM" name="STEPS_MM">
-        <location column="9" file="motion/linearcoordmap.h" line="66" />
+        <location column="9" file="motion/linearcoordmap.h" line="67" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::applyLeveling" name="applyLeveling">
-        <location column="9" file="motion/linearcoordmap.h" line="111" />
+        <location column="9" file="motion/linearcoordmap.h" line="121" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::bound" name="bound">
-        <location column="9" file="motion/linearcoordmap.h" line="114" />
+        <location column="9" file="motion/linearcoordmap.h" line="124" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::getArcSteppers" name="getArcSteppers">
-        <location column="9" file="motion/linearcoordmap.h" line="94" />
+        <location column="9" file="motion/linearcoordmap.h" line="93" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::getAxisSteppers" name="getAxisSteppers">
-        <location column="9" file="motion/linearcoordmap.h" line="88" />
+        <location column="9" file="motion/linearcoordmap.h" line="90" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::getEndstop" name="getEndstop">
-        <location column="9" file="motion/linearcoordmap.h" line="97" />
+        <location column="9" file="motion/linearcoordmap.h" line="96" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::getHomePosition" name="getHomePosition">
-        <location column="9" file="motion/linearcoordmap.h" line="108" />
-      </undocumented>
-      <undocumented id="motion::LinearCoordMap::getHomeSteppers" name="getHomeSteppers">
-        <location column="9" file="motion/linearcoordmap.h" line="91" />
+        <location column="9" file="motion/linearcoordmap.h" line="118" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::numAxis" name="numAxis">
-        <location column="9" file="motion/linearcoordmap.h" line="105" />
+        <location column="9" file="motion/linearcoordmap.h" line="104" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::xyzeFromMechanical" name="xyzeFromMechanical">
-        <location column="9" file="motion/linearcoordmap.h" line="117" />
+        <location column="9" file="motion/linearcoordmap.h" line="127" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/lineardeltastepper.h" line="261" />
+        <location column="9" file="motion/lineardeltastepper.h" line="263" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::L" name="L">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="83" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::MM_STEPS" name="MM_STEPS">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="87" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::STEPS_MM" name="STEPS_MM">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="86" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::applyLeveling" name="applyLeveling">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="123" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::bound" name="bound">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="126" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::buildrad" name="buildrad">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="85" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::getArcSteppers" name="getArcSteppers">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="103" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::getAxisPosition" name="getAxisPosition">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="110" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::getAxisSteppers" name="getAxisSteppers">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="97" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::getEndstop" name="getEndstop">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="113" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::getHomePosition" name="getHomePosition">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="120" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::getHomeSteppers" name="getHomeSteppers">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="100" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaCoordMap::h" name="h">
         <location column="9" file="motion/lineardeltacoordmap.h" line="84" />
       </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::MM_STEPS" name="MM_STEPS">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="88" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::STEPS_MM" name="STEPS_MM">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="87" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::applyLeveling" name="applyLeveling">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="133" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::bound" name="bound">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="136" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::buildrad" name="buildrad">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="86" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::getArcSteppers" name="getArcSteppers">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="102" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::getAxisPosition" name="getAxisPosition">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="109" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::getAxisSteppers" name="getAxisSteppers">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="99" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::getEndstop" name="getEndstop">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="112" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::getHomePosition" name="getHomePosition">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="130" />
+      </undocumented>
+      <undocumented id="motion::LinearDeltaCoordMap::h" name="h">
+        <location column="9" file="motion/lineardeltacoordmap.h" line="85" />
+      </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::numAxis" name="numAxis">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="107" />
+        <location column="9" file="motion/lineardeltacoordmap.h" line="106" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::r" name="r">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="82" />
+        <location column="9" file="motion/lineardeltacoordmap.h" line="83" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::xyzeFromMechanical" name="xyzeFromMechanical">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="139" />
+        <location column="9" file="motion/lineardeltacoordmap.h" line="149" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/lineardeltastepper.h" line="392" />
+        <location column="9" file="motion/lineardeltastepper.h" line="399" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::getTerm1AndRootParam" name="getTerm1AndRootParam">
-        <location column="9" file="motion/lineardeltastepper.h" line="358" />
+        <location column="9" file="motion/lineardeltastepper.h" line="365" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::testDir" name="testDir">
-        <location column="9" file="motion/lineardeltastepper.h" line="376" />
-      </undocumented>
-      <undocumented id="motion::LinearHomeStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/linearstepper.h" line="64" />
-      </undocumented>
-      <undocumented id="motion::LinearStepper::GET_COORD" name="GET_COORD">
-        <location column="9" file="motion/linearstepper.h" line="81" />
+        <location column="9" file="motion/lineardeltastepper.h" line="383" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize::maxSize" name="maxSize">
-        <location column="9" file="motion/motionplanner.h" line="70" />
+        <location column="9" file="motion/motionplanner.h" line="81" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::arcTo" name="arcTo">
-        <location column="9" file="motion/motionplanner.h" line="280" />
+        <location column="9" file="motion/motionplanner.h" line="282" />
+      </undocumented>
+      <undocumented id="motion::MotionPlanner::axisPositions" name="axisPositions">
+        <location column="9" file="motion/motionplanner.h" line="170" />
+      </undocumented>
+      <undocumented id="motion::MotionPlanner::coordMap" name="coordMap">
+        <location column="9" file="motion/motionplanner.h" line="150" />
+      </undocumented>
+      <undocumented id="motion::MotionPlanner::coordMap" name="coordMap">
+        <location column="9" file="motion/motionplanner.h" line="153" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
-        <location column="9" file="motion/motionplanner.h" line="143" />
-      </undocumented>
-      <undocumented id="motion::MotionPlanner::homeEndstops" name="homeEndstops">
-        <location column="9" file="motion/motionplanner.h" line="268" />
-      </undocumented>
-      <undocumented id="motion::MotionPlanner::isHoming" name="isHoming">
-        <location column="9" file="motion/motionplanner.h" line="203" />
+        <location column="9" file="motion/motionplanner.h" line="160" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::moveTo" name="moveTo">
-        <location column="9" file="motion/motionplanner.h" line="233" />
+        <location column="9" file="motion/motionplanner.h" line="241" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::nextOutputEvent" name="nextOutputEvent">
-        <location column="9" file="motion/motionplanner.h" line="206" />
+        <location column="9" file="motion/motionplanner.h" line="216" />
+      </undocumented>
+      <undocumented id="motion::MotionPlanner::resetAxisPositions" name="resetAxisPositions">
+        <location column="9" file="motion/motionplanner.h" line="173" />
       </undocumented>
       <undocumented id="motion::NoAcceleration::transform" name="transform">
         <location column="5" file="motion/accelerationprofile.h" line="52" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__getNextTime::operator()" name="operator()">
-        <location column="5" file="motion/axisstepper.h" line="117" />
+        <location column="5" file="motion/axisstepper.h" line="111" />
       </undocumented>
       <undocumented id="plat::generic::ChronoClock::now" name="now">
         <location column="17" file="platforms/generic/chronoclock.h" line="23" />
@@ -1937,7 +1873,7 @@ return values.
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="543" />
       </undocumented>
     </type>
-    <type documented="0" name="templatenontypeparameter" undocumented="28">
+    <type documented="0" name="templatenontypeparameter" undocumented="25">
       <undocumented id="__callOnAll::IdxPlusOne" name="IdxPlusOne">
         <location column="28" file="common/tupleutil.h" line="20" />
       </undocumented>
@@ -1951,76 +1887,67 @@ return values.
         <location column="56" file="motion/axisstepper.h" line="80" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
-        <location column="48" file="motion/axisstepper.h" line="181" />
+        <location column="48" file="motion/axisstepper.h" line="161" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisSteppers::MechSize" name="MechSize">
         <location column="56" file="motion/axisstepper.h" line="79" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisSteppers::MechSize" name="MechSize">
-        <location column="48" file="motion/axisstepper.h" line="153" />
+        <location column="48" file="motion/axisstepper.h" line="147" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::getStepperDriver::idx" name="idx">
-        <location column="19" file="motion/linearcoordmap.h" line="100" />
+        <location column="19" file="motion/linearcoordmap.h" line="99" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::AxisIdx" name="AxisIdx">
         <location column="36" file="motion/lineardeltastepper.h" line="167" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
-        <location column="39" file="motion/lineardeltastepper.h" line="183" />
+        <location column="39" file="motion/lineardeltastepper.h" line="184" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::getStepperDriver::idx" name="idx">
-        <location column="19" file="motion/lineardeltacoordmap.h" line="116" />
+        <location column="19" file="motion/lineardeltacoordmap.h" line="115" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
-        <location column="36" file="motion/lineardeltastepper.h" line="304" />
+        <location column="36" file="motion/lineardeltastepper.h" line="310" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
-        <location column="39" file="motion/lineardeltastepper.h" line="321" />
-      </undocumented>
-      <undocumented id="motion::LinearHomeStepper::AxisIdx" name="AxisIdx">
-        <location column="36" file="motion/linearstepper.h" line="51" />
+        <location column="39" file="motion/lineardeltastepper.h" line="327" />
       </undocumented>
       <undocumented id="motion::LinearStepper::CoordType" name="CoordType">
-        <location column="36" file="motion/linearstepper.h" line="74" />
+        <location column="36" file="motion/linearstepper.h" line="52" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::sz" name="sz">
-        <location column="39" file="motion/linearstepper.h" line="100" />
+        <location column="39" file="motion/linearstepper.h" line="71" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::sz" name="sz">
-        <location column="39" file="motion/linearstepper.h" line="109" />
+        <location column="39" file="motion/linearstepper.h" line="81" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
-        <location column="38" file="motion/motionplanner.h" line="60" />
+        <location column="38" file="motion/motionplanner.h" line="71" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::UpdateOutputEvents::operator()::MyIdx" name="MyIdx">
-        <location column="23" file="motion/motionplanner.h" line="85" />
+        <location column="23" file="motion/motionplanner.h" line="96" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::_nextStepArc::T" name="T">
-        <location column="19" file="motion/motionplanner.h" line="197" />
-      </undocumented>
-      <undocumented id="motion::MotionPlanner::_nextStepHome::T" name="T">
-        <location column="19" file="motion/motionplanner.h" line="185" />
+        <location column="19" file="motion/motionplanner.h" line="210" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::_nextStepLinear::T" name="T">
-        <location column="19" file="motion/motionplanner.h" line="191" />
+        <location column="19" file="motion/motionplanner.h" line="204" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__getNextTime::idx" name="idx">
-        <location column="28" file="motion/axisstepper.h" line="116" />
+        <location column="28" file="motion/axisstepper.h" line="110" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisArcSteppers::operator()::MechSize" name="MechSize">
-        <location column="83" file="motion/axisstepper.h" line="174" />
+        <location column="83" file="motion/axisstepper.h" line="154" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisArcSteppers::operator()::MyIdx" name="MyIdx">
-        <location column="15" file="motion/axisstepper.h" line="174" />
-      </undocumented>
-      <undocumented id="motion::_AxisStepper__initAxisHomeSteppers::operator()::MyIdx" name="MyIdx">
-        <location column="15" file="motion/axisstepper.h" line="160" />
+        <location column="15" file="motion/axisstepper.h" line="154" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisSteppers::operator()::MechSize" name="MechSize">
-        <location column="83" file="motion/axisstepper.h" line="146" />
+        <location column="83" file="motion/axisstepper.h" line="140" />
       </undocumented>
       <undocumented id="motion::_AxisStepper__initAxisSteppers::operator()::MyIdx" name="MyIdx">
-        <location column="15" file="motion/axisstepper.h" line="146" />
+        <location column="15" file="motion/axisstepper.h" line="140" />
       </undocumented>
     </type>
     <type documented="28" name="field" undocumented="12">
@@ -2061,9 +1988,9 @@ return values.
         <location column="5" file="platforms/rpi/hardwarescheduler.h" line="466" />
       </undocumented>
     </type>
-    <type documented="6" name="structtemplate" undocumented="1">
+    <type documented="5" name="structtemplate" undocumented="1">
       <undocumented id="motion::array_size" name="array_size">
-        <location column="1" file="motion/motionplanner.h" line="55" />
+        <location column="1" file="motion/motionplanner.h" line="66" />
       </undocumented>
     </type>
     <type documented="3" name="functiontemplate" undocumented="6">
@@ -2086,7 +2013,7 @@ return values.
         <location column="1" file="common/tupleutil.h" line="62" />
       </undocumented>
     </type>
-    <type documented="15" name="constructor" undocumented="38">
+    <type documented="14" name="constructor" undocumented="41">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="9" />
         <location column="1" file="filesystem.cpp" line="3" />
@@ -2103,6 +2030,12 @@ return values.
       <undocumented id="Matrix3x3::Matrix3x3" name="Matrix3x3">
         <location column="9" file="common/matrix.h" line="29" />
       </undocumented>
+      <undocumented id="OptionalArg::OptionalArg&lt;T&gt;" name="OptionalArg&lt;T&gt;">
+        <location column="3" file="common/optionalarg.h" line="15" />
+      </undocumented>
+      <undocumented id="OptionalArg::OptionalArg&lt;T&gt;" name="OptionalArg&lt;T&gt;">
+        <location column="3" file="common/optionalarg.h" line="16" />
+      </undocumented>
       <undocumented id="OutputEvent::OutputEvent" name="OutputEvent">
         <location column="9" file="outputevent.h" line="44" />
       </undocumented>
@@ -2116,11 +2049,17 @@ return values.
         <location column="9" file="scheduler.h" line="65" />
         <location column="1" file="scheduler.h" line="77" />
       </undocumented>
+      <undocumented id="State::CoordMapInterface::CoordMapInterface" name="CoordMapInterface">
+        <location column="13" file="state.h" line="146" />
+      </undocumented>
+      <undocumented id="State::DriverCallbackInterface::DriverCallbackInterface" name="DriverCallbackInterface">
+        <location column="13" file="state.h" line="135" />
+      </undocumented>
       <undocumented id="State::MotionInterface::MotionInterface" name="MotionInterface">
-        <location column="13" file="state.h" line="118" />
+        <location column="13" file="state.h" line="123" />
       </undocumented>
       <undocumented id="State::SchedInterface::SchedInterface" name="SchedInterface">
-        <location column="13" file="state.h" line="87" />
+        <location column="13" file="state.h" line="94" />
       </undocumented>
       <undocumented id="gparse::Com::Com" name="Com">
         <location column="9" file="gparse/com.h" line="62" />
@@ -2166,34 +2105,31 @@ return values.
         <location column="9" file="iodrivers/tempcontrol.h" line="73" />
       </undocumented>
       <undocumented id="motion::AxisStepper::AxisStepper" name="AxisStepper">
-        <location column="9" file="motion/axisstepper.h" line="86" />
+        <location column="9" file="motion/axisstepper.h" line="85" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;" name="AxisStepperWithDriver&lt;StepperDriver&gt;">
-        <location column="9" file="motion/axisstepper.h" line="105" />
+        <location column="9" file="motion/axisstepper.h" line="99" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;" name="AxisStepperWithDriver&lt;StepperDriver&gt;">
-        <location column="9" file="motion/axisstepper.h" line="106" />
+        <location column="9" file="motion/axisstepper.h" line="100" />
       </undocumented>
       <undocumented id="motion::ConstantAcceleration::ConstantAcceleration" name="ConstantAcceleration">
         <location column="9" file="motion/constantacceleration.h" line="51" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::LinearCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;" name="LinearCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;">
-        <location column="9" file="motion/linearcoordmap.h" line="76" />
+        <location column="9" file="motion/linearcoordmap.h" line="77" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="182" />
+        <location column="9" file="motion/lineardeltastepper.h" line="183" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;" name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;">
-        <location column="9" file="motion/lineardeltacoordmap.h" line="88" />
+        <location column="9" file="motion/lineardeltacoordmap.h" line="89" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="320" />
-      </undocumented>
-      <undocumented id="motion::LinearHomeStepper::LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearHomeStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/linearstepper.h" line="55" />
+        <location column="9" file="motion/lineardeltastepper.h" line="326" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::MotionPlanner&lt;Interface&gt;" name="MotionPlanner&lt;Interface&gt;">
-        <location column="9" file="motion/motionplanner.h" line="127" />
+        <location column="9" file="motion/motionplanner.h" line="137" />
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::DmaMem" name="DmaMem">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="521" />
@@ -2207,7 +2143,14 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="107" />
       </undocumented>
     </type>
-    <type documented="3" name="variable" undocumented="10">
+    <type documented="3" name="variable" undocumented="12">
+      <undocumented id="NotPresent" name="NotPresent">
+        <location column="23" file="common/optionalarg.h" line="23" />
+      </undocumented>
+      <undocumented id="OptionalArg::NotPresent" name="NotPresent">
+        <location column="3" file="common/optionalarg.h" line="14" />
+        <location column="1" file="common/optionalarg.h" line="23" />
+      </undocumented>
       <undocumented id="gparse::Response::Null" name="Null">
         <location column="9" file="gparse/response.h" line="52" />
         <location column="1" file="gparse/response.cpp" line="6" />
@@ -2244,8 +2187,8 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="52" />
       </undocumented>
     </type>
-    <type documented="4" name="conversionfunction" undocumented="0" />
-    <type documented="7" name="enumvalue" undocumented="92">
+    <type documented="6" name="conversionfunction" undocumented="0" />
+    <type documented="7" name="enumvalue" undocumented="95">
       <undocumented id="OnIdleCpuIntervalShort" name="OnIdleCpuIntervalShort">
         <location column="5" file="schedulerbase.h" line="48" />
       </undocumented>
@@ -2253,16 +2196,16 @@ return values.
         <location column="5" file="schedulerbase.h" line="49" />
       </undocumented>
       <undocumented id="POS_ABSOLUTE" name="POS_ABSOLUTE">
-        <location column="5" file="state.h" line="69" />
-      </undocumented>
-      <undocumented id="POS_RELATIVE" name="POS_RELATIVE">
         <location column="5" file="state.h" line="70" />
       </undocumented>
+      <undocumented id="POS_RELATIVE" name="POS_RELATIVE">
+        <location column="5" file="state.h" line="71" />
+      </undocumented>
       <undocumented id="UNIT_IN" name="UNIT_IN">
-        <location column="5" file="state.h" line="76" />
+        <location column="5" file="state.h" line="77" />
       </undocumented>
       <undocumented id="UNIT_MM" name="UNIT_MM">
-        <location column="5" file="state.h" line="75" />
+        <location column="5" file="state.h" line="76" />
       </undocumented>
       <undocumented id="gparse::ResponseNull" name="ResponseNull">
         <location column="5" file="gparse/response.h" line="44" />
@@ -2504,11 +2447,11 @@ return values.
       <undocumented id="motion::DELTA_AXIS_E" name="DELTA_AXIS_E">
         <location column="5" file="motion/lineardeltastepper.h" line="164" />
       </undocumented>
+      <undocumented id="motion::MOTIONFLAGS_DEFAULT" name="MOTIONFLAGS_DEFAULT">
+        <location column="5" file="motion/motionplanner.h" line="56" />
+      </undocumented>
       <undocumented id="motion::MotionArc" name="MotionArc">
         <location column="5" file="motion/motionplanner.h" line="51" />
-      </undocumented>
-      <undocumented id="motion::MotionHome" name="MotionHome">
-        <location column="5" file="motion/motionplanner.h" line="52" />
       </undocumented>
       <undocumented id="motion::MotionLinear" name="MotionLinear">
         <location column="5" file="motion/motionplanner.h" line="50" />
@@ -2516,11 +2459,20 @@ return values.
       <undocumented id="motion::MotionNone" name="MotionNone">
         <location column="5" file="motion/motionplanner.h" line="49" />
       </undocumented>
+      <undocumented id="motion::NO_BOUNDING" name="NO_BOUNDING">
+        <location column="5" file="motion/motionplanner.h" line="58" />
+      </undocumented>
+      <undocumented id="motion::NO_LEVELING" name="NO_LEVELING">
+        <location column="5" file="motion/motionplanner.h" line="57" />
+      </undocumented>
       <undocumented id="motion::StepBackward" name="StepBackward">
         <location column="5" file="motion/axisstepper.h" line="58" />
       </undocumented>
       <undocumented id="motion::StepForward" name="StepForward">
         <location column="5" file="motion/axisstepper.h" line="59" />
+      </undocumented>
+      <undocumented id="motion::USE_ENDSTOPS" name="USE_ENDSTOPS">
+        <location column="5" file="motion/motionplanner.h" line="59" />
       </undocumented>
     </type>
     <type documented="0" name="destructor" undocumented="1">
@@ -2689,107 +2641,115 @@ return values.
       <undocumented name="f" />
     </function>
     <function id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
-      <location column="3" file="common/vector3.h" line="38" />
+      <location column="3" file="common/vector3.h" line="39" />
       <undocumented name="y" />
       <undocumented name="x" />
       <undocumented name="z" />
     </function>
     <function id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
-      <location column="3" file="common/vector3.h" line="40" />
+      <location column="3" file="common/vector3.h" line="41" />
       <undocumented name="v" />
     </function>
     <function id="Vector3::tuple" name="tuple">
-      <location column="3" file="common/vector3.h" line="44" />
+      <location column="3" file="common/vector3.h" line="45" />
       <undocumented-return />
     </function>
     <function id="Vector3::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
-      <location column="3" file="common/vector3.h" line="48" />
+      <location column="3" file="common/vector3.h" line="49" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::array" name="array">
+      <location column="3" file="common/vector3.h" line="53" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::operator array&lt;type-parameter-0-0, 3&gt;" name="operator array&lt;type-parameter-0-0, 3&gt;">
+      <location column="3" file="common/vector3.h" line="57" />
       <undocumented-return />
     </function>
     <function id="Vector3::str" name="str">
-      <location column="3" file="common/vector3.h" line="54" />
+      <location column="3" file="common/vector3.h" line="63" />
       <undocumented-return />
     </function>
     <function id="Vector3::operator basic_string" name="operator basic_string">
-      <location column="3" file="common/vector3.h" line="58" />
+      <location column="3" file="common/vector3.h" line="67" />
       <undocumented-return />
     </function>
     <function id="Vector3::x" name="x">
-      <location column="3" file="common/vector3.h" line="62" />
+      <location column="3" file="common/vector3.h" line="71" />
       <undocumented-return />
     </function>
     <function id="Vector3::y" name="y">
-      <location column="3" file="common/vector3.h" line="64" />
-      <undocumented-return />
-    </function>
-    <function id="Vector3::z" name="z">
-      <location column="3" file="common/vector3.h" line="66" />
-      <undocumented-return />
-    </function>
-    <function id="Vector3::magSq" name="magSq">
-      <location column="3" file="common/vector3.h" line="69" />
-      <undocumented-return />
-    </function>
-    <function id="Vector3::mag" name="mag">
       <location column="3" file="common/vector3.h" line="73" />
       <undocumented-return />
     </function>
+    <function id="Vector3::z" name="z">
+      <location column="3" file="common/vector3.h" line="75" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::magSq" name="magSq">
+      <location column="3" file="common/vector3.h" line="78" />
+      <undocumented-return />
+    </function>
+    <function id="Vector3::mag" name="mag">
+      <location column="3" file="common/vector3.h" line="82" />
+      <undocumented-return />
+    </function>
     <function id="Vector3::withX" name="withX">
-      <location column="3" file="common/vector3.h" line="80" />
+      <location column="3" file="common/vector3.h" line="89" />
       <undocumented-return />
       <undocumented name="x" />
     </function>
     <function id="Vector3::withY" name="withY">
-      <location column="3" file="common/vector3.h" line="84" />
+      <location column="3" file="common/vector3.h" line="93" />
       <undocumented-return />
       <undocumented name="y" />
     </function>
     <function id="Vector3::withZ" name="withZ">
-      <location column="3" file="common/vector3.h" line="88" />
+      <location column="3" file="common/vector3.h" line="97" />
       <undocumented-return />
       <undocumented name="z" />
     </function>
     <function id="Vector3::operator-" name="operator-">
-      <location column="3" file="common/vector3.h" line="93" />
+      <location column="3" file="common/vector3.h" line="102" />
       <undocumented-return />
     </function>
     <function id="Vector3::norm" name="norm">
-      <location column="3" file="common/vector3.h" line="98" />
+      <location column="3" file="common/vector3.h" line="107" />
       <undocumented-return />
       <misspelled name="return" />
     </function>
     <function id="Vector3::operator+" name="operator+">
-      <location column="3" file="common/vector3.h" line="104" />
+      <location column="3" file="common/vector3.h" line="113" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
     <function id="Vector3::dot" name="dot">
-      <location column="3" file="common/vector3.h" line="133" />
+      <location column="3" file="common/vector3.h" line="142" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
     <function id="Vector3::cross" name="cross">
-      <location column="3" file="common/vector3.h" line="141" />
+      <location column="3" file="common/vector3.h" line="150" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
     <function id="Vector3::scalarProj" name="scalarProj">
-      <location column="3" file="common/vector3.h" line="146" />
+      <location column="3" file="common/vector3.h" line="155" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
     <function id="Vector3::proj" name="proj">
-      <location column="3" file="common/vector3.h" line="153" />
+      <location column="3" file="common/vector3.h" line="162" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
     <function id="Vector3::distance" name="distance">
-      <location column="3" file="common/vector3.h" line="157" />
+      <location column="3" file="common/vector3.h" line="166" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
     <function id="Vector3::distance" name="distance">
-      <location column="3" file="common/vector3.h" line="161" />
+      <location column="3" file="common/vector3.h" line="170" />
       <undocumented-return />
       <undocumented name="y" />
       <undocumented name="x" />
@@ -2819,40 +2779,48 @@ return values.
       <location column="3" file="common/vector4.h" line="29" />
       <undocumented-return />
     </function>
+    <function id="Vector4::array" name="array">
+      <location column="3" file="common/vector4.h" line="33" />
+      <undocumented-return />
+    </function>
+    <function id="Vector4::operator array&lt;type-parameter-0-0, 4&gt;" name="operator array&lt;type-parameter-0-0, 4&gt;">
+      <location column="3" file="common/vector4.h" line="37" />
+      <undocumented-return />
+    </function>
     <function id="Vector4::str" name="str">
-      <location column="3" file="common/vector4.h" line="34" />
+      <location column="3" file="common/vector4.h" line="42" />
       <undocumented-return />
     </function>
     <function id="Vector4::operator basic_string" name="operator basic_string">
-      <location column="3" file="common/vector4.h" line="38" />
+      <location column="3" file="common/vector4.h" line="46" />
       <undocumented-return />
     </function>
     <function id="Vector4::xyz" name="xyz">
-      <location column="3" file="common/vector4.h" line="43" />
-      <undocumented-return />
-    </function>
-    <function id="Vector4::e" name="e">
-      <location column="3" file="common/vector4.h" line="47" />
-      <undocumented-return />
-    </function>
-    <function id="Vector4::x" name="x">
       <location column="3" file="common/vector4.h" line="51" />
       <undocumented-return />
     </function>
-    <function id="Vector4::y" name="y">
+    <function id="Vector4::e" name="e">
       <location column="3" file="common/vector4.h" line="55" />
       <undocumented-return />
     </function>
-    <function id="Vector4::z" name="z">
+    <function id="Vector4::x" name="x">
       <location column="3" file="common/vector4.h" line="59" />
       <undocumented-return />
     </function>
+    <function id="Vector4::y" name="y">
+      <location column="3" file="common/vector4.h" line="63" />
+      <undocumented-return />
+    </function>
+    <function id="Vector4::z" name="z">
+      <location column="3" file="common/vector4.h" line="67" />
+      <undocumented-return />
+    </function>
     <function id="Vector4::operator-" name="operator-">
-      <location column="3" file="common/vector4.h" line="64" />
+      <location column="3" file="common/vector4.h" line="72" />
       <undocumented-return />
     </function>
     <function id="Vector4::operator+" name="operator+">
-      <location column="3" file="common/vector4.h" line="69" />
+      <location column="3" file="common/vector4.h" line="77" />
       <undocumented-return />
       <undocumented name="v" />
     </function>
@@ -2861,16 +2829,28 @@ return values.
       <undocumented-return />
     </function>
     <function id="motion::AxisStepper::nextStep" name="nextStep">
-      <location column="9" file="motion/axisstepper.h" line="84" />
-      <location column="1" file="motion/axisstepper.h" line="198" />
+      <location column="9" file="motion/axisstepper.h" line="83" />
+      <location column="1" file="motion/axisstepper.h" line="178" />
+      <undocumented name="useEndstops" />
       <undocumented name="axes" />
     </function>
+    <function id="motion::AxisStepper::_nextStep" name="_nextStep">
+      <location column="9" file="motion/axisstepper.h" line="86" />
+      <location column="1" file="motion/axisstepper.cpp" line="14" />
+      <undocumented name="useEndstops" />
+    </function>
+    <function id="motion::operator|" name="operator|">
+      <location column="1" file="motion/motionplanner.h" line="62" />
+      <undocumented-return />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
     <function id="motion::MotionPlanner::readyForNextMove" name="readyForNextMove">
-      <location column="9" file="motion/motionplanner.h" line="140" />
+      <location column="9" file="motion/motionplanner.h" line="157" />
       <undocumented-return />
     </function>
     <function id="motion::MotionPlanner::actualCartesianPosition" name="actualCartesianPosition">
-      <location column="9" file="motion/motionplanner.h" line="150" />
+      <location column="9" file="motion/motionplanner.h" line="167" />
       <undocumented-return />
     </function>
     <function id="mathutil::CtoK" name="CtoK">
@@ -2909,25 +2889,31 @@ return values.
       <undocumented name="interface" />
       <undocumented name="dutyCycle" />
     </function>
-    <function id="State::DriverCallbackInterface::DriverCallbackInterface" name="DriverCallbackInterface">
-      <location column="13" file="state.h" line="132" />
-      <undocumented name="index" />
-      <undocumented name="state" />
+    <function id="OptionalArg::get" name="get">
+      <location column="3" file="common/optionalarg.h" line="18" />
+      <undocumented-return />
+      <undocumented name="fallback" />
+    </function>
+    <function id="State::CoordMapInterface::moveTo" name="moveTo">
+      <location column="13" file="state.h" line="151" />
+      <undocumented name="position" />
+      <undocumented name="velXyz" />
+      <undocumented name="flags" />
     </function>
     <function id="State::State&lt;Drv&gt;" name="State&lt;Drv&gt;">
-      <location column="9" file="state.h" line="174" />
-      <location column="1" file="state.h" line="231" />
+      <location column="9" file="state.h" line="207" />
+      <location column="1" file="state.h" line="265" />
       <undocumented name="fs" />
       <undocumented name="com" />
       <undocumented name="needPersistentCom" />
       <undocumented name="drv" />
     </function>
     <function id="State::motionPlanner" name="motionPlanner">
-      <location column="9" file="state.h" line="180" />
+      <location column="9" file="state.h" line="213" />
       <undocumented-return />
     </function>
     <function id="State::setPersistentHostCom" name="setPersistentHostCom">
-      <location column="9" file="state.h" line="184" />
+      <location column="9" file="state.h" line="217" />
       <undocumented name="persistence" />
     </function>
     <function id="motion::ConstantAcceleration::transform" name="transform">
@@ -2935,20 +2921,58 @@ return values.
       <undocumented-return />
       <undocumented name="time" />
     </function>
+    <function id="motion::CoordMap::getEndstop" name="getEndstop">
+      <location column="9" file="motion/coordmap.h" line="68" />
+      <undocumented-return />
+      <undocumented name="axis" />
+    </function>
+    <function id="motion::CoordMap::numAxis" name="numAxis">
+      <location column="9" file="motion/coordmap.h" line="73" />
+      <undocumented-return />
+    </function>
+    <function id="motion::CoordMap::executeHomeRoutine" name="executeHomeRoutine">
+      <location column="9" file="motion/coordmap.h" line="77" />
+      <undocumented name="interface" />
+    </function>
+    <function id="motion::CoordMap::getHomePosition" name="getHomePosition">
+      <location column="9" file="motion/coordmap.h" line="82" />
+      <undocumented-return />
+      <undocumented name="" />
+      <misspelled name="return" />
+    </function>
+    <function id="motion::CoordMap::applyLeveling" name="applyLeveling">
+      <location column="9" file="motion/coordmap.h" line="88" />
+      <undocumented-return />
+      <undocumented name="xyz" />
+    </function>
+    <function id="motion::CoordMap::bound" name="bound">
+      <location column="9" file="motion/coordmap.h" line="92" />
+      <undocumented-return />
+      <undocumented name="xyze" />
+    </function>
+    <function id="motion::CoordMap::xyzeFromMechanical" name="xyzeFromMechanical">
+      <location column="9" file="motion/coordmap.h" line="96" />
+      <undocumented-return />
+      <undocumented name="mech" />
+    </function>
+    <function id="motion::CoordMap::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
+      <location column="9" file="motion/coordmap.h" line="103" />
+      <undocumented-return />
+    </function>
     <function id="Matrix3x3::transform" name="transform">
       <location column="9" file="common/matrix.h" line="41" />
       <undocumented-return />
       <undocumented name="xyz" />
     </function>
     <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
-      <location column="9" file="motion/linearstepper.h" line="100" />
+      <location column="9" file="motion/linearstepper.h" line="71" />
       <undocumented name="map" />
       <undocumented name="vel" />
       <undocumented name="curPos" />
       <undocumented name="idx" />
     </function>
     <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
-      <location column="9" file="motion/linearstepper.h" line="109" />
+      <location column="9" file="motion/linearstepper.h" line="81" />
       <undocumented name="map" />
       <undocumented name="center" />
       <undocumented name="idx" />
@@ -2958,6 +2982,10 @@ return values.
       <undocumented name="u" />
       <undocumented name="v" />
       <undocumented name="extVel" />
+    </function>
+    <function id="motion::LinearStepper::_nextStep" name="_nextStep">
+      <location column="9" file="motion/linearstepper.h" line="93" />
+      <undocumented name="useEndstops" />
     </function>
     <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/machine.h" line="12" />
@@ -3023,7 +3051,7 @@ return values.
       <undocumented name="lev" />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
-      <location column="9" file="motion/lineardeltastepper.h" line="209" />
+      <location column="9" file="motion/lineardeltastepper.h" line="211" />
       <undocumented-return />
       <undocumented name="s" />
     </function>
@@ -3056,19 +3084,31 @@ return values.
       </doctype>
     </field>
     <method id="Vector3::tuple" name="tuple">
-      <location column="3" file="common/vector3.h" line="44" />
+      <location column="3" file="common/vector3.h" line="45" />
       <doctype name="brief">
         <ref name="x, y, z" />
       </doctype>
     </method>
     <conversionfunction id="Vector3::operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;" name="operator tuple&lt;type-parameter-0-0, type-parameter-0-0, type-parameter-0-0&gt;">
-      <location column="3" file="common/vector3.h" line="48" />
+      <location column="3" file="common/vector3.h" line="49" />
+      <doctype name="brief">
+        <ref name="x, y, z" />
+      </doctype>
+    </conversionfunction>
+    <method id="Vector3::array" name="array">
+      <location column="3" file="common/vector3.h" line="53" />
+      <doctype name="brief">
+        <ref name="x, y, z" />
+      </doctype>
+    </method>
+    <conversionfunction id="Vector3::operator array&lt;type-parameter-0-0, 3&gt;" name="operator array&lt;type-parameter-0-0, 3&gt;">
+      <location column="3" file="common/vector3.h" line="57" />
       <doctype name="brief">
         <ref name="x, y, z" />
       </doctype>
     </conversionfunction>
     <method id="Vector3::cross" name="cross">
-      <location column="3" file="common/vector3.h" line="141" />
+      <location column="3" file="common/vector3.h" line="150" />
       <doctype name="doc">
         <ref name="uy*vz - uz*vy, uz*vx - ux*vz, ux*vy - uy*vx" />
       </doctype>
@@ -3091,19 +3131,43 @@ return values.
         <ref name="x, y, z, e" />
       </doctype>
     </conversionfunction>
-    <structtemplate id="motion::AxisStepper::GetHomeStepperTypes" name="GetHomeStepperTypes">
-      <location column="9" file="motion/axisstepper.h" line="90" />
+    <method id="Vector4::array" name="array">
+      <location column="3" file="common/vector4.h" line="33" />
       <doctype name="brief">
-        <ref name="std::tuple&lt;StepperT, ..." />
-        <ref name="StepperT::HomeStepperT, ..." />
+        <ref name="x, y, z, e" />
       </doctype>
-    </structtemplate>
+    </method>
+    <conversionfunction id="Vector4::operator array&lt;type-parameter-0-0, 4&gt;" name="operator array&lt;type-parameter-0-0, 4&gt;">
+      <location column="3" file="common/vector4.h" line="37" />
+      <doctype name="brief">
+        <ref name="x, y, z, e" />
+      </doctype>
+    </conversionfunction>
     <method id="motion::MaxOutputEventSequenceSize::mySize" name="mySize">
-      <location column="5" file="motion/motionplanner.h" line="63" />
+      <location column="5" file="motion/motionplanner.h" line="74" />
       <doctype name="brief">
         <ref name="OutputEvent, N" />
       </doctype>
     </method>
+    <classtemplate id="OptionalArg" name="OptionalArg">
+      <location column="1" file="common/optionalarg.h" line="10" />
+      <doctype name="doc">
+        <ref name="float" />
+        <ref name="float" />
+      </doctype>
+    </classtemplate>
+    <typedef id="State::MotionInterface::CoordMapT" name="CoordMapT">
+      <location column="13" file="state.h" line="120" />
+      <doctype name="brief">
+        <ref name="MotionPlanner" />
+      </doctype>
+    </typedef>
+    <typedef id="State::MotionInterface::AccelerationProfileT" name="AccelerationProfileT">
+      <location column="13" file="state.h" line="122" />
+      <doctype name="brief">
+        <ref name="MotionPlanner" />
+      </doctype>
+    </typedef>
     <class id="Matrix3x3" name="Matrix3x3">
       <location column="1" file="common/matrix.h" line="23" />
       <doctype name="brief">
@@ -3143,19 +3207,19 @@ return values.
       </doctype>
     </variable>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">
-      <location column="9" file="motion/lineardeltastepper.h" line="174" />
+      <location column="9" file="motion/lineardeltastepper.h" line="175" />
       <doctype name="brief">
         <ref name="xc, yc, zc" />
       </doctype>
     </field>
     <field id="motion::LinearDeltaArcStepper::vy" name="vy">
-      <location column="9" file="motion/lineardeltastepper.h" line="174" />
+      <location column="9" file="motion/lineardeltastepper.h" line="175" />
       <doctype name="brief">
         <ref name="xc, yc, zc" />
       </doctype>
     </field>
     <field id="motion::LinearDeltaArcStepper::vz" name="vz">
-      <location column="9" file="motion/lineardeltastepper.h" line="174" />
+      <location column="9" file="motion/lineardeltastepper.h" line="175" />
       <doctype name="brief">
         <ref name="xc, yc, zc" />
       </doctype>

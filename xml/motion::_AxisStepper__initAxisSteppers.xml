@@ -14,6 +14,9 @@
     <argument id="motion::_AxisStepper__initAxisSteppers::operator()::steppers" name="steppers">
       <type name="TupleT" qualifier="*" />
     </argument>
+    <argument id="motion::_AxisStepper__initAxisSteppers::operator()::useEndstops" name="useEndstops">
+      <type builtin="yes" name="bool" />
+    </argument>
     <argument id="motion::_AxisStepper__initAxisSteppers::operator()::map" name="map">
       <type name="const CoordMapT" qualifier=" const *" />
     </argument>

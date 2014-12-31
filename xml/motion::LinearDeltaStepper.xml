@@ -7,9 +7,6 @@
   <templatenontypeparameter id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
     <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
   </templatenontypeparameter>
-  <typedef id="motion::LinearDeltaStepper::HomeStepperT" name="HomeStepperT">
-    <type name="StepperDriverT" />
-  </typedef>
   <typedef id="motion::LinearDeltaStepper::ArcStepperT" name="ArcStepperT">
     <type name="StepperDriverT" />
   </typedef>
@@ -61,5 +58,8 @@
     <return>
       <type builtin="yes" name="void" />
     </return>
+    <argument id="motion::LinearDeltaStepper::_nextStep::useEndstops" name="useEndstops">
+      <type builtin="yes" name="bool" />
+    </argument>
   </method>
 </classtemplate>

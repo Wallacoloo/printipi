@@ -2,7 +2,19 @@
 <class id="motion::CoordMap" name="CoordMap" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <subclass access="public" name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap" />
   <subclass access="public" name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap" />
+  <methodtemplate id="motion::CoordMap::executeHomeRoutine" name="executeHomeRoutine">
+    <brief>Home the machine by sending commands to @interface</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::CoordMap::executeHomeRoutine::interface" name="interface">
+      <type name="Interface" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="motion::CoordMap::executeHomeRoutine::Interface" name="Interface" />
+  </methodtemplate>
   <method id="motion::CoordMap::applyLeveling" name="applyLeveling">
+    <brief>apply some leveling transformation to the [x,y,z] cartesian coordinate to compensate for an unlevel bed.</brief>
+    <doc>Note: this is only applied to the endpoints of a line, so a non-planar bed cannot properly be leveled.</doc>
     <return>
       <type name="Vector3f" ref="index#Vector3f" />
     </return>
@@ -11,6 +23,7 @@
     </argument>
   </method>
   <method id="motion::CoordMap::bound" name="bound">
+    <brief>ensure that the desired coordinate is accessible. (i.e. motors won't ram the endstops, etc).</brief>
     <return>
       <type name="Vector4f" ref="index#Vector4f" />
     </return>
@@ -19,6 +32,8 @@
     </argument>
   </method>
   <method id="motion::CoordMap::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
+    <brief>if we get a G1 before the first G28, then we *probably* want to home first,</brief>
+    <doc>but feel free to override this in other implementations.</doc>
     <return>
       <type builtin="yes" name="bool" />
     </return>
@@ -34,6 +49,8 @@
     </return>
   </method>
   <method id="motion::CoordMap::getEndstop" name="getEndstop">
+    <brief>return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)</brief>
+    <doc>Depending on which AxisSteppers your CoordMap uses, you may not need to implement this function.</doc>
     <return>
       <type name="iodrv::Endstop" qualifier=" const &amp;" ref="iodrv::Endstop#iodrv::Endstop" />
     </return>
@@ -42,6 +59,7 @@
     </argument>
   </method>
   <method id="motion::CoordMap::getHomePosition" name="getHomePosition">
+    <brief>given the current tracked motor coordinates, and knowing that we are at home position,</brief>
     <return>
       <type name="std::array&lt;int, 0&gt;" />
     </return>
@@ -55,11 +73,13 @@
     </return>
   </method>
   <method id="motion::CoordMap::numAxis" name="numAxis" static="yes">
+    <brief>return the number of axis (physical motors) that we have.</brief>
     <return>
       <type name="std::size_t" />
     </return>
   </method>
   <method id="motion::CoordMap::xyzeFromMechanical" name="xyzeFromMechanical">
+    <brief>given axis coordinates &amp;mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.</brief>
     <return>
       <type name="Vector4f" ref="index#Vector4f" />
     </return>

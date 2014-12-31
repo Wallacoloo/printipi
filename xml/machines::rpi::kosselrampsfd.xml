@@ -4,15 +4,6 @@
   <base access="public">
     <type name="Machine" ref="machines::Machine#machines::Machine" />
   </base>
-  <method id="machines::rpi::kosselrampsfd::clampHomeRate" name="clampHomeRate" override="yes">
-    <return>
-      <type builtin="yes" name="float" />
-    </return>
-    <argument id="machines::rpi::kosselrampsfd::clampHomeRate::inp" name="inp">
-      <type builtin="yes" name="float" />
-    </argument>
-    <override name="Machine::clampHomeRate" ref="machines::Machine#machines::Machine::clampHomeRate" />
-  </method>
   <method id="machines::rpi::kosselrampsfd::clampMoveRate" name="clampMoveRate" override="yes">
     <return>
       <type builtin="yes" name="float" />

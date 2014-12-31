@@ -18,6 +18,9 @@ It also allows for the compiler to easily optimize the if statements into a jump
     <argument id="motion::_AxisStepper__nextStep::operator()::desiredIdx" name="desiredIdx">
       <type name="std::size_t" />
     </argument>
+    <argument id="motion::_AxisStepper__nextStep::operator()::useEndstops" name="useEndstops">
+      <type builtin="yes" name="bool" />
+    </argument>
     <templatetypeparameter id="motion::_AxisStepper__nextStep::operator()::T" name="T" />
   </methodtemplate>
 </struct>

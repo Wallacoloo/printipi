@@ -6,14 +6,6 @@
   <subclass access="public" name="rpi::kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
     <brief>for ConstantAcceleration &amp; such</brief>
   </subclass>
-  <method id="machines::Machine::clampHomeRate" name="clampHomeRate">
-    <return>
-      <type builtin="yes" name="float" />
-    </return>
-    <argument id="machines::Machine::clampHomeRate::inp" name="inp">
-      <type builtin="yes" name="float" />
-    </argument>
-  </method>
   <method id="machines::Machine::clampMoveRate" name="clampMoveRate">
     <return>
       <type builtin="yes" name="float" />

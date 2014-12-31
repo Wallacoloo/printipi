@@ -35,6 +35,9 @@
     <templatetypeparameter id="callOnAll::Func" name="Func" />
     <templatetypeparameter id="callOnAll::Args" name="Args" />
   </functiontemplate>
+  <variable id="NotPresent" name="NotPresent">
+    <type name="OptionalArg&lt;float&gt;" qualifier=" const" />
+  </variable>
   <functiontemplate id="tupleCallOnIndex" name="tupleCallOnIndex">
     <return>
       <type name="decltype(__callOnIndex&lt;TupleT, std::tuple_size&lt;TupleT&gt;::value, Func, Args...&gt;()(t, f, idx, args...))" />
@@ -185,9 +188,6 @@
     <struct name="_AxisStepper__initAxisArcSteppers" ref="motion::_AxisStepper__initAxisArcSteppers#motion::_AxisStepper__initAxisArcSteppers">
       <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
     </struct>
-    <struct name="_AxisStepper__initAxisHomeSteppers" ref="motion::_AxisStepper__initAxisHomeSteppers#motion::_AxisStepper__initAxisHomeSteppers">
-      <brief>Helper class for AxisStepper::initAxisHomeSteppers</brief>
-    </struct>
     <struct name="_AxisStepper__initAxisSteppers" ref="motion::_AxisStepper__initAxisSteppers#motion::_AxisStepper__initAxisSteppers">
       <brief>Helper class for AxisStepper::initAxisSteppers</brief>
     </struct>
@@ -202,10 +202,6 @@
       <structtemplate name="GetArcStepperTypes" ref="motion::AxisStepper::GetArcStepperTypes#motion::AxisStepper::GetArcStepperTypes">
         <brief>Arc steppers:</brief>
         <templatetypeparameter id="motion::AxisStepper::GetArcStepperTypes::Types" name="Types" />
-      </structtemplate>
-      <structtemplate name="GetHomeStepperTypes" ref="motion::AxisStepper::GetHomeStepperTypes#motion::AxisStepper::GetHomeStepperTypes">
-        <brief>homing steppers. GetHomeStepperTypes&amp;lt;std::tuple&lt;StepperT, ...&amp;gt; &gt;::HomeStepperTypes is equivalent to std::tuple&amp;lt;StepperT::HomeStepperT, ...&amp;gt;</brief>
-        <templatetypeparameter id="motion::AxisStepper::GetHomeStepperTypes::Types" name="Types" />
       </structtemplate>
     </class>
     <classtemplate name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver">
@@ -245,12 +241,6 @@
       <templatetypeparameter id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT" />
       <templatenontypeparameter id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
         <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
-      </templatenontypeparameter>
-    </classtemplate>
-    <classtemplate name="LinearHomeStepper" ref="motion::LinearHomeStepper#motion::LinearHomeStepper">
-      <templatetypeparameter id="motion::LinearHomeStepper::StepperDriverT" name="StepperDriverT" />
-      <templatenontypeparameter default="std" id="motion::LinearHomeStepper::AxisIdx" name="AxisIdx">
-        <type name="std::size_t" />
       </templatenontypeparameter>
     </classtemplate>
     <classtemplate name="LinearStepper" ref="motion::LinearStepper#motion::LinearStepper">
@@ -331,6 +321,10 @@
     <brief>#include &amp;lt;tuple&amp;gt;</brief>
   </class>
   <struct name="NoFilter" ref="NoFilter#NoFilter" />
+  <classtemplate name="OptionalArg" ref="OptionalArg#OptionalArg">
+    <brief>allow for a function default value that is not a constant.</brief>
+    <templatetypeparameter id="OptionalArg::T" name="T" />
+  </classtemplate>
   <class name="OutputEvent" ref="OutputEvent#OutputEvent">
     <brief>for IoLevel</brief>
   </class>
