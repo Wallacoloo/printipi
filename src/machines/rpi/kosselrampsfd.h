@@ -357,7 +357,7 @@ class kosselrampsfd : public Machine {
             //    bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
             return LinearDeltaCoordMap<A4988, A4988, A4988, A4988>(
-                R_MM, L_MM, H_MM, BUILDRAD_MM, STEPS_MM, STEPS_MM_EXT, 
+                R_MM, L_MM, H_MM, BUILDRAD_MM, STEPS_MM, STEPS_MM_EXT, HOME_RATE_MM_SEC, 
                 //A tower:
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_A_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_A_DIR), 
@@ -396,10 +396,6 @@ class kosselrampsfd : public Machine {
         }
         inline float clampMoveRate(float inp) const {
             return std::min(inp, defaultMoveRate());
-        }
-        inline float clampHomeRate(float inp) const {
-            (void)inp; //unused argument
-            return HOME_RATE_MM_SEC;
         }
 };
 

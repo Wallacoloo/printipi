@@ -68,6 +68,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
     float _r, _L, _h, _buildrad;
     float _STEPS_MM, _MM_STEPS;
     float _STEPS_MM_EXT, _MM_STEPS_EXT;
+    float homeVelocity;
     BedLevelT bedLevel;
 
     std::array<iodrv::Endstop, 4> endstops; //A, B, C and E (E is null)
@@ -84,12 +85,13 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline float buildrad() const { return _buildrad; }
         inline float STEPS_MM(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? STEPS_MM_EXT() : STEPS_MM(); }
         inline float MM_STEPS(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? MM_STEPS_EXT() : MM_STEPS(); }
-        inline LinearDeltaCoordMap(float r, float L, float h, float buildrad, float STEPS_MM, float STEPS_MM_EXT, 
+        inline LinearDeltaCoordMap(float r, float L, float h, float buildrad, float STEPS_MM, float STEPS_MM_EXT, float homeVelocity,
             Stepper1 &&stepper1, Stepper2 &&stepper2, Stepper3 &&stepper3, Stepper4 &&stepper4,
             iodrv::Endstop &&endstopA, iodrv::Endstop &&endstopB, iodrv::Endstop &&endstopC, const BedLevelT &t)
          : _r(r), _L(L), _h(h), _buildrad(buildrad),
            _STEPS_MM(STEPS_MM), _MM_STEPS(1. / STEPS_MM),
            _STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
+           homeVelocity(homeVelocity),
            bedLevel(t),
            endstops({{std::move(endstopA), std::move(endstopB), std::move(endstopC), std::move(iodrv::Endstop())}}),
            stepperDrivers(std::move(stepper1), std::move(stepper2), std::move(stepper3), std::move(stepper4)) {}
@@ -119,7 +121,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             Vector4f curPos = interface.actualCartesianPosition();
             //try to move to <here> + <height> & will stop along the way if we hit an endstop.
             Vector4f destPos = curPos + Vector4f(0, 0, h(), 0);
-            interface.moveTo(destPos, 10, motion::USE_ENDSTOPS | motion::NO_LEVELING | motion::NO_BOUNDING); //TODO: remove magic-number 10 (velocity of home movement)
+            interface.moveTo(destPos, homeVelocity, motion::USE_ENDSTOPS | motion::NO_LEVELING | motion::NO_BOUNDING);
             //reset the indexed axis positions:
             interface.resetAxisPositions(getHomePosition(interface.axisPositions()));
             //interface.setUnbufferedMove(false);

@@ -127,7 +127,7 @@ class cartesian : public Machine {
         }
         inline LinearCoordMap<A4988, A4988, A4988, A4988> getCoordMap() const {
             return LinearCoordMap<A4988, A4988, A4988, A4988>(
-                STEPS_MM_X, STEPS_MM_Y, STEPS_MM_Z, STEPS_MM_EXT,
+                STEPS_MM_X, STEPS_MM_Y, STEPS_MM_Z, STEPS_MM_EXT, HOME_RATE_MM_SEC, 
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_X_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_X_DIR), 
                       IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_X_EN)),
@@ -176,10 +176,6 @@ class cartesian : public Machine {
         }
         inline float clampMoveRate(float inp) const {
             return std::min(inp, defaultMoveRate());
-        }
-        inline float clampHomeRate(float inp) const {
-            (void)inp; //unused argument
-            return HOME_RATE_MM_SEC;
         }
 };
 

@@ -18,9 +18,6 @@ class Machine {
         inline float clampMoveRate(float inp) const {
             return inp; 
         }
-        inline float clampHomeRate(float inp) const {
-            return inp;
-        }
         inline bool doHomeBeforeFirstMovement() const {
             return true; //if we get a G1 before the first G28, then yes - we want to home first.
         }
