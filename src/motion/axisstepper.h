@@ -104,77 +104,77 @@ template <typename StepperDriver> class AxisStepperWithDriver : public AxisStepp
         }
 };
 
-//Helper classes for AxisStepper::getNextTime method
-//C++ doesn't support partial template function specialization, so we need to use templated classes instead.
-//Below function(s) select the AxisStepper with the smallest time attribute from a tuple of such AxisSteppers
-template <typename TupleT, int idx> struct _AxisStepper__getNextTime {
-    AxisStepper& operator()(TupleT &axes) {
-        AxisStepper &m1 = _AxisStepper__getNextTime<TupleT, idx-1>()(axes);
-        AxisStepper &m2 = std::get<idx>(axes);
-        //assume that .time can be finite, infinite, or NaN.
-        //comparisons against NaN are ALWAYS false.
-        if (m1.time <= 0) { return m2; } //if one of the times is non-positive (ie no next step), return the other one.
-        if (m2.time <= 0) { return m1; }
-        //Now return the smallest of the two, discarding any NaNs:
-        //if m2.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m1.time
-        //elif m1.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m2.time
-        return (m1.time < m2.time || std::isnan(m2.time)) ? m1 : m2;
-    }
-};
+namespace {
+    //place helper functions in an unnamed namespace to limit visibility and hint the documentation generator
 
-//TODO: re-implement with tupleutil
+    //Helper classes for AxisStepper::getNextTime method
+    //C++ doesn't support partial template function specialization, so we need to use templated classes instead.
+    //Below function(s) select the AxisStepper with the smallest time attribute from a tuple of such AxisSteppers
+    template <typename TupleT, int idx> struct _AxisStepper__getNextTime {
+        AxisStepper& operator()(TupleT &axes) {
+            AxisStepper &m1 = _AxisStepper__getNextTime<TupleT, idx-1>()(axes);
+            AxisStepper &m2 = std::get<idx>(axes);
+            //assume that .time can be finite, infinite, or NaN.
+            //comparisons against NaN are ALWAYS false.
+            if (m1.time <= 0) { return m2; } //if one of the times is non-positive (ie no next step), return the other one.
+            if (m2.time <= 0) { return m1; }
+            //Now return the smallest of the two, discarding any NaNs:
+            //if m2.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m1.time
+            //elif m1.time == NaN, then (m1.time < m2.time || isnan(m2.time)) ? m1 : m2 will return m2.time
+            return (m1.time < m2.time || std::isnan(m2.time)) ? m1 : m2;
+        }
+    };
 
-template <typename TupleT> struct _AxisStepper__getNextTime<TupleT, 0> {
-    AxisStepper& operator()(TupleT &axes) {
-        return std::get<0>(axes);
-    }
-};
+    //TODO: re-implement with tupleutil
+    template <typename TupleT> struct _AxisStepper__getNextTime<TupleT, 0> {
+        AxisStepper& operator()(TupleT &axes) {
+            return std::get<0>(axes);
+        }
+    };
+
+    //Helper class for AxisStepper::initAxisSteppers
+    struct _AxisStepper__initAxisSteppers {
+        template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, bool useEndstops, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector4f &vel) {
+            (void)_myIdx; (void)stepper; //unused
+            std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, curPos, vel));
+            std::get<MyIdx>(*steppers)._nextStep(useEndstops);
+        }
+    };
+
+    //Helper class for AxisStepper::initAxisArcSteppers
+    struct _AxisStepper__initAxisArcSteppers {
+        template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, bool useEndstops, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel) {
+            (void)_myIdx; (void)stepper; //unused
+            std::get<MyIdx>(*steppers) = T(MyIdx, *map, curPos, center, u, v, arcRad, arcVel, extVel);
+            std::get<MyIdx>(*steppers)._nextStep(useEndstops);
+        }
+    };
+
+    //Helper class for AxisStepper::nextStep method
+    //this iterates through all steppers and checks if their index is equal to the index of the desired stepper to step.
+    //if so, it calls _nextStep().
+    //This allows for _nextStep to act as if it were virtual (by defining a method of that name in a derived type), but without using a vtable.
+    //It also allows for the compiler to easily optimize the if statements into a jump-table.
+    struct _AxisStepper__nextStep {
+        template <typename T> void operator()(std::size_t myIdx, T &stepper, std::size_t desiredIdx, bool useEndstops) {
+            if (desiredIdx == myIdx) {
+                stepper._nextStep(useEndstops);
+            }
+        }
+    };
+}
+
+
 
 template <typename TupleT> AxisStepper& AxisStepper::getNextTime(TupleT &axes) {
     return _AxisStepper__getNextTime<TupleT, std::tuple_size<TupleT>::value-1>()(axes);
 }
-
-//Helper class for AxisStepper::initAxisSteppers
-
-struct _AxisStepper__initAxisSteppers {
-    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, bool useEndstops, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector4f &vel) {
-        (void)_myIdx; (void)stepper; //unused
-        std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, curPos, vel));
-        std::get<MyIdx>(*steppers)._nextStep(useEndstops);
-    }
-};
-
 template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisStepper::initAxisSteppers(TupleT &steppers, bool useEndstops, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector4f &vel) {
     callOnAll(steppers, _AxisStepper__initAxisSteppers(), &steppers, useEndstops, &map, curPos, vel);
 }
-
-//Helper class for AxisStepper::initAxisArcSteppers
-
-struct _AxisStepper__initAxisArcSteppers {
-    template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, bool useEndstops, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel) {
-        (void)_myIdx; (void)stepper; //unused
-        std::get<MyIdx>(*steppers) = T(MyIdx, *map, curPos, center, u, v, arcRad, arcVel, extVel);
-        std::get<MyIdx>(*steppers)._nextStep(useEndstops);
-    }
-};
-
 template <typename TupleT, typename CoordMapT, std::size_t MechSize> void AxisStepper::initAxisArcSteppers(TupleT &steppers, bool useEndstops, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel) {
     callOnAll(steppers, _AxisStepper__initAxisArcSteppers(), &steppers, useEndstops, &map, curPos, center, u, v, arcRad, arcVel, extVel);
 }
-
-//Helper class for AxisStepper::nextStep method
-//this iterates through all steppers and checks if their index is equal to the index of the desired stepper to step.
-//if so, it calls _nextStep().
-//This allows for _nextStep to act as if it were virtual (by defining a method of that name in a derived type), but without using a vtable.
-//It also allows for the compiler to easily optimize the if statements into a jump-table.
-
-struct _AxisStepper__nextStep {
-    template <typename T> void operator()(std::size_t myIdx, T &stepper, std::size_t desiredIdx, bool useEndstops) {
-        if (desiredIdx == myIdx) {
-            stepper._nextStep(useEndstops);
-        }
-    }
-};
 template <typename TupleT> void AxisStepper::nextStep(TupleT &axes, bool useEndstops) {
     callOnAll(axes, _AxisStepper__nextStep(), this->index(), useEndstops);
 }

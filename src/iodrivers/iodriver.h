@@ -84,95 +84,105 @@ class IODriver {
         template <typename TupleT> static CelciusType getBedTemp(TupleT &drivers);
 };
 
-//IODriver::lockAllAxis helper functions:
-struct IODriver__lockAllAxis {
-    template <typename T> void operator()(std::size_t index, T &driver) {
-        (void)index; //unused;
-        driver.lockAxis();
-    }
-};
+namespace {
+    //place helper functions in an unnamed namespace to limit visibility and hint the documentation generator
+
+    //IODriver::lockAllAxis helper functions:
+    struct IODriver__lockAllAxis {
+        template <typename T> void operator()(std::size_t index, T &driver) {
+            (void)index; //unused;
+            driver.lockAxis();
+        }
+    };
+
+    //IODriver::unlockAllAxis helper functions:
+    struct IODriver__unlockAllAxis {
+        template <typename T> void operator()(std::size_t index, T &driver) {
+            (void)index; //unused;
+            driver.unlockAxis();
+        }
+    };
+
+    //IODriver::setHotendTemp helper functions:
+    struct IODriver__setHotendTemp {
+        template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
+            (void)index; //unused;
+            if (driver.isHotend()) {
+                driver.setTargetTemperature(temp);
+            }
+        }
+    };
+
+    //IODriver::setBedTemp helper functions:
+    struct IODriver__setBedTemp {
+        template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
+            (void)index; //unused;
+            if (driver.isHeatedBed()) {
+                driver.setTargetTemperature(temp);
+            }
+        }
+    };
+
+    //IODriver::getHotendTemp helper functions:
+    struct IODriver__getHotendTemp {
+        CelciusType value;
+        IODriver__getHotendTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
+        template <typename T> void operator()(std::size_t index, T &driver) {
+            (void)index; //unused;
+            if (driver.isHotend()) {
+                value = driver.getMeasuredTemperature();
+            }
+        }
+    };
+
+    //IODriver::getHotendTargetTemp helper functions:
+    struct IODriver__getHotendTargetTemp {
+        CelciusType value;
+        IODriver__getHotendTargetTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
+        template <typename T> void operator()(std::size_t index, T &driver) {
+            (void)index; //unused;
+            if (driver.isHotend()) {
+                value = driver.getTargetTemperature();
+            }
+        }
+    };
+
+    //IODriver::getBedTemp helper functions:
+    struct IODriver__getBedTemp {
+        CelciusType value;
+        IODriver__getBedTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
+        template <typename T> void operator()(std::size_t /*index*/, T &driver) {
+            if (driver.isHeatedBed()) {
+                value = driver.getMeasuredTemperature();
+            }
+        }
+    };
+}
+
+
+
 template <typename TupleT> void IODriver::lockAllAxis(TupleT &drivers) {
     callOnAll(drivers, IODriver__lockAllAxis());
 }
-
-//IODriver::unlockAllAxis helper functions:
-struct IODriver__unlockAllAxis {
-    template <typename T> void operator()(std::size_t index, T &driver) {
-        (void)index; //unused;
-        driver.unlockAxis();
-    }
-};
 template <typename TupleT> void IODriver::unlockAllAxis(TupleT &drivers) {
     callOnAll(drivers, IODriver__unlockAllAxis());
 }
-
-//IODriver::setHotendTemp helper functions:
-struct IODriver__setHotendTemp {
-    template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
-        (void)index; //unused;
-        if (driver.isHotend()) {
-            driver.setTargetTemperature(temp);
-        }
-    }
-};
 template <typename TupleT> void IODriver::setHotendTemp(TupleT &drivers, CelciusType temp) {
     callOnAll(drivers, IODriver__setHotendTemp(), temp);
 }
-//IODriver::setBedTemp helper functions:
-struct IODriver__setBedTemp {
-    template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
-        (void)index; //unused;
-        if (driver.isHeatedBed()) {
-            driver.setTargetTemperature(temp);
-        }
-    }
-};
 template <typename TupleT> void IODriver::setBedTemp(TupleT &drivers, CelciusType temp) {
     callOnAll(drivers, IODriver__setBedTemp(), temp);
 }
-
-//IODriver::getHotendTemp helper functions:
-struct IODriver__getHotendTemp {
-    CelciusType value;
-    IODriver__getHotendTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
-    template <typename T> void operator()(std::size_t index, T &driver) {
-        (void)index; //unused;
-        if (driver.isHotend()) {
-            value = driver.getMeasuredTemperature();
-        }
-    }
-};
 template <typename TupleT> CelciusType IODriver::getHotendTemp(TupleT &drivers) {
     IODriver__getHotendTemp t;
     callOnAll(drivers, &t);
     return t.value;
 }
-//IODriver::getHotendTargetTemp helper functions:
-struct IODriver__getHotendTargetTemp {
-    CelciusType value;
-    IODriver__getHotendTargetTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
-    template <typename T> void operator()(std::size_t index, T &driver) {
-        (void)index; //unused;
-        if (driver.isHotend()) {
-            value = driver.getTargetTemperature();
-        }
-    }
-};
 template <typename TupleT> CelciusType IODriver::getHotendTargetTemp(TupleT &drivers) {
     IODriver__getHotendTargetTemp t;
     callOnAll(drivers, &t);
     return t.value;
 }
-//IODriver::getBedTemp helper functions:
-struct IODriver__getBedTemp {
-    CelciusType value;
-    IODriver__getBedTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
-    template <typename T> void operator()(std::size_t /*index*/, T &driver) {
-        if (driver.isHeatedBed()) {
-            value = driver.getMeasuredTemperature();
-        }
-    }
-};
 template <typename TupleT> CelciusType IODriver::getBedTemp(TupleT &drivers) {
     IODriver__getBedTemp t;
     callOnAll(drivers, &t);
