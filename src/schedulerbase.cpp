@@ -9,12 +9,12 @@
 std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> SchedulerBase::exitHandlers;
 bool SchedulerBase::isExiting(false);
 
-void ctrlCOrZHandler(int s){
+static void ctrlCOrZHandler(int s){
    printf("Caught signal %d\n",s);
    exit(1); 
 }
 
-void segfaultHandler(int signal, siginfo_t *si, void *arg) {
+static void segfaultHandler(int signal, siginfo_t *si, void *arg) {
     (void)signal; (void)arg; //unused
     printf("Caught segfault at address %p\n", si->si_addr);
     exit(1);
