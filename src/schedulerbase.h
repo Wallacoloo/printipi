@@ -55,7 +55,7 @@ enum OnIdleCpuIntervalT {
 Defines things such as exit handlers */
 class SchedulerBase {
     //for the exitHandlers, we could use a set, but a vector is even less likely to fail,
-    //  and the exitHandlers are called in the case of an extreme error (eg segfauly; corrupted data)
+    //  and the exitHandlers are called in the case of an extreme error (eg segfault; corrupted data)
     static std::array<std::vector<void(*)()>, SCHED_NUM_EXIT_HANDLER_LEVELS> exitHandlers;
     static bool isExiting;
     private:
