@@ -29,6 +29,14 @@ template <typename F> class Vector4 {
 		operator std::tuple<F, F, F, F>() const {
 			return tuple();
 		}
+		//cast to a std::array of <x, y, z, e>
+		std::array<F, 4> array() const {
+			return std::array<F, 4>({{x(), y(), z(), e()}});
+		}
+		//cast to a std::array of <x, y, z, e>
+		operator std::array<F, 4>() const {
+			return array();
+		}
 
 		//string representation: "Vector4f(x, y, z, e)"
 		std::string str() const {

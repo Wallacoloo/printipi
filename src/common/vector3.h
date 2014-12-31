@@ -27,6 +27,7 @@
 #include <cmath>
 #include <string>
 #include <tuple>
+#include <array>
 
 //mathematical vector utility
 template <typename F> class Vector3 {
@@ -47,6 +48,14 @@ template <typename F> class Vector3 {
 		//cast to a tuple of <x, y, z>
 		operator std::tuple<F, F, F>() const {
 			return tuple();
+		}
+		//cast to a std::array of <x, y, z>
+		std::array<F, 3> array() const {
+			return std::array<F, 4>({{x(), y(), z()}});
+		}
+		//cast to a std::array of <x, y, z>
+		operator std::array<F, 3>() const {
+			return array();
 		}
 		
 
