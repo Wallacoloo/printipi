@@ -53,6 +53,10 @@ namespace motion {
 
 class CoordMap {
     public:
+        //If the coordmap internally contains IoDrivers (e.g. stepper drivers or servos to lower the probe), then it should return a tuple of REFERENCES to them.
+        inline std::tuple<> getDependentIoDrivers() {
+            return std::tuple<>();
+        }
         inline std::tuple<> getAxisSteppers() const {
             //return a tuple of uninitialized AxisSteppers for moving in a straight line. See axisstepper.h for the definition of AxisStepper.
             return std::tuple<>();

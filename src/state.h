@@ -164,7 +164,10 @@ template <typename Drv> class State {
     struct State__setFanRate; //forward declare a type used internally in setFanRate() function
     struct State__onIdleCpu; //forward declare a type used internally in onIdleCpu() function
     typedef Scheduler<SchedInterface> SchedType;
-    typedef decltype(std::declval<Drv>().getIoDrivers()) IODriverTypes;
+    //The ioDrivers are a combination of the ones used by the coordmap and the miscellaneous ones from the machine
+    typedef decltype(std::tuple_cat(
+        std::declval<Drv>().getCoordMap().getDependentIoDrivers(), 
+        std::declval<Drv>().getIoDrivers())) IODriverTypes;
 
     //flag set by M0. Indicates that the machine should shut down after any current moves complete.
     bool _doShutdownAfterMoveCompletes;
@@ -277,7 +280,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     _motionPlanner(MotionInterface(*this)),
     driver(drv),
     filesystem(fs),
-    ioDrivers(drv.getIoDrivers())
+    ioDrivers(std::tuple_cat(_motionPlanner.coordMap().getDependentIoDrivers(), drv.getIoDrivers()))
     {
     this->setDestMoveRatePrimitive(this->driver.defaultMoveRate());
     this->gcodeFileStack.push_back(com);

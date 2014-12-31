@@ -337,7 +337,8 @@ class kosselrampsfd : public Machine {
         //return a list of miscellaneous IoDrivers (Endstops & A4988 drivers are reachable via <getCoordMap>)
         inline std::tuple<Fan> getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD));
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD)
+            );
                 //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>(
                 //    iodrv::HotendType, _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
                 //    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), LowPassFilter(3.000)));

@@ -96,6 +96,13 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
            bedLevel(t),
            endstops({{std::move(endstopA), std::move(endstopB), std::move(endstopC), std::move(iodrv::Endstop())}}),
            stepperDrivers(std::move(stepper1), std::move(stepper2), std::move(stepper3), std::move(stepper4)) {}
+        inline std::tuple<Stepper1&, Stepper2&, Stepper3&, Stepper4&> getDependentIoDrivers() {
+            return std::tie(
+                std::get<0>(stepperDrivers), 
+                std::get<1>(stepperDrivers), 
+                std::get<2>(stepperDrivers), 
+                std::get<3>(stepperDrivers));
+        }
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
         }

@@ -37,6 +37,7 @@
 #define DRIVERS_IODRIVER_H
 
 #include <cassert> //for assert
+#include <tuple> 
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
 #include "compileflags.h" //for CelciusType
 #include "common/tupleutil.h"
@@ -48,28 +49,34 @@ namespace iodrv {
 class IODriver {
     public:
         inline IODriver() {}
-        /* called by M17; Enable/power all stepper motors */
-        inline void lockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
-        /* called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise. */
-        inline void unlockAxis() {} //OVERRIDE THIS (stepper motor drivers only)
-        inline bool isFan() const { return false; } //OVERRIDE THIS (fans only: return true)
-        inline bool isHotend() const { return false; } //OVERRIDE THIS (hotends only: return true)
-        inline bool isHeatedBed() const { return false; } //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
+        //called by M17; Enable/power all stepper motors
+        //OVERRIDE THIS (stepper motor drivers only)
+        inline void lockAxis() {}
+        // called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise.
+        //OVERRIDE THIS (stepper motor drivers only)
+        inline void unlockAxis() {} 
+        //OVERRIDE THIS (fans only: return true)
+        inline bool isFan() const { return false; } 
+        //OVERRIDE THIS (hotends only: return true)
+        inline bool isHotend() const { return false; } 
+        //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
+        inline bool isHeatedBed() const { return false; } 
+        //OVERRIDE THIS (hotends / beds only)
         inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
+        //OVERRIDE THIS (hotends / beds only)
         inline CelciusType getTargetTemperature() const { 
-            //OVERRIDE THIS (hotends / beds only)
             assert(false && "IoDriver::getTargetTemperature() must be overriden by subclass."); 
             return mathutil::ABSOLUTE_ZERO_CELCIUS; //for when assertions are disabled.
         }
+        //OVERRIDE THIS (hotends / beds only)
         inline CelciusType getMeasuredTemperature() const { 
-            //OVERRIDE THIS (hotends / beds only)
             assert(false && "IoDriver::getMeasuredTemperature() must be overriden by subclass."); 
             return mathutil::ABSOLUTE_ZERO_CELCIUS; //for when assertions are disabled.
         } 
-        /* called when the scheduler has extra time,
-        Can be used to check the status of inputs, etc.
-        Return true if object needs to continue to be serviced, false otherwise. */
-        template <typename CallbackInterface> inline bool onIdleCpu(const CallbackInterface &) { return false; } //OVERRIDE THIS
+        //called when the scheduler has extra time,
+        //Can be used to check the status of inputs, etc.
+        //Return true if object needs to continue to be serviced, false otherwise. 
+        template <typename CallbackInterface> inline bool onIdleCpu(const CallbackInterface &) { return false; }
         template <typename CallbackInterface> inline void setFanDutyCycle(const CallbackInterface &interface, float dutyCycle) {
             (void)interface;
             (void)dutyCycle;
