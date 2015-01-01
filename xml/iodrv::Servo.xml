@@ -10,4 +10,42 @@ Not yet ready for use; see discussion @ https://github.com/Wallacoloo/printipi/i
   <base access="public">
     <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
   </base>
+  <constructor id="iodrv::Servo::Servo" name="Servo">
+    <argument id="iodrv::Servo::Servo::pin" name="pin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::Servo::Servo::cycleLength" name="cycleLength">
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
+    </argument>
+    <argument id="iodrv::Servo::Servo::minMaxOnTime" name="minMaxOnTime">
+      <type name="std::pair&lt;std::chrono::duration&lt;long, std::ratio&lt;1, 1000000000&gt; &gt;, std::chrono::duration&lt;long, std::ratio&lt;1, 1000000000&gt; &gt; &gt;" />
+    </argument>
+    <argument id="iodrv::Servo::Servo::minMaxAngle" name="minMaxAngle">
+      <type name="std::pair&lt;float, float&gt;" />
+    </argument>
+    <argument id="iodrv::Servo::Servo::initialAngle" name="initialAngle">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method id="iodrv::Servo::isServo" name="isServo" override="yes">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <override name="IODriver::isServo" ref="iodrv::IODriver#iodrv::IODriver::isServo" />
+  </method>
+  <method id="iodrv::Servo::nextEvent" name="nextEvent" override="yes">
+    <return>
+      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
+    </return>
+    <override name="IODriver::nextEvent" ref="iodrv::IODriver#iodrv::IODriver::nextEvent" />
+  </method>
+  <method id="iodrv::Servo::setServoAngle" name="setServoAngle" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::Servo::setServoAngle::angle" name="angle">
+      <type builtin="yes" name="float" />
+    </argument>
+    <override name="IODriver::setServoAngle" ref="iodrv::IODriver#iodrv::IODriver::setServoAngle" />
+  </method>
 </class>

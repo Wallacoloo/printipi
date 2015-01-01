@@ -87,8 +87,6 @@
     </templatenontypeparameter>
   </methodtemplate>
   <methodtemplate id="motion::AxisStepper::nextStep" name="nextStep">
-    <brief>Event getEvent() const; //NOT TO BE OVERRIDEN</brief>
-    <doc>Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -128,6 +126,7 @@
   </constructor>
   <method access="protected" id="motion::AxisStepper::_nextStep" name="_nextStep">
     <brief>only callable via children</brief>
+    <doc>OVERRIDE THIS. And yes, it will be called upon initialization too.</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>

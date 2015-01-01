@@ -138,12 +138,31 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
       <type builtin="yes" name="bool" />
     </return>
   </method>
+  <method id="iodrv::IODriver::isServo" name="isServo">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
   <method id="iodrv::IODriver::lockAxis" name="lockAxis">
     <brief>called by M17; Enable/power all stepper motors</brief>
     <doc>OVERRIDE THIS (stepper motor drivers only)</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>
+  </method>
+  <method id="iodrv::IODriver::nextEvent" name="nextEvent">
+    <return>
+      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::setServoAngle" name="setServoAngle">
+    <brief>@angle the desired angle of the servo, in radians</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::setServoAngle::angle" name="angle">
+      <type builtin="yes" name="float" />
+    </argument>
   </method>
   <method id="iodrv::IODriver::setTargetTemperature" name="setTargetTemperature">
     <brief>OVERRIDE THIS (hotends / beds only)</brief>
