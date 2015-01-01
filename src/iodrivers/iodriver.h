@@ -61,6 +61,7 @@ class IODriver {
         inline bool isHotend() const { return false; } 
         //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
         inline bool isHeatedBed() const { return false; } 
+        inline bool isServo() const { return false;  }
         //OVERRIDE THIS (hotends / beds only)
         inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
         //OVERRIDE THIS (hotends / beds only)
@@ -73,6 +74,14 @@ class IODriver {
             assert(false && "IoDriver::getMeasuredTemperature() must be overriden by subclass."); 
             return mathutil::ABSOLUTE_ZERO_CELCIUS; //for when assertions are disabled.
         } 
+        //@angle the desired angle of the servo, in radians
+        inline void setServoAngle(float angle) {
+            (void)angle;
+            assert(false && "IoDriver::setServoAngle must be overriden by subclass.");
+        }
+        inline OutputEvent nextEvent() {
+            return OutputEvent();
+        }
         //called when the scheduler has extra time,
         //Can be used to check the status of inputs, etc.
         //Return true if object needs to continue to be serviced, false otherwise. 

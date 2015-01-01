@@ -184,6 +184,8 @@
 #ifndef MACHINES_RPI_KOSSELRAMPSFD
 #define MACHINES_RPI_KOSSELRAMPSFD
 
+#include <tuple>
+
 #include "machines/machine.h"
 #include "pid.h"
 #include "common/filters/lowpassfilter.h"
@@ -196,7 +198,8 @@
 #include "iodrivers/fan.h"
 #include "iodrivers/iopin.h"
 #include "platforms/rpi/mitpi.h" //for pin numberings
-#include <tuple>
+#include "iodrivers/servo.h"
+
 
 //All of the #defines between this point and the end of this file are ONLY used within this file,
 
@@ -337,7 +340,10 @@ class kosselrampsfd : public Machine {
         //return a list of miscellaneous IoDrivers (Endstops & A4988 drivers are reachable via <getCoordMap>)
         inline std::tuple<Fan> getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD)
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD) /*,
+                Servo(IoPin::null(), std::chrono::milliseconds(100), 
+                      std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(2)),
+                      std::make_pair(0.0, 2*M_PI))*/
             );
                 //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>(
                 //    iodrv::HotendType, _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
