@@ -5,8 +5,8 @@
   <subclass access="public" name="Servo" ref="iodrv::Servo#iodrv::Servo">
     <brief>Controls a Servo motor.</brief>
   </subclass>
-  <subclass access="public" name="Fan" ref="iodrv::Fan#iodrv::Fan" />
   <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
+  <subclass access="public" name="Fan" ref="iodrv::Fan#iodrv::Fan" />
   <methodtemplate id="iodrv::IODriver::getBedTemp" name="getBedTemp" static="yes">
     <return>
       <type name="CelciusType" ref="index#CelciusType" />
@@ -48,7 +48,7 @@
     <templatetypeparameter id="iodrv::IODriver::lockAllAxis::TupleT" name="TupleT" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
-    <brief> called when the scheduler has extra time,</brief>
+    <brief>called when the scheduler has extra time,</brief>
     <doc>Can be used to check the status of inputs, etc.
 Return true if object needs to continue to be serviced, false otherwise.</doc>
     <return>
@@ -73,7 +73,6 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
     <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODriver::setFanDutyCycle" name="setFanDutyCycle">
-    <brief>OVERRIDE THIS</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -110,41 +109,44 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
   </methodtemplate>
   <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
   <method id="iodrv::IODriver::getMeasuredTemperature" name="getMeasuredTemperature">
+    <brief>OVERRIDE THIS (hotends / beds only)</brief>
     <return>
       <type name="CelciusType" ref="index#CelciusType" />
     </return>
   </method>
   <method id="iodrv::IODriver::getTargetTemperature" name="getTargetTemperature">
+    <brief>OVERRIDE THIS (hotends / beds only)</brief>
     <return>
       <type name="CelciusType" ref="index#CelciusType" />
     </return>
   </method>
   <method id="iodrv::IODriver::isFan" name="isFan">
-    <brief>OVERRIDE THIS (stepper motor drivers only)</brief>
+    <brief>OVERRIDE THIS (fans only: return true)</brief>
     <return>
       <type builtin="yes" name="bool" />
     </return>
   </method>
   <method id="iodrv::IODriver::isHeatedBed" name="isHeatedBed">
-    <brief>OVERRIDE THIS (hotends only: return true)</brief>
+    <brief>OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).</brief>
     <return>
       <type builtin="yes" name="bool" />
     </return>
   </method>
   <method id="iodrv::IODriver::isHotend" name="isHotend">
-    <brief>OVERRIDE THIS (fans only: return true)</brief>
+    <brief>OVERRIDE THIS (hotends only: return true)</brief>
     <return>
       <type builtin="yes" name="bool" />
     </return>
   </method>
   <method id="iodrv::IODriver::lockAxis" name="lockAxis">
     <brief>called by M17; Enable/power all stepper motors</brief>
+    <doc>OVERRIDE THIS (stepper motor drivers only)</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
   <method id="iodrv::IODriver::setTargetTemperature" name="setTargetTemperature">
-    <brief>OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).</brief>
+    <brief>OVERRIDE THIS (hotends / beds only)</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -153,8 +155,8 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
     </argument>
   </method>
   <method id="iodrv::IODriver::unlockAxis" name="unlockAxis">
-    <brief>OVERRIDE THIS (stepper motor drivers only)</brief>
-    <doc>called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise.</doc>
+    <brief>called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise.</brief>
+    <doc>OVERRIDE THIS (stepper motor drivers only)</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>

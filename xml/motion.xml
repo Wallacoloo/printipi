@@ -10,22 +10,6 @@
     </argument>
     <templatetypeparameter id="motion::stepDirFromSign::T" name="T" />
   </functiontemplate>
-  <structtemplate name="_AxisStepper__getNextTime" ref="motion::_AxisStepper__getNextTime#motion::_AxisStepper__getNextTime">
-    <brief>Helper classes for AxisStepper::getNextTime method</brief>
-    <templatetypeparameter id="motion::_AxisStepper__getNextTime::TupleT" name="TupleT" />
-    <templatenontypeparameter id="motion::_AxisStepper__getNextTime::idx" name="idx">
-      <type builtin="yes" name="int" />
-    </templatenontypeparameter>
-  </structtemplate>
-  <struct name="_AxisStepper__initAxisArcSteppers" ref="motion::_AxisStepper__initAxisArcSteppers#motion::_AxisStepper__initAxisArcSteppers">
-    <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
-  </struct>
-  <struct name="_AxisStepper__initAxisSteppers" ref="motion::_AxisStepper__initAxisSteppers#motion::_AxisStepper__initAxisSteppers">
-    <brief>Helper class for AxisStepper::initAxisSteppers</brief>
-  </struct>
-  <struct name="_AxisStepper__nextStep" ref="motion::_AxisStepper__nextStep#motion::_AxisStepper__nextStep">
-    <brief>Helper class for AxisStepper::nextStep method</brief>
-  </struct>
   <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
   <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
     <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />

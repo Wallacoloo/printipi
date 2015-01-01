@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>IODriver::getHotendTargetTemp helper functions:</brief>
+  <methodtemplate id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()" name="operator()">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()::index" name="index">
+      <type name="std::size_t" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()::driver" name="driver">
+      <type name="T" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()::T" name="T" />
+  </methodtemplate>
+  <field id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::value" name="value">
+    <type name="CelciusType" ref="index#CelciusType" />
+  </field>
+  <constructor id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp" />
+</struct>

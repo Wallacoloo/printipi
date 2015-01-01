@@ -14,27 +14,6 @@
   <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
   <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
   <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
-  <struct name="IODriver__getBedTemp" ref="iodrv::IODriver__getBedTemp#iodrv::IODriver__getBedTemp">
-    <brief>IODriver::getBedTemp helper functions:</brief>
-  </struct>
-  <struct name="IODriver__getHotendTargetTemp" ref="iodrv::IODriver__getHotendTargetTemp#iodrv::IODriver__getHotendTargetTemp">
-    <brief>IODriver::getHotendTargetTemp helper functions:</brief>
-  </struct>
-  <struct name="IODriver__getHotendTemp" ref="iodrv::IODriver__getHotendTemp#iodrv::IODriver__getHotendTemp">
-    <brief>IODriver::getHotendTemp helper functions:</brief>
-  </struct>
-  <struct name="IODriver__lockAllAxis" ref="iodrv::IODriver__lockAllAxis#iodrv::IODriver__lockAllAxis">
-    <brief>IODriver::lockAllAxis helper functions:</brief>
-  </struct>
-  <struct name="IODriver__setBedTemp" ref="iodrv::IODriver__setBedTemp#iodrv::IODriver__setBedTemp">
-    <brief>IODriver::setBedTemp helper functions:</brief>
-  </struct>
-  <struct name="IODriver__setHotendTemp" ref="iodrv::IODriver__setHotendTemp#iodrv::IODriver__setHotendTemp">
-    <brief>IODriver::setHotendTemp helper functions:</brief>
-  </struct>
-  <struct name="IODriver__unlockAllAxis" ref="iodrv::IODriver__unlockAllAxis#iodrv::IODriver__unlockAllAxis">
-    <brief>IODriver::unlockAllAxis helper functions:</brief>
-  </struct>
   <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
   <class name="RCThermistor" ref="iodrv::RCThermistor#iodrv::RCThermistor" />
   <class name="Servo" ref="iodrv::Servo#iodrv::Servo">

@@ -95,6 +95,12 @@
       <type name="const BedLevelT" qualifier=" const &amp;" />
     </argument>
   </constructor>
+  <method id="motion::LinearDeltaCoordMap::getDependentIoDrivers" name="getDependentIoDrivers" override="yes">
+    <return>
+      <type name="std::tuple&lt;_Elements&gt;" />
+    </return>
+    <override name="CoordMap::getDependentIoDrivers" ref="motion::CoordMap#motion::CoordMap::getDependentIoDrivers" />
+  </method>
   <method id="motion::LinearDeltaCoordMap::getAxisSteppers" name="getAxisSteppers" override="yes">
     <return>
       <type name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_AxisStepperTypes" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap::_AxisStepperTypes" />

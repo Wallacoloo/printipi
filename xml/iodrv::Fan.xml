@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="iodrv::Fan" name="Fan" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+The Fan class serves to control a physical Fan, often used to cool plastic as it exits the hotend.
+This class essentially wraps an IoPin so that it can be commanded and recognized as a fan.
+</doc>
   <base access="public">
     <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
   </base>

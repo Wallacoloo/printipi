@@ -1,105 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <index xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <functiontemplate id="callOnAll" name="callOnAll">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="callOnAll::t" name="t">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="callOnAll::f" name="f">
-      <type name="Func" />
-    </argument>
-    <argument id="callOnAll::args" name="args">
-      <type name="Args..." />
-    </argument>
-    <templatetypeparameter id="callOnAll::TupleT" name="TupleT" />
-    <templatetypeparameter id="callOnAll::Func" name="Func" />
-    <templatetypeparameter id="callOnAll::Args" name="Args" />
-  </functiontemplate>
-  <functiontemplate id="callOnAll" name="callOnAll">
-    <brief>This second version allows to pass a function object by pointer, so that it can perhaps be modified. TODO: Maybe just use an auto reference (Func &amp;&amp;f)?</brief>
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="callOnAll::t" name="t">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="callOnAll::f" name="f">
-      <type name="Func" qualifier="*" />
-    </argument>
-    <argument id="callOnAll::args" name="args">
-      <type name="Args..." />
-    </argument>
-    <templatetypeparameter id="callOnAll::TupleT" name="TupleT" />
-    <templatetypeparameter id="callOnAll::Func" name="Func" />
-    <templatetypeparameter id="callOnAll::Args" name="Args" />
-  </functiontemplate>
   <variable id="NotPresent" name="NotPresent">
     <type name="OptionalArg&lt;float&gt;" qualifier=" const" />
   </variable>
-  <functiontemplate id="tupleCallOnIndex" name="tupleCallOnIndex">
-    <return>
-      <type name="decltype(__callOnIndex&lt;TupleT, std::tuple_size&lt;TupleT&gt;::value, Func, Args...&gt;()(t, f, idx, args...))" />
-    </return>
-    <argument id="tupleCallOnIndex::t" name="t">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="tupleCallOnIndex::f" name="f">
-      <type name="Func" />
-    </argument>
-    <argument id="tupleCallOnIndex::idx" name="idx">
-      <type name="std::size_t" />
-    </argument>
-    <argument id="tupleCallOnIndex::args" name="args">
-      <type name="Args..." />
-    </argument>
-    <templatetypeparameter id="tupleCallOnIndex::TupleT" name="TupleT" />
-    <templatetypeparameter id="tupleCallOnIndex::Func" name="Func" />
-    <templatetypeparameter id="tupleCallOnIndex::Args" name="Args" />
-  </functiontemplate>
-  <functiontemplate id="tupleReduce" name="tupleReduce">
-    <return>
-      <type name="decltype(d)" />
-    </return>
-    <argument id="tupleReduce::t" name="t">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="tupleReduce::f" name="f">
-      <type name="Func" />
-    </argument>
-    <argument id="tupleReduce::r" name="r">
-      <type name="Reduce" />
-    </argument>
-    <argument id="tupleReduce::d" name="d">
-      <type name="ReducedDefault" />
-    </argument>
-    <argument id="tupleReduce::args" name="args">
-      <type name="Args..." />
-    </argument>
-    <templatetypeparameter id="tupleReduce::TupleT" name="TupleT" />
-    <templatetypeparameter id="tupleReduce::Func" name="Func" />
-    <templatetypeparameter id="tupleReduce::Reduce" name="Reduce" />
-    <templatetypeparameter id="tupleReduce::ReducedDefault" name="ReducedDefault" />
-    <templatetypeparameter id="tupleReduce::Args" name="Args" />
-  </functiontemplate>
-  <functiontemplate id="tupleReduceLogicalOr" name="tupleReduceLogicalOr">
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-    <argument id="tupleReduceLogicalOr::t" name="t">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="tupleReduceLogicalOr::f" name="f">
-      <type name="Func" />
-    </argument>
-    <argument id="tupleReduceLogicalOr::args" name="args">
-      <type name="Args..." />
-    </argument>
-    <templatetypeparameter id="tupleReduceLogicalOr::TupleT" name="TupleT" />
-    <templatetypeparameter id="tupleReduceLogicalOr::Func" name="Func" />
-    <templatetypeparameter id="tupleReduceLogicalOr::Args" name="Args" />
-  </functiontemplate>
   <namespace name="argparse" ref="argparse#argparse" />
   <namespace name="gparse" ref="gparse#gparse">
     <brief>#List of commands on Reprap Wiki:</brief>
@@ -113,27 +16,6 @@
     <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
     <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
     <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
-    <struct name="IODriver__getBedTemp" ref="iodrv::IODriver__getBedTemp#iodrv::IODriver__getBedTemp">
-      <brief>IODriver::getBedTemp helper functions:</brief>
-    </struct>
-    <struct name="IODriver__getHotendTargetTemp" ref="iodrv::IODriver__getHotendTargetTemp#iodrv::IODriver__getHotendTargetTemp">
-      <brief>IODriver::getHotendTargetTemp helper functions:</brief>
-    </struct>
-    <struct name="IODriver__getHotendTemp" ref="iodrv::IODriver__getHotendTemp#iodrv::IODriver__getHotendTemp">
-      <brief>IODriver::getHotendTemp helper functions:</brief>
-    </struct>
-    <struct name="IODriver__lockAllAxis" ref="iodrv::IODriver__lockAllAxis#iodrv::IODriver__lockAllAxis">
-      <brief>IODriver::lockAllAxis helper functions:</brief>
-    </struct>
-    <struct name="IODriver__setBedTemp" ref="iodrv::IODriver__setBedTemp#iodrv::IODriver__setBedTemp">
-      <brief>IODriver::setBedTemp helper functions:</brief>
-    </struct>
-    <struct name="IODriver__setHotendTemp" ref="iodrv::IODriver__setHotendTemp#iodrv::IODriver__setHotendTemp">
-      <brief>IODriver::setHotendTemp helper functions:</brief>
-    </struct>
-    <struct name="IODriver__unlockAllAxis" ref="iodrv::IODriver__unlockAllAxis#iodrv::IODriver__unlockAllAxis">
-      <brief>IODriver::unlockAllAxis helper functions:</brief>
-    </struct>
     <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin">
       <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
         <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
@@ -178,22 +60,6 @@
   </namespace>
   <namespace name="motion" ref="motion#motion">
     <brief>forward declare for class in "endstop.h"</brief>
-    <structtemplate name="_AxisStepper__getNextTime" ref="motion::_AxisStepper__getNextTime#motion::_AxisStepper__getNextTime">
-      <brief>Helper classes for AxisStepper::getNextTime method</brief>
-      <templatetypeparameter id="motion::_AxisStepper__getNextTime::TupleT" name="TupleT" />
-      <templatenontypeparameter id="motion::_AxisStepper__getNextTime::idx" name="idx">
-        <type builtin="yes" name="int" />
-      </templatenontypeparameter>
-    </structtemplate>
-    <struct name="_AxisStepper__initAxisArcSteppers" ref="motion::_AxisStepper__initAxisArcSteppers#motion::_AxisStepper__initAxisArcSteppers">
-      <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
-    </struct>
-    <struct name="_AxisStepper__initAxisSteppers" ref="motion::_AxisStepper__initAxisSteppers#motion::_AxisStepper__initAxisSteppers">
-      <brief>Helper class for AxisStepper::initAxisSteppers</brief>
-    </struct>
-    <struct name="_AxisStepper__nextStep" ref="motion::_AxisStepper__nextStep#motion::_AxisStepper__nextStep">
-      <brief>Helper class for AxisStepper::nextStep method</brief>
-    </struct>
     <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
     <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
       <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
@@ -282,36 +148,77 @@
       <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />
     </namespace>
   </namespace>
+  <namespace name="tupleutil" ref="tupleutil#tupleutil">
+    <namespace name="(anonymous::1)" ref="tupleutil::(anonymous::1)#tupleutil::(anonymous::1)">
+      <structtemplate name="__callOnAll" ref="tupleutil::(anonymous::1)::__callOnAll#tupleutil::(anonymous::1)::__callOnAll">
+        <brief>callOnAll helper functions:</brief>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::TupleT" name="TupleT" />
+        <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
+          <type name="std::size_t" />
+        </templatenontypeparameter>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::Func" name="Func" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::Args" name="Args" />
+      </structtemplate>
+      <structtemplate name="__callOnAllReduce" ref="tupleutil::(anonymous::1)::__callOnAllReduce#tupleutil::(anonymous::1)::__callOnAllReduce">
+        <brief>tupleReduce helper functions:</brief>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT" />
+        <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
+          <type name="std::size_t" />
+        </templatenontypeparameter>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Func" name="Func" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Args" name="Args" />
+      </structtemplate>
+      <structtemplate name="__callOnIndex" ref="tupleutil::(anonymous::1)::__callOnIndex#tupleutil::(anonymous::1)::__callOnIndex">
+        <brief>callOnIndex helper functions:</brief>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::TupleT" name="TupleT" />
+        <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
+          <type name="std::size_t" />
+        </templatenontypeparameter>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::Func" name="Func" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::Args" name="Args" />
+      </structtemplate>
+      <structtemplate name="_AxisStepper__getNextTime" ref="tupleutil::(anonymous::1)::_AxisStepper__getNextTime#tupleutil::(anonymous::1)::_AxisStepper__getNextTime">
+        <brief>Helper classes for AxisStepper::getNextTime method</brief>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT" />
+        <templatenontypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
+          <type builtin="yes" name="int" />
+        </templatenontypeparameter>
+      </structtemplate>
+      <struct name="_AxisStepper__initAxisArcSteppers" ref="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers#tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers">
+        <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
+      </struct>
+      <struct name="_AxisStepper__initAxisSteppers" ref="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers#tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers">
+        <brief>Helper class for AxisStepper::initAxisSteppers</brief>
+      </struct>
+      <struct name="_AxisStepper__nextStep" ref="tupleutil::(anonymous::1)::_AxisStepper__nextStep#tupleutil::(anonymous::1)::_AxisStepper__nextStep">
+        <brief>Helper class for AxisStepper::nextStep method</brief>
+      </struct>
+      <struct name="IODriver__getBedTemp" ref="tupleutil::(anonymous::1)::IODriver__getBedTemp#tupleutil::(anonymous::1)::IODriver__getBedTemp">
+        <brief>IODriver::getBedTemp helper functions:</brief>
+      </struct>
+      <struct name="IODriver__getHotendTargetTemp" ref="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp#tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp">
+        <brief>IODriver::getHotendTargetTemp helper functions:</brief>
+      </struct>
+      <struct name="IODriver__getHotendTemp" ref="tupleutil::(anonymous::1)::IODriver__getHotendTemp#tupleutil::(anonymous::1)::IODriver__getHotendTemp">
+        <brief>IODriver::getHotendTemp helper functions:</brief>
+      </struct>
+      <struct name="IODriver__lockAllAxis" ref="tupleutil::(anonymous::1)::IODriver__lockAllAxis#tupleutil::(anonymous::1)::IODriver__lockAllAxis">
+        <brief>IODriver::lockAllAxis helper functions:</brief>
+      </struct>
+      <struct name="IODriver__setBedTemp" ref="tupleutil::(anonymous::1)::IODriver__setBedTemp#tupleutil::(anonymous::1)::IODriver__setBedTemp">
+        <brief>IODriver::setBedTemp helper functions:</brief>
+      </struct>
+      <struct name="IODriver__setHotendTemp" ref="tupleutil::(anonymous::1)::IODriver__setHotendTemp#tupleutil::(anonymous::1)::IODriver__setHotendTemp">
+        <brief>IODriver::setHotendTemp helper functions:</brief>
+      </struct>
+      <struct name="IODriver__unlockAllAxis" ref="tupleutil::(anonymous::1)::IODriver__unlockAllAxis#tupleutil::(anonymous::1)::IODriver__unlockAllAxis">
+        <brief>IODriver::unlockAllAxis helper functions:</brief>
+      </struct>
+    </namespace>
+  </namespace>
   <templatetypeparameter id="Drv" name="Drv" />
-  <structtemplate name="__callOnAll" ref="__callOnAll#__callOnAll">
-    <brief>callOnAll helper functions:</brief>
-    <templatetypeparameter id="__callOnAll::TupleT" name="TupleT" />
-    <templatenontypeparameter default="std" id="__callOnAll::IdxPlusOne" name="IdxPlusOne">
-      <type name="std::size_t" />
-    </templatenontypeparameter>
-    <templatetypeparameter id="__callOnAll::Func" name="Func" />
-    <templatetypeparameter id="__callOnAll::Args" name="Args" />
-  </structtemplate>
-  <structtemplate name="__callOnAllReduce" ref="__callOnAllReduce#__callOnAllReduce">
-    <brief>tupleReduce helper functions:</brief>
-    <templatetypeparameter id="__callOnAllReduce::TupleT" name="TupleT" />
-    <templatenontypeparameter default="std" id="__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
-      <type name="std::size_t" />
-    </templatenontypeparameter>
-    <templatetypeparameter id="__callOnAllReduce::Func" name="Func" />
-    <templatetypeparameter id="__callOnAllReduce::Reduce" name="Reduce" />
-    <templatetypeparameter id="__callOnAllReduce::ReducedDefault" name="ReducedDefault" />
-    <templatetypeparameter id="__callOnAllReduce::Args" name="Args" />
-  </structtemplate>
-  <structtemplate name="__callOnIndex" ref="__callOnIndex#__callOnIndex">
-    <brief>callOnIndex helper functions:</brief>
-    <templatetypeparameter id="__callOnIndex::TupleT" name="TupleT" />
-    <templatenontypeparameter default="std" id="__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
-      <type name="std::size_t" />
-    </templatenontypeparameter>
-    <templatetypeparameter id="__callOnIndex::Func" name="Func" />
-    <templatetypeparameter id="__callOnIndex::Args" name="Args" />
-  </structtemplate>
   <class name="FileSystem" ref="FileSystem#FileSystem" />
   <class name="IntervalTimer" ref="IntervalTimer#IntervalTimer">
     <brief>for EventClockT</brief>
