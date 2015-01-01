@@ -21,16 +21,6 @@
  * SOFTWARE.
  */
 
-/*
- * The A4988 is a current-chopping stepper motor driver IC.
- * It is used in the StepStick, Pololu stepper motor drivers, etc.
- * It consists of 2 control pins: STEP and DIRECTION.
- * Documentation: http://www.pololu.com/file/download/a4988_DMOS_microstepping_driver_with_translator.pdf?file_id=0J450
- * Minimum STEP high pulse: 1uS
- * Minimum STEP low pulse:  1uS
- * Low -> High transition on STEP pin trigger the step.
-*/
-
 
 #ifndef DRIVERS_A4988_H
 #define DRIVERS_A4988_H
@@ -47,6 +37,15 @@
 
 namespace iodrv {
 
+/*
+ * The A4988 is a current-chopping stepper motor driver IC.
+ * It is used in the StepStick, Pololu stepper motor drivers, etc.
+ * It consists of 2 control pins: STEP and DIRECTION.
+ * Documentation: http://www.pololu.com/file/download/a4988_DMOS_microstepping_driver_with_translator.pdf?file_id=0J450
+ * Minimum STEP high pulse: 1uS
+ * Minimum STEP low pulse:  1uS
+ * Low -> High transition on STEP pin trigger the step.
+*/
 class A4988 : public IODriver {
     IoPin enablePin;
     IoPin stepPin;

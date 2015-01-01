@@ -21,14 +21,6 @@
  * SOFTWARE.
  */
 
-/* 
- * Printipi/iodrivers/axisstepper.h
- *
- * Endstops are queriable switches placed at the axis limits.
- * They typically represent a "known" point to which the device can be homed upon initiailization,
- *   or a point beyond which the device should not be pushed.
- */
-
 #ifndef DRIVERS_ENDSTOP_H
 #define DRIVERS_ENDSTOP_H
 
@@ -39,7 +31,11 @@
 
 namespace iodrv {
 
-
+/* 
+ * Endstops are queriable switches placed at the axis limits.
+ * They typically represent a "known" point to which the device can be homed upon initiailization,
+ *   or a point beyond which the device should not be pushed.
+ */
 class Endstop : public IODriver {
     IoPin pin;
     public:

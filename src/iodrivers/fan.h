@@ -21,13 +21,6 @@
  * SOFTWARE.
  */
 
-/* 
- * Printipi/iodrivers/fan.h
- *
- * The Fan class serves to control a physical Fan, often used to cool cpu components.
- * This class essentially wraps an IoPin so that it can be commanded and recognized as a fan.
- */
- 
 
 #ifndef DRIVERS_FAN_H
 #define DRIVERS_FAN_H
@@ -38,6 +31,10 @@
 
 namespace iodrv {
 
+/* 
+ * The Fan class serves to control a physical Fan, often used to cool plastic as it exits the hotend.
+ * This class essentially wraps an IoPin so that it can be commanded and recognized as a fan.
+ */
 class Fan : public IODriver {
     IoPin pin;
     float period;

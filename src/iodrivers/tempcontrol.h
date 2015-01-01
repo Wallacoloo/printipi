@@ -20,15 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/* 
- * Printipi/iodrivers/tempcontrol.h
- * 
- * TempControl provides a way to coordinate thermistor readings with the PWM control of a hotend OR heated bed.
- * It used a PID controller to determine the ideal PWM for a given thermistor reading and temperature target.
- * Additionally, it accepts an (optional) filter applied BEFORE the PID controller, which can be used to weed out some variability in readings (use a low-pass filter for this).
- * Currently, it assumes an RC-based thermistor, but in the future it may be expanded to work with any analog IoPin too.
- */
  
 
 #ifndef DRIVERS_TEMPCONTROL_H
@@ -54,6 +45,12 @@ enum TempControlType {
     HeatedBedType
 };
 
+/* 
+ * TempControl provides a way to coordinate thermistor readings with the PWM control of a hotend OR heated bed.
+ * It used a PID controller to determine the ideal PWM for a given thermistor reading and temperature target.
+ * Additionally, it accepts an (optional) filter applied BEFORE the PID controller, which can be used to weed out some variability in readings (use a low-pass filter for this).
+ * Currently, it assumes an RC-based thermistor, but in the future it may be expanded to work with any analog IoPin too.
+ */
 template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class TempControl : public IODriver {
     static const std::chrono::microseconds _intervalThresh;
     static const std::chrono::microseconds _readInterval;
