@@ -43,6 +43,7 @@
 #include "common/tupleutil.h"
 #include "common/mathutil.h" //for mathutil::ABSOLUTE_ZERO_CELCIUS
 #include "iopin.h"
+#include "outputevent.h"
 
 namespace iodrv {
 
