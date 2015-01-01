@@ -78,12 +78,15 @@ class AxisStepper {
         template <typename TupleT> static AxisStepper& getNextTime(TupleT &axes);
         template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisSteppers(TupleT &steppers, bool useEndstops, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector4f &vel);
         template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisArcSteppers(TupleT &steppers, bool useEndstops, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel);
-        //Event getEvent() const; //NOT TO BE OVERRIDEN
-        //Event getEvent(float realTime) const; //NOT TO BE OVERRIDEN
         template <typename TupleT> void nextStep(TupleT &axes, bool useEndstops); //NOT TO BE OVERRIDEN
     protected:
         AxisStepper(int idx) : _index(idx) {} //only callable via children
-        inline void _nextStep(bool useEndstops); //OVERRIDE THIS. And yes, it will be called upon initialization too.
+        //OVERRIDE THIS. And yes, it will be called upon initialization too.
+        inline void _nextStep(bool useEndstops) {
+            //should be implemented in derivatives.
+            (void)useEndstops;
+            assert(false && "AxisStepper::_nextStep() must be overriden in any child classes");
+        } 
     public:
         //Arc steppers:
         template <typename... Types> struct GetArcStepperTypes {
