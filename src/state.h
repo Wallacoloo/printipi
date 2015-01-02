@@ -704,14 +704,12 @@ template <typename Drv> void State<Drv>::homeEndstops() {
     //we need to keep track of the fact we're homing, so as to ignore remote movement commands until homing is complete
     this->_isHoming = true;
     bool restoreMoveBuffering = _doBufferMoves;
-    LOG("begin homeEndstops() %i\n", restoreMoveBuffering);
     setMoveBuffering(false);
 
     CoordMapInterface interface(*this);
     _motionPlanner.coordMap().executeHomeRoutine(interface);
 
     setMoveBuffering(restoreMoveBuffering);
-    LOG("end homeEndstops\n");
     this->_isHomed = true;
     this->_isHoming = false;
 }
