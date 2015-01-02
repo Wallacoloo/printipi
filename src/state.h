@@ -186,7 +186,10 @@ template <typename Drv> class State {
     float _destMoveRatePrimitive;
     //the host can set any arbitrary point to be referenced as 0.
     Vector4f _hostZeroOffset;
-    bool _isHomed; //Need to know if our absolute coordinates are accurate, which changes when power is lost or stepper motors are deactivated.
+    //Flag will be true if in the homing routine (in which case we don't want to allow any G1's, etc, to be run)
+    bool _isHoming;
+    //Need to know if our absolute coordinates are accurate, which changes when power is lost or stepper motors are deactivated.
+    bool _isHomed; 
     bool _isWaitingForHotend;
     EventClockT::time_point _lastMotionPlannedTime;
     //M32 allows a gcode file to call subroutines, essentially.
@@ -272,6 +275,7 @@ template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com 
     unitMode(UNIT_MM), 
     _destMm(0, 0, 0, 0),
     _hostZeroOffset(0, 0, 0, 0),
+    _isHoming(false),
     _isHomed(false),
     _isWaitingForHotend(false),
     _lastMotionPlannedTime(std::chrono::seconds(0)), 
@@ -371,8 +375,47 @@ template <typename Drv> struct State<Drv>::State__onIdleCpu {
 };
 
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
+    bool motionNeedsCpu = false;
+    if (scheduler.isRoomInBuffer()) { 
+        OutputEvent ioDriverEvt = iodrv::IODriver::tuplePeekNextEvent(ioDrivers);
+        OutputEvent motionEvt = _motionPlanner.peekNextEvent();
+
+        //iodrv::IODriver::tupleConsumeNextEvent(ioDrivers);
+        //LOG("Next IoDriverEvt at %lu, state: %i\n", ioDriverEvt.time().time_since_epoch().count(), ioDriverEvt.state());
+        //bool doServiceMotion =   !motionEvt.isNull()   && (ioDriverEvt.isNull() || motionEvt.time() <= ioDriverEvt.time());
+        bool doServiceIoDriver = !ioDriverEvt.isNull() && (motionEvt.isNull()   || ioDriverEvt.time() <= motionEvt.time());
+        //LOG("doServiceIoDriver: %i. ioDriverEvt.time: %lu, motionEvt.time: %lu\n", doServiceIoDriver, 
+        //    ioDriverEvt.time().time_since_epoch().count(), motionEvt.time().time_since_epoch().count());
+        if (doServiceIoDriver) {
+            //IoDriver event occurs first, so queue it & consume it.
+            this->scheduler.queue(ioDriverEvt);
+            iodrv::IODriver::tupleConsumeNextEvent(ioDrivers);
+        } else if (_doBufferMoves || _lastMotionPlannedTime <= EventClockT::now()) { 
+            //if we're homing (_doBufferMoves==false), we don't want to queue the next step until the current one has actually completed.
+            //Although the IoDriver event does not occur first, that doesn't mean there is necessarily a motion event.
+            if (!motionEvt.isNull()) {
+                _motionPlanner.consumeNextEvent();
+                this->scheduler.queue(motionEvt);
+                _lastMotionPlannedTime = motionEvt.time();
+                motionNeedsCpu = scheduler.isRoomInBuffer();
+            }
+        }
+        if (_motionPlanner.peekNextEvent().isNull()) {
+            //LOG("State::onIdleCpu() motionEvt is null; signals end of move\n");
+            //check if we have received a command to exit after the current move is complete
+            //if that command has been received, and the current move has been completed, then exit the event loop.
+            if ((_doShutdownAfterMoveCompletes || _doExitEventLoopAfterMoveCompletes) && !motionNeedsCpu) {
+                //reset the event loop exit flag (but not the shutdown flag!)
+                _doExitEventLoopAfterMoveCompletes = false;
+                scheduler.exitEventLoop();
+                //It would be best to return now rather than tend the com channel
+                //As we don't want to risk the homing routine being interrupted.
+                return false;
+            }
+        }
+    }
+
     //Only check the communications periodically because calling execute(com.getCommand()) DOES add up.
-    //One could swap the interval check with the com.tendCom() if running on a system incapable of buffering a full line of g-code.
     if (interval == OnIdleCpuIntervalWide) {
         if (!gcodeFileStack.empty()) {
             if (_isRootComPersistent) {
@@ -390,28 +433,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
             }
         }
     }
-    bool motionNeedsCpu = false;
-    if (scheduler.isRoomInBuffer()) { 
-        OutputEvent evt; //check to see if motionPlanner has another event ready
-        if (_doBufferMoves || _lastMotionPlannedTime <= EventClockT::now()) { //if we're homing (doBufferMoves()==false), we don't want to queue the next step until the current one has actually completed.
-            if (!(evt = _motionPlanner.nextOutputEvent()).isNull()) {
-                this->scheduler.queue(evt);
-                _lastMotionPlannedTime = evt.time();
-                motionNeedsCpu = scheduler.isRoomInBuffer();
-            } else { //undo buffer-length changes set in homing
-                LOGV("State::onIdleCpu() OutputEvent is null. Signals end of move\n");
-                //this->scheduler.setDefaultMaxSleep();
-                //check if we have received a command to exit after the current move is complete
-                //if that command has been received, and the current move has been completed, then exit the event loop.
-                if ((_doShutdownAfterMoveCompletes || _doExitEventLoopAfterMoveCompletes) && !motionNeedsCpu) {
-                    //reset the event loop exit flag (but not the shutdown flag!)
-                    _doExitEventLoopAfterMoveCompletes = false;
-                    scheduler.exitEventLoop();
-                }
-            }
-        }
-        
-    }
+
     bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), this);
     return motionNeedsCpu || driversNeedCpu;
 }
@@ -449,6 +471,9 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return;
         }
+        if (_isHoming) {
+            return;
+        }
         if (!_isHomed && _motionPlanner.doHomeBeforeFirstMovement()) {
             this->homeEndstops();
         }
@@ -468,6 +493,18 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         this->queueMovement(trueDest);
         reply(gparse::Response::Ok);
     } else if (cmd.isG2() || cmd.isG3()) {
+        if (!_motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
+            return;
+        }
+        if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
+            return;
+        }
+        if (_isHoming) {
+            return;
+        }
+        if (!_isHomed && _motionPlanner.doHomeBeforeFirstMovement()) {
+            this->homeEndstops();
+        }
         LOGW("Warning: G3 is experimental\n");
         //first, get the end coordinate and optional feed-rate:
         bool hasX, hasY, hasZ, hasE;
@@ -502,6 +539,9 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
             return;
         }
         if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
+            return;
+        }
+        if (_isHoming) {
             return;
         }
         //reply before homing, because homing may hang.
@@ -661,17 +701,19 @@ template <typename Drv> void State<Drv>::queueMovement(const Vector4f &dest, Opt
 }
 
 template <typename Drv> void State<Drv>::homeEndstops() {
-    //homing is done with real-time scheduling (can't plan far ahead), so instruct the Scheduler to avoid long sleeps
-    //this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
-    //_motionPlanner.homeEndstops(std::max(_lastMotionPlannedTime, EventClockT::now()), this->driver.clampHomeRate(destMoveRatePrimitive()));
+    //we need to keep track of the fact we're homing, so as to ignore remote movement commands until homing is complete
+    this->_isHoming = true;
     bool restoreMoveBuffering = _doBufferMoves;
+    LOG("begin homeEndstops() %i\n", restoreMoveBuffering);
     setMoveBuffering(false);
-    //this->scheduler.setMaxSleep(std::chrono::milliseconds(1));
+
     CoordMapInterface interface(*this);
     _motionPlanner.coordMap().executeHomeRoutine(interface);
-    this->_isHomed = true;
+
     setMoveBuffering(restoreMoveBuffering);
-    //this->scheduler.setDefaultMaxSleep();
+    LOG("end homeEndstops\n");
+    this->_isHomed = true;
+    this->_isHoming = false;
 }
 
 template <typename Drv> bool State<Drv>::isHotendReady() {

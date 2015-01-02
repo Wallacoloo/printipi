@@ -9,6 +9,7 @@
 #include "iopin.h"
 #include "outputevent.h"
 #include "platforms/auto/chronoclock.h"
+#include "common/logging.h"
 
 namespace iodrv {
 
@@ -41,10 +42,15 @@ class Servo : public IODriver {
 		inline void setServoAngle(float angle) {
 			highTime = getOnTime(angle);
 		}
-		inline OutputEvent nextEvent() {
-			curState = !curState;
-			lastEventTime += curState ? highTime : (cycleLength-highTime);
-			return OutputEvent(lastEventTime, pin, curState);
+		inline OutputEvent peekNextEvent() const {
+			bool nextState = !curState;
+			EventClockT::time_point nextEventTime = lastEventTime + (nextState ? highTime : (cycleLength-highTime));
+			return OutputEvent(nextEventTime, pin, nextState);
+		}
+		inline void consumeNextEvent() {
+			OutputEvent evt = peekNextEvent();
+			curState = evt.state();
+			lastEventTime = evt.time();
 		}
 	private:
 		inline EventClockT::duration getOnTime(float angle) {

@@ -10,6 +10,7 @@
 #include "filesystem.h"
 #include "gparse/com.h"
 #include "platforms/auto/thisthreadsleep.h"
+#include "common/logging.h"
 
 //MACHINE_PATH is calculated in the Makefile and then passed as a define through the make system (ie gcc -DMACHINEPATH='"path"')
 #include MACHINE_PATH
@@ -78,6 +79,7 @@ struct TestClass {
             //the above setup code and the teardown code further below are re-run for EVERY 'when' case.
             //This is also repeated recursively.
 
+            LOG("state.cpp: BEGIN TEST\n");
             //test homing
             WHEN("The machine is homed") {
                 sendCommand("G28", "ok");

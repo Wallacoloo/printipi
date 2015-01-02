@@ -80,9 +80,10 @@ class IODriver {
             (void)angle;
             assert(false && "IoDriver::setServoAngle must be overriden by subclass.");
         }
-        inline OutputEvent nextEvent() {
+        inline OutputEvent peekNextEvent() const {
             return OutputEvent();
         }
+        inline void consumeNextEvent() {}
         //called when the scheduler has extra time,
         //Can be used to check the status of inputs, etc.
         //Return true if object needs to continue to be serviced, false otherwise. 
@@ -99,12 +100,14 @@ class IODriver {
         template <typename TupleT> static CelciusType getHotendTemp(TupleT &drivers);
         template <typename TupleT> static CelciusType getHotendTargetTemp(TupleT &drivers);
         template <typename TupleT> static CelciusType getBedTemp(TupleT &drivers);
+        template <typename TupleT> static OutputEvent tuplePeekNextEvent(const TupleT &drivers);
+        template <typename TupleT> static void tupleConsumeNextEvent(TupleT &drivers);
 };
 
 namespace {
     //place helper functions in an unnamed namespace to limit visibility and hint the documentation generator
 
-    //IODriver::lockAllAxis helper functions:
+    //IODriver::lockAllAxis helper
     struct IODriver__lockAllAxis {
         template <typename T> void operator()(std::size_t index, T &driver) {
             (void)index; //unused;
@@ -112,7 +115,7 @@ namespace {
         }
     };
 
-    //IODriver::unlockAllAxis helper functions:
+    //IODriver::unlockAllAxis helper
     struct IODriver__unlockAllAxis {
         template <typename T> void operator()(std::size_t index, T &driver) {
             (void)index; //unused;
@@ -120,7 +123,7 @@ namespace {
         }
     };
 
-    //IODriver::setHotendTemp helper functions:
+    //IODriver::setHotendTemp helper
     struct IODriver__setHotendTemp {
         template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
             (void)index; //unused;
@@ -130,7 +133,7 @@ namespace {
         }
     };
 
-    //IODriver::setBedTemp helper functions:
+    //IODriver::setBedTemp helper
     struct IODriver__setBedTemp {
         template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
             (void)index; //unused;
@@ -140,7 +143,7 @@ namespace {
         }
     };
 
-    //IODriver::getHotendTemp helper functions:
+    //IODriver::getHotendTemp helper
     struct IODriver__getHotendTemp {
         CelciusType value;
         IODriver__getHotendTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
@@ -152,7 +155,7 @@ namespace {
         }
     };
 
-    //IODriver::getHotendTargetTemp helper functions:
+    //IODriver::getHotendTargetTemp helper
     struct IODriver__getHotendTargetTemp {
         CelciusType value;
         IODriver__getHotendTargetTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
@@ -164,13 +167,37 @@ namespace {
         }
     };
 
-    //IODriver::getBedTemp helper functions:
+    //IODriver::getBedTemp helper
     struct IODriver__getBedTemp {
         CelciusType value;
         IODriver__getBedTemp() : value(mathutil::ABSOLUTE_ZERO_CELCIUS) {}
-        template <typename T> void operator()(std::size_t /*index*/, T &driver) {
+        template <typename T> void operator()(std::size_t index, T &driver) {
+            (void)index; //unused
             if (driver.isHeatedBed()) {
                 value = driver.getMeasuredTemperature();
+            }
+        }
+    };
+
+    //IODriver::tuplePeekNextEvent helper
+    struct IODriver__tuplePeekNextEvent {
+        OutputEvent value;
+        std::size_t index;
+        IODriver__tuplePeekNextEvent() : value(OutputEvent()), index(-1) {}
+        template <typename T> void operator()(std::size_t index, const T &driver) {
+            OutputEvent evt = driver.peekNextEvent();
+            if (!evt.isNull() && (value.isNull() || evt.time() < value.time())) {
+                this->value = evt;
+                this->index = index;
+            }
+        }
+    };
+    //IODriver::tupleConsumeNextEvent helper
+    struct IODriver__tupleConsumeNextEvent {
+        template <typename T> void operator()(std::size_t index, T &driver, std::size_t desiredIndex) {
+            //TODO: replace with tupleutil::callOnIndex to avoid the index check
+            if (index == desiredIndex) {
+                driver.consumeNextEvent();
             }
         }
     };
@@ -204,6 +231,22 @@ template <typename TupleT> CelciusType IODriver::getBedTemp(TupleT &drivers) {
     IODriver__getBedTemp t;
     callOnAll(drivers, &t);
     return t.value;
+}
+
+template <typename TupleT> OutputEvent IODriver::tuplePeekNextEvent(const TupleT &drivers) {
+    //get the next OutputEvent & associated index (peeker.value, peeker.index)
+    IODriver__tuplePeekNextEvent peeker;
+    callOnAll(drivers, &peeker);
+    //return just the OutputEvent
+    return peeker.value;
+}
+template <typename TupleT> void IODriver::tupleConsumeNextEvent(TupleT &drivers) {
+    //get the next OutputEvent & associated index (peeker.value, peeker.index)
+    IODriver__tuplePeekNextEvent peeker;
+    callOnAll(drivers, &peeker);
+    //consume the event associated with peeker.index
+    IODriver__tupleConsumeNextEvent consumer;
+    callOnAll(drivers, &consumer, peeker.index);
 }
 
 

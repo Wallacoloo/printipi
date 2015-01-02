@@ -51,7 +51,8 @@
 template <typename Interface> class Scheduler : public SchedulerBase {
     EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
     Interface interface;
-    bool hasActiveEvent;
+    OutputEvent nextEvent;
+    //bool hasActiveEvent;
     bool _doExit;
     public:
         void queue(const OutputEvent &evt);
@@ -66,17 +67,16 @@ template <typename Interface> class Scheduler : public SchedulerBase {
         void initSchedThread() const; //call this from whatever threads call nextEvent to optimize that thread's priority.
         bool isRoomInBuffer() const;
         void eventLoop();
-        void yield(const OutputEvent *evt);
+        //void yield(const OutputEvent *evt);
         void exitEventLoop();
     private:
         void sleepUntilEvent(const OutputEvent *evt) const;
-        bool isEventNear(const OutputEvent &evt) const;
         bool isEventTime(const OutputEvent &evt) const;
 };
 
 template <typename Interface> Scheduler<Interface>::Scheduler(Interface interface) 
     : interface(interface)
-    ,hasActiveEvent(false)
+    //,hasActiveEvent(false)
     ,_doExit(false)
     {
     setDefaultMaxSleep();
@@ -84,9 +84,10 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 
 
 template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent &evt) {
-    hasActiveEvent = true;
-    this->yield(&evt);
-    hasActiveEvent = false;
+    this->nextEvent = evt;
+    //hasActiveEvent = true;
+    //this->yield(&evt);
+    //hasActiveEvent = false;
 }
 
 template <typename Interface> void Scheduler<Interface>::schedPwm(const iodrv::IoPin &pin, float duty, float maxPeriod) {
@@ -107,7 +108,8 @@ template <typename Interface> void Scheduler<Interface>::initSchedThread() const
 }
 
 template <typename Interface> bool Scheduler<Interface>::isRoomInBuffer() const {
-    return !hasActiveEvent;
+    return nextEvent.isNull();
+    //return !hasActiveEvent;
 }
 
 
@@ -115,17 +117,31 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
     OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
     int numShortIntervals = 0; //need to track the number of short cpu intervals, because if we just execute short intervals constantly for, say, 1 second, then certain services that only run at long intervals won't occur. So make every, say, 10000th short interval transform into a wide interval.
     while (!_doExit) {
-        if (interface.onIdleCpu(intervalT)) {
+        if (!nextEvent.isNull() && isEventTime(nextEvent)) {
+            //queue the pending event and reset it
+            interface.queue(nextEvent);
+            this->nextEvent = OutputEvent();
+        }
+        if (!interface.onIdleCpu(intervalT)) {
+            //if we don't need any onIdleCpu, then sleep until the event.
+            //sleepUntilEvent won't always do the full sleep; it has a time limit.
+            if (_doExit) {
+                //check exit flag (may have changed in onIdleCpu call) again before entering a long sleep
+                break;
+            }
+            this->sleepUntilEvent(&this->nextEvent);
+            //We just slept for a while, which translates to a wide interval. Note that it may not actually be the event time yet.
+            intervalT = OnIdleCpuIntervalWide;
+            //numShortIntervals = 0;
+        } else {
+            //after 2048 (just a nice binary number) short intervals, insert a wide interval instead:
             intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
-        } else if (!_doExit) { //must recheck _doExit flag, since it could have been modified in the call to onIdleCpu
-            intervalT = OnIdleCpuIntervalWide; //no cpu is needed; wide delay
-            sleepUntilEvent(nullptr);
         }
     }
     _doExit = false;
 }
 
-template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent *evt) {
+/*template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent *evt) {
     OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
     //need to track the number of short cpu intervals, because if we just execute short intervals constantly for, say, 1 second, 
     //  then certain services that only run at long intervals won't occur. 
@@ -145,7 +161,7 @@ template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent
         }
     }
     interface.queue(*evt);
-}
+}*/
 
 template <typename Interface> void Scheduler<Interface>::exitEventLoop() {
     _doExit = true;
@@ -154,18 +170,13 @@ template <typename Interface> void Scheduler<Interface>::exitEventLoop() {
 template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const OutputEvent *evt) const {
     //need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
     auto sleepUntil = EventClockT::now() + MAX_SLEEP;
-    if (evt) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
+    if (evt && !evt->isNull()) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
         auto evtTime = interface.schedTime(evt->time());
         if (evtTime < sleepUntil) {
             sleepUntil = evtTime;
         }
     }
     SleepT::sleep_until(sleepUntil);
-}
-
-template <typename Interface> bool Scheduler<Interface>::isEventNear(const OutputEvent &evt) const {
-    auto thresh = EventClockT::now() + std::chrono::microseconds(20);
-    return interface.schedTime(evt.time()) <= thresh;
 }
 
 template <typename Interface> bool Scheduler<Interface>::isEventTime(const OutputEvent &evt) const {

@@ -213,11 +213,25 @@ template <typename Interface> class MotionPlanner {
         void _nextStepArc(std::false_type ) {
         }
     public:
-        OutputEvent nextOutputEvent() {
-            //called by State to query the next step in the current path segment
-            if (curOutputEvent == endOutputEvent) { //we have some OutputEvents buffered.
+        OutputEvent peekNextEvent() {
+            //called by State to query the next step in the current path segment, but NOT advance the iterator.
+            //if (curOutputEvent != endOutputEvent) {
+            if (_motionType != MotionNone) {
+                return *curOutputEvent;
+            } else {
+                return OutputEvent();
+            }
+        }
+        void consumeNextEvent() {
+            //called by State to advance the event iterator (will usually be called directly after peekNextEvent, but also called at the start of a move internally)
+            //Only advance the iterator if we aren't at the end of it (the only way we could be at the end of it is if the array contains 0 elements)
+            if (curOutputEvent != endOutputEvent) {
+                ++curOutputEvent;
+            }
+            while (curOutputEvent == endOutputEvent) {
+                //we're at the end of the single step buffer. Refill it (_nextStep* will also reset the curOutputEvent index)
+                //This must be a WHILE loop, because it's possible that the next step will have 0 output events (Although why, I can't imagine)
                 switch (_motionType) {
-
                     case MotionLinear:
                         _nextStepLinear(std::integral_constant<bool, std::tuple_size<AxisStepperTypes>::value != 0>());
                         break;
@@ -226,16 +240,11 @@ template <typename Interface> class MotionPlanner {
                         _nextStepArc(std::integral_constant<bool, std::tuple_size<ArcStepperTypes>::value != 0>());
                         break;
                     case MotionNone:
-                        return OutputEvent();
+                        return;
                     default: //impossible enum type
                         assert(false && "Impossible enum type");
-                        return OutputEvent();
+                        return;
                 }
-            }
-            if (curOutputEvent != endOutputEvent) {
-                return *(curOutputEvent++);
-            } else {
-                return OutputEvent();
             }
         }
         void moveTo(EventClockT::time_point baseTime, const Vector4f &dest_, float maxVelXyz, float minVelE, float maxVelE, MotionFlags flags=MOTIONFLAGS_DEFAULT) {
@@ -277,6 +286,8 @@ template <typename Interface> class MotionPlanner {
             this->_duration = minDuration;
             this->_motionType = MotionLinear;
             this->_accel.begin(minDuration, maxVelXyz);
+            //prepare the move buffer so that peekNextEvent() is valid
+            consumeNextEvent();
         }
 
         void arcTo(EventClockT::time_point baseTime, const Vector4f &dest_, const Vector3f &center_, float maxVelXyz, float minVelE, float maxVelE, bool isCW, MotionFlags flags=MOTIONFLAGS_DEFAULT) {
@@ -385,6 +396,8 @@ template <typename Interface> class MotionPlanner {
             this->_duration = minDuration;
             this->_motionType = MotionArc;
             this->_accel.begin(minDuration, maxVelXyz);
+            //prepare the move buffer so that peekNextEvent() is valid
+            consumeNextEvent();
         }
 };
 
