@@ -621,7 +621,10 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         CelciusType t, b;
         t = iodrv::IODriver::getHotendTemp(ioDrivers);
         b = iodrv::IODriver::getBedTemp(ioDrivers);
-        reply(gparse::Response(gparse::ResponseOk, "T:" + std::to_string(t) + " B:" + std::to_string(b)));
+        reply(gparse::Response(gparse::ResponseOk, {
+            std::make_pair("T", std::to_string(t)),
+            std::make_pair("B", std::to_string(b))
+        }));
     } else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
         float s = cmd.getS(1.0); //PWM duty cycle
         if (s > 1) { //host thinks we're working from 0 to 255
@@ -657,10 +660,10 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         exit(1);
     } else if (cmd.isM115()) {
         //get firmware info
-        reply(gparse::Response(gparse::ResponseOk, {{
+        reply(gparse::Response(gparse::ResponseOk, {
             std::make_pair("FIRMWARE_NAME", "printipi"),
             std::make_pair("FIRMWARE_URL", "githum.com/Wallacoloo/printipi")
-        }}));
+        }));
     } else if (cmd.isM116()) { //Wait for all heaters (and slow moving variables) to reach target
         _isWaitingForHotend = true;
         reply(gparse::Response::Ok);
