@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="gparse::Command" name="Command" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+Command objects represent a single line of gcode.
+They can be parsed from a string, and then can be queried by opcode and parameters.
+</doc>
   <field id="gparse::Command::opcodeStr" name="opcodeStr">
     <brief>std::string opcode;</brief>
     <type name="uint32_t" />
@@ -35,6 +39,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </return>
   </method>
   <method id="gparse::Command::getE" name="getE">
+    <brief>extrusion distance</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -51,6 +56,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </argument>
   </method>
   <method id="gparse::Command::getF" name="getF">
+    <brief>extruder feed-rate</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -106,6 +112,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </argument>
   </method>
   <method id="gparse::Command::getI" name="getI">
+    <brief>arc center X coordinate</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -122,6 +129,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </argument>
   </method>
   <method id="gparse::Command::getJ" name="getJ">
+    <brief>arc center Y coordinate</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -138,6 +146,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </argument>
   </method>
   <method id="gparse::Command::getK" name="getK">
+    <brief>arc center Z coordinate</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -159,6 +168,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </return>
   </method>
   <method id="gparse::Command::getS" name="getS">
+    <brief>PWM rate</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -175,6 +185,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </argument>
   </method>
   <method id="gparse::Command::getSpecialStringParam" name="getSpecialStringParam">
+    <brief>The specialStringParam is a filename, for M32, or a message to display, for M117.</brief>
     <return>
       <type name="std::string" qualifier=" const &amp;" />
     </return>

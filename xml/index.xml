@@ -5,7 +5,7 @@
   </variable>
   <namespace name="argparse" ref="argparse#argparse" />
   <namespace name="gparse" ref="gparse#gparse">
-    <brief>#List of commands on Reprap Wiki:</brief>
+    <brief>null file descriptor</brief>
     <class name="Com" ref="gparse::Com#gparse::Com" />
     <class name="Command" ref="gparse::Command#gparse::Command" />
     <class name="Response" ref="gparse::Response#gparse::Response" />
@@ -127,7 +127,7 @@
     <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
   </namespace>
   <namespace name="plat" ref="plat#plat">
-    <brief># to divide the NOMINAL_CLOCK_FREQ by before passing it to the PWM peripheral.</brief>
+    <brief>forward declare for class defined in outputevent.h</brief>
     <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
       <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />

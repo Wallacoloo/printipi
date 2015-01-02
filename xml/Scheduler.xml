@@ -70,7 +70,6 @@ This gives the onIdleCpu function the possibility to schedule events using Sched
     </return>
   </method>
   <method id="Scheduler::exitEventLoop" name="exitEventLoop">
-    <brief>void yield(const OutputEvent *evt);</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>

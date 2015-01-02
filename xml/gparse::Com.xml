@@ -1,5 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="gparse::Com" name="Com" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+Com manages the low-level interfacing with whatever is controlling this printer.
+reads are non-blocking, so tendCom() must be called on a regular basis.
+once tendCom returns true, then a command is available via getCommand(), and a reply can be sent to the host via reply(...)
+
+Communication is typically done over a serial interface, but Com accepts any file descriptor,
+  so communication can be done via stdin (/dev/stdin) or commands can be directly fed from a gcode file.
+</doc>
   <variable id="gparse::Com::NULL_FILE_STR" name="NULL_FILE_STR">
     <brief>initialize static consts:</brief>
     <type name="std::string" qualifier=" const" />
@@ -43,14 +51,7 @@
     </return>
   </method>
   <method id="gparse::Com::reply" name="reply">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="gparse::Com::reply::resp" name="resp">
-      <type name="std::string" qualifier=" const &amp;" />
-    </argument>
-  </method>
-  <method id="gparse::Com::reply" name="reply">
+    <brief>void reply(const std::string &amp;resp);</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
