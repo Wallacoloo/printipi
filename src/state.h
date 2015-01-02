@@ -452,7 +452,7 @@ template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
             //if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
             if (!NO_LOG_M105 || !cmd.isM105()) {
                 LOG("command: %s\n", cmd.toGCode().c_str());
-                LOG("response: %s", resp.toString().c_str());
+                LOG("response: %s\n", resp.toString().c_str());
             }
             com.reply(resp);
             //}
@@ -655,6 +655,12 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if (cmd.isM112()) { //emergency stop
         reply(gparse::Response::Ok);
         exit(1);
+    } else if (cmd.isM115()) {
+        //get firmware info
+        reply(gparse::Response(gparse::ResponseOk, std::array<std::pair<std::string, std::string>, 2>{{
+            std::make_pair("FIRMWARE_NAME", "printipi"),
+            std::make_pair("FIRMWARE_URL", "githum.com/Wallacoloo/printipi")
+        }}));
     } else if (cmd.isM116()) { //Wait for all heaters (and slow moving variables) to reach target
         _isWaitingForHotend = true;
         reply(gparse::Response::Ok);
