@@ -1,20 +1,19 @@
 #ifndef COMMON_TUPLEUTIL_H
 #define COMMON_TUPLEUTIL_H
 
-/* 
- * Printipi/common/tupleutil.h
- * (c) 2014 Colin Wallace
- *
- * This file provides utilities for manipulating tuples.
- * Namely, it provides a way to apply a polymorphic (templated) function to each item in a tuple.
- */
-
 #include <tuple>
 #include <cassert>
 #include <utility> //for std::forward
 //for std::integral_constant
 #include <type_traits>
 
+
+/* 
+ * This namespace provides utilities for manipulating tuples.
+ * Namely, it provides a way to apply a polymorphic (templated) function to each item in a tuple (callOnAll)
+ * Or a reducing (folding) function to each element of a tuple. (tupleReduce)
+ * Or call a function with the nth element of a tuple, where n is not a compile-time constant. (tupleCallOnIndex)
+ */
 namespace tupleutil {
 namespace {
     //place helper functions in an unnamed namespace to limit visibility and hint the documentation generator

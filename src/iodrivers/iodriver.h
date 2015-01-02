@@ -100,7 +100,7 @@ class IODriver {
         template <typename TupleT> static CelciusType getHotendTemp(TupleT &drivers);
         template <typename TupleT> static CelciusType getHotendTargetTemp(TupleT &drivers);
         template <typename TupleT> static CelciusType getBedTemp(TupleT &drivers);
-        template <typename TupleT> static OutputEvent tuplePeekNextEvent(const TupleT &drivers);
+        template <typename TupleT> static OutputEvent tuplePeekNextEvent(TupleT &drivers);
         template <typename TupleT> static void tupleConsumeNextEvent(TupleT &drivers);
 };
 
@@ -233,7 +233,7 @@ template <typename TupleT> CelciusType IODriver::getBedTemp(TupleT &drivers) {
     return t.value;
 }
 
-template <typename TupleT> OutputEvent IODriver::tuplePeekNextEvent(const TupleT &drivers) {
+template <typename TupleT> OutputEvent IODriver::tuplePeekNextEvent(TupleT &drivers) {
     //get the next OutputEvent & associated index (peeker.value, peeker.index)
     IODriver__tuplePeekNextEvent peeker;
     callOnAll(drivers, &peeker);
