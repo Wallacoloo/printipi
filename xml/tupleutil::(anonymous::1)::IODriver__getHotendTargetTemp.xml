@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>IODriver::getHotendTargetTemp helper functions:</brief>
+  <brief>IODriver::getHotendTargetTemp helper</brief>
   <methodtemplate id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()" name="operator()">
     <return>
       <type builtin="yes" name="void" />

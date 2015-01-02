@@ -97,6 +97,26 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
     <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
   </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::tupleConsumeNextEvent" name="tupleConsumeNextEvent" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::tupleConsumeNextEvent::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::tupleConsumeNextEvent::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::tupleConsumeNextEvent::TupleT" name="TupleT" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::tuplePeekNextEvent" name="tuplePeekNextEvent" static="yes">
+    <return>
+      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
+    </return>
+    <argument id="iodrv::IODriver::tuplePeekNextEvent::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT" />
+  </methodtemplate>
   <methodtemplate id="iodrv::IODriver::unlockAllAxis" name="unlockAllAxis" static="yes">
     <return>
       <type builtin="yes" name="void" />
@@ -108,6 +128,11 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
     <templatetypeparameter id="iodrv::IODriver::unlockAllAxis::TupleT" name="TupleT" />
   </methodtemplate>
   <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
+  <method id="iodrv::IODriver::consumeNextEvent" name="consumeNextEvent">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
   <method id="iodrv::IODriver::getMeasuredTemperature" name="getMeasuredTemperature">
     <brief>OVERRIDE THIS (hotends / beds only)</brief>
     <return>
@@ -150,7 +175,7 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
       <type builtin="yes" name="void" />
     </return>
   </method>
-  <method id="iodrv::IODriver::nextEvent" name="nextEvent">
+  <method id="iodrv::IODriver::peekNextEvent" name="peekNextEvent">
     <return>
       <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
     </return>

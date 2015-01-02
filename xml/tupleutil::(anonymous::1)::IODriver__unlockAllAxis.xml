@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="tupleutil::(anonymous::1)::IODriver__unlockAllAxis" name="IODriver__unlockAllAxis" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>IODriver::unlockAllAxis helper functions:</brief>
+  <brief>IODriver::unlockAllAxis helper</brief>
   <methodtemplate id="tupleutil::(anonymous::1)::IODriver__unlockAllAxis::operator()" name="operator()">
     <return>
       <type builtin="yes" name="void" />

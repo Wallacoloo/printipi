@@ -27,17 +27,23 @@ Not yet ready for use; see discussion @ https://github.com/Wallacoloo/printipi/i
       <type builtin="yes" name="float" />
     </argument>
   </constructor>
+  <method id="iodrv::Servo::consumeNextEvent" name="consumeNextEvent" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <override name="IODriver::consumeNextEvent" ref="iodrv::IODriver#iodrv::IODriver::consumeNextEvent" />
+  </method>
   <method id="iodrv::Servo::isServo" name="isServo" override="yes">
     <return>
       <type builtin="yes" name="bool" />
     </return>
     <override name="IODriver::isServo" ref="iodrv::IODriver#iodrv::IODriver::isServo" />
   </method>
-  <method id="iodrv::Servo::nextEvent" name="nextEvent" override="yes">
+  <method id="iodrv::Servo::peekNextEvent" name="peekNextEvent" override="yes">
     <return>
       <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
     </return>
-    <override name="IODriver::nextEvent" ref="iodrv::IODriver#iodrv::IODriver::nextEvent" />
+    <override name="IODriver::peekNextEvent" ref="iodrv::IODriver#iodrv::IODriver::peekNextEvent" />
   </method>
   <method id="iodrv::Servo::setServoAngle" name="setServoAngle" override="yes">
     <return>

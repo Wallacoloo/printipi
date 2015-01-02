@@ -30,7 +30,7 @@
   <method id="motion::MotionPlanner::actualCartesianPosition" name="actualCartesianPosition">
     <brief>return the actual cartesian position of the effector/hotend</brief>
     <doc>Note that if there is a move in progress, this position is based off the last step event
-that's been retrieved from <ref ref="motion::MotionPlanner#motion::MotionPlanner::nextOutputEvent">motion::MotionPlanner::nextOutputEvent</ref></doc>
+that's been retrieved from &amp;lt;nextOutputEvent&amp;gt;</doc>
     <return>
       <type name="Vector4f" ref="index#Vector4f" />
     </return>
@@ -48,9 +48,14 @@ that's been retrieved from <ref ref="motion::MotionPlanner#motion::MotionPlanner
       <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
   </method>
-  <method id="motion::MotionPlanner::nextOutputEvent" name="nextOutputEvent">
+  <method id="motion::MotionPlanner::peekNextEvent" name="peekNextEvent">
     <return>
       <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
+    </return>
+  </method>
+  <method id="motion::MotionPlanner::consumeNextEvent" name="consumeNextEvent">
+    <return>
+      <type builtin="yes" name="void" />
     </return>
   </method>
   <method id="motion::MotionPlanner::moveTo" name="moveTo">

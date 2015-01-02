@@ -1,5 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="Scheduler" name="Scheduler" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+The Scheduler controls program flow between tending communications and executing events at precise times.
+It is designed to run in a single-threaded environment so it can have maximum control.
+Scheduler.eventLoop should be called after any program setup is completed.
+The eventLoop function will frequently yield control *briefly* to Interface.onIdleCpu.
+This gives the onIdleCpu function the possibility to schedule events using Scheduler.queue.
+</doc>
   <base access="public">
     <type name="SchedulerBase" ref="SchedulerBase#SchedulerBase" />
     <brief> Base class from which all templated schedulers derive.</brief>
@@ -62,15 +69,8 @@
       <type builtin="yes" name="void" />
     </return>
   </method>
-  <method id="Scheduler::yield" name="yield">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="Scheduler::yield::evt" name="evt">
-      <type name="OutputEvent" qualifier=" const *" ref="OutputEvent#OutputEvent" />
-    </argument>
-  </method>
   <method id="Scheduler::exitEventLoop" name="exitEventLoop">
+    <brief>void yield(const OutputEvent *evt);</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>

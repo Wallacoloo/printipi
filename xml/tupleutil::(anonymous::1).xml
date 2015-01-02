@@ -46,24 +46,30 @@
     <brief>Helper class for AxisStepper::nextStep method</brief>
   </struct>
   <struct name="IODriver__getBedTemp" ref="tupleutil::(anonymous::1)::IODriver__getBedTemp#tupleutil::(anonymous::1)::IODriver__getBedTemp">
-    <brief>IODriver::getBedTemp helper functions:</brief>
+    <brief>IODriver::getBedTemp helper</brief>
   </struct>
   <struct name="IODriver__getHotendTargetTemp" ref="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp#tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp">
-    <brief>IODriver::getHotendTargetTemp helper functions:</brief>
+    <brief>IODriver::getHotendTargetTemp helper</brief>
   </struct>
   <struct name="IODriver__getHotendTemp" ref="tupleutil::(anonymous::1)::IODriver__getHotendTemp#tupleutil::(anonymous::1)::IODriver__getHotendTemp">
-    <brief>IODriver::getHotendTemp helper functions:</brief>
+    <brief>IODriver::getHotendTemp helper</brief>
   </struct>
   <struct name="IODriver__lockAllAxis" ref="tupleutil::(anonymous::1)::IODriver__lockAllAxis#tupleutil::(anonymous::1)::IODriver__lockAllAxis">
-    <brief>IODriver::lockAllAxis helper functions:</brief>
+    <brief>IODriver::lockAllAxis helper</brief>
   </struct>
   <struct name="IODriver__setBedTemp" ref="tupleutil::(anonymous::1)::IODriver__setBedTemp#tupleutil::(anonymous::1)::IODriver__setBedTemp">
-    <brief>IODriver::setBedTemp helper functions:</brief>
+    <brief>IODriver::setBedTemp helper</brief>
   </struct>
   <struct name="IODriver__setHotendTemp" ref="tupleutil::(anonymous::1)::IODriver__setHotendTemp#tupleutil::(anonymous::1)::IODriver__setHotendTemp">
-    <brief>IODriver::setHotendTemp helper functions:</brief>
+    <brief>IODriver::setHotendTemp helper</brief>
+  </struct>
+  <struct name="IODriver__tupleConsumeNextEvent" ref="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent#tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent">
+    <brief>IODriver::tupleConsumeNextEvent helper</brief>
+  </struct>
+  <struct name="IODriver__tuplePeekNextEvent" ref="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent#tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent">
+    <brief>IODriver::tuplePeekNextEvent helper</brief>
   </struct>
   <struct name="IODriver__unlockAllAxis" ref="tupleutil::(anonymous::1)::IODriver__unlockAllAxis#tupleutil::(anonymous::1)::IODriver__unlockAllAxis">
-    <brief>IODriver::unlockAllAxis helper functions:</brief>
+    <brief>IODriver::unlockAllAxis helper</brief>
   </struct>
 </namespace>

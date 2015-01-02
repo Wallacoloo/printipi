@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="tupleutil::(anonymous::1)::IODriver__getBedTemp" name="IODriver__getBedTemp" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>IODriver::getBedTemp helper functions:</brief>
+  <brief>IODriver::getBedTemp helper</brief>
   <methodtemplate id="tupleutil::(anonymous::1)::IODriver__getBedTemp::operator()" name="operator()">
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="tupleutil::(anonymous::1)::IODriver__getBedTemp::operator()::" name="">
+    <argument id="tupleutil::(anonymous::1)::IODriver__getBedTemp::operator()::index" name="index">
       <type name="std::size_t" />
     </argument>
     <argument id="tupleutil::(anonymous::1)::IODriver__getBedTemp::operator()::driver" name="driver">

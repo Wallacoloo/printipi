@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="tupleutil" name="tupleutil" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+This namespace provides utilities for manipulating tuples.
+Namely, it provides a way to apply a polymorphic (templated) function to each item in a tuple (callOnAll)
+Or a reducing (folding) function to each element of a tuple. (tupleReduce)
+Or call a function with the nth element of a tuple, where n is not a compile-time constant. (tupleCallOnIndex)
+</doc>
   <functiontemplate id="tupleutil::callOnAll" name="callOnAll">
     <brief>Apply @f(item, @args...) for each item in the tuple @t</brief>
     <return>
