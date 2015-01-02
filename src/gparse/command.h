@@ -98,41 +98,47 @@ class Command {
         inline float getFloatParam(char label, bool &hasParam) const {
             return getFloatParam(label, NAN, hasParam);
         }
-        
+        //The specialStringParam is a filename, for M32, or a message to display, for M117.
         inline const std::string& getSpecialStringParam() const {
             return specialStringParam;
         }
-        inline float getE(float def=NAN) const { //extrusion distance
+        //extrusion distance
+        inline float getE(float def=NAN) const {
             return getFloatParam('E', def);
         }
         inline float getE(bool &hasParam) const {
             return getFloatParam('E', hasParam);
         }
-        inline float getF(float def=NAN) const { //extruder feed-rate.
+        //extruder feed-rate
+        inline float getF(float def=NAN) const {
             return getFloatParam('F', def);
         }
         inline float getF(bool &hasParam) const {
             return getFloatParam('F', hasParam);
         }
-        inline float getI(float def=NAN) const { //arc center X coordinate
+        //arc center X coordinate
+        inline float getI(float def=NAN) const {
             return getFloatParam('I', def);
         }
         inline float getI(bool &hasParam) const {
             return getFloatParam('I', hasParam);
         }
-        inline float getJ(float def=NAN) const { //arc center Y coordinate
+        //arc center Y coordinate
+        inline float getJ(float def=NAN) const {
             return getFloatParam('J', def);
         }
         inline float getJ(bool &hasParam) const {
             return getFloatParam('J', hasParam);
         }
-        inline float getK(float def=NAN) const { //arc center Z coordinate
+        //arc center Z coordinate
+        inline float getK(float def=NAN) const {
             return getFloatParam('K', def);
         }
         inline float getK(bool &hasParam) const {
             return getFloatParam('K', hasParam);
         }
-        inline float getS(float def=NAN) const { //PWM rate
+        //PWM rate
+        inline float getS(float def=NAN) const {
             return getFloatParam('S', def);
         }
         inline float getS(bool &hasParam) const {
@@ -331,9 +337,9 @@ class Command {
         inline bool isM999() const { return isOpcode(bigEndianStr('M', '9', '9', '9')); }
         inline bool isTxxx() const { return isFirstChar('T'); }
     private:
+        //Make the letter passed uppercase if it was not before.
+        //Must be done because gcode is case-insensitive (G1 == g1)
         inline char upper(char letter) const {
-            //Make the letter passed uppercase if it was not before.
-            //Must be done because gcode is case-insensitive (G1 == g1)
             if (letter >= 'a' && letter <= 'z') { //if lowercase
                 letter += ('A' - 'a'); //add the offset between uppercase and lowercase letters for our character set.
             }

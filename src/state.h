@@ -657,7 +657,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         exit(1);
     } else if (cmd.isM115()) {
         //get firmware info
-        reply(gparse::Response(gparse::ResponseOk, std::array<std::pair<std::string, std::string>, 2>{{
+        reply(gparse::Response(gparse::ResponseOk, {{
             std::make_pair("FIRMWARE_NAME", "printipi"),
             std::make_pair("FIRMWARE_URL", "githum.com/Wallacoloo/printipi")
         }}));
