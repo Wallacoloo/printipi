@@ -149,13 +149,13 @@ class cartesian : public Machine {
             0, 1, 0,
             0, 0, 1));
         }
-        inline std::tuple<Fan, Servo, TempControl<RCThermistor, PID, LowPassFilter> > 
+        inline std::tuple<Fan, /*Servo,*/ TempControl<RCThermistor, PID, LowPassFilter> > 
           getIoDrivers() const {
             return std::make_tuple(
                 Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD),
-                Servo(IoPin::null(), std::chrono::milliseconds(100), 
-                    std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(2)),
-                    std::make_pair(0.0, 2*M_PI)),
+                //Servo(IoPin::null(), std::chrono::milliseconds(100), 
+                //    std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(2)),
+                //    std::make_pair(0.0, 2*M_PI)),
                 TempControl<RCThermistor, PID, LowPassFilter>(
                     iodrv::HotendType,
                     IoPin(PIN_HOTEND_INVERSIONS, PIN_HOTEND), 
