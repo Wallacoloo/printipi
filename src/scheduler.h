@@ -68,7 +68,7 @@ template <typename Interface> class Scheduler : public SchedulerBase {
         void eventLoop();
         void exitEventLoop();
     private:
-        void sleepUntilEvent(const OutputEvent *evt) const;
+        void sleepUntilEvent(const OutputEvent &evt) const;
         bool isEventTime(const OutputEvent &evt) const;
 };
 
@@ -120,7 +120,7 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
                 //check exit flag (may have changed in onIdleCpu call) again before entering a long sleep
                 break;
             }
-            this->sleepUntilEvent(&this->nextEvent);
+            this->sleepUntilEvent(this->nextEvent);
             //We just slept for a while, which translates to a wide interval. Note that it may not actually be the event time yet.
             intervalT = OnIdleCpuIntervalWide;
             //numShortIntervals = 0;
@@ -136,11 +136,12 @@ template <typename Interface> void Scheduler<Interface>::exitEventLoop() {
     _doExit = true;
 }
 
-template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const OutputEvent *evt) const {
+template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const OutputEvent &evt) const {
     //need to call onIdleCpu handlers occasionally - avoid sleeping for long periods of time.
     auto sleepUntil = EventClockT::now() + MAX_SLEEP;
-    if (evt && !evt->isNull()) { //allow calling with NULL to sleep for a configured period of time (MAX_SLEEP)
-        auto evtTime = interface.schedTime(evt->time());
+    //allow calling with a null OutputEvent to sleep for a configured period of time (MAX_SLEEP)
+    if (!evt.isNull()) {
+        auto evtTime = interface.schedTime(evt.time());
         if (evtTime < sleepUntil) {
             sleepUntil = evtTime;
         }
