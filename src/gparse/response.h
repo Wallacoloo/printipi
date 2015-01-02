@@ -27,6 +27,8 @@
 
 #include <string>
 #include <sstream>
+#include <utility> //for std::pair
+#include <initializer_list>
 
 namespace gparse {
 
@@ -50,21 +52,34 @@ class Response {
         // Response::NULL allows one to indicate that no response should be sent
         static const Response Null;
         //Construct a response from just the code (e.g. Response(Response::Ok).toString() == "ok")
-        inline Response(ResponseCode nCode) : code(nCode) {
+        inline Response(ResponseCode code) : code(code) {
         }
         //Construct a response from a code, followed by an extra string (implicitly joined by a space)
-        inline Response(ResponseCode nCode, const std::string &nRest) : code(nCode), rest(nRest) {
+        inline Response(ResponseCode code, const std::string &rest) : code(code), rest(rest) {
         }
+
         //Construct a response from a code and a set of Key:Value pairs (joined by a space)
         //@pairs is given as any container whose elements are std::pairs<std::string, std::string>,
         //  in which std::pair::first is the key, and std::pair::second is the value.
-        template <typename Container> Response(ResponseCode nCode, const Container &pairs)
-          : code(nCode), rest(joinPairsAndStr(pairs, "")) {}
+        template <typename Container> Response(ResponseCode code, const Container &pairs)
+          : code(code), rest(joinPairsAndStr(pairs, "")) {}
+
         //Construct a response from a code, a set of Key:Value pairs, and then an extra string (all 3 are joined by spaced)
         //@pairs is given as any container whose elements are std::pairs<std::string, std::string>,
         //  in which std::pair::first is the key, and std::pair::second is the value.
-        template <typename Container> Response(ResponseCode nCode, const Container &pairs, const std::string &nRest)
-          : code(nCode), rest(joinPairsAndStr(pairs, nRest)) {}
+        template <typename Container> Response(ResponseCode code, const Container &pairs, const std::string &rest)
+          : code(code), rest(joinPairsAndStr(pairs, rest)) {}
+
+        //Construct a response from a code and a set of Key:Value pairs (joined by a space)
+        //Allow construction, using an std::initializer_list of std::pair<std::string, std::string> for @pairs.
+        //Example: Response(ResponseOk, {make_pair("T", "65"), make_pair("B", "20")})
+        Response(ResponseCode code, std::initializer_list<std::pair<std::string, std::string> > pairs)
+          : code(code), rest(joinPairsAndStr(pairs, "")) {}
+        //Construct a response from a code and a set of Key:Value pairs (joined by a space)
+        //Allow construction, using an std::initializer_list of std::pair<std::string, std::string> for @pairs.
+        //Example: Response(ResponseOk, {make_pair("T", "65"), make_pair("B", "20")})
+        Response(ResponseCode code, std::initializer_list<std::pair<std::string, std::string> > pairs, const std::string &rest)
+          : code(code), rest(joinPairsAndStr(pairs, rest)) {}
         inline std::string toString() const {
             return (code == ResponseOk ? "ok" : "") + (rest.empty() ? "" : " " + rest);
         }
