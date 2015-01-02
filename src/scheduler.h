@@ -21,14 +21,6 @@
  * SOFTWARE.
  */
 
-/* 
- * Printipi/scheduler.h
- *
- * The Scheduler controls program flow between tending communications and executing events at precise times.
- * It is designed to run in a single-threaded environment so it can have maximum control.
- * As such, the program should call Scheduler.yield() periodically if doing any long-running task.
- * Events can be queued with Scheduler.queue, and Scheduler.eventLoop should be called after any program setup is completed.
- */
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
@@ -48,6 +40,14 @@
 #endif
 #include "schedulerbase.h"
 
+
+/* 
+ * The Scheduler controls program flow between tending communications and executing events at precise times.
+ * It is designed to run in a single-threaded environment so it can have maximum control.
+ * Scheduler.eventLoop should be called after any program setup is completed.
+ * The eventLoop function will frequently yield control *briefly* to Interface.onIdleCpu.
+ * This gives the onIdleCpu function the possibility to schedule events using Scheduler.queue.
+ */
 template <typename Interface> class Scheduler : public SchedulerBase {
     EventClockT::duration MAX_SLEEP; //need to call onIdleCpu handlers every so often, even if no events are ready.
     Interface interface;
@@ -127,11 +127,16 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
 
 template <typename Interface> void Scheduler<Interface>::yield(const OutputEvent *evt) {
     OnIdleCpuIntervalT intervalT = OnIdleCpuIntervalWide;
-    int numShortIntervals = 0; //need to track the number of short cpu intervals, because if we just execute short intervals constantly for, say, 1 second, then certain services that only run at long intervals won't occur. So make every, say, 10000th short interval transform into a wide interval.
+    //need to track the number of short cpu intervals, because if we just execute short intervals constantly for, say, 1 second, 
+    //  then certain services that only run at long intervals won't occur. 
+    //  So make every, say, 10000th short interval transform into a wide interval.
+    int numShortIntervals = 0; 
     while (!isEventTime(*evt)) {
-        if (!interface.onIdleCpu(intervalT)) { //if we don't need any onIdleCpu, then either sleep for event or yield to rest of program:
+        if (!interface.onIdleCpu(intervalT)) {
+            //if we don't need any onIdleCpu, then sleep until the event.
+            //sleepUntilEvent won't always do the full sleep; it has a time limit.
             this->sleepUntilEvent(evt);
-            //break; //don't break because sleepUntilEvent won't always do the full sleep
+            //We just slept for a while, which translates to a wide interval. Note that it may not actually be the event time yet.
             intervalT = OnIdleCpuIntervalWide;
             //numShortIntervals = 0;
         } else {
@@ -155,7 +160,6 @@ template <typename Interface> void Scheduler<Interface>::sleepUntilEvent(const O
             sleepUntil = evtTime;
         }
     }
-    //LOGV("Scheduler::sleepUntilEvent: %ld.%08lu\n", sleepUntil.tv_sec, sleepUntil.tv_nsec);
     SleepT::sleep_until(sleepUntil);
 }
 
