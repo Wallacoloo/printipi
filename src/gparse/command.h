@@ -20,14 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/* 
- * gparse/command.h
- *
- * Command objects represent a single line of gcode.
- * They can be parsed from a string, and then can be queried by opcode and parameters.
- * They can also be constructed and used as replies to the host (although this may change in future implementations)
- */
  
 
 #ifndef GPARSE_COMMAND_H
@@ -67,7 +59,10 @@ inline uint32_t bigEndianStr(char a, char b, char c, char d) {
     return (a<<24) + (b<<16) + (c<<8) + d;
 }
 
-
+/* 
+ * Command objects represent a single line of gcode.
+ * They can be parsed from a string, and then can be queried by opcode and parameters.
+ */
 class Command {
     public:
     //std::string opcode;
