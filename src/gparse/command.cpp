@@ -132,7 +132,7 @@ std::string Command::toGCode() const {
         r += ' ';
         r += getSpecialStringParam();
     }
-    return r + '\n';
+    return r;
 }
 
 bool Command::hasParam(char label) const {

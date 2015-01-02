@@ -56,16 +56,22 @@ const Command& Com::getCommand() const {
     return _parsed;
 }
 
-void Com::reply(const std::string &resp) {
+/*void Com::reply(const std::string &resp) {
     if (hasWriteFile()) {
         write(_writeFd, resp.c_str(), resp.length());
     }
     //The pending command has be replied to, so reset it.
     _parsed = Command();
-}
+}*/
 
 void Com::reply(const Response &resp) {
-    reply(resp.toString());
+    if (hasWriteFile() && !resp.isNull()) {
+        std::string respStr = resp.toString();
+        write(_writeFd, respStr.c_str(), respStr.length());
+        write(_writeFd, "\n", 1);
+    }
+    //The pending command has be replied to, so reset it.
+    _parsed = Command();
 }
 
 }

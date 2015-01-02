@@ -80,7 +80,7 @@ class Com {
         //sequential calls to getCommand() will all return the same command, until reply() is called, at which point the next command will be parsed.
         const Command& getCommand() const;
         
-        void reply(const std::string &resp);
+        //void reply(const std::string &resp);
         void reply(const Response &resp);
         
             
