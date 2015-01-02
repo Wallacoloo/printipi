@@ -21,15 +21,6 @@
  * SOFTWARE.
  */
 
-/* 
- * Printipi/state.h
- *
- * State handles as much driver-mutual functionality as possible, including mapping Gcodes to specific functions,
- *   tracking unit mode and axis position, and interfacing with the scheduler.
- * State controls the communications channel, the scheduler, and the underlying driver.
- * Motion planning is offloaded to src/motion/MotionPlanner
- */
-
 #ifndef STATE_H
 #define STATE_H
 
@@ -77,6 +68,12 @@ enum LengthUnit {
     UNIT_IN
 };
 
+/* 
+ * State handles as much driver-mutual functionality as possible, including mapping Gcodes to specific functions,
+ *   tracking unit mode and axis position, and interfacing with the scheduler.
+ * State controls the communications channel, the scheduler, and the underlying driver.
+ * Motion planning is offloaded to src/motion/MotionPlanner
+ */
 template <typename Drv> class State {
     friend struct TestClass;
     //Derive the types for various Machine-specific subtypes:
