@@ -428,37 +428,37 @@ return values.
         <location column="19" file="motion/axisstepper.h" line="160" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAll::Args" name="Args">
-        <location column="71" file="common/tupleutil.h" line="45" />
+        <location column="71" file="common/tupleutil.h" line="52" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAll::Func" name="Func">
-        <location column="56" file="common/tupleutil.h" line="45" />
+        <location column="56" file="common/tupleutil.h" line="52" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAll::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="45" />
+        <location column="15" file="common/tupleutil.h" line="52" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Args" name="Args">
-        <location column="113" file="common/tupleutil.h" line="59" />
+        <location column="113" file="common/tupleutil.h" line="66" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Func" name="Func">
-        <location column="56" file="common/tupleutil.h" line="59" />
+        <location column="56" file="common/tupleutil.h" line="66" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce">
-        <location column="71" file="common/tupleutil.h" line="59" />
+        <location column="71" file="common/tupleutil.h" line="66" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault">
-        <location column="88" file="common/tupleutil.h" line="59" />
+        <location column="88" file="common/tupleutil.h" line="66" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="59" />
+        <location column="15" file="common/tupleutil.h" line="66" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnIndex::Args" name="Args">
-        <location column="73" file="common/tupleutil.h" line="75" />
+        <location column="73" file="common/tupleutil.h" line="82" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnIndex::Func" name="Func">
-        <location column="58" file="common/tupleutil.h" line="75" />
+        <location column="58" file="common/tupleutil.h" line="82" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnIndex::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="75" />
+        <location column="15" file="common/tupleutil.h" line="82" />
       </undocumented>
       <undocumented id="gparse::Response::Response::Container" name="Container">
         <location column="19" file="gparse/response.h" line="62" />
@@ -695,55 +695,55 @@ return values.
         <location column="35" file="platforms/generic/thisthreadsleep.h" line="40" />
       </undocumented>
       <undocumented id="tupleutil::callOnAll::Args" name="Args">
-        <location column="43" file="common/tupleutil.h" line="98" />
+        <location column="43" file="common/tupleutil.h" line="105" />
       </undocumented>
       <undocumented id="tupleutil::callOnAll::Args" name="Args">
-        <location column="43" file="common/tupleutil.h" line="103" />
+        <location column="43" file="common/tupleutil.h" line="110" />
       </undocumented>
       <undocumented id="tupleutil::callOnAll::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="98" />
+        <location column="28" file="common/tupleutil.h" line="105" />
       </undocumented>
       <undocumented id="tupleutil::callOnAll::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="103" />
+        <location column="28" file="common/tupleutil.h" line="110" />
       </undocumented>
       <undocumented id="tupleutil::callOnAll::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="98" />
+        <location column="11" file="common/tupleutil.h" line="105" />
       </undocumented>
       <undocumented id="tupleutil::callOnAll::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="103" />
+        <location column="11" file="common/tupleutil.h" line="110" />
       </undocumented>
       <undocumented id="tupleutil::tupleCallOnIndex::Args" name="Args">
-        <location column="43" file="common/tupleutil.h" line="120" />
+        <location column="43" file="common/tupleutil.h" line="127" />
       </undocumented>
       <undocumented id="tupleutil::tupleCallOnIndex::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="120" />
+        <location column="28" file="common/tupleutil.h" line="127" />
       </undocumented>
       <undocumented id="tupleutil::tupleCallOnIndex::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="120" />
+        <location column="11" file="common/tupleutil.h" line="127" />
       </undocumented>
       <undocumented id="tupleutil::tupleReduce::Args" name="Args">
-        <location column="85" file="common/tupleutil.h" line="109" />
+        <location column="85" file="common/tupleutil.h" line="116" />
       </undocumented>
       <undocumented id="tupleutil::tupleReduce::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="109" />
+        <location column="28" file="common/tupleutil.h" line="116" />
       </undocumented>
       <undocumented id="tupleutil::tupleReduce::Reduce" name="Reduce">
-        <location column="43" file="common/tupleutil.h" line="109" />
+        <location column="43" file="common/tupleutil.h" line="116" />
       </undocumented>
       <undocumented id="tupleutil::tupleReduce::ReducedDefault" name="ReducedDefault">
-        <location column="60" file="common/tupleutil.h" line="109" />
+        <location column="60" file="common/tupleutil.h" line="116" />
       </undocumented>
       <undocumented id="tupleutil::tupleReduce::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="109" />
+        <location column="11" file="common/tupleutil.h" line="116" />
       </undocumented>
       <undocumented id="tupleutil::tupleReduceLogicalOr::Args" name="Args">
-        <location column="43" file="common/tupleutil.h" line="113" />
+        <location column="43" file="common/tupleutil.h" line="120" />
       </undocumented>
       <undocumented id="tupleutil::tupleReduceLogicalOr::Func" name="Func">
-        <location column="28" file="common/tupleutil.h" line="113" />
+        <location column="28" file="common/tupleutil.h" line="120" />
       </undocumented>
       <undocumented id="tupleutil::tupleReduceLogicalOr::TupleT" name="TupleT">
-        <location column="11" file="common/tupleutil.h" line="113" />
+        <location column="11" file="common/tupleutil.h" line="120" />
       </undocumented>
     </type>
     <type documented="8" name="enum" undocumented="6">
@@ -950,13 +950,13 @@ return values.
         <location column="9" file="motion/axisstepper.h" line="115" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAll::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="46" />
+        <location column="9" file="common/tupleutil.h" line="53" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="60" />
+        <location column="9" file="common/tupleutil.h" line="67" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnIndex::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="76" />
+        <location column="9" file="common/tupleutil.h" line="83" />
       </undocumented>
       <undocumented id="gparse::Com::hasReadFile" name="hasReadFile">
         <location column="9" file="gparse/com.h" line="67" />
@@ -1841,13 +1841,13 @@ return values.
         <location column="19" file="motion/axisstepper.h" line="138" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="45" />
+        <location column="32" file="common/tupleutil.h" line="52" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="59" />
+        <location column="32" file="common/tupleutil.h" line="66" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="75" />
+        <location column="32" file="common/tupleutil.h" line="82" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
         <location column="56" file="motion/axisstepper.h" line="78" />
@@ -2568,19 +2568,19 @@ return values.
       <undocumented name="moveDuration" />
     </function>
     <function id="tupleutil::callOnAll" name="callOnAll">
-      <location column="1" file="common/tupleutil.h" line="98" />
+      <location column="1" file="common/tupleutil.h" line="105" />
       <undocumented name="args" />
       <undocumented name="t" />
       <undocumented name="f" />
     </function>
     <function id="tupleutil::callOnAll" name="callOnAll">
-      <location column="1" file="common/tupleutil.h" line="103" />
+      <location column="1" file="common/tupleutil.h" line="110" />
       <undocumented name="args" />
       <undocumented name="t" />
       <undocumented name="f" />
     </function>
     <function id="tupleutil::tupleReduce" name="tupleReduce">
-      <location column="1" file="common/tupleutil.h" line="109" />
+      <location column="1" file="common/tupleutil.h" line="116" />
       <undocumented-return />
       <undocumented name="d" />
       <undocumented name="r" />
@@ -2589,14 +2589,14 @@ return values.
       <undocumented name="f" />
     </function>
     <function id="tupleutil::tupleReduceLogicalOr" name="tupleReduceLogicalOr">
-      <location column="1" file="common/tupleutil.h" line="113" />
+      <location column="1" file="common/tupleutil.h" line="120" />
       <undocumented-return />
       <undocumented name="args" />
       <undocumented name="t" />
       <undocumented name="f" />
     </function>
     <function id="tupleutil::tupleCallOnIndex" name="tupleCallOnIndex">
-      <location column="1" file="common/tupleutil.h" line="120" />
+      <location column="1" file="common/tupleutil.h" line="127" />
       <undocumented-return />
       <undocumented name="args" />
       <undocumented name="t" />
