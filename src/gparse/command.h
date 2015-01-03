@@ -43,19 +43,22 @@ print pretty
 
 namespace gparse {
 
-//bigEndianStr turns a series of characters into a uint32_t for fast string-comparisons.
-//Eg bigEndianStr('G', '1', '0') is similar to an array, x, where x[0] == 'G', x[1] == '1' and x[2] == '0', but held in fixed-width.
-inline uint32_t bigEndianStr(char a) {
-    return a;
-}
-inline uint32_t bigEndianStr(char a, char b) {
-    return (a<<8) + b;
-}
-inline uint32_t bigEndianStr(char a, char b, char c) {
-    return (a<<16) + (b<<8) + c;
-}
-inline uint32_t bigEndianStr(char a, char b, char c, char d) {
-    return (a<<24) + (b<<16) + (c<<8) + d;
+//internal functions - treat as private
+namespace {
+    //bigEndianStr turns a series of characters into a uint32_t for fast string-comparisons.
+    //Eg bigEndianStr('G', '1', '0') is similar to an array, x, where x[0] == 'G', x[1] == '1' and x[2] == '0', but held in fixed-width.
+    inline uint32_t bigEndianStr(char a) {
+        return a;
+    }
+    inline uint32_t bigEndianStr(char a, char b) {
+        return (a<<8) + b;
+    }
+    inline uint32_t bigEndianStr(char a, char b, char c) {
+        return (a<<16) + (b<<8) + c;
+    }
+    inline uint32_t bigEndianStr(char a, char b, char c, char d) {
+        return (a<<24) + (b<<16) + (c<<8) + d;
+    }
 }
 
 /* 
