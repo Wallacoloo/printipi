@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="motion::LinearCoordMap" name="LinearCoordMap" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+LinearCoordMap implements the CoordMap interface for Cartesian robots.
+This is the CoordMap that your machine should use if it is a Cartesian robot.
+</doc>
   <base access="public">
     <type name="CoordMap" ref="motion::CoordMap#motion::CoordMap" />
   </base>

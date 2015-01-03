@@ -86,9 +86,11 @@
     <class name="Response" ref="gparse::Response#gparse::Response" />
   </namespace>
   <namespace name="iodrv" ref="iodrv#iodrv">
-    <brief>for StepDirection</brief>
+    <brief>for the testsuite</brief>
     <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
-    <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
+    <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
+      <brief>forward declare for class in "endstop.h"</brief>
+    </class>
     <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
     <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
     <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin">
@@ -130,11 +132,12 @@
   </namespace>
   <namespace name="mathutil" ref="mathutil#mathutil" />
   <namespace name="mitpi" ref="mitpi#mitpi">
-    <brief>for uint32_t</brief>
-    <struct name="InitMitpiType" ref="mitpi::InitMitpiType#mitpi::InitMitpiType" />
+    <struct name="InitMitpiType" ref="mitpi::InitMitpiType#mitpi::InitMitpiType">
+      <brief>convenience type used to manage lifetime of mitpi.</brief>
+    </struct>
   </namespace>
   <namespace name="motion" ref="motion#motion">
-    <brief>forward declare for class in "endstop.h"</brief>
+    <brief>for motion::USE_ENDSTOPS</brief>
     <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
     <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
       <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
@@ -199,14 +202,18 @@
     <classtemplate name="MotionPlanner" ref="motion::MotionPlanner#motion::MotionPlanner">
       <templatetypeparameter id="motion::MotionPlanner::Interface" name="Interface" />
     </classtemplate>
-    <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
+    <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration">
+      <brief>AccelerationProfile implementation that doesn't perform any acceleration transformation</brief>
+    </struct>
   </namespace>
   <namespace name="plat" ref="plat#plat">
     <brief># to divide the NOMINAL_CLOCK_FREQ by before passing it to the PWM peripheral.</brief>
     <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
       <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
-      <class name="PrimitiveIoPin" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin" />
+      <class name="PrimitiveIoPin" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin">
+        <brief>Implementation for a basic (do-nothing) GPIO pin</brief>
+      </class>
       <class name="ThisThreadSleep" ref="plat::generic::ThisThreadSleep#plat::generic::ThisThreadSleep" />
     </namespace>
     <namespace name="rpi" ref="plat::rpi#plat::rpi">
@@ -226,37 +233,32 @@
   <namespace name="tupleutil" ref="tupleutil#tupleutil" />
   <templatetypeparameter id="Drv" name="Drv" />
   <class name="FileSystem" ref="FileSystem#FileSystem" />
-  <class name="IntervalTimer" ref="IntervalTimer#IntervalTimer">
-    <brief>for EventClockT</brief>
-  </class>
-  <class name="LowPassFilter" ref="LowPassFilter#LowPassFilter">
-    <brief> http://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter</brief>
-  </class>
+  <class name="IntervalTimer" ref="IntervalTimer#IntervalTimer" />
+  <class name="LowPassFilter" ref="LowPassFilter#LowPassFilter" />
   <class name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
   <struct name="NoFilter" ref="NoFilter#NoFilter" />
   <classtemplate name="OptionalArg" ref="OptionalArg#OptionalArg">
     <brief>allow for a function default value that is not a constant.</brief>
     <templatetypeparameter id="OptionalArg::T" name="T" />
   </classtemplate>
-  <class name="OutputEvent" ref="OutputEvent#OutputEvent">
-    <brief>for IoLevel</brief>
-  </class>
-  <class name="PID" ref="PID#PID">
-    <brief>for EventClockT</brief>
-  </class>
+  <class name="OutputEvent" ref="OutputEvent#OutputEvent" />
+  <class name="PID" ref="PID#PID" />
   <classtemplate name="Scheduler" ref="Scheduler#Scheduler">
     <templatetypeparameter id="Scheduler::Interface" name="Interface" />
   </classtemplate>
-  <class name="SchedulerBase" ref="SchedulerBase#SchedulerBase">
-    <brief> Base class from which all templated schedulers derive.</brief>
-  </class>
+  <class name="SchedulerBase" ref="SchedulerBase#SchedulerBase" />
   <classtemplate name="State" ref="State#State">
     <templatetypeparameter id="State::Drv" name="Drv" />
   </classtemplate>
-  <classtemplate name="ThisThreadSleepAdapter" ref="ThisThreadSleepAdapter#ThisThreadSleepAdapter">
-    <templatetypeparameter id="ThisThreadSleepAdapter::ClockT" name="ClockT" />
-    <templatetypeparameter id="ThisThreadSleepAdapter::SleepT" name="SleepT" />
-  </classtemplate>
+  <structtemplate name="ThisThreadSleepAdapter" ref="ThisThreadSleepAdapter#ThisThreadSleepAdapter">
+    <brief>allows for sleeping to an absolute time when the custom clock (EventClockT) has a different offset than the system clock (which is otherwise used for measuring sleep times).</brief>
+    <templatetypeparameter id="ThisThreadSleepAdapter::ClockT" name="ClockT">
+      <brief>the clock to which absolute times should be compared.</brief>
+    </templatetypeparameter>
+    <templatetypeparameter id="ThisThreadSleepAdapter::SleepT" name="SleepT">
+      <brief>a type or namespace that implements the sleep_for function (like ThisThreadSleepPosix or std::this_thread) which can sleep for a RELATIVE TIME.</brief>
+    </templatetypeparameter>
+  </structtemplate>
   <classtemplate name="Vector3" ref="Vector3#Vector3">
     <brief>mathematical vector utility</brief>
     <templatetypeparameter id="Vector3::F" name="F" />

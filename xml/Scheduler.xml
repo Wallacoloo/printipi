@@ -9,7 +9,6 @@ This gives the onIdleCpu function the possibility to schedule events using Sched
 </doc>
   <base access="public">
     <type name="SchedulerBase" ref="SchedulerBase#SchedulerBase" />
-    <brief> Base class from which all templated schedulers derive.</brief>
   </base>
   <templatetypeparameter id="Scheduler::Interface" name="Interface" />
   <method id="Scheduler::queue" name="queue">

@@ -1,8 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="mitpi::InitMitpiType" name="InitMitpiType" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <constructor id="mitpi::InitMitpiType::InitMitpiType" name="InitMitpiType">
-    <brief>convenience type used to manage lifetime of mitpi.</brief>
-    <doc>Can be used as a member object of a type that depends on Mitpi functionality.
+  <brief>convenience type used to manage lifetime of mitpi.</brief>
+  <doc>Can be used as a member object of a type that depends on Mitpi functionality.
 Example:
 class X {
 InitMitpiType mitpiDependency;
@@ -11,5 +10,5 @@ mitpi::makeOutput(11);
 //Note the lack of explicit mitpi initialization. This is done with the InitMitpiType above
 }
 };</doc>
-  </constructor>
+  <constructor id="mitpi::InitMitpiType::InitMitpiType" name="InitMitpiType" />
 </struct>

@@ -1,8 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="mitpi" name="mitpi" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>for uint32_t</brief>
-  <struct name="InitMitpiType" ref="mitpi::InitMitpiType#mitpi::InitMitpiType" />
+  <doc>
+Mitpi is a small library used for interfacing with the Raspberry Pi's peripherals, including GPIO and timers,
+  licensed under the extremely permissive MIT license.
+
+Please note that most of its features require superuser priviledges, so you may have to launch any executable which uses this library with `sudo'
+</doc>
+  <struct name="InitMitpiType" ref="mitpi::InitMitpiType#mitpi::InitMitpiType">
+    <brief>convenience type used to manage lifetime of mitpi.</brief>
+  </struct>
   <enum anonymous="yes" id="mitpi::GpioPin" name="GpioPin">
+    <brief>Map physical pin locations to logical pin ids used by the processor</brief>
     <enumvalue id="mitpi::V1_GPIO_P1_03" name="V1_GPIO_P1_03" value="0">
       <brief>There are 2 board revisions (and now the model A+/B+), which have slightly different I/O wiring.</brief>
       <doc>P1 header (2x13 pins) for version 1 (i.e. before Sept 2012:
@@ -89,9 +97,8 @@ Physical numbering is ordered ... how?</doc>
     <enumvalue id="mitpi::NULL_GPIO_PIN" name="NULL_GPIO_PIN" value="127" />
   </enum>
   <enum anonymous="yes" id="mitpi::GpioPull" name="GpioPull">
-    <enumvalue id="mitpi::GPIOPULL_NONE" name="GPIOPULL_NONE" value="0">
-      <brief>Internal pull-up / down resistors</brief>
-    </enumvalue>
+    <brief>Internal pull-up / down resistors</brief>
+    <enumvalue id="mitpi::GPIOPULL_NONE" name="GPIOPULL_NONE" value="0" />
     <enumvalue id="mitpi::GPIOPULL_DOWN" name="GPIOPULL_DOWN" value="1" />
     <enumvalue id="mitpi::GPIOPULL_UP" name="GPIOPULL_UP" value="2" />
   </enum>

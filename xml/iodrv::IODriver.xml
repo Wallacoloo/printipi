@@ -1,12 +1,22 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="iodrv::IODriver" name="IODriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <subclass access="public" name="TempControl" ref="iodrv::TempControl#iodrv::TempControl" />
+  <doc>
+IODrivers control the electrical interface to each component.
+One IODriver is needed for each stepper motor, fan, hotend, etc.
+
+Note: IODriver is an interface, and not an implementation.
+An implementation is needed for each electrical component - the fan, hotend, and 1 for each stepper motor, etc.
+These implementations must provide the functions outlined further down in the header.
+</doc>
   <subclass access="public" name="A4988" ref="iodrv::A4988#iodrv::A4988" />
+  <subclass access="public" name="TempControl" ref="iodrv::TempControl#iodrv::TempControl" />
   <subclass access="public" name="Servo" ref="iodrv::Servo#iodrv::Servo">
     <brief>Controls a Servo motor.</brief>
   </subclass>
   <subclass access="public" name="Fan" ref="iodrv::Fan#iodrv::Fan" />
-  <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
+  <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
+    <brief>forward declare for class in "endstop.h"</brief>
+  </subclass>
   <methodtemplate id="iodrv::IODriver::getBedTemp" name="getBedTemp" static="yes">
     <return>
       <type name="CelciusType" ref="index#CelciusType" />

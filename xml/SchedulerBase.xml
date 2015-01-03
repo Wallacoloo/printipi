@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="SchedulerBase" name="SchedulerBase" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief> Base class from which all templated schedulers derive.</brief>
-  <doc>Defines things such as exit handlers</doc>
+  <doc>
+SchedulerBase allows any file to insert exit handlers, without adding the entire Scheduler as a dependency.
+</doc>
   <subclass access="public" name="Scheduler" ref="Scheduler#Scheduler" />
   <method id="SchedulerBase::configureExitHandlers" name="configureExitHandlers" static="yes">
     <return>

@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="plat::generic::PrimitiveIoPin" name="PrimitiveIoPin" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>Implementation for a basic (do-nothing) GPIO pin</brief>
   <methodtemplate id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
     <brief>We want to use this PrimitiveIoPin on any architecture,</brief>
     <doc>so let it be constructed with whatever platform-specific arguments the config file uses with its IO pins</doc>
@@ -18,6 +19,7 @@
     </return>
   </method>
   <method id="plat::generic::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+    <brief>Write a digital value to the pin. Note: must first call makeDigitalOutput.</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>

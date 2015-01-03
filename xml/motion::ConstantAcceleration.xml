@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="motion::ConstantAcceleration" name="ConstantAcceleration" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+ConstantAcceleration is an implementation of motion::AccelerationProfile in which
+ v(t) = {at [if at &amp;lt; vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t &amp;gt; duration-accelTime] }
+
+Polynomial acceleration profiles turn out to be non-trivial, so only constant, linear, and quadratic acceleration have a closed-form solution (above that requires solving the roots of an n+1 degree polynomial. Event just linear acceleration requires solving a degree 3 polynomial.
+</doc>
   <base access="public">
     <type name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
   </base>

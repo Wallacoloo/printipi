@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="NoFilter" name="NoFilter" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
-Printipi/filters/nofilter.h
-(c) 2014 Colin Wallace
-
 Provides a default filter for algorithms that allow a filter parameter, such as in src/drivers/tempcontrol.h
 The filter's output is the same as its input.
 </doc>

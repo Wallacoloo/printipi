@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="plat::generic::HardwareScheduler" name="HardwareScheduler" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <method id="plat::generic::HardwareScheduler::onIdleCpu" name="onIdleCpu">
+    <brief>Can be used to perform routine resource management when there's free cpu.</brief>
+    <doc>Avoid spending more than a few hundred microseconds in this function, or event scheduling might be impacted
+</doc>
     <return>
+      <doc>true if we request more cpu time.</doc>
       <type builtin="yes" name="bool" />
     </return>
     <argument id="plat::generic::HardwareScheduler::onIdleCpu::interval" name="interval">
@@ -9,6 +13,7 @@
     </argument>
   </method>
   <method id="plat::generic::HardwareScheduler::queue" name="queue">
+    <brief>add this event to the hardware queue, waiting until schedTime(evt.time()) if necessary</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -17,6 +22,8 @@
     </argument>
   </method>
   <method id="plat::generic::HardwareScheduler::queuePwm" name="queuePwm">
+    <brief>Set the given pin to a pwm duty-cycle of `ratio` using a maximum period of maxPeriod (irrelevant if using PCM algorithm).</brief>
+    <doc>E.g. queuePwm(5, 0.4) sets pin #5 to a 40% duty cycle.</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -31,6 +38,7 @@
     </argument>
   </method>
   <method id="plat::generic::HardwareScheduler::schedTime" name="schedTime">
+    <brief>If an event needs to occur at evtTime, this function should return the earliest time at which it can be scheduled.</brief>
     <return>
       <type name="ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </return>

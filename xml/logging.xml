@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="logging" name="logging" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+This provides some functions that allow for logging information to stdout.
+Use LOG for information logging, LOGE to log an error, LOGW for warnings, LOGD for debug logging, and LOGV for verbose debug logging.
+LOG, LOGE, etc are not a part of the logging namespace because they are implemented as macros
+</doc>
   <variable id="logging::_debug" name="_debug">
     <type builtin="yes" name="bool" />
   </variable>

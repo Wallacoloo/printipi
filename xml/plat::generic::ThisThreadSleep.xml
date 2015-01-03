@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="plat::generic::ThisThreadSleep" name="ThisThreadSleep" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+std::this_thread::sleep_until may be having issues when using custom clocks. Try this as a workaround if using Posix.
+</doc>
   <methodtemplate id="plat::generic::ThisThreadSleep::sleep_for" name="sleep_for" static="yes">
     <return>
       <type builtin="yes" name="void" />

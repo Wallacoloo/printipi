@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="plat::rpi::ChronoClock" name="ChronoClock" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+Implements the same interfaces as std::chrono::&amp;lt;clock&amp;gt;::now()
+  to allow for highly efficient access to the system time (no context switching to kernel)
+
+NOTE: The time reported by ChronoClockRpi may be different than the actual system time, so make sure to use consistent clock sources!
+</doc>
   <variable id="plat::rpi::ChronoClock::is_steady" name="is_steady">
     <type builtin="yes" name="bool" qualifier=" const" />
   </variable>

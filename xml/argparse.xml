@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="argparse" name="argparse" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+based on a stackoverflow post
+
+argparse provides some basic functions for parsing command line options.
+</doc>
   <function id="argparse::cmdOptionExists" name="cmdOptionExists">
     <return>
       <type builtin="yes" name="bool" />

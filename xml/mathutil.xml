@@ -1,9 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="mathutil" name="mathutil" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
-Printipi/common/mathutil.h
-
-This file provides some useful conversion (mm to inches, celcius to kelvin, etc), mathematical constants, and basic mathematical functions for convenience.
+This  provides some useful conversion (mm to inches, celcius to kelvin, etc), mathematical constants, and basic mathematical functions for convenience.
 </doc>
   <variable id="mathutil::ABSOLUTE_ZERO_CELCIUS" name="ABSOLUTE_ZERO_CELCIUS">
     <brief>It is impossible for any temperature to be &lt; this value, in Celcius</brief>

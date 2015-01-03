@@ -15,21 +15,6 @@ It was decided to make a thin wrapper around the raw string responses in order t
     <type name="Response" qualifier=" const" ref="gparse::Response#gparse::Response" />
   </variable>
   <methodtemplate id="gparse::Response::Response" name="Response">
-    <brief>Construct a response from a code and a set of Key:Value pairs (joined by a space)</brief>
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="gparse::Response::Response::code" name="code">
-      <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
-    </argument>
-    <argument id="gparse::Response::Response::pairs" name="pairs">
-      <doc>is given as any container whose elements are std::pairs&amp;lt;std::string, std::string&amp;gt;,
-in which std::pair::first is the key, and std::pair::second is the value.</doc>
-      <type name="const Container" qualifier=" const &amp;" />
-    </argument>
-    <templatetypeparameter id="gparse::Response::Response::Container" name="Container" />
-  </methodtemplate>
-  <methodtemplate id="gparse::Response::Response" name="Response">
     <brief>Construct a response from a code, a set of Key:Value pairs, and then an extra string (all 3 are joined by spaced)</brief>
     <return>
       <type builtin="yes" name="void" />
@@ -48,29 +33,12 @@ in which std::pair::first is the key, and std::pair::second is the value.</doc>
     <templatetypeparameter id="gparse::Response::Response::Container" name="Container" />
   </methodtemplate>
   <constructor id="gparse::Response::Response" name="Response">
-    <brief>Construct a response from just the code (e.g. Response(Response::Ok).toString() == "ok")</brief>
-    <argument id="gparse::Response::Response::code" name="code">
-      <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
-    </argument>
-  </constructor>
-  <constructor id="gparse::Response::Response" name="Response">
-    <brief>Construct a response from a code, followed by an extra string (implicitly joined by a space)</brief>
+    <brief>Construct a response from a code, followed by an optional extra string (implicitly joined by a space)</brief>
     <argument id="gparse::Response::Response::code" name="code">
       <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
     </argument>
     <argument id="gparse::Response::Response::rest" name="rest">
       <type name="std::string" qualifier=" const &amp;" />
-    </argument>
-  </constructor>
-  <constructor id="gparse::Response::Response" name="Response">
-    <brief>Construct a response from a code and a set of Key:Value pairs (joined by a space)</brief>
-    <doc>Allow construction, using an std::initializer_list of std::pair&amp;lt;std::string, std::string&amp;gt; for @pairs.
-Example: Response(ResponseOk, {make_pair("T", "65"), make_pair("B", "20")})</doc>
-    <argument id="gparse::Response::Response::code" name="code">
-      <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
-    </argument>
-    <argument id="gparse::Response::Response::pairs" name="pairs">
-      <type name="std::initializer_list&lt;std::pair&lt;std::basic_string&lt;char&gt;, std::basic_string&lt;char&gt; &gt; &gt;" />
     </argument>
   </constructor>
   <constructor id="gparse::Response::Response" name="Response">

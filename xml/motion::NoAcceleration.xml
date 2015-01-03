@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="motion::NoAcceleration" name="NoAcceleration" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>AccelerationProfile implementation that doesn't perform any acceleration transformation</brief>
   <base access="public">
     <type name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
   </base>

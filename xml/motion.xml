@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="motion" name="motion" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>forward declare for class in "endstop.h"</brief>
+  <brief>for motion::USE_ENDSTOPS</brief>
   <functiontemplate id="motion::stepDirFromSign" name="stepDirFromSign">
     <return>
       <type name="StepDirection" ref="motion#motion::StepDirection" />
@@ -69,7 +69,9 @@
   <classtemplate name="MotionPlanner" ref="motion::MotionPlanner#motion::MotionPlanner">
     <templatetypeparameter id="motion::MotionPlanner::Interface" name="Interface" />
   </classtemplate>
-  <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
+  <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration">
+    <brief>AccelerationProfile implementation that doesn't perform any acceleration transformation</brief>
+  </struct>
   <enum anonymous="yes" id="motion::CartesianAxis" name="CartesianAxis">
     <enumvalue id="motion::CARTESIAN_AXIS_X" name="CARTESIAN_AXIS_X" value="0" />
     <enumvalue id="motion::CARTESIAN_AXIS_Y" name="CARTESIAN_AXIS_Y" value="1" />

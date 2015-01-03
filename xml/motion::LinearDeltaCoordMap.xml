@@ -1,5 +1,21 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="motion::LinearDeltaCoordMap" name="LinearDeltaCoordMap" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+LinearDeltaCoordMap implements the CoordMap interface for (rail-based) Delta-style robots like the Kossel
+This class allows for translating mechanical positions to the cartesian x, y, z, e system.
+It assumes there are 3 legs arranged in a circle (120 degrees between each adjacent pair)
+  and these legs have carriages a distance d from their base.
+The leg at (x=0, y=+) is axis A,
+The leg at (x&gt;0, y&lt;0) is axis B,
+The leg at (x&lt;0, y&lt;0) is axis C
+Additionally, the carriages host a free-spinning joint with an arm of length L linked to an end effector,
+and the carriages are r units apart.
+
+R1000 is 'r' (in mm) multiplied by 1000,
+L1000 is 'L' (in mm) multiplied by 1000
+
+The math is described more in /code/proof-of-concept/coordmath.py and coord-math.nb (note: file has been deleted; must view an archived version of printipi on Github to view this documentation)
+</doc>
   <base access="public">
     <type name="CoordMap" ref="motion::CoordMap#motion::CoordMap" />
   </base>

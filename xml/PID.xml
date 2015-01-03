@@ -1,6 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="PID" name="PID" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>for EventClockT</brief>
+  <doc>
+PID provides a Proportional-Integral-Derivative controller that can be used as a control feedback mechanism.
+Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
+PID workings: http://en.wikipedia.org/wiki/PID_controller
+</doc>
   <constructor id="PID::PID" name="PID">
     <argument id="PID::PID::P" name="P">
       <type builtin="yes" name="float" />

@@ -1,7 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
-<classtemplate id="ThisThreadSleepAdapter" name="ThisThreadSleepAdapter" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <templatetypeparameter id="ThisThreadSleepAdapter::ClockT" name="ClockT" />
-  <templatetypeparameter id="ThisThreadSleepAdapter::SleepT" name="SleepT" />
+<structtemplate id="ThisThreadSleepAdapter" name="ThisThreadSleepAdapter" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>allows for sleeping to an absolute time when the custom clock (EventClockT) has a different offset than the system clock (which is otherwise used for measuring sleep times).</brief>
+  <templatetypeparameter id="ThisThreadSleepAdapter::ClockT" name="ClockT">
+    <brief>the clock to which absolute times should be compared.</brief>
+  </templatetypeparameter>
+  <templatetypeparameter id="ThisThreadSleepAdapter::SleepT" name="SleepT">
+    <brief>a type or namespace that implements the sleep_for function (like ThisThreadSleepPosix or std::this_thread) which can sleep for a RELATIVE TIME.</brief>
+  </templatetypeparameter>
   <methodtemplate id="ThisThreadSleepAdapter::sleep_until" name="sleep_until" static="yes">
     <return>
       <type builtin="yes" name="void" />
@@ -22,4 +27,4 @@
     <templatetypeparameter id="ThisThreadSleepAdapter::sleep_for::Rep" name="Rep" />
     <templatetypeparameter id="ThisThreadSleepAdapter::sleep_for::Period" name="Period" />
   </methodtemplate>
-</classtemplate>
+</structtemplate>
