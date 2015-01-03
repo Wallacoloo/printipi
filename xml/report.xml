@@ -15,11 +15,11 @@ return values.
     <type documented="2" name="function" undocumented="23">
       <undocumented id="argparse::cmdOptionExists" name="cmdOptionExists">
         <location column="1" file="argparse.h" line="38" />
-        <location column="1" file="argparse.cpp" line="16" />
+        <location column="1" file="argparse.cpp" line="39" />
       </undocumented>
       <undocumented id="argparse::getCmdOption" name="getCmdOption">
         <location column="1" file="argparse.h" line="37" />
-        <location column="1" file="argparse.cpp" line="7" />
+        <location column="1" file="argparse.cpp" line="30" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
         <location column="5" file="gparse/command.h" line="53" />
@@ -766,7 +766,19 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="44" />
       </undocumented>
     </type>
-    <type documented="10" name="namespace" undocumented="5">
+    <type documented="9" name="namespace" undocumented="6">
+      <undocumented id="iodrv" name="iodrv">
+        <location column="1" file="iodrivers/iopin.h" line="31" />
+        <location column="1" file="iodrivers/iodriver.h" line="37" />
+        <location column="1" file="motion/coordmap.h" line="34" />
+        <location column="1" file="iodrivers/endstop.h" line="32" />
+        <location column="1" file="iodrivers/a4988.h" line="39" />
+        <location column="1" file="iodrivers/fan.h" line="32" />
+        <location column="1" file="iodrivers/tempcontrol.h" line="39" />
+        <location column="1" file="iodrivers/rcthermistor.h" line="35" />
+        <location column="1" file="iodrivers/servo.h" line="37" />
+        <location column="1" file="iodrivers/iopin.cpp" line="31" />
+      </undocumented>
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="27" />
         <location column="1" file="machines/generic/cartesian.h" line="118" />
@@ -785,11 +797,11 @@ return values.
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="39" />
       </undocumented>
       <undocumented id="plat::rpi" name="rpi">
-        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
-        <location column="1" file="platforms/rpi/chronoclock.cpp" line="4" />
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="169" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="30" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="187" />
+        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
+        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
       </undocumented>
     </type>
     <type documented="12" name="classtemplate" undocumented="2">
@@ -803,7 +815,7 @@ return values.
     <type documented="103" name="method" undocumented="327">
       <undocumented id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
         <location column="9" file="filesystem.h" line="33" />
-        <location column="1" file="filesystem.cpp" line="6" />
+        <location column="1" file="filesystem.cpp" line="29" />
       </undocumented>
       <undocumented id="IntervalTimer::clock" name="clock">
         <location column="9" file="common/intervaltimer.h" line="41" />
@@ -860,7 +872,7 @@ return values.
       </undocumented>
       <undocumented id="SchedulerBase::configureExitHandlers" name="configureExitHandlers">
         <location column="9" file="schedulerbase.h" line="59" />
-        <location column="1" file="schedulerbase.cpp" line="36" />
+        <location column="1" file="schedulerbase.cpp" line="59" />
       </undocumented>
       <undocumented id="State::CoordMapInterface::actualCartesianPosition" name="actualCartesianPosition">
         <location column="13" file="state.h" line="144" />
@@ -948,15 +960,15 @@ return values.
       </undocumented>
       <undocumented id="gparse::Com::hasReadFile" name="hasReadFile">
         <location column="9" file="gparse/com.h" line="67" />
-        <location column="1" file="gparse/com.cpp" line="46" />
+        <location column="1" file="gparse/com.cpp" line="69" />
       </undocumented>
       <undocumented id="gparse::Com::hasWriteFile" name="hasWriteFile">
         <location column="9" file="gparse/com.h" line="68" />
-        <location column="1" file="gparse/com.cpp" line="49" />
+        <location column="1" file="gparse/com.cpp" line="72" />
       </undocumented>
       <undocumented id="gparse::Com::reply" name="reply">
         <location column="9" file="gparse/com.h" line="79" />
-        <location column="1" file="gparse/com.cpp" line="59" />
+        <location column="1" file="gparse/com.cpp" line="82" />
       </undocumented>
       <undocumented id="gparse::Command::empty" name="empty">
         <location column="9" file="gparse/command.h" line="89" />
@@ -984,7 +996,7 @@ return values.
       </undocumented>
       <undocumented id="gparse::Command::getOpcode" name="getOpcode">
         <location column="9" file="gparse/command.h" line="92" />
-        <location column="1" file="gparse/command.cpp" line="104" />
+        <location column="1" file="gparse/command.cpp" line="127" />
       </undocumented>
       <undocumented id="gparse::Command::getS" name="getS">
         <location column="9" file="gparse/command.h" line="147" />
@@ -1021,7 +1033,7 @@ return values.
       </undocumented>
       <undocumented id="gparse::Command::hasParam" name="hasParam">
         <location column="9" file="gparse/command.h" line="94" />
-        <location column="1" file="gparse/command.cpp" line="138" />
+        <location column="1" file="gparse/command.cpp" line="161" />
       </undocumented>
       <undocumented id="gparse::Command::hasS" name="hasS">
         <location column="9" file="gparse/command.h" line="174" />
@@ -1481,7 +1493,7 @@ return values.
       </undocumented>
       <undocumented id="gparse::Command::toGCode" name="toGCode">
         <location column="9" file="gparse/command.h" line="93" />
-        <location column="1" file="gparse/command.cpp" line="122" />
+        <location column="1" file="gparse/command.cpp" line="145" />
       </undocumented>
       <undocumented id="gparse::Response::isNull" name="isNull">
         <location column="9" file="gparse/response.h" line="74" />
@@ -1512,19 +1524,19 @@ return values.
       </undocumented>
       <undocumented id="iodrv::IoPin::digitalRead" name="digitalRead">
         <location column="9" file="iodrivers/iopin.h" line="102" />
-        <location column="1" file="iodrivers/iopin.cpp" line="71" />
+        <location column="1" file="iodrivers/iopin.cpp" line="95" />
       </undocumented>
       <undocumented id="iodrv::IoPin::digitalWrite" name="digitalWrite">
         <location column="9" file="iodrivers/iopin.h" line="103" />
-        <location column="1" file="iodrivers/iopin.cpp" line="75" />
+        <location column="1" file="iodrivers/iopin.cpp" line="99" />
       </undocumented>
       <undocumented id="iodrv::IoPin::isNull" name="isNull">
         <location column="9" file="iodrivers/iopin.h" line="95" />
-        <location column="1" file="iodrivers/iopin.cpp" line="50" />
+        <location column="1" file="iodrivers/iopin.cpp" line="74" />
       </undocumented>
       <undocumented id="iodrv::IoPin::makeDigitalInput" name="makeDigitalInput">
         <location column="9" file="iodrivers/iopin.h" line="101" />
-        <location column="1" file="iodrivers/iopin.cpp" line="68" />
+        <location column="1" file="iodrivers/iopin.cpp" line="92" />
       </undocumented>
       <undocumented id="iodrv::IoPin::null::ref" name="ref">
         <location column="9" file="iodrivers/iopin.h" line="111" />
@@ -1534,31 +1546,31 @@ return values.
       </undocumented>
       <undocumented id="iodrv::IoPin::operator=" name="operator=">
         <location column="9" file="iodrivers/iopin.h" line="75" />
-        <location column="1" file="iodrivers/iopin.cpp" line="35" />
+        <location column="1" file="iodrivers/iopin.cpp" line="59" />
       </undocumented>
       <undocumented id="iodrv::IoPin::primitiveIoPin" name="primitiveIoPin">
         <location column="9" file="iodrivers/iopin.h" line="98" />
-        <location column="1" file="iodrivers/iopin.cpp" line="59" />
+        <location column="1" file="iodrivers/iopin.cpp" line="83" />
       </undocumented>
       <undocumented id="iodrv::IoPin::registerExitHandler" name="registerExitHandler">
         <location column="9" file="iodrivers/iopin.h" line="67" />
-        <location column="1" file="iodrivers/iopin.cpp" line="19" />
+        <location column="1" file="iodrivers/iopin.cpp" line="43" />
       </undocumented>
       <undocumented id="iodrv::IoPin::setDefaultState" name="setDefaultState">
         <location column="9" file="iodrivers/iopin.h" line="93" />
-        <location column="1" file="iodrivers/iopin.cpp" line="46" />
+        <location column="1" file="iodrivers/iopin.cpp" line="70" />
       </undocumented>
       <undocumented id="iodrv::IoPin::setToDefault" name="setToDefault">
         <location column="9" file="iodrivers/iopin.h" line="104" />
-        <location column="1" file="iodrivers/iopin.cpp" line="80" />
+        <location column="1" file="iodrivers/iopin.cpp" line="104" />
       </undocumented>
       <undocumented id="iodrv::IoPin::translateDutyCycleToPrimitive" name="translateDutyCycleToPrimitive">
         <location column="9" file="iodrivers/iopin.h" line="97" />
-        <location column="1" file="iodrivers/iopin.cpp" line="56" />
+        <location column="1" file="iodrivers/iopin.cpp" line="80" />
       </undocumented>
       <undocumented id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
         <location column="9" file="iodrivers/iopin.h" line="96" />
-        <location column="1" file="iodrivers/iopin.cpp" line="53" />
+        <location column="1" file="iodrivers/iopin.cpp" line="77" />
       </undocumented>
       <undocumented id="iodrv::RCThermistor::isReady" name="isReady">
         <location column="9" file="iodrivers/rcthermistor.h" line="79" />
@@ -1934,7 +1946,7 @@ return values.
     <type documented="15" name="constructor" undocumented="42">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="32" />
-        <location column="1" file="filesystem.cpp" line="3" />
+        <location column="1" file="filesystem.cpp" line="26" />
       </undocumented>
       <undocumented id="IntervalTimer::IntervalTimer" name="IntervalTimer">
         <location column="9" file="common/intervaltimer.h" line="37" />
@@ -1993,7 +2005,7 @@ return values.
       </undocumented>
       <undocumented id="gparse::Com::Com" name="Com">
         <location column="9" file="gparse/com.h" line="58" />
-        <location column="1" file="gparse/com.cpp" line="11" />
+        <location column="1" file="gparse/com.cpp" line="34" />
       </undocumented>
       <undocumented id="iodrv::A4988::A4988" name="A4988">
         <location column="9" file="iodrivers/a4988.h" line="55" />
@@ -2083,15 +2095,15 @@ return values.
       </undocumented>
       <undocumented id="logging::_debug" name="_debug">
         <location column="5" file="common/logging.h" line="81" />
-        <location column="1" file="common/logging.cpp" line="8" />
+        <location column="1" file="common/logging.cpp" line="31" />
       </undocumented>
       <undocumented id="logging::_info" name="_info">
         <location column="5" file="common/logging.h" line="80" />
-        <location column="1" file="common/logging.cpp" line="7" />
+        <location column="1" file="common/logging.cpp" line="30" />
       </undocumented>
       <undocumented id="logging::_verbose" name="_verbose">
         <location column="5" file="common/logging.h" line="82" />
-        <location column="1" file="common/logging.cpp" line="9" />
+        <location column="1" file="common/logging.cpp" line="32" />
       </undocumented>
       <undocumented id="plat::generic::ChronoClock::is_steady" name="is_steady">
         <location column="17" file="platforms/generic/chronoclock.h" line="45" />
@@ -2394,7 +2406,7 @@ return values.
     <type documented="0" name="destructor" undocumented="1">
       <undocumented id="iodrv::IoPin::~IoPin" name="~IoPin">
         <location column="9" file="iodrivers/iopin.h" line="91" />
-        <location column="1" file="iodrivers/iopin.cpp" line="25" />
+        <location column="1" file="iodrivers/iopin.cpp" line="49" />
       </undocumented>
     </type>
     <type documented="26" name="class" undocumented="4">
@@ -2421,12 +2433,12 @@ return values.
     </function>
     <function id="gparse::Command::Command" name="Command">
       <location column="9" file="gparse/command.h" line="88" />
-      <location column="1" file="gparse/command.cpp" line="6" />
+      <location column="1" file="gparse/command.cpp" line="29" />
       <undocumented name="" />
     </function>
     <function id="gparse::Command::getFloatParam" name="getFloatParam">
       <location column="9" file="gparse/command.h" line="96" />
-      <location column="1" file="gparse/command.cpp" line="155" />
+      <location column="1" file="gparse/command.cpp" line="178" />
       <undocumented-return />
       <undocumented name="hasParam" />
       <undocumented name="def" />
@@ -2488,32 +2500,25 @@ return values.
     </function>
     <function id="gparse::Com::Com" name="Com">
       <location column="9" file="gparse/com.h" line="62" />
-      <location column="1" file="gparse/com.cpp" line="13" />
+      <location column="1" file="gparse/com.cpp" line="36" />
       <undocumented name="fileR" />
       <undocumented name="fileW" />
       <undocumented name="dieOnEof" />
     </function>
     <function id="gparse::Com::tendCom" name="tendCom">
       <location column="9" file="gparse/com.h" line="65" />
-      <location column="1" file="gparse/com.cpp" line="20" />
+      <location column="1" file="gparse/com.cpp" line="43" />
       <undocumented-return />
     </function>
     <function id="gparse::Com::isAtEof" name="isAtEof">
       <location column="9" file="gparse/com.h" line="72" />
-      <location column="1" file="gparse/com.cpp" line="52" />
+      <location column="1" file="gparse/com.cpp" line="75" />
       <undocumented-return />
     </function>
     <function id="gparse::Com::getCommand" name="getCommand">
       <location column="9" file="gparse/com.h" line="77" />
-      <location column="1" file="gparse/com.cpp" line="55" />
+      <location column="1" file="gparse/com.cpp" line="78" />
       <undocumented-return />
-    </function>
-    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="61" />
-      <location column="1" file="schedulerbase.cpp" line="56" />
-      <undocumented-return />
-      <undocumented name="handler" />
-      <undocumented name="level" />
     </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/generic/primitiveiopin.h" line="43" />
@@ -2537,41 +2542,20 @@ return values.
     </function>
     <function id="iodrv::IoPin::IoPin" name="IoPin">
       <location column="9" file="iodrivers/iopin.h" line="74" />
-      <location column="1" file="iodrivers/iopin.cpp" line="31" />
+      <location column="1" file="iodrivers/iopin.cpp" line="55" />
       <undocumented name="other" />
     </function>
     <function id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
       <location column="9" file="iodrivers/iopin.h" line="100" />
-      <location column="1" file="iodrivers/iopin.cpp" line="63" />
+      <location column="1" file="iodrivers/iopin.cpp" line="87" />
       <undocumented name="lev" />
     </function>
-    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="39" />
+    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
+      <location column="9" file="schedulerbase.h" line="61" />
+      <location column="1" file="schedulerbase.cpp" line="79" />
       <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="43" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="53" />
-      <undocumented name="pinIdx" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="59" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="63" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/rpi/primitiveiopin.h" line="72" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="76" />
-      <undocumented name="lev" />
+      <undocumented name="handler" />
+      <undocumented name="level" />
     </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
       <location column="9" file="scheduler.h" line="67" />
@@ -2990,7 +2974,7 @@ return values.
     </function>
     <function id="PID::feed" name="feed">
       <location column="9" file="pid.h" line="51" />
-      <location column="1" file="pid.cpp" line="5" />
+      <location column="1" file="pid.cpp" line="28" />
       <undocumented-return />
       <undocumented name="setpoint" />
       <undocumented name="pv" />
@@ -3006,6 +2990,34 @@ return values.
     <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/generic/cartesian.h" line="175" />
       <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="39" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="43" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="53" />
+      <undocumented name="pinIdx" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="59" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="63" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/rpi/primitiveiopin.h" line="72" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="76" />
+      <undocumented name="lev" />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
       <location column="9" file="motion/lineardeltastepper.h" line="208" />
@@ -3050,18 +3062,6 @@ return values.
       <location column="9" file="gparse/response.h" line="68" />
       <doctype name="doc">
         <ref name="std::string, std::string" />
-      </doctype>
-    </constructor>
-    <class id="plat::rpi::ChronoClock" name="ChronoClock">
-      <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
-      <doctype name="doc">
-        <ref name="clock" />
-      </doctype>
-    </class>
-    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="53" />
-      <doctype component="pullUpDown" name="params">
-        <ref name="IoPin" />
       </doctype>
     </constructor>
     <method id="Vector3::tuple" name="tuple">
@@ -3159,6 +3159,18 @@ return values.
       <location column="1" file="motion/constantacceleration.h" line="41" />
       <doctype name="doc">
         <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
+      </doctype>
+    </class>
+    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="53" />
+      <doctype component="pullUpDown" name="params">
+        <ref name="IoPin" />
+      </doctype>
+    </constructor>
+    <class id="plat::rpi::ChronoClock" name="ChronoClock">
+      <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
+      <doctype name="doc">
+        <ref name="clock" />
       </doctype>
     </class>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">

@@ -86,7 +86,6 @@
     <class name="Response" ref="gparse::Response#gparse::Response" />
   </namespace>
   <namespace name="iodrv" ref="iodrv#iodrv">
-    <brief>for the testsuite</brief>
     <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
     <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
       <brief>forward declare for class in "endstop.h"</brief>
