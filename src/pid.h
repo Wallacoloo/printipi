@@ -1,16 +1,15 @@
 #ifndef PID_H
 #define PID_H
 
+//for EventClockT
+#include "platforms/auto/chronoclock.h"
+
+
 /* 
- * Printipi/pid.h
- *
- * http://en.wikipedia.org/wiki/PID_controller
  * PID provides a Proportional-Integral-Derivative controller that can be used as a control feedback mechanism.
  * Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
+ * PID workings: http://en.wikipedia.org/wiki/PID_controller
  */
-
-#include "platforms/auto/chronoclock.h" //for EventClockT
-
 class PID {
     float _P, _I, _D;
     float errorI;
