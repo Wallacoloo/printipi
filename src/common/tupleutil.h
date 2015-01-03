@@ -30,6 +30,13 @@
 //for std::integral_constant
 #include <type_traits>
 
+//TODO: It may be better to simplify the tupleReduce function, which currently takes a getter function AND a reducing function
+//TODO:   into a simpler tupleMap() and tupleReduce() that each take only 1 function.
+//TODO:   tupleMap would apply f to each item and return a new tuple
+//TODO:   tupleReduce would reduce the tuple over f.
+//TODO:   Thus, the current tupleReduceLegacy(tuple, func, reducer) could be implemented as
+//TODO:     tupleReduce(tupleMap(tuple, func), reducer)
+
 
 /* 
  * This namespace provides utilities for manipulating tuples.
