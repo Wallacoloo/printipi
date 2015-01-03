@@ -95,7 +95,7 @@
     </return>
   </method>
   <method id="Vector3::withX" name="withX">
-    <brief>@return return the equivalent vector, but with @_x=@x</brief>
+    <brief>@return the equivalent vector, but with @_x=@x</brief>
     <return>
       <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
     </return>
