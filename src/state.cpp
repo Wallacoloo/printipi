@@ -41,13 +41,14 @@ struct TestClass {
 
             //convenience function to read and wait for the next line from Printipi's output
             auto readLine = [&]() {
-                std::string tempRead;
-                do {
-                    if (outputFile.eof()) {
-                        outputFile.clear();
-                    }
-                } while (!std::getline(outputFile, tempRead));
-                return tempRead;
+                std::string read;
+                char curChar = 0;
+                while (curChar != '\n') {
+                    if (outputFile.readsome(&curChar, 1) && curChar != '\n') {
+                        read += curChar;
+                    } 
+                }
+                return read;
             };
 
             //@cmd g-code command to send to printer (a newline character will be appended)
