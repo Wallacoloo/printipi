@@ -21,25 +21,6 @@
  * SOFTWARE.
  */
 
-/* 
- * Printipi/motion/lineardeltacoordmap.h
- * 
- * LinearDeltaCoordMap implements the CoordMap interface for (rail-based) Delta-style robots like the Kossel
- * This class allows for translating mechanical positions to the cartesian x, y, z, e system.
- * It assumes there are 3 legs arranged in a circle (120 degrees between each adjacent pair)
- *   and these legs have carriages a distance d from their base.
- * The leg at (x=0, y=+) is axis A,
- * The leg at (x>0, y<0) is axis B,
- * The leg at (x<0, y<0) is axis C
- * Additionally, the carriages host a free-spinning joint with an arm of length L linked to an end effector,
- * and the carriages are r units apart.
- *
- * R1000 is 'r' (in mm) multiplied by 1000,
- * L1000 is 'L' (in mm) multiplied by 1000
- *
- * The math is described more in /code/proof-of-concept/coordmath.py and coord-math.nb (note: file has been deleted; must view an archived version of printipi on Github to view this documentation)
- */
-
 #ifndef MOTION_LINEARDELTACOORDMAP_H
 #define MOTION_LINEARDELTACOORDMAP_H
 
@@ -57,6 +38,22 @@
 
 namespace motion {
 
+/* 
+ * LinearDeltaCoordMap implements the CoordMap interface for (rail-based) Delta-style robots like the Kossel
+ * This class allows for translating mechanical positions to the cartesian x, y, z, e system.
+ * It assumes there are 3 legs arranged in a circle (120 degrees between each adjacent pair)
+ *   and these legs have carriages a distance d from their base.
+ * The leg at (x=0, y=+) is axis A,
+ * The leg at (x>0, y<0) is axis B,
+ * The leg at (x<0, y<0) is axis C
+ * Additionally, the carriages host a free-spinning joint with an arm of length L linked to an end effector,
+ * and the carriages are r units apart.
+ *
+ * R1000 is 'r' (in mm) multiplied by 1000,
+ * L1000 is 'L' (in mm) multiplied by 1000
+ *
+ * The math is described more in /code/proof-of-concept/coordmath.py and coord-math.nb (note: file has been deleted; must view an archived version of printipi on Github to view this documentation)
+ */
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public CoordMap {
     typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
     typedef std::tuple<LinearDeltaStepper<Stepper1, DELTA_AXIS_A>, 

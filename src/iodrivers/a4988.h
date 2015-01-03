@@ -33,7 +33,8 @@
 #include "iopin.h"
 #include "outputevent.h"
 #include "platforms/auto/chronoclock.h"
-#include "motion/axisstepper.h" //for StepDirection
+//for StepDirection
+#include "motion/axisstepper.h" 
 
 namespace iodrv {
 

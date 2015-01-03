@@ -20,13 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/* 
- * Printipi/motion/linearstepper.h
- * 
- * LinearStepper implements the AxisStepper interface for Cartesian-style robots.
- * Additionally, the LinearHomeStepper is used to home the axis for some other types of robots.
- */
  
 
 #ifndef MOTION_LINEARSTEPPER_H
@@ -48,7 +41,9 @@ enum CartesianAxis {
     CARTESIAN_AXIS_E=3
 };
 
-
+/* 
+ * LinearStepper implements the AxisStepper interface for Cartesian-style robots.
+ */
 template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper : public AxisStepperWithDriver<StepperDriverT> {
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;

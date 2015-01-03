@@ -21,20 +21,22 @@
  * SOFTWARE.
  */
  
+
+#ifndef PLATFORMS_RPI_MITPI_H
+#define PLATFORMS_RPI_MITPI_H
+
+//for uint32_t
+#include <stdint.h>
+
 /*
  * Mitpi is a small library used for interfacing with the Raspberry Pi's peripherals, including GPIO and timers,
  *   licensed under the extremely permissive MIT license.
  *
  * Please note that most of its features require superuser priviledges, so you may have to launch any executable which uses this library with `sudo'
  */
-
-#ifndef PLATFORMS_RPI_MITPI_H
-#define PLATFORMS_RPI_MITPI_H
-
-#include <stdint.h> //for uint32_t
-
 namespace mitpi {
 
+//Map physical pin locations to logical pin ids used by the processor
 enum GpioPin {
     //There are 2 board revisions (and now the model A+/B+), which have slightly different I/O wiring.
     //P1 header (2x13 pins) for version 1 (i.e. before Sept 2012:
@@ -120,8 +122,8 @@ enum GpioPin {
     NULL_GPIO_PIN = 127,
 };
 
+//Internal pull-up / down resistors
 enum GpioPull {
-    //Internal pull-up / down resistors
     GPIOPULL_NONE = 0,
     GPIOPULL_DOWN = 1,
     GPIOPULL_UP   = 2,
@@ -142,17 +144,17 @@ void usleep(unsigned int us);
 uint64_t readSysTime();
 
 
+//convenience type used to manage lifetime of mitpi.
+//Can be used as a member object of a type that depends on Mitpi functionality.
+//Example:
+//class X {
+//    InitMitpiType mitpiDependency;
+//    void doStuff() {
+//        mitpi::makeOutput(11);
+//        //Note the lack of explicit mitpi initialization. This is done with the InitMitpiType above
+//    }
+//};
 struct InitMitpiType {
-    //convenience type used to manage lifetime of mitpi.
-    //Can be used as a member object of a type that depends on Mitpi functionality.
-    //Example:
-    //class X {
-    //    InitMitpiType mitpiDependency;
-    //    void doStuff() {
-    //        mitpi::makeOutput(11);
-    //        //Note the lack of explicit mitpi initialization. This is done with the InitMitpiType above
-    //    }
-    //};
     inline InitMitpiType() {
         init();
     }

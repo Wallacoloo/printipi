@@ -20,19 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/* 
- * Printipi/motion/axisstepper.h
- *
- * AxisSteppers are used to queue movements.
- * When a movement is desired, an AxisStepper is instantiated for each MECHANICAL axis (eg each column of a Kossel, plus extruders. Or perhaps an X stepper, a Y stepper, a Z stepper, and an extruder for a cartesian bot).
- * The AxisStepper provides the relative time at which its associated axis should next be advanced, as well as in what mechanical direction, given an initial mechanical position and cartesian velocity.
- * It also implements the 'nextStep' method, which will update the time & direction of the step that would follow the current one. In this way, the AxisStepper can be queried for the 1st step, 2nd step, and so on, for the given path.
- *
- * Note: AxisStepper is an interface, and not an implementation.
- * An implementation is needed for each coordinate style - Cartesian, deltabot, etc.
- * These implementations must provide the functions outlined further down in the header.
- */
  
 
 #ifndef MOTION_AXISSTEPPER_H
@@ -66,6 +53,17 @@ template <typename T> T stepDirToSigned(StepDirection dir) {
     return dir == StepBackward ? -1 : 1;
 }
 
+
+/* 
+ * AxisSteppers are used to queue movements.
+ * When a movement is desired, an AxisStepper is instantiated for each MECHANICAL axis (eg each column of a Kossel, plus extruders. Or perhaps an X stepper, a Y stepper, a Z stepper, and an extruder for a cartesian bot).
+ * The AxisStepper provides the relative time at which its associated axis should next be advanced, as well as in what mechanical direction, given an initial mechanical position and cartesian velocity.
+ * It also implements the 'nextStep' method, which will update the time & direction of the step that would follow the current one. In this way, the AxisStepper can be queried for the 1st step, 2nd step, and so on, for the given path.
+ *
+ * Note: AxisStepper is an interface, and not an implementation.
+ * An implementation is needed for each coordinate style - Cartesian, deltabot, etc.
+ * These implementations must provide the functions outlined further down in the header.
+ */
 class AxisStepper {
     private:
         AxisIdType _index; //ID of axis. Does not necessarily have to be stored as a variable (other option is one template instance per ID, which pretty much already happens), but this allows AxisStepper::nextStep() to not be virtual

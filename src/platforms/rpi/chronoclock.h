@@ -20,29 +20,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
-/*
- * Printipi/platforms/rpi/chronoclockrpi.h
- *
- * Implements the same interfaces as std::chrono::<clock>::now()
- *   to allow for highly efficient access to the system time (no context switching to kernel)
- *
- * NOTE: The time reported by ChronoClockRpi may be different than the actual system time, so make sure to use consistent clock sources!
- */
+
  
 #ifndef PLATFORMS_RPI_CHRONOCLOCK_H
 #define PLATFORMS_RPI_CHRONOCLOCK_H
 
-#include <chrono> //for std::chrono::*
+#include <chrono>
 #include "mitpi.h"
 
 
 namespace plat {
 namespace rpi {
 
-
+/*
+ * Implements the same interfaces as std::chrono::<clock>::now()
+ *   to allow for highly efficient access to the system time (no context switching to kernel)
+ *
+ * NOTE: The time reported by ChronoClockRpi may be different than the actual system time, so make sure to use consistent clock sources!
+ */
 class ChronoClock {
-    //special implementation of std::chrono::clock<...>
     static mitpi::InitMitpiType _i; //ensure mitpi is init before any calls to now() occur.
     public:
         typedef std::chrono::microseconds duration;

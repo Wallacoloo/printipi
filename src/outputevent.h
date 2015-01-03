@@ -21,13 +21,6 @@
  * SOFTWARE.
  */
  
-/* 
- * Printipi/outputevent.h
- *
- * An OutputEvent encapsulates information about the desired state for a GPIO pin at a given time.
- *   Eg, "set pin (2) (high) at t=(1234567) uS", or "set pin (44) (low) at t=(887766) uS"
- */
- 
 #ifndef OUTPUTEVENT_H
 #define OUTPUTEVENT_H
  
@@ -36,6 +29,10 @@
 #include "iodrivers/iopin.h"
 #include "compileflags.h" //for IoLevel
 
+/* 
+ * An OutputEvent encapsulates information about the desired state for a GPIO pin at a given time.
+ *   Eg, "set pin (2) (high) at t=(1234567) uS", or "set pin (44) (low) at t=(887766) uS"
+ */
 class OutputEvent {
     EventClockT::time_point _time;
     PrimitiveIoPin _pin;

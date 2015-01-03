@@ -21,9 +21,24 @@
  * SOFTWARE.
  */
 
+#ifndef MOTION_COORDMAP_H
+#define MOTION_COORDMAP_H
+
+#include <tuple>
+#include <array>
+#include <cassert> //for assert
+
+#include "common/vector3.h"
+#include "common/vector4.h"
+
+namespace iodrv { 
+    //forward declare for class in "endstop.h"
+    class Endstop; 
+}
+
+namespace motion {
+
 /* 
- * Printipi/motion/coordmap.h
- *
  * CoordMaps are used to translate cartesian coordinates to and from the machine's coordinate system
  * This allows for a bot to internally use a non-cartesian coordinate system - very useful for delta bots.
  *
@@ -36,21 +51,6 @@
  *   For example, if your Z motor has 1000 steps/mm and is 200 mm tall, then an axis coordinate of 0 translates to a cartesian Z coordinate of 0mm,
  *     and an axis coordinate of 200000 translates to a cartesian Z coordinate of 200mm.
  */
-
-#ifndef MOTION_COORDMAP_H
-#define MOTION_COORDMAP_H
-
-#include <tuple>
-#include <array>
-#include <cassert> //for assert
-
-#include "common/vector3.h"
-#include "common/vector4.h"
-
-namespace iodrv { class Endstop; } //forward declare for class in "endstop.h"
-
-namespace motion {
-
 class CoordMap {
     public:
         //If the coordmap internally contains IoDrivers (e.g. stepper drivers or servos to lower the probe), then it should return a tuple of REFERENCES to them.

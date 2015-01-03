@@ -21,12 +21,6 @@
  * SOFTWARE.
  */
 
-/* 
- * Printipi/motion/lineardeltastepper.h
- * 
- * LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel
- */
-
 /* Raspberry Pi float performance can be found here: http://www.raspberrypi.org/forums/viewtopic.php?t=7336
   float +,-,*: 2 cycles
   float /: 32 cycles (same for doubles)
@@ -164,6 +158,9 @@ enum DeltaAxis {
     DELTA_AXIS_E=3
 };
 
+/* 
+ * LinearDeltaArcStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel, for arc movements (G2/G3)
+ */
 template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcStepper : public AxisStepperWithDriver<StepperDriverT> {
     private:
         const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
@@ -307,6 +304,9 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcSteppe
         }
 };
 
+/* 
+ * LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel, for linear movements (G0/G1)
+ */
 template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
     private:
         const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference

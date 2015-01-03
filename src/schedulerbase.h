@@ -20,12 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
-/*
- * Printipi/schedulerbase.h
- *
- * SchedulerBase allows any file to insert exit handlers, without adding the entire Scheduler as a dependency.
- */
 
 #ifndef SCHEDULERBASE_H
 #define SCHEDULERBASE_H
@@ -51,8 +45,9 @@ enum OnIdleCpuIntervalT {
 };
 
 
-/* Base class from which all templated schedulers derive.
-Defines things such as exit handlers */
+/*
+ * SchedulerBase allows any file to insert exit handlers, without adding the entire Scheduler as a dependency.
+ */
 class SchedulerBase {
     //for the exitHandlers, we could use a set, but a vector is even less likely to fail,
     //  and the exitHandlers are called in the case of an extreme error (eg segfault; corrupted data)

@@ -20,17 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/* 
- * Printipi/iodrivers/iodriver.h
- *
- * IODrivers control the electrical interface to each component.
- * One IODriver is needed for each stepper motor, fan, hotend, etc.
- *
- * Note: IODriver is an interface, and not an implementation.
- * An implementation is needed for each electrical component - the fan, hotend, and 1 for each stepper motor, etc.
- * These implementations must provide the functions outlined further down in the header.
- */
  
 
 #ifndef DRIVERS_IODRIVER_H
@@ -47,6 +36,15 @@
 
 namespace iodrv {
 
+
+/* 
+ * IODrivers control the electrical interface to each component.
+ * One IODriver is needed for each stepper motor, fan, hotend, etc.
+ *
+ * Note: IODriver is an interface, and not an implementation.
+ * An implementation is needed for each electrical component - the fan, hotend, and 1 for each stepper motor, etc.
+ * These implementations must provide the functions outlined further down in the header.
+ */
 class IODriver {
     public:
         inline IODriver() {}

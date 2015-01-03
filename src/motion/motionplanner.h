@@ -21,14 +21,6 @@
  * SOFTWARE.
  */
  
-/* 
- * Printipi/motion/motionplanner.h
- *
- * MotionPlanner takes commands from the State (mainly those caused by G1 and G28) and resolves the move into a path via interfacing with a CoordMap, AxisSteppers, and an AccelerationProfile.
- * Once a path is planned, State can call MotionPlanner.nextStep() and be given data in the form of an Event, which can be passed on to a Scheduler.
- * 
- * Interface must have 2 public typedefs: CoordMapT and AccelerationProfileT. These are often provided by the machine driver.
- */
 #ifndef MOTION_MOTIONPLANNER_H
 #define MOTION_MOTIONPLANNER_H
 
@@ -90,6 +82,13 @@ template <typename AxisStepperTypes> struct MaxOutputEventSequenceSize<AxisStepp
     }
 };
 
+
+/* 
+ * MotionPlanner takes commands from the State (mainly those caused by G1 and G28) and resolves the move into a path via interfacing with a CoordMap, AxisSteppers, and an AccelerationProfile.
+ * Once a path is planned, State can call MotionPlanner.nextStep() and be given data in the form of an Event, which can be passed on to a Scheduler.
+ * 
+ * @Interface must have 2 public typedefs: CoordMapT and AccelerationProfileT. These are often provided by the machine driver.
+ */
 template <typename Interface> class MotionPlanner {
     private:
         struct UpdateOutputEvents {

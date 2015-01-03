@@ -20,13 +20,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/* 
- * Printipi/motion/linearcoordmap.h
- *
- * LinearCoordMap implements the CoordMap interface for Cartesian robots.
- * This is the CoordMap that your machine should use if it is a Cartesian robot.
- */
  
  
 #ifndef MOTION_LINEARCOORDMAP_H
@@ -44,7 +37,10 @@
 
 namespace motion {
 
-
+/* 
+ * LinearCoordMap implements the CoordMap interface for Cartesian robots.
+ * This is the CoordMap that your machine should use if it is a Cartesian robot.
+ */
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
     typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
     typedef std::tuple<LinearStepper<Stepper1, CARTESIAN_AXIS_X>, 

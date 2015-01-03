@@ -21,20 +21,6 @@
  * SOFTWARE.
  */
  
-/*
- * Printipi/platforms/rpi/hardwarescheduler.h
- *
- * platforms::rpi::HardwareScheduler implements the HardwareScheduler interface defined in platforms/generic/hardwarescheduler.h
- *
- * It works by maintaining a circular queue of, say, 10 ms in length.
- * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
- * Meanwhile, a CPU peripheral called DMA (Direct Memory Access) is constantly each frame of this queue into the memory-mapped GPIO bank at a mostly constant rate.
- * This memory streaming happens constantly, regardless of what the CPU is doing. Logically, it's almost like an entirely separate entity from the cpu.
- * 
- * DMA timing is done by configuring the PWM module to request a sample at a given rate. Once this sample is requested, the entire DMA transaction is gated until the request is fulfilled. This allows one to copy a frame into the gpio bank and then fulfill the PWM sample request, which stalls the transaction until the PWM device requests another sample.
- *
- */
- 
  /*
  * processor documentation is at: http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
  * pg 38 for DMA
@@ -190,6 +176,17 @@ struct PwmHeader;
 struct GpioBufferFrame;
 
 
+/*
+ * implements the HardwareScheduler interface defined in platforms/generic/hardwarescheduler.h
+ *
+ * It works by maintaining a circular queue of, say, 10 ms in length.
+ * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
+ * Meanwhile, a CPU peripheral called DMA (Direct Memory Access) is constantly each frame of this queue into the memory-mapped GPIO bank at a mostly constant rate.
+ * This memory streaming happens constantly, regardless of what the CPU is doing. Logically, it's almost like an entirely separate entity from the cpu.
+ * 
+ * DMA timing is done by configuring the PWM module to request a sample at a given rate. Once this sample is requested, the entire DMA transaction is gated until the request is fulfilled. This allows one to copy a frame into the gpio bank and then fulfill the PWM sample request, which stalls the transaction until the PWM device requests another sample.
+ *
+ */
 class HardwareScheduler {
     struct DmaMem {
         //Memory used in DMA must bypass the CPU L1 cache, so we keep a L1-cached view & an L2-cache-coherent view
