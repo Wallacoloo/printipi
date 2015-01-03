@@ -85,7 +85,7 @@ template <typename F> class Vector3 {
 
 		//psuedo-modifiers
 
-		//@return return the equivalent vector, but with @_x=@x
+		//@return the equivalent vector, but with @_x=@x
 		Vector3<F> withX(F x) {
 			return Vector3<F>(x, y(), z());
 		}
