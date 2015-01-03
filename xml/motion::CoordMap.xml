@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="motion::CoordMap" name="CoordMap" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <subclass access="public" name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap" />
   <subclass access="public" name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap" />
+  <subclass access="public" name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap" />
   <methodtemplate id="motion::CoordMap::executeHomeRoutine" name="executeHomeRoutine">
     <brief>Home the machine by sending commands to @interface</brief>
     <return>

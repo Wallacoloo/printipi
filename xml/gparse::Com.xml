@@ -51,7 +51,6 @@ Communication is typically done over a serial interface, but Com accepts any fil
     </return>
   </method>
   <method id="gparse::Com::reply" name="reply">
-    <brief>void reply(const std::string &amp;resp);</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>

@@ -112,5 +112,4 @@ If, for example, the reducing function @r sums its two arguments, then the resul
     <templatetypeparameter id="tupleutil::tupleReduceLogicalOr::Func" name="Func" />
     <templatetypeparameter id="tupleutil::tupleReduceLogicalOr::Args" name="Args" />
   </functiontemplate>
-  <namespace name="(anonymous::1)" ref="tupleutil::(anonymous::1)#tupleutil::(anonymous::1)" />
 </namespace>

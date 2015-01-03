@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="gparse" name="gparse" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <brief>null file descriptor</brief>
+  <namespace name="(anonymous::1)" ref="gparse::(anonymous::1)#gparse::(anonymous::1)">
+    <brief>internal functions - treat as private</brief>
+  </namespace>
   <class name="Com" ref="gparse::Com#gparse::Com" />
   <class name="Command" ref="gparse::Command#gparse::Command" />
   <class name="Response" ref="gparse::Response#gparse::Response" />
@@ -8,56 +11,4 @@
     <enumvalue id="gparse::ResponseOk" name="ResponseOk" value="0" />
     <enumvalue id="gparse::ResponseNull" name="ResponseNull" value="1" />
   </enum>
-  <function id="gparse::bigEndianStr" name="bigEndianStr">
-    <brief>bigEndianStr turns a series of characters into a uint32_t for fast string-comparisons.</brief>
-    <doc>Eg bigEndianStr('G', '1', '0') is similar to an array, x, where x[0] == 'G', x[1] == '1' and x[2] == '0', but held in fixed-width.</doc>
-    <return>
-      <type name="uint32_t" />
-    </return>
-    <argument id="gparse::bigEndianStr::a" name="a">
-      <type builtin="yes" name="char" />
-    </argument>
-  </function>
-  <function id="gparse::bigEndianStr" name="bigEndianStr">
-    <return>
-      <type name="uint32_t" />
-    </return>
-    <argument id="gparse::bigEndianStr::a" name="a">
-      <type builtin="yes" name="char" />
-    </argument>
-    <argument id="gparse::bigEndianStr::b" name="b">
-      <type builtin="yes" name="char" />
-    </argument>
-  </function>
-  <function id="gparse::bigEndianStr" name="bigEndianStr">
-    <return>
-      <type name="uint32_t" />
-    </return>
-    <argument id="gparse::bigEndianStr::a" name="a">
-      <type builtin="yes" name="char" />
-    </argument>
-    <argument id="gparse::bigEndianStr::b" name="b">
-      <type builtin="yes" name="char" />
-    </argument>
-    <argument id="gparse::bigEndianStr::c" name="c">
-      <type builtin="yes" name="char" />
-    </argument>
-  </function>
-  <function id="gparse::bigEndianStr" name="bigEndianStr">
-    <return>
-      <type name="uint32_t" />
-    </return>
-    <argument id="gparse::bigEndianStr::a" name="a">
-      <type builtin="yes" name="char" />
-    </argument>
-    <argument id="gparse::bigEndianStr::b" name="b">
-      <type builtin="yes" name="char" />
-    </argument>
-    <argument id="gparse::bigEndianStr::c" name="c">
-      <type builtin="yes" name="char" />
-    </argument>
-    <argument id="gparse::bigEndianStr::d" name="d">
-      <type builtin="yes" name="char" />
-    </argument>
-  </function>
 </namespace>

@@ -21,14 +21,14 @@ return values.
         <location column="1" file="argparse.h" line="38" />
         <location column="1" file="argparse.cpp" line="7" />
       </undocumented>
-      <undocumented id="gparse::bigEndianStr" name="bigEndianStr">
-        <location column="1" file="gparse/command.h" line="51" />
+      <undocumented id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+        <location column="5" file="gparse/command.h" line="53" />
       </undocumented>
-      <undocumented id="gparse::bigEndianStr" name="bigEndianStr">
-        <location column="1" file="gparse/command.h" line="54" />
+      <undocumented id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+        <location column="5" file="gparse/command.h" line="56" />
       </undocumented>
-      <undocumented id="gparse::bigEndianStr" name="bigEndianStr">
-        <location column="1" file="gparse/command.h" line="57" />
+      <undocumented id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+        <location column="5" file="gparse/command.h" line="59" />
       </undocumented>
       <undocumented id="logging::disable" name="disable">
         <location column="5" file="common/logging.h" line="74" />
@@ -160,16 +160,52 @@ return values.
         <location column="9" file="scheduler.h" line="59" />
       </undocumented>
       <undocumented id="State::State__onIdleCpu::operator()" name="operator()">
-        <location column="5" file="state.h" line="371" />
+        <location column="5" file="state.h" line="368" />
       </undocumented>
       <undocumented id="State::State__setFanRate::operator()" name="operator()">
-        <location column="5" file="state.h" line="739" />
+        <location column="5" file="state.h" line="736" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::sleep_for" name="sleep_for">
         <location column="9" file="boilerplate/thisthreadsleepadapter.h" line="16" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::sleep_until" name="sleep_until">
         <location column="9" file="boilerplate/thisthreadsleepadapter.h" line="11" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="174" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="162" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="150" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__lockAllAxis::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="112" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__setBedTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="138" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__setHotendTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="128" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="197" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="187" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__unlockAllAxis::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="120" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()" name="operator()">
+        <location column="9" file="motion/axisstepper.h" line="149" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()" name="operator()">
+        <location column="9" file="motion/axisstepper.h" line="140" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()" name="operator()">
+        <location column="9" file="motion/axisstepper.h" line="162" />
       </undocumented>
       <undocumented id="iodrv::Fan::setFanDutyCycle" name="setFanDutyCycle">
         <location column="9" file="iodrivers/fan.h" line="48" />
@@ -265,42 +301,6 @@ return values.
       <undocumented id="plat::generic::ThisThreadSleep::sleep_until" name="sleep_until">
         <location column="13" file="platforms/generic/thisthreadsleep.h" line="18" />
       </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getBedTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="174" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="162" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="150" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__lockAllAxis::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="112" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__setBedTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="138" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__setHotendTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="128" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="197" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="187" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__unlockAllAxis::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="120" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()" name="operator()">
-        <location column="9" file="motion/axisstepper.h" line="149" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()" name="operator()">
-        <location column="9" file="motion/axisstepper.h" line="140" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__nextStep::operator()" name="operator()">
-        <location column="9" file="motion/axisstepper.h" line="162" />
-      </undocumented>
     </type>
     <type documented="15" name="struct" undocumented="6">
       <undocumented id="mitpi::InitMitpiType" name="InitMitpiType">
@@ -326,7 +326,7 @@ return values.
     </type>
     <type documented="0" name="templatetypeparameter" undocumented="146">
       <undocumented id="Drv" name="Drv">
-        <location column="11" file="state.h" line="465" />
+        <location column="11" file="state.h" line="462" />
       </undocumented>
       <undocumented id="IntervalTimer::clockCmp::DurT" name="DurT">
         <location column="19" file="common/intervaltimer.h" line="27" />
@@ -344,19 +344,19 @@ return values.
         <location column="19" file="scheduler.h" line="59" />
       </undocumented>
       <undocumented id="State::Drv" name="Drv">
-        <location column="11" file="state.h" line="80" />
+        <location column="11" file="state.h" line="77" />
       </undocumented>
       <undocumented id="State::State__onIdleCpu::operator()::T" name="T">
-        <location column="15" file="state.h" line="371" />
+        <location column="15" file="state.h" line="368" />
       </undocumented>
       <undocumented id="State::State__setFanRate::operator()::T" name="T">
-        <location column="15" file="state.h" line="739" />
+        <location column="15" file="state.h" line="736" />
       </undocumented>
       <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
-        <location column="19" file="state.h" line="257" />
+        <location column="19" file="state.h" line="254" />
       </undocumented>
       <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
-        <location column="35" file="state.h" line="465" />
+        <location column="35" file="state.h" line="462" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::ClockT" name="ClockT">
         <location column="11" file="boilerplate/thisthreadsleepadapter.h" line="6" />
@@ -390,6 +390,90 @@ return values.
       </undocumented>
       <undocumented id="Vector4::Vector4&lt;F&gt;::T2" name="T2">
         <location column="13" file="common/vector4.h" line="22" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="174" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="162" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="150" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__lockAllAxis::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="112" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__setBedTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="138" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__setHotendTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="128" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="197" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="187" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__unlockAllAxis::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="120" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT">
+        <location column="15" file="motion/axisstepper.h" line="116" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::CoordMapT" name="CoordMapT">
+        <location column="67" file="motion/axisstepper.h" line="149" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::T" name="T">
+        <location column="55" file="motion/axisstepper.h" line="149" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::TupleT" name="TupleT">
+        <location column="38" file="motion/axisstepper.h" line="149" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::CoordMapT" name="CoordMapT">
+        <location column="67" file="motion/axisstepper.h" line="140" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::T" name="T">
+        <location column="55" file="motion/axisstepper.h" line="140" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::TupleT" name="TupleT">
+        <location column="38" file="motion/axisstepper.h" line="140" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()::T" name="T">
+        <location column="19" file="motion/axisstepper.h" line="162" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAll::Args" name="Args">
+        <location column="71" file="common/tupleutil.h" line="22" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAll::Func" name="Func">
+        <location column="56" file="common/tupleutil.h" line="22" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAll::TupleT" name="TupleT">
+        <location column="15" file="common/tupleutil.h" line="22" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Args" name="Args">
+        <location column="113" file="common/tupleutil.h" line="36" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Func" name="Func">
+        <location column="56" file="common/tupleutil.h" line="36" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce">
+        <location column="71" file="common/tupleutil.h" line="36" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault">
+        <location column="88" file="common/tupleutil.h" line="36" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT">
+        <location column="15" file="common/tupleutil.h" line="36" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnIndex::Args" name="Args">
+        <location column="73" file="common/tupleutil.h" line="52" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnIndex::Func" name="Func">
+        <location column="58" file="common/tupleutil.h" line="52" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnIndex::TupleT" name="TupleT">
+        <location column="15" file="common/tupleutil.h" line="52" />
       </undocumented>
       <undocumented id="gparse::Response::Response::Container" name="Container">
         <location column="19" file="gparse/response.h" line="64" />
@@ -628,90 +712,6 @@ return values.
       <undocumented id="plat::generic::ThisThreadSleep::sleep_until::Duration" name="Duration">
         <location column="35" file="platforms/generic/thisthreadsleep.h" line="18" />
       </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getBedTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="174" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="162" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="150" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__lockAllAxis::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="112" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__setBedTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="138" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__setHotendTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="128" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="197" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="187" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__unlockAllAxis::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="120" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT">
-        <location column="15" file="motion/axisstepper.h" line="116" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::CoordMapT" name="CoordMapT">
-        <location column="67" file="motion/axisstepper.h" line="149" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::T" name="T">
-        <location column="55" file="motion/axisstepper.h" line="149" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::TupleT" name="TupleT">
-        <location column="38" file="motion/axisstepper.h" line="149" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::CoordMapT" name="CoordMapT">
-        <location column="67" file="motion/axisstepper.h" line="140" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::T" name="T">
-        <location column="55" file="motion/axisstepper.h" line="140" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::TupleT" name="TupleT">
-        <location column="38" file="motion/axisstepper.h" line="140" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__nextStep::operator()::T" name="T">
-        <location column="19" file="motion/axisstepper.h" line="162" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::Args" name="Args">
-        <location column="71" file="common/tupleutil.h" line="22" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::Func" name="Func">
-        <location column="56" file="common/tupleutil.h" line="22" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="22" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::Args" name="Args">
-        <location column="113" file="common/tupleutil.h" line="36" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::Func" name="Func">
-        <location column="56" file="common/tupleutil.h" line="36" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce">
-        <location column="71" file="common/tupleutil.h" line="36" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault">
-        <location column="88" file="common/tupleutil.h" line="36" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="36" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::Args" name="Args">
-        <location column="73" file="common/tupleutil.h" line="52" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::Func" name="Func">
-        <location column="58" file="common/tupleutil.h" line="52" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="52" />
-      </undocumented>
       <undocumented id="tupleutil::callOnAll::Args" name="Args">
         <location column="43" file="common/tupleutil.h" line="75" />
       </undocumented>
@@ -790,7 +790,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="57" />
       </undocumented>
     </type>
-    <type documented="7" name="namespace" undocumented="8">
+    <type documented="8" name="namespace" undocumented="7">
       <undocumented id="argparse" name="argparse">
         <location column="1" file="argparse.h" line="36" />
         <location column="1" file="argparse.cpp" line="5" />
@@ -817,22 +817,14 @@ return values.
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="15" />
       </undocumented>
       <undocumented id="plat::rpi" name="rpi">
+        <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
+        <location column="1" file="platforms/rpi/chronoclock.cpp" line="4" />
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="183" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="7" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="187" />
-        <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
-        <location column="1" file="platforms/rpi/chronoclock.cpp" line="4" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)" name="(anonymous::1)">
-        <location column="1" file="common/tupleutil.h" line="18" />
-        <location column="1" file="motion/axisstepper.h" line="110" />
-        <location column="1" file="iodrivers/iodriver.h" line="107" />
       </undocumented>
     </type>
-    <type documented="5" name="classtemplate" undocumented="10">
-      <undocumented id="State" name="State">
-        <location column="1" file="state.h" line="80" />
-      </undocumented>
+    <type documented="6" name="classtemplate" undocumented="9">
       <undocumented id="ThisThreadSleepAdapter" name="ThisThreadSleepAdapter">
         <location column="1" file="boilerplate/thisthreadsleepadapter.h" line="6" />
       </undocumented>
@@ -861,7 +853,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="93" />
       </undocumented>
     </type>
-    <type documented="99" name="method" undocumented="331">
+    <type documented="98" name="method" undocumented="332">
       <undocumented id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
         <location column="9" file="filesystem.h" line="10" />
         <location column="1" file="filesystem.cpp" line="6" />
@@ -924,34 +916,34 @@ return values.
         <location column="1" file="schedulerbase.cpp" line="36" />
       </undocumented>
       <undocumented id="State::CoordMapInterface::actualCartesianPosition" name="actualCartesianPosition">
-        <location column="13" file="state.h" line="147" />
+        <location column="13" file="state.h" line="144" />
       </undocumented>
       <undocumented id="State::CoordMapInterface::axisPositions" name="axisPositions">
-        <location column="13" file="state.h" line="157" />
+        <location column="13" file="state.h" line="154" />
       </undocumented>
       <undocumented id="State::CoordMapInterface::resetAxisPositions" name="resetAxisPositions">
-        <location column="13" file="state.h" line="160" />
+        <location column="13" file="state.h" line="157" />
       </undocumented>
       <undocumented id="State::DriverCallbackInterface::schedPwm" name="schedPwm">
-        <location column="13" file="state.h" line="138" />
+        <location column="13" file="state.h" line="135" />
       </undocumented>
       <undocumented id="State::MotionInterface::getAccelerationProfile" name="getAccelerationProfile">
-        <location column="13" file="state.h" line="124" />
+        <location column="13" file="state.h" line="121" />
       </undocumented>
       <undocumented id="State::MotionInterface::getCoordMap" name="getCoordMap">
-        <location column="13" file="state.h" line="127" />
+        <location column="13" file="state.h" line="124" />
       </undocumented>
       <undocumented id="State::SchedInterface::onIdleCpu" name="onIdleCpu">
-        <location column="13" file="state.h" line="95" />
+        <location column="13" file="state.h" line="92" />
       </undocumented>
       <undocumented id="State::SchedInterface::queue" name="queue">
-        <location column="13" file="state.h" line="102" />
+        <location column="13" file="state.h" line="99" />
       </undocumented>
       <undocumented id="State::SchedInterface::queuePwm" name="queuePwm">
-        <location column="13" file="state.h" line="106" />
+        <location column="13" file="state.h" line="103" />
       </undocumented>
       <undocumented id="State::SchedInterface::schedTime" name="schedTime">
-        <location column="13" file="state.h" line="110" />
+        <location column="13" file="state.h" line="107" />
       </undocumented>
       <undocumented id="Vector3::operator*" name="operator*">
         <location column="3" file="common/vector3.h" line="127" />
@@ -995,6 +987,18 @@ return values.
       <undocumented id="Vector4::operator/=" name="operator/=">
         <location column="3" file="common/vector4.h" line="101" />
       </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__getNextTime::operator()" name="operator()">
+        <location column="9" file="motion/axisstepper.h" line="117" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAll::operator()" name="operator()">
+        <location column="9" file="common/tupleutil.h" line="23" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::operator()" name="operator()">
+        <location column="9" file="common/tupleutil.h" line="37" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnIndex::operator()" name="operator()">
+        <location column="9" file="common/tupleutil.h" line="53" />
+      </undocumented>
       <undocumented id="gparse::Com::hasReadFile" name="hasReadFile">
         <location column="9" file="gparse/com.h" line="67" />
         <location column="1" file="gparse/com.cpp" line="46" />
@@ -1003,529 +1007,533 @@ return values.
         <location column="9" file="gparse/com.h" line="68" />
         <location column="1" file="gparse/com.cpp" line="49" />
       </undocumented>
+      <undocumented id="gparse::Com::reply" name="reply">
+        <location column="9" file="gparse/com.h" line="79" />
+        <location column="1" file="gparse/com.cpp" line="59" />
+      </undocumented>
       <undocumented id="gparse::Command::empty" name="empty">
-        <location column="9" file="gparse/command.h" line="86" />
+        <location column="9" file="gparse/command.h" line="89" />
       </undocumented>
       <undocumented id="gparse::Command::getE" name="getE">
-        <location column="9" file="gparse/command.h" line="109" />
+        <location column="9" file="gparse/command.h" line="112" />
       </undocumented>
       <undocumented id="gparse::Command::getF" name="getF">
-        <location column="9" file="gparse/command.h" line="116" />
+        <location column="9" file="gparse/command.h" line="119" />
       </undocumented>
       <undocumented id="gparse::Command::getFloatParam" name="getFloatParam">
-        <location column="9" file="gparse/command.h" line="94" />
+        <location column="9" file="gparse/command.h" line="97" />
       </undocumented>
       <undocumented id="gparse::Command::getFloatParam" name="getFloatParam">
-        <location column="9" file="gparse/command.h" line="98" />
+        <location column="9" file="gparse/command.h" line="101" />
       </undocumented>
       <undocumented id="gparse::Command::getI" name="getI">
-        <location column="9" file="gparse/command.h" line="123" />
+        <location column="9" file="gparse/command.h" line="126" />
       </undocumented>
       <undocumented id="gparse::Command::getJ" name="getJ">
-        <location column="9" file="gparse/command.h" line="130" />
+        <location column="9" file="gparse/command.h" line="133" />
       </undocumented>
       <undocumented id="gparse::Command::getK" name="getK">
-        <location column="9" file="gparse/command.h" line="137" />
+        <location column="9" file="gparse/command.h" line="140" />
       </undocumented>
       <undocumented id="gparse::Command::getOpcode" name="getOpcode">
-        <location column="9" file="gparse/command.h" line="89" />
+        <location column="9" file="gparse/command.h" line="92" />
         <location column="1" file="gparse/command.cpp" line="104" />
       </undocumented>
       <undocumented id="gparse::Command::getS" name="getS">
-        <location column="9" file="gparse/command.h" line="144" />
-      </undocumented>
-      <undocumented id="gparse::Command::getX" name="getX">
         <location column="9" file="gparse/command.h" line="147" />
       </undocumented>
       <undocumented id="gparse::Command::getX" name="getX">
         <location column="9" file="gparse/command.h" line="150" />
       </undocumented>
-      <undocumented id="gparse::Command::getY" name="getY">
+      <undocumented id="gparse::Command::getX" name="getX">
         <location column="9" file="gparse/command.h" line="153" />
       </undocumented>
       <undocumented id="gparse::Command::getY" name="getY">
         <location column="9" file="gparse/command.h" line="156" />
       </undocumented>
-      <undocumented id="gparse::Command::getZ" name="getZ">
+      <undocumented id="gparse::Command::getY" name="getY">
         <location column="9" file="gparse/command.h" line="159" />
       </undocumented>
       <undocumented id="gparse::Command::getZ" name="getZ">
         <location column="9" file="gparse/command.h" line="162" />
       </undocumented>
-      <undocumented id="gparse::Command::hasAnyXYZEParam" name="hasAnyXYZEParam">
-        <location column="9" file="gparse/command.h" line="186" />
-      </undocumented>
-      <undocumented id="gparse::Command::hasAnyXYZParam" name="hasAnyXYZParam">
-        <location column="9" file="gparse/command.h" line="183" />
-      </undocumented>
-      <undocumented id="gparse::Command::hasE" name="hasE">
+      <undocumented id="gparse::Command::getZ" name="getZ">
         <location column="9" file="gparse/command.h" line="165" />
       </undocumented>
-      <undocumented id="gparse::Command::hasF" name="hasF">
+      <undocumented id="gparse::Command::hasAnyXYZEParam" name="hasAnyXYZEParam">
+        <location column="9" file="gparse/command.h" line="189" />
+      </undocumented>
+      <undocumented id="gparse::Command::hasAnyXYZParam" name="hasAnyXYZParam">
+        <location column="9" file="gparse/command.h" line="186" />
+      </undocumented>
+      <undocumented id="gparse::Command::hasE" name="hasE">
         <location column="9" file="gparse/command.h" line="168" />
       </undocumented>
+      <undocumented id="gparse::Command::hasF" name="hasF">
+        <location column="9" file="gparse/command.h" line="171" />
+      </undocumented>
       <undocumented id="gparse::Command::hasParam" name="hasParam">
-        <location column="9" file="gparse/command.h" line="91" />
+        <location column="9" file="gparse/command.h" line="94" />
         <location column="1" file="gparse/command.cpp" line="138" />
       </undocumented>
       <undocumented id="gparse::Command::hasS" name="hasS">
-        <location column="9" file="gparse/command.h" line="171" />
-      </undocumented>
-      <undocumented id="gparse::Command::hasX" name="hasX">
         <location column="9" file="gparse/command.h" line="174" />
       </undocumented>
-      <undocumented id="gparse::Command::hasY" name="hasY">
+      <undocumented id="gparse::Command::hasX" name="hasX">
         <location column="9" file="gparse/command.h" line="177" />
       </undocumented>
-      <undocumented id="gparse::Command::hasZ" name="hasZ">
+      <undocumented id="gparse::Command::hasY" name="hasY">
         <location column="9" file="gparse/command.h" line="180" />
       </undocumented>
+      <undocumented id="gparse::Command::hasZ" name="hasZ">
+        <location column="9" file="gparse/command.h" line="183" />
+      </undocumented>
       <undocumented id="gparse::Command::isG1" name="isG1">
-        <location column="9" file="gparse/command.h" line="191" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG10" name="isG10">
-        <location column="9" file="gparse/command.h" line="195" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG2" name="isG2">
-        <location column="9" file="gparse/command.h" line="192" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG20" name="isG20">
-        <location column="9" file="gparse/command.h" line="196" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG21" name="isG21">
-        <location column="9" file="gparse/command.h" line="197" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG28" name="isG28">
-        <location column="9" file="gparse/command.h" line="198" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG29" name="isG29">
-        <location column="9" file="gparse/command.h" line="199" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG3" name="isG3">
-        <location column="9" file="gparse/command.h" line="193" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG30" name="isG30">
-        <location column="9" file="gparse/command.h" line="200" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG31" name="isG31">
-        <location column="9" file="gparse/command.h" line="201" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG32" name="isG32">
-        <location column="9" file="gparse/command.h" line="202" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG4" name="isG4">
         <location column="9" file="gparse/command.h" line="194" />
       </undocumented>
-      <undocumented id="gparse::Command::isG90" name="isG90">
+      <undocumented id="gparse::Command::isG10" name="isG10">
+        <location column="9" file="gparse/command.h" line="198" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG2" name="isG2">
+        <location column="9" file="gparse/command.h" line="195" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG20" name="isG20">
+        <location column="9" file="gparse/command.h" line="199" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG21" name="isG21">
+        <location column="9" file="gparse/command.h" line="200" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG28" name="isG28">
+        <location column="9" file="gparse/command.h" line="201" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG29" name="isG29">
+        <location column="9" file="gparse/command.h" line="202" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG3" name="isG3">
+        <location column="9" file="gparse/command.h" line="196" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG30" name="isG30">
         <location column="9" file="gparse/command.h" line="203" />
       </undocumented>
-      <undocumented id="gparse::Command::isG91" name="isG91">
+      <undocumented id="gparse::Command::isG31" name="isG31">
         <location column="9" file="gparse/command.h" line="204" />
       </undocumented>
-      <undocumented id="gparse::Command::isG92" name="isG92">
+      <undocumented id="gparse::Command::isG32" name="isG32">
         <location column="9" file="gparse/command.h" line="205" />
       </undocumented>
-      <undocumented id="gparse::Command::isM0" name="isM0">
+      <undocumented id="gparse::Command::isG4" name="isG4">
+        <location column="9" file="gparse/command.h" line="197" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG90" name="isG90">
         <location column="9" file="gparse/command.h" line="206" />
       </undocumented>
-      <undocumented id="gparse::Command::isM1" name="isM1">
+      <undocumented id="gparse::Command::isG91" name="isG91">
         <location column="9" file="gparse/command.h" line="207" />
       </undocumented>
-      <undocumented id="gparse::Command::isM10" name="isM10">
-        <location column="9" file="gparse/command.h" line="214" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM103" name="isM103">
-        <location column="9" file="gparse/command.h" line="242" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM104" name="isM104">
-        <location column="9" file="gparse/command.h" line="243" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM105" name="isM105">
-        <location column="9" file="gparse/command.h" line="244" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM106" name="isM106">
-        <location column="9" file="gparse/command.h" line="245" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM107" name="isM107">
-        <location column="9" file="gparse/command.h" line="246" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM108" name="isM108">
-        <location column="9" file="gparse/command.h" line="247" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM109" name="isM109">
-        <location column="9" file="gparse/command.h" line="248" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM11" name="isM11">
-        <location column="9" file="gparse/command.h" line="215" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM110" name="isM110">
-        <location column="9" file="gparse/command.h" line="249" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM111" name="isM111">
-        <location column="9" file="gparse/command.h" line="250" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM112" name="isM112">
-        <location column="9" file="gparse/command.h" line="251" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM113" name="isM113">
-        <location column="9" file="gparse/command.h" line="252" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM114" name="isM114">
-        <location column="9" file="gparse/command.h" line="253" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM115" name="isM115">
-        <location column="9" file="gparse/command.h" line="254" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM116" name="isM116">
-        <location column="9" file="gparse/command.h" line="255" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM117" name="isM117">
-        <location column="9" file="gparse/command.h" line="256" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM118" name="isM118">
-        <location column="9" file="gparse/command.h" line="257" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM119" name="isM119">
-        <location column="9" file="gparse/command.h" line="258" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM120" name="isM120">
-        <location column="9" file="gparse/command.h" line="259" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM121" name="isM121">
-        <location column="9" file="gparse/command.h" line="260" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM122" name="isM122">
-        <location column="9" file="gparse/command.h" line="261" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM123" name="isM123">
-        <location column="9" file="gparse/command.h" line="262" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM124" name="isM124">
-        <location column="9" file="gparse/command.h" line="263" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM126" name="isM126">
-        <location column="9" file="gparse/command.h" line="264" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM127" name="isM127">
-        <location column="9" file="gparse/command.h" line="265" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM128" name="isM128">
-        <location column="9" file="gparse/command.h" line="266" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM129" name="isM129">
-        <location column="9" file="gparse/command.h" line="267" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM130" name="isM130">
-        <location column="9" file="gparse/command.h" line="268" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM131" name="isM131">
-        <location column="9" file="gparse/command.h" line="269" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM132" name="isM132">
-        <location column="9" file="gparse/command.h" line="270" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM133" name="isM133">
-        <location column="9" file="gparse/command.h" line="271" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM134" name="isM134">
-        <location column="9" file="gparse/command.h" line="272" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM135" name="isM135">
-        <location column="9" file="gparse/command.h" line="273" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM136" name="isM136">
-        <location column="9" file="gparse/command.h" line="274" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM140" name="isM140">
-        <location column="9" file="gparse/command.h" line="275" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM141" name="isM141">
-        <location column="9" file="gparse/command.h" line="276" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM142" name="isM142">
-        <location column="9" file="gparse/command.h" line="277" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM143" name="isM143">
-        <location column="9" file="gparse/command.h" line="278" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM144" name="isM144">
-        <location column="9" file="gparse/command.h" line="279" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM160" name="isM160">
-        <location column="9" file="gparse/command.h" line="280" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM17" name="isM17">
-        <location column="9" file="gparse/command.h" line="216" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM18" name="isM18">
-        <location column="9" file="gparse/command.h" line="217" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM190" name="isM190">
-        <location column="9" file="gparse/command.h" line="281" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM20" name="isM20">
-        <location column="9" file="gparse/command.h" line="218" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM200" name="isM200">
-        <location column="9" file="gparse/command.h" line="282" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM201" name="isM201">
-        <location column="9" file="gparse/command.h" line="283" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM202" name="isM202">
-        <location column="9" file="gparse/command.h" line="284" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM203" name="isM203">
-        <location column="9" file="gparse/command.h" line="285" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM204" name="isM204">
-        <location column="9" file="gparse/command.h" line="286" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM205" name="isM205">
-        <location column="9" file="gparse/command.h" line="287" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM206" name="isM206">
-        <location column="9" file="gparse/command.h" line="288" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM207" name="isM207">
-        <location column="9" file="gparse/command.h" line="289" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM208" name="isM208">
-        <location column="9" file="gparse/command.h" line="290" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM209" name="isM209">
-        <location column="9" file="gparse/command.h" line="291" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM21" name="isM21">
-        <location column="9" file="gparse/command.h" line="219" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM210" name="isM210">
-        <location column="9" file="gparse/command.h" line="292" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM22" name="isM22">
-        <location column="9" file="gparse/command.h" line="220" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM220" name="isM220">
-        <location column="9" file="gparse/command.h" line="293" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM221" name="isM221">
-        <location column="9" file="gparse/command.h" line="294" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM226" name="isM226">
-        <location column="9" file="gparse/command.h" line="295" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM227" name="isM227">
-        <location column="9" file="gparse/command.h" line="296" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM228" name="isM228">
-        <location column="9" file="gparse/command.h" line="297" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM229" name="isM229">
-        <location column="9" file="gparse/command.h" line="298" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM23" name="isM23">
-        <location column="9" file="gparse/command.h" line="221" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM230" name="isM230">
-        <location column="9" file="gparse/command.h" line="299" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM24" name="isM24">
-        <location column="9" file="gparse/command.h" line="222" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM240" name="isM240">
-        <location column="9" file="gparse/command.h" line="300" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM241" name="isM241">
-        <location column="9" file="gparse/command.h" line="301" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM245" name="isM245">
-        <location column="9" file="gparse/command.h" line="302" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM246" name="isM246">
-        <location column="9" file="gparse/command.h" line="303" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM25" name="isM25">
-        <location column="9" file="gparse/command.h" line="223" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM26" name="isM26">
-        <location column="9" file="gparse/command.h" line="224" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM27" name="isM27">
-        <location column="9" file="gparse/command.h" line="225" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM28" name="isM28">
-        <location column="9" file="gparse/command.h" line="226" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM280" name="isM280">
-        <location column="9" file="gparse/command.h" line="304" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM29" name="isM29">
-        <location column="9" file="gparse/command.h" line="227" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM3" name="isM3">
+      <undocumented id="gparse::Command::isG92" name="isG92">
         <location column="9" file="gparse/command.h" line="208" />
       </undocumented>
-      <undocumented id="gparse::Command::isM30" name="isM30">
-        <location column="9" file="gparse/command.h" line="228" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM300" name="isM300">
-        <location column="9" file="gparse/command.h" line="305" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM301" name="isM301">
-        <location column="9" file="gparse/command.h" line="306" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM302" name="isM302">
-        <location column="9" file="gparse/command.h" line="307" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM303" name="isM303">
-        <location column="9" file="gparse/command.h" line="308" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM304" name="isM304">
-        <location column="9" file="gparse/command.h" line="309" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM305" name="isM305">
-        <location column="9" file="gparse/command.h" line="310" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM32" name="isM32">
-        <location column="9" file="gparse/command.h" line="229" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM4" name="isM4">
+      <undocumented id="gparse::Command::isM0" name="isM0">
         <location column="9" file="gparse/command.h" line="209" />
       </undocumented>
-      <undocumented id="gparse::Command::isM40" name="isM40">
-        <location column="9" file="gparse/command.h" line="230" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM400" name="isM400">
-        <location column="9" file="gparse/command.h" line="311" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM41" name="isM41">
-        <location column="9" file="gparse/command.h" line="231" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM42" name="isM42">
-        <location column="9" file="gparse/command.h" line="232" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM420" name="isM420">
-        <location column="9" file="gparse/command.h" line="312" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM43" name="isM43">
-        <location column="9" file="gparse/command.h" line="233" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM5" name="isM5">
+      <undocumented id="gparse::Command::isM1" name="isM1">
         <location column="9" file="gparse/command.h" line="210" />
       </undocumented>
-      <undocumented id="gparse::Command::isM540" name="isM540">
-        <location column="9" file="gparse/command.h" line="313" />
+      <undocumented id="gparse::Command::isM10" name="isM10">
+        <location column="9" file="gparse/command.h" line="217" />
       </undocumented>
-      <undocumented id="gparse::Command::isM550" name="isM550">
-        <location column="9" file="gparse/command.h" line="314" />
+      <undocumented id="gparse::Command::isM103" name="isM103">
+        <location column="9" file="gparse/command.h" line="245" />
       </undocumented>
-      <undocumented id="gparse::Command::isM551" name="isM551">
-        <location column="9" file="gparse/command.h" line="315" />
+      <undocumented id="gparse::Command::isM104" name="isM104">
+        <location column="9" file="gparse/command.h" line="246" />
       </undocumented>
-      <undocumented id="gparse::Command::isM552" name="isM552">
-        <location column="9" file="gparse/command.h" line="316" />
+      <undocumented id="gparse::Command::isM105" name="isM105">
+        <location column="9" file="gparse/command.h" line="247" />
       </undocumented>
-      <undocumented id="gparse::Command::isM553" name="isM553">
-        <location column="9" file="gparse/command.h" line="317" />
+      <undocumented id="gparse::Command::isM106" name="isM106">
+        <location column="9" file="gparse/command.h" line="248" />
       </undocumented>
-      <undocumented id="gparse::Command::isM554" name="isM554">
-        <location column="9" file="gparse/command.h" line="318" />
+      <undocumented id="gparse::Command::isM107" name="isM107">
+        <location column="9" file="gparse/command.h" line="249" />
       </undocumented>
-      <undocumented id="gparse::Command::isM555" name="isM555">
-        <location column="9" file="gparse/command.h" line="319" />
+      <undocumented id="gparse::Command::isM108" name="isM108">
+        <location column="9" file="gparse/command.h" line="250" />
       </undocumented>
-      <undocumented id="gparse::Command::isM556" name="isM556">
-        <location column="9" file="gparse/command.h" line="320" />
+      <undocumented id="gparse::Command::isM109" name="isM109">
+        <location column="9" file="gparse/command.h" line="251" />
       </undocumented>
-      <undocumented id="gparse::Command::isM557" name="isM557">
-        <location column="9" file="gparse/command.h" line="321" />
+      <undocumented id="gparse::Command::isM11" name="isM11">
+        <location column="9" file="gparse/command.h" line="218" />
       </undocumented>
-      <undocumented id="gparse::Command::isM558" name="isM558">
-        <location column="9" file="gparse/command.h" line="322" />
+      <undocumented id="gparse::Command::isM110" name="isM110">
+        <location column="9" file="gparse/command.h" line="252" />
       </undocumented>
-      <undocumented id="gparse::Command::isM559" name="isM559">
-        <location column="9" file="gparse/command.h" line="323" />
+      <undocumented id="gparse::Command::isM111" name="isM111">
+        <location column="9" file="gparse/command.h" line="253" />
       </undocumented>
-      <undocumented id="gparse::Command::isM560" name="isM560">
-        <location column="9" file="gparse/command.h" line="324" />
+      <undocumented id="gparse::Command::isM112" name="isM112">
+        <location column="9" file="gparse/command.h" line="254" />
       </undocumented>
-      <undocumented id="gparse::Command::isM561" name="isM561">
-        <location column="9" file="gparse/command.h" line="325" />
+      <undocumented id="gparse::Command::isM113" name="isM113">
+        <location column="9" file="gparse/command.h" line="255" />
       </undocumented>
-      <undocumented id="gparse::Command::isM562" name="isM562">
-        <location column="9" file="gparse/command.h" line="326" />
+      <undocumented id="gparse::Command::isM114" name="isM114">
+        <location column="9" file="gparse/command.h" line="256" />
       </undocumented>
-      <undocumented id="gparse::Command::isM563" name="isM563">
-        <location column="9" file="gparse/command.h" line="327" />
+      <undocumented id="gparse::Command::isM115" name="isM115">
+        <location column="9" file="gparse/command.h" line="257" />
       </undocumented>
-      <undocumented id="gparse::Command::isM564" name="isM564">
-        <location column="9" file="gparse/command.h" line="328" />
+      <undocumented id="gparse::Command::isM116" name="isM116">
+        <location column="9" file="gparse/command.h" line="258" />
       </undocumented>
-      <undocumented id="gparse::Command::isM565" name="isM565">
-        <location column="9" file="gparse/command.h" line="329" />
+      <undocumented id="gparse::Command::isM117" name="isM117">
+        <location column="9" file="gparse/command.h" line="259" />
       </undocumented>
-      <undocumented id="gparse::Command::isM566" name="isM566">
-        <location column="9" file="gparse/command.h" line="330" />
+      <undocumented id="gparse::Command::isM118" name="isM118">
+        <location column="9" file="gparse/command.h" line="260" />
       </undocumented>
-      <undocumented id="gparse::Command::isM567" name="isM567">
-        <location column="9" file="gparse/command.h" line="331" />
+      <undocumented id="gparse::Command::isM119" name="isM119">
+        <location column="9" file="gparse/command.h" line="261" />
       </undocumented>
-      <undocumented id="gparse::Command::isM568" name="isM568">
-        <location column="9" file="gparse/command.h" line="332" />
+      <undocumented id="gparse::Command::isM120" name="isM120">
+        <location column="9" file="gparse/command.h" line="262" />
       </undocumented>
-      <undocumented id="gparse::Command::isM569" name="isM569">
-        <location column="9" file="gparse/command.h" line="333" />
+      <undocumented id="gparse::Command::isM121" name="isM121">
+        <location column="9" file="gparse/command.h" line="263" />
       </undocumented>
-      <undocumented id="gparse::Command::isM665" name="isM665">
-        <location column="9" file="gparse/command.h" line="334" />
+      <undocumented id="gparse::Command::isM122" name="isM122">
+        <location column="9" file="gparse/command.h" line="264" />
       </undocumented>
-      <undocumented id="gparse::Command::isM7" name="isM7">
+      <undocumented id="gparse::Command::isM123" name="isM123">
+        <location column="9" file="gparse/command.h" line="265" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM124" name="isM124">
+        <location column="9" file="gparse/command.h" line="266" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM126" name="isM126">
+        <location column="9" file="gparse/command.h" line="267" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM127" name="isM127">
+        <location column="9" file="gparse/command.h" line="268" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM128" name="isM128">
+        <location column="9" file="gparse/command.h" line="269" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM129" name="isM129">
+        <location column="9" file="gparse/command.h" line="270" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM130" name="isM130">
+        <location column="9" file="gparse/command.h" line="271" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM131" name="isM131">
+        <location column="9" file="gparse/command.h" line="272" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM132" name="isM132">
+        <location column="9" file="gparse/command.h" line="273" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM133" name="isM133">
+        <location column="9" file="gparse/command.h" line="274" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM134" name="isM134">
+        <location column="9" file="gparse/command.h" line="275" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM135" name="isM135">
+        <location column="9" file="gparse/command.h" line="276" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM136" name="isM136">
+        <location column="9" file="gparse/command.h" line="277" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM140" name="isM140">
+        <location column="9" file="gparse/command.h" line="278" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM141" name="isM141">
+        <location column="9" file="gparse/command.h" line="279" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM142" name="isM142">
+        <location column="9" file="gparse/command.h" line="280" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM143" name="isM143">
+        <location column="9" file="gparse/command.h" line="281" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM144" name="isM144">
+        <location column="9" file="gparse/command.h" line="282" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM160" name="isM160">
+        <location column="9" file="gparse/command.h" line="283" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM17" name="isM17">
+        <location column="9" file="gparse/command.h" line="219" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM18" name="isM18">
+        <location column="9" file="gparse/command.h" line="220" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM190" name="isM190">
+        <location column="9" file="gparse/command.h" line="284" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM20" name="isM20">
+        <location column="9" file="gparse/command.h" line="221" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM200" name="isM200">
+        <location column="9" file="gparse/command.h" line="285" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM201" name="isM201">
+        <location column="9" file="gparse/command.h" line="286" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM202" name="isM202">
+        <location column="9" file="gparse/command.h" line="287" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM203" name="isM203">
+        <location column="9" file="gparse/command.h" line="288" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM204" name="isM204">
+        <location column="9" file="gparse/command.h" line="289" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM205" name="isM205">
+        <location column="9" file="gparse/command.h" line="290" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM206" name="isM206">
+        <location column="9" file="gparse/command.h" line="291" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM207" name="isM207">
+        <location column="9" file="gparse/command.h" line="292" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM208" name="isM208">
+        <location column="9" file="gparse/command.h" line="293" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM209" name="isM209">
+        <location column="9" file="gparse/command.h" line="294" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM21" name="isM21">
+        <location column="9" file="gparse/command.h" line="222" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM210" name="isM210">
+        <location column="9" file="gparse/command.h" line="295" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM22" name="isM22">
+        <location column="9" file="gparse/command.h" line="223" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM220" name="isM220">
+        <location column="9" file="gparse/command.h" line="296" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM221" name="isM221">
+        <location column="9" file="gparse/command.h" line="297" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM226" name="isM226">
+        <location column="9" file="gparse/command.h" line="298" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM227" name="isM227">
+        <location column="9" file="gparse/command.h" line="299" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM228" name="isM228">
+        <location column="9" file="gparse/command.h" line="300" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM229" name="isM229">
+        <location column="9" file="gparse/command.h" line="301" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM23" name="isM23">
+        <location column="9" file="gparse/command.h" line="224" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM230" name="isM230">
+        <location column="9" file="gparse/command.h" line="302" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM24" name="isM24">
+        <location column="9" file="gparse/command.h" line="225" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM240" name="isM240">
+        <location column="9" file="gparse/command.h" line="303" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM241" name="isM241">
+        <location column="9" file="gparse/command.h" line="304" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM245" name="isM245">
+        <location column="9" file="gparse/command.h" line="305" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM246" name="isM246">
+        <location column="9" file="gparse/command.h" line="306" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM25" name="isM25">
+        <location column="9" file="gparse/command.h" line="226" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM26" name="isM26">
+        <location column="9" file="gparse/command.h" line="227" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM27" name="isM27">
+        <location column="9" file="gparse/command.h" line="228" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM28" name="isM28">
+        <location column="9" file="gparse/command.h" line="229" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM280" name="isM280">
+        <location column="9" file="gparse/command.h" line="307" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM29" name="isM29">
+        <location column="9" file="gparse/command.h" line="230" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM3" name="isM3">
         <location column="9" file="gparse/command.h" line="211" />
       </undocumented>
-      <undocumented id="gparse::Command::isM8" name="isM8">
+      <undocumented id="gparse::Command::isM30" name="isM30">
+        <location column="9" file="gparse/command.h" line="231" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM300" name="isM300">
+        <location column="9" file="gparse/command.h" line="308" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM301" name="isM301">
+        <location column="9" file="gparse/command.h" line="309" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM302" name="isM302">
+        <location column="9" file="gparse/command.h" line="310" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM303" name="isM303">
+        <location column="9" file="gparse/command.h" line="311" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM304" name="isM304">
+        <location column="9" file="gparse/command.h" line="312" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM305" name="isM305">
+        <location column="9" file="gparse/command.h" line="313" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM32" name="isM32">
+        <location column="9" file="gparse/command.h" line="232" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM4" name="isM4">
         <location column="9" file="gparse/command.h" line="212" />
       </undocumented>
-      <undocumented id="gparse::Command::isM80" name="isM80">
+      <undocumented id="gparse::Command::isM40" name="isM40">
+        <location column="9" file="gparse/command.h" line="233" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM400" name="isM400">
+        <location column="9" file="gparse/command.h" line="314" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM41" name="isM41">
         <location column="9" file="gparse/command.h" line="234" />
       </undocumented>
-      <undocumented id="gparse::Command::isM81" name="isM81">
+      <undocumented id="gparse::Command::isM42" name="isM42">
         <location column="9" file="gparse/command.h" line="235" />
       </undocumented>
-      <undocumented id="gparse::Command::isM82" name="isM82">
+      <undocumented id="gparse::Command::isM420" name="isM420">
+        <location column="9" file="gparse/command.h" line="315" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM43" name="isM43">
         <location column="9" file="gparse/command.h" line="236" />
       </undocumented>
-      <undocumented id="gparse::Command::isM83" name="isM83">
-        <location column="9" file="gparse/command.h" line="237" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM84" name="isM84">
-        <location column="9" file="gparse/command.h" line="238" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM9" name="isM9">
+      <undocumented id="gparse::Command::isM5" name="isM5">
         <location column="9" file="gparse/command.h" line="213" />
       </undocumented>
-      <undocumented id="gparse::Command::isM906" name="isM906">
+      <undocumented id="gparse::Command::isM540" name="isM540">
+        <location column="9" file="gparse/command.h" line="316" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM550" name="isM550">
+        <location column="9" file="gparse/command.h" line="317" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM551" name="isM551">
+        <location column="9" file="gparse/command.h" line="318" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM552" name="isM552">
+        <location column="9" file="gparse/command.h" line="319" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM553" name="isM553">
+        <location column="9" file="gparse/command.h" line="320" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM554" name="isM554">
+        <location column="9" file="gparse/command.h" line="321" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM555" name="isM555">
+        <location column="9" file="gparse/command.h" line="322" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM556" name="isM556">
+        <location column="9" file="gparse/command.h" line="323" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM557" name="isM557">
+        <location column="9" file="gparse/command.h" line="324" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM558" name="isM558">
+        <location column="9" file="gparse/command.h" line="325" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM559" name="isM559">
+        <location column="9" file="gparse/command.h" line="326" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM560" name="isM560">
+        <location column="9" file="gparse/command.h" line="327" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM561" name="isM561">
+        <location column="9" file="gparse/command.h" line="328" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM562" name="isM562">
+        <location column="9" file="gparse/command.h" line="329" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM563" name="isM563">
+        <location column="9" file="gparse/command.h" line="330" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM564" name="isM564">
+        <location column="9" file="gparse/command.h" line="331" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM565" name="isM565">
+        <location column="9" file="gparse/command.h" line="332" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM566" name="isM566">
+        <location column="9" file="gparse/command.h" line="333" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM567" name="isM567">
+        <location column="9" file="gparse/command.h" line="334" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM568" name="isM568">
         <location column="9" file="gparse/command.h" line="335" />
       </undocumented>
-      <undocumented id="gparse::Command::isM92" name="isM92">
-        <location column="9" file="gparse/command.h" line="239" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM98" name="isM98">
-        <location column="9" file="gparse/command.h" line="240" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM99" name="isM99">
-        <location column="9" file="gparse/command.h" line="241" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM998" name="isM998">
+      <undocumented id="gparse::Command::isM569" name="isM569">
         <location column="9" file="gparse/command.h" line="336" />
       </undocumented>
-      <undocumented id="gparse::Command::isM999" name="isM999">
+      <undocumented id="gparse::Command::isM665" name="isM665">
         <location column="9" file="gparse/command.h" line="337" />
       </undocumented>
-      <undocumented id="gparse::Command::isTxxx" name="isTxxx">
+      <undocumented id="gparse::Command::isM7" name="isM7">
+        <location column="9" file="gparse/command.h" line="214" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM8" name="isM8">
+        <location column="9" file="gparse/command.h" line="215" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM80" name="isM80">
+        <location column="9" file="gparse/command.h" line="237" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM81" name="isM81">
+        <location column="9" file="gparse/command.h" line="238" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM82" name="isM82">
+        <location column="9" file="gparse/command.h" line="239" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM83" name="isM83">
+        <location column="9" file="gparse/command.h" line="240" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM84" name="isM84">
+        <location column="9" file="gparse/command.h" line="241" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM9" name="isM9">
+        <location column="9" file="gparse/command.h" line="216" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM906" name="isM906">
         <location column="9" file="gparse/command.h" line="338" />
       </undocumented>
+      <undocumented id="gparse::Command::isM92" name="isM92">
+        <location column="9" file="gparse/command.h" line="242" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM98" name="isM98">
+        <location column="9" file="gparse/command.h" line="243" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM99" name="isM99">
+        <location column="9" file="gparse/command.h" line="244" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM998" name="isM998">
+        <location column="9" file="gparse/command.h" line="339" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM999" name="isM999">
+        <location column="9" file="gparse/command.h" line="340" />
+      </undocumented>
+      <undocumented id="gparse::Command::isTxxx" name="isTxxx">
+        <location column="9" file="gparse/command.h" line="341" />
+      </undocumented>
       <undocumented id="gparse::Command::toGCode" name="toGCode">
-        <location column="9" file="gparse/command.h" line="90" />
+        <location column="9" file="gparse/command.h" line="93" />
         <location column="1" file="gparse/command.cpp" line="122" />
       </undocumented>
       <undocumented id="gparse::Response::isNull" name="isNull">
@@ -1871,20 +1879,32 @@ return values.
       <undocumented id="plat::rpi::HardwareScheduler::schedTime" name="schedTime">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="220" />
       </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::operator()" name="operator()">
-        <location column="9" file="motion/axisstepper.h" line="117" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="23" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="37" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="53" />
-      </undocumented>
     </type>
     <type documented="0" name="templatenontypeparameter" undocumented="25">
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
+        <location column="32" file="motion/axisstepper.h" line="116" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::MechSize" name="MechSize">
+        <location column="87" file="motion/axisstepper.h" line="149" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::MyIdx" name="MyIdx">
+        <location column="19" file="motion/axisstepper.h" line="149" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MechSize" name="MechSize">
+        <location column="87" file="motion/axisstepper.h" line="140" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MyIdx" name="MyIdx">
+        <location column="19" file="motion/axisstepper.h" line="140" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
+        <location column="32" file="common/tupleutil.h" line="22" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
+        <location column="32" file="common/tupleutil.h" line="36" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
+        <location column="32" file="common/tupleutil.h" line="52" />
+      </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
         <location column="56" file="motion/axisstepper.h" line="80" />
       </undocumented>
@@ -1936,32 +1956,23 @@ return values.
       <undocumented id="motion::MotionPlanner::_nextStepLinear::T" name="T">
         <location column="19" file="motion/motionplanner.h" line="204" />
       </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
-        <location column="32" file="motion/axisstepper.h" line="116" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::MechSize" name="MechSize">
-        <location column="87" file="motion/axisstepper.h" line="149" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::MyIdx" name="MyIdx">
-        <location column="19" file="motion/axisstepper.h" line="149" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MechSize" name="MechSize">
-        <location column="87" file="motion/axisstepper.h" line="140" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MyIdx" name="MyIdx">
-        <location column="19" file="motion/axisstepper.h" line="140" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="22" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="36" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="52" />
-      </undocumented>
     </type>
     <type documented="5" name="field" undocumented="9">
+      <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::value" name="value">
+        <location column="9" file="iodrivers/iodriver.h" line="172" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::value" name="value">
+        <location column="9" file="iodrivers/iodriver.h" line="160" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::value" name="value">
+        <location column="9" file="iodrivers/iodriver.h" line="148" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::index" name="index">
+        <location column="9" file="iodrivers/iodriver.h" line="185" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::value" name="value">
+        <location column="9" file="iodrivers/iodriver.h" line="184" />
+      </undocumented>
       <undocumented id="motion::AxisStepper::time" name="time">
         <location column="9" file="motion/axisstepper.h" line="73" />
       </undocumented>
@@ -1973,21 +1984,6 @@ return values.
       </undocumented>
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::virtL2Coherent" name="virtL2Coherent">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="197" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getBedTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="172" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="160" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="148" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::index" name="index">
-        <location column="9" file="iodrivers/iodriver.h" line="185" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="184" />
       </undocumented>
     </type>
     <type documented="5" name="structtemplate" undocumented="1">
@@ -2040,16 +2036,28 @@ return values.
         <location column="1" file="scheduler.h" line="75" />
       </undocumented>
       <undocumented id="State::CoordMapInterface::CoordMapInterface" name="CoordMapInterface">
-        <location column="13" file="state.h" line="146" />
+        <location column="13" file="state.h" line="143" />
       </undocumented>
       <undocumented id="State::DriverCallbackInterface::DriverCallbackInterface" name="DriverCallbackInterface">
-        <location column="13" file="state.h" line="135" />
+        <location column="13" file="state.h" line="132" />
       </undocumented>
       <undocumented id="State::MotionInterface::MotionInterface" name="MotionInterface">
-        <location column="13" file="state.h" line="123" />
+        <location column="13" file="state.h" line="120" />
       </undocumented>
       <undocumented id="State::SchedInterface::SchedInterface" name="SchedInterface">
-        <location column="13" file="state.h" line="94" />
+        <location column="13" file="state.h" line="91" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::IODriver__getBedTemp" name="IODriver__getBedTemp">
+        <location column="9" file="iodrivers/iodriver.h" line="173" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp">
+        <location column="9" file="iodrivers/iodriver.h" line="161" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::IODriver__getHotendTemp" name="IODriver__getHotendTemp">
+        <location column="9" file="iodrivers/iodriver.h" line="149" />
+      </undocumented>
+      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::IODriver__tuplePeekNextEvent" name="IODriver__tuplePeekNextEvent">
+        <location column="9" file="iodrivers/iodriver.h" line="186" />
       </undocumented>
       <undocumented id="gparse::Com::Com" name="Com">
         <location column="9" file="gparse/com.h" line="58" />
@@ -2120,18 +2128,6 @@ return values.
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="218" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="423" />
       </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getBedTemp::IODriver__getBedTemp" name="IODriver__getBedTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="173" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="161" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTemp::IODriver__getHotendTemp" name="IODriver__getHotendTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="149" />
-      </undocumented>
-      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::IODriver__tuplePeekNextEvent" name="IODriver__tuplePeekNextEvent">
-        <location column="9" file="iodrivers/iodriver.h" line="186" />
-      </undocumented>
     </type>
     <type documented="5" name="variable" undocumented="10">
       <undocumented id="NotPresent" name="NotPresent">
@@ -2178,16 +2174,16 @@ return values.
         <location column="5" file="schedulerbase.h" line="50" />
       </undocumented>
       <undocumented id="POS_ABSOLUTE" name="POS_ABSOLUTE">
-        <location column="5" file="state.h" line="70" />
+        <location column="5" file="state.h" line="61" />
       </undocumented>
       <undocumented id="POS_RELATIVE" name="POS_RELATIVE">
-        <location column="5" file="state.h" line="71" />
+        <location column="5" file="state.h" line="62" />
       </undocumented>
       <undocumented id="UNIT_IN" name="UNIT_IN">
-        <location column="5" file="state.h" line="77" />
+        <location column="5" file="state.h" line="68" />
       </undocumented>
       <undocumented id="UNIT_MM" name="UNIT_MM">
-        <location column="5" file="state.h" line="76" />
+        <location column="5" file="state.h" line="67" />
       </undocumented>
       <undocumented id="gparse::ResponseNull" name="ResponseNull">
         <location column="5" file="gparse/response.h" line="37" />
@@ -2507,18 +2503,86 @@ return values.
     </type>
   </coverage>
   <arguments>
-    <function id="gparse::bigEndianStr" name="bigEndianStr">
-      <location column="1" file="gparse/command.h" line="48" />
+    <function id="PID::feed" name="feed">
+      <location column="9" file="pid.h" line="29" />
+      <location column="1" file="pid.cpp" line="5" />
+      <undocumented-return />
+      <undocumented name="setpoint" />
+      <undocumented name="pv" />
+    </function>
+    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
+      <location column="9" file="schedulerbase.h" line="66" />
+      <location column="1" file="schedulerbase.cpp" line="56" />
+      <undocumented-return />
+      <undocumented name="handler" />
+      <undocumented name="level" />
+    </function>
+    <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/generic/primitiveiopin.h" line="19" />
+      <undocumented name="args" />
+    </function>
+    <function id="plat::generic::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/generic/primitiveiopin.h" line="25" />
+      <undocumented-return />
+    </function>
+    <function id="plat::generic::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/generic/primitiveiopin.h" line="34" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IoPin::IoPin" name="IoPin">
+      <location column="9" file="iodrivers/iopin.h" line="73" />
+      <undocumented name="other" />
+    </function>
+    <function id="iodrv::IoPin::IoPin" name="IoPin">
+      <location column="9" file="iodrivers/iopin.h" line="76" />
+      <location column="1" file="iodrivers/iopin.cpp" line="31" />
+      <undocumented name="other" />
+    </function>
+    <function id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="9" file="iodrivers/iopin.h" line="102" />
+      <location column="1" file="iodrivers/iopin.cpp" line="63" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="16" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="20" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
+      <undocumented name="pinIdx" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="36" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="40" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/rpi/primitiveiopin.h" line="49" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="53" />
+      <undocumented name="lev" />
+    </function>
+    <function id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+      <location column="5" file="gparse/command.h" line="50" />
       <undocumented-return />
       <undocumented name="a" />
     </function>
     <function id="gparse::Command::Command" name="Command">
-      <location column="9" file="gparse/command.h" line="85" />
+      <location column="9" file="gparse/command.h" line="88" />
       <location column="1" file="gparse/command.cpp" line="6" />
       <undocumented name="" />
     </function>
     <function id="gparse::Command::getFloatParam" name="getFloatParam">
-      <location column="9" file="gparse/command.h" line="93" />
+      <location column="9" file="gparse/command.h" line="96" />
       <location column="1" file="gparse/command.cpp" line="155" />
       <undocumented-return />
       <undocumented name="hasParam" />
@@ -2526,41 +2590,41 @@ return values.
       <undocumented name="label" />
     </function>
     <function id="gparse::Command::getSpecialStringParam" name="getSpecialStringParam">
-      <location column="9" file="gparse/command.h" line="102" />
+      <location column="9" file="gparse/command.h" line="105" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::getE" name="getE">
-      <location column="9" file="gparse/command.h" line="106" />
+      <location column="9" file="gparse/command.h" line="109" />
       <undocumented-return />
       <undocumented name="def" />
     </function>
     <function id="gparse::Command::getF" name="getF">
-      <location column="9" file="gparse/command.h" line="113" />
+      <location column="9" file="gparse/command.h" line="116" />
       <undocumented-return />
       <undocumented name="def" />
     </function>
     <function id="gparse::Command::getI" name="getI">
-      <location column="9" file="gparse/command.h" line="120" />
+      <location column="9" file="gparse/command.h" line="123" />
       <undocumented-return />
       <undocumented name="def" />
     </function>
     <function id="gparse::Command::getJ" name="getJ">
-      <location column="9" file="gparse/command.h" line="127" />
+      <location column="9" file="gparse/command.h" line="130" />
       <undocumented-return />
       <undocumented name="def" />
     </function>
     <function id="gparse::Command::getK" name="getK">
-      <location column="9" file="gparse/command.h" line="134" />
+      <location column="9" file="gparse/command.h" line="137" />
       <undocumented-return />
       <undocumented name="def" />
     </function>
     <function id="gparse::Command::getS" name="getS">
-      <location column="9" file="gparse/command.h" line="141" />
+      <location column="9" file="gparse/command.h" line="144" />
       <undocumented-return />
       <undocumented name="def" />
     </function>
     <function id="gparse::Command::isG0" name="isG0">
-      <location column="9" file="gparse/command.h" line="190" />
+      <location column="9" file="gparse/command.h" line="193" />
       <undocumented-return />
     </function>
     <function id="gparse::Response::Response" name="Response">
@@ -2613,44 +2677,6 @@ return values.
       <location column="9" file="gparse/com.h" line="77" />
       <location column="1" file="gparse/com.cpp" line="55" />
       <undocumented-return />
-    </function>
-    <function id="gparse::Com::reply" name="reply">
-      <location column="9" file="gparse/com.h" line="80" />
-      <location column="1" file="gparse/com.cpp" line="67" />
-      <undocumented name="resp" />
-    </function>
-    <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/generic/primitiveiopin.h" line="19" />
-      <undocumented name="args" />
-    </function>
-    <function id="plat::generic::PrimitiveIoPin::id" name="id">
-      <location column="3" file="platforms/generic/primitiveiopin.h" line="25" />
-      <undocumented-return />
-    </function>
-    <function id="plat::generic::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/generic/primitiveiopin.h" line="34" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IoPin::IoPin" name="IoPin">
-      <location column="9" file="iodrivers/iopin.h" line="73" />
-      <undocumented name="other" />
-    </function>
-    <function id="iodrv::IoPin::IoPin" name="IoPin">
-      <location column="9" file="iodrivers/iopin.h" line="76" />
-      <location column="1" file="iodrivers/iopin.cpp" line="31" />
-      <undocumented name="other" />
-    </function>
-    <function id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="9" file="iodrivers/iopin.h" line="102" />
-      <location column="1" file="iodrivers/iopin.cpp" line="63" />
-      <undocumented name="lev" />
-    </function>
-    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="66" />
-      <location column="1" file="schedulerbase.cpp" line="56" />
-      <undocumented-return />
-      <undocumented name="handler" />
-      <undocumented name="level" />
     </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
       <location column="9" file="scheduler.h" line="67" />
@@ -2953,25 +2979,25 @@ return values.
       <undocumented name="fallback" />
     </function>
     <function id="State::CoordMapInterface::moveTo" name="moveTo">
-      <location column="13" file="state.h" line="151" />
+      <location column="13" file="state.h" line="148" />
       <undocumented name="position" />
       <undocumented name="velXyz" />
       <undocumented name="flags" />
     </function>
     <function id="State::State&lt;Drv&gt;" name="State&lt;Drv&gt;">
-      <location column="9" file="state.h" line="213" />
-      <location column="1" file="state.h" line="271" />
+      <location column="9" file="state.h" line="210" />
+      <location column="1" file="state.h" line="268" />
       <undocumented name="fs" />
       <undocumented name="com" />
       <undocumented name="needPersistentCom" />
       <undocumented name="drv" />
     </function>
     <function id="State::motionPlanner" name="motionPlanner">
-      <location column="9" file="state.h" line="219" />
+      <location column="9" file="state.h" line="216" />
       <undocumented-return />
     </function>
     <function id="State::setPersistentHostCom" name="setPersistentHostCom">
-      <location column="9" file="state.h" line="223" />
+      <location column="9" file="state.h" line="220" />
       <undocumented name="persistence" />
     </function>
     <function id="motion::ConstantAcceleration::transform" name="transform">
@@ -3048,13 +3074,6 @@ return values.
       <location column="9" file="machines/machine.h" line="12" />
       <undocumented-return />
     </function>
-    <function id="PID::feed" name="feed">
-      <location column="9" file="pid.h" line="29" />
-      <location column="1" file="pid.cpp" line="5" />
-      <undocumented-return />
-      <undocumented name="setpoint" />
-      <undocumented name="pv" />
-    </function>
     <function id="iodrv::TempControl::isHotend" name="isHotend">
       <location column="9" file="iodrivers/tempcontrol.h" line="77" />
       <undocumented-return />
@@ -3066,34 +3085,6 @@ return values.
     <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/generic/cartesian.h" line="175" />
       <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="16" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="20" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
-      <undocumented name="pinIdx" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="36" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="40" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/rpi/primitiveiopin.h" line="49" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="53" />
-      <undocumented name="lev" />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
       <location column="9" file="motion/lineardeltastepper.h" line="211" />
@@ -3122,8 +3113,21 @@ return values.
     </function>
   </arguments>
   <references>
+    <variable id="plat::rpi::ChronoClock::_i" name="_i">
+      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
+      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
+      <doctype name="brief">
+        <ref name="..." />
+      </doctype>
+    </variable>
+    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
+      <doctype component="pullUpDown" name="params">
+        <ref name="IoPin" />
+      </doctype>
+    </constructor>
     <field id="gparse::Command::arguments" name="arguments">
-      <location column="5" file="gparse/command.h" line="70" />
+      <location column="5" file="gparse/command.h" line="73" />
       <doctype name="doc">
         <ref name="std::string" />
       </doctype>
@@ -3232,30 +3236,17 @@ return values.
       </doctype>
     </classtemplate>
     <typedef id="State::MotionInterface::CoordMapT" name="CoordMapT">
-      <location column="13" file="state.h" line="120" />
+      <location column="13" file="state.h" line="117" />
       <doctype name="brief">
         <ref name="MotionPlanner" />
       </doctype>
     </typedef>
     <typedef id="State::MotionInterface::AccelerationProfileT" name="AccelerationProfileT">
-      <location column="13" file="state.h" line="122" />
+      <location column="13" file="state.h" line="119" />
       <doctype name="brief">
         <ref name="MotionPlanner" />
       </doctype>
     </typedef>
-    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="30" />
-      <doctype component="pullUpDown" name="params">
-        <ref name="IoPin" />
-      </doctype>
-    </constructor>
-    <variable id="plat::rpi::ChronoClock::_i" name="_i">
-      <location column="5" file="platforms/rpi/chronoclock.h" line="46" />
-      <location column="1" file="platforms/rpi/chronoclock.cpp" line="6" />
-      <doctype name="brief">
-        <ref name="..." />
-      </doctype>
-    </variable>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">
       <location column="9" file="motion/lineardeltastepper.h" line="175" />
       <doctype name="brief">

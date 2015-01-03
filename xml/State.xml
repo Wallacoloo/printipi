@@ -1,5 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="State" name="State" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+State handles as much driver-mutual functionality as possible, including mapping Gcodes to specific functions,
+  tracking unit mode and axis position, and interfacing with the scheduler.
+State controls the communications channel, the scheduler, and the underlying driver.
+Motion planning is offloaded to src/motion/MotionPlanner
+</doc>
   <templatetypeparameter id="State::Drv" name="Drv" />
   <constructor id="State::State&lt;Drv&gt;" name="State&lt;Drv&gt;">
     <brief>Initialize the state:</brief>
