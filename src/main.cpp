@@ -28,10 +28,14 @@
  * main handles command line arguments, and instantiates the serial communications, State, and machine-specific driver.
  * Driver type is passed into this compilation unit as a command-line argument (gcc -DMACHINE=...)
  *
- * Printipi discussions:
+ * Printipi Github repository: https://github.com/Wallacoloo/printipi/
+ * Printipi Google Group (forum): https://groups.google.com/forum/#!forum/printipi
+ *
+ * Miscellaneous Printipi discussions:
  *   http://forums.reprap.org/read.php?2,396157
  *   https://groups.google.com/forum/#!searchin/deltabot/wallacoloo|sort:relevance/deltabot/JQNpmnlYYUc/_6V6SYcOGMUJ
  *   http://youtube.com/watch?v=g4UD5MRas3E
+ *   http://youtube.com/watch?v=gAruwqOEuPs
  */
 
 
