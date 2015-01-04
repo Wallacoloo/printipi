@@ -44,11 +44,11 @@ void Servo::consumeNextEvent() {
 EventClockT::duration Servo::getOnTime(float angle) {
 	//clamp the angle
 	//angle = std::min(minMaxAngle.second, std::max(minMaxAngle.first, angle));
-	angle = mathutil::clamp(angle, minMaxAngle.first, minMaxAngle.second);
+	angle = mathutil::clamp(angle, minAngle, maxAngle);
 	//calculate proportion, p, such that angle = angleMin + p*(angleMax-angleMin)
-	float proportion = (angle-minMaxAngle.first) / (minMaxAngle.second - minMaxAngle.first);
+	float proportion = (angle-minAngle) / (maxAngle - minAngle);
 	//This proportion now nicely maps to the linear scale, [minOnTime, maxOnTime]
-	float fsec = std::chrono::duration<float>(minMaxOnTime.first).count() + proportion*std::chrono::duration<float>(minMaxOnTime.second - minMaxOnTime.first).count();
+	float fsec = std::chrono::duration<float>(minOnTime).count() + proportion*std::chrono::duration<float>(maxOnTime - minOnTime).count();
 	return std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(fsec));
 }
 

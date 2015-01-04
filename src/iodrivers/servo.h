@@ -47,8 +47,8 @@ class Servo : public IODriver {
 	//constants:
 	IoPin pin;
 	EventClockT::duration cycleLength;
-	std::pair<EventClockT::duration, EventClockT::duration> minMaxOnTime;
-	std::pair<float, float> minMaxAngle;
+	EventClockT::duration minOnTime, maxOnTime;
+	float minAngle, maxAngle;
 	//internal state:
 	EventClockT::time_point lastEventTime;
 	EventClockT::duration highTime;
@@ -65,7 +65,8 @@ class Servo : public IODriver {
 		//@initialAngle the angle the Servo should be set to at startup.
 		inline Servo(IoPin &&pin, EventClockT::duration cycleLength, std::pair<EventClockT::duration, EventClockT::duration> minMaxOnTime,
 			std::pair<float, float> minMaxAngle=std::pair<float, float>(0, 360), float initialAngle=0)
-		 : pin(std::move(pin)), cycleLength(cycleLength), minMaxOnTime(minMaxOnTime), minMaxAngle(minMaxAngle),
+		 : pin(std::move(pin)) , cycleLength(cycleLength), minOnTime(minMaxOnTime.first), maxOnTime(minMaxOnTime.second), 
+		   minAngle(minMaxAngle.first), maxAngle(minMaxAngle.second),
 		   lastEventTime(EventClockT::now()), highTime(getOnTime(initialAngle)), curState(false) {}
 
 		inline bool isServo() const {
