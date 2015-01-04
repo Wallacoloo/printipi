@@ -29,7 +29,7 @@
 class FileSystem {
     std::string gcodeBase;
     public:
-        FileSystem(const std::string &nBase);
+        FileSystem(const std::string &nBase="/");
         std::string relGcodePathToAbs(const std::string &rel);
 };
 

@@ -198,8 +198,8 @@ template <typename Drv> class State {
     std::vector<gparse::Com> gcodeFileStack;
     SchedType scheduler;
     motion::MotionPlanner<MotionInterface> _motionPlanner;
-    Drv &driver;
-    FileSystem &filesystem;
+    Drv driver;
+    FileSystem filesystem;
     IODriverTypes ioDrivers;
     public:
         //Initialize the state:
@@ -207,7 +207,7 @@ template <typename Drv> class State {
         //  M32 command allows branching to another, local gcode file. By default, this will PAUSE reading/writing from the previous com channel.
         //  But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
         //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
-        State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom);
+        State(const Drv &drv=Drv(), const FileSystem &fs=FileSystem(), const gparse::Com &com=gparse::Com(), bool needPersistentCom=true);
         //Continually service communication channels & execute received commands until we receive a command to exit
         void eventLoop();
         //return a read-only reference to the interal MotionPlanner object
@@ -265,7 +265,7 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom)
+template <typename Drv> State<Drv>::State(const Drv &drv, const FileSystem &fs, const gparse::Com &com, bool needPersistentCom)
     : _doShutdownAfterMoveCompletes(false),
     _doExitEventLoopAfterMoveCompletes(false), 
     _doBufferMoves(true), 

@@ -26,10 +26,10 @@
 
 #include <tuple>
 #include <array>
-#include <cassert> //for assert
 
 #include "common/vector3.h"
 #include "common/vector4.h"
+#include "common/logging.h"
 
 namespace iodrv { 
     //forward declare for class in "endstop.h"
@@ -83,8 +83,8 @@ class CoordMap {
         }
         //given the current tracked motor coordinates, and knowing that we are at home position,
         //@return the true motor coordinates.
-        inline std::array<int, 0> getHomePosition(const std::array<int, 0> &/*cur*/) const {
-            
+        inline std::array<int, 0> getHomePosition(const std::array<int, 0> &cur) const {
+            (void)cur;
             return std::array<int, 0>();
         }
         //apply some leveling transformation to the [x,y,z] cartesian coordinate to compensate for an unlevel bed.
@@ -97,9 +97,9 @@ class CoordMap {
             return xyze;
         }
         //given axis coordinates &mech, calculate the cartesian [x,y,z,e] coordinates that the printhead is at.
-        inline Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
+        inline Vector4f xyzeFromMechanical(const std::array<int, 0> &mech) const {
             (void)mech; //unused in this stub
-            assert(false);
+            LOGW_ONCE("xyzeFromMechanical should be implemented in CoordMap implementations\n");
             return Vector4f(0, 0, 0, 0);
         }
         //if we get a G1 before the first G28, then we *probably* want to home first,
