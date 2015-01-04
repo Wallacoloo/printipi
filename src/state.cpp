@@ -175,6 +175,7 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
                     helper.verifyPosition(40, -10, 50);
                 }
             }
+            remove("test-printipi-m32.gcode");
         }
         //test M84; stop idle hold (same as M18)
         WHEN("The M84 command is sent to stop the idle hold") {

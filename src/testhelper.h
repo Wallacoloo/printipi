@@ -115,6 +115,8 @@ template <typename MachineT> class TestHelper {
 
         ~TestHelper() {
             exitOnce();
+            remove("PRINTIPI_TEST_INPUT");
+            remove("PRINTIPI_TEST_OUTPUT");
         }
         void threadedEventLoop() {
             eventThread = std::thread([&](){ 
