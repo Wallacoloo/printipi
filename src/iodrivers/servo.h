@@ -71,30 +71,15 @@ class Servo : public IODriver {
 		inline bool isServo() const {
 			return true;
 		}
-		inline void setServoAngleDegrees(float angle) {
-			highTime = getOnTime(angle);
-		}
-		inline OutputEvent peekNextEvent() const {
-			bool nextState = !curState;
-			EventClockT::time_point nextEventTime = lastEventTime + (nextState ? highTime : (cycleLength-highTime));
-			return OutputEvent(nextEventTime, pin, nextState);
-		}
-		inline void consumeNextEvent() {
-			OutputEvent evt = peekNextEvent();
-			this->curState = evt.state();
-			this->lastEventTime = evt.time();
-		}
+		void setServoAngleDegrees(float angle);
+		//Used by State for event scheduling.
+		//Queries information about the next time this Servo needs to toggle an IoPin
+		OutputEvent peekNextEvent() const;
+		//Used by State for event scheduling.
+		//When the State calls this, it is an acknowledgement that the last event returned from peekNextEvent() has been scheduled.
+		void consumeNextEvent();
 	private:
-		inline EventClockT::duration getOnTime(float angle) {
-			//clamp the angle
-			//angle = std::min(minMaxAngle.second, std::max(minMaxAngle.first, angle));
-			angle = mathutil::clamp(angle, minMaxAngle.first, minMaxAngle.second);
-			//calculate proportion, p, such that angle = angleMin + p*(angleMax-angleMin)
-			float proportion = (angle-minMaxAngle.first) / (minMaxAngle.second - minMaxAngle.first);
-			//This proportion now nicely maps to the linear scale, [minOnTime, maxOnTime]
-			float fsec = std::chrono::duration<float>(minMaxOnTime.first).count() + proportion*std::chrono::duration<float>(minMaxOnTime.second - minMaxOnTime.first).count();
-			return std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(fsec));
-		}
+		EventClockT::duration getOnTime(float angle);
 };
 
 }
