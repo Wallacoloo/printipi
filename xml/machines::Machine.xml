@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="machines::Machine" name="Machine" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <subclass access="public" name="TestMachine" ref="TestMachine#TestMachine" />
   <subclass access="public" name="generic::cartesian" ref="machines::generic::cartesian#machines::generic::cartesian">
     <brief>for Acceleration &amp; such</brief>
   </subclass>

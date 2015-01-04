@@ -14,13 +14,13 @@ M32 command allows branching to another, local gcode file. By default, this will
 But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
 This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.</doc>
     <argument id="State::State&lt;Drv&gt;::drv" name="drv">
-      <type name="Drv" qualifier=" &amp;" />
+      <type name="const Drv" qualifier=" const &amp;" />
     </argument>
     <argument id="State::State&lt;Drv&gt;::fs" name="fs">
-      <type name="FileSystem" qualifier=" &amp;" ref="FileSystem#FileSystem" />
+      <type name="FileSystem" qualifier=" const &amp;" ref="FileSystem#FileSystem" />
     </argument>
     <argument id="State::State&lt;Drv&gt;::com" name="com">
-      <type name="gparse::Com" ref="gparse::Com#gparse::Com" />
+      <type name="gparse::Com" qualifier=" const &amp;" ref="gparse::Com#gparse::Com" />
     </argument>
     <argument id="State::State&lt;Drv&gt;::needPersistentCom" name="needPersistentCom">
       <type builtin="yes" name="bool" />

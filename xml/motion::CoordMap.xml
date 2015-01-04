@@ -82,7 +82,7 @@ Note: the term "axis coordinates" refers to an individual motor's microstep inde
     <return>
       <type name="std::array&lt;int, 0&gt;" />
     </return>
-    <argument id="motion::CoordMap::getHomePosition::" name="">
+    <argument id="motion::CoordMap::getHomePosition::cur" name="cur">
       <type name="std::array&lt;int, 0&gt;" qualifier=" const &amp;" />
     </argument>
   </method>
@@ -103,7 +103,7 @@ Note: the term "axis coordinates" refers to an individual motor's microstep inde
       <type name="Vector4f" ref="index#Vector4f" />
     </return>
     <argument id="motion::CoordMap::xyzeFromMechanical::mech" name="mech">
-      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;int, 0&gt;" qualifier=" const &amp;" />
     </argument>
   </method>
 </class>

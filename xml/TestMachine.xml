@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="TestMachine" name="TestMachine" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="machines::Machine" ref="machines::Machine#machines::Machine" />
+  </base>
+  <templatetypeparameter id="TestMachine::GetIoDrivers" name="GetIoDrivers">
+    <default>
+      <type name="DefaultGetIoDrivers" ref="DefaultGetIoDrivers#DefaultGetIoDrivers" />
+    </default>
+  </templatetypeparameter>
+  <templatetypeparameter id="TestMachine::GetCoordMap" name="GetCoordMap">
+    <default>
+      <type name="DefaultGetCoordMap" ref="DefaultGetCoordMap#DefaultGetCoordMap" />
+    </default>
+  </templatetypeparameter>
+  <templatetypeparameter id="TestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
+    <default>
+      <type name="DefaultGetAccelerationProfile" ref="DefaultGetAccelerationProfile#DefaultGetAccelerationProfile" />
+    </default>
+  </templatetypeparameter>
+  <constructor id="TestMachine::TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;" name="TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;">
+    <argument id="TestMachine::TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;::getIoDrivers" name="getIoDrivers">
+      <type name="const GetIoDrivers" qualifier=" const &amp;" />
+    </argument>
+    <argument id="TestMachine::TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;::getCoordMap" name="getCoordMap">
+      <type name="const GetCoordMap" qualifier=" const &amp;" />
+    </argument>
+    <argument id="TestMachine::TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;::getAccelerationProfile" name="getAccelerationProfile">
+      <type name="const GetAccelerationProfile" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="TestMachine::getIoDrivers" name="getIoDrivers">
+    <return>
+      <type name="decltype(this-&gt;_getIoDrivers())" />
+    </return>
+  </method>
+  <method id="TestMachine::getCoordMap" name="getCoordMap">
+    <return>
+      <type name="decltype(this-&gt;_getCoordMap())" />
+    </return>
+  </method>
+  <method id="TestMachine::getAccelerationProfile" name="getAccelerationProfile">
+    <return>
+      <type name="decltype(this-&gt;_getAccelerationProfile())" />
+    </return>
+  </method>
+</classtemplate>

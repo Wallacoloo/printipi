@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate abstract="true" id="TestHelper" name="TestHelper" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="TestHelper::MachineT" name="MachineT" />
+  <constructor id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
+    <argument id="TestHelper::TestHelper&lt;MachineT&gt;::machine" name="machine">
+      <type name="const MachineT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="TestHelper::TestHelper&lt;MachineT&gt;::enterEventLoop" name="enterEventLoop">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </constructor>
+  <constructor abstract="yes" id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
+    <argument id="TestHelper::TestHelper&lt;MachineT&gt;::other" name="other">
+      <type name="TestHelper&lt;MachineT&gt; &amp;&amp;" />
+    </argument>
+  </constructor>
+  <destructor id="TestHelper::~TestHelper&lt;MachineT&gt;" name="~TestHelper&lt;MachineT&gt;" />
+  <method id="TestHelper::threadedEventLoop" name="threadedEventLoop">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="TestHelper::readLine" name="readLine">
+    <brief>convenience function to read and wait for the next line from Printipi's output</brief>
+    <return>
+      <type name="std::string" />
+    </return>
+  </method>
+  <method id="TestHelper::sendCommand" name="sendCommand">
+    <brief>@cmd g-code command to send to printer (a newline character will be appended)</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="TestHelper::sendCommand::cmd" name="cmd">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+    <argument id="TestHelper::sendCommand::expect" name="expect">
+      <doc>expected response</doc>
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+  </method>
+  <method id="TestHelper::verifyPosition" name="verifyPosition">
+    <brief>Verify that the position as reported by the motion planner is near (@x, @y, @z)</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="TestHelper::verifyPosition::x" name="x">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="TestHelper::verifyPosition::y" name="y">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="TestHelper::verifyPosition::z" name="z">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="TestHelper::exitOnce" name="exitOnce">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+</classtemplate>
