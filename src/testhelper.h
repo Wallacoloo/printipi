@@ -111,7 +111,7 @@ template <typename MachineT> class TestHelper {
                 this->threadedEventLoop();
             }      
         }
-        TestHelper(TestHelper<MachineT> &&other) = default;
+        TestHelper(TestHelper<MachineT> &&) = default;
 
         ~TestHelper() {
             exitOnce();
@@ -164,8 +164,18 @@ template <typename MachineT> class TestHelper {
 template <typename MachineT, typename ... Args> TestHelper<MachineT> makeTestHelper(const MachineT &machine, Args ...args) {
     return TestHelper<MachineT>(machine, args...);
 }
+
+/*
+In gcc-4.6, the following results in "sorry, unimplemented: cannot expand ‘Args ...’ into a fixed-length argument list"
+So use the workaround further below.
 template <typename ... Args> TestMachine<Args...> makeTestMachine(Args ...args) {
     return TestMachine<Args...>(args...);
+}*/
+template <typename GetIoDrivers=DefaultGetIoDrivers, typename GetCoordMap=DefaultGetCoordMap, 
+typename GetAccelerationProfile=DefaultGetAccelerationProfile> TestMachine<GetIoDrivers, GetCoordMap, GetAccelerationProfile> 
+    makeTestMachine(const GetIoDrivers &getIoDrivers=GetIoDrivers(), const GetCoordMap &getCoordMap=GetCoordMap(), 
+      const GetAccelerationProfile &getAccelerationProfile=GetAccelerationProfile()) {
+    return TestMachine<GetIoDrivers, GetCoordMap, GetAccelerationProfile>(getIoDrivers, getCoordMap, getAccelerationProfile);
 }
 
 
