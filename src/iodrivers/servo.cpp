@@ -22,6 +22,7 @@
  */
 
 #include "servo.h"
+#include "testhelper.h"
 
 namespace iodrv {
 
@@ -47,9 +48,37 @@ EventClockT::duration Servo::getOnTime(float angle) {
 	angle = mathutil::clamp(angle, minAngle, maxAngle);
 	//calculate proportion, p, such that angle = angleMin + p*(angleMax-angleMin)
 	float proportion = (angle-minAngle) / (maxAngle - minAngle);
+	//must account for any inverted pins:
+	proportion = pin.translateDutyCycleToPrimitive(proportion);
 	//This proportion now nicely maps to the linear scale, [minOnTime, maxOnTime]
 	float fsec = std::chrono::duration<float>(minOnTime).count() + proportion*std::chrono::duration<float>(maxOnTime - minOnTime).count();
 	return std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(fsec));
+}
+
+struct ServoTester {
+	ServoTester() {
+		GIVEN("A TestHelper & IoDrivers tuple") {
+	    	auto ioDrivers = std::make_tuple(
+	    	    iodrv::Servo(iodrv::IoPin::null(), 
+				  			 std::chrono::milliseconds(100), 
+				  			 std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(5))
+			));
+			auto getIoDrivers = [&]() {
+				return std::tie(std::get<0>(ioDrivers));
+			};
+	    	auto helper = makeTestHelper(makeTestMachine(getIoDrivers));
+	    	WHEN("Servo0 is set to 90 degrees") {
+	    		helper.sendCommand("M280 P0 S90.0", "ok");
+	    		THEN("Its highTime should be 2 us (25% interpolation of 1, 5)") {
+		    		REQUIRE(std::get<0>(ioDrivers).highTime == std::chrono::milliseconds(2));
+		    	}
+	    	}
+		}
+	}
+};
+
+SCENARIO("Servo will behave correctly", "[servo]") {
+    ServoTester();
 }
 
 }

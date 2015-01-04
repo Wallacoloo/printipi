@@ -44,6 +44,7 @@ namespace iodrv {
 //Typical pulse length varies from 1ms to 2ms for the full control range,
 // while the pulses must occur between 40-200 times per second.
 class Servo : public IODriver {
+	friend class ServoTester;
 	//constants:
 	IoPin pin;
 	EventClockT::duration cycleLength;
