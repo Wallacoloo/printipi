@@ -24,6 +24,8 @@
 #ifndef PLATFORMS_RPI_PRIMITIVEIOPIN_H
 #define PLATFORMS_RPI_PRIMITIVEIOPIN_H
 
+#include <cassert>
+
 #include "mitpi.h" //for GpioPin
 //for MAX_RPI_PIN_ID
 #include "compileflags.h"
