@@ -48,8 +48,6 @@ EventClockT::duration Servo::getOnTime(float angle) {
 	angle = mathutil::clamp(angle, minAngle, maxAngle);
 	//calculate proportion, p, such that angle = angleMin + p*(angleMax-angleMin)
 	float proportion = (angle-minAngle) / (maxAngle - minAngle);
-	//must account for any inverted pins:
-	proportion = pin.translateDutyCycleToPrimitive(proportion);
 	//This proportion now nicely maps to the linear scale, [minOnTime, maxOnTime]
 	float fsec = std::chrono::duration<float>(minOnTime).count() + proportion*std::chrono::duration<float>(maxOnTime - minOnTime).count();
 	return std::chrono::duration_cast<EventClockT::duration>(std::chrono::duration<float>(fsec));
