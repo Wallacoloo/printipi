@@ -118,11 +118,41 @@ template <typename MachineT> class TestHelper {
             remove("PRINTIPI_TEST_INPUT");
             remove("PRINTIPI_TEST_OUTPUT");
         }
+
+        //@cmd g-code command to send to printer (a newline character will be appended)
+        //@expect expected response
+        void sendCommand(const std::string &cmd, const std::string &expect) {
+            INFO("Sending command: '" + cmd + "'");
+            *inputFile << cmd << '\n';
+            INFO("It should be acknowledged with something that begins with '" + expect + "'");
+            std::string got = readLine();
+            REQUIRE(got.substr(0, expect.length()) == expect);
+        }
+
+        //Verify that the position as reported by the motion planner is near (@x, @y, @z)
+        void verifyPosition(float x, float y, float z) const {
+        	Vector4f actualPos = state.motionPlanner().actualCartesianPosition();
+            INFO("Actual position: " + std::string(actualPos));
+            REQUIRE(actualPos.xyz().distance(x, y, z) <= 4);
+        }
+        template <typename A, typename B> void requireTimesApproxEqual(const A &a, const B &b) {
+            typedef typename std::common_type<A, B>::type Common;
+            REQUIRE(Common(a).count() == Approx(Common(b).count()));
+        }
+
+        void exitOnce() {
+            //check if the eventThread represents a valid thread
+            if (eventThread.joinable()) {
+                sendCommand("M0", "ok");
+                eventThread.join();
+            }
+        }
         void threadedEventLoop() {
             eventThread = std::thread([&](){ 
                 state.eventLoop(); 
             });
         }
+
         //convenience function to read and wait for the next line from Printipi's output
         std::string readLine() {
             std::string read;
@@ -133,32 +163,7 @@ template <typename MachineT> class TestHelper {
                 } 
             }
             return read;
-        };
-
-        //@cmd g-code command to send to printer (a newline character will be appended)
-        //@expect expected response
-        void sendCommand(const std::string &cmd, const std::string &expect) {
-            INFO("Sending command: '" + cmd + "'");
-            *inputFile << cmd << '\n';
-            INFO("It should be acknowledged with something that begins with '" + expect + "'");
-            std::string got = readLine();
-            REQUIRE(got.substr(0, expect.length()) == expect);
-        };
-
-        //Verify that the position as reported by the motion planner is near (@x, @y, @z)
-        void verifyPosition (float x, float y, float z) const {
-        	Vector4f actualPos = state.motionPlanner().actualCartesianPosition();
-            INFO("Actual position: " + std::string(actualPos));
-            REQUIRE(actualPos.xyz().distance(x, y, z) <= 4);
-        };
-
-        void exitOnce() {
-            //check if the eventThread represents a valid thread
-            if (eventThread.joinable()) {
-                sendCommand("M0", "ok");
-                eventThread.join();
-            }
-        };            
+        };          
 };
 
 template <typename MachineT, typename ... Args> TestHelper<MachineT> makeTestHelper(const MachineT &machine, Args ...args) {
