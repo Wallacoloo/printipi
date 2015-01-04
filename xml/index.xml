@@ -14,13 +14,39 @@
     <templatetypeparameter id="makeTestHelper::Args" name="Args" />
   </functiontemplate>
   <functiontemplate id="makeTestMachine" name="makeTestMachine">
+    <doc>
+In gcc-4.6, the following results in "sorry, unimplemented: cannot expand ‘Args ...’ into a fixed-length argument list"
+So use the workaround further below.
+template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; makeTestMachine(Args ...args) {
+ return TestMachine&amp;lt;Args...&amp;gt;(args...);
+}</doc>
     <return>
       <type name="TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;" ref="TestMachine#TestMachine" />
     </return>
-    <argument id="makeTestMachine::args" name="args">
-      <type name="Args..." />
+    <argument id="makeTestMachine::getIoDrivers" name="getIoDrivers">
+      <type name="const GetIoDrivers" qualifier=" const &amp;" />
     </argument>
-    <templatetypeparameter id="makeTestMachine::Args" name="Args" />
+    <argument id="makeTestMachine::getCoordMap" name="getCoordMap">
+      <type name="const GetCoordMap" qualifier=" const &amp;" />
+    </argument>
+    <argument id="makeTestMachine::getAccelerationProfile" name="getAccelerationProfile">
+      <type name="const GetAccelerationProfile" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="makeTestMachine::GetIoDrivers" name="GetIoDrivers">
+      <default>
+        <type name="DefaultGetIoDrivers" ref="DefaultGetIoDrivers#DefaultGetIoDrivers" />
+      </default>
+    </templatetypeparameter>
+    <templatetypeparameter id="makeTestMachine::GetCoordMap" name="GetCoordMap">
+      <default>
+        <type name="DefaultGetCoordMap" ref="DefaultGetCoordMap#DefaultGetCoordMap" />
+      </default>
+    </templatetypeparameter>
+    <templatetypeparameter id="makeTestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
+      <default>
+        <type name="DefaultGetAccelerationProfile" ref="DefaultGetAccelerationProfile#DefaultGetAccelerationProfile" />
+      </default>
+    </templatetypeparameter>
   </functiontemplate>
   <variable id="NotPresent" name="NotPresent">
     <type name="OptionalArg&lt;float&gt;" qualifier=" const" />

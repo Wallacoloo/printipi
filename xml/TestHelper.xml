@@ -10,22 +10,11 @@
     </argument>
   </constructor>
   <constructor abstract="yes" id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
-    <argument id="TestHelper::TestHelper&lt;MachineT&gt;::other" name="other">
+    <argument id="TestHelper::TestHelper&lt;MachineT&gt;::" name="">
       <type name="TestHelper&lt;MachineT&gt; &amp;&amp;" />
     </argument>
   </constructor>
   <destructor id="TestHelper::~TestHelper&lt;MachineT&gt;" name="~TestHelper&lt;MachineT&gt;" />
-  <method id="TestHelper::threadedEventLoop" name="threadedEventLoop">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-  </method>
-  <method id="TestHelper::readLine" name="readLine">
-    <brief>convenience function to read and wait for the next line from Printipi's output</brief>
-    <return>
-      <type name="std::string" />
-    </return>
-  </method>
   <method id="TestHelper::sendCommand" name="sendCommand">
     <brief>@cmd g-code command to send to printer (a newline character will be appended)</brief>
     <return>
@@ -54,9 +43,34 @@
       <type builtin="yes" name="float" />
     </argument>
   </method>
+  <methodtemplate id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
+    <brief>Compare two std::chrono::durations, of potentially different types.</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="TestHelper::requireTimesApproxEqual::a" name="a">
+      <type name="const A" qualifier=" const &amp;" />
+    </argument>
+    <argument id="TestHelper::requireTimesApproxEqual::b" name="b">
+      <type name="const B" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="TestHelper::requireTimesApproxEqual::A" name="A" />
+    <templatetypeparameter id="TestHelper::requireTimesApproxEqual::B" name="B" />
+  </methodtemplate>
   <method id="TestHelper::exitOnce" name="exitOnce">
     <return>
       <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="TestHelper::threadedEventLoop" name="threadedEventLoop">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="TestHelper::readLine" name="readLine">
+    <brief>convenience function to read and wait for the next line from Printipi's output</brief>
+    <return>
+      <type name="std::string" />
     </return>
   </method>
 </classtemplate>
