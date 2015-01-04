@@ -33,6 +33,7 @@
 #include "outputevent.h"
 #include "platforms/auto/chronoclock.h"
 #include "common/logging.h"
+#include "common/mathutil.h"
 
 namespace iodrv {
 
@@ -42,23 +43,31 @@ namespace iodrv {
 //The length of that pulse determines the position at which the servo should be placed, and the servo will attempt to stay at that location until the next command.
 //Typical pulse length varies from 1ms to 2ms for the full control range,
 // while the pulses must occur between 40-200 times per second.
-//
-//Not yet ready for use; see discussion @ https://github.com/Wallacoloo/printipi/issues/62
 class Servo : public IODriver {
 	//constants:
 	IoPin pin;
 	EventClockT::duration cycleLength;
 	std::pair<EventClockT::duration, EventClockT::duration> minMaxOnTime;
 	std::pair<float, float> minMaxAngle;
-	//state:
+	//internal state:
 	EventClockT::time_point lastEventTime;
 	EventClockT::duration highTime;
 	bool curState;
 	public:
-		Servo(IoPin &&pin, EventClockT::duration cycleLength, std::pair<EventClockT::duration, EventClockT::duration> minMaxOnTime,
-			std::pair<float, float> minMaxAngle, float initialAngle=0)
+		//Instantiate a Servo controlled by PWM on pin @pin
+		//
+		//A Servo operates using pwm of a fixed frequency, and adjusting only the duty cycle to control angle.
+		//@cycleLength the length of one PWM cycle. Most servos can handle 40-200 Hz, so this should be anywhere between 5-25 ms.
+		//@minMaxOnTime a pair of <minOnTime, maxOnTime> where minOnTime is the PWM duty cycle that would send the Servo to the lowest angle it can handle,
+		//   and maxOnTime corresponds with the Servo's maximum angle.
+		//@minMaxAngle a pair of <minAngle, maxAngle> where minAngle is the minimum angle the Servo can be set to, in degrees, and 
+		//   maxAngle is the maximum angle the Servo can be set to, in degrees.
+		//@initialAngle the angle the Servo should be set to at startup.
+		inline Servo(IoPin &&pin, EventClockT::duration cycleLength, std::pair<EventClockT::duration, EventClockT::duration> minMaxOnTime,
+			std::pair<float, float> minMaxAngle=std::pair<float, float>(0, 360), float initialAngle=0)
 		 : pin(std::move(pin)), cycleLength(cycleLength), minMaxOnTime(minMaxOnTime), minMaxAngle(minMaxAngle),
 		   lastEventTime(EventClockT::now()), highTime(getOnTime(initialAngle)), curState(false) {}
+
 		inline bool isServo() const {
 			return true;
 		}
@@ -72,13 +81,14 @@ class Servo : public IODriver {
 		}
 		inline void consumeNextEvent() {
 			OutputEvent evt = peekNextEvent();
-			curState = evt.state();
-			lastEventTime = evt.time();
+			this->curState = evt.state();
+			this->lastEventTime = evt.time();
 		}
 	private:
 		inline EventClockT::duration getOnTime(float angle) {
 			//clamp the angle
-			angle = std::min(minMaxAngle.second, std::max(minMaxAngle.first, angle));
+			//angle = std::min(minMaxAngle.second, std::max(minMaxAngle.first, angle));
+			angle = mathutil::clamp(angle, minMaxAngle.first, minMaxAngle.second);
 			//calculate proportion, p, such that angle = angleMin + p*(angleMax-angleMin)
 			float proportion = (angle-minMaxAngle.first) / (minMaxAngle.second - minMaxAngle.first);
 			//This proportion now nicely maps to the linear scale, [minOnTime, maxOnTime]

@@ -44,6 +44,11 @@ template <typename T> constexpr T KtoC(T K) {
     return K - 273.15;
 }
 
+//force @value to be between @vMin and @vMax
+template <typename T> constexpr T clamp(T value, T vMin, T vMax) {
+	return value < vMin ? vMin : (value > vMax ? vMax : value);
+}
+
 
 }
 

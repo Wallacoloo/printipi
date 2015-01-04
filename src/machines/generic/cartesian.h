@@ -155,7 +155,7 @@ class cartesian : public Machine {
                 Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD),
                 Servo(IoPin::null(), std::chrono::milliseconds(100), 
                     std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(2)),
-                    std::make_pair(0.0, 2*M_PI)),
+                    std::make_pair(0.0f, 360.0f)),
                 TempControl<RCThermistor, PID, LowPassFilter>(
                     iodrv::HotendType,
                     IoPin(PIN_HOTEND_INVERSIONS, PIN_HOTEND), 
