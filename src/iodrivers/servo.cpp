@@ -58,15 +58,18 @@ EventClockT::duration Servo::getOnTime(float angle) {
 struct ServoTester {
 	ServoTester() {
 		GIVEN("A TestHelper & IoDrivers tuple") {
+			//create the ioDrivers
 	    	auto ioDrivers = std::make_tuple(
 	    	    iodrv::Servo(iodrv::IoPin::null(), 
 				  			 std::chrono::milliseconds(100), 
 				  			 std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(5))
 			));
+			//only give the State references to the ioDrivers so that we can track changes without private member access
 			auto getIoDrivers = [&]() {
 				return std::tie(std::get<0>(ioDrivers));
 			};
 	    	auto helper = makeTestHelper(makeTestMachine(getIoDrivers));
+	    	
 	    	WHEN("Servo0 is set to 90 degrees") {
 	    		helper.sendCommand("M280 P0 S90.0", "ok");
 	    		THEN("Its highTime should be 2 us (25% interpolation of 1, 5)") {
