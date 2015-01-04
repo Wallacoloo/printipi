@@ -89,15 +89,24 @@ template <typename MachineT> class TestHelper {
     std::thread eventThread;
     public:
         TestHelper(const MachineT &machine=MachineT(), bool enterEventLoop=true) 
-        : inputFile(new std::ofstream()),
-          outputFile(new std::ifstream()),
-          driver(machine), fs("./"), com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT"), state(driver, fs, com, true) {
+        : inputFile([]() {
             //disable buffering before opening
-            inputFile->rdbuf()->pubsetbuf(0, 0);
-            inputFile->open("PRINTIPI_TEST_INPUT", std::fstream::out | std::fstream::trunc);
-            outputFile->rdbuf()->pubsetbuf(0, 0);
+            auto p = new std::ofstream();
+            p->rdbuf()->pubsetbuf(0, 0);
+            p->open("PRINTIPI_TEST_INPUT", std::fstream::out | std::fstream::trunc);
+            return p;
+        }()),
+          outputFile([]() {
+            //disable buffering before opening
+            auto p = new std::ifstream();
+            p->rdbuf()->pubsetbuf(0, 0);
             //must open with the ::out flag to automatically create the file if it doesn't exist
-            outputFile->open("PRINTIPI_TEST_OUTPUT", std::fstream::out | std::fstream::in | std::fstream::trunc);      
+            p->open("PRINTIPI_TEST_OUTPUT", std::fstream::out | std::fstream::in | std::fstream::trunc);
+            return p;
+        }()),
+          driver(machine), fs("./"), com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT"), state(driver, fs, com, true) {
+            //Note: the above inputFile and outputFile MUST be opened before com is instantiated, otherwise the files may not have been created
+            //  and com will have a null file handle.   
             if (enterEventLoop) {
                 this->threadedEventLoop();
             }      
