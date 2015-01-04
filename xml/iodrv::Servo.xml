@@ -45,13 +45,13 @@ Not yet ready for use; see discussion @ https://github.com/Wallacoloo/printipi/i
     </return>
     <override name="IODriver::peekNextEvent" ref="iodrv::IODriver#iodrv::IODriver::peekNextEvent" />
   </method>
-  <method id="iodrv::Servo::setServoAngle" name="setServoAngle" override="yes">
+  <method id="iodrv::Servo::setServoAngleDegrees" name="setServoAngleDegrees" override="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="iodrv::Servo::setServoAngle::angle" name="angle">
+    <argument id="iodrv::Servo::setServoAngleDegrees::angle" name="angle">
       <type builtin="yes" name="float" />
     </argument>
-    <override name="IODriver::setServoAngle" ref="iodrv::IODriver#iodrv::IODriver::setServoAngle" />
+    <override name="IODriver::setServoAngleDegrees" ref="iodrv::IODriver#iodrv::IODriver::setServoAngleDegrees" />
   </method>
 </class>

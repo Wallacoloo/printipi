@@ -32,7 +32,7 @@
   </method>
   <method id="machines::generic::cartesian::getIoDrivers" name="getIoDrivers">
     <return>
-      <type name="std::tuple&lt;iodrv::Fan, iodrv::TempControl&lt;iodrv::RCThermistor, PID, LowPassFilter&gt; &gt;" />
+      <type name="std::tuple&lt;iodrv::Fan, iodrv::Servo, iodrv::TempControl&lt;iodrv::RCThermistor, PID, LowPassFilter&gt; &gt;" />
     </return>
   </method>
   <method id="machines::generic::cartesian::maxExtrudeRate" name="maxExtrudeRate" override="yes">

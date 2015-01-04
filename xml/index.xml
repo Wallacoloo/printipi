@@ -71,6 +71,9 @@
       <struct name="IODriver__setHotendTemp" ref="gparse::(anonymous::1)::IODriver__setHotendTemp#gparse::(anonymous::1)::IODriver__setHotendTemp">
         <brief>IODriver::setHotendTemp helper</brief>
       </struct>
+      <struct name="IODriver__setServoAngleAtServoIndex" ref="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex#gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex">
+        <brief>IODriver::setServoAngleAtServoIndex helper</brief>
+      </struct>
       <struct name="IODriver__tupleConsumeNextEvent" ref="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent#gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent">
         <brief>IODriver::tupleConsumeNextEvent helper</brief>
       </struct>

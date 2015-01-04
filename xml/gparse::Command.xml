@@ -73,9 +73,8 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </argument>
   </method>
   <method id="gparse::Command::getFloatParam" name="getFloatParam">
-    <brief>float Command::getFloatParam(char label) const {</brief>
-    <doc>return arguments[upper(label)-'A'];
-}</doc>
+    <brief> TODO: hasParam will always return false when GPARSE_ARG_NOT_PRESENT is NaN (a will be false).</brief>
+    <doc>We should instead just replace GPARSE_ARG_NOT_PRESENT with NaN and use std::isnan</doc>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -167,8 +166,25 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type name="std::string" />
     </return>
   </method>
+  <method id="gparse::Command::getP" name="getP">
+    <brief>Servo Index</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getP::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getP" name="getP">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getP::hasParam" name="hasParam">
+      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    </argument>
+  </method>
   <method id="gparse::Command::getS" name="getS">
-    <brief>PWM rate</brief>
+    <brief>PWM rate or servo angle</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -254,6 +270,11 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </return>
   </method>
   <method id="gparse::Command::hasF" name="hasF">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasP" name="hasP">
     <return>
       <type builtin="yes" name="bool" />
     </return>

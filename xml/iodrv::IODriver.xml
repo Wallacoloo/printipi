@@ -107,6 +107,22 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
     <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
   </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::setServoAngleAtServoIndex" name="setServoAngleAtServoIndex" static="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::setServoAngleAtServoIndex::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="iodrv::IODriver::setServoAngleAtServoIndex::index" name="index">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="iodrv::IODriver::setServoAngleAtServoIndex::angleDeg" name="angleDeg">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::setServoAngleAtServoIndex::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::setServoAngleAtServoIndex::TupleT" name="TupleT" />
+  </methodtemplate>
   <methodtemplate id="iodrv::IODriver::tupleConsumeNextEvent" name="tupleConsumeNextEvent" static="yes">
     <return>
       <type builtin="yes" name="void" />
@@ -190,12 +206,12 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
       <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
     </return>
   </method>
-  <method id="iodrv::IODriver::setServoAngle" name="setServoAngle">
-    <brief>@angle the desired angle of the servo, in radians</brief>
+  <method id="iodrv::IODriver::setServoAngleDegrees" name="setServoAngleDegrees">
+    <brief>@angle the desired angle of the servo, in degrees</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="iodrv::IODriver::setServoAngle::angle" name="angle">
+    <argument id="iodrv::IODriver::setServoAngleDegrees::angle" name="angle">
       <type builtin="yes" name="float" />
     </argument>
   </method>
