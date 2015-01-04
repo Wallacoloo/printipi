@@ -63,11 +63,12 @@ class Response {
           : code(code), rest(joinPairsAndStr(pairs, rest)) {}
 
         //Construct a response from a code and a set of Key:Value pairs (joined by a space)
-        //Allow construction, using an std::initializer_list of std::pair<std::string, std::string> for @pairs.
+        //Allow construction, using an std::initializer_list of std::pair<std::string, std::string> (or const char*, etc) for @pairs.
         //Example: Response(ResponseOk, {make_pair("T", "65"), make_pair("B", "20")})
-        Response(ResponseCode code, std::initializer_list<std::pair<std::string, std::string> > pairs, const std::string &rest="")
+        //This specialization is only needed in gcc-4.6, where automatic deduction of a std::initializer_list as Container would cause a warning in the other version
+        template <typename T> Response(ResponseCode code, std::initializer_list<T> pairs, const std::string &rest="")
           : code(code), rest(joinPairsAndStr(pairs, rest)) {}
-          
+
         inline std::string toString() const {
             return (code == ResponseOk ? "ok" : "") + (rest.empty() ? "" : " " + rest);
         }

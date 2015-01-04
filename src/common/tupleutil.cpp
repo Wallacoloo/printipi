@@ -39,6 +39,7 @@ struct ReturnAddIndex {
 
 struct TestEquality {
 	template <typename T> bool operator()(std::size_t index, T& t, int test) {
+		(void)index; //unused
 		return t == test;
 	}
 };
