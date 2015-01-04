@@ -25,6 +25,8 @@
 #define PLATFORMS_RPI_PRIMITIVEIOPIN_H
 
 #include "mitpi.h" //for GpioPin
+//for MAX_RPI_PIN_ID
+#include "compileflags.h"
 
 namespace plat {
 namespace rpi {
@@ -52,6 +54,7 @@ class PrimitiveIoPin {
 		//**Also note:** @pullUpDown acts the same regardless of the <IoPin>'s read/write inversions.
 		inline PrimitiveIoPin(mitpi::GpioPin pinIdx, mitpi::GpioPull pullUpDown=mitpi::GPIOPULL_NONE)
 		  : pinIdx(pinIdx) {
+		  	assert(pinIdx <= MAX_RPI_PIN_ID && "Make sure to appropriately set MAX_RPI_PIN_ID (see compileflags.h) or else some pins might not behave correctly");
 			mitpi::init();
 			mitpi::setPinPull(pinIdx, pullUpDown);
 		}

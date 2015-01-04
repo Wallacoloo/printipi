@@ -140,7 +140,14 @@ class Command {
         inline float getK(bool &hasParam) const {
             return getFloatParam('K', hasParam);
         }
-        //PWM rate
+        //Servo Index
+        inline float getP(float def=NAN) const {
+            return getFloatParam('P', def);
+        }
+        inline float getP(bool &hasParam) const {
+            return getFloatParam('P', hasParam);
+        }
+        //PWM rate or servo angle
         inline float getS(float def=NAN) const {
             return getFloatParam('S', def);
         }
@@ -170,6 +177,9 @@ class Command {
         }
         inline bool hasF() const {
             return hasParam('F');
+        }
+        inline bool hasP() const {
+            return hasParam('P');
         }
         inline bool hasS() const {
             return hasParam('S');

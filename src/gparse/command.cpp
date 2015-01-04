@@ -159,27 +159,19 @@ std::string Command::toGCode() const {
 }
 
 bool Command::hasParam(char label) const {
-    /*for (const std::string &p : this->pieces) {
-        if (p[0] == label) {
-            return true;
-        }
-    }
-    return false;*/
     //return arguments[upper(label)-'A'] != GPARSE_ARG_NOT_PRESENT; //BREAKS FOR NAN
     bool a = arguments[upper(label)-'A'] != GPARSE_ARG_NOT_PRESENT;
     bool b = (!std::isnan(GPARSE_ARG_NOT_PRESENT) || !std::isnan(arguments[upper(label)-'A']));
     return a && b;
 }
 
-/*float Command::getFloatParam(char label) const {
-    return arguments[upper(label)-'A'];
-}*/
+/* TODO: hasParam will always return false when GPARSE_ARG_NOT_PRESENT is NaN (a will be false).
+  We should instead just replace GPARSE_ARG_NOT_PRESENT with NaN and use std::isnan
+*/
 
 float Command::getFloatParam(char label, float def, bool &hasParam) const {
     hasParam = this->hasParam(label);
     return hasParam ? arguments[upper(label)-'A'] : def;
-    //std::string s = this->getStrParam(label, hasParam);
-    //return hasParam ? std::stof(s) : def;
 }
 
 }

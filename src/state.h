@@ -268,6 +268,7 @@ template <typename Drv> class State {
 template <typename Drv> State<Drv>::State(Drv &drv, FileSystem &fs, gparse::Com com, bool needPersistentCom)
     : _doShutdownAfterMoveCompletes(false),
     _doExitEventLoopAfterMoveCompletes(false), 
+    _doBufferMoves(true), 
     _positionMode(POS_ABSOLUTE), _extruderPosMode(POS_ABSOLUTE),  
     unitMode(UNIT_MM), 
     _destMm(0, 0, 0, 0),
@@ -673,6 +674,14 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float t = cmd.getS(hasS);
         if (hasS) {
             iodrv::IODriver::setBedTemp(ioDrivers, t);
+        }
+        reply(gparse::Response::Ok);
+    } else if(cmd.isM280()) {
+        //set servo angle. P=servo index, S=angle (in degrees, presumably)
+        int index = cmd.getP(-1);
+        if (index >= 0) {
+            float angleDeg = cmd.getS(0);
+            iodrv::IODriver::setServoAngleAtServoIndex(ioDrivers, index, angleDeg);
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isTxxx()) { //set tool number

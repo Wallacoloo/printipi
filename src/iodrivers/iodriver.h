@@ -73,10 +73,10 @@ class IODriver {
             assert(false && "IoDriver::getMeasuredTemperature() must be overriden by subclass."); 
             return mathutil::ABSOLUTE_ZERO_CELCIUS; //for when assertions are disabled.
         } 
-        //@angle the desired angle of the servo, in radians
-        inline void setServoAngle(float angle) {
+        //@angle the desired angle of the servo, in degrees
+        inline void setServoAngleDegrees(float angle) {
             (void)angle;
-            assert(false && "IoDriver::setServoAngle must be overriden by subclass.");
+            assert(false && "IoDriver::setServoAngleDegrees must be overriden by subclass.");
         }
         inline OutputEvent peekNextEvent() const {
             return OutputEvent();
@@ -100,6 +100,7 @@ class IODriver {
         template <typename TupleT> static CelciusType getBedTemp(TupleT &drivers);
         template <typename TupleT> static OutputEvent tuplePeekNextEvent(TupleT &drivers);
         template <typename TupleT> static void tupleConsumeNextEvent(TupleT &drivers);
+        template <typename TupleT> static void setServoAngleAtServoIndex(TupleT &drivers, int index, float angleDeg);
 };
 
 namespace {
@@ -199,6 +200,23 @@ namespace {
             }
         }
     };
+
+    //IODriver::setServoAngleAtServoIndex helper
+    struct IODriver__setServoAngleAtServoIndex {
+        //access servos by their SERVO index, not their index in the ioDrivers tuple.
+        //That is, servo #0 is the first servo in the tuple,
+        //  servo #1 is the second, and so on.
+        std::size_t numServosSeen;
+        IODriver__setServoAngleAtServoIndex() : numServosSeen(0) {}
+        template <typename T> void operator()(std::size_t index, T &driver, std::size_t desiredIndex, float angleDeg) {
+            (void)index; //unused
+            if (driver.isServo()) {
+                if (numServosSeen++ == desiredIndex) {
+                    driver.setServoAngleDegrees(angleDeg);
+                }
+            }
+        }
+    };
 }
 
 
@@ -247,7 +265,10 @@ template <typename TupleT> void IODriver::tupleConsumeNextEvent(TupleT &drivers)
     callOnAll(drivers, &consumer, peeker.index);
 }
 
-
+template <typename TupleT> void IODriver::setServoAngleAtServoIndex(TupleT &drivers, int index, float angleDeg) {
+    IODriver__setServoAngleAtServoIndex indexer;
+    callOnAll(drivers, &indexer, index, angleDeg);
+}
 
 }
 #endif

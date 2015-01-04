@@ -62,7 +62,7 @@ class Servo : public IODriver {
 		inline bool isServo() const {
 			return true;
 		}
-		inline void setServoAngle(float angle) {
+		inline void setServoAngleDegrees(float angle) {
 			highTime = getOnTime(angle);
 		}
 		inline OutputEvent peekNextEvent() const {

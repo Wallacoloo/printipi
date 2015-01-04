@@ -79,8 +79,9 @@ struct TestClass {
             auto sendCommand = [&](const std::string &cmd, const std::string &expect) {
                 INFO("Sending command: '" + cmd + "'");
                 inputFile << cmd << '\n';
-                INFO("It should be acknowledged with '" + expect + "'");
-                REQUIRE(readLine() == expect);
+                INFO("It should be acknowledged with something that begins with '" + expect + "'");
+                std::string got = readLine();
+                REQUIRE(got.substr(0, expect.length()) == expect);
             };
 
             //Verify that the position as reported by the motion planner is near (@x, @y, @z)
@@ -255,10 +256,20 @@ struct TestClass {
             	sendCommand("M106 S64", "ok");
             	//"then the machine shouldn't crash", and S64 should be interpreted as 64/255 duty cycle.
             }
+            WHEN("The M115 command is sent to get firmware info") {
+                sendCommand("M115", "ok");
+            }
             WHEN("The M117 command is sent") {
-            	//NOTE: failing; M117 cannot parse the string
             	sendCommand("M117 Hello, World!", "ok");
             	//"then the machine shouldn't crash"
+            }
+            WHEN("The M280 command is sent with servo index=0") {
+                sendCommand("M280 P0 S40.5", "ok");
+                //"then the machine shouldn't crash"
+            }
+            WHEN("The M280 command is sent with servo index=-1 (invalid)") {
+                sendCommand("M280 P-1 S40.5", "ok");
+                //"then the machine shouldn't crash"
             }
             //Teardown code:
             exitOnce();
