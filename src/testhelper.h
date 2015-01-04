@@ -135,6 +135,7 @@ template <typename MachineT> class TestHelper {
             INFO("Actual position: " + std::string(actualPos));
             REQUIRE(actualPos.xyz().distance(x, y, z) <= 4);
         }
+        //Compare two std::chrono::durations, of potentially different types.
         template <typename A, typename B> void requireTimesApproxEqual(const A &a, const B &b) {
             typedef typename std::common_type<A, B>::type Common;
             REQUIRE(Common(a).count() == Approx(Common(b).count()));

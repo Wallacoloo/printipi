@@ -69,11 +69,11 @@ struct ServoTester {
 				return std::tie(std::get<0>(ioDrivers));
 			};
 	    	auto helper = makeTestHelper(makeTestMachine(getIoDrivers));
-	    	
+
 	    	WHEN("Servo0 is set to 90 degrees") {
 	    		helper.sendCommand("M280 P0 S90.0", "ok");
 	    		THEN("Its highTime should be 2 us (25% interpolation of 1, 5)") {
-		    		REQUIRE(std::get<0>(ioDrivers).highTime == std::chrono::milliseconds(2));
+		    		helper.requireTimesApproxEqual(std::get<0>(ioDrivers).highTime, std::chrono::milliseconds(2));
 		    	}
 	    	}
 		}
