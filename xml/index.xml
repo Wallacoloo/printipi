@@ -6,84 +6,6 @@
   <namespace name="argparse" ref="argparse#argparse" />
   <namespace name="gparse" ref="gparse#gparse">
     <brief>null file descriptor</brief>
-    <namespace name="(anonymous::1)" ref="gparse::(anonymous::1)#gparse::(anonymous::1)">
-      <brief>internal functions - treat as private</brief>
-      <structtemplate name="__callOnAll" ref="gparse::(anonymous::1)::__callOnAll#gparse::(anonymous::1)::__callOnAll">
-        <brief>callOnAll helper functions:</brief>
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::TupleT" name="TupleT" />
-        <templatenontypeparameter default="std" id="gparse::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
-          <type name="std::size_t" />
-        </templatenontypeparameter>
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::Func" name="Func" />
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::Args" name="Args" />
-      </structtemplate>
-      <structtemplate name="__callOnAllReduce" ref="gparse::(anonymous::1)::__callOnAllReduce#gparse::(anonymous::1)::__callOnAllReduce">
-        <brief>tupleReduce helper functions:</brief>
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT" />
-        <templatenontypeparameter default="std" id="gparse::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
-          <type name="std::size_t" />
-        </templatenontypeparameter>
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAllReduce::Func" name="Func" />
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce" />
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault" />
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAllReduce::Args" name="Args" />
-      </structtemplate>
-      <structtemplate name="__callOnIndex" ref="gparse::(anonymous::1)::__callOnIndex#gparse::(anonymous::1)::__callOnIndex">
-        <brief>callOnIndex helper functions:</brief>
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnIndex::TupleT" name="TupleT" />
-        <templatenontypeparameter default="std" id="gparse::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
-          <type name="std::size_t" />
-        </templatenontypeparameter>
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnIndex::Func" name="Func" />
-        <templatetypeparameter id="gparse::(anonymous::1)::__callOnIndex::Args" name="Args" />
-      </structtemplate>
-      <structtemplate name="_AxisStepper__getNextTime" ref="gparse::(anonymous::1)::_AxisStepper__getNextTime#gparse::(anonymous::1)::_AxisStepper__getNextTime">
-        <brief>Helper classes for AxisStepper::getNextTime method</brief>
-        <templatetypeparameter id="gparse::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT" />
-        <templatenontypeparameter id="gparse::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
-          <type builtin="yes" name="int" />
-        </templatenontypeparameter>
-      </structtemplate>
-      <struct name="_AxisStepper__initAxisArcSteppers" ref="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers#gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers">
-        <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
-      </struct>
-      <struct name="_AxisStepper__initAxisSteppers" ref="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers#gparse::(anonymous::1)::_AxisStepper__initAxisSteppers">
-        <brief>Helper class for AxisStepper::initAxisSteppers</brief>
-      </struct>
-      <struct name="_AxisStepper__nextStep" ref="gparse::(anonymous::1)::_AxisStepper__nextStep#gparse::(anonymous::1)::_AxisStepper__nextStep">
-        <brief>Helper class for AxisStepper::nextStep method</brief>
-      </struct>
-      <struct name="IODriver__getBedTemp" ref="gparse::(anonymous::1)::IODriver__getBedTemp#gparse::(anonymous::1)::IODriver__getBedTemp">
-        <brief>IODriver::getBedTemp helper</brief>
-      </struct>
-      <struct name="IODriver__getHotendTargetTemp" ref="gparse::(anonymous::1)::IODriver__getHotendTargetTemp#gparse::(anonymous::1)::IODriver__getHotendTargetTemp">
-        <brief>IODriver::getHotendTargetTemp helper</brief>
-      </struct>
-      <struct name="IODriver__getHotendTemp" ref="gparse::(anonymous::1)::IODriver__getHotendTemp#gparse::(anonymous::1)::IODriver__getHotendTemp">
-        <brief>IODriver::getHotendTemp helper</brief>
-      </struct>
-      <struct name="IODriver__lockAllAxis" ref="gparse::(anonymous::1)::IODriver__lockAllAxis#gparse::(anonymous::1)::IODriver__lockAllAxis">
-        <brief>IODriver::lockAllAxis helper</brief>
-      </struct>
-      <struct name="IODriver__setBedTemp" ref="gparse::(anonymous::1)::IODriver__setBedTemp#gparse::(anonymous::1)::IODriver__setBedTemp">
-        <brief>IODriver::setBedTemp helper</brief>
-      </struct>
-      <struct name="IODriver__setHotendTemp" ref="gparse::(anonymous::1)::IODriver__setHotendTemp#gparse::(anonymous::1)::IODriver__setHotendTemp">
-        <brief>IODriver::setHotendTemp helper</brief>
-      </struct>
-      <struct name="IODriver__setServoAngleAtServoIndex" ref="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex#gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex">
-        <brief>IODriver::setServoAngleAtServoIndex helper</brief>
-      </struct>
-      <struct name="IODriver__tupleConsumeNextEvent" ref="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent#gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent">
-        <brief>IODriver::tupleConsumeNextEvent helper</brief>
-      </struct>
-      <struct name="IODriver__tuplePeekNextEvent" ref="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent#gparse::(anonymous::1)::IODriver__tuplePeekNextEvent">
-        <brief>IODriver::tuplePeekNextEvent helper</brief>
-      </struct>
-      <struct name="IODriver__unlockAllAxis" ref="gparse::(anonymous::1)::IODriver__unlockAllAxis#gparse::(anonymous::1)::IODriver__unlockAllAxis">
-        <brief>IODriver::unlockAllAxis helper</brief>
-      </struct>
-    </namespace>
     <class name="Com" ref="gparse::Com#gparse::Com" />
     <class name="Command" ref="gparse::Command#gparse::Command" />
     <class name="Response" ref="gparse::Response#gparse::Response" />
@@ -232,7 +154,86 @@
       <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />
     </namespace>
   </namespace>
-  <namespace name="tupleutil" ref="tupleutil#tupleutil" />
+  <namespace name="tupleutil" ref="tupleutil#tupleutil">
+    <namespace name="(anonymous::1)" ref="tupleutil::(anonymous::1)#tupleutil::(anonymous::1)">
+      <brief>internal functions - treat as private</brief>
+      <structtemplate name="__callOnAll" ref="tupleutil::(anonymous::1)::__callOnAll#tupleutil::(anonymous::1)::__callOnAll">
+        <brief>callOnAll helper functions:</brief>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::TupleT" name="TupleT" />
+        <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
+          <type name="std::size_t" />
+        </templatenontypeparameter>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::Func" name="Func" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::Args" name="Args" />
+      </structtemplate>
+      <structtemplate name="__callOnAllReduce" ref="tupleutil::(anonymous::1)::__callOnAllReduce#tupleutil::(anonymous::1)::__callOnAllReduce">
+        <brief>tupleReduce helper functions:</brief>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT" />
+        <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
+          <type name="std::size_t" />
+        </templatenontypeparameter>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Func" name="Func" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Args" name="Args" />
+      </structtemplate>
+      <structtemplate name="__callOnIndex" ref="tupleutil::(anonymous::1)::__callOnIndex#tupleutil::(anonymous::1)::__callOnIndex">
+        <brief>callOnIndex helper functions:</brief>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::TupleT" name="TupleT" />
+        <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
+          <type name="std::size_t" />
+        </templatenontypeparameter>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::Func" name="Func" />
+        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::Args" name="Args" />
+      </structtemplate>
+      <structtemplate name="_AxisStepper__getNextTime" ref="tupleutil::(anonymous::1)::_AxisStepper__getNextTime#tupleutil::(anonymous::1)::_AxisStepper__getNextTime">
+        <brief>Helper classes for AxisStepper::getNextTime method</brief>
+        <templatetypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT" />
+        <templatenontypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
+          <type builtin="yes" name="int" />
+        </templatenontypeparameter>
+      </structtemplate>
+      <struct name="_AxisStepper__initAxisArcSteppers" ref="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers#tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers">
+        <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
+      </struct>
+      <struct name="_AxisStepper__initAxisSteppers" ref="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers#tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers">
+        <brief>Helper class for AxisStepper::initAxisSteppers</brief>
+      </struct>
+      <struct name="_AxisStepper__nextStep" ref="tupleutil::(anonymous::1)::_AxisStepper__nextStep#tupleutil::(anonymous::1)::_AxisStepper__nextStep">
+        <brief>Helper class for AxisStepper::nextStep method</brief>
+      </struct>
+      <struct name="IODriver__getBedTemp" ref="tupleutil::(anonymous::1)::IODriver__getBedTemp#tupleutil::(anonymous::1)::IODriver__getBedTemp">
+        <brief>IODriver::getBedTemp helper</brief>
+      </struct>
+      <struct name="IODriver__getHotendTargetTemp" ref="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp#tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp">
+        <brief>IODriver::getHotendTargetTemp helper</brief>
+      </struct>
+      <struct name="IODriver__getHotendTemp" ref="tupleutil::(anonymous::1)::IODriver__getHotendTemp#tupleutil::(anonymous::1)::IODriver__getHotendTemp">
+        <brief>IODriver::getHotendTemp helper</brief>
+      </struct>
+      <struct name="IODriver__lockAllAxis" ref="tupleutil::(anonymous::1)::IODriver__lockAllAxis#tupleutil::(anonymous::1)::IODriver__lockAllAxis">
+        <brief>IODriver::lockAllAxis helper</brief>
+      </struct>
+      <struct name="IODriver__setBedTemp" ref="tupleutil::(anonymous::1)::IODriver__setBedTemp#tupleutil::(anonymous::1)::IODriver__setBedTemp">
+        <brief>IODriver::setBedTemp helper</brief>
+      </struct>
+      <struct name="IODriver__setHotendTemp" ref="tupleutil::(anonymous::1)::IODriver__setHotendTemp#tupleutil::(anonymous::1)::IODriver__setHotendTemp">
+        <brief>IODriver::setHotendTemp helper</brief>
+      </struct>
+      <struct name="IODriver__setServoAngleAtServoIndex" ref="tupleutil::(anonymous::1)::IODriver__setServoAngleAtServoIndex#tupleutil::(anonymous::1)::IODriver__setServoAngleAtServoIndex">
+        <brief>IODriver::setServoAngleAtServoIndex helper</brief>
+      </struct>
+      <struct name="IODriver__tupleConsumeNextEvent" ref="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent#tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent">
+        <brief>IODriver::tupleConsumeNextEvent helper</brief>
+      </struct>
+      <struct name="IODriver__tuplePeekNextEvent" ref="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent#tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent">
+        <brief>IODriver::tuplePeekNextEvent helper</brief>
+      </struct>
+      <struct name="IODriver__unlockAllAxis" ref="tupleutil::(anonymous::1)::IODriver__unlockAllAxis#tupleutil::(anonymous::1)::IODriver__unlockAllAxis">
+        <brief>IODriver::unlockAllAxis helper</brief>
+      </struct>
+    </namespace>
+  </namespace>
   <templatetypeparameter id="Drv" name="Drv" />
   <class name="FileSystem" ref="FileSystem#FileSystem" />
   <class name="IntervalTimer" ref="IntervalTimer#IntervalTimer" />

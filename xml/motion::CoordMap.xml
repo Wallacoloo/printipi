@@ -13,8 +13,8 @@ Note: the term "axis coordinates" refers to an individual motor's microstep inde
   For example, if your Z motor has 1000 steps/mm and is 200 mm tall, then an axis coordinate of 0 translates to a cartesian Z coordinate of 0mm,
     and an axis coordinate of 200000 translates to a cartesian Z coordinate of 200mm.
 </doc>
-  <subclass access="public" name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap" />
   <subclass access="public" name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap" />
+  <subclass access="public" name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap" />
   <methodtemplate id="motion::CoordMap::executeHomeRoutine" name="executeHomeRoutine">
     <brief>Home the machine by sending commands to @interface</brief>
     <return>

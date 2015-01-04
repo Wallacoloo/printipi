@@ -4,13 +4,14 @@
   <doc>Servos are controlled by periodically sending a pulse of a specified length.
 The length of that pulse determines the position at which the servo should be placed, and the servo will attempt to stay at that location until the next command.
 Typical pulse length varies from 1ms to 2ms for the full control range,
-while the pulses must occur between 40-200 times per second.
-
-Not yet ready for use; see discussion @ https://github.com/Wallacoloo/printipi/issues/62</doc>
+while the pulses must occur between 40-200 times per second.</doc>
   <base access="public">
     <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
   </base>
   <constructor id="iodrv::Servo::Servo" name="Servo">
+    <brief>Instantiate a Servo controlled by PWM on pin @pin</brief>
+    <doc>A Servo operates using pwm of a fixed frequency, and adjusting only the duty cycle to control angle.
+</doc>
     <argument id="iodrv::Servo::Servo::pin" name="pin">
       <type name="IoPin &amp;&amp;" />
     </argument>
@@ -28,6 +29,8 @@ Not yet ready for use; see discussion @ https://github.com/Wallacoloo/printipi/i
     </argument>
   </constructor>
   <method id="iodrv::Servo::consumeNextEvent" name="consumeNextEvent" override="yes">
+    <brief>Used by State for event scheduling.</brief>
+    <doc>When the State calls this, it is an acknowledgement that the last event returned from peekNextEvent() has been scheduled.</doc>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -40,6 +43,8 @@ Not yet ready for use; see discussion @ https://github.com/Wallacoloo/printipi/i
     <override name="IODriver::isServo" ref="iodrv::IODriver#iodrv::IODriver::isServo" />
   </method>
   <method id="iodrv::Servo::peekNextEvent" name="peekNextEvent" override="yes">
+    <brief>Used by State for event scheduling.</brief>
+    <doc>Queries information about the next time this Servo needs to toggle an IoPin</doc>
     <return>
       <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
     </return>

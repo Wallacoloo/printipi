@@ -7,6 +7,22 @@ This  provides some useful conversion (mm to inches, celcius to kelvin, etc), ma
     <brief>It is impossible for any temperature to be &lt; this value, in Celcius</brief>
     <type builtin="yes" name="float" qualifier=" const" />
   </variable>
+  <functiontemplate id="mathutil::clamp" name="clamp">
+    <brief>force @value to be between @vMin and @vMax</brief>
+    <return>
+      <type name="T" />
+    </return>
+    <argument id="mathutil::clamp::value" name="value">
+      <type name="T" />
+    </argument>
+    <argument id="mathutil::clamp::vMin" name="vMin">
+      <type name="T" />
+    </argument>
+    <argument id="mathutil::clamp::vMax" name="vMax">
+      <type name="T" />
+    </argument>
+    <templatetypeparameter id="mathutil::clamp::T" name="T" />
+  </functiontemplate>
   <functiontemplate id="mathutil::CtoK" name="CtoK">
     <brief>Convert from Celcius temperature to Kelvin</brief>
     <return>
