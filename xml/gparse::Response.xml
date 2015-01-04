@@ -32,24 +32,29 @@ in which std::pair::first is the key, and std::pair::second is the value.</doc>
     </argument>
     <templatetypeparameter id="gparse::Response::Response::Container" name="Container" />
   </methodtemplate>
-  <constructor id="gparse::Response::Response" name="Response">
-    <brief>Construct a response from a code, followed by an optional extra string (implicitly joined by a space)</brief>
-    <argument id="gparse::Response::Response::code" name="code">
-      <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
-    </argument>
-    <argument id="gparse::Response::Response::rest" name="rest">
-      <type name="std::string" qualifier=" const &amp;" />
-    </argument>
-  </constructor>
-  <constructor id="gparse::Response::Response" name="Response">
+  <methodtemplate id="gparse::Response::Response" name="Response">
     <brief>Construct a response from a code and a set of Key:Value pairs (joined by a space)</brief>
-    <doc>Allow construction, using an std::initializer_list of std::pair&amp;lt;std::string, std::string&amp;gt; for @pairs.
-Example: Response(ResponseOk, {make_pair("T", "65"), make_pair("B", "20")})</doc>
+    <doc>Allow construction, using an std::initializer_list of std::pair&amp;lt;std::string, std::string&amp;gt; (or const char*, etc) for @pairs.
+Example: Response(ResponseOk, {make_pair("T", "65"), make_pair("B", "20")})
+This specialization is only needed in gcc-4.6, where automatic deduction of a std::initializer_list as Container would cause a warning in the other version</doc>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
     <argument id="gparse::Response::Response::code" name="code">
       <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
     </argument>
     <argument id="gparse::Response::Response::pairs" name="pairs">
-      <type name="std::initializer_list&lt;std::pair&lt;std::basic_string&lt;char&gt;, std::basic_string&lt;char&gt; &gt; &gt;" />
+      <type name="std::initializer_list&lt;_E&gt;" />
+    </argument>
+    <argument id="gparse::Response::Response::rest" name="rest">
+      <type name="std::string" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="gparse::Response::Response::T" name="T" />
+  </methodtemplate>
+  <constructor id="gparse::Response::Response" name="Response">
+    <brief>Construct a response from a code, followed by an optional extra string (implicitly joined by a space)</brief>
+    <argument id="gparse::Response::Response::code" name="code">
+      <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
     </argument>
     <argument id="gparse::Response::Response::rest" name="rest">
       <type name="std::string" qualifier=" const &amp;" />

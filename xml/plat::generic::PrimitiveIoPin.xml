@@ -23,7 +23,7 @@
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="plat::generic::PrimitiveIoPin::digitalWrite::" name="">
+    <argument id="plat::generic::PrimitiveIoPin::digitalWrite::level" name="level">
       <type name="IoLevel" ref="index#IoLevel" />
     </argument>
   </method>
@@ -49,7 +49,7 @@
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="plat::generic::PrimitiveIoPin::makeDigitalOutput::" name="">
+    <argument id="plat::generic::PrimitiveIoPin::makeDigitalOutput::level" name="level">
       <type name="IoLevel" ref="index#IoLevel" />
     </argument>
   </method>

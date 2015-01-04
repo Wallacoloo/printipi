@@ -149,7 +149,7 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="47" />
       </undocumented>
     </type>
-    <type documented="9" name="methodtemplate" undocumented="48">
+    <type documented="10" name="methodtemplate" undocumented="48">
       <undocumented id="IntervalTimer::clockCmp" name="clockCmp">
         <location column="9" file="common/intervaltimer.h" line="47" />
       </undocumented>
@@ -322,7 +322,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="266" />
       </undocumented>
     </type>
-    <type documented="2" name="templatetypeparameter" undocumented="147">
+    <type documented="2" name="templatetypeparameter" undocumented="148">
       <undocumented id="Drv" name="Drv">
         <location column="11" file="state.h" line="463" />
       </undocumented>
@@ -473,8 +473,11 @@ return values.
       <undocumented id="gparse::Response::Response::Container" name="Container">
         <location column="19" file="gparse/response.h" line="62" />
       </undocumented>
+      <undocumented id="gparse::Response::Response::T" name="T">
+        <location column="19" file="gparse/response.h" line="69" />
+      </undocumented>
       <undocumented id="gparse::Response::joinPairsAndStr::Container" name="Container">
-        <location column="19" file="gparse/response.h" line="78" />
+        <location column="19" file="gparse/response.h" line="79" />
       </undocumented>
       <undocumented id="iodrv::Fan::setFanDutyCycle::CallbackInterface" name="CallbackInterface">
         <location column="19" file="iodrivers/fan.h" line="48" />
@@ -1522,10 +1525,10 @@ return values.
         <location column="1" file="gparse/command.cpp" line="145" />
       </undocumented>
       <undocumented id="gparse::Response::isNull" name="isNull">
-        <location column="9" file="gparse/response.h" line="74" />
+        <location column="9" file="gparse/response.h" line="75" />
       </undocumented>
       <undocumented id="gparse::Response::toString" name="toString">
-        <location column="9" file="gparse/response.h" line="71" />
+        <location column="9" file="gparse/response.h" line="72" />
       </undocumented>
       <undocumented id="iodrv::A4988::getEventOutputSequence" name="getEventOutputSequence">
         <location column="9" file="iodrivers/a4988.h" line="77" />
@@ -1611,10 +1614,10 @@ return values.
         <location column="9" file="iodrivers/rcthermistor.h" line="95" />
       </undocumented>
       <undocumented id="iodrv::Servo::isServo" name="isServo">
-        <location column="3" file="iodrivers/servo.h" line="71" />
+        <location column="3" file="iodrivers/servo.h" line="72" />
       </undocumented>
       <undocumented id="iodrv::Servo::setServoAngleDegrees" name="setServoAngleDegrees">
-        <location column="3" file="iodrivers/servo.h" line="74" />
+        <location column="3" file="iodrivers/servo.h" line="75" />
         <location column="1" file="iodrivers/servo.cpp" line="28" />
       </undocumented>
       <undocumented id="iodrv::TempControl::getMeasuredTemperature" name="getMeasuredTemperature">
@@ -1964,7 +1967,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="52" />
       </undocumented>
     </type>
-    <type documented="16" name="constructor" undocumented="42">
+    <type documented="15" name="constructor" undocumented="42">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="32" />
         <location column="1" file="filesystem.cpp" line="26" />
@@ -2519,7 +2522,7 @@ return values.
       <undocumented name="rest" />
     </function>
     <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="68" />
+      <location column="9" file="gparse/response.h" line="69" />
       <undocumented name="pairs" />
       <undocumented name="code" />
       <undocumented name="rest" />
@@ -2555,12 +2558,12 @@ return values.
       <undocumented-return />
     </function>
     <function id="plat::generic::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/generic/primitiveiopin.h" line="58" />
+      <location column="6" file="platforms/generic/primitiveiopin.h" line="59" />
       <undocumented-return />
     </function>
     <function id="plat::generic::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-      <location column="6" file="platforms/generic/primitiveiopin.h" line="63" />
-      <undocumented name="" />
+      <location column="6" file="platforms/generic/primitiveiopin.h" line="64" />
+      <undocumented name="level" />
     </function>
     <function id="iodrv::IoPin::IoPin" name="IoPin">
       <location column="9" file="iodrivers/iopin.h" line="71" />
@@ -3025,7 +3028,7 @@ return values.
       <undocumented name="pin" />
     </function>
     <function id="iodrv::Servo::peekNextEvent" name="peekNextEvent">
-      <location column="3" file="iodrivers/servo.h" line="77" />
+      <location column="3" file="iodrivers/servo.h" line="78" />
       <location column="1" file="iodrivers/servo.cpp" line="32" />
       <undocumented-return />
     </function>
@@ -3104,12 +3107,12 @@ return values.
         <ref name="std::string, std::string" />
       </doctype>
     </methodtemplate>
-    <constructor id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="68" />
+    <methodtemplate id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="69" />
       <doctype name="doc">
         <ref name="std::string, std::string" />
       </doctype>
-    </constructor>
+    </methodtemplate>
     <method id="Vector3::tuple" name="tuple">
       <location column="3" file="common/vector3.h" line="45" />
       <doctype name="brief">
