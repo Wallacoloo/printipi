@@ -47,7 +47,8 @@ class PrimitiveIoPin {
 		//do-nothing implementations for basic functions
 		//Note: the return type of id() is platform-specific, though it must never be void.
 		inline int id() const { return -1; }
-		inline void makeDigitalOutput(IoLevel) {
+		inline void makeDigitalOutput(IoLevel level) {
+			(void)level;
 			LOGW_ONCE("Attempt to makeDigitalOutput() the generic PrimitiveIoPin interface\n");
 		}
 	    //configure the pin to be an input
@@ -60,7 +61,8 @@ class PrimitiveIoPin {
 	    	return IoLow; 
 	    }
 	    //Write a digital value to the pin. Note: must first call makeDigitalOutput.
-	    inline void digitalWrite(IoLevel) {
+	    inline void digitalWrite(IoLevel level) {
+	    	(void)level;
 	    	LOGW_ONCE("Attempt to digitalWrite() the generic PrimitiveIoPin interface\n");
 	    }
 };
