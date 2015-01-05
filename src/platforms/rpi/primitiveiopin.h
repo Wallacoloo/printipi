@@ -57,8 +57,11 @@ class PrimitiveIoPin {
 		inline PrimitiveIoPin(mitpi::GpioPin pinIdx, mitpi::GpioPull pullUpDown=mitpi::GPIOPULL_NONE)
 		  : pinIdx(pinIdx) {
 		  	assert((pinIdx == mitpi::NULL_GPIO_PIN || pinIdx <= MAX_RPI_PIN_ID) && "Make sure to appropriately set MAX_RPI_PIN_ID (see compileflags.h) or else some pins might not behave correctly");
-			mitpi::init();
-			mitpi::setPinPull(pinIdx, pullUpDown);
+			if (pinIdx != mitpi::NULL_GPIO_PIN) {
+				mitpi::init();
+				//we CANNOT set the pin pull of a null gpio pin
+				mitpi::setPinPull(pinIdx, pullUpDown);
+			}
 		}
 		//@return the logical index of the pin (for use with other platform-specific functions)
 		inline mitpi::GpioPin id() const {
