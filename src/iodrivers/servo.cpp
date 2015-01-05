@@ -58,10 +58,20 @@ struct ServoTester {
 		GIVEN("A TestHelper & IoDrivers tuple") {
 			//create the ioDrivers
 	    	auto ioDrivers = std::make_tuple(
-	    	    iodrv::Servo(iodrv::IoPin::null(), 
-				  			 std::chrono::milliseconds(100), 
-				  			 std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(5))
-			));
+	    	    iodrv::Servo(iodrv::IoPin(iodrv::NO_INVERSIONS, iodrv::IoPin::null().primitiveIoPin()), 
+				  			 std::chrono::milliseconds(100), //cycle length
+				  			 std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(5)), //min/max duty cycle
+				  			 std::make_pair(0, 360) //min/max angle
+				),
+				iodrv::IODriver(),
+				iodrv::IODriver(),
+				iodrv::Servo(iodrv::IoPin(iodrv::INVERT_WRITES, iodrv::IoPin::null().primitiveIoPin()), 
+				  			 std::chrono::milliseconds(100), //cycle length
+				  			 std::make_pair(std::chrono::milliseconds(2), std::chrono::milliseconds(4)), //min/max duty cycle
+				  			 std::make_pair(90, 180) //min/max angle
+				),
+				iodrv::IODriver()
+	    	);
 			//only give the State references to the ioDrivers so that we can track changes without private member access
 			auto getIoDrivers = [&]() {
 				return std::tie(std::get<0>(ioDrivers));
