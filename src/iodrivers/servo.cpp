@@ -76,7 +76,11 @@ struct ServoTester {
 	    	);
 			//only give the State references to the ioDrivers so that we can track changes without private member access
 			auto getIoDrivers = [&]() {
-				return std::tie(std::get<0>(ioDrivers));
+				return std::tie(std::get<0>(ioDrivers), 
+								std::get<1>(ioDrivers), 
+								std::get<2>(ioDrivers), 
+								std::get<3>(ioDrivers)
+								std::get<4>(ioDrivers));
 			};
 	    	auto helper = makeTestHelper(makeTestMachine(getIoDrivers));
 
