@@ -61,14 +61,16 @@ struct ServoTester {
 	    	    iodrv::Servo(iodrv::IoPin(iodrv::NO_INVERSIONS, iodrv::IoPin::null().primitiveIoPin()), 
 				  			 std::chrono::milliseconds(100), //cycle length
 				  			 std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(5)), //min/max duty cycle
-				  			 std::make_pair(0, 360) //min/max angle
+				  			 std::make_pair(0, 360), //min/max angle
+				  			 0 //default angle
 				),
 				iodrv::IODriver(),
 				iodrv::IODriver(),
 				iodrv::Servo(iodrv::IoPin(iodrv::INVERT_WRITES, iodrv::IoPin::null().primitiveIoPin()), 
 				  			 std::chrono::milliseconds(100), //cycle length
-				  			 std::make_pair(std::chrono::milliseconds(2), std::chrono::milliseconds(4)), //min/max duty cycle
-				  			 std::make_pair(90, 180) //min/max angle
+				  			 std::make_pair(std::chrono::milliseconds(2), std::chrono::milliseconds(3)), //min/max duty cycle
+				  			 std::make_pair(90, 180), //min/max angle
+				  			 180 //default angle
 				),
 				iodrv::IODriver()
 	    	);
@@ -80,9 +82,17 @@ struct ServoTester {
 
 	    	WHEN("Servo0 is set to 90 degrees") {
 	    		helper.sendCommand("M280 P0 S90.0", "ok");
-	    		THEN("Its highTime should be 2 us (25% interpolation of 1, 5)") {
+	    		THEN("Its highTime should be 2 ms (25% interpolation of 1, 5) and other servos should not have been affected") {
 		    		helper.requireTimesApproxEqual(std::get<0>(ioDrivers).highTime, std::chrono::milliseconds(2));
+		    		helper.requireTimesApproxEqual(std::get<3>(ioDrivers).highTime, std::chrono::milliseconds(3));
 		    	}
+	    	}
+	    	WHEN("Servo1 is set to 135 degrees") {
+	    		helper.sendCommand("M280 P1 S135", "ok");
+	    		THEN("Its highTime should be 2.5 ms (50% interpolation of 2, 3) and other servos should not have been affected") {
+	    			helper.requireTimesApproxEqual(std::get<0>(ioDrivers).highTime, std::chrono::milliseconds(1));
+	    			helper.requireTimesApproxEqual(std::get<3>(ioDrivers).highTime, std::chrono::microseconds(2500));
+	    		}
 	    	}
 		}
 	}
