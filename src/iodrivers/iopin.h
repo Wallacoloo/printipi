@@ -44,6 +44,12 @@ enum DefaultIoState {
     IO_DEFAULT_HIGH
 };
 
+enum IoPinMode {
+    IOPIN_MODE_UNSPECIFIED,
+    IOPIN_MODE_INPUT,
+    IOPIN_MODE_OUTPUT,
+};
+
 
 /*
  * IoPin defines the interface for a GPIO pin, as well as default implementations of each function in case they aren't supported by the actual driver. 
@@ -54,9 +60,14 @@ class IoPin {
     bool _invertReads;
     bool _invertWrites;
     DefaultIoState _defaultState;
+    //if compiling in debug mode, we should force that all users of IoPin correctly set it to output mode before writing to it.
+    #ifndef NDEBUG
+        IoPinMode _currentMode;
+    #endif
 
     static std::set<IoPin*> livingPins;
-
+    //called internally to register an exit handler that safely deactivates all IoPins upon program termination.
+    static void registerExitHandler();
     public:
         //forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly
         //null() cannot be implemented as a function, as it would necessitate a copy, which is prohibited
@@ -64,20 +75,24 @@ class IoPin {
 
         //set all pins to their (safe) default output:
         static void deactivateAll();
-        static void registerExitHandler();
 
         //prevent copy operations to make pin lifetime-tracking easier.
         //  otherwise, we end up with a pin resetting itself everytime its copied
         IoPin(const IoPin &other) = delete;
         IoPin& operator=(const IoPin &other) = delete;
-        //allow the move constructor & move assignment:
+        //allow the move constructor
         IoPin(IoPin &&other);
+        //allow move assignment
         IoPin& operator=(IoPin &&other);
 
+        //Create an IoPin given its inversions, and forward the remaining arguments to PrimitiveIoPin
         template <typename ...Args> IoPin(IoPinInversions inversions, Args... args)
           : _pin(args...),  
           _invertReads((inversions & INVERT_READS) != 0), _invertWrites((inversions & INVERT_WRITES) != 0), 
           _defaultState(IO_DEFAULT_NONE) {
+            #ifndef NDEBUG
+                _currentMode = IOPIN_MODE_UNSPECIFIED;
+            #endif
             //We need to tell the scheduler to deactivate all pins at shutdown, but only once:
             //Note: this is done in a separate, non-templated function to avoid a bug in gcc-4.7 with the -flto flag
             //Note: only registerExitHandler if this pin is NOT null,
@@ -91,26 +106,29 @@ class IoPin {
         ~IoPin();
 
         void setDefaultState(DefaultIoState state);
-
+        //@return true if the underlying PrimitiveIoPin is null (either IoPin was construction via IoPin::null(), or IoPin(..., PrimitiveIoPin::null()))
         bool isNull() const;
+        //Convert a write level such that IoPin.digitalWrite(lev) is the same as IoPin.primitiveIoPin().digitalWrite(<translated level>)
+        //  where <translated level> is the value returned by this function
         IoLevel translateWriteToPrimitive(IoLevel lev) const;
         float translateDutyCycleToPrimitive(float pwm) const;
         const PrimitiveIoPin& primitiveIoPin() const;
-        //wrapper functions that take the burden of inversions, etc off the platform-specific drivers:
+        //set the pin as a digital output, and give it the specified state.
+        //Doing these two actions together allow us to prevent the pin from ever being in an undefined state.
         void makeDigitalOutput(IoLevel lev);
+        //Configure the pin as an input
         void makeDigitalInput();
+        //Read a binary logic level from the pin. MUST first call makeDigitalInput() to put the pin in input mode.
         IoLevel digitalRead() const;
+        //Write a binary logic level to the pin (IoHigh or IoLow). MUST first call makeDigitalOutput() to put the pin in output mode.
         void digitalWrite(IoLevel lev);
+        //put the pin into its default state, as set by setDefaultState(...).
         void setToDefault();
 };
 
 class IoPin::null : public IoPin {
-    static null _null;
     public:
         inline null() : IoPin(NO_INVERSIONS, PrimitiveIoPin::null()) {}
-        inline static const null& ref() {
-            return _null;
-        }
 };
 
 }

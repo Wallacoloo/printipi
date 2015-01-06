@@ -23,6 +23,8 @@
 
 #include "iopin.h"
 
+#include <cassert>
+
 #include "schedulerbase.h" //for SchedulerBase::registerExitHandler
 #include "common/logging.h"
 //for the testsuite
@@ -31,7 +33,6 @@
 namespace iodrv {
 
 std::set<IoPin*> IoPin::livingPins; //allocate storage for static variables.
-IoPin::null IoPin::null::_null;
 
 void IoPin::deactivateAll() {
     LOG("IoPin::deactivateAll()\n");
@@ -60,8 +61,11 @@ IoPin& IoPin::operator=(IoPin &&other) {
 	_invertReads = other._invertReads;
     _invertWrites = other._invertWrites;
     _defaultState = other._defaultState;
+    #ifndef NDEBUG
+        _currentMode = other._currentMode;
+    #endif
 	_pin = other._pin;
-	other._pin = IoPin::null::ref()._pin;
+	other._pin = IoPin::null()._pin; //PrimitiveIoPin::null()
 	livingPins.insert(this);
     livingPins.erase(&other);
     return *this;
@@ -84,19 +88,31 @@ const PrimitiveIoPin& IoPin::primitiveIoPin() const {
     return _pin; 
 }
 //wrapper functions that take the burden of inversions, etc off the platform-specific drivers:
+
 void IoPin::makeDigitalOutput(IoLevel lev) {
-    //set the pin as a digital output, and give it the specified state.
-    //Doing these two actions together allow us to prevent the pin from ever being in an undefined state.
+    #ifndef NDEBUG
+        _currentMode = IOPIN_MODE_OUTPUT;
+    #endif
+    //relay the call to the real pin, performing any inversions necessary
     _pin.makeDigitalOutput(translateWriteToPrimitive(lev));
 }
 void IoPin::makeDigitalInput() {
+    #ifndef NDEBUG
+        _currentMode = IOPIN_MODE_INPUT;
+    #endif
     _pin.makeDigitalInput();
 }
 IoLevel IoPin::digitalRead() const {
+    #ifndef NDEBUG
+        assert(_currentMode == IOPIN_MODE_INPUT);
+    #endif
     //relay the call to the real pin, performing any inversions necessary
     return _invertReads ? !_pin.digitalRead() : _pin.digitalRead();
 }
 void IoPin::digitalWrite(IoLevel lev) {
+    #ifndef NDEBUG
+        assert(_currentMode == IOPIN_MODE_OUTPUT);
+    #endif
     //relay the call to the real pin, performing any inversions necessary
     _pin.digitalWrite(translateWriteToPrimitive(lev));
 }
