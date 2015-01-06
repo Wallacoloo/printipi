@@ -660,7 +660,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         //get firmware info
         reply(gparse::Response(gparse::ResponseOk, {
             std::make_pair("FIRMWARE_NAME", "printipi"),
-            std::make_pair("FIRMWARE_URL", "githum.com/Wallacoloo/printipi")
+            std::make_pair("FIRMWARE_URL", "github.com/Wallacoloo/printipi")
         }));
     } else if (cmd.isM116()) { //Wait for all heaters (and slow moving variables) to reach target
         _isWaitingForHotend = true;
