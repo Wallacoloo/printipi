@@ -880,7 +880,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="109" name="method" undocumented="335">
+    <type documented="114" name="method" undocumented="330">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="57" />
       </undocumented>
@@ -908,21 +908,6 @@ return values.
       </undocumented>
       <undocumented id="NoFilter::feed" name="feed">
         <location column="5" file="common/filters/nofilter.h" line="32" />
-      </undocumented>
-      <undocumented id="OutputEvent::isNull" name="isNull">
-        <location column="9" file="outputevent.h" line="59" />
-      </undocumented>
-      <undocumented id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
-        <location column="9" file="outputevent.h" line="50" />
-      </undocumented>
-      <undocumented id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
-        <location column="9" file="outputevent.h" line="53" />
-      </undocumented>
-      <undocumented id="OutputEvent::state" name="state">
-        <location column="9" file="outputevent.h" line="56" />
-      </undocumented>
-      <undocumented id="OutputEvent::time" name="time">
-        <location column="9" file="outputevent.h" line="47" />
       </undocumented>
       <undocumented id="Scheduler::eventLoop" name="eventLoop">
         <location column="9" file="scheduler.h" line="68" />
@@ -1683,10 +1668,10 @@ return values.
         <location column="9" file="iodrivers/rcthermistor.h" line="95" />
       </undocumented>
       <undocumented id="iodrv::Servo::isServo" name="isServo">
-        <location column="3" file="iodrivers/servo.h" line="73" />
+        <location column="3" file="iodrivers/servo.h" line="78" />
       </undocumented>
       <undocumented id="iodrv::Servo::setServoAngleDegrees" name="setServoAngleDegrees">
-        <location column="3" file="iodrivers/servo.h" line="76" />
+        <location column="3" file="iodrivers/servo.h" line="81" />
         <location column="1" file="iodrivers/servo.cpp" line="29" />
       </undocumented>
       <undocumented id="iodrv::TempControl::getMeasuredTemperature" name="getMeasuredTemperature">
@@ -2039,7 +2024,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="52" />
       </undocumented>
     </type>
-    <type documented="16" name="constructor" undocumented="44">
+    <type documented="18" name="constructor" undocumented="42">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="32" />
         <location column="1" file="filesystem.cpp" line="26" />
@@ -2061,12 +2046,6 @@ return values.
       </undocumented>
       <undocumented id="OptionalArg::OptionalArg&lt;T&gt;" name="OptionalArg&lt;T&gt;">
         <location column="3" file="common/optionalarg.h" line="39" />
-      </undocumented>
-      <undocumented id="OutputEvent::OutputEvent" name="OutputEvent">
-        <location column="9" file="outputevent.h" line="41" />
-      </undocumented>
-      <undocumented id="OutputEvent::OutputEvent" name="OutputEvent">
-        <location column="9" file="outputevent.h" line="44" />
       </undocumented>
       <undocumented id="PID::PID" name="PID">
         <location column="9" file="pid.h" line="46" />
@@ -2660,6 +2639,30 @@ return values.
       <location column="1" file="iodrivers/iopin.cpp" line="87" />
       <undocumented name="lev" />
     </function>
+    <function id="OutputEvent::OutputEvent" name="OutputEvent">
+      <location column="9" file="outputevent.h" line="49" />
+      <undocumented name="pin" />
+    </function>
+    <function id="OutputEvent::time" name="time">
+      <location column="9" file="outputevent.h" line="53" />
+      <undocumented-return />
+    </function>
+    <function id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
+      <location column="9" file="outputevent.h" line="57" />
+      <undocumented-return />
+    </function>
+    <function id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
+      <location column="9" file="outputevent.h" line="61" />
+      <undocumented-return />
+    </function>
+    <function id="OutputEvent::state" name="state">
+      <location column="9" file="outputevent.h" line="68" />
+      <undocumented-return />
+    </function>
+    <function id="OutputEvent::isNull" name="isNull">
+      <location column="9" file="outputevent.h" line="72" />
+      <undocumented-return />
+    </function>
     <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
       <location column="9" file="schedulerbase.h" line="61" />
       <location column="1" file="schedulerbase.cpp" line="79" />
@@ -3146,7 +3149,7 @@ return values.
       <undocumented name="pin" />
     </function>
     <function id="iodrv::Servo::peekNextEvent" name="peekNextEvent">
-      <location column="3" file="iodrivers/servo.h" line="79" />
+      <location column="3" file="iodrivers/servo.h" line="84" />
       <location column="1" file="iodrivers/servo.cpp" line="33" />
       <undocumented-return />
     </function>
