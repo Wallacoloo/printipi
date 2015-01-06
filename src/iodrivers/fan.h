@@ -39,12 +39,19 @@ class Fan : public IODriver {
     IoPin pin;
     float period;
     public:
+        //@pin the IoPin that powers the fan.
+        //  In most cases, the fan should NOT be directly powered from the microcontroller. 
+        //  It should either be behind a transistor whose input is connected to @pin,
+        //  or (if its a 3 wire fan), the fan should be powered from the power rail & the control signal (3rd wire) should be connected to @pin
+        //@defaultState the state to place this pin in upon shutdown
+        //@period the desired cycle length (in seconds) to use for PWM control. Most users will be happy keeping this at the default, 0.
+        //  This is useful if using a transistor that cannot switch fast (like a relay).
         inline Fan(IoPin &&pin, DefaultIoState defaultState=IO_DEFAULT_NONE, float period=0) : IODriver(), pin(std::move(pin)), period(period) {
             this->pin.setDefaultState(defaultState);
             this->pin.makeDigitalOutput(IoLow);
         }
         inline bool isFan() const { return true; }
-        
+        //called by State upon receiving an M106 gcode
         template <typename CallbackInterface> inline void setFanDutyCycle(const CallbackInterface &interface, float dutyCycle) {
             (void)interface;
             (void)dutyCycle;
