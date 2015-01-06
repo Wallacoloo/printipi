@@ -66,9 +66,9 @@
          - SERVO1 through SERVO4 (pg 6), 
          - AUX3 - SPI (pg 6), 
          - ENDSTOPS (pg 7) - acts as a pullup, can be disabled by removing JP801
-		     Endstop outputs are sent to an IO buffer chip, 4050_RMC, with Vlogic power supply. So likely still 3.3V compatible, 
-		       so long as you avoid the unbuffered P802 (CONN_6X2) interface
-		 - P801 - "CONN_6" (pg 7)
+         Endstop outputs are sent to an IO buffer chip, 4050_RMC (74HC4050), with Vlogic power supply. So likely still 3.3V compatible, 
+           so long as you avoid the unbuffered P802 (CONN_6X2) interface
+     - P801 - "CONN_6" (pg 7)
  *     There is a jumper - JP101 - to choose 3.3V or 5V logic levels. The note says: "VSEL - Select logic voltage. 1-2 = Autoselect by IOREF, 2-3 = 5V"
  *       Also a note: "On R3 compatible Arduinos, IOREF will supply 3.3V (DUE) or 5V (MEGA). If IOREF is not provided (non-R3) then it must be a 5V Arduino so set VSEL = 5V"
  *     There is also jumper JP201, "5V_SEL" that connects DUE_5V to FD_5V. FD_5V is also permanently connected to P219, "EXT_5V". This suggests that one can either use an external 5V supply and remove the jumper, or use DUE_5V and insert the jumper.
@@ -96,7 +96,7 @@
  *     One can create what is essentially a digitally-controlled resistor with a FET + capacitor: http://en.wikipedia.org/wiki/Switched_capacitor
  *     ADC Types: http://en.wikipedia.org/wiki/Analog-to-digital_converter#ADC_types
  *       Of note: delta-encoded ADC (same design as on the github issue: https://github.com/Wallacoloo/printipi/issues/24#issuecomment-58137624)
- *	     Of note: Successive Approximation ADC which is more resistance to oscillations around to signal than a delta-encoded ADC
+ *       Of note: Successive Approximation ADC which is more resistance to oscillations around to signal than a delta-encoded ADC
  *     If we can convert an analog signal into a digital PWM signal, with duty cycle proportional to V,
  *       then we can sample the PWM signal with the RPi regulary and deduce the duty cycle via its average value.
  *       One such way to do this: compare Vin to some periodic analog signal
@@ -127,19 +127,41 @@
  *           Probably not. The 7812 is a voltage regulator. In this case, it's being used to bring 24V down to 12V,
  *             and is bypassed in the case that the input is already 12V. The capacitor connects output voltage to ground.
  *           It's possible that the output is floating when the input is < 14~15V (regulator has 2V drop-out),
- *             in which case we COULD use it.
+ *             in which case we COULD use it. EDIT: Nope, the voltage is still 12V, even when tied to ground by 47k pull-down resistor.
  *         There aren't many free resistors. If we disable endstop pullups, then we have 3x 10k in parallel from unused endstops.
  *           Each stepper driver has a single 100k pull-down to ground.
  *           Fet 5 & 6 each have a 10k pull-down to ground (although it looks like their state is only undefined when the board loses power)
  *           ESTOP switch has a 4.7k resistor connected to ground. Not clear if it's a button or 2 pins, but it appears to be 2 pins on my board (on top of the physical button).
  *
+ *
+ *   Ramps-FD Thermistor port looks like:
+ *
+ *          V_LOGIC
+ *             \
+ *             / 4k7
+ *             \
+ *      22ohm  /
+ *  o---/\/\/\-+------o
+ *            _|_
+ *            ___
+ *             |
+ *            GND
+ *
+ *      The 'o's are connection points.
+ *      The intended use is that you connect your thermistor between the left o and GND to create a voltage divider,
+ *        and read analog voltage at the right o.
+ *
+ *   Note on buffer circuitry:
+ *     the 74HC4050 used to buffer endstops accepts 15V max input
+ *     the other 74HC chips appear to only accept Vcc as max input, up to 7V
+ *
  *   Possible thermistor circuits:
- *     1.                                 
+ *     1. Duty-cycle approximation
  *                                         
  *                Rt             
  *      Vcc ---/\/\/\/\---+-------\/\/\/\/\---------+ Node 2
  *                        |                        _|
- *                        |                       |
+ *                        |         (buf)         | |
  *                        +----------|>|---------||<.
  *                       _|_                      |_|
  *                       ___ C                      |
@@ -159,11 +181,12 @@
  *        If this frequency is too high, capacitance at the input may become significant.
  *        What we might consider is to gate the feedback with square wave (generated via the Pi's DMA output).
  *          This would be done by placing a diode-based AND gate after the buffer, with the buffer as one input & square wave as the other.
+ *          Or, we could cascade two fets
  *
  *     2. RC-time modification:
  *
- *                  Ra                   Rt
- *       Vctrl ----/\/\/\/\----+------/\/\/\/\----|>|--- Vdis
+ *                  Ra                   Rt      (diode)
+ *       Vctrl ----/\/\/\/\----+------/\/\/\/\----->|--- Vdis
  *                            _|_              
  *                            ___ C             
  *                             |
@@ -179,6 +202,120 @@
  *         - when measuring a HIGH resistance (normally long discharge time), Vdis is set to 0.
  *         - when measuring a LOW resistance (normally short discharge time), Vdis is set to a higher PWM value.
  *
+ *     3. RC-time w/ ramps-fd circuit:
+ *             V_LOGIC
+ *                 \
+ *                 / 4k7
+ *                 \
+ *          22ohm  /         therm
+ *      o---/\/\/\-+-----o-/\/\/\-o
+ *      |         _|_    |        |
+ *      # (buf)   ___    |        |
+ *      |          |     |        |
+ *     CHRG       GND   MEAS    DRAIN
+ *    
+ *      Here, we buffer an output from the Pi and set LOW to charge the cap. Then we switch it to high impedance (NOT POSSIBLE WITH THE BUFFER!)
+ *      Next, DRAIN is pwm'd and the cap is discharged through a combination of the 4k7 and the thermistor.
+ *        The PWM rate of DRAIN allows some control over the drainage time.
+ *
+ *     4. RC-time w/ ramps-fd circuit + pull resistors:
+ *             V_LOGIC
+ *                 \
+ *                 / 4k7
+ *                 \
+ *          22ohm  /         therm
+ *      o---/\/\/\-+-----o-/\/\/\-o
+ *      \         _|_    |        |
+ *      / 3k3     ___    |        |
+ *      \          |     |        |
+ *     CHRG       GND   MEAS    DRAIN
+ *    
+ *      Modification to the previous circuit.
+ *      Here, we use 3x10k resistors in parallel, taken from the disabled X/Y/Z-MIN endstop pullups.
+ *        This requires that JP801 is No-Connect, such that endstops have no pullups
+ *        If we don't need ANY endstops, then we can get away with a full 6x10k resistors in parallel.
+ *        Actually, we can wire all the endstops directly from GND to Pi input & use internal pull-up and then have the full 6x10k resistors available.
+ *          Without the buffer, however, it's important to NOT expose the endstops to 5V (can perhaps disable 5V altogether)
+ *      By pulling CHRG low, and disconnecting DRAIN, we can pull the capacitor down to 3.3 * (10000./3+22) / (10000./3+22 + 4700) = 1.37 V
+ *        This is still in the undefined range of Pi inputs.
+ *          Using the hex buffer chip doesn't help - 1.24V is the typical Vinput-low @ 3.3v (extrapolated).
+ *          The quad/octa buffer chips have 1.43V typical Vinput-low @ 3.3v (extrapolated)
+ *      So alternatively, we can set CHRG and DRAIN to Vcc to charge the cap, 
+ *        and then pull both low and measure the dischage time. This still has a possibility to fail for large thermistor resistances, 
+ *        but it should succeed for resistances < about 5k
+ *      We could also use the 4k7 pull-down from the ESTOP jumper to combat the 4k7 pull-up (but the Geeetech board seems to omit the resistor).
+ *
+ *    5. RC-time w/ ramps-fd simple w/ diode:
+ *                  V_LOGIC         V_LOGIC
+ *                      \              |
+ *                      / 4k7          |
+ *                      \              |
+ *      diode    22ohm  /       therm  |
+ *     o-|<|-o---/\/\/\-+-----o-/\/\/\-o
+ *     |               _|_    |        
+ *     # (buf)         ___    |        
+ *     |                |     |        
+ *    CHRG             GND   MEAS    
+ *
+ *      In this version, the capacitor is charged by pulling CHRG low. 
+ *        once charged, CHRG is pulled high, which puts the buffer high and the diode acts as high impedance.
+ *      The capacitor is discharged through the parallel combination of 4k7 with therm. Measure the time it takes for MEAS to be pulled high.
+ *      HOWEVER, this circuit requires a diode, and there aren't any diodes that can be used in this way on the board.
+ *        ACTUALLY, there is a free diode if not using a heated bed (V_HEATBED is floating) in D8-Heatbed circuit
+ *          edit: cannot use it without have a 1k8 resistor to 12V supply + led connected to the 22 ohm resistor.
+ *
+ *     6. RC-time w/ ramps-fd using fets:
+ *                  V_LOGIC         V_LOGIC
+ *                      \              |
+ *                      / 4k7          |
+ *                      \              |
+ *               22ohm  /       therm  |
+ *    P_FET6 o---/\/\/\-+-----o-/\/\/\-o
+ *          _|         _|_    |        
+ *         |           ___    |        
+ *    o---||<.          |     |        
+ *    |    |_|          |     |
+ *    |      |          |     |
+ *   CHRG   GND        GND   MEAS
+ *
+ *      Here we use a FET to control the charging. When CHRG is active, then that presents 0 V at P_FET6 to charge cap.
+ *        When CHRG is inactive, then P_FET6 acts as high-impedance & doesn't interfere with circuit
+ *      HOWEVER, there are no free fets on the board that can make this circuit 
+ *        without having P_FET6 also have a connection to 12V through a 1k8 resistor + led
+ *        BUT, there may be a possible workaround.
+ *
+ *     7. Duty-cycle Approximation w/ ramps-fd:
+ *                                                       diode
+ *                                                  .----->|--- V_POWER (12V) or V_HEATBED (NC)
+ *                                                  |
+ *                4k7         22ohm          buf2   |   LED    1k8
+ *  V_LOGIC ---/\/\/\/\---+--\/\/\-o-------o-|<|-o--+---|<----\/\/\--- V_GATE (12v)
+ *                        |                |       _|
+ *                        |          buf1  |      | |      ^ LED is irrelevant
+ *                        +-----o----|>|---}-----||<.         
+ *                       _|_    \          |      |_|
+ *                       ___ C  / Rtherm   |        |
+ *                        |     \          |        |
+ *                       GND   V_LOGIC   MEAS      GND
+ *       This circuit is ACTUALLY constructable strictly with jumpers. o's indicate jumper patches.
+ *         HOWEVER, it violates the maximum sourcing current of the buffer.
+ *       First, the parallel combination of Rtherm | 4k7 will be supplying some amount of power to C.
+ *       The buffers + fet create a feedback circuit that will keep the voltage across C constant (~1 diode drop).
+ *         buf1 and buf2 will constantly be flipping.
+ *         This means that buf2 will be alternately sourcing and draining power from the capacitor.
+ *       When draining power, it's draining P=IV = V*V/R = D^2/22, where D is buf1's threshold voltage.
+ *       When supplying power, it's supplying (V_LOGIC-D)^2/22.
+ *       By sampling MEAS often, we can determine how much of the time buf2 is draining vs supplying, 
+ *         and from that calculate the average amount of power being drained.
+ *       The power being drained is equal to the power entering the capacitor through Rtherm | 4k7,
+ *         so we can solve for Rtherm.
+ *       DOWNSIDE is that this circuit attempts to switch the buffers / fet at a VERY high frequency, in which they might operate linearly and not digitally.
+ *         The only way to really solve this is to use a Schmitt trigger (hysteresis).
+ *         Rather than trying to implement in hardware, we could try to implement realtime feedback in software.
+ *           given i = c*dv/dt, c=10e-6, then when FB circuit is active, if Rfb=22, then dv/dt = i/c = v/r/c = 3.3/22/10e-6 = 15000. 
+ *             That is, after 10 us, C voltage will change by 0.15 V away from equilibrium, if not properly fedback.
+ *           If we want to preserve the assumption that voltage across C is const, 0.1 V variation is probably the max we can accept.
+ *           That requires a 7 us feedback frequency. Not doable in Linux userland, but perhaps doable on the GPU core.
  */
 
 #ifndef MACHINES_RPI_KOSSELRAMPSFD
