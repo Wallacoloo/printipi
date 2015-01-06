@@ -68,7 +68,12 @@ class Servo : public IODriver {
 			std::pair<float, float> minMaxAngle=std::pair<float, float>(0, 360), float initialAngle=0)
 		 : pin(std::move(pin)) , cycleLength(cycleLength), minOnTime(minMaxOnTime.first), maxOnTime(minMaxOnTime.second), 
 		   minAngle(minMaxAngle.first), maxAngle(minMaxAngle.second),
-		   lastEventTime(EventClockT::now()), highTime(getOnTime(initialAngle)), curState(false) {}
+		   lastEventTime(EventClockT::now()), highTime(getOnTime(initialAngle)), curState(false) {
+		   	//ensure that the servo control pin is not left floating when shutdown
+		   	pin.setDefaultState(IO_DEFAULT_LOW);
+		   	//configure the pin for output mode
+		   	pin.makeDigitalOutput(IoLow);
+	    }
 
 		inline bool isServo() const {
 			return true;
