@@ -8,6 +8,7 @@ This class essentially wraps an IoPin so that it can be commanded and recognized
     <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
   </base>
   <methodtemplate id="iodrv::Fan::setFanDutyCycle" name="setFanDutyCycle" override="yes">
+    <brief>called by State upon receiving an M106 gcode</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -21,6 +22,11 @@ This class essentially wraps an IoPin so that it can be commanded and recognized
     <templatetypeparameter id="iodrv::Fan::setFanDutyCycle::CallbackInterface" name="CallbackInterface" />
   </methodtemplate>
   <constructor id="iodrv::Fan::Fan" name="Fan">
+    <brief>@pin the IoPin that powers the fan.</brief>
+    <doc>In most cases, the fan should NOT be directly powered from the microcontroller.
+It should either be behind a transistor whose input is connected to @pin,
+or (if its a 3 wire fan), the fan should be powered from the power rail &amp; the control signal (3rd wire) should be connected to @pin
+</doc>
     <argument id="iodrv::Fan::Fan::pin" name="pin">
       <type name="IoPin &amp;&amp;" />
     </argument>
