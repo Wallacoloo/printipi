@@ -49,6 +49,9 @@ class OutputEvent {
         inline OutputEvent(EventClockT::time_point time, const iodrv::IoPin &pin, bool state) 
         : _time(time), _pin(pin.primitiveIoPin()), _state(pin.translateWriteToPrimitive(state)) {
         }
+        inline bool operator==(const OutputEvent &other) {
+            return _time == other._time && _pin.id() == other._pin.id() && _state == other._state;
+        }
         //@return the time at which the pin state should be altered.
         inline EventClockT::time_point time() const {
             return _time;
