@@ -844,13 +844,13 @@ return values.
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="27" />
         <location column="1" file="machines/generic/cartesian.h" line="118" />
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="329" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="466" />
       </undocumented>
       <undocumented id="machines::generic" name="generic">
         <location column="1" file="machines/generic/cartesian.h" line="119" />
       </undocumented>
       <undocumented id="machines::rpi" name="rpi">
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="330" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="467" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
         <location column="5" file="platforms/generic/chronoclock.h" line="38" />
@@ -1714,10 +1714,10 @@ return values.
         <location column="9" file="machines/generic/cartesian.h" line="178" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::clampMoveRate" name="clampMoveRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="404" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="541" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::maxExtrudeRate" name="maxExtrudeRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="401" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="538" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::getStepOutputEventSequence" name="getStepOutputEventSequence">
         <location column="9" file="motion/axisstepper.h" line="102" />
@@ -3195,23 +3195,23 @@ return values.
       <undocumented name="s" />
     </function>
     <function id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="341" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="478" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::getAccelerationProfile" name="getAccelerationProfile">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="354" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="491" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::getCoordMap" name="getCoordMap">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="361" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="498" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::defaultMoveRate" name="defaultMoveRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="394" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="531" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="398" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="535" />
       <undocumented-return />
     </function>
   </arguments>
