@@ -4,6 +4,9 @@
 set -e #exit script if any of the commands error
 set -x #echo each command
 
+#If running in Travis CI, add path to valgrind binary:
+PATH=$PATH:/home/travis/.local/bin
+
 pushd src
 make clean
 #things to test:
