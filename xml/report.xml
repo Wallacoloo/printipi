@@ -21,15 +21,6 @@ return values.
         <location column="1" file="argparse.h" line="37" />
         <location column="1" file="argparse.cpp" line="30" />
       </undocumented>
-      <undocumented id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
-        <location column="5" file="gparse/command.h" line="53" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
-        <location column="5" file="gparse/command.h" line="56" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
-        <location column="5" file="gparse/command.h" line="59" />
-      </undocumented>
       <undocumented id="logging::disable" name="disable">
         <location column="5" file="common/logging.h" line="94" />
       </undocumented>
@@ -94,6 +85,15 @@ return values.
       <undocumented id="mitpi::usleep" name="usleep">
         <location column="1" file="platforms/rpi/mitpi.h" line="143" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="139" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+        <location column="5" file="gparse/command.h" line="53" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+        <location column="5" file="gparse/command.h" line="56" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+        <location column="5" file="gparse/command.h" line="59" />
       </undocumented>
     </type>
     <type documented="7" name="typedef" undocumented="17">
@@ -170,45 +170,6 @@ return values.
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::sleep_until" name="sleep_until">
         <location column="5" file="boilerplate/thisthreadsleepadapter.h" line="34" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="173" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="161" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="149" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__lockAllAxis::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="111" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setBedTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="137" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setHotendTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="127" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="211" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="196" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="186" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__unlockAllAxis::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="119" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()" name="operator()">
-        <location column="9" file="motion/axisstepper.h" line="147" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()" name="operator()">
-        <location column="9" file="motion/axisstepper.h" line="138" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()" name="operator()">
-        <location column="9" file="motion/axisstepper.h" line="160" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getBedTemp" name="getBedTemp">
         <location column="9" file="iodrivers/iodriver.h" line="100" />
@@ -302,6 +263,45 @@ return values.
       <undocumented id="plat::generic::ThisThreadSleep::sleep_until" name="sleep_until">
         <location column="13" file="platforms/generic/thisthreadsleep.h" line="40" />
       </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getBedTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="173" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="161" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="149" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__lockAllAxis::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="111" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__setBedTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="137" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__setHotendTemp::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="127" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__setServoAngleAtServoIndex::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="211" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="196" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="186" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__unlockAllAxis::operator()" name="operator()">
+        <location column="9" file="iodrivers/iodriver.h" line="119" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()" name="operator()">
+        <location column="9" file="motion/axisstepper.h" line="147" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()" name="operator()">
+        <location column="9" file="motion/axisstepper.h" line="138" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__nextStep::operator()" name="operator()">
+        <location column="9" file="motion/axisstepper.h" line="160" />
+      </undocumented>
     </type>
     <type documented="19" name="struct" undocumented="6">
       <undocumented id="DefaultGetAccelerationProfile" name="DefaultGetAccelerationProfile">
@@ -323,6 +323,20 @@ return values.
       <undocumented id="plat::rpi::PwmHeader" name="PwmHeader">
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="175" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="266" />
+      </undocumented>
+    </type>
+    <type documented="12" name="classtemplate" undocumented="4">
+      <undocumented id="TestHelper" name="TestHelper">
+        <location column="1" file="testhelper.h" line="81" />
+      </undocumented>
+      <undocumented id="TestMachine" name="TestMachine">
+        <location column="1" file="testhelper.h" line="62" />
+      </undocumented>
+      <undocumented id="motion::AxisStepperWithDriver" name="AxisStepperWithDriver">
+        <location column="1" file="motion/axisstepper.h" line="97" />
+      </undocumented>
+      <undocumented id="motion::MaxOutputEventSequenceSize" name="MaxOutputEventSequenceSize">
+        <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
     <type documented="2" name="templatetypeparameter" undocumented="165">
@@ -421,93 +435,6 @@ return values.
       </undocumented>
       <undocumented id="Vector4::Vector4&lt;F&gt;::T2" name="T2">
         <location column="13" file="common/vector4.h" line="45" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="173" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="161" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="149" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__lockAllAxis::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="111" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setBedTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="137" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setHotendTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="127" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="211" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="196" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="186" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__unlockAllAxis::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="119" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT">
-        <location column="15" file="motion/axisstepper.h" line="114" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::CoordMapT" name="CoordMapT">
-        <location column="67" file="motion/axisstepper.h" line="147" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::T" name="T">
-        <location column="55" file="motion/axisstepper.h" line="147" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::TupleT" name="TupleT">
-        <location column="38" file="motion/axisstepper.h" line="147" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::CoordMapT" name="CoordMapT">
-        <location column="67" file="motion/axisstepper.h" line="138" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::T" name="T">
-        <location column="55" file="motion/axisstepper.h" line="138" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::TupleT" name="TupleT">
-        <location column="38" file="motion/axisstepper.h" line="138" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()::T" name="T">
-        <location column="19" file="motion/axisstepper.h" line="160" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAll::Args" name="Args">
-        <location column="71" file="common/tupleutil.h" line="52" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAll::Func" name="Func">
-        <location column="56" file="common/tupleutil.h" line="52" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAll::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="52" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Args" name="Args">
-        <location column="113" file="common/tupleutil.h" line="66" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Func" name="Func">
-        <location column="56" file="common/tupleutil.h" line="66" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce">
-        <location column="71" file="common/tupleutil.h" line="66" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault">
-        <location column="88" file="common/tupleutil.h" line="66" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="66" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnIndex::Args" name="Args">
-        <location column="73" file="common/tupleutil.h" line="82" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnIndex::Func" name="Func">
-        <location column="58" file="common/tupleutil.h" line="82" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnIndex::TupleT" name="TupleT">
-        <location column="15" file="common/tupleutil.h" line="82" />
       </undocumented>
       <undocumented id="gparse::Response::Response::Container" name="Container">
         <location column="19" file="gparse/response.h" line="62" />
@@ -770,6 +697,93 @@ return values.
       <undocumented id="plat::generic::ThisThreadSleep::sleep_until::Duration" name="Duration">
         <location column="35" file="platforms/generic/thisthreadsleep.h" line="40" />
       </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getBedTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="173" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="161" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="149" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__lockAllAxis::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="111" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__setBedTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="137" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__setHotendTemp::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="127" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__setServoAngleAtServoIndex::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="211" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="196" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="186" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__unlockAllAxis::operator()::T" name="T">
+        <location column="19" file="iodrivers/iodriver.h" line="119" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT">
+        <location column="15" file="motion/axisstepper.h" line="114" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::CoordMapT" name="CoordMapT">
+        <location column="67" file="motion/axisstepper.h" line="147" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::T" name="T">
+        <location column="55" file="motion/axisstepper.h" line="147" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::TupleT" name="TupleT">
+        <location column="38" file="motion/axisstepper.h" line="147" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::CoordMapT" name="CoordMapT">
+        <location column="67" file="motion/axisstepper.h" line="138" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::T" name="T">
+        <location column="55" file="motion/axisstepper.h" line="138" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::TupleT" name="TupleT">
+        <location column="38" file="motion/axisstepper.h" line="138" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__nextStep::operator()::T" name="T">
+        <location column="19" file="motion/axisstepper.h" line="160" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::Args" name="Args">
+        <location column="71" file="common/tupleutil.h" line="52" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::Func" name="Func">
+        <location column="56" file="common/tupleutil.h" line="52" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::TupleT" name="TupleT">
+        <location column="15" file="common/tupleutil.h" line="52" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::Args" name="Args">
+        <location column="113" file="common/tupleutil.h" line="66" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::Func" name="Func">
+        <location column="56" file="common/tupleutil.h" line="66" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce">
+        <location column="71" file="common/tupleutil.h" line="66" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault">
+        <location column="88" file="common/tupleutil.h" line="66" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT">
+        <location column="15" file="common/tupleutil.h" line="66" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::Args" name="Args">
+        <location column="73" file="common/tupleutil.h" line="82" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::Func" name="Func">
+        <location column="58" file="common/tupleutil.h" line="82" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::TupleT" name="TupleT">
+        <location column="15" file="common/tupleutil.h" line="82" />
+      </undocumented>
       <undocumented id="tupleutil::callOnAll::Args" name="Args">
         <location column="43" file="common/tupleutil.h" line="105" />
       </undocumented>
@@ -848,16 +862,16 @@ return values.
     <type documented="9" name="namespace" undocumented="6">
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
+        <location column="1" file="iodrivers/iopin.cpp" line="33" />
         <location column="1" file="iodrivers/iodriver.h" line="37" />
+        <location column="1" file="iodrivers/servo.h" line="38" />
         <location column="1" file="motion/coordmap.h" line="34" />
+        <location column="1" file="iodrivers/servo.cpp" line="27" />
         <location column="1" file="iodrivers/endstop.h" line="32" />
         <location column="1" file="iodrivers/a4988.h" line="39" />
         <location column="1" file="iodrivers/fan.h" line="32" />
         <location column="1" file="iodrivers/tempcontrol.h" line="39" />
         <location column="1" file="iodrivers/rcthermistor.h" line="35" />
-        <location column="1" file="iodrivers/servo.h" line="38" />
-        <location column="1" file="iodrivers/iopin.cpp" line="33" />
-        <location column="1" file="iodrivers/servo.cpp" line="27" />
       </undocumented>
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="32" />
@@ -871,31 +885,22 @@ return values.
         <location column="1" file="machines/rpi/kosselrampsfd.h" line="467" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
-        <location column="5" file="platforms/generic/chronoclock.h" line="38" />
         <location column="1" file="platforms/generic/primitiveiopin.h" line="34" />
+        <location column="5" file="platforms/generic/chronoclock.h" line="38" />
         <location column="5" file="platforms/generic/thisthreadsleep.h" line="33" />
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="39" />
       </undocumented>
       <undocumented id="plat::rpi" name="rpi">
+        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
+        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="169" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="34" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="187" />
-        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
-        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
       </undocumented>
     </type>
-    <type documented="12" name="classtemplate" undocumented="4">
-      <undocumented id="TestHelper" name="TestHelper">
-        <location column="1" file="testhelper.h" line="81" />
-      </undocumented>
-      <undocumented id="TestMachine" name="TestMachine">
-        <location column="1" file="testhelper.h" line="62" />
-      </undocumented>
-      <undocumented id="motion::AxisStepperWithDriver" name="AxisStepperWithDriver">
-        <location column="1" file="motion/axisstepper.h" line="97" />
-      </undocumented>
-      <undocumented id="motion::MaxOutputEventSequenceSize" name="MaxOutputEventSequenceSize">
-        <location column="1" file="motion/motionplanner.h" line="63" />
+    <type documented="6" name="structtemplate" undocumented="1">
+      <undocumented id="motion::array_size" name="array_size">
+        <location column="1" file="motion/motionplanner.h" line="58" />
       </undocumented>
     </type>
     <type documented="121" name="method" undocumented="325">
@@ -1043,18 +1048,6 @@ return values.
       </undocumented>
       <undocumented id="Vector4::operator/=" name="operator/=">
         <location column="3" file="common/vector4.h" line="124" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__getNextTime::operator()" name="operator()">
-        <location column="9" file="motion/axisstepper.h" line="115" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAll::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="53" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="67" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnIndex::operator()" name="operator()">
-        <location column="9" file="common/tupleutil.h" line="83" />
       </undocumented>
       <undocumented id="gparse::Com::hasReadFile" name="hasReadFile">
         <location column="9" file="gparse/com.h" line="67" />
@@ -1896,32 +1889,20 @@ return values.
       <undocumented id="plat::rpi::HardwareScheduler::schedTime" name="schedTime">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="217" />
       </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::operator()" name="operator()">
+        <location column="9" file="motion/axisstepper.h" line="115" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::operator()" name="operator()">
+        <location column="9" file="common/tupleutil.h" line="53" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::operator()" name="operator()">
+        <location column="9" file="common/tupleutil.h" line="67" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::operator()" name="operator()">
+        <location column="9" file="common/tupleutil.h" line="83" />
+      </undocumented>
     </type>
     <type documented="0" name="templatenontypeparameter" undocumented="25">
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
-        <location column="32" file="motion/axisstepper.h" line="114" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::MechSize" name="MechSize">
-        <location column="87" file="motion/axisstepper.h" line="147" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::MyIdx" name="MyIdx">
-        <location column="19" file="motion/axisstepper.h" line="147" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MechSize" name="MechSize">
-        <location column="87" file="motion/axisstepper.h" line="138" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MyIdx" name="MyIdx">
-        <location column="19" file="motion/axisstepper.h" line="138" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="52" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="66" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
-        <location column="32" file="common/tupleutil.h" line="82" />
-      </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
         <location column="56" file="motion/axisstepper.h" line="78" />
       </undocumented>
@@ -1973,23 +1954,32 @@ return values.
       <undocumented id="motion::MotionPlanner::_nextStepLinear::T" name="T">
         <location column="19" file="motion/motionplanner.h" line="203" />
       </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
+        <location column="32" file="motion/axisstepper.h" line="114" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::MechSize" name="MechSize">
+        <location column="87" file="motion/axisstepper.h" line="147" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::MyIdx" name="MyIdx">
+        <location column="19" file="motion/axisstepper.h" line="147" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MechSize" name="MechSize">
+        <location column="87" file="motion/axisstepper.h" line="138" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MyIdx" name="MyIdx">
+        <location column="19" file="motion/axisstepper.h" line="138" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
+        <location column="32" file="common/tupleutil.h" line="52" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
+        <location column="32" file="common/tupleutil.h" line="66" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
+        <location column="32" file="common/tupleutil.h" line="82" />
+      </undocumented>
     </type>
     <type documented="6" name="field" undocumented="9">
-      <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="171" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="159" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="147" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::index" name="index">
-        <location column="9" file="iodrivers/iodriver.h" line="184" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="183" />
-      </undocumented>
       <undocumented id="motion::AxisStepper::time" name="time">
         <location column="9" file="motion/axisstepper.h" line="71" />
       </undocumented>
@@ -2002,10 +1992,20 @@ return values.
       <undocumented id="plat::rpi::HardwareScheduler::DmaMem::virtL2Coherent" name="virtL2Coherent">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="194" />
       </undocumented>
-    </type>
-    <type documented="6" name="structtemplate" undocumented="1">
-      <undocumented id="motion::array_size" name="array_size">
-        <location column="1" file="motion/motionplanner.h" line="58" />
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getBedTemp::value" name="value">
+        <location column="9" file="iodrivers/iodriver.h" line="171" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::value" name="value">
+        <location column="9" file="iodrivers/iodriver.h" line="159" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTemp::value" name="value">
+        <location column="9" file="iodrivers/iodriver.h" line="147" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::index" name="index">
+        <location column="9" file="iodrivers/iodriver.h" line="184" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::value" name="value">
+        <location column="9" file="iodrivers/iodriver.h" line="183" />
       </undocumented>
     </type>
     <type documented="9" name="functiontemplate" undocumented="3">
@@ -2069,21 +2069,6 @@ return values.
       </undocumented>
       <undocumented id="TestMachine::TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;" name="TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;">
         <location column="9" file="testhelper.h" line="67" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::IODriver__getBedTemp" name="IODriver__getBedTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="172" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="160" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::IODriver__getHotendTemp" name="IODriver__getHotendTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="148" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex::IODriver__setServoAngleAtServoIndex" name="IODriver__setServoAngleAtServoIndex">
-        <location column="9" file="iodrivers/iodriver.h" line="210" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::IODriver__tuplePeekNextEvent" name="IODriver__tuplePeekNextEvent">
-        <location column="9" file="iodrivers/iodriver.h" line="185" />
       </undocumented>
       <undocumented id="gparse::Com::Com" name="Com">
         <location column="9" file="gparse/com.h" line="58" />
@@ -2150,6 +2135,21 @@ return values.
       <undocumented id="plat::rpi::HardwareScheduler::HardwareScheduler" name="HardwareScheduler">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="215" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="423" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getBedTemp::IODriver__getBedTemp" name="IODriver__getBedTemp">
+        <location column="9" file="iodrivers/iodriver.h" line="172" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp">
+        <location column="9" file="iodrivers/iodriver.h" line="160" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__getHotendTemp::IODriver__getHotendTemp" name="IODriver__getHotendTemp">
+        <location column="9" file="iodrivers/iodriver.h" line="148" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__setServoAngleAtServoIndex::IODriver__setServoAngleAtServoIndex" name="IODriver__setServoAngleAtServoIndex">
+        <location column="9" file="iodrivers/iodriver.h" line="210" />
+      </undocumented>
+      <undocumented id="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent::IODriver__tuplePeekNextEvent" name="IODriver__tuplePeekNextEvent">
+        <location column="9" file="iodrivers/iodriver.h" line="185" />
       </undocumented>
     </type>
     <type documented="5" name="variable" undocumented="10">
@@ -2514,7 +2514,199 @@ return values.
     </type>
   </coverage>
   <arguments>
-    <function id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+    <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/generic/primitiveiopin.h" line="43" />
+      <undocumented name="args" />
+    </function>
+    <function id="plat::generic::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/generic/primitiveiopin.h" line="49" />
+      <undocumented-return />
+    </function>
+    <function id="plat::generic::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/generic/primitiveiopin.h" line="59" />
+      <undocumented-return />
+    </function>
+    <function id="plat::generic::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+      <location column="6" file="platforms/generic/primitiveiopin.h" line="64" />
+      <undocumented name="level" />
+    </function>
+    <function id="iodrv::IoPin::IoPin" name="IoPin">
+      <location column="9" file="iodrivers/iopin.h" line="81" />
+      <undocumented name="other" />
+    </function>
+    <function id="iodrv::IoPin::IoPin" name="IoPin">
+      <location column="9" file="iodrivers/iopin.h" line="84" />
+      <location column="1" file="iodrivers/iopin.cpp" line="56" />
+      <undocumented name="other" />
+    </function>
+    <function id="iodrv::IoPin::operator=" name="operator=">
+      <location column="9" file="iodrivers/iopin.h" line="86" />
+      <location column="1" file="iodrivers/iopin.cpp" line="60" />
+      <undocumented-return />
+      <undocumented name="other" />
+    </function>
+    <function id="iodrv::IoPin::IoPin" name="IoPin">
+      <location column="9" file="iodrivers/iopin.h" line="89" />
+      <undocumented name="inversions" />
+      <undocumented name="args" />
+    </function>
+    <function id="iodrv::IoPin::isNull" name="isNull">
+      <location column="9" file="iodrivers/iopin.h" line="110" />
+      <location column="1" file="iodrivers/iopin.cpp" line="78" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
+      <location column="9" file="iodrivers/iopin.h" line="113" />
+      <location column="1" file="iodrivers/iopin.cpp" line="81" />
+      <undocumented-return />
+      <undocumented name="lev" />
+    </function>
+    <function id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="9" file="iodrivers/iopin.h" line="118" />
+      <location column="1" file="iodrivers/iopin.cpp" line="92" />
+      <undocumented name="lev" />
+    </function>
+    <function id="iodrv::IoPin::digitalRead" name="digitalRead">
+      <location column="9" file="iodrivers/iopin.h" line="122" />
+      <location column="1" file="iodrivers/iopin.cpp" line="105" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="iodrivers/iopin.h" line="124" />
+      <location column="1" file="iodrivers/iopin.cpp" line="112" />
+      <undocumented name="lev" />
+    </function>
+    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
+      <location column="9" file="schedulerbase.h" line="61" />
+      <location column="1" file="schedulerbase.cpp" line="79" />
+      <undocumented-return />
+      <undocumented name="handler" />
+      <undocumented name="level" />
+    </function>
+    <function id="tupleutil::callOnAll" name="callOnAll">
+      <location column="1" file="common/tupleutil.h" line="105" />
+      <undocumented name="args" />
+      <undocumented name="t" />
+      <undocumented name="f" />
+    </function>
+    <function id="tupleutil::callOnAll" name="callOnAll">
+      <location column="1" file="common/tupleutil.h" line="110" />
+      <undocumented name="args" />
+      <undocumented name="t" />
+      <undocumented name="f" />
+    </function>
+    <function id="tupleutil::tupleReduce" name="tupleReduce">
+      <location column="1" file="common/tupleutil.h" line="116" />
+      <undocumented-return />
+      <undocumented name="d" />
+      <undocumented name="r" />
+      <undocumented name="t" />
+      <undocumented name="args" />
+      <undocumented name="f" />
+    </function>
+    <function id="tupleutil::tupleReduceLogicalOr" name="tupleReduceLogicalOr">
+      <location column="1" file="common/tupleutil.h" line="120" />
+      <undocumented-return />
+      <undocumented name="args" />
+      <undocumented name="t" />
+      <undocumented name="f" />
+    </function>
+    <function id="tupleutil::tupleCallOnIndex" name="tupleCallOnIndex">
+      <location column="1" file="common/tupleutil.h" line="127" />
+      <undocumented-return />
+      <undocumented name="args" />
+      <undocumented name="t" />
+      <undocumented name="idx" />
+      <undocumented name="f" />
+    </function>
+    <function id="mathutil::CtoK" name="CtoK">
+      <location column="1" file="common/mathutil.h" line="38" />
+      <undocumented-return />
+      <undocumented name="C" />
+    </function>
+    <function id="mathutil::KtoC" name="KtoC">
+      <location column="1" file="common/mathutil.h" line="43" />
+      <undocumented-return />
+      <undocumented name="K" />
+    </function>
+    <function id="mathutil::clamp" name="clamp">
+      <location column="1" file="common/mathutil.h" line="48" />
+      <undocumented-return />
+      <undocumented name="vMax" />
+      <undocumented name="vMin" />
+      <undocumented name="value" />
+    </function>
+    <function id="OutputEvent::OutputEvent" name="OutputEvent">
+      <location column="9" file="outputevent.h" line="49" />
+      <undocumented name="pin" />
+    </function>
+    <function id="OutputEvent::time" name="time">
+      <location column="9" file="outputevent.h" line="56" />
+      <undocumented-return />
+    </function>
+    <function id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
+      <location column="9" file="outputevent.h" line="60" />
+      <undocumented-return />
+    </function>
+    <function id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
+      <location column="9" file="outputevent.h" line="64" />
+      <undocumented-return />
+    </function>
+    <function id="OutputEvent::state" name="state">
+      <location column="9" file="outputevent.h" line="71" />
+      <undocumented-return />
+    </function>
+    <function id="OutputEvent::isNull" name="isNull">
+      <location column="9" file="outputevent.h" line="75" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IODriver::isFan" name="isFan">
+      <location column="9" file="iodrivers/iodriver.h" line="58" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IODriver::isHotend" name="isHotend">
+      <location column="9" file="iodrivers/iodriver.h" line="60" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IODriver::isHeatedBed" name="isHeatedBed">
+      <location column="9" file="iodrivers/iodriver.h" line="62" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IODriver::setTargetTemperature" name="setTargetTemperature">
+      <location column="9" file="iodrivers/iodriver.h" line="65" />
+      <undocumented name="" />
+    </function>
+    <function id="iodrv::IODriver::getTargetTemperature" name="getTargetTemperature">
+      <location column="9" file="iodrivers/iodriver.h" line="67" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IODriver::getMeasuredTemperature" name="getMeasuredTemperature">
+      <location column="9" file="iodrivers/iodriver.h" line="72" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IODriver::setServoAngleDegrees" name="setServoAngleDegrees">
+      <location column="9" file="iodrivers/iodriver.h" line="77" />
+      <undocumented name="angle" />
+    </function>
+    <function id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
+      <location column="9" file="iodrivers/iodriver.h" line="88" />
+      <undocumented-return />
+      <undocumented name="" />
+    </function>
+    <function id="iodrv::Servo::Servo" name="Servo">
+      <location column="3" file="iodrivers/servo.h" line="67" />
+      <undocumented name="minMaxAngle" />
+      <undocumented name="initialAngle" />
+      <undocumented name="minMaxOnTime" />
+      <undocumented name="cycleLength" />
+      <undocumented name="pin" />
+    </function>
+    <function id="iodrv::Servo::peekNextEvent" name="peekNextEvent">
+      <location column="3" file="iodrivers/servo.h" line="84" />
+      <location column="1" file="iodrivers/servo.cpp" line="33" />
+      <undocumented-return />
+    </function>
+    <function id="tupleutil::(anonymous::1)::bigEndianStr" name="bigEndianStr">
       <location column="5" file="gparse/command.h" line="50" />
       <undocumented-return />
       <undocumented name="a" />
@@ -2613,99 +2805,6 @@ return values.
       <location column="1" file="gparse/com.cpp" line="78" />
       <undocumented-return />
     </function>
-    <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/generic/primitiveiopin.h" line="43" />
-      <undocumented name="args" />
-    </function>
-    <function id="plat::generic::PrimitiveIoPin::id" name="id">
-      <location column="3" file="platforms/generic/primitiveiopin.h" line="49" />
-      <undocumented-return />
-    </function>
-    <function id="plat::generic::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/generic/primitiveiopin.h" line="59" />
-      <undocumented-return />
-    </function>
-    <function id="plat::generic::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-      <location column="6" file="platforms/generic/primitiveiopin.h" line="64" />
-      <undocumented name="level" />
-    </function>
-    <function id="iodrv::IoPin::IoPin" name="IoPin">
-      <location column="9" file="iodrivers/iopin.h" line="81" />
-      <undocumented name="other" />
-    </function>
-    <function id="iodrv::IoPin::IoPin" name="IoPin">
-      <location column="9" file="iodrivers/iopin.h" line="84" />
-      <location column="1" file="iodrivers/iopin.cpp" line="56" />
-      <undocumented name="other" />
-    </function>
-    <function id="iodrv::IoPin::operator=" name="operator=">
-      <location column="9" file="iodrivers/iopin.h" line="86" />
-      <location column="1" file="iodrivers/iopin.cpp" line="60" />
-      <undocumented-return />
-      <undocumented name="other" />
-    </function>
-    <function id="iodrv::IoPin::IoPin" name="IoPin">
-      <location column="9" file="iodrivers/iopin.h" line="89" />
-      <undocumented name="inversions" />
-      <undocumented name="args" />
-    </function>
-    <function id="iodrv::IoPin::isNull" name="isNull">
-      <location column="9" file="iodrivers/iopin.h" line="110" />
-      <location column="1" file="iodrivers/iopin.cpp" line="78" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
-      <location column="9" file="iodrivers/iopin.h" line="113" />
-      <location column="1" file="iodrivers/iopin.cpp" line="81" />
-      <undocumented-return />
-      <undocumented name="lev" />
-    </function>
-    <function id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="9" file="iodrivers/iopin.h" line="118" />
-      <location column="1" file="iodrivers/iopin.cpp" line="92" />
-      <undocumented name="lev" />
-    </function>
-    <function id="iodrv::IoPin::digitalRead" name="digitalRead">
-      <location column="9" file="iodrivers/iopin.h" line="122" />
-      <location column="1" file="iodrivers/iopin.cpp" line="105" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IoPin::digitalWrite" name="digitalWrite">
-      <location column="9" file="iodrivers/iopin.h" line="124" />
-      <location column="1" file="iodrivers/iopin.cpp" line="112" />
-      <undocumented name="lev" />
-    </function>
-    <function id="OutputEvent::OutputEvent" name="OutputEvent">
-      <location column="9" file="outputevent.h" line="49" />
-      <undocumented name="pin" />
-    </function>
-    <function id="OutputEvent::time" name="time">
-      <location column="9" file="outputevent.h" line="56" />
-      <undocumented-return />
-    </function>
-    <function id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
-      <location column="9" file="outputevent.h" line="60" />
-      <undocumented-return />
-    </function>
-    <function id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
-      <location column="9" file="outputevent.h" line="64" />
-      <undocumented-return />
-    </function>
-    <function id="OutputEvent::state" name="state">
-      <location column="9" file="outputevent.h" line="71" />
-      <undocumented-return />
-    </function>
-    <function id="OutputEvent::isNull" name="isNull">
-      <location column="9" file="outputevent.h" line="75" />
-      <undocumented-return />
-    </function>
-    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="61" />
-      <location column="1" file="schedulerbase.cpp" line="79" />
-      <undocumented-return />
-      <undocumented name="handler" />
-      <undocumented name="level" />
-    </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
       <location column="9" file="scheduler.h" line="67" />
       <location column="1" file="scheduler.h" line="102" />
@@ -2715,42 +2814,6 @@ return values.
       <location column="5" file="motion/accelerationprofile.h" line="43" />
       <undocumented name="Vmax" />
       <undocumented name="moveDuration" />
-    </function>
-    <function id="tupleutil::callOnAll" name="callOnAll">
-      <location column="1" file="common/tupleutil.h" line="105" />
-      <undocumented name="args" />
-      <undocumented name="t" />
-      <undocumented name="f" />
-    </function>
-    <function id="tupleutil::callOnAll" name="callOnAll">
-      <location column="1" file="common/tupleutil.h" line="110" />
-      <undocumented name="args" />
-      <undocumented name="t" />
-      <undocumented name="f" />
-    </function>
-    <function id="tupleutil::tupleReduce" name="tupleReduce">
-      <location column="1" file="common/tupleutil.h" line="116" />
-      <undocumented-return />
-      <undocumented name="d" />
-      <undocumented name="r" />
-      <undocumented name="t" />
-      <undocumented name="args" />
-      <undocumented name="f" />
-    </function>
-    <function id="tupleutil::tupleReduceLogicalOr" name="tupleReduceLogicalOr">
-      <location column="1" file="common/tupleutil.h" line="120" />
-      <undocumented-return />
-      <undocumented name="args" />
-      <undocumented name="t" />
-      <undocumented name="f" />
-    </function>
-    <function id="tupleutil::tupleCallOnIndex" name="tupleCallOnIndex">
-      <location column="1" file="common/tupleutil.h" line="127" />
-      <undocumented-return />
-      <undocumented name="args" />
-      <undocumented name="t" />
-      <undocumented name="idx" />
-      <undocumented name="f" />
     </function>
     <function id="Vector3::Vector3&lt;F&gt;" name="Vector3&lt;F&gt;">
       <location column="3" file="common/vector3.h" line="39" />
@@ -2958,56 +3021,6 @@ return values.
       <location column="9" file="motion/motionplanner.h" line="166" />
       <undocumented-return />
     </function>
-    <function id="mathutil::CtoK" name="CtoK">
-      <location column="1" file="common/mathutil.h" line="38" />
-      <undocumented-return />
-      <undocumented name="C" />
-    </function>
-    <function id="mathutil::KtoC" name="KtoC">
-      <location column="1" file="common/mathutil.h" line="43" />
-      <undocumented-return />
-      <undocumented name="K" />
-    </function>
-    <function id="mathutil::clamp" name="clamp">
-      <location column="1" file="common/mathutil.h" line="48" />
-      <undocumented-return />
-      <undocumented name="vMax" />
-      <undocumented name="vMin" />
-      <undocumented name="value" />
-    </function>
-    <function id="iodrv::IODriver::isFan" name="isFan">
-      <location column="9" file="iodrivers/iodriver.h" line="58" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IODriver::isHotend" name="isHotend">
-      <location column="9" file="iodrivers/iodriver.h" line="60" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IODriver::isHeatedBed" name="isHeatedBed">
-      <location column="9" file="iodrivers/iodriver.h" line="62" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IODriver::setTargetTemperature" name="setTargetTemperature">
-      <location column="9" file="iodrivers/iodriver.h" line="65" />
-      <undocumented name="" />
-    </function>
-    <function id="iodrv::IODriver::getTargetTemperature" name="getTargetTemperature">
-      <location column="9" file="iodrivers/iodriver.h" line="67" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IODriver::getMeasuredTemperature" name="getMeasuredTemperature">
-      <location column="9" file="iodrivers/iodriver.h" line="72" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IODriver::setServoAngleDegrees" name="setServoAngleDegrees">
-      <location column="9" file="iodrivers/iodriver.h" line="77" />
-      <undocumented name="angle" />
-    </function>
-    <function id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
-      <location column="9" file="iodrivers/iodriver.h" line="88" />
-      <undocumented-return />
-      <undocumented name="" />
-    </function>
     <function id="plat::generic::HardwareScheduler::queue" name="queue">
       <location column="5" file="platforms/generic/hardwarescheduler.h" line="43" />
       <undocumented name="evt" />
@@ -3054,11 +3067,6 @@ return values.
       <location column="9" file="state.h" line="220" />
       <undocumented name="persistence" />
     </function>
-    <function id="motion::ConstantAcceleration::transform" name="transform">
-      <location column="9" file="motion/constantacceleration.h" line="61" />
-      <undocumented-return />
-      <undocumented name="time" />
-    </function>
     <function id="motion::CoordMap::getDependentIoDrivers" name="getDependentIoDrivers">
       <location column="9" file="motion/coordmap.h" line="57" />
       <undocumented-return />
@@ -3101,74 +3109,8 @@ return values.
       <location column="9" file="motion/coordmap.h" line="107" />
       <undocumented-return />
     </function>
-    <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
-      <location column="9" file="motion/linearstepper.h" line="66" />
-      <undocumented name="map" />
-      <undocumented name="vel" />
-      <undocumented name="curPos" />
-      <undocumented name="idx" />
-    </function>
-    <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
-      <location column="9" file="motion/linearstepper.h" line="76" />
-      <undocumented name="map" />
-      <undocumented name="center" />
-      <undocumented name="idx" />
-      <undocumented name="arcRad" />
-      <undocumented name="curPos" />
-      <undocumented name="arcVel" />
-      <undocumented name="u" />
-      <undocumented name="v" />
-      <undocumented name="extVel" />
-    </function>
-    <function id="motion::LinearStepper::_nextStep" name="_nextStep">
-      <location column="9" file="motion/linearstepper.h" line="88" />
-      <undocumented name="useEndstops" />
-    </function>
     <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/machine.h" line="49" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::Fan::Fan" name="Fan">
-      <location column="9" file="iodrivers/fan.h" line="49" />
-      <undocumented name="defaultState" />
-      <undocumented name="pin" />
-      <undocumented name="period" />
-    </function>
-    <function id="iodrv::Fan::setFanDutyCycle" name="setFanDutyCycle">
-      <location column="9" file="iodrivers/fan.h" line="55" />
-      <undocumented name="interface" />
-      <undocumented name="dutyCycle" />
-    </function>
-    <function id="PID::feed" name="feed">
-      <location column="9" file="pid.h" line="51" />
-      <location column="1" file="pid.cpp" line="28" />
-      <undocumented-return />
-      <undocumented name="setpoint" />
-      <undocumented name="pv" />
-    </function>
-    <function id="iodrv::TempControl::isHotend" name="isHotend">
-      <location column="9" file="iodrivers/tempcontrol.h" line="77" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::Servo::Servo" name="Servo">
-      <location column="3" file="iodrivers/servo.h" line="67" />
-      <undocumented name="minMaxAngle" />
-      <undocumented name="initialAngle" />
-      <undocumented name="minMaxOnTime" />
-      <undocumented name="cycleLength" />
-      <undocumented name="pin" />
-    </function>
-    <function id="iodrv::Servo::peekNextEvent" name="peekNextEvent">
-      <location column="3" file="iodrivers/servo.h" line="84" />
-      <location column="1" file="iodrivers/servo.cpp" line="33" />
-      <undocumented-return />
-    </function>
-    <function id="machines::generic::cartesian::defaultMoveRate" name="defaultMoveRate">
-      <location column="9" file="machines/generic/cartesian.h" line="171" />
-      <undocumented-return />
-    </function>
-    <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/generic/cartesian.h" line="175" />
       <undocumented-return />
     </function>
     <function id="TestHelper::sendCommand" name="sendCommand">
@@ -3201,6 +3143,64 @@ return values.
       <undocumented name="getCoordMap" />
       <undocumented name="getIoDrivers" />
       <undocumented name="getAccelerationProfile" />
+    </function>
+    <function id="PID::feed" name="feed">
+      <location column="9" file="pid.h" line="51" />
+      <location column="1" file="pid.cpp" line="28" />
+      <undocumented-return />
+      <undocumented name="setpoint" />
+      <undocumented name="pv" />
+    </function>
+    <function id="motion::ConstantAcceleration::transform" name="transform">
+      <location column="9" file="motion/constantacceleration.h" line="61" />
+      <undocumented-return />
+      <undocumented name="time" />
+    </function>
+    <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
+      <location column="9" file="motion/linearstepper.h" line="66" />
+      <undocumented name="map" />
+      <undocumented name="vel" />
+      <undocumented name="curPos" />
+      <undocumented name="idx" />
+    </function>
+    <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
+      <location column="9" file="motion/linearstepper.h" line="76" />
+      <undocumented name="map" />
+      <undocumented name="center" />
+      <undocumented name="idx" />
+      <undocumented name="arcRad" />
+      <undocumented name="curPos" />
+      <undocumented name="arcVel" />
+      <undocumented name="u" />
+      <undocumented name="v" />
+      <undocumented name="extVel" />
+    </function>
+    <function id="motion::LinearStepper::_nextStep" name="_nextStep">
+      <location column="9" file="motion/linearstepper.h" line="88" />
+      <undocumented name="useEndstops" />
+    </function>
+    <function id="iodrv::Fan::Fan" name="Fan">
+      <location column="9" file="iodrivers/fan.h" line="49" />
+      <undocumented name="defaultState" />
+      <undocumented name="pin" />
+      <undocumented name="period" />
+    </function>
+    <function id="iodrv::Fan::setFanDutyCycle" name="setFanDutyCycle">
+      <location column="9" file="iodrivers/fan.h" line="55" />
+      <undocumented name="interface" />
+      <undocumented name="dutyCycle" />
+    </function>
+    <function id="iodrv::TempControl::isHotend" name="isHotend">
+      <location column="9" file="iodrivers/tempcontrol.h" line="77" />
+      <undocumented-return />
+    </function>
+    <function id="machines::generic::cartesian::defaultMoveRate" name="defaultMoveRate">
+      <location column="9" file="machines/generic/cartesian.h" line="171" />
+      <undocumented-return />
+    </function>
+    <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
+      <location column="9" file="machines/generic/cartesian.h" line="175" />
+      <undocumented-return />
     </function>
     <function id="plat::rpi::PrimitiveIoPin::null" name="null">
       <location column="3" file="platforms/rpi/primitiveiopin.h" line="43" />
@@ -3257,6 +3257,16 @@ return values.
     </function>
   </arguments>
   <references>
+    <method id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
+      <location column="9" file="iodrivers/iopin.h" line="113" />
+      <location column="1" file="iodrivers/iopin.cpp" line="81" />
+      <doctype name="doc">
+        <ref name="translated level" />
+      </doctype>
+      <doctype name="brief">
+        <ref name="translated level" />
+      </doctype>
+    </method>
     <field id="gparse::Command::arguments" name="arguments">
       <location column="5" file="gparse/command.h" line="73" />
       <doctype name="doc">
@@ -3275,16 +3285,6 @@ return values.
         <ref name="std::string, std::string" />
       </doctype>
     </methodtemplate>
-    <method id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
-      <location column="9" file="iodrivers/iopin.h" line="113" />
-      <location column="1" file="iodrivers/iopin.cpp" line="81" />
-      <doctype name="doc">
-        <ref name="translated level" />
-      </doctype>
-      <doctype name="brief">
-        <ref name="translated level" />
-      </doctype>
-    </method>
     <method id="Vector3::tuple" name="tuple">
       <location column="3" file="common/vector3.h" line="45" />
       <doctype name="brief">
@@ -3376,12 +3376,6 @@ return values.
         <ref name="MotionPlanner" />
       </doctype>
     </typedef>
-    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
-      <location column="1" file="motion/constantacceleration.h" line="41" />
-      <doctype name="doc">
-        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
-      </doctype>
-    </class>
     <functiontemplate id="makeTestMachine" name="makeTestMachine">
       <location column="1" file="testhelper.h" line="198" />
       <doctype name="doc">
@@ -3390,18 +3384,24 @@ return values.
         <ref name="Args..." />
       </doctype>
     </functiontemplate>
-    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="57" />
-      <doctype component="pullUpDown" name="params">
-        <ref name="IoPin" />
+    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
+      <location column="1" file="motion/constantacceleration.h" line="41" />
+      <doctype name="doc">
+        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
       </doctype>
-    </constructor>
+    </class>
     <class id="plat::rpi::ChronoClock" name="ChronoClock">
       <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
       <doctype name="doc">
         <ref name="clock" />
       </doctype>
     </class>
+    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="57" />
+      <doctype component="pullUpDown" name="params">
+        <ref name="IoPin" />
+      </doctype>
+    </constructor>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">
       <location column="9" file="motion/lineardeltastepper.h" line="172" />
       <doctype name="brief">
