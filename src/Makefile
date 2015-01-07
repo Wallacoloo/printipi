@@ -50,6 +50,8 @@ ifeq "$(suffix $(MACHINE))" ".h"
 else
 	MACHINEPARSED:=$(MACHINE)
 endif
+#Allow for one to specify either the full path (machines/<platform>/<machine>.h) OR a partial path, without the machines prefix (<platform>/machine.h)
+MACHINEPARSED:=$(MACHINEPARSED:machines/%=%)
 MACHINECPP=$(subst /,::,$(MACHINEPARSED))
 
 
