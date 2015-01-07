@@ -20,7 +20,7 @@ install:
 - ./autogen.sh
 - ./configure
 - make
-- make install
+- make install prefix=/home/travis/.local
 #install cldoc from source (could use pip install cldoc for an outdated version)
 - pushd `mktemp -d`
 - git clone https://github.com/jessevdk/cldoc.git
