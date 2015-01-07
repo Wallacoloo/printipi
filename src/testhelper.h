@@ -41,6 +41,18 @@
 #include "motion/accelerationprofile.h"
 #include "motion/coordmap.h"
 
+enum TestHelperCtorFlags {
+    TESTHELPER_ENTER_EVENT_LOOP = 1,
+    TESTHELPER_NO_ENTER_EVENT_LOOP = 0,
+
+    TESTHELPER_PERSISTENT_ROOT_COM = 2,
+    TESTHELPER_NO_PERSISTENT_ROOT_COM = 0,
+};
+//bitwise OR operator for TestHelperCtorFlags, to avoid a bitwise OR resulting in an integer type instead of a TestHelperCtorFlags type.
+inline TestHelperCtorFlags operator|(TestHelperCtorFlags a, TestHelperCtorFlags b) {
+    return static_cast<TestHelperCtorFlags>(static_cast<int>(a) | static_cast<int>(b));
+}
+
 struct DefaultGetIoDrivers {
     std::tuple<> operator()() const {
         return std::tuple<>();
@@ -88,7 +100,7 @@ template <typename MachineT=machines::Machine> class TestHelper {
     State<MachineT> state;
     std::thread eventThread;
     public:
-        TestHelper(const MachineT &machine=MachineT(), bool enterEventLoop=true) 
+        TestHelper(const MachineT &machine=MachineT(), TestHelperCtorFlags flags=TESTHELPER_ENTER_EVENT_LOOP) 
         : inputFile([]() {
             //disable buffering before opening
             auto p = new std::ofstream();
@@ -104,10 +116,12 @@ template <typename MachineT=machines::Machine> class TestHelper {
             p->open("PRINTIPI_TEST_OUTPUT", std::fstream::out | std::fstream::in | std::fstream::trunc);
             return p;
         }()),
-          driver(machine), fs("./"), com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT"), state(driver, fs, com, true) {
+          driver(machine), 
+          fs("./"), 
+          com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT"), state(driver, fs, com, flags & TESTHELPER_PERSISTENT_ROOT_COM) {
             //Note: the above inputFile and outputFile MUST be opened before com is instantiated, otherwise the files may not have been created
             //  and com will have a null file handle.   
-            if (enterEventLoop) {
+            if (flags & TESTHELPER_ENTER_EVENT_LOOP) {
                 this->threadedEventLoop();
             }      
         }
