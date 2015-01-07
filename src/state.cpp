@@ -38,7 +38,7 @@
 SCENARIO("State will respond correctly to gcode commands", "[state]") {
     GIVEN("A State with Driver, Filesystem & Com interfaces") {
         //setup code:
-        TestHelper<machines::MACHINE> helper;
+        TestHelper<machines::MACHINE> helper(machines::MACHINE(), TESTHELPER_NO_PERSISTENT_ROOT_COM | TESTHELPER_ENTER_EVENT_LOOP);
 
         //each WHEN/THEN case corresponds to a single test;
         //the above setup code and the teardown code further below are re-run for EVERY 'when' case.
@@ -138,10 +138,8 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
                 //load & run the file
                 helper.sendCommand("M32 test-printipi-m32.gcode", "ok");
                 THEN("The actual position should be near (40, -10, 50)") {
-                    //note: Printipi is able to monitor multiple file inputs simultaneously,
-                    // if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
-                    // there is no way to query the status of this file read, so we must just sleep & hope
-                    SleepT::sleep_for(std::chrono::seconds(1));
+                    //note: Since running with TESTHELPER_NO_PERSISTENT_ROOT_COM, the M0 exit command from us is guaranteed to be processed
+                    //  after the end of the gcode file, so no sleep is needed.
                     helper.exitOnce(); //force the G0 code to complete
                     helper.verifyPosition(40, -10, 50);
                 }
@@ -152,10 +150,8 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
                 //load & run the file
                 helper.sendCommand("M32 test-printipi-m32.gcode", "ok");
                 THEN("The actual position should be near (40, -10, 50)") {
-                    //note: Printipi is able to monitor multiple file inputs simultaneously,
-                    // if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
-                    // there is no way to query the status of this file read, so we must just sleep & hope
-                    SleepT::sleep_for(std::chrono::seconds(1));
+                    //note: Since running with TESTHELPER_NO_PERSISTENT_ROOT_COM, the M0 exit command from us is guaranteed to be processed
+                    //  after the end of the gcode file, so no sleep is needed.
                     helper.exitOnce(); //force the G0 code to complete
                     helper.verifyPosition(40, -10, 50);
                 }
@@ -167,10 +163,8 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
                 //load & run the file
                 helper.sendCommand("M32 test-printipi-m32.gcode", "ok");
                 THEN("The no commands past M99 should be processed & the actual position should be near (40, -10, 50)") {
-                    //note: Printipi is able to monitor multiple file inputs simultaneously,
-                    // if we send it M0 immediately, it may not have read the G1 from the file, and so it will exit
-                    // there is no way to query the status of this file read, so we must just sleep & hope
-                    SleepT::sleep_for(std::chrono::seconds(1));
+                    //note: Since running with TESTHELPER_NO_PERSISTENT_ROOT_COM, the M0 exit command from us is guaranteed to be processed
+                    //  after the end of the gcode file, so no sleep is needed.
                     helper.exitOnce(); //force the G0 code to complete
                     helper.verifyPosition(40, -10, 50);
                 }
