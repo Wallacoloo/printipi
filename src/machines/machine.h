@@ -24,10 +24,24 @@
 #ifndef DRIVERS_MACHINES_MACHINE_H
 #define DRIVERS_MACHINES_MACHINE_H
 
+#include <tuple>
+
+#include "motion/coordmap.h"
+#include "motion/accelerationprofile.h"
+
 namespace machines {
 
 class Machine {
     public:
+        inline motion::CoordMap getCoordMap() const {
+            return motion::CoordMap();
+        }
+        inline motion::NoAcceleration getAccelerationProfile() const {
+            return motion::NoAcceleration();
+        }
+        inline std::tuple<> getIoDrivers() const {
+            return std::tuple<>();
+        }
         inline float defaultMoveRate() const { //in mm/sec
             return 0;
         }
