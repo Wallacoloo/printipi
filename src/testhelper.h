@@ -78,7 +78,7 @@ template <typename GetIoDrivers=DefaultGetIoDrivers, typename GetCoordMap=Defaul
 
 };
 
-template <typename MachineT> class TestHelper {
+template <typename MachineT=machines::Machine> class TestHelper {
     //must be unique_ptr in order to be movable
     std::unique_ptr<std::ofstream> inputFile;
     std::unique_ptr<std::ifstream> outputFile;
@@ -136,9 +136,17 @@ template <typename MachineT> class TestHelper {
             REQUIRE(actualPos.xyz().distance(x, y, z) <= 4);
         }
         //Compare two std::chrono::durations, of potentially different types.
-        template <typename A, typename B> void requireTimesApproxEqual(const A &a, const B &b) {
+        template <typename AClock, typename ADur, typename BClock, typename BDur> 
+            static void requireDurationsApproxEqual(const std::chrono::duration<AClock, ADur> &a, const std::chrono::duration<BClock, BDur> &b) {
+            typedef std::chrono::duration<AClock, ADur> A;
+            typedef std::chrono::duration<BClock, BDur> B;
             typedef typename std::common_type<A, B>::type Common;
             REQUIRE(Common(a).count() == Approx(Common(b).count()));
+        }
+        //Compare two std::chrono::time_points, of potentially different types.
+        template <typename AClock, typename ADur, typename BClock, typename BDur> 
+            static void requireTimesApproxEqual(const std::chrono::time_point<AClock, ADur> &a, const std::chrono::time_point<BClock, BDur> &b) {
+            requireDurationsApproxEqual(a.time_since_epoch(), b.time_since_epoch());
         }
 
         void exitOnce() {

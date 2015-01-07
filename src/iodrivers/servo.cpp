@@ -55,7 +55,7 @@ EventClockT::duration Servo::getOnTime(float angle) {
 
 struct ServoTester {
 	ServoTester() {
-		GIVEN("A TestHelper & IoDrivers tuple") {
+		GIVEN("A tuple of Servos and IoDrivers") {
 			//create the ioDrivers
 	    	auto ioDrivers = std::make_tuple(
 	    	    iodrv::Servo(iodrv::IoPin(iodrv::NO_INVERSIONS, iodrv::IoPin::null().primitiveIoPin()), 
@@ -74,30 +74,67 @@ struct ServoTester {
 				),
 				iodrv::IODriver()
 	    	);
-			//only give the State references to the ioDrivers so that we can track changes without private member access
-			auto getIoDrivers = [&]() {
-				return std::tie(std::get<0>(ioDrivers), 
-								std::get<1>(ioDrivers), 
-								std::get<2>(ioDrivers), 
-								std::get<3>(ioDrivers),
-								std::get<4>(ioDrivers));
-			};
-	    	auto helper = makeTestHelper(makeTestMachine(getIoDrivers));
+	    	auto &servo0 = std::get<0>(ioDrivers);
+	    	auto &servo1 = std::get<3>(ioDrivers);
+    		THEN("Two consecutive calls to peekNextEvent should return the same event") {
+    			REQUIRE(servo0.peekNextEvent() == servo0.peekNextEvent());
+    		}
+    		THEN("consecutive consumeNextEvent calls should have appropriate spacing") {
+    			//advance such that the next call to peekNextEvent() will return the OFF state.
+    			if (servo0.peekNextEvent().state() == 1) { 
+    				servo0.consumeNextEvent();
+    			}
+    			OutputEvent prevLow = servo0.peekNextEvent();
+    			servo0.consumeNextEvent();
+    			//now at the ON state.
+    			//test 3 iterations
+    			for (int i=0; i<3; ++i) {
+    				OutputEvent curHigh = servo0.peekNextEvent();
+    				servo0.consumeNextEvent();
+    				OutputEvent curLow = servo0.peekNextEvent();
+    				servo0.consumeNextEvent();
+    				//Require pin state to be alternating.
+    				REQUIRE(curHigh.state() == true);
+    				REQUIRE(curLow.state() == false);
+    				//configured for 1 ms on, 99 ms off.
+    				TestHelper<>::requireTimesApproxEqual(curHigh.time(), prevLow.time() + std::chrono::milliseconds(99));
+    				TestHelper<>::requireTimesApproxEqual(curLow.time(), curHigh.time() + std::chrono::milliseconds(1));
+    				prevLow = curLow;
+    			}
+    		}
+	    	GIVEN("A TestHelper that owns references to those IoDrivers") {
+				//only give the State references to the ioDrivers so that we can track changes without private member access
+				auto getIoDrivers = [&]() {
+					return std::tie(std::get<0>(ioDrivers), 
+									std::get<1>(ioDrivers), 
+									std::get<2>(ioDrivers), 
+									std::get<3>(ioDrivers),
+									std::get<4>(ioDrivers));
+				};
+		    	auto helper = makeTestHelper(makeTestMachine(getIoDrivers));
 
-	    	WHEN("Servo0 is set to 90 degrees") {
-	    		helper.sendCommand("M280 P0 S90.0", "ok");
-	    		THEN("Its highTime should be 2 ms (25% interpolation of 1, 5) and other servos should not have been affected") {
-		    		helper.requireTimesApproxEqual(std::get<0>(ioDrivers).highTime, std::chrono::milliseconds(2));
-		    		helper.requireTimesApproxEqual(std::get<3>(ioDrivers).highTime, std::chrono::milliseconds(3));
+		    	WHEN("Servo0 is set to 90 degrees") {
+		    		helper.sendCommand("M280 P0 S90.0", "ok");
+		    		THEN("Its highTime should be 2 ms (25% interpolation of 1, 5) and other servos should not have been affected") {
+			    		helper.requireDurationsApproxEqual(servo0.highTime, std::chrono::milliseconds(2));
+			    		helper.requireDurationsApproxEqual(servo1.highTime, std::chrono::milliseconds(3));
+			    	}
 		    	}
-	    	}
-	    	WHEN("Servo1 is set to 135 degrees") {
-	    		helper.sendCommand("M280 P1 S135", "ok");
-	    		THEN("Its highTime should be 2.5 ms (50% interpolation of 2, 3) and other servos should not have been affected") {
-	    			helper.requireTimesApproxEqual(std::get<0>(ioDrivers).highTime, std::chrono::milliseconds(1));
-	    			helper.requireTimesApproxEqual(std::get<3>(ioDrivers).highTime, std::chrono::microseconds(2500));
-	    		}
-	    	}
+		    	WHEN("Servo1 is set to 135 degrees") {
+		    		helper.sendCommand("M280 P1 S135", "ok");
+		    		THEN("Its highTime should be 2.5 ms (50% interpolation of 2, 3) and other servos should not have been affected") {
+		    			helper.requireDurationsApproxEqual(servo0.highTime, std::chrono::milliseconds(1));
+		    			helper.requireDurationsApproxEqual(servo1.highTime, std::chrono::microseconds(2500));
+		    		}
+		    	}
+		    	WHEN("Servo1 is set to 270 degrees") {
+		    		helper.sendCommand("M280 P1 S270", "ok");
+		    		THEN("It should be clamped to its limit, 180 degrees, and other servos should be unaffected") {
+		    			helper.requireDurationsApproxEqual(servo0.highTime, std::chrono::milliseconds(1));
+		    			helper.requireDurationsApproxEqual(servo1.highTime, std::chrono::milliseconds(3));
+		    		}
+		    	}
+		    }
 		}
 	}
 };
