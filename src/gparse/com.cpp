@@ -31,10 +31,8 @@ namespace gparse {
 //initialize static consts:
 const std::string Com::NULL_FILE_STR("/dev/null"); 
 
-Com::Com() : _readFd(NO_HANDLE), _writeFd(NO_HANDLE), _dieOnEof(false), _isAtEof(false) {}
-
 Com::Com(const std::string &fileR, const std::string &fileW, bool dieOnEof) 
-  : _readFd(open(fileR.c_str(), O_RDWR | O_NONBLOCK))
+  : _readFd(fileR == NULL_FILE_STR ? NO_HANDLE : open(fileR.c_str(), O_RDWR | O_NONBLOCK))
   , _writeFd(fileW == NULL_FILE_STR ? NO_HANDLE : open(fileW.c_str(), O_RDWR | O_NONBLOCK))
   , _dieOnEof(dieOnEof)
   , _isAtEof(false) {

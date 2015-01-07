@@ -55,11 +55,9 @@ class Com {
     public:
         static const std::string NULL_FILE_STR;
     public:
-        Com();
-
         //set @dieOnEof=true when reading from an actual, fix-length file, instead of a stream.
         //useful when dealing with "subprograms" (printing from a file), in which the replies don't need to be sent back to the main com channel.
-        Com(const std::string &fileR, const std::string &fileW=NULL_FILE_STR, bool dieOnEof=false);
+        Com(const std::string &fileR=NULL_FILE_STR, const std::string &fileW=NULL_FILE_STR, bool dieOnEof=false);
 
         //returns true if there is a command ready to be interpreted.
         bool tendCom();
