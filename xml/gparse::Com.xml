@@ -12,7 +12,6 @@ Communication is typically done over a serial interface, but Com accepts any fil
     <brief>initialize static consts:</brief>
     <type name="std::string" qualifier=" const" />
   </variable>
-  <constructor id="gparse::Com::Com" name="Com" />
   <constructor id="gparse::Com::Com" name="Com">
     <brief>set @dieOnEof=true when reading from an actual, fix-length file, instead of a stream.</brief>
     <doc>useful when dealing with "subprograms" (printing from a file), in which the replies don't need to be sent back to the main com channel.</doc>
