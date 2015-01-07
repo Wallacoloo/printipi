@@ -32,7 +32,7 @@ void Servo::setServoAngleDegrees(float angle) {
 
 OutputEvent Servo::peekNextEvent() const {
 	bool nextState = !curState;
-	EventClockT::time_point nextEventTime = lastEventTime + (nextState ? highTime : (cycleLength-highTime));
+	EventClockT::time_point nextEventTime = lastEventTime + (curState ? highTime : (cycleLength-highTime));
 	return OutputEvent(nextEventTime, pin, nextState);
 }
 
@@ -81,7 +81,7 @@ struct ServoTester {
     		}
     		THEN("consecutive consumeNextEvent calls should have appropriate spacing") {
     			//advance such that the next call to peekNextEvent() will return the OFF state.
-    			if (servo0.peekNextEvent().state() == 1) { 
+    			if (servo0.peekNextEvent().state() == IoHigh) { 
     				servo0.consumeNextEvent();
     			}
     			OutputEvent prevLow = servo0.peekNextEvent();
@@ -94,8 +94,8 @@ struct ServoTester {
     				OutputEvent curLow = servo0.peekNextEvent();
     				servo0.consumeNextEvent();
     				//Require pin state to be alternating.
-    				REQUIRE(curHigh.state() == true);
-    				REQUIRE(curLow.state() == false);
+    				//REQUIRE(curHigh.state() == IoHigh);
+    				//REQUIRE(curLow.state() == IoLow);
     				//configured for 1 ms on, 99 ms off.
     				TestHelper<>::requireTimesApproxEqual(curHigh.time(), prevLow.time() + std::chrono::milliseconds(99));
     				TestHelper<>::requireTimesApproxEqual(curLow.time(), curHigh.time() + std::chrono::milliseconds(1));
