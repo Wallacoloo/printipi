@@ -34,8 +34,12 @@ enum IoPinInversions {
     //bitfield that can be used to indicate whether a pin has logically-inverted reads/writes
     NO_INVERSIONS = 0,
     INVERT_READS  = 1,
-    INVERT_WRITES = 2
+    INVERT_WRITES = 2,
 };
+//bitwise OR operator for IoPinInversions, to avoid INVERT_READS|INVERT_WRITES resulting in an integer type instead of a IoPinInversions type.
+inline IoPinInversions operator|(IoPinInversions a, IoPinInversions b) {
+    return static_cast<IoPinInversions>(static_cast<int>(a) | static_cast<int>(b));
+}
 
 enum DefaultIoState {
     IO_DEFAULT_NONE,
