@@ -12,7 +12,10 @@ before_install:
 #- sudo add-apt-repository -y ppa:jtaylor/jtaylor
 - sudo apt-get update -qq
 install:
+#Install compilers
 - sudo apt-get install -qq g++-4.7 libclang-3.4-dev clang-3.4 libclang1-3.4 libclang-common-3.4-dev
+#Install debug symbols needed by valgrind
+- sudo apt-get install -qq libc6-dbg
 #- sudo apt-get install -qq valgrind
 #install valgrind from source (3.7.0 and 3.8.0 encounter an unknown instruction on some gcc-produced binaries)
 - svn co svn://svn.valgrind.org/valgrind/trunk valgrind
