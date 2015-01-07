@@ -21,7 +21,7 @@ git config user.email $GIT_EMAIL
 
 set -x #echo future commands
 
-#If running in Travis CI:
+#If running in Travis CI, add path to cldoc binary:
 PATH=$PATH:/home/travis/.local/bin
 
 #cldoc fix for https://github.com/jessevdk/cldoc/issues/2
