@@ -1,17 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
-<structtemplate id="gparse::(anonymous::1)::_AxisStepper__getNextTime" name="_AxisStepper__getNextTime" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<structtemplate id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime" name="_AxisStepper__getNextTime" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <brief>Helper classes for AxisStepper::getNextTime method</brief>
   <doc>C++ doesn't support partial template function specialization, so we need to use templated classes instead.
 Below function(s) select the AxisStepper with the smallest time attribute from a tuple of such AxisSteppers</doc>
-  <templatetypeparameter id="gparse::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT" />
-  <templatenontypeparameter id="gparse::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
+  <templatetypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT" />
+  <templatenontypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
     <type builtin="yes" name="int" />
   </templatenontypeparameter>
-  <method id="gparse::(anonymous::1)::_AxisStepper__getNextTime::operator()" name="operator()">
+  <method id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::operator()" name="operator()">
     <return>
       <type name="motion::AxisStepper" qualifier=" &amp;" ref="motion::AxisStepper#motion::AxisStepper" />
     </return>
-    <argument id="gparse::(anonymous::1)::_AxisStepper__getNextTime::operator()::axes" name="axes">
+    <argument id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::operator()::axes" name="axes">
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
   </method>
