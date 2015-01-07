@@ -859,8 +859,8 @@ return values.
         <location column="1" file="iodrivers/tempcontrol.h" line="39" />
         <location column="1" file="iodrivers/rcthermistor.h" line="35" />
         <location column="1" file="iodrivers/servo.h" line="38" />
-        <location column="1" file="iodrivers/servo.cpp" line="27" />
         <location column="1" file="iodrivers/iopin.cpp" line="33" />
+        <location column="1" file="iodrivers/servo.cpp" line="27" />
       </undocumented>
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="32" />
@@ -3071,6 +3071,11 @@ return values.
       <location column="9" file="state.h" line="220" />
       <undocumented name="persistence" />
     </function>
+    <function id="motion::ConstantAcceleration::transform" name="transform">
+      <location column="9" file="motion/constantacceleration.h" line="61" />
+      <undocumented-return />
+      <undocumented name="time" />
+    </function>
     <function id="motion::CoordMap::getDependentIoDrivers" name="getDependentIoDrivers">
       <location column="9" file="motion/coordmap.h" line="57" />
       <undocumented-return />
@@ -3113,52 +3118,6 @@ return values.
       <location column="9" file="motion/coordmap.h" line="107" />
       <undocumented-return />
     </function>
-    <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/machine.h" line="49" />
-      <undocumented-return />
-    </function>
-    <function id="operator|" name="operator|">
-      <location column="1" file="testhelper.h" line="52" />
-      <undocumented-return />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::sendCommand" name="sendCommand">
-      <location column="9" file="testhelper.h" line="138" />
-      <undocumented name="cmd" />
-    </function>
-    <function id="TestHelper::verifyPosition" name="verifyPosition">
-      <location column="9" file="testhelper.h" line="147" />
-      <undocumented name="y" />
-      <undocumented name="x" />
-      <undocumented name="z" />
-    </function>
-    <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
-      <location column="9" file="testhelper.h" line="153" />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
-      <location column="9" file="testhelper.h" line="171" />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::readLine" name="readLine">
-      <location column="9" file="testhelper.h" line="190" />
-      <undocumented-return />
-    </function>
-    <function id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="212" />
-      <undocumented-return />
-      <undocumented name="getCoordMap" />
-      <undocumented name="getIoDrivers" />
-      <undocumented name="getAccelerationProfile" />
-    </function>
-    <function id="motion::ConstantAcceleration::transform" name="transform">
-      <location column="9" file="motion/constantacceleration.h" line="61" />
-      <undocumented-return />
-      <undocumented name="time" />
-    </function>
     <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
       <location column="9" file="motion/linearstepper.h" line="66" />
       <undocumented name="map" />
@@ -3181,6 +3140,10 @@ return values.
     <function id="motion::LinearStepper::_nextStep" name="_nextStep">
       <location column="9" file="motion/linearstepper.h" line="88" />
       <undocumented name="useEndstops" />
+    </function>
+    <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
+      <location column="9" file="machines/machine.h" line="49" />
+      <undocumented-return />
     </function>
     <function id="iodrv::Fan::Fan" name="Fan">
       <location column="9" file="iodrivers/fan.h" line="49" />
@@ -3224,6 +3187,43 @@ return values.
     <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/generic/cartesian.h" line="175" />
       <undocumented-return />
+    </function>
+    <function id="operator|" name="operator|">
+      <location column="1" file="testhelper.h" line="52" />
+      <undocumented-return />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::sendCommand" name="sendCommand">
+      <location column="9" file="testhelper.h" line="138" />
+      <undocumented name="cmd" />
+    </function>
+    <function id="TestHelper::verifyPosition" name="verifyPosition">
+      <location column="9" file="testhelper.h" line="147" />
+      <undocumented name="y" />
+      <undocumented name="x" />
+      <undocumented name="z" />
+    </function>
+    <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
+      <location column="9" file="testhelper.h" line="153" />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
+      <location column="9" file="testhelper.h" line="171" />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::readLine" name="readLine">
+      <location column="9" file="testhelper.h" line="190" />
+      <undocumented-return />
+    </function>
+    <function id="makeTestMachine" name="makeTestMachine">
+      <location column="1" file="testhelper.h" line="212" />
+      <undocumented-return />
+      <undocumented name="getCoordMap" />
+      <undocumented name="getIoDrivers" />
+      <undocumented name="getAccelerationProfile" />
     </function>
     <function id="plat::rpi::PrimitiveIoPin::null" name="null">
       <location column="3" file="platforms/rpi/primitiveiopin.h" line="43" />
@@ -3399,6 +3399,12 @@ return values.
         <ref name="MotionPlanner" />
       </doctype>
     </typedef>
+    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
+      <location column="1" file="motion/constantacceleration.h" line="41" />
+      <doctype name="doc">
+        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
+      </doctype>
+    </class>
     <functiontemplate id="makeTestMachine" name="makeTestMachine">
       <location column="1" file="testhelper.h" line="212" />
       <doctype name="doc">
@@ -3407,12 +3413,6 @@ return values.
         <ref name="Args..." />
       </doctype>
     </functiontemplate>
-    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
-      <location column="1" file="motion/constantacceleration.h" line="41" />
-      <doctype name="doc">
-        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
-      </doctype>
-    </class>
     <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/rpi/primitiveiopin.h" line="57" />
       <doctype component="pullUpDown" name="params">
