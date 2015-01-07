@@ -14,13 +14,13 @@ before_install:
 install:
 - sudo apt-get install -qq g++-4.7 libclang-3.4-dev clang-3.4 libclang1-3.4 libclang-common-3.4-dev
 #- sudo apt-get install -qq valgrind
-#install valgrind from source (3.7.0 and 3.8.0 encounter an unknown instruction)
+#install valgrind from source (3.7.0 and 3.8.0 encounter an unknown instruction on some gcc-produced binaries)
 - svn co svn://svn.valgrind.org/valgrind/trunk valgrind
 - pushd valgrind
 - ./autogen.sh
-- ./configure
+- ./configure --prefix=/home/travis/.local
 - make
-- make install prefix=/home/travis/.local
+- make install 
 - popd
 #install cldoc from source (could use pip install cldoc for an outdated version)
 - pushd `mktemp -d`
