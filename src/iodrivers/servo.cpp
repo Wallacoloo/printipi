@@ -38,7 +38,7 @@ OutputEvent Servo::peekNextEvent() const {
 
 void Servo::consumeNextEvent() {
 	OutputEvent evt = peekNextEvent();
-	this->curState = evt.state();
+	this->curState = !curState; //Note: avoid evt.state(), as that has potentially been level-inverted for the pin inversions
 	this->lastEventTime = evt.time();
 }
 
@@ -74,14 +74,15 @@ struct ServoTester {
 				),
 				iodrv::IODriver()
 	    	);
-	    	auto &servo0 = std::get<0>(ioDrivers);
-	    	auto &servo1 = std::get<3>(ioDrivers);
+	    	iodrv::Servo &servo0 = std::get<0>(ioDrivers);
+	    	iodrv::Servo &servo1 = std::get<3>(ioDrivers);
     		THEN("Two consecutive calls to peekNextEvent should return the same event") {
     			REQUIRE(servo0.peekNextEvent() == servo0.peekNextEvent());
     		}
     		THEN("consecutive consumeNextEvent calls should have appropriate spacing") {
     			//advance such that the next call to peekNextEvent() will return the OFF state.
-    			if (servo0.peekNextEvent().state() == IoHigh) { 
+    			//avoid (servo0.peekNextEvent().state() == IoHigh) due to erroneous valgrind warning
+    			if (servo0.curState == IoLow) {
     				servo0.consumeNextEvent();
     			}
     			OutputEvent prevLow = servo0.peekNextEvent();
@@ -94,8 +95,8 @@ struct ServoTester {
     				OutputEvent curLow = servo0.peekNextEvent();
     				servo0.consumeNextEvent();
     				//Require pin state to be alternating.
-    				//REQUIRE(curHigh.state() == IoHigh);
-    				//REQUIRE(curLow.state() == IoLow);
+    				REQUIRE(curHigh.state() == IoHigh);
+    				REQUIRE(curLow.state() == IoLow);
     				//configured for 1 ms on, 99 ms off.
     				TestHelper<>::requireTimesApproxEqual(curHigh.time(), prevLow.time() + std::chrono::milliseconds(99));
     				TestHelper<>::requireTimesApproxEqual(curLow.time(), curHigh.time() + std::chrono::milliseconds(1));
