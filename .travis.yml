@@ -16,11 +16,12 @@ install:
 #- sudo apt-get install -qq valgrind
 #install valgrind from source (3.7.0 and 3.8.0 encounter an unknown instruction)
 - svn co svn://svn.valgrind.org/valgrind/trunk valgrind
-- cd valgrind
+- pushd valgrind
 - ./autogen.sh
 - ./configure
 - make
 - make install prefix=/home/travis/.local
+- popd
 #install cldoc from source (could use pip install cldoc for an outdated version)
 - pushd `mktemp -d`
 - git clone https://github.com/jessevdk/cldoc.git
