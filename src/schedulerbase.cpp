@@ -67,7 +67,7 @@ void SchedulerBase::configureExitHandlers() {
     sigaction(SIGTSTP, &sigIntHandler, nullptr); //register ctrl+z
     sigaction(SIGABRT, &sigIntHandler, nullptr); //register SIGABRT, which is triggered for critical errors (eg glibc detects double-free)
     sigaction(SIGTERM, &sigIntHandler, nullptr); //register SIGTERM
-    
+    sigaction(SIGILL, &sigIntHandler, nullptr); //resgier SIGILL - illegal instruction
     struct sigaction sa;
     //memset(&sa, 0, sizeof(sigaction));
     sigemptyset(&sa.sa_mask);
