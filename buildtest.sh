@@ -23,7 +23,7 @@ do
 			if [ "$machine" == "generic/cartesian.h" ]; then
 				#if we have a generic machine, then run the tests.
 				#Cannot run platform-specific tests on all platforms.
-				valgrind --leak-check=full --error-exitcode=1 ../build/printipi
+				valgrind --leak-check=full --track-fds=yes --error-exitcode=1 ../build/printipi
 		    fi
 		done
 	done
