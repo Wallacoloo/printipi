@@ -43,7 +43,7 @@ that's been retrieved from &amp;lt;nextOutputEvent&amp;gt;</doc>
   </method>
   <method id="motion::MotionPlanner::axisPositions" name="axisPositions">
     <return>
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </return>
   </method>
   <method id="motion::MotionPlanner::resetAxisPositions" name="resetAxisPositions">
@@ -51,7 +51,7 @@ that's been retrieved from &amp;lt;nextOutputEvent&amp;gt;</doc>
       <type builtin="yes" name="void" />
     </return>
     <argument id="motion::MotionPlanner::resetAxisPositions::pos" name="pos">
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
   </method>
   <method id="motion::MotionPlanner::peekNextEvent" name="peekNextEvent">
