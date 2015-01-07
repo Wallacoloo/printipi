@@ -45,6 +45,18 @@
     </enumvalue>
     <enumvalue id="iodrv::INVERT_READS" name="INVERT_READS" value="1" />
     <enumvalue id="iodrv::INVERT_WRITES" name="INVERT_WRITES" value="2" />
+    <function id="iodrv::operator|" name="operator|">
+      <brief>bitwise OR operator for IoPinInversions, to avoid INVERT_READS|INVERT_WRITES resulting in an integer type instead of a IoPinInversions type.</brief>
+      <return>
+        <type name="IoPinInversions" ref="iodrv#iodrv::IoPinInversions" />
+      </return>
+      <argument id="iodrv::operator|::a" name="a">
+        <type name="IoPinInversions" ref="iodrv#iodrv::IoPinInversions" />
+      </argument>
+      <argument id="iodrv::operator|::b" name="b">
+        <type name="IoPinInversions" ref="iodrv#iodrv::IoPinInversions" />
+      </argument>
+    </function>
   </enum>
   <enum anonymous="yes" id="iodrv::IoPinMode" name="IoPinMode">
     <enumvalue id="iodrv::IOPIN_MODE_UNSPECIFIED" name="IOPIN_MODE_UNSPECIFIED" value="0" />

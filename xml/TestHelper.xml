@@ -9,8 +9,8 @@
     <argument id="TestHelper::TestHelper&lt;MachineT&gt;::machine" name="machine">
       <type name="const MachineT" qualifier=" const &amp;" />
     </argument>
-    <argument id="TestHelper::TestHelper&lt;MachineT&gt;::enterEventLoop" name="enterEventLoop">
-      <type builtin="yes" name="bool" />
+    <argument id="TestHelper::TestHelper&lt;MachineT&gt;::flags" name="flags">
+      <type name="TestHelperCtorFlags" ref="index#TestHelperCtorFlags" />
     </argument>
   </constructor>
   <constructor abstract="yes" id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">

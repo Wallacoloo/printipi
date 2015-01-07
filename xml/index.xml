@@ -360,6 +360,24 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <enumvalue id="POS_ABSOLUTE" name="POS_ABSOLUTE" value="0" />
     <enumvalue id="POS_RELATIVE" name="POS_RELATIVE" value="1" />
   </enum>
+  <enum anonymous="yes" id="TestHelperCtorFlags" name="TestHelperCtorFlags">
+    <enumvalue id="TESTHELPER_ENTER_EVENT_LOOP" name="TESTHELPER_ENTER_EVENT_LOOP" value="1" />
+    <enumvalue id="TESTHELPER_NO_ENTER_EVENT_LOOP" name="TESTHELPER_NO_ENTER_EVENT_LOOP" value="0" />
+    <enumvalue id="TESTHELPER_PERSISTENT_ROOT_COM" name="TESTHELPER_PERSISTENT_ROOT_COM" value="2" />
+    <enumvalue id="TESTHELPER_NO_PERSISTENT_ROOT_COM" name="TESTHELPER_NO_PERSISTENT_ROOT_COM" value="0" />
+    <function id="operator|" name="operator|">
+      <brief>bitwise OR operator for TestHelperCtorFlags, to avoid a bitwise OR resulting in an integer type instead of a TestHelperCtorFlags type.</brief>
+      <return>
+        <type name="TestHelperCtorFlags" ref="index#TestHelperCtorFlags" />
+      </return>
+      <argument id="operator|::a" name="a">
+        <type name="TestHelperCtorFlags" ref="index#TestHelperCtorFlags" />
+      </argument>
+      <argument id="operator|::b" name="b">
+        <type name="TestHelperCtorFlags" ref="index#TestHelperCtorFlags" />
+      </argument>
+    </function>
+  </enum>
   <typedef id="AxisIdType" name="AxisIdType">
     <brief>This determines the maximum number of axis we can have on the machine</brief>
     <doc>Since most machines only need 3-6 degrees of freedom, an 8-bit integer is PLENTY</doc>
