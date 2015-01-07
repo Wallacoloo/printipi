@@ -141,7 +141,17 @@ template <typename MachineT=machines::Machine> class TestHelper {
             typedef std::chrono::duration<AClock, ADur> A;
             typedef std::chrono::duration<BClock, BDur> B;
             typedef typename std::common_type<A, B>::type Common;
-            REQUIRE(Common(a).count() == Approx(Common(b).count()));
+            Common smaller = std::min(Common(a), Common(b));
+            Common bigger = std::max(Common(a), Common(b));
+            INFO("times should be approx equal: ");
+            INFO(std::to_string(smaller.count()));
+            INFO(std::to_string(bigger.count()));
+            bool timesAreApproxEqual = bigger <= smaller + Common(std::chrono::microseconds(1)) && 
+              smaller >= bigger + Common(std::chrono::microseconds(-1));
+            REQUIRE(timesAreApproxEqual);
+            //REQUIRE(bigger <= smaller + Common(std::chrono::microseconds(1)));
+            //REQUIRE(smaller >= bigger + Common(std::chrono::microseconds(-1)));
+            //REQUIRE(Common(a).count() == Approx(Common(b).count()));
         }
         //Compare two std::chrono::time_points, of potentially different types.
         template <typename AClock, typename ADur, typename BClock, typename BDur> 
