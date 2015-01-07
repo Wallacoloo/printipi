@@ -23,10 +23,15 @@ do
 			#check for compilation with and without tests enabled
 			make CXX=$compiler MACHINE=$machine $target
 			make CXX=$compiler MACHINE=$machine $target DO_TESTS=1
+			#if we have a generic machine, then run the tests.
+			#Cannot run platform-specific tests on all platforms.
 			if [ "$machine" == "generic/cartesian.h" ]; then
-				#if we have a generic machine, then run the tests.
-				#Cannot run platform-specific tests on all platforms.
-				valgrind --leak-check=full --track-fds=yes --error-exitcode=1 ../build/printipi
+				#only run valgrind on debug builds or clang builds to avoid gcc generating instructions valgrind doesn't recognize
+				if [ "$target" == "debug" || "$compiler" == "clang++"]; then 
+					valgrind --leak-check=full --track-fds=yes --error-exitcode=1 ../build/printipi
+				else
+					../build/printipi
+				fi
 		    fi
 		done
 	done
