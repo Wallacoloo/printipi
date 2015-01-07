@@ -304,7 +304,11 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <templatetypeparameter id="State::Drv" name="Drv" />
   </classtemplate>
   <classtemplate name="TestHelper" ref="TestHelper#TestHelper">
-    <templatetypeparameter id="TestHelper::MachineT" name="MachineT" />
+    <templatetypeparameter id="TestHelper::MachineT" name="MachineT">
+      <default>
+        <type name="machines::Machine" ref="machines::Machine#machines::Machine" />
+      </default>
+    </templatetypeparameter>
   </classtemplate>
   <classtemplate name="TestMachine" ref="TestMachine#TestMachine">
     <templatetypeparameter id="TestMachine::GetIoDrivers" name="GetIoDrivers">

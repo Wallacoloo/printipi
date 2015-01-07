@@ -6,9 +6,4 @@
     <type name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
   </base>
   <constructor id="iodrv::IoPin::null::null" name="null" />
-  <method id="iodrv::IoPin::null::ref" name="ref" static="yes">
-    <return>
-      <type name="null" qualifier=" const &amp;" ref="iodrv::IoPin::null#iodrv::IoPin::null" />
-    </return>
-  </method>
 </class>

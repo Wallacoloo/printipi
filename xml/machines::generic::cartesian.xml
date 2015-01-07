@@ -20,20 +20,23 @@
     </return>
     <override name="Machine::defaultMoveRate" ref="machines::Machine#machines::Machine::defaultMoveRate" />
   </method>
-  <method id="machines::generic::cartesian::getAccelerationProfile" name="getAccelerationProfile">
+  <method id="machines::generic::cartesian::getAccelerationProfile" name="getAccelerationProfile" override="yes">
     <return>
       <type name="motion::ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
     </return>
+    <override name="Machine::getAccelerationProfile" ref="machines::Machine#machines::Machine::getAccelerationProfile" />
   </method>
-  <method id="machines::generic::cartesian::getCoordMap" name="getCoordMap">
+  <method id="machines::generic::cartesian::getCoordMap" name="getCoordMap" override="yes">
     <return>
       <type name="motion::LinearCoordMap&lt;iodrv::A4988, iodrv::A4988, iodrv::A4988, iodrv::A4988, Matrix3x3&gt;" />
     </return>
+    <override name="Machine::getCoordMap" ref="machines::Machine#machines::Machine::getCoordMap" />
   </method>
-  <method id="machines::generic::cartesian::getIoDrivers" name="getIoDrivers">
+  <method id="machines::generic::cartesian::getIoDrivers" name="getIoDrivers" override="yes">
     <return>
       <type name="std::tuple&lt;iodrv::Fan, iodrv::Servo, iodrv::TempControl&lt;iodrv::RCThermistor, PID, LowPassFilter&gt; &gt;" />
     </return>
+    <override name="Machine::getIoDrivers" ref="machines::Machine#machines::Machine::getIoDrivers" />
   </method>
   <method id="machines::generic::cartesian::maxExtrudeRate" name="maxExtrudeRate" override="yes">
     <return>

@@ -20,25 +20,28 @@
     </return>
     <override name="Machine::defaultMoveRate" ref="machines::Machine#machines::Machine::defaultMoveRate" />
   </method>
-  <method id="machines::rpi::kosselrampsfd::getAccelerationProfile" name="getAccelerationProfile">
+  <method id="machines::rpi::kosselrampsfd::getAccelerationProfile" name="getAccelerationProfile" override="yes">
     <brief>Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).</brief>
     <return>
       <type name="motion::ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
     </return>
+    <override name="Machine::getAccelerationProfile" ref="machines::Machine#machines::Machine::getAccelerationProfile" />
   </method>
-  <method id="machines::rpi::kosselrampsfd::getCoordMap" name="getCoordMap">
+  <method id="machines::rpi::kosselrampsfd::getCoordMap" name="getCoordMap" override="yes">
     <brief>Define the coordinate system:</brief>
     <doc>We are using a LinearDelta coordinate system, where vertically-moving carriages are
 attached to an end effector via fixed-length, rotatable rods.</doc>
     <return>
       <type name="motion::LinearDeltaCoordMap&lt;iodrv::A4988, iodrv::A4988, iodrv::A4988, iodrv::A4988, Matrix3x3&gt;" />
     </return>
+    <override name="Machine::getCoordMap" ref="machines::Machine#machines::Machine::getCoordMap" />
   </method>
-  <method id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
-    <brief>return a list of miscellaneous IoDrivers (Endstops &amp; A4988 drivers are reachable via <ref ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd::getCoordMap">machines::rpi::kosselrampsfd::getCoordMap</ref>)</brief>
+  <method id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers" override="yes">
+    <brief>return a list of miscellaneous IoDrivers (Endstops &amp; A4988 drivers are reachable via <ref ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd::getCoordMap">machines::rpi::kosselrampsfd::getCoordMap</ref> and <ref ref="machines::Machine#machines::Machine::getCoordMap">machines::Machine::getCoordMap</ref>)</brief>
     <return>
       <type name="std::tuple&lt;iodrv::Fan&gt;" />
     </return>
+    <override name="Machine::getIoDrivers" ref="machines::Machine#machines::Machine::getIoDrivers" />
   </method>
   <method id="machines::rpi::kosselrampsfd::maxExtrudeRate" name="maxExtrudeRate" override="yes">
     <return>

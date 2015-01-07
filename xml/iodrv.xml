@@ -46,6 +46,11 @@
     <enumvalue id="iodrv::INVERT_READS" name="INVERT_READS" value="1" />
     <enumvalue id="iodrv::INVERT_WRITES" name="INVERT_WRITES" value="2" />
   </enum>
+  <enum anonymous="yes" id="iodrv::IoPinMode" name="IoPinMode">
+    <enumvalue id="iodrv::IOPIN_MODE_UNSPECIFIED" name="IOPIN_MODE_UNSPECIFIED" value="0" />
+    <enumvalue id="iodrv::IOPIN_MODE_INPUT" name="IOPIN_MODE_INPUT" value="1" />
+    <enumvalue id="iodrv::IOPIN_MODE_OUTPUT" name="IOPIN_MODE_OUTPUT" value="2" />
+  </enum>
   <enum anonymous="yes" id="iodrv::TempControlType" name="TempControlType">
     <brief>enum passed to instructor to define the TempControl instance as either controlling a Hotend or a Heated Bed.</brief>
     <doc>Functionally, they work the same, but each type responds to different G-codes.</doc>

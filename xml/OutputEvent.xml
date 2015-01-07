@@ -28,6 +28,14 @@ so if @state is IoHigh, pin.areWritesInverted() == true, then the physical hardw
       <type builtin="yes" name="bool" />
     </return>
   </method>
+  <method id="OutputEvent::operator==" name="operator==">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="OutputEvent::operator==::other" name="other">
+      <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
+    </argument>
+  </method>
   <method id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
     <brief>@return the pin that should be affected.</brief>
     <return>

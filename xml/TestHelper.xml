@@ -1,6 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate abstract="true" id="TestHelper" name="TestHelper" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <templatetypeparameter id="TestHelper::MachineT" name="MachineT" />
+  <templatetypeparameter id="TestHelper::MachineT" name="MachineT">
+    <default>
+      <type name="machines::Machine" ref="machines::Machine#machines::Machine" />
+    </default>
+  </templatetypeparameter>
   <constructor id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
     <argument id="TestHelper::TestHelper&lt;MachineT&gt;::machine" name="machine">
       <type name="const MachineT" qualifier=" const &amp;" />
@@ -43,19 +47,37 @@
       <type builtin="yes" name="float" />
     </argument>
   </method>
-  <methodtemplate id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
+  <methodtemplate id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual" static="yes">
     <brief>Compare two std::chrono::durations, of potentially different types.</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
+    <argument id="TestHelper::requireDurationsApproxEqual::a" name="a">
+      <type name="std::chrono::duration&lt;_Rep, _Period&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="TestHelper::requireDurationsApproxEqual::b" name="b">
+      <type name="std::chrono::duration&lt;_Rep, _Period&gt;" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="TestHelper::requireDurationsApproxEqual::AClock" name="AClock" />
+    <templatetypeparameter id="TestHelper::requireDurationsApproxEqual::ADur" name="ADur" />
+    <templatetypeparameter id="TestHelper::requireDurationsApproxEqual::BClock" name="BClock" />
+    <templatetypeparameter id="TestHelper::requireDurationsApproxEqual::BDur" name="BDur" />
+  </methodtemplate>
+  <methodtemplate id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual" static="yes">
+    <brief>Compare two std::chrono::time_points, of potentially different types.</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
     <argument id="TestHelper::requireTimesApproxEqual::a" name="a">
-      <type name="const A" qualifier=" const &amp;" />
+      <type name="std::chrono::time_point&lt;_Clock, _Dur&gt;" qualifier=" const &amp;" />
     </argument>
     <argument id="TestHelper::requireTimesApproxEqual::b" name="b">
-      <type name="const B" qualifier=" const &amp;" />
+      <type name="std::chrono::time_point&lt;_Clock, _Dur&gt;" qualifier=" const &amp;" />
     </argument>
-    <templatetypeparameter id="TestHelper::requireTimesApproxEqual::A" name="A" />
-    <templatetypeparameter id="TestHelper::requireTimesApproxEqual::B" name="B" />
+    <templatetypeparameter id="TestHelper::requireTimesApproxEqual::AClock" name="AClock" />
+    <templatetypeparameter id="TestHelper::requireTimesApproxEqual::ADur" name="ADur" />
+    <templatetypeparameter id="TestHelper::requireTimesApproxEqual::BClock" name="BClock" />
+    <templatetypeparameter id="TestHelper::requireTimesApproxEqual::BDur" name="BDur" />
   </methodtemplate>
   <method id="TestHelper::exitOnce" name="exitOnce">
     <return>

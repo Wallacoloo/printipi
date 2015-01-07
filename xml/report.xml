@@ -149,7 +149,7 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="47" />
       </undocumented>
     </type>
-    <type documented="12" name="methodtemplate" undocumented="47">
+    <type documented="14" name="methodtemplate" undocumented="46">
       <undocumented id="IntervalTimer::clockCmp" name="clockCmp">
         <location column="9" file="common/intervaltimer.h" line="47" />
       </undocumented>
@@ -253,9 +253,6 @@ return values.
         <location column="9" file="iodrivers/iodriver.h" line="95" />
         <location column="1" file="iodrivers/iodriver.h" line="227" />
       </undocumented>
-      <undocumented id="iodrv::IoPin::IoPin" name="IoPin">
-        <location column="9" file="iodrivers/iopin.h" line="77" />
-      </undocumented>
       <undocumented id="iodrv::TempControl::onIdleCpu" name="onIdleCpu">
         <location column="9" file="iodrivers/tempcontrol.h" line="92" />
       </undocumented>
@@ -328,7 +325,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="266" />
       </undocumented>
     </type>
-    <type documented="2" name="templatetypeparameter" undocumented="159">
+    <type documented="2" name="templatetypeparameter" undocumented="165">
       <undocumented id="Drv" name="Drv">
         <location column="11" file="state.h" line="463" />
       </undocumented>
@@ -365,11 +362,29 @@ return values.
       <undocumented id="TestHelper::MachineT" name="MachineT">
         <location column="11" file="testhelper.h" line="81" />
       </undocumented>
-      <undocumented id="TestHelper::requireTimesApproxEqual::A" name="A">
+      <undocumented id="TestHelper::requireDurationsApproxEqual::AClock" name="AClock">
         <location column="19" file="testhelper.h" line="139" />
       </undocumented>
-      <undocumented id="TestHelper::requireTimesApproxEqual::B" name="B">
-        <location column="31" file="testhelper.h" line="139" />
+      <undocumented id="TestHelper::requireDurationsApproxEqual::ADur" name="ADur">
+        <location column="36" file="testhelper.h" line="139" />
+      </undocumented>
+      <undocumented id="TestHelper::requireDurationsApproxEqual::BClock" name="BClock">
+        <location column="51" file="testhelper.h" line="139" />
+      </undocumented>
+      <undocumented id="TestHelper::requireDurationsApproxEqual::BDur" name="BDur">
+        <location column="68" file="testhelper.h" line="139" />
+      </undocumented>
+      <undocumented id="TestHelper::requireTimesApproxEqual::AClock" name="AClock">
+        <location column="19" file="testhelper.h" line="147" />
+      </undocumented>
+      <undocumented id="TestHelper::requireTimesApproxEqual::ADur" name="ADur">
+        <location column="36" file="testhelper.h" line="147" />
+      </undocumented>
+      <undocumented id="TestHelper::requireTimesApproxEqual::BClock" name="BClock">
+        <location column="51" file="testhelper.h" line="147" />
+      </undocumented>
+      <undocumented id="TestHelper::requireTimesApproxEqual::BDur" name="BDur">
+        <location column="68" file="testhelper.h" line="147" />
       </undocumented>
       <undocumented id="TestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
         <location column="95" file="testhelper.h" line="62" />
@@ -573,7 +588,7 @@ return values.
         <location column="11" file="iodrivers/iodriver.h" line="227" />
       </undocumented>
       <undocumented id="iodrv::IoPin::IoPin::Args" name="Args">
-        <location column="19" file="iodrivers/iopin.h" line="77" />
+        <location column="19" file="iodrivers/iopin.h" line="89" />
       </undocumented>
       <undocumented id="iodrv::TempControl::Filter" name="Filter">
         <location column="50" file="iodrivers/tempcontrol.h" line="54" />
@@ -591,19 +606,19 @@ return values.
         <location column="19" file="iodrivers/tempcontrol.h" line="128" />
       </undocumented>
       <undocumented id="makeTestHelper::Args" name="Args">
-        <location column="30" file="testhelper.h" line="170" />
+        <location column="30" file="testhelper.h" line="178" />
       </undocumented>
       <undocumented id="makeTestHelper::MachineT" name="MachineT">
-        <location column="11" file="testhelper.h" line="170" />
+        <location column="11" file="testhelper.h" line="178" />
       </undocumented>
       <undocumented id="makeTestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
-        <location column="1" file="testhelper.h" line="181" />
+        <location column="1" file="testhelper.h" line="189" />
       </undocumented>
       <undocumented id="makeTestMachine::GetCoordMap" name="GetCoordMap">
-        <location column="54" file="testhelper.h" line="180" />
+        <location column="54" file="testhelper.h" line="188" />
       </undocumented>
       <undocumented id="makeTestMachine::GetIoDrivers" name="GetIoDrivers">
-        <location column="11" file="testhelper.h" line="180" />
+        <location column="11" file="testhelper.h" line="188" />
       </undocumented>
       <undocumented id="mathutil::CtoK::T" name="T">
         <location column="11" file="common/mathutil.h" line="38" />
@@ -807,7 +822,7 @@ return values.
         <location column="11" file="common/tupleutil.h" line="120" />
       </undocumented>
     </type>
-    <type documented="8" name="enum" undocumented="6">
+    <type documented="8" name="enum" undocumented="7">
       <undocumented id="gparse::ResponseCode" name="ResponseCode">
         <location column="1" file="gparse/response.h" line="35" />
       </undocumented>
@@ -816,6 +831,9 @@ return values.
       </undocumented>
       <undocumented id="iodrv::IoPinInversions" name="IoPinInversions">
         <location column="1" file="iodrivers/iopin.h" line="33" />
+      </undocumented>
+      <undocumented id="iodrv::IoPinMode" name="IoPinMode">
+        <location column="1" file="iodrivers/iopin.h" line="47" />
       </undocumented>
       <undocumented id="motion::CartesianAxis" name="CartesianAxis">
         <location column="1" file="motion/linearstepper.h" line="37" />
@@ -839,10 +857,10 @@ return values.
         <location column="1" file="iodrivers/rcthermistor.h" line="35" />
         <location column="1" file="iodrivers/servo.h" line="38" />
         <location column="1" file="iodrivers/servo.cpp" line="27" />
-        <location column="1" file="iodrivers/iopin.cpp" line="31" />
+        <location column="1" file="iodrivers/iopin.cpp" line="33" />
       </undocumented>
       <undocumented id="machines" name="machines">
-        <location column="1" file="machines/machine.h" line="27" />
+        <location column="1" file="machines/machine.h" line="32" />
         <location column="1" file="machines/generic/cartesian.h" line="118" />
         <location column="1" file="machines/rpi/kosselrampsfd.h" line="466" />
       </undocumented>
@@ -880,7 +898,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="114" name="method" undocumented="330">
+    <type documented="121" name="method" undocumented="325">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="57" />
       </undocumented>
@@ -908,6 +926,9 @@ return values.
       </undocumented>
       <undocumented id="NoFilter::feed" name="feed">
         <location column="5" file="common/filters/nofilter.h" line="32" />
+      </undocumented>
+      <undocumented id="OutputEvent::operator==" name="operator==">
+        <location column="9" file="outputevent.h" line="52" />
       </undocumented>
       <undocumented id="Scheduler::eventLoop" name="eventLoop">
         <location column="9" file="scheduler.h" line="68" />
@@ -967,10 +988,10 @@ return values.
         <location column="13" file="state.h" line="107" />
       </undocumented>
       <undocumented id="TestHelper::exitOnce" name="exitOnce">
-        <location column="9" file="testhelper.h" line="144" />
+        <location column="9" file="testhelper.h" line="152" />
       </undocumented>
       <undocumented id="TestHelper::threadedEventLoop" name="threadedEventLoop">
-        <location column="9" file="testhelper.h" line="151" />
+        <location column="9" file="testhelper.h" line="159" />
       </undocumented>
       <undocumented id="TestMachine::getAccelerationProfile" name="getAccelerationProfile">
         <location column="9" file="testhelper.h" line="75" />
@@ -1605,55 +1626,20 @@ return values.
       <undocumented id="iodrv::IODriver::peekNextEvent" name="peekNextEvent">
         <location column="9" file="iodrivers/iodriver.h" line="81" />
       </undocumented>
-      <undocumented id="iodrv::IoPin::digitalRead" name="digitalRead">
-        <location column="9" file="iodrivers/iopin.h" line="102" />
-        <location column="1" file="iodrivers/iopin.cpp" line="95" />
-      </undocumented>
-      <undocumented id="iodrv::IoPin::digitalWrite" name="digitalWrite">
-        <location column="9" file="iodrivers/iopin.h" line="103" />
-        <location column="1" file="iodrivers/iopin.cpp" line="99" />
-      </undocumented>
-      <undocumented id="iodrv::IoPin::isNull" name="isNull">
-        <location column="9" file="iodrivers/iopin.h" line="95" />
-        <location column="1" file="iodrivers/iopin.cpp" line="74" />
-      </undocumented>
-      <undocumented id="iodrv::IoPin::makeDigitalInput" name="makeDigitalInput">
-        <location column="9" file="iodrivers/iopin.h" line="101" />
-        <location column="1" file="iodrivers/iopin.cpp" line="92" />
-      </undocumented>
-      <undocumented id="iodrv::IoPin::null::ref" name="ref">
-        <location column="9" file="iodrivers/iopin.h" line="111" />
-      </undocumented>
       <undocumented id="iodrv::IoPin::operator=" name="operator=">
-        <location column="9" file="iodrivers/iopin.h" line="72" />
-      </undocumented>
-      <undocumented id="iodrv::IoPin::operator=" name="operator=">
-        <location column="9" file="iodrivers/iopin.h" line="75" />
-        <location column="1" file="iodrivers/iopin.cpp" line="59" />
+        <location column="9" file="iodrivers/iopin.h" line="82" />
       </undocumented>
       <undocumented id="iodrv::IoPin::primitiveIoPin" name="primitiveIoPin">
-        <location column="9" file="iodrivers/iopin.h" line="98" />
-        <location column="1" file="iodrivers/iopin.cpp" line="83" />
-      </undocumented>
-      <undocumented id="iodrv::IoPin::registerExitHandler" name="registerExitHandler">
-        <location column="9" file="iodrivers/iopin.h" line="67" />
-        <location column="1" file="iodrivers/iopin.cpp" line="43" />
+        <location column="9" file="iodrivers/iopin.h" line="115" />
+        <location column="1" file="iodrivers/iopin.cpp" line="87" />
       </undocumented>
       <undocumented id="iodrv::IoPin::setDefaultState" name="setDefaultState">
-        <location column="9" file="iodrivers/iopin.h" line="93" />
-        <location column="1" file="iodrivers/iopin.cpp" line="70" />
-      </undocumented>
-      <undocumented id="iodrv::IoPin::setToDefault" name="setToDefault">
-        <location column="9" file="iodrivers/iopin.h" line="104" />
-        <location column="1" file="iodrivers/iopin.cpp" line="104" />
+        <location column="9" file="iodrivers/iopin.h" line="108" />
+        <location column="1" file="iodrivers/iopin.cpp" line="74" />
       </undocumented>
       <undocumented id="iodrv::IoPin::translateDutyCycleToPrimitive" name="translateDutyCycleToPrimitive">
-        <location column="9" file="iodrivers/iopin.h" line="97" />
-        <location column="1" file="iodrivers/iopin.cpp" line="80" />
-      </undocumented>
-      <undocumented id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
-        <location column="9" file="iodrivers/iopin.h" line="96" />
-        <location column="1" file="iodrivers/iopin.cpp" line="77" />
+        <location column="9" file="iodrivers/iopin.h" line="114" />
+        <location column="1" file="iodrivers/iopin.cpp" line="84" />
       </undocumented>
       <undocumented id="iodrv::RCThermistor::isReady" name="isReady">
         <location column="9" file="iodrivers/rcthermistor.h" line="79" />
@@ -1687,16 +1673,25 @@ return values.
         <location column="9" file="iodrivers/tempcontrol.h" line="83" />
       </undocumented>
       <undocumented id="machines::Machine::clampMoveRate" name="clampMoveRate">
-        <location column="9" file="machines/machine.h" line="41" />
+        <location column="9" file="machines/machine.h" line="55" />
       </undocumented>
       <undocumented id="machines::Machine::defaultMoveRate" name="defaultMoveRate">
-        <location column="9" file="machines/machine.h" line="31" />
+        <location column="9" file="machines/machine.h" line="45" />
       </undocumented>
       <undocumented id="machines::Machine::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
-        <location column="9" file="machines/machine.h" line="44" />
+        <location column="9" file="machines/machine.h" line="58" />
+      </undocumented>
+      <undocumented id="machines::Machine::getAccelerationProfile" name="getAccelerationProfile">
+        <location column="9" file="machines/machine.h" line="39" />
+      </undocumented>
+      <undocumented id="machines::Machine::getCoordMap" name="getCoordMap">
+        <location column="9" file="machines/machine.h" line="36" />
+      </undocumented>
+      <undocumented id="machines::Machine::getIoDrivers" name="getIoDrivers">
+        <location column="9" file="machines/machine.h" line="42" />
       </undocumented>
       <undocumented id="machines::Machine::maxExtrudeRate" name="maxExtrudeRate">
-        <location column="9" file="machines/machine.h" line="38" />
+        <location column="9" file="machines/machine.h" line="52" />
       </undocumented>
       <undocumented id="machines::generic::cartesian::clampMoveRate" name="clampMoveRate">
         <location column="9" file="machines/generic/cartesian.h" line="181" />
@@ -2015,7 +2010,7 @@ return values.
     </type>
     <type documented="9" name="functiontemplate" undocumented="3">
       <undocumented id="makeTestHelper" name="makeTestHelper">
-        <location column="1" file="testhelper.h" line="170" />
+        <location column="1" file="testhelper.h" line="178" />
       </undocumented>
       <undocumented id="motion::stepDirFromSign" name="stepDirFromSign">
         <location column="1" file="motion/axisstepper.h" line="49" />
@@ -2107,7 +2102,7 @@ return values.
         <location column="9" file="iodrivers/iodriver.h" line="50" />
       </undocumented>
       <undocumented id="iodrv::IoPin::null::null" name="null">
-        <location column="9" file="iodrivers/iopin.h" line="110" />
+        <location column="9" file="iodrivers/iopin.h" line="131" />
       </undocumented>
       <undocumented id="iodrv::RCThermistor::RCThermistor" name="RCThermistor">
         <location column="9" file="iodrivers/rcthermistor.h" line="70" />
@@ -2194,7 +2189,7 @@ return values.
       </undocumented>
     </type>
     <type documented="6" name="conversionfunction" undocumented="0" />
-    <type documented="6" name="enumvalue" undocumented="96">
+    <type documented="6" name="enumvalue" undocumented="99">
       <undocumented id="OnIdleCpuIntervalShort" name="OnIdleCpuIntervalShort">
         <location column="5" file="schedulerbase.h" line="43" />
       </undocumented>
@@ -2230,6 +2225,15 @@ return values.
       </undocumented>
       <undocumented id="iodrv::INVERT_WRITES" name="INVERT_WRITES">
         <location column="5" file="iodrivers/iopin.h" line="37" />
+      </undocumented>
+      <undocumented id="iodrv::IOPIN_MODE_INPUT" name="IOPIN_MODE_INPUT">
+        <location column="5" file="iodrivers/iopin.h" line="49" />
+      </undocumented>
+      <undocumented id="iodrv::IOPIN_MODE_OUTPUT" name="IOPIN_MODE_OUTPUT">
+        <location column="5" file="iodrivers/iopin.h" line="50" />
+      </undocumented>
+      <undocumented id="iodrv::IOPIN_MODE_UNSPECIFIED" name="IOPIN_MODE_UNSPECIFIED">
+        <location column="5" file="iodrivers/iopin.h" line="48" />
       </undocumented>
       <undocumented id="iodrv::IO_DEFAULT_HIGH" name="IO_DEFAULT_HIGH">
         <location column="5" file="iodrivers/iopin.h" line="44" />
@@ -2489,8 +2493,8 @@ return values.
         <location column="9" file="testhelper.h" line="116" />
       </undocumented>
       <undocumented id="iodrv::IoPin::~IoPin" name="~IoPin">
-        <location column="9" file="iodrivers/iopin.h" line="91" />
-        <location column="1" file="iodrivers/iopin.cpp" line="49" />
+        <location column="9" file="iodrivers/iopin.h" line="106" />
+        <location column="1" file="iodrivers/iopin.cpp" line="50" />
       </undocumented>
     </type>
     <type documented="26" name="class" undocumented="4">
@@ -2498,7 +2502,7 @@ return values.
         <location column="1" file="filesystem.h" line="29" />
       </undocumented>
       <undocumented id="machines::Machine" name="Machine">
-        <location column="1" file="machines/machine.h" line="29" />
+        <location column="1" file="machines/machine.h" line="34" />
       </undocumented>
       <undocumented id="plat::generic::ChronoClock" name="ChronoClock">
         <location column="9" file="platforms/generic/chronoclock.h" line="39" />
@@ -2626,17 +2630,49 @@ return values.
       <undocumented name="level" />
     </function>
     <function id="iodrv::IoPin::IoPin" name="IoPin">
-      <location column="9" file="iodrivers/iopin.h" line="71" />
+      <location column="9" file="iodrivers/iopin.h" line="81" />
       <undocumented name="other" />
     </function>
     <function id="iodrv::IoPin::IoPin" name="IoPin">
-      <location column="9" file="iodrivers/iopin.h" line="74" />
-      <location column="1" file="iodrivers/iopin.cpp" line="55" />
+      <location column="9" file="iodrivers/iopin.h" line="84" />
+      <location column="1" file="iodrivers/iopin.cpp" line="56" />
       <undocumented name="other" />
     </function>
+    <function id="iodrv::IoPin::operator=" name="operator=">
+      <location column="9" file="iodrivers/iopin.h" line="86" />
+      <location column="1" file="iodrivers/iopin.cpp" line="60" />
+      <undocumented-return />
+      <undocumented name="other" />
+    </function>
+    <function id="iodrv::IoPin::IoPin" name="IoPin">
+      <location column="9" file="iodrivers/iopin.h" line="89" />
+      <undocumented name="inversions" />
+      <undocumented name="args" />
+    </function>
+    <function id="iodrv::IoPin::isNull" name="isNull">
+      <location column="9" file="iodrivers/iopin.h" line="110" />
+      <location column="1" file="iodrivers/iopin.cpp" line="78" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
+      <location column="9" file="iodrivers/iopin.h" line="113" />
+      <location column="1" file="iodrivers/iopin.cpp" line="81" />
+      <undocumented-return />
+      <undocumented name="lev" />
+    </function>
     <function id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="9" file="iodrivers/iopin.h" line="100" />
-      <location column="1" file="iodrivers/iopin.cpp" line="87" />
+      <location column="9" file="iodrivers/iopin.h" line="118" />
+      <location column="1" file="iodrivers/iopin.cpp" line="92" />
+      <undocumented name="lev" />
+    </function>
+    <function id="iodrv::IoPin::digitalRead" name="digitalRead">
+      <location column="9" file="iodrivers/iopin.h" line="122" />
+      <location column="1" file="iodrivers/iopin.cpp" line="105" />
+      <undocumented-return />
+    </function>
+    <function id="iodrv::IoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="iodrivers/iopin.h" line="124" />
+      <location column="1" file="iodrivers/iopin.cpp" line="112" />
       <undocumented name="lev" />
     </function>
     <function id="OutputEvent::OutputEvent" name="OutputEvent">
@@ -2644,23 +2680,23 @@ return values.
       <undocumented name="pin" />
     </function>
     <function id="OutputEvent::time" name="time">
-      <location column="9" file="outputevent.h" line="53" />
+      <location column="9" file="outputevent.h" line="56" />
       <undocumented-return />
     </function>
     <function id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
-      <location column="9" file="outputevent.h" line="57" />
+      <location column="9" file="outputevent.h" line="60" />
       <undocumented-return />
     </function>
     <function id="OutputEvent::primitiveIoPin" name="primitiveIoPin">
-      <location column="9" file="outputevent.h" line="61" />
+      <location column="9" file="outputevent.h" line="64" />
       <undocumented-return />
     </function>
     <function id="OutputEvent::state" name="state">
-      <location column="9" file="outputevent.h" line="68" />
+      <location column="9" file="outputevent.h" line="71" />
       <undocumented-return />
     </function>
     <function id="OutputEvent::isNull" name="isNull">
-      <location column="9" file="outputevent.h" line="72" />
+      <location column="9" file="outputevent.h" line="75" />
       <undocumented-return />
     </function>
     <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
@@ -3018,10 +3054,6 @@ return values.
       <location column="9" file="state.h" line="220" />
       <undocumented name="persistence" />
     </function>
-    <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/machine.h" line="35" />
-      <undocumented-return />
-    </function>
     <function id="motion::CoordMap::getDependentIoDrivers" name="getDependentIoDrivers">
       <location column="9" file="motion/coordmap.h" line="57" />
       <undocumented-return />
@@ -3064,6 +3096,10 @@ return values.
       <location column="9" file="motion/coordmap.h" line="107" />
       <undocumented-return />
     </function>
+    <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
+      <location column="9" file="machines/machine.h" line="49" />
+      <undocumented-return />
+    </function>
     <function id="TestHelper::sendCommand" name="sendCommand">
       <location column="9" file="testhelper.h" line="124" />
       <undocumented name="cmd" />
@@ -3074,17 +3110,22 @@ return values.
       <undocumented name="x" />
       <undocumented name="z" />
     </function>
-    <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
+    <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
       <location column="9" file="testhelper.h" line="139" />
       <undocumented name="a" />
       <undocumented name="b" />
     </function>
+    <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
+      <location column="9" file="testhelper.h" line="147" />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
     <function id="TestHelper::readLine" name="readLine">
-      <location column="9" file="testhelper.h" line="158" />
+      <location column="9" file="testhelper.h" line="166" />
       <undocumented-return />
     </function>
     <function id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="180" />
+      <location column="1" file="testhelper.h" line="188" />
       <undocumented-return />
       <undocumented name="getCoordMap" />
       <undocumented name="getIoDrivers" />
@@ -3234,6 +3275,16 @@ return values.
         <ref name="std::string, std::string" />
       </doctype>
     </methodtemplate>
+    <method id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
+      <location column="9" file="iodrivers/iopin.h" line="113" />
+      <location column="1" file="iodrivers/iopin.cpp" line="81" />
+      <doctype name="doc">
+        <ref name="translated level" />
+      </doctype>
+      <doctype name="brief">
+        <ref name="translated level" />
+      </doctype>
+    </method>
     <method id="Vector3::tuple" name="tuple">
       <location column="3" file="common/vector3.h" line="45" />
       <doctype name="brief">
@@ -3326,7 +3377,7 @@ return values.
       </doctype>
     </typedef>
     <functiontemplate id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="180" />
+      <location column="1" file="testhelper.h" line="188" />
       <doctype name="doc">
         <ref name="typename ... Args" />
         <ref name="Args..." />

@@ -25,6 +25,21 @@
       <type builtin="yes" name="bool" />
     </return>
   </method>
+  <method id="machines::Machine::getAccelerationProfile" name="getAccelerationProfile">
+    <return>
+      <type name="motion::NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration" />
+    </return>
+  </method>
+  <method id="machines::Machine::getCoordMap" name="getCoordMap">
+    <return>
+      <type name="motion::CoordMap" ref="motion::CoordMap#motion::CoordMap" />
+    </return>
+  </method>
+  <method id="machines::Machine::getIoDrivers" name="getIoDrivers">
+    <return>
+      <type name="std::tuple&lt;&gt;" />
+    </return>
+  </method>
   <method id="machines::Machine::maxExtrudeRate" name="maxExtrudeRate">
     <return>
       <type builtin="yes" name="float" />

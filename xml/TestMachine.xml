@@ -29,19 +29,22 @@
       <type name="const GetAccelerationProfile" qualifier=" const &amp;" />
     </argument>
   </constructor>
-  <method id="TestMachine::getIoDrivers" name="getIoDrivers">
+  <method id="TestMachine::getIoDrivers" name="getIoDrivers" override="yes">
     <return>
       <type name="decltype(this-&gt;_getIoDrivers())" />
     </return>
+    <override name="machines::Machine::getIoDrivers" ref="machines::Machine#machines::Machine::getIoDrivers" />
   </method>
-  <method id="TestMachine::getCoordMap" name="getCoordMap">
+  <method id="TestMachine::getCoordMap" name="getCoordMap" override="yes">
     <return>
       <type name="decltype(this-&gt;_getCoordMap())" />
     </return>
+    <override name="machines::Machine::getCoordMap" ref="machines::Machine#machines::Machine::getCoordMap" />
   </method>
-  <method id="TestMachine::getAccelerationProfile" name="getAccelerationProfile">
+  <method id="TestMachine::getAccelerationProfile" name="getAccelerationProfile" override="yes">
     <return>
       <type name="decltype(this-&gt;_getAccelerationProfile())" />
     </return>
+    <override name="machines::Machine::getAccelerationProfile" ref="machines::Machine#machines::Machine::getAccelerationProfile" />
   </method>
 </classtemplate>
