@@ -18,7 +18,7 @@ install:
 - sudo apt-get install -qq libc6-dbg
 #- sudo apt-get install -qq valgrind
 #install valgrind from source (3.7.0 and 3.8.0 encounter an unknown instruction on some gcc-produced binaries)
-- svn co svn://svn.valgrind.org/valgrind/trunk valgrind
+- svn co svn://svn.valgrind.org/valgrind/trunk valgrind --quiet
 - pushd valgrind
 - ./autogen.sh
 - ./configure --prefix=/home/travis/.local
