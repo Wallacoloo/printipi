@@ -75,6 +75,8 @@ int testmain(int argc, char **argv) {
     #if DO_TESTS
         int result = Catch::Session().run(argc, argv);
         return result;
+    #else
+        (void)argc; (void)argv; //unused
     #endif
     return 0;
 }
