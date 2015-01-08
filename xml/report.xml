@@ -366,28 +366,28 @@ return values.
         <location column="11" file="testhelper.h" line="93" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::AClock" name="AClock">
-        <location column="19" file="testhelper.h" line="157" />
+        <location column="19" file="testhelper.h" line="155" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::ADur" name="ADur">
-        <location column="36" file="testhelper.h" line="157" />
+        <location column="36" file="testhelper.h" line="155" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::BClock" name="BClock">
-        <location column="51" file="testhelper.h" line="157" />
+        <location column="51" file="testhelper.h" line="155" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::BDur" name="BDur">
-        <location column="68" file="testhelper.h" line="157" />
+        <location column="68" file="testhelper.h" line="155" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::AClock" name="AClock">
-        <location column="19" file="testhelper.h" line="175" />
+        <location column="19" file="testhelper.h" line="173" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::ADur" name="ADur">
-        <location column="36" file="testhelper.h" line="175" />
+        <location column="36" file="testhelper.h" line="173" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::BClock" name="BClock">
-        <location column="51" file="testhelper.h" line="175" />
+        <location column="51" file="testhelper.h" line="173" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::BDur" name="BDur">
-        <location column="68" file="testhelper.h" line="175" />
+        <location column="68" file="testhelper.h" line="173" />
       </undocumented>
       <undocumented id="TestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
         <location column="95" file="testhelper.h" line="74" />
@@ -621,19 +621,19 @@ return values.
         <location column="19" file="iodrivers/tempcontrol.h" line="128" />
       </undocumented>
       <undocumented id="makeTestHelper::Args" name="Args">
-        <location column="30" file="testhelper.h" line="206" />
+        <location column="30" file="testhelper.h" line="204" />
       </undocumented>
       <undocumented id="makeTestHelper::MachineT" name="MachineT">
-        <location column="11" file="testhelper.h" line="206" />
+        <location column="11" file="testhelper.h" line="204" />
       </undocumented>
       <undocumented id="makeTestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
-        <location column="1" file="testhelper.h" line="217" />
+        <location column="1" file="testhelper.h" line="215" />
       </undocumented>
       <undocumented id="makeTestMachine::GetCoordMap" name="GetCoordMap">
-        <location column="54" file="testhelper.h" line="216" />
+        <location column="54" file="testhelper.h" line="214" />
       </undocumented>
       <undocumented id="makeTestMachine::GetIoDrivers" name="GetIoDrivers">
-        <location column="11" file="testhelper.h" line="216" />
+        <location column="11" file="testhelper.h" line="214" />
       </undocumented>
       <undocumented id="mathutil::CtoK::T" name="T">
         <location column="11" file="common/mathutil.h" line="38" />
@@ -1017,10 +1017,10 @@ return values.
         <location column="9" file="state.h" line="223" />
       </undocumented>
       <undocumented id="TestHelper::exitOnce" name="exitOnce">
-        <location column="9" file="testhelper.h" line="180" />
+        <location column="9" file="testhelper.h" line="178" />
       </undocumented>
       <undocumented id="TestHelper::threadedEventLoop" name="threadedEventLoop">
-        <location column="9" file="testhelper.h" line="187" />
+        <location column="9" file="testhelper.h" line="185" />
       </undocumented>
       <undocumented id="TestMachine::getAccelerationProfile" name="getAccelerationProfile">
         <location column="9" file="testhelper.h" line="87" />
@@ -2039,7 +2039,7 @@ return values.
     </type>
     <type documented="9" name="functiontemplate" undocumented="3">
       <undocumented id="makeTestHelper" name="makeTestHelper">
-        <location column="1" file="testhelper.h" line="206" />
+        <location column="1" file="testhelper.h" line="204" />
       </undocumented>
       <undocumented id="motion::stepDirFromSign" name="stepDirFromSign">
         <location column="1" file="motion/axisstepper.h" line="49" />
@@ -2091,10 +2091,10 @@ return values.
         <location column="13" file="state.h" line="91" />
       </undocumented>
       <undocumented id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
-        <location column="9" file="testhelper.h" line="102" />
+        <location column="9" file="testhelper.h" line="101" />
       </undocumented>
       <undocumented id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
-        <location column="9" file="testhelper.h" line="128" />
+        <location column="9" file="testhelper.h" line="126" />
       </undocumented>
       <undocumented id="TestMachine::TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;" name="TestMachine&lt;GetIoDrivers, GetCoordMap, GetAccelerationProfile&gt;">
         <location column="9" file="testhelper.h" line="79" />
@@ -2554,7 +2554,7 @@ return values.
     </type>
     <type documented="0" name="destructor" undocumented="2">
       <undocumented id="TestHelper::~TestHelper&lt;MachineT&gt;" name="~TestHelper&lt;MachineT&gt;">
-        <location column="9" file="testhelper.h" line="130" />
+        <location column="9" file="testhelper.h" line="128" />
       </undocumented>
       <undocumented id="iodrv::IoPin::~IoPin" name="~IoPin">
         <location column="9" file="iodrivers/iopin.h" line="110" />
@@ -3191,31 +3191,31 @@ return values.
       <undocumented name="b" />
     </function>
     <function id="TestHelper::sendCommand" name="sendCommand">
-      <location column="9" file="testhelper.h" line="141" />
+      <location column="9" file="testhelper.h" line="139" />
       <undocumented name="cmd" />
     </function>
     <function id="TestHelper::verifyPosition" name="verifyPosition">
-      <location column="9" file="testhelper.h" line="151" />
+      <location column="9" file="testhelper.h" line="149" />
       <undocumented name="y" />
       <undocumented name="x" />
       <undocumented name="z" />
     </function>
     <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
-      <location column="9" file="testhelper.h" line="157" />
+      <location column="9" file="testhelper.h" line="155" />
       <undocumented name="a" />
       <undocumented name="b" />
     </function>
     <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
-      <location column="9" file="testhelper.h" line="175" />
+      <location column="9" file="testhelper.h" line="173" />
       <undocumented name="a" />
       <undocumented name="b" />
     </function>
     <function id="TestHelper::readLine" name="readLine">
-      <location column="9" file="testhelper.h" line="194" />
+      <location column="9" file="testhelper.h" line="192" />
       <undocumented-return />
     </function>
     <function id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="216" />
+      <location column="1" file="testhelper.h" line="214" />
       <undocumented-return />
       <undocumented name="getCoordMap" />
       <undocumented name="getIoDrivers" />
@@ -3467,7 +3467,7 @@ return values.
       </doctype>
     </typedef>
     <functiontemplate id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="216" />
+      <location column="1" file="testhelper.h" line="214" />
       <doctype name="doc">
         <ref name="typename ... Args" />
         <ref name="Args..." />

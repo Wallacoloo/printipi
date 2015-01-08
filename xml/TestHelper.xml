@@ -7,7 +7,7 @@
   </templatetypeparameter>
   <constructor id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
     <argument id="TestHelper::TestHelper&lt;MachineT&gt;::machine" name="machine">
-      <type name="const MachineT" qualifier=" const &amp;" />
+      <type name="MachineT &amp;&amp;" />
     </argument>
     <argument id="TestHelper::TestHelper&lt;MachineT&gt;::flags" name="flags">
       <type name="TestHelperCtorFlags" ref="index#TestHelperCtorFlags" />

@@ -5,7 +5,7 @@
       <type name="TestHelper&lt;MachineT&gt;" ref="TestHelper#TestHelper" />
     </return>
     <argument id="makeTestHelper::machine" name="machine">
-      <type name="const MachineT" qualifier=" const &amp;" />
+      <type name="MachineT &amp;&amp;" />
     </argument>
     <argument id="makeTestHelper::args" name="args">
       <type name="Args..." />
