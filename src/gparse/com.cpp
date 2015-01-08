@@ -70,20 +70,6 @@ const Command& Com::getCommand() const {
     return _parsed;
 }
 
-void Com::setInputFile(const std::string &name) {
-    setInputFile(giveFullOwnership(new std::ifstream(name, std::ios_base::in)));
-}
-void Com::setInputFile(ComStreamOwnershipMarker<std::istream*> stream) {
-    _readFd = std::move(std::unique_ptr<std::istream, ComStreamDeleter>(stream.argument, ComStreamDeleter(stream.hasOwnership)));
-}
-
-void Com::setOutputFile(const std::string &name) {
-    setOutputFile(giveFullOwnership(new std::ofstream(name, std::ios_base::out)));
-}
-void Com::setOutputFile(ComStreamOwnershipMarker<std::ostream*> stream) {
-    _writeFd = std::move(std::unique_ptr<std::ostream, ComStreamDeleter>(stream.argument, ComStreamDeleter(stream.hasOwnership)));
-}
-
 void Com::reply(const Response &resp) {
     if (hasWriteFile() && !resp.isNull()) {
         std::string respStr = resp.toString();

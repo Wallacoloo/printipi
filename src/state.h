@@ -589,7 +589,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         LOGD("loading gcode: %s\n", cmd.getSpecialStringParam().c_str());
         reply(gparse::Response::Ok);
         //create another Communications channel for reading from the gcode file.
-        gcodeFileStack.push_back(gparse::Com(filesystem.relGcodePathToAbs(cmd.getSpecialStringParam()), gparse::Com::NO_OUTPUT_STREAM(), true));
+        gcodeFileStack.push_back(gparse::Com(filesystem.relGcodePathToAbs(cmd.getSpecialStringParam()), nullptr, true));
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);
         reply(gparse::Response::Ok);

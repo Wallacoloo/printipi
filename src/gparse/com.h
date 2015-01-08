@@ -32,6 +32,30 @@
 
 namespace gparse {
 
+//Used during Com construction to wrap the stream input to give an indication of who owns the stream.
+//Instead of using directly, it's a better idea to refer to the public <Com::shareOwnership> and <Com::giveFullOwnership> functions
+template <typename T> class ComStreamOwnershipMarker;
+template <> class ComStreamOwnershipMarker<std::istream*> {
+    friend class Com;
+    std::istream* argument;
+    bool hasOwnership;
+    public:
+        ComStreamOwnershipMarker(std::istream *argument, bool hasOwnership) : argument(argument), hasOwnership(hasOwnership) {}
+        ComStreamOwnershipMarker(const char *filename) : argument(new std::ifstream(filename, std::ios_base::in)), hasOwnership(true) {}
+        ComStreamOwnershipMarker(const std::string &filename) : ComStreamOwnershipMarker(filename.c_str()) {}
+        ComStreamOwnershipMarker(std::nullptr_t) : ComStreamOwnershipMarker(nullptr, true) {}
+};
+template <> class ComStreamOwnershipMarker<std::ostream*> {
+    friend class Com;
+    std::ostream* argument;
+    bool hasOwnership;
+    public:
+        ComStreamOwnershipMarker(std::ostream *argument, bool hasOwnership) : argument(argument), hasOwnership(hasOwnership) {}
+        ComStreamOwnershipMarker(const char *filename) : argument(new std::ofstream(filename, std::ios_base::out)), hasOwnership(true) {}
+        ComStreamOwnershipMarker(const std::string &filename) : ComStreamOwnershipMarker(filename.c_str()) {}
+        ComStreamOwnershipMarker(std::nullptr_t) : ComStreamOwnershipMarker(nullptr, true) {}
+};
+
 /* 
  * Com manages the low-level interfacing with whatever is controlling this printer.
  * reads are non-blocking, so tendCom() must be called on a regular basis.
@@ -54,20 +78,6 @@ class Com {
             }
     };
 
-    //Used during Com construction to wrap the stream input to give an indication of who owns the stream.
-    //Instead of using directly, it's a better idea to refer to the public <shareOwnership> and <giveFullOwnership> functions
-    template <typename T> class ComStreamOwnershipMarker {
-        friend class Com;
-        T argument;
-        bool hasOwnership;
-        public:
-            ComStreamOwnershipMarker(const T &argument, bool hasOwnership) : argument(argument), hasOwnership(hasOwnership) {}
-            //allow implicit casts to compatible argument types.
-            //  useful when e.g. trying to instantiate a Base* from a Derived*
-            template <typename TBase> operator ComStreamOwnershipMarker<TBase>() const {
-                return ComStreamOwnershipMarker<TBase>(argument, hasOwnership);
-            }
-    };
     //Have to use unique_ptrs because fstreams aren't movable for gcc < 5.0
     std::unique_ptr<std::istream, ComStreamDeleter> _readFd;
     std::unique_ptr<std::ostream, ComStreamDeleter> _writeFd;
@@ -90,26 +100,16 @@ class Com {
         template <typename T> static ComStreamOwnershipMarker<T> giveFullOwnership(const T &stream) {
             return ComStreamOwnershipMarker<T>(stream, true);
         }
-        //If the Com channel shouldn't have an input stream, then pass NO_INPUT_STREAM() as the first parameter to the constructor
-        static ComStreamOwnershipMarker<std::istream*> NO_INPUT_STREAM() {
-            return giveFullOwnership<std::istream*>(nullptr);
-        }
-        //If the Com channel shouldn't have an output stream, then pass NO_OUTPUT_STREAM() as the first parameter to the constructor
-        static ComStreamOwnershipMarker<std::ostream*> NO_OUTPUT_STREAM() {
-            return giveFullOwnership<std::ostream*>(nullptr);
-        }
     public:
         //set @dieOnEof=true when reading from an actual, fix-length file, instead of a stream.
         //useful when dealing with "subprograms" (printing from a file), in which the replies don't need to be sent back to the main com channel.
         //Com(const std::string &fileR=NULL_FILE_STR, const std::string &fileW=NULL_FILE_STR, bool dieOnEof=false);
-        template <typename RType=ComStreamOwnershipMarker<std::istream*>, typename WType=ComStreamOwnershipMarker<std::ostream*> > 
-          Com(const RType &readStream=NO_INPUT_STREAM(), const WType &writeStream=NO_OUTPUT_STREAM(), bool dieOnEof=false) 
-          : _readFd(nullptr), 
-            _writeFd(nullptr),
+        inline Com(const ComStreamOwnershipMarker<std::istream*> &readStream=nullptr, 
+            const ComStreamOwnershipMarker<std::ostream*> &writeStream=nullptr, bool dieOnEof=false) 
+          : _readFd(readStream.argument, ComStreamDeleter(readStream.hasOwnership)), 
+            _writeFd(writeStream.argument, ComStreamDeleter(writeStream.hasOwnership)),
             _dieOnEof(dieOnEof),
             _isAtEof(false) {
-                setInputFile(readStream);
-                setOutputFile(writeStream);
         }
 
         //returns true if there is a command ready to be interpreted.
@@ -121,15 +121,7 @@ class Com {
         //if reading with dieOnEof=true, and the last command has been parsed (but not necessarily responded to),
         //  then this function will return true
         bool isAtEof() const;
-    private:
-        //release any previous input file and replace it with the file designated by @name
-        void setInputFile(const std::string &name);
-        void setInputFile(ComStreamOwnershipMarker<std::istream*> stream);
 
-        //release any previous output file and replace it with the file designated by @name
-        void setOutputFile(const std::string &name);
-        void setOutputFile(ComStreamOwnershipMarker<std::ostream*> stream);
-    public:
         //returns any pending command.
         //
         //sequential calls to getCommand() will all return the same command, until reply() is called, at which point the next command will be parsed.
