@@ -96,7 +96,6 @@ template <typename MachineT=machines::Machine> class TestHelper {
     std::unique_ptr<std::ifstream> outputFile;
     MachineT driver;
     FileSystem fs;
-    gparse::Com com;
     State<MachineT> state;
     std::thread eventThread;
     public:
@@ -118,7 +117,8 @@ template <typename MachineT=machines::Machine> class TestHelper {
         }()),
           driver(machine), 
           fs("./"), 
-          com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT"), state(driver, fs, com, flags & TESTHELPER_PERSISTENT_ROOT_COM) {
+          state(driver, fs, flags & TESTHELPER_PERSISTENT_ROOT_COM) {
+            state.addComChannel(gparse::Com("PRINTIPI_TEST_INPUT", "PRINTIPI_TEST_OUTPUT"));
             //Note: the above inputFile and outputFile MUST be opened before com is instantiated, otherwise the files may not have been created
             //  and com will have a null file handle.   
             if (flags & TESTHELPER_ENTER_EVENT_LOOP) {
@@ -129,6 +129,9 @@ template <typename MachineT=machines::Machine> class TestHelper {
 
         ~TestHelper() {
             exitOnce();
+            //reset files before deleting their underlying storage
+            inputFile.reset();
+            outputFile.reset();
             remove("PRINTIPI_TEST_INPUT");
             remove("PRINTIPI_TEST_OUTPUT");
         }
@@ -138,6 +141,7 @@ template <typename MachineT=machines::Machine> class TestHelper {
         void sendCommand(const std::string &cmd, const std::string &expect) {
             INFO("Sending command: '" + cmd + "'");
             *inputFile << cmd << '\n';
+            inputFile->flush();
             INFO("It should be acknowledged with something that begins with '" + expect + "'");
             std::string got = readLine();
             REQUIRE(got.substr(0, expect.length()) == expect);

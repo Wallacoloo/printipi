@@ -207,7 +207,7 @@ template <typename Drv> class State {
         //  M32 command allows branching to another, local gcode file. By default, this will PAUSE reading/writing from the previous com channel.
         //  But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
         //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
-        State(const Drv &drv=Drv(), const FileSystem &fs=FileSystem(), const gparse::Com &com=gparse::Com(), bool needPersistentCom=true);
+        State(const Drv &drv=Drv(), const FileSystem &fs=FileSystem(), bool needPersistentCom=true);
         //Continually service communication channels & execute received commands until we receive a command to exit
         void eventLoop();
         //return a read-only reference to the interal MotionPlanner object
@@ -219,6 +219,9 @@ template <typename Drv> class State {
         //if set to false, then running a subprogram will cause the main communication channel to not be serviced until the subprogram returns
         void setPersistentHostCom(bool persistence) {
             _isRootComPersistent = persistence;
+        }
+        void addComChannel(gparse::Com &&ch) {
+            gcodeFileStack.push_back(std::move(ch));
         }
     private:
         void setMoveBuffering(bool doBufferMoves);
@@ -265,7 +268,7 @@ template <typename Drv> class State {
 };
 
 
-template <typename Drv> State<Drv>::State(const Drv &drv, const FileSystem &fs, const gparse::Com &com, bool needPersistentCom)
+template <typename Drv> State<Drv>::State(const Drv &drv, const FileSystem &fs, bool needPersistentCom)
     : _doShutdownAfterMoveCompletes(false),
     _doExitEventLoopAfterMoveCompletes(false), 
     _doBufferMoves(true), 
@@ -285,7 +288,6 @@ template <typename Drv> State<Drv>::State(const Drv &drv, const FileSystem &fs, 
     ioDrivers(std::tuple_cat(_motionPlanner.coordMap().getDependentIoDrivers(), drv.getIoDrivers()))
     {
     this->setDestMoveRatePrimitive(this->driver.defaultMoveRate());
-    this->gcodeFileStack.push_back(com);
 }
 
 template <typename Drv> void State<Drv>::setMoveBuffering(bool doBufferMoves) {
@@ -586,7 +588,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if (cmd.isM32()) { //select file on SD card and print:
         LOGD("loading gcode: %s\n", cmd.getSpecialStringParam().c_str());
         reply(gparse::Response::Ok);
-        gcodeFileStack.push_back(gparse::Com(filesystem.relGcodePathToAbs(cmd.getSpecialStringParam()), gparse::Com::NULL_FILE_STR, true));
+        //create another Communications channel for reading from the gcode file.
+        gcodeFileStack.push_back(gparse::Com(filesystem.relGcodePathToAbs(cmd.getSpecialStringParam()), gparse::Com::NO_OUTPUT_STREAM(), true));
     } else if (cmd.isM82()) { //set extruder absolute mode
         setExtruderPosMode(POS_ABSOLUTE);
         reply(gparse::Response::Ok);

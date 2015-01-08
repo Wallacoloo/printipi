@@ -23,27 +23,20 @@
 
 #include "com.h"
 
-#include <unistd.h> //for (file) read() and write()
-#include <fcntl.h> //needed for (file) open()
-
 namespace gparse {
-
-//initialize static consts:
-const std::string Com::NULL_FILE_STR("/dev/null"); 
-
-Com::Com(const std::string &fileR, const std::string &fileW, bool dieOnEof) 
-  : _readFd(fileR == NULL_FILE_STR ? NO_HANDLE : open(fileR.c_str(), O_RDWR | O_NONBLOCK))
-  , _writeFd(fileW == NULL_FILE_STR ? NO_HANDLE : open(fileW.c_str(), O_RDWR | O_NONBLOCK))
-  , _dieOnEof(dieOnEof)
-  , _isAtEof(false) {
-  }
 
 bool Com::tendCom() {
     if (!_parsed.empty()) { 
         return true;
     }
+    if (!hasReadFile()) {
+        return false;
+    }
+    //clear any eof bit possibly set previously (if a stream and not a file)
+    _readFd->clear();
     char chr;
-    while (read(_readFd, &chr, 1) == 1) { //read all characters available on serial line.
+    //while (read(_readFd, &chr, 1) == 1) { //read all characters available on serial line.
+    while((chr = _readFd->get()) != std::char_traits<char>::eof()) {
         if (chr == '\n') {
             _parsed = Command(_pending);
             _pending = "";
@@ -65,10 +58,10 @@ bool Com::tendCom() {
 }
 
 bool Com::hasReadFile() const {
-    return _readFd != NO_HANDLE;
+    return (bool)_readFd;
 }
 bool Com::hasWriteFile() const {
-    return _writeFd != NO_HANDLE;
+    return (bool)_writeFd;
 }
 bool Com::isAtEof() const {
     return _isAtEof && _parsed.empty();
@@ -77,11 +70,26 @@ const Command& Com::getCommand() const {
     return _parsed;
 }
 
+void Com::setInputFile(const std::string &name) {
+    setInputFile(giveFullOwnership(new std::ifstream(name, std::ios_base::in)));
+}
+void Com::setInputFile(ComStreamOwnershipMarker<std::istream*> stream) {
+    _readFd = std::move(std::unique_ptr<std::istream, ComStreamDeleter>(stream.argument, ComStreamDeleter(stream.hasOwnership)));
+}
+
+void Com::setOutputFile(const std::string &name) {
+    setOutputFile(giveFullOwnership(new std::ofstream(name, std::ios_base::out)));
+}
+void Com::setOutputFile(ComStreamOwnershipMarker<std::ostream*> stream) {
+    _writeFd = std::move(std::unique_ptr<std::ostream, ComStreamDeleter>(stream.argument, ComStreamDeleter(stream.hasOwnership)));
+}
+
 void Com::reply(const Response &resp) {
     if (hasWriteFile() && !resp.isNull()) {
         std::string respStr = resp.toString();
-        write(_writeFd, respStr.c_str(), respStr.length());
-        write(_writeFd, "\n", 1);
+        (*_writeFd) << respStr;
+        _writeFd->put('\n');
+        _writeFd->flush();
     }
     //The pending command has be replied to, so reset it.
     _parsed = Command();
