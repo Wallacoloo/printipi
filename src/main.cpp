@@ -38,7 +38,6 @@
  *   http://youtube.com/watch?v=gAruwqOEuPs
  */
 
-
 #define COMPILING_MAIN //used elsewhere to do one-time warnings, etc.
 
 #include "compileflags.h"
@@ -62,6 +61,9 @@
 //or, call make MACHINE=<machine>, eg MACHINE=rpi::KosselPi (case-sensitive) and the path will be calculated from that (src/machines/rpi/kossel.h)
 #include MACHINE_PATH
 
+
+#define STRINGIFY(x) #x
+
 static void printUsage(char* cmd) {
     //#ifndef NO_USAGE_INFO
     LOGE("usage: %s [input file=/dev/stdin] [output file=/dev/null] [--help] [--quiet] [--verbose]\n", cmd);
@@ -82,12 +84,8 @@ int testmain(int argc, char **argv) {
 }
 
 int main_(int argc, char **argv) {
-    gparse::Com com;
-    bool keepPersistentCom = false;
-    //std::string defaultSerialFile("/dev/stdin");
-    //std::string serialFileName;
-    //std::string outFile = gparse::Com::NULL_FILE_STR;
-    SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
+    //useful to setup fail-safe exit routines first-thing for catching debug info.
+    SchedulerBase::configureExitHandlers(); 
     
     if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
         logging::disable();
@@ -102,10 +100,18 @@ int main_(int argc, char **argv) {
         printUsage(argv[0]);
         return 0;
     } 
+    LOG("Printipi: built for machine: '" STRINGIFY(MACHINE) "'\n");
     
     char* fsRootArg = argparse::getCmdOption(argv, argv+argc, "--fsroot");
     std::string fsRoot = fsRootArg ? std::string(fsRootArg) : "/";
+    LOG("Filesystem root: %s\n", fsRoot.c_str());
+    FileSystem fs(fsRoot);
     
+    gparse::Com com;
+    //if input is stdin, or a two-way pipe, then it likely means we want to keep that channel open forever
+    //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
+    bool keepPersistentCom = false;
+
     //if no arguments, or if first argument (and therefore all args) is an option, 
     //  then take gcode commands from stdin
     if (argc < 2 || argv[1][0] == '-') { 
@@ -115,7 +121,7 @@ int main_(int argc, char **argv) {
     } else {
         //otherwise, first parameter must be a filename from which to read gcode commands
         //second argument is for the output file
-        if (argc >2 && argv[2][0] != '-') { 
+        if (argc > 2 && argv[2][0] != '-') { 
             com = std::move(gparse::Com(std::string(argv[1]), std::string(argv[2])));
             //hints at a dual-way pipe (host <-> firmware communication); preserve communiation channel to host
             keepPersistentCom = true;
@@ -130,20 +136,8 @@ int main_(int argc, char **argv) {
     if (retval) {
         LOGW("Warning: mlockall (prevent memory swaps) in main.cpp::main() returned non-zero: %i\n", retval);
     }
-    
-    //Open the serial device:
-    //LOG("Serial file: %s\n", serialFileName.c_str());
-    //gparse::Com com = gparse::Com(serialFileName, outFile);
-    
-    //instantiate main driver:
-    machines::MACHINE driver;
-    
-    LOG("Filesystem root: %s\n", fsRoot.c_str());
-    FileSystem fs(fsRoot);
-    
-    //if input is stdin, or a two-way pipe, then it likely means we want to keep this input channel forever,
-    //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
-    State<machines::MACHINE> state(driver, fs, keepPersistentCom);
+        
+    State<machines::MACHINE> state(machines::MACHINE(), fs, keepPersistentCom);
     state.addComChannel(std::move(com));
     state.eventLoop();
     return 0;
