@@ -49,6 +49,7 @@
 
 #include <string>
 #include <sys/mman.h> //for mlockall
+#include <iostream> //for std::cin
 #include "common/logging.h"
 
 #include "gparse/com.h"
