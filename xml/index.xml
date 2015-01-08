@@ -53,7 +53,6 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
   </variable>
   <namespace name="argparse" ref="argparse#argparse" />
   <namespace name="gparse" ref="gparse#gparse">
-    <brief>null file descriptor</brief>
     <namespace name="(anonymous::1)" ref="gparse::(anonymous::1)#gparse::(anonymous::1)">
       <brief>internal functions - treat as private</brief>
       <structtemplate name="__callOnAll" ref="gparse::(anonymous::1)::__callOnAll#gparse::(anonymous::1)::__callOnAll">
@@ -134,6 +133,12 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     </namespace>
     <class name="Com" ref="gparse::Com#gparse::Com" />
     <class name="Command" ref="gparse::Command#gparse::Command" />
+    <classtemplate name="ComStreamOwnershipMarker" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker">
+      <brief>Used during Com construction to wrap the stream input to give an indication of who owns the stream.</brief>
+      <templatetypeparameter id="gparse::ComStreamOwnershipMarker::T" name="T" />
+    </classtemplate>
+    <class name="ComStreamOwnershipMarker" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker" />
+    <class name="ComStreamOwnershipMarker" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker" />
     <class name="Response" ref="gparse::Response#gparse::Response" />
   </namespace>
   <namespace name="iodrv" ref="iodrv#iodrv">

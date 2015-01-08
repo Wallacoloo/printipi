@@ -8,18 +8,37 @@ once tendCom returns true, then a command is available via getCommand(), and a r
 Communication is typically done over a serial interface, but Com accepts any file descriptor,
   so communication can be done via stdin (/dev/stdin) or commands can be directly fed from a gcode file.
 </doc>
-  <variable id="gparse::Com::NULL_FILE_STR" name="NULL_FILE_STR">
-    <brief>initialize static consts:</brief>
-    <type name="std::string" qualifier=" const" />
-  </variable>
+  <methodtemplate id="gparse::Com::giveFullOwnership" name="giveFullOwnership" static="yes">
+    <brief>Whenever you pass a file pointer to the Com constructor, you must explicitly mark who the owner should be.</brief>
+    <doc>If you wish to pass ownership over to Com, call Com(..., giveFullOwnership(file), ...)</doc>
+    <return>
+      <type name="ComStreamOwnershipMarker&lt;T&gt;" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker" />
+    </return>
+    <argument id="gparse::Com::giveFullOwnership::stream" name="stream">
+      <type name="const T" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="gparse::Com::giveFullOwnership::T" name="T" />
+  </methodtemplate>
+  <methodtemplate id="gparse::Com::shareOwnership" name="shareOwnership" static="yes">
+    <brief>Whenever you pass a file pointer to the Com constructor, you must explicitly mark who the owner should be.</brief>
+    <doc>If you wish for the caller to retain ownership, call Com(..., shareOwnership(file), ...)</doc>
+    <return>
+      <type name="ComStreamOwnershipMarker&lt;T&gt;" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker" />
+    </return>
+    <argument id="gparse::Com::shareOwnership::stream" name="stream">
+      <type name="const T" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="gparse::Com::shareOwnership::T" name="T" />
+  </methodtemplate>
   <constructor id="gparse::Com::Com" name="Com">
     <brief>set @dieOnEof=true when reading from an actual, fix-length file, instead of a stream.</brief>
-    <doc>useful when dealing with "subprograms" (printing from a file), in which the replies don't need to be sent back to the main com channel.</doc>
-    <argument id="gparse::Com::Com::fileR" name="fileR">
-      <type name="std::string" qualifier=" const &amp;" />
+    <doc>useful when dealing with "subprograms" (printing from a file), in which the replies don't need to be sent back to the main com channel.
+Com(const std::string &amp;fileR=NULL_FILE_STR, const std::string &amp;fileW=NULL_FILE_STR, bool dieOnEof=false);</doc>
+    <argument id="gparse::Com::Com::readStream" name="readStream">
+      <type name="ComStreamOwnershipMarker&lt;std::istream *&gt;" qualifier=" const &amp;" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker" />
     </argument>
-    <argument id="gparse::Com::Com::fileW" name="fileW">
-      <type name="std::string" qualifier=" const &amp;" />
+    <argument id="gparse::Com::Com::writeStream" name="writeStream">
+      <type name="ComStreamOwnershipMarker&lt;std::ostream *&gt;" qualifier=" const &amp;" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker" />
     </argument>
     <argument id="gparse::Com::Com::dieOnEof" name="dieOnEof">
       <type builtin="yes" name="bool" />

@@ -149,7 +149,7 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="47" />
       </undocumented>
     </type>
-    <type documented="14" name="methodtemplate" undocumented="46">
+    <type documented="16" name="methodtemplate" undocumented="47">
       <undocumented id="IntervalTimer::clockCmp" name="clockCmp">
         <location column="9" file="common/intervaltimer.h" line="47" />
       </undocumented>
@@ -160,10 +160,10 @@ return values.
         <location column="9" file="scheduler.h" line="59" />
       </undocumented>
       <undocumented id="State::State__onIdleCpu::operator()" name="operator()">
-        <location column="5" file="state.h" line="369" />
+        <location column="5" file="state.h" line="371" />
       </undocumented>
       <undocumented id="State::State__setFanRate::operator()" name="operator()">
-        <location column="5" file="state.h" line="745" />
+        <location column="5" file="state.h" line="748" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::sleep_for" name="sleep_for">
         <location column="5" file="boilerplate/thisthreadsleepadapter.h" line="39" />
@@ -209,6 +209,9 @@ return values.
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()" name="operator()">
         <location column="9" file="motion/axisstepper.h" line="160" />
+      </undocumented>
+      <undocumented id="gparse::Com::ComStreamDeleter::operator()" name="operator()">
+        <location column="13" file="gparse/com.h" line="74" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getBedTemp" name="getBedTemp">
         <location column="9" file="iodrivers/iodriver.h" line="100" />
@@ -325,9 +328,9 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="266" />
       </undocumented>
     </type>
-    <type documented="2" name="templatetypeparameter" undocumented="165">
+    <type documented="2" name="templatetypeparameter" undocumented="169">
       <undocumented id="Drv" name="Drv">
-        <location column="11" file="state.h" line="463" />
+        <location column="11" file="state.h" line="465" />
       </undocumented>
       <undocumented id="IntervalTimer::clockCmp::DurT" name="DurT">
         <location column="19" file="common/intervaltimer.h" line="47" />
@@ -348,43 +351,43 @@ return values.
         <location column="11" file="state.h" line="77" />
       </undocumented>
       <undocumented id="State::State__onIdleCpu::operator()::T" name="T">
-        <location column="15" file="state.h" line="369" />
+        <location column="15" file="state.h" line="371" />
       </undocumented>
       <undocumented id="State::State__setFanRate::operator()::T" name="T">
-        <location column="15" file="state.h" line="745" />
+        <location column="15" file="state.h" line="748" />
       </undocumented>
       <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
-        <location column="19" file="state.h" line="254" />
+        <location column="19" file="state.h" line="257" />
       </undocumented>
       <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
-        <location column="35" file="state.h" line="463" />
+        <location column="35" file="state.h" line="465" />
       </undocumented>
       <undocumented id="TestHelper::MachineT" name="MachineT">
         <location column="11" file="testhelper.h" line="93" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::AClock" name="AClock">
-        <location column="19" file="testhelper.h" line="153" />
+        <location column="19" file="testhelper.h" line="157" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::ADur" name="ADur">
-        <location column="36" file="testhelper.h" line="153" />
+        <location column="36" file="testhelper.h" line="157" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::BClock" name="BClock">
-        <location column="51" file="testhelper.h" line="153" />
+        <location column="51" file="testhelper.h" line="157" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::BDur" name="BDur">
-        <location column="68" file="testhelper.h" line="153" />
+        <location column="68" file="testhelper.h" line="157" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::AClock" name="AClock">
-        <location column="19" file="testhelper.h" line="171" />
+        <location column="19" file="testhelper.h" line="175" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::ADur" name="ADur">
-        <location column="36" file="testhelper.h" line="171" />
+        <location column="36" file="testhelper.h" line="175" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::BClock" name="BClock">
-        <location column="51" file="testhelper.h" line="171" />
+        <location column="51" file="testhelper.h" line="175" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::BDur" name="BDur">
-        <location column="68" file="testhelper.h" line="171" />
+        <location column="68" file="testhelper.h" line="175" />
       </undocumented>
       <undocumented id="TestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
         <location column="95" file="testhelper.h" line="74" />
@@ -509,6 +512,18 @@ return values.
       <undocumented id="gparse::(anonymous::1)::__callOnIndex::TupleT" name="TupleT">
         <location column="15" file="common/tupleutil.h" line="82" />
       </undocumented>
+      <undocumented id="gparse::Com::ComStreamDeleter::operator()::T" name="T">
+        <location column="23" file="gparse/com.h" line="74" />
+      </undocumented>
+      <undocumented id="gparse::Com::giveFullOwnership::T" name="T">
+        <location column="19" file="gparse/com.h" line="100" />
+      </undocumented>
+      <undocumented id="gparse::Com::shareOwnership::T" name="T">
+        <location column="19" file="gparse/com.h" line="95" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::T" name="T">
+        <location column="11" file="gparse/com.h" line="37" />
+      </undocumented>
       <undocumented id="gparse::Response::Response::Container" name="Container">
         <location column="19" file="gparse/response.h" line="62" />
       </undocumented>
@@ -606,19 +621,19 @@ return values.
         <location column="19" file="iodrivers/tempcontrol.h" line="128" />
       </undocumented>
       <undocumented id="makeTestHelper::Args" name="Args">
-        <location column="30" file="testhelper.h" line="202" />
+        <location column="30" file="testhelper.h" line="206" />
       </undocumented>
       <undocumented id="makeTestHelper::MachineT" name="MachineT">
-        <location column="11" file="testhelper.h" line="202" />
+        <location column="11" file="testhelper.h" line="206" />
       </undocumented>
       <undocumented id="makeTestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
-        <location column="1" file="testhelper.h" line="213" />
+        <location column="1" file="testhelper.h" line="217" />
       </undocumented>
       <undocumented id="makeTestMachine::GetCoordMap" name="GetCoordMap">
-        <location column="54" file="testhelper.h" line="212" />
+        <location column="54" file="testhelper.h" line="216" />
       </undocumented>
       <undocumented id="makeTestMachine::GetIoDrivers" name="GetIoDrivers">
-        <location column="11" file="testhelper.h" line="212" />
+        <location column="11" file="testhelper.h" line="216" />
       </undocumented>
       <undocumented id="mathutil::CtoK::T" name="T">
         <location column="11" file="common/mathutil.h" line="38" />
@@ -848,7 +863,15 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="44" />
       </undocumented>
     </type>
-    <type documented="9" name="namespace" undocumented="6">
+    <type documented="8" name="namespace" undocumented="7">
+      <undocumented id="gparse" name="gparse">
+        <location column="1" file="gparse/command.h" line="44" />
+        <location column="1" file="gparse/response.h" line="33" />
+        <location column="1" file="gparse/com.h" line="33" />
+        <location column="1" file="gparse/command.cpp" line="26" />
+        <location column="1" file="gparse/com.cpp" line="26" />
+        <location column="1" file="gparse/response.cpp" line="3" />
+      </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
         <location column="1" file="iodrivers/iodriver.h" line="37" />
@@ -859,8 +882,8 @@ return values.
         <location column="1" file="iodrivers/tempcontrol.h" line="39" />
         <location column="1" file="iodrivers/rcthermistor.h" line="35" />
         <location column="1" file="iodrivers/servo.h" line="38" />
-        <location column="1" file="iodrivers/iopin.cpp" line="33" />
         <location column="1" file="iodrivers/servo.cpp" line="27" />
+        <location column="1" file="iodrivers/iopin.cpp" line="33" />
       </undocumented>
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="32" />
@@ -887,7 +910,7 @@ return values.
         <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
       </undocumented>
     </type>
-    <type documented="12" name="classtemplate" undocumented="4">
+    <type documented="13" name="classtemplate" undocumented="4">
       <undocumented id="TestHelper" name="TestHelper">
         <location column="1" file="testhelper.h" line="93" />
       </undocumented>
@@ -901,7 +924,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="121" name="method" undocumented="325">
+    <type documented="121" name="method" undocumented="326">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -990,11 +1013,14 @@ return values.
       <undocumented id="State::SchedInterface::schedTime" name="schedTime">
         <location column="13" file="state.h" line="107" />
       </undocumented>
+      <undocumented id="State::addComChannel" name="addComChannel">
+        <location column="9" file="state.h" line="223" />
+      </undocumented>
       <undocumented id="TestHelper::exitOnce" name="exitOnce">
-        <location column="9" file="testhelper.h" line="176" />
+        <location column="9" file="testhelper.h" line="180" />
       </undocumented>
       <undocumented id="TestHelper::threadedEventLoop" name="threadedEventLoop">
-        <location column="9" file="testhelper.h" line="183" />
+        <location column="9" file="testhelper.h" line="187" />
       </undocumented>
       <undocumented id="TestMachine::getAccelerationProfile" name="getAccelerationProfile">
         <location column="9" file="testhelper.h" line="87" />
@@ -1060,16 +1086,16 @@ return values.
         <location column="9" file="common/tupleutil.h" line="83" />
       </undocumented>
       <undocumented id="gparse::Com::hasReadFile" name="hasReadFile">
-        <location column="9" file="gparse/com.h" line="65" />
-        <location column="1" file="gparse/com.cpp" line="67" />
+        <location column="9" file="gparse/com.h" line="118" />
+        <location column="1" file="gparse/com.cpp" line="60" />
       </undocumented>
       <undocumented id="gparse::Com::hasWriteFile" name="hasWriteFile">
-        <location column="9" file="gparse/com.h" line="66" />
-        <location column="1" file="gparse/com.cpp" line="70" />
+        <location column="9" file="gparse/com.h" line="119" />
+        <location column="1" file="gparse/com.cpp" line="63" />
       </undocumented>
       <undocumented id="gparse::Com::reply" name="reply">
-        <location column="9" file="gparse/com.h" line="77" />
-        <location column="1" file="gparse/com.cpp" line="80" />
+        <location column="9" file="gparse/com.h" line="130" />
+        <location column="1" file="gparse/com.cpp" line="73" />
       </undocumented>
       <undocumented id="gparse::Command::empty" name="empty">
         <location column="9" file="gparse/command.h" line="89" />
@@ -2013,7 +2039,7 @@ return values.
     </type>
     <type documented="9" name="functiontemplate" undocumented="3">
       <undocumented id="makeTestHelper" name="makeTestHelper">
-        <location column="1" file="testhelper.h" line="202" />
+        <location column="1" file="testhelper.h" line="206" />
       </undocumented>
       <undocumented id="motion::stepDirFromSign" name="stepDirFromSign">
         <location column="1" file="motion/axisstepper.h" line="49" />
@@ -2022,7 +2048,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="52" />
       </undocumented>
     </type>
-    <type documented="18" name="constructor" undocumented="41">
+    <type documented="18" name="constructor" undocumented="50">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="32" />
         <location column="1" file="filesystem.cpp" line="26" />
@@ -2065,7 +2091,7 @@ return values.
         <location column="13" file="state.h" line="91" />
       </undocumented>
       <undocumented id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
-        <location column="9" file="testhelper.h" line="103" />
+        <location column="9" file="testhelper.h" line="102" />
       </undocumented>
       <undocumented id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
         <location column="9" file="testhelper.h" line="128" />
@@ -2087,6 +2113,33 @@ return values.
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::IODriver__tuplePeekNextEvent" name="IODriver__tuplePeekNextEvent">
         <location column="9" file="iodrivers/iodriver.h" line="185" />
+      </undocumented>
+      <undocumented id="gparse::Com::ComStreamDeleter::ComStreamDeleter" name="ComStreamDeleter">
+        <location column="13" file="gparse/com.h" line="73" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="9" file="gparse/com.h" line="43" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="9" file="gparse/com.h" line="44" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="9" file="gparse/com.h" line="45" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="9" file="gparse/com.h" line="46" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="9" file="gparse/com.h" line="53" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="9" file="gparse/com.h" line="54" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="9" file="gparse/com.h" line="55" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="9" file="gparse/com.h" line="56" />
       </undocumented>
       <undocumented id="iodrv::A4988::A4988" name="A4988">
         <location column="9" file="iodrivers/a4988.h" line="55" />
@@ -2151,7 +2204,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="423" />
       </undocumented>
     </type>
-    <type documented="5" name="variable" undocumented="10">
+    <type documented="4" name="variable" undocumented="10">
       <undocumented id="NotPresent" name="NotPresent">
         <location column="23" file="common/optionalarg.h" line="46" />
       </undocumented>
@@ -2508,9 +2561,15 @@ return values.
         <location column="1" file="iodrivers/iopin.cpp" line="50" />
       </undocumented>
     </type>
-    <type documented="26" name="class" undocumented="4">
+    <type documented="26" name="class" undocumented="6">
       <undocumented id="FileSystem" name="FileSystem">
         <location column="1" file="filesystem.h" line="29" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="1" file="gparse/com.h" line="38" />
+      </undocumented>
+      <undocumented id="gparse::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
+        <location column="1" file="gparse/com.h" line="48" />
       </undocumented>
       <undocumented id="machines::Machine" name="Machine">
         <location column="1" file="machines/machine.h" line="34" />
@@ -2602,26 +2661,35 @@ return values.
       <undocumented name="code" />
       <undocumented name="rest" />
     </function>
+    <function id="gparse::Com::shareOwnership" name="shareOwnership">
+      <location column="9" file="gparse/com.h" line="95" />
+      <undocumented-return />
+      <undocumented name="stream" />
+    </function>
+    <function id="gparse::Com::giveFullOwnership" name="giveFullOwnership">
+      <location column="9" file="gparse/com.h" line="100" />
+      <undocumented-return />
+      <undocumented name="stream" />
+    </function>
     <function id="gparse::Com::Com" name="Com">
-      <location column="9" file="gparse/com.h" line="60" />
-      <location column="1" file="gparse/com.cpp" line="34" />
-      <undocumented name="fileR" />
-      <undocumented name="fileW" />
+      <location column="9" file="gparse/com.h" line="107" />
+      <undocumented name="writeStream" />
+      <undocumented name="readStream" />
       <undocumented name="dieOnEof" />
     </function>
     <function id="gparse::Com::tendCom" name="tendCom">
-      <location column="9" file="gparse/com.h" line="63" />
-      <location column="1" file="gparse/com.cpp" line="41" />
+      <location column="9" file="gparse/com.h" line="116" />
+      <location column="1" file="gparse/com.cpp" line="28" />
       <undocumented-return />
     </function>
     <function id="gparse::Com::isAtEof" name="isAtEof">
-      <location column="9" file="gparse/com.h" line="70" />
-      <location column="1" file="gparse/com.cpp" line="73" />
+      <location column="9" file="gparse/com.h" line="123" />
+      <location column="1" file="gparse/com.cpp" line="66" />
       <undocumented-return />
     </function>
     <function id="gparse::Com::getCommand" name="getCommand">
-      <location column="9" file="gparse/com.h" line="75" />
-      <location column="1" file="gparse/com.cpp" line="76" />
+      <location column="9" file="gparse/com.h" line="128" />
+      <location column="1" file="gparse/com.cpp" line="69" />
       <undocumented-return />
     </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
@@ -3057,9 +3125,8 @@ return values.
     </function>
     <function id="State::State&lt;Drv&gt;" name="State&lt;Drv&gt;">
       <location column="9" file="state.h" line="210" />
-      <location column="1" file="state.h" line="268" />
+      <location column="1" file="state.h" line="271" />
       <undocumented name="fs" />
-      <undocumented name="com" />
       <undocumented name="needPersistentCom" />
       <undocumented name="drv" />
     </function>
@@ -3070,11 +3137,6 @@ return values.
     <function id="State::setPersistentHostCom" name="setPersistentHostCom">
       <location column="9" file="state.h" line="220" />
       <undocumented name="persistence" />
-    </function>
-    <function id="motion::ConstantAcceleration::transform" name="transform">
-      <location column="9" file="motion/constantacceleration.h" line="61" />
-      <undocumented-return />
-      <undocumented name="time" />
     </function>
     <function id="motion::CoordMap::getDependentIoDrivers" name="getDependentIoDrivers">
       <location column="9" file="motion/coordmap.h" line="57" />
@@ -3118,6 +3180,52 @@ return values.
       <location column="9" file="motion/coordmap.h" line="107" />
       <undocumented-return />
     </function>
+    <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
+      <location column="9" file="machines/machine.h" line="49" />
+      <undocumented-return />
+    </function>
+    <function id="operator|" name="operator|">
+      <location column="1" file="testhelper.h" line="52" />
+      <undocumented-return />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::sendCommand" name="sendCommand">
+      <location column="9" file="testhelper.h" line="141" />
+      <undocumented name="cmd" />
+    </function>
+    <function id="TestHelper::verifyPosition" name="verifyPosition">
+      <location column="9" file="testhelper.h" line="151" />
+      <undocumented name="y" />
+      <undocumented name="x" />
+      <undocumented name="z" />
+    </function>
+    <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
+      <location column="9" file="testhelper.h" line="157" />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
+      <location column="9" file="testhelper.h" line="175" />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::readLine" name="readLine">
+      <location column="9" file="testhelper.h" line="194" />
+      <undocumented-return />
+    </function>
+    <function id="makeTestMachine" name="makeTestMachine">
+      <location column="1" file="testhelper.h" line="216" />
+      <undocumented-return />
+      <undocumented name="getCoordMap" />
+      <undocumented name="getIoDrivers" />
+      <undocumented name="getAccelerationProfile" />
+    </function>
+    <function id="motion::ConstantAcceleration::transform" name="transform">
+      <location column="9" file="motion/constantacceleration.h" line="61" />
+      <undocumented-return />
+      <undocumented name="time" />
+    </function>
     <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
       <location column="9" file="motion/linearstepper.h" line="66" />
       <undocumented name="map" />
@@ -3140,10 +3248,6 @@ return values.
     <function id="motion::LinearStepper::_nextStep" name="_nextStep">
       <location column="9" file="motion/linearstepper.h" line="88" />
       <undocumented name="useEndstops" />
-    </function>
-    <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/machine.h" line="49" />
-      <undocumented-return />
     </function>
     <function id="iodrv::Fan::Fan" name="Fan">
       <location column="9" file="iodrivers/fan.h" line="49" />
@@ -3187,43 +3291,6 @@ return values.
     <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/generic/cartesian.h" line="175" />
       <undocumented-return />
-    </function>
-    <function id="operator|" name="operator|">
-      <location column="1" file="testhelper.h" line="52" />
-      <undocumented-return />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::sendCommand" name="sendCommand">
-      <location column="9" file="testhelper.h" line="138" />
-      <undocumented name="cmd" />
-    </function>
-    <function id="TestHelper::verifyPosition" name="verifyPosition">
-      <location column="9" file="testhelper.h" line="147" />
-      <undocumented name="y" />
-      <undocumented name="x" />
-      <undocumented name="z" />
-    </function>
-    <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
-      <location column="9" file="testhelper.h" line="153" />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
-      <location column="9" file="testhelper.h" line="171" />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::readLine" name="readLine">
-      <location column="9" file="testhelper.h" line="190" />
-      <undocumented-return />
-    </function>
-    <function id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="212" />
-      <undocumented-return />
-      <undocumented name="getCoordMap" />
-      <undocumented name="getIoDrivers" />
-      <undocumented name="getAccelerationProfile" />
     </function>
     <function id="plat::rpi::PrimitiveIoPin::null" name="null">
       <location column="3" file="platforms/rpi/primitiveiopin.h" line="43" />
@@ -3399,20 +3466,20 @@ return values.
         <ref name="MotionPlanner" />
       </doctype>
     </typedef>
-    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
-      <location column="1" file="motion/constantacceleration.h" line="41" />
-      <doctype name="doc">
-        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
-      </doctype>
-    </class>
     <functiontemplate id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="212" />
+      <location column="1" file="testhelper.h" line="216" />
       <doctype name="doc">
         <ref name="typename ... Args" />
         <ref name="Args..." />
         <ref name="Args..." />
       </doctype>
     </functiontemplate>
+    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
+      <location column="1" file="motion/constantacceleration.h" line="41" />
+      <doctype name="doc">
+        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
+      </doctype>
+    </class>
     <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/rpi/primitiveiopin.h" line="57" />
       <doctype component="pullUpDown" name="params">

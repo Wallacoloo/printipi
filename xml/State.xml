@@ -19,9 +19,6 @@ This is normally only relevant for communication with a host, like Octoprint, wh
     <argument id="State::State&lt;Drv&gt;::fs" name="fs">
       <type name="FileSystem" qualifier=" const &amp;" ref="FileSystem#FileSystem" />
     </argument>
-    <argument id="State::State&lt;Drv&gt;::com" name="com">
-      <type name="gparse::Com" qualifier=" const &amp;" ref="gparse::Com#gparse::Com" />
-    </argument>
     <argument id="State::State&lt;Drv&gt;::needPersistentCom" name="needPersistentCom">
       <type builtin="yes" name="bool" />
     </argument>
@@ -46,6 +43,14 @@ This is normally only relevant for communication with a host, like Octoprint, wh
     </return>
     <argument id="State::setPersistentHostCom::persistence" name="persistence">
       <type builtin="yes" name="bool" />
+    </argument>
+  </method>
+  <method id="State::addComChannel" name="addComChannel">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="State::addComChannel::ch" name="ch">
+      <type name="gparse::Com &amp;&amp;" />
     </argument>
   </method>
 </classtemplate>
