@@ -42,8 +42,8 @@ template <> class ComStreamOwnershipMarker<std::istream*> {
     public:
         ComStreamOwnershipMarker(std::istream *argument, bool hasOwnership) : argument(argument), hasOwnership(hasOwnership) {}
         ComStreamOwnershipMarker(const char *filename) : argument(new std::ifstream(filename, std::ios_base::in)), hasOwnership(true) {}
-        ComStreamOwnershipMarker(const std::string &filename) : ComStreamOwnershipMarker(filename.c_str()) {}
-        ComStreamOwnershipMarker(std::nullptr_t) : ComStreamOwnershipMarker(nullptr, true) {}
+        ComStreamOwnershipMarker(const std::string &filename) : argument(new std::ifstream(filename, std::ios_base::in)), hasOwnership(true) {}
+        ComStreamOwnershipMarker(std::nullptr_t) : argument(nullptr), hasOwnership(true) {}
 };
 template <> class ComStreamOwnershipMarker<std::ostream*> {
     friend class Com;
@@ -52,8 +52,8 @@ template <> class ComStreamOwnershipMarker<std::ostream*> {
     public:
         ComStreamOwnershipMarker(std::ostream *argument, bool hasOwnership) : argument(argument), hasOwnership(hasOwnership) {}
         ComStreamOwnershipMarker(const char *filename) : argument(new std::ofstream(filename, std::ios_base::out)), hasOwnership(true) {}
-        ComStreamOwnershipMarker(const std::string &filename) : ComStreamOwnershipMarker(filename.c_str()) {}
-        ComStreamOwnershipMarker(std::nullptr_t) : ComStreamOwnershipMarker(nullptr, true) {}
+        ComStreamOwnershipMarker(const std::string &filename) : argument(new std::ofstream(filename, std::ios_base::out)), hasOwnership(true) {}
+        ComStreamOwnershipMarker(std::nullptr_t) : argument(nullptr), hasOwnership(true) {}
 };
 
 /* 
