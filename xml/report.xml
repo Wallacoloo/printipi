@@ -868,9 +868,9 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
-        <location column="1" file="gparse/com.cpp" line="26" />
-        <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/command.cpp" line="26" />
+        <location column="1" file="gparse/response.cpp" line="3" />
+        <location column="1" file="gparse/com.cpp" line="26" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -882,8 +882,8 @@ return values.
         <location column="1" file="iodrivers/tempcontrol.h" line="39" />
         <location column="1" file="iodrivers/rcthermistor.h" line="35" />
         <location column="1" file="iodrivers/servo.h" line="38" />
-        <location column="1" file="iodrivers/servo.cpp" line="27" />
         <location column="1" file="iodrivers/iopin.cpp" line="33" />
+        <location column="1" file="iodrivers/servo.cpp" line="27" />
       </undocumented>
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="32" />
@@ -903,11 +903,11 @@ return values.
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="39" />
       </undocumented>
       <undocumented id="plat::rpi" name="rpi">
-        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
-        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="169" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="34" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="187" />
+        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
+        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
       </undocumented>
     </type>
     <type documented="13" name="classtemplate" undocumented="4">
@@ -2692,13 +2692,6 @@ return values.
       <location column="1" file="gparse/com.cpp" line="69" />
       <undocumented-return />
     </function>
-    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="61" />
-      <location column="1" file="schedulerbase.cpp" line="79" />
-      <undocumented-return />
-      <undocumented name="handler" />
-      <undocumented name="level" />
-    </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="3" file="platforms/generic/primitiveiopin.h" line="43" />
       <undocumented name="args" />
@@ -2791,33 +2784,12 @@ return values.
       <location column="9" file="outputevent.h" line="75" />
       <undocumented-return />
     </function>
-    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="43" />
+    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
+      <location column="9" file="schedulerbase.h" line="61" />
+      <location column="1" file="schedulerbase.cpp" line="79" />
       <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="47" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="57" />
-      <undocumented name="pinIdx" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="67" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="71" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/rpi/primitiveiopin.h" line="80" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="84" />
-      <undocumented name="lev" />
+      <undocumented name="handler" />
+      <undocumented name="level" />
     </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
       <location column="9" file="scheduler.h" line="67" />
@@ -3166,6 +3138,11 @@ return values.
       <location column="9" file="state.h" line="220" />
       <undocumented name="persistence" />
     </function>
+    <function id="motion::ConstantAcceleration::transform" name="transform">
+      <location column="9" file="motion/constantacceleration.h" line="61" />
+      <undocumented-return />
+      <undocumented name="time" />
+    </function>
     <function id="motion::CoordMap::getDependentIoDrivers" name="getDependentIoDrivers">
       <location column="9" file="motion/coordmap.h" line="57" />
       <undocumented-return />
@@ -3208,52 +3185,6 @@ return values.
       <location column="9" file="motion/coordmap.h" line="107" />
       <undocumented-return />
     </function>
-    <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/machine.h" line="49" />
-      <undocumented-return />
-    </function>
-    <function id="operator|" name="operator|">
-      <location column="1" file="testhelper.h" line="52" />
-      <undocumented-return />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::sendCommand" name="sendCommand">
-      <location column="9" file="testhelper.h" line="141" />
-      <undocumented name="cmd" />
-    </function>
-    <function id="TestHelper::verifyPosition" name="verifyPosition">
-      <location column="9" file="testhelper.h" line="151" />
-      <undocumented name="y" />
-      <undocumented name="x" />
-      <undocumented name="z" />
-    </function>
-    <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
-      <location column="9" file="testhelper.h" line="157" />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
-      <location column="9" file="testhelper.h" line="175" />
-      <undocumented name="a" />
-      <undocumented name="b" />
-    </function>
-    <function id="TestHelper::readLine" name="readLine">
-      <location column="9" file="testhelper.h" line="194" />
-      <undocumented-return />
-    </function>
-    <function id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="216" />
-      <undocumented-return />
-      <undocumented name="getCoordMap" />
-      <undocumented name="getIoDrivers" />
-      <undocumented name="getAccelerationProfile" />
-    </function>
-    <function id="motion::ConstantAcceleration::transform" name="transform">
-      <location column="9" file="motion/constantacceleration.h" line="61" />
-      <undocumented-return />
-      <undocumented name="time" />
-    </function>
     <function id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
       <location column="9" file="motion/linearstepper.h" line="66" />
       <undocumented name="map" />
@@ -3276,6 +3207,10 @@ return values.
     <function id="motion::LinearStepper::_nextStep" name="_nextStep">
       <location column="9" file="motion/linearstepper.h" line="88" />
       <undocumented name="useEndstops" />
+    </function>
+    <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
+      <location column="9" file="machines/machine.h" line="49" />
+      <undocumented-return />
     </function>
     <function id="iodrv::Fan::Fan" name="Fan">
       <location column="9" file="iodrivers/fan.h" line="49" />
@@ -3319,6 +3254,71 @@ return values.
     <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/generic/cartesian.h" line="175" />
       <undocumented-return />
+    </function>
+    <function id="operator|" name="operator|">
+      <location column="1" file="testhelper.h" line="52" />
+      <undocumented-return />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::sendCommand" name="sendCommand">
+      <location column="9" file="testhelper.h" line="141" />
+      <undocumented name="cmd" />
+    </function>
+    <function id="TestHelper::verifyPosition" name="verifyPosition">
+      <location column="9" file="testhelper.h" line="151" />
+      <undocumented name="y" />
+      <undocumented name="x" />
+      <undocumented name="z" />
+    </function>
+    <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
+      <location column="9" file="testhelper.h" line="157" />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
+      <location column="9" file="testhelper.h" line="175" />
+      <undocumented name="a" />
+      <undocumented name="b" />
+    </function>
+    <function id="TestHelper::readLine" name="readLine">
+      <location column="9" file="testhelper.h" line="194" />
+      <undocumented-return />
+    </function>
+    <function id="makeTestMachine" name="makeTestMachine">
+      <location column="1" file="testhelper.h" line="216" />
+      <undocumented-return />
+      <undocumented name="getCoordMap" />
+      <undocumented name="getIoDrivers" />
+      <undocumented name="getAccelerationProfile" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="43" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="47" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="57" />
+      <undocumented name="pinIdx" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="67" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="71" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/rpi/primitiveiopin.h" line="80" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="84" />
+      <undocumented name="lev" />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
       <location column="9" file="motion/lineardeltastepper.h" line="208" />
@@ -3365,12 +3365,6 @@ return values.
         <ref name="std::string, std::string" />
       </doctype>
     </methodtemplate>
-    <class id="plat::rpi::ChronoClock" name="ChronoClock">
-      <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
-      <doctype name="doc">
-        <ref name="clock" />
-      </doctype>
-    </class>
     <method id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
       <location column="9" file="iodrivers/iopin.h" line="117" />
       <location column="1" file="iodrivers/iopin.cpp" line="81" />
@@ -3381,12 +3375,6 @@ return values.
         <ref name="translated level" />
       </doctype>
     </method>
-    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="57" />
-      <doctype component="pullUpDown" name="params">
-        <ref name="IoPin" />
-      </doctype>
-    </constructor>
     <method id="Vector3::tuple" name="tuple">
       <location column="3" file="common/vector3.h" line="45" />
       <doctype name="brief">
@@ -3478,6 +3466,12 @@ return values.
         <ref name="MotionPlanner" />
       </doctype>
     </typedef>
+    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
+      <location column="1" file="motion/constantacceleration.h" line="41" />
+      <doctype name="doc">
+        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
+      </doctype>
+    </class>
     <functiontemplate id="makeTestMachine" name="makeTestMachine">
       <location column="1" file="testhelper.h" line="216" />
       <doctype name="doc">
@@ -3486,10 +3480,16 @@ return values.
         <ref name="Args..." />
       </doctype>
     </functiontemplate>
-    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
-      <location column="1" file="motion/constantacceleration.h" line="41" />
+    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="57" />
+      <doctype component="pullUpDown" name="params">
+        <ref name="IoPin" />
+      </doctype>
+    </constructor>
+    <class id="plat::rpi::ChronoClock" name="ChronoClock">
+      <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
       <doctype name="doc">
-        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
+        <ref name="clock" />
       </doctype>
     </class>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">
