@@ -70,9 +70,9 @@ class Servo : public IODriver {
 		   minAngle(minMaxAngle.first), maxAngle(minMaxAngle.second),
 		   lastEventTime(EventClockT::now()), highTime(getOnTime(initialAngle)), curState(IoLow) {
 		   	//ensure that the servo control pin is not left floating when shutdown
-		   	pin.setDefaultState(IO_DEFAULT_LOW);
+		   	this->pin.setDefaultState(IO_DEFAULT_LOW);
 		   	//configure the pin for output mode
-		   	pin.makeDigitalOutput(IoLow);
+		   	this->pin.makeDigitalOutput(IoLow);
 	    }
 
 		inline bool isServo() const {
