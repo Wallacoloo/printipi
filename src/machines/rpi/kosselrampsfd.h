@@ -353,7 +353,7 @@
 #include "motion/constantacceleration.h"
 #include "iodrivers/a4988.h"
 #include "motion/lineardeltacoordmap.h"
-#include "iodrivers/rcthermistor.h"
+#include "iodrivers/rcthermistor2pin.h"
 #include "iodrivers/tempcontrol.h"
 #include "iodrivers/fan.h"
 #include "iodrivers/iopin.h"
@@ -443,19 +443,7 @@
 #define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
 //during RPi boot, fan can be set to be either on or off by using internal pull resistors
 #define PIN_FAN_PULL              mitpi::GPIOPULL_UP
-#define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency
-
-//define the hotend:
-//  The hotend is controlled in precisely the same manner as the fan.
-//  Please note that this is currently set to inverted mode, so a logic-level HIGH should 
-//    result in 0 power delivered to the hotend.
-#define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
-#define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
-//hotend state during boot, if hardware pull resistors weren't present.
-//NOTE: if you have a hotend that is active LOW, then you want the pull resistor to pull HIGH!
-#define PIN_HOTEND_PULL           mitpi::GPIOPULL_DOWN
-//MOSFETS have a limited switching frequency, which can be accounted for with a minimum PWM_PERIOD
-#define HOTEND_MIN_PWM_PERIOD        0.01                 
+#define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency             
 
 #define PIN_STEPPER_A_EN          mitpi::V2_GPIO_P5_04    //maps to FD Shield D48  (X_EN)
 #define PIN_STEPPER_A_STEP        mitpi::V2_GPIO_P1_22    //maps to FD Shield AD9  (X_STEP)
@@ -476,6 +464,32 @@
 #define PIN_STEPPER_EN_INVERSIONS INVERT_WRITES
 //Set the pin to pull HIGH so that the stepper is disabled during RPi boot
 #define PIN_STEPPER_EN_PULL       mitpi::GPIOPULL_UP
+
+//define the hotend:
+//  The hotend is controlled in the same PWM manner as the fan
+#define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
+#define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
+//hotend state during boot, if hardware pull resistors weren't present.
+//NOTE: if you have a hotend that is active LOW, then you want the pull resistor to pull HIGH!
+#define PIN_HOTEND_PULL           mitpi::GPIOPULL_DOWN
+//MOSFETS have a limited switching frequency, which can be accounted for with a minimum PWM_PERIOD
+#define HOTEND_MIN_PWM_PERIOD     0.01    
+
+//Refer to the RcThermistor2Pin documentation.
+//One pin is used to discharge the capacitor through the thermistor (variable resistance)
+#define PIN_THERMISTOR            mitpi::NULL_GPIO_PIN
+//One pin (fixed resistance) is used for charging the capacitor,
+#define PIN_THERMISTOR_CHARGE     mitpi::NULL_GPIO_PIN
+#define THERM_C_FARADS            10.10e-6
+#define THERM_V_TOGGLE_V          1.65
+#define THERM_RCHARGE_OHMS        1000
+#define THERM_RSERIES_OHMS          22
+#define THERM_RUP_OHMS            4700
+#define THERM_T0_C                25.0
+#define THERM_R0_OHMS             100000
+#define THERM_BETA                3950
+
+#define VCC_V                     3.3  
 
 
 //PID thermistor->hotend feedback settings
@@ -498,12 +512,27 @@ class kosselrampsfd : public Machine {
         //  Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
         
         //return a list of miscellaneous IoDrivers (Endstops & A4988 drivers are reachable via <getCoordMap>)
-        inline std::tuple<Fan> getIoDrivers() const {
+        inline std::tuple<Fan, TempControl<RCThermistor2Pin, PID, LowPassFilter> > getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD) /*,
-                Servo(IoPin::null(), std::chrono::milliseconds(100), 
-                      std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(2)),
-                      std::make_pair(0.0, 2*M_PI))*/
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD),
+                TempControl<RCThermistor2Pin, PID, LowPassFilter>(
+                    iodrv::HotendType,
+                    IoPin(PIN_HOTEND_INVERSIONS, PIN_HOTEND), 
+                    RCThermistor2Pin(
+                        IoPin(NO_INVERSIONS, PIN_THERMISTOR),
+                        IoPin(NO_INVERSIONS, PIN_THERMISTOR_CHARGE),
+                        THERM_RCHARGE_OHMS, 
+                        THERM_RSERIES_OHMS,
+                        THERM_RUP_OHMS,
+                        THERM_C_FARADS, 
+                        VCC_V, 
+                        THERM_V_TOGGLE_V, 
+                        THERM_T0_C, 
+                        THERM_R0_OHMS, 
+                        THERM_BETA), 
+                    PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), 
+                    LowPassFilter(3.000)
+                )
             );
                 //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>(
                 //    iodrv::HotendType, _HotendOut(), _Thermistor(THERM_RA_OHMS, THERM_CAP_FARADS, VCC_V, THERM_IN_THRESH_V, THERM_T0_C, THERM_R0_OHMS, THERM_BETA), 
