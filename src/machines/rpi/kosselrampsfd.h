@@ -90,7 +90,8 @@
  *     Previous RC reading designs here: https://github.com/Wallacoloo/printipi/issues/24
  *     RPi inputs have "hysteresis" - a pin may transition from reading LOW to HIGH at a 2v threshold, but HIGH -> LOW at a 1v threshold.
  *       This can be disabled, according to: http://www.mosaic-industries.com/embedded-systems/microcontroller-projects/raspberry-pi/gpio-pin-electrical-specifications
- *       But the procedure to do so is not described.
+ *       The procedure is listed here: http://www.scribd.com/doc/101830961/GPIO-Pads-Control2
+ *         also: max current per pin is 16 mA (and total should not exceed 50 mA)
  *       We can also use one of the spare transistors on the FD board as a fixed comparator.
  *         Example (usting BJTs): http://pyevolve.sourceforge.net/wordpress/?p=2383
  *     One can create what is essentially a digitally-controlled resistor with a FET + capacitor: http://en.wikipedia.org/wiki/Switched_capacitor
@@ -131,7 +132,10 @@
  *         There aren't many free resistors. If we disable endstop pullups, then we have 3x 10k in parallel from unused endstops.
  *           Each stepper driver has a single 100k pull-down to ground.
  *           Fet 5 & 6 each have a 10k pull-down to ground (although it looks like their state is only undefined when the board loses power)
- *           ESTOP switch has a 4.7k resistor connected to ground. Not clear if it's a button or 2 pins, but it appears to be 2 pins on my board (on top of the physical button).
+ *           ESTOP jumper has a 4.7k resistor connected to ground. 
+ *             It's near the endstop section. The idea is that if you have a normally-closed switch, you can replace the jumper with that switch
+ *             to use it as an emergency stop button.
+ *             To make use of the 4k7 resistor, the pin closest to the endstops should be tied to ground, and the other pin has the resistor.
  *
  *
  *   Ramps-FD Thermistor port looks like:
@@ -223,27 +227,46 @@
  *                 \
  *                 / 4k7
  *                 \
- *          22ohm  /         therm
+ *          22ohm  /        3k3
  *      o---/\/\/\-+-----o-/\/\/\-o
- *      \         _|_    |        |
- *      / 3k3     ___    |        |
- *      \          |     |        |
- *     CHRG       GND   MEAS    DRAIN
+ *      \         _|_             |
+ *      / therm   ___             |
+ *      \          |              |
+ *    DRAIN       GND          CHRG/MEAS
  *    
  *      Modification to the previous circuit.
+ *        pull CHRG low to bring the cap close to ground which DRAIN is disconnected.
+ *        Simultaneously tie DRAIN high and make CHRG/MEAS high-impedance
+ *        Use MEAS to measure how long it takes for cap to discharge.
  *      Here, we use 3x10k resistors in parallel, taken from the disabled X/Y/Z-MIN endstop pullups.
  *        This requires that JP801 is No-Connect, such that endstops have no pullups
  *        If we don't need ANY endstops, then we can get away with a full 6x10k resistors in parallel.
  *        Actually, we can wire all the endstops directly from GND to Pi input & use internal pull-up and then have the full 6x10k resistors available.
  *          Without the buffer, however, it's important to NOT expose the endstops to 5V (can perhaps disable 5V altogether)
- *      By pulling CHRG low, and disconnecting DRAIN, we can pull the capacitor down to 3.3 * (10000./3+22) / (10000./3+22 + 4700) = 1.37 V
+ *      By pulling CHRG low, and disconnecting DRAIN, we can pull the capacitor down to 3.3 * (10000./3) / (10000./3 + 4700) = 1.37 V
  *        This is still in the undefined range of Pi inputs.
  *          Using the hex buffer chip doesn't help - 1.24V is the typical Vinput-low @ 3.3v (extrapolated).
  *          The quad/octa buffer chips have 1.43V typical Vinput-low @ 3.3v (extrapolated)
  *      So alternatively, we can set CHRG and DRAIN to Vcc to charge the cap, 
  *        and then pull both low and measure the dischage time. This still has a possibility to fail for large thermistor resistances, 
  *        but it should succeed for resistances < about 5k
- *      We could also use the 4k7 pull-down from the ESTOP jumper to combat the 4k7 pull-up (but the Geeetech board seems to omit the resistor).
+ *      We could also use the 4k7 pull-down from the ESTOP jumper (near the endstop connections) to combat the 4k7 pull-up.
+ *      DRAIN resistance | min cap voltage | max current
+ *                  3k3 |            1.37 |  1.0 mA
+ *                 1000 |            0.59 |  3.2 mA
+ *                  680 |            0.43 |  4.7 mA
+ *                  470 |            0.31 |  6.7 mA
+ *                  330 |            0.23 |  9.4 mA
+ *                  220 |            0.16 | 13.6 mA
+ *                  180 |            0.14 | 16.3 mA (beyond pi ratings)
+ *      Beyond ~280 C, the thermistor will be source too much current for the Pi.
+ *        A solution is to place yet another resistor in series with the thermistor.
+ *        Note: for PLA, we don't typically exceed 200 C, which is somewhere between 500-1000 ohms
+ *          So we should be safe with no series resistor, and the Pi configured to source a max of 8 mA per pin.
+ *      How to wire: 
+ *                   P301 #2      -> thermistor -> Pi GPIO
+ *                   THERM0 (AD0) -> 1k ohm     -> Pi GPIO
+ *
  *
  *    5. RC-time w/ ramps-fd simple w/ diode:
  *                  V_LOGIC         V_LOGIC
