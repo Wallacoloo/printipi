@@ -82,6 +82,7 @@ struct ServoTester {
     		THEN("consecutive consumeNextEvent calls should have appropriate spacing") {
     			//advance such that the next call to peekNextEvent() will return the INACTIVE state.
     			//avoid (servo0.peekNextEvent().state() == IoHigh) due to erroneous valgrind warning
+    			//Note: when servo.curState == IoLow, then servo.peekNextEvent().state() == IoHigh
     			if (servo0.curState == IoLow) {
     				servo0.consumeNextEvent();
     			}
@@ -97,6 +98,8 @@ struct ServoTester {
     				//Require pin state to be alternating.
     				REQUIRE(curActive.state() == IoHigh);
     				REQUIRE(curInactive.state() == IoLow);
+    				LOG("Servo goes high at %lu\n", curActive.time().time_since_epoch().count());
+    				LOG("Servo goes low at %lu\n", curInactive.time().time_since_epoch().count());
     				//configured for 1 ms on, 99 ms off.
     				TestHelper<>::requireTimesApproxEqual(curActive.time(), prevInactive.time() + std::chrono::milliseconds(99));
     				TestHelper<>::requireTimesApproxEqual(curInactive.time(), curActive.time() + std::chrono::milliseconds(1));
@@ -106,6 +109,7 @@ struct ServoTester {
     		THEN("The Servo should properly handle pin inversions") {
     			//advance such that the next call to peekNextEvent() will return the INACTIVE state.
     			//avoid (servo0.peekNextEvent().state() == IoHigh) due to erroneous valgrind warning
+    			//Note: when servo.curState == IoLow, then servo.peekNextEvent().state() == IoHigh
     			if (servo1.curState == IoLow) {
     				servo1.consumeNextEvent();
     			}
