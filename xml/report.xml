@@ -12,7 +12,7 @@ return values.
 3. [References](#report/references): Unresolved cross references.
 </doc>
   <coverage>
-    <type documented="4" name="function" undocumented="23">
+    <type documented="5" name="function" undocumented="23">
       <undocumented id="argparse::cmdOptionExists" name="cmdOptionExists">
         <location column="1" file="argparse.h" line="38" />
         <location column="1" file="argparse.cpp" line="39" />
@@ -52,48 +52,48 @@ return values.
         <location column="5" file="common/logging.h" line="90" />
       </undocumented>
       <undocumented id="mitpi::init" name="init">
-        <location column="1" file="platforms/rpi/mitpi.h" line="134" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="79" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="161" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="84" />
       </undocumented>
       <undocumented id="mitpi::makeInput" name="makeInput">
-        <location column="1" file="platforms/rpi/mitpi.h" line="137" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="98" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="164" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="107" />
       </undocumented>
       <undocumented id="mitpi::makeOutput" name="makeOutput">
-        <location column="1" file="platforms/rpi/mitpi.h" line="136" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="93" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="163" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="102" />
       </undocumented>
       <undocumented id="mitpi::mapPeripheral" name="mapPeripheral">
-        <location column="1" file="platforms/rpi/mitpi.h" line="132" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="61" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="159" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="66" />
       </undocumented>
       <undocumented id="mitpi::readPinState" name="readPinState">
-        <location column="1" file="platforms/rpi/mitpi.h" line="141" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="120" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="168" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="129" />
       </undocumented>
       <undocumented id="mitpi::readSysTime" name="readSysTime">
-        <location column="1" file="platforms/rpi/mitpi.h" line="144" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="144" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="175" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="159" />
       </undocumented>
       <undocumented id="mitpi::setPinHigh" name="setPinHigh">
-        <location column="1" file="platforms/rpi/mitpi.h" line="138" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="103" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="165" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="112" />
       </undocumented>
       <undocumented id="mitpi::setPinLow" name="setPinLow">
-        <location column="1" file="platforms/rpi/mitpi.h" line="139" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="110" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="166" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="119" />
       </undocumented>
       <undocumented id="mitpi::setPinPull" name="setPinPull">
-        <location column="1" file="platforms/rpi/mitpi.h" line="142" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="127" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="169" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="136" />
       </undocumented>
       <undocumented id="mitpi::setPinState" name="setPinState">
-        <location column="1" file="platforms/rpi/mitpi.h" line="140" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="117" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="167" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="126" />
       </undocumented>
       <undocumented id="mitpi::usleep" name="usleep">
-        <location column="1" file="platforms/rpi/mitpi.h" line="143" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="139" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="174" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="154" />
       </undocumented>
     </type>
     <type documented="7" name="typedef" undocumented="17">
@@ -837,7 +837,7 @@ return values.
         <location column="11" file="common/tupleutil.h" line="120" />
       </undocumented>
     </type>
-    <type documented="8" name="enum" undocumented="8">
+    <type documented="9" name="enum" undocumented="8">
       <undocumented id="TestHelperCtorFlags" name="TestHelperCtorFlags">
         <location column="1" file="testhelper.h" line="44" />
       </undocumented>
@@ -868,9 +868,9 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
-        <location column="1" file="gparse/command.cpp" line="26" />
-        <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/com.cpp" line="26" />
+        <location column="1" file="gparse/response.cpp" line="3" />
+        <location column="1" file="gparse/command.cpp" line="26" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -884,17 +884,18 @@ return values.
         <location column="1" file="iodrivers/servo.h" line="38" />
         <location column="1" file="iodrivers/servo.cpp" line="27" />
         <location column="1" file="iodrivers/iopin.cpp" line="33" />
+        <location column="1" file="iodrivers/rcthermistor2pin.h" line="35" />
       </undocumented>
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="32" />
         <location column="1" file="machines/generic/cartesian.h" line="118" />
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="466" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="503" />
       </undocumented>
       <undocumented id="machines::generic" name="generic">
         <location column="1" file="machines/generic/cartesian.h" line="119" />
       </undocumented>
       <undocumented id="machines::rpi" name="rpi">
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="467" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="504" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
         <location column="5" file="platforms/generic/chronoclock.h" line="38" />
@@ -924,7 +925,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="121" name="method" undocumented="326">
+    <type documented="123" name="method" undocumented="328">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1670,6 +1671,12 @@ return values.
         <location column="9" file="iodrivers/iopin.h" line="118" />
         <location column="1" file="iodrivers/iopin.cpp" line="84" />
       </undocumented>
+      <undocumented id="iodrv::RCThermistor2Pin::startRead" name="startRead">
+        <location column="9" file="iodrivers/rcthermistor2pin.h" line="109" />
+      </undocumented>
+      <undocumented id="iodrv::RCThermistor2Pin::value" name="value">
+        <location column="9" file="iodrivers/rcthermistor2pin.h" line="136" />
+      </undocumented>
       <undocumented id="iodrv::RCThermistor::isReady" name="isReady">
         <location column="9" file="iodrivers/rcthermistor.h" line="79" />
       </undocumented>
@@ -1738,10 +1745,10 @@ return values.
         <location column="9" file="machines/generic/cartesian.h" line="178" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::clampMoveRate" name="clampMoveRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="541" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="593" />
       </undocumented>
       <undocumented id="machines::rpi::kosselrampsfd::maxExtrudeRate" name="maxExtrudeRate">
-        <location column="9" file="machines/rpi/kosselrampsfd.h" line="538" />
+        <location column="9" file="machines/rpi/kosselrampsfd.h" line="590" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::getStepOutputEventSequence" name="getStepOutputEventSequence">
         <location column="9" file="motion/axisstepper.h" line="102" />
@@ -2048,7 +2055,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="52" />
       </undocumented>
     </type>
-    <type documented="18" name="constructor" undocumented="50">
+    <type documented="18" name="constructor" undocumented="51">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="32" />
         <location column="1" file="filesystem.cpp" line="26" />
@@ -2156,6 +2163,9 @@ return values.
       <undocumented id="iodrv::IoPin::null::null" name="null">
         <location column="9" file="iodrivers/iopin.h" line="135" />
       </undocumented>
+      <undocumented id="iodrv::RCThermistor2Pin::RCThermistor2Pin" name="RCThermistor2Pin">
+        <location column="9" file="iodrivers/rcthermistor2pin.h" line="101" />
+      </undocumented>
       <undocumented id="iodrv::RCThermistor::RCThermistor" name="RCThermistor">
         <location column="9" file="iodrivers/rcthermistor.h" line="70" />
       </undocumented>
@@ -2163,7 +2173,7 @@ return values.
         <location column="9" file="iodrivers/tempcontrol.h" line="70" />
       </undocumented>
       <undocumented id="mitpi::InitMitpiType::InitMitpiType" name="InitMitpiType">
-        <location column="5" file="platforms/rpi/mitpi.h" line="158" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="189" />
       </undocumented>
       <undocumented id="motion::AxisStepper::AxisStepper" name="AxisStepper">
         <location column="9" file="motion/axisstepper.h" line="81" />
@@ -2241,7 +2251,7 @@ return values.
       </undocumented>
     </type>
     <type documented="6" name="conversionfunction" undocumented="0" />
-    <type documented="6" name="enumvalue" undocumented="103">
+    <type documented="9" name="enumvalue" undocumented="112">
       <undocumented id="OnIdleCpuIntervalShort" name="OnIdleCpuIntervalShort">
         <location column="5" file="schedulerbase.h" line="43" />
       </undocumented>
@@ -2312,193 +2322,220 @@ return values.
         <location column="5" file="iodrivers/iopin.h" line="45" />
       </undocumented>
       <undocumented id="mitpi::GPIOPULL_DOWN" name="GPIOPULL_DOWN">
-        <location column="5" file="platforms/rpi/mitpi.h" line="128" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="133" />
       </undocumented>
       <undocumented id="mitpi::GPIOPULL_NONE" name="GPIOPULL_NONE">
-        <location column="5" file="platforms/rpi/mitpi.h" line="127" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="132" />
       </undocumented>
       <undocumented id="mitpi::GPIOPULL_UP" name="GPIOPULL_UP">
-        <location column="5" file="platforms/rpi/mitpi.h" line="129" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="134" />
       </undocumented>
       <undocumented id="mitpi::NULL_GPIO_PIN" name="NULL_GPIO_PIN">
-        <location column="5" file="platforms/rpi/mitpi.h" line="122" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="127" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_DRIVE_10MA" name="PAD_DRIVE_10MA">
+        <location column="5" file="platforms/rpi/mitpi.h" line="146" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_DRIVE_12MA" name="PAD_DRIVE_12MA">
+        <location column="5" file="platforms/rpi/mitpi.h" line="147" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_DRIVE_14MA" name="PAD_DRIVE_14MA">
+        <location column="5" file="platforms/rpi/mitpi.h" line="148" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_DRIVE_16MA" name="PAD_DRIVE_16MA">
+        <location column="5" file="platforms/rpi/mitpi.h" line="149" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_DRIVE_4MA" name="PAD_DRIVE_4MA">
+        <location column="5" file="platforms/rpi/mitpi.h" line="143" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_DRIVE_6MA" name="PAD_DRIVE_6MA">
+        <location column="5" file="platforms/rpi/mitpi.h" line="144" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_DRIVE_8MA" name="PAD_DRIVE_8MA">
+        <location column="5" file="platforms/rpi/mitpi.h" line="145" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_HYSTERESIS_EN" name="PAD_HYSTERESIS_EN">
+        <location column="5" file="platforms/rpi/mitpi.h" line="152" />
+      </undocumented>
+      <undocumented id="mitpi::PAD_SLEW_NO_LIMIT" name="PAD_SLEW_NO_LIMIT">
+        <location column="5" file="platforms/rpi/mitpi.h" line="156" />
       </undocumented>
       <undocumented id="mitpi::PLUS_GPIO_P1_05" name="PLUS_GPIO_P1_05">
-        <location column="5" file="platforms/rpi/mitpi.h" line="96" />
-      </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_07" name="PLUS_GPIO_P1_07">
-        <location column="5" file="platforms/rpi/mitpi.h" line="97" />
-      </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_08" name="PLUS_GPIO_P1_08">
-        <location column="5" file="platforms/rpi/mitpi.h" line="98" />
-      </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_10" name="PLUS_GPIO_P1_10">
-        <location column="5" file="platforms/rpi/mitpi.h" line="99" />
-      </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_11" name="PLUS_GPIO_P1_11">
-        <location column="5" file="platforms/rpi/mitpi.h" line="100" />
-      </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_12" name="PLUS_GPIO_P1_12">
         <location column="5" file="platforms/rpi/mitpi.h" line="101" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_13" name="PLUS_GPIO_P1_13">
+      <undocumented id="mitpi::PLUS_GPIO_P1_07" name="PLUS_GPIO_P1_07">
         <location column="5" file="platforms/rpi/mitpi.h" line="102" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_15" name="PLUS_GPIO_P1_15">
+      <undocumented id="mitpi::PLUS_GPIO_P1_08" name="PLUS_GPIO_P1_08">
         <location column="5" file="platforms/rpi/mitpi.h" line="103" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_16" name="PLUS_GPIO_P1_16">
+      <undocumented id="mitpi::PLUS_GPIO_P1_10" name="PLUS_GPIO_P1_10">
         <location column="5" file="platforms/rpi/mitpi.h" line="104" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_18" name="PLUS_GPIO_P1_18">
+      <undocumented id="mitpi::PLUS_GPIO_P1_11" name="PLUS_GPIO_P1_11">
         <location column="5" file="platforms/rpi/mitpi.h" line="105" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_19" name="PLUS_GPIO_P1_19">
+      <undocumented id="mitpi::PLUS_GPIO_P1_12" name="PLUS_GPIO_P1_12">
         <location column="5" file="platforms/rpi/mitpi.h" line="106" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_21" name="PLUS_GPIO_P1_21">
+      <undocumented id="mitpi::PLUS_GPIO_P1_13" name="PLUS_GPIO_P1_13">
         <location column="5" file="platforms/rpi/mitpi.h" line="107" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_22" name="PLUS_GPIO_P1_22">
+      <undocumented id="mitpi::PLUS_GPIO_P1_15" name="PLUS_GPIO_P1_15">
         <location column="5" file="platforms/rpi/mitpi.h" line="108" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_23" name="PLUS_GPIO_P1_23">
+      <undocumented id="mitpi::PLUS_GPIO_P1_16" name="PLUS_GPIO_P1_16">
         <location column="5" file="platforms/rpi/mitpi.h" line="109" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_24" name="PLUS_GPIO_P1_24">
+      <undocumented id="mitpi::PLUS_GPIO_P1_18" name="PLUS_GPIO_P1_18">
         <location column="5" file="platforms/rpi/mitpi.h" line="110" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_26" name="PLUS_GPIO_P1_26">
+      <undocumented id="mitpi::PLUS_GPIO_P1_19" name="PLUS_GPIO_P1_19">
         <location column="5" file="platforms/rpi/mitpi.h" line="111" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_29" name="PLUS_GPIO_P1_29">
+      <undocumented id="mitpi::PLUS_GPIO_P1_21" name="PLUS_GPIO_P1_21">
         <location column="5" file="platforms/rpi/mitpi.h" line="112" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_31" name="PLUS_GPIO_P1_31">
+      <undocumented id="mitpi::PLUS_GPIO_P1_22" name="PLUS_GPIO_P1_22">
         <location column="5" file="platforms/rpi/mitpi.h" line="113" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_32" name="PLUS_GPIO_P1_32">
+      <undocumented id="mitpi::PLUS_GPIO_P1_23" name="PLUS_GPIO_P1_23">
         <location column="5" file="platforms/rpi/mitpi.h" line="114" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_33" name="PLUS_GPIO_P1_33">
+      <undocumented id="mitpi::PLUS_GPIO_P1_24" name="PLUS_GPIO_P1_24">
         <location column="5" file="platforms/rpi/mitpi.h" line="115" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_35" name="PLUS_GPIO_P1_35">
+      <undocumented id="mitpi::PLUS_GPIO_P1_26" name="PLUS_GPIO_P1_26">
         <location column="5" file="platforms/rpi/mitpi.h" line="116" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_36" name="PLUS_GPIO_P1_36">
+      <undocumented id="mitpi::PLUS_GPIO_P1_29" name="PLUS_GPIO_P1_29">
         <location column="5" file="platforms/rpi/mitpi.h" line="117" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_37" name="PLUS_GPIO_P1_37">
+      <undocumented id="mitpi::PLUS_GPIO_P1_31" name="PLUS_GPIO_P1_31">
         <location column="5" file="platforms/rpi/mitpi.h" line="118" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_38" name="PLUS_GPIO_P1_38">
+      <undocumented id="mitpi::PLUS_GPIO_P1_32" name="PLUS_GPIO_P1_32">
         <location column="5" file="platforms/rpi/mitpi.h" line="119" />
       </undocumented>
-      <undocumented id="mitpi::PLUS_GPIO_P1_40" name="PLUS_GPIO_P1_40">
+      <undocumented id="mitpi::PLUS_GPIO_P1_33" name="PLUS_GPIO_P1_33">
         <location column="5" file="platforms/rpi/mitpi.h" line="120" />
       </undocumented>
+      <undocumented id="mitpi::PLUS_GPIO_P1_35" name="PLUS_GPIO_P1_35">
+        <location column="5" file="platforms/rpi/mitpi.h" line="121" />
+      </undocumented>
+      <undocumented id="mitpi::PLUS_GPIO_P1_36" name="PLUS_GPIO_P1_36">
+        <location column="5" file="platforms/rpi/mitpi.h" line="122" />
+      </undocumented>
+      <undocumented id="mitpi::PLUS_GPIO_P1_37" name="PLUS_GPIO_P1_37">
+        <location column="5" file="platforms/rpi/mitpi.h" line="123" />
+      </undocumented>
+      <undocumented id="mitpi::PLUS_GPIO_P1_38" name="PLUS_GPIO_P1_38">
+        <location column="5" file="platforms/rpi/mitpi.h" line="124" />
+      </undocumented>
+      <undocumented id="mitpi::PLUS_GPIO_P1_40" name="PLUS_GPIO_P1_40">
+        <location column="5" file="platforms/rpi/mitpi.h" line="125" />
+      </undocumented>
       <undocumented id="mitpi::V1_GPIO_P1_07" name="V1_GPIO_P1_07">
-        <location column="5" file="platforms/rpi/mitpi.h" line="49" />
-      </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_08" name="V1_GPIO_P1_08">
-        <location column="5" file="platforms/rpi/mitpi.h" line="50" />
-      </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_10" name="V1_GPIO_P1_10">
-        <location column="5" file="platforms/rpi/mitpi.h" line="51" />
-      </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_11" name="V1_GPIO_P1_11">
-        <location column="5" file="platforms/rpi/mitpi.h" line="52" />
-      </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_12" name="V1_GPIO_P1_12">
-        <location column="5" file="platforms/rpi/mitpi.h" line="53" />
-      </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_13" name="V1_GPIO_P1_13">
         <location column="5" file="platforms/rpi/mitpi.h" line="54" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_15" name="V1_GPIO_P1_15">
+      <undocumented id="mitpi::V1_GPIO_P1_08" name="V1_GPIO_P1_08">
         <location column="5" file="platforms/rpi/mitpi.h" line="55" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_16" name="V1_GPIO_P1_16">
+      <undocumented id="mitpi::V1_GPIO_P1_10" name="V1_GPIO_P1_10">
         <location column="5" file="platforms/rpi/mitpi.h" line="56" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_18" name="V1_GPIO_P1_18">
+      <undocumented id="mitpi::V1_GPIO_P1_11" name="V1_GPIO_P1_11">
         <location column="5" file="platforms/rpi/mitpi.h" line="57" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_19" name="V1_GPIO_P1_19">
+      <undocumented id="mitpi::V1_GPIO_P1_12" name="V1_GPIO_P1_12">
         <location column="5" file="platforms/rpi/mitpi.h" line="58" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_21" name="V1_GPIO_P1_21">
+      <undocumented id="mitpi::V1_GPIO_P1_13" name="V1_GPIO_P1_13">
         <location column="5" file="platforms/rpi/mitpi.h" line="59" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_22" name="V1_GPIO_P1_22">
+      <undocumented id="mitpi::V1_GPIO_P1_15" name="V1_GPIO_P1_15">
         <location column="5" file="platforms/rpi/mitpi.h" line="60" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_23" name="V1_GPIO_P1_23">
+      <undocumented id="mitpi::V1_GPIO_P1_16" name="V1_GPIO_P1_16">
         <location column="5" file="platforms/rpi/mitpi.h" line="61" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_24" name="V1_GPIO_P1_24">
+      <undocumented id="mitpi::V1_GPIO_P1_18" name="V1_GPIO_P1_18">
         <location column="5" file="platforms/rpi/mitpi.h" line="62" />
       </undocumented>
-      <undocumented id="mitpi::V1_GPIO_P1_26" name="V1_GPIO_P1_26">
+      <undocumented id="mitpi::V1_GPIO_P1_19" name="V1_GPIO_P1_19">
         <location column="5" file="platforms/rpi/mitpi.h" line="63" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_05" name="V2_GPIO_P1_05">
+      <undocumented id="mitpi::V1_GPIO_P1_21" name="V1_GPIO_P1_21">
+        <location column="5" file="platforms/rpi/mitpi.h" line="64" />
+      </undocumented>
+      <undocumented id="mitpi::V1_GPIO_P1_22" name="V1_GPIO_P1_22">
+        <location column="5" file="platforms/rpi/mitpi.h" line="65" />
+      </undocumented>
+      <undocumented id="mitpi::V1_GPIO_P1_23" name="V1_GPIO_P1_23">
+        <location column="5" file="platforms/rpi/mitpi.h" line="66" />
+      </undocumented>
+      <undocumented id="mitpi::V1_GPIO_P1_24" name="V1_GPIO_P1_24">
+        <location column="5" file="platforms/rpi/mitpi.h" line="67" />
+      </undocumented>
+      <undocumented id="mitpi::V1_GPIO_P1_26" name="V1_GPIO_P1_26">
         <location column="5" file="platforms/rpi/mitpi.h" line="68" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_07" name="V2_GPIO_P1_07">
-        <location column="5" file="platforms/rpi/mitpi.h" line="69" />
-      </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_08" name="V2_GPIO_P1_08">
-        <location column="5" file="platforms/rpi/mitpi.h" line="70" />
-      </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_10" name="V2_GPIO_P1_10">
-        <location column="5" file="platforms/rpi/mitpi.h" line="71" />
-      </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_11" name="V2_GPIO_P1_11">
-        <location column="5" file="platforms/rpi/mitpi.h" line="72" />
-      </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_12" name="V2_GPIO_P1_12">
+      <undocumented id="mitpi::V2_GPIO_P1_05" name="V2_GPIO_P1_05">
         <location column="5" file="platforms/rpi/mitpi.h" line="73" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_13" name="V2_GPIO_P1_13">
+      <undocumented id="mitpi::V2_GPIO_P1_07" name="V2_GPIO_P1_07">
         <location column="5" file="platforms/rpi/mitpi.h" line="74" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_15" name="V2_GPIO_P1_15">
+      <undocumented id="mitpi::V2_GPIO_P1_08" name="V2_GPIO_P1_08">
         <location column="5" file="platforms/rpi/mitpi.h" line="75" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_16" name="V2_GPIO_P1_16">
+      <undocumented id="mitpi::V2_GPIO_P1_10" name="V2_GPIO_P1_10">
         <location column="5" file="platforms/rpi/mitpi.h" line="76" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_18" name="V2_GPIO_P1_18">
+      <undocumented id="mitpi::V2_GPIO_P1_11" name="V2_GPIO_P1_11">
         <location column="5" file="platforms/rpi/mitpi.h" line="77" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_19" name="V2_GPIO_P1_19">
+      <undocumented id="mitpi::V2_GPIO_P1_12" name="V2_GPIO_P1_12">
         <location column="5" file="platforms/rpi/mitpi.h" line="78" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_21" name="V2_GPIO_P1_21">
+      <undocumented id="mitpi::V2_GPIO_P1_13" name="V2_GPIO_P1_13">
         <location column="5" file="platforms/rpi/mitpi.h" line="79" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_22" name="V2_GPIO_P1_22">
+      <undocumented id="mitpi::V2_GPIO_P1_15" name="V2_GPIO_P1_15">
         <location column="5" file="platforms/rpi/mitpi.h" line="80" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_23" name="V2_GPIO_P1_23">
+      <undocumented id="mitpi::V2_GPIO_P1_16" name="V2_GPIO_P1_16">
         <location column="5" file="platforms/rpi/mitpi.h" line="81" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_24" name="V2_GPIO_P1_24">
+      <undocumented id="mitpi::V2_GPIO_P1_18" name="V2_GPIO_P1_18">
         <location column="5" file="platforms/rpi/mitpi.h" line="82" />
       </undocumented>
-      <undocumented id="mitpi::V2_GPIO_P1_26" name="V2_GPIO_P1_26">
+      <undocumented id="mitpi::V2_GPIO_P1_19" name="V2_GPIO_P1_19">
         <location column="5" file="platforms/rpi/mitpi.h" line="83" />
       </undocumented>
+      <undocumented id="mitpi::V2_GPIO_P1_21" name="V2_GPIO_P1_21">
+        <location column="5" file="platforms/rpi/mitpi.h" line="84" />
+      </undocumented>
+      <undocumented id="mitpi::V2_GPIO_P1_22" name="V2_GPIO_P1_22">
+        <location column="5" file="platforms/rpi/mitpi.h" line="85" />
+      </undocumented>
+      <undocumented id="mitpi::V2_GPIO_P1_23" name="V2_GPIO_P1_23">
+        <location column="5" file="platforms/rpi/mitpi.h" line="86" />
+      </undocumented>
+      <undocumented id="mitpi::V2_GPIO_P1_24" name="V2_GPIO_P1_24">
+        <location column="5" file="platforms/rpi/mitpi.h" line="87" />
+      </undocumented>
+      <undocumented id="mitpi::V2_GPIO_P1_26" name="V2_GPIO_P1_26">
+        <location column="5" file="platforms/rpi/mitpi.h" line="88" />
+      </undocumented>
       <undocumented id="mitpi::V2_GPIO_P5_04" name="V2_GPIO_P5_04">
-        <location column="5" file="platforms/rpi/mitpi.h" line="89" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="94" />
       </undocumented>
       <undocumented id="mitpi::V2_GPIO_P5_05" name="V2_GPIO_P5_05">
-        <location column="5" file="platforms/rpi/mitpi.h" line="90" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="95" />
       </undocumented>
       <undocumented id="mitpi::V2_GPIO_P5_06" name="V2_GPIO_P5_06">
-        <location column="5" file="platforms/rpi/mitpi.h" line="91" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="96" />
       </undocumented>
       <undocumented id="motion::CARTESIAN_AXIS_E" name="CARTESIAN_AXIS_E">
         <location column="5" file="motion/linearstepper.h" line="41" />
@@ -2561,7 +2598,7 @@ return values.
         <location column="1" file="iodrivers/iopin.cpp" line="50" />
       </undocumented>
     </type>
-    <type documented="26" name="class" undocumented="6">
+    <type documented="27" name="class" undocumented="6">
       <undocumented id="FileSystem" name="FileSystem">
         <location column="1" file="filesystem.h" line="29" />
       </undocumented>
@@ -2584,12 +2621,113 @@ return values.
     </type>
   </coverage>
   <arguments>
-    <function id="PID::feed" name="feed">
-      <location column="9" file="pid.h" line="51" />
-      <location column="1" file="pid.cpp" line="28" />
+    <function id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+      <location column="5" file="gparse/command.h" line="50" />
       <undocumented-return />
-      <undocumented name="setpoint" />
-      <undocumented name="pv" />
+      <undocumented name="a" />
+    </function>
+    <function id="gparse::Command::Command" name="Command">
+      <location column="9" file="gparse/command.h" line="88" />
+      <location column="1" file="gparse/command.cpp" line="29" />
+      <undocumented name="" />
+    </function>
+    <function id="gparse::Command::getFloatParam" name="getFloatParam">
+      <location column="9" file="gparse/command.h" line="96" />
+      <location column="1" file="gparse/command.cpp" line="172" />
+      <undocumented-return />
+      <undocumented name="hasParam" />
+      <undocumented name="def" />
+      <undocumented name="label" />
+    </function>
+    <function id="gparse::Command::getSpecialStringParam" name="getSpecialStringParam">
+      <location column="9" file="gparse/command.h" line="105" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Command::getE" name="getE">
+      <location column="9" file="gparse/command.h" line="109" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getF" name="getF">
+      <location column="9" file="gparse/command.h" line="116" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getI" name="getI">
+      <location column="9" file="gparse/command.h" line="123" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getJ" name="getJ">
+      <location column="9" file="gparse/command.h" line="130" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getK" name="getK">
+      <location column="9" file="gparse/command.h" line="137" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getP" name="getP">
+      <location column="9" file="gparse/command.h" line="144" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getS" name="getS">
+      <location column="9" file="gparse/command.h" line="151" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::isG0" name="isG0">
+      <location column="9" file="gparse/command.h" line="203" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="56" />
+      <undocumented name="code" />
+      <undocumented name="rest" />
+    </function>
+    <function id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="62" />
+      <undocumented name="code" />
+      <undocumented name="rest" />
+    </function>
+    <function id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="69" />
+      <undocumented name="pairs" />
+      <undocumented name="code" />
+      <undocumented name="rest" />
+    </function>
+    <function id="gparse::Com::shareOwnership" name="shareOwnership">
+      <location column="9" file="gparse/com.h" line="95" />
+      <undocumented-return />
+      <undocumented name="stream" />
+    </function>
+    <function id="gparse::Com::giveFullOwnership" name="giveFullOwnership">
+      <location column="9" file="gparse/com.h" line="100" />
+      <undocumented-return />
+      <undocumented name="stream" />
+    </function>
+    <function id="gparse::Com::Com" name="Com">
+      <location column="9" file="gparse/com.h" line="107" />
+      <undocumented name="writeStream" />
+      <undocumented name="readStream" />
+      <undocumented name="dieOnEof" />
+    </function>
+    <function id="gparse::Com::tendCom" name="tendCom">
+      <location column="9" file="gparse/com.h" line="116" />
+      <location column="1" file="gparse/com.cpp" line="28" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::isAtEof" name="isAtEof">
+      <location column="9" file="gparse/com.h" line="123" />
+      <location column="1" file="gparse/com.cpp" line="66" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::getCommand" name="getCommand">
+      <location column="9" file="gparse/com.h" line="128" />
+      <location column="1" file="gparse/com.cpp" line="69" />
+      <undocumented-return />
     </function>
     <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
       <location column="9" file="schedulerbase.h" line="61" />
@@ -2717,114 +2855,6 @@ return values.
     <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
       <location column="9" file="platforms/rpi/primitiveiopin.h" line="84" />
       <undocumented name="lev" />
-    </function>
-    <function id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
-      <location column="5" file="gparse/command.h" line="50" />
-      <undocumented-return />
-      <undocumented name="a" />
-    </function>
-    <function id="gparse::Command::Command" name="Command">
-      <location column="9" file="gparse/command.h" line="88" />
-      <location column="1" file="gparse/command.cpp" line="29" />
-      <undocumented name="" />
-    </function>
-    <function id="gparse::Command::getFloatParam" name="getFloatParam">
-      <location column="9" file="gparse/command.h" line="96" />
-      <location column="1" file="gparse/command.cpp" line="172" />
-      <undocumented-return />
-      <undocumented name="hasParam" />
-      <undocumented name="def" />
-      <undocumented name="label" />
-    </function>
-    <function id="gparse::Command::getSpecialStringParam" name="getSpecialStringParam">
-      <location column="9" file="gparse/command.h" line="105" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Command::getE" name="getE">
-      <location column="9" file="gparse/command.h" line="109" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getF" name="getF">
-      <location column="9" file="gparse/command.h" line="116" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getI" name="getI">
-      <location column="9" file="gparse/command.h" line="123" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getJ" name="getJ">
-      <location column="9" file="gparse/command.h" line="130" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getK" name="getK">
-      <location column="9" file="gparse/command.h" line="137" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getP" name="getP">
-      <location column="9" file="gparse/command.h" line="144" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getS" name="getS">
-      <location column="9" file="gparse/command.h" line="151" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::isG0" name="isG0">
-      <location column="9" file="gparse/command.h" line="203" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="56" />
-      <undocumented name="code" />
-      <undocumented name="rest" />
-    </function>
-    <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="62" />
-      <undocumented name="code" />
-      <undocumented name="rest" />
-    </function>
-    <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="69" />
-      <undocumented name="pairs" />
-      <undocumented name="code" />
-      <undocumented name="rest" />
-    </function>
-    <function id="gparse::Com::shareOwnership" name="shareOwnership">
-      <location column="9" file="gparse/com.h" line="95" />
-      <undocumented-return />
-      <undocumented name="stream" />
-    </function>
-    <function id="gparse::Com::giveFullOwnership" name="giveFullOwnership">
-      <location column="9" file="gparse/com.h" line="100" />
-      <undocumented-return />
-      <undocumented name="stream" />
-    </function>
-    <function id="gparse::Com::Com" name="Com">
-      <location column="9" file="gparse/com.h" line="107" />
-      <undocumented name="writeStream" />
-      <undocumented name="readStream" />
-      <undocumented name="dieOnEof" />
-    </function>
-    <function id="gparse::Com::tendCom" name="tendCom">
-      <location column="9" file="gparse/com.h" line="116" />
-      <location column="1" file="gparse/com.cpp" line="28" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::isAtEof" name="isAtEof">
-      <location column="9" file="gparse/com.h" line="123" />
-      <location column="1" file="gparse/com.cpp" line="66" />
-      <undocumented-return />
-    </function>
-    <function id="gparse::Com::getCommand" name="getCommand">
-      <location column="9" file="gparse/com.h" line="128" />
-      <location column="1" file="gparse/com.cpp" line="69" />
-      <undocumented-return />
     </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
       <location column="9" file="scheduler.h" line="67" />
@@ -3295,6 +3325,13 @@ return values.
       <undocumented name="interface" />
       <undocumented name="dutyCycle" />
     </function>
+    <function id="PID::feed" name="feed">
+      <location column="9" file="pid.h" line="51" />
+      <location column="1" file="pid.cpp" line="28" />
+      <undocumented-return />
+      <undocumented name="setpoint" />
+      <undocumented name="pv" />
+    </function>
     <function id="iodrv::TempControl::isHotend" name="isHotend">
       <location column="9" file="iodrivers/tempcontrol.h" line="77" />
       <undocumented-return />
@@ -3325,28 +3362,55 @@ return values.
       <undocumented-return />
       <undocumented name="s" />
     </function>
+    <function id="iodrv::RCThermistor2Pin::isReady" name="isReady">
+      <location column="9" file="iodrivers/rcthermistor2pin.h" line="118" />
+      <undocumented-return />
+      <misspelled name="return" />
+    </function>
+    <function id="iodrv::RCThermistor2Pin::timeSinceStartRead" name="timeSinceStartRead">
+      <location column="9" file="iodrivers/rcthermistor2pin.h" line="132" />
+      <undocumented-return />
+    </function>
     <function id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="478" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="515" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::getAccelerationProfile" name="getAccelerationProfile">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="491" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="543" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::getCoordMap" name="getCoordMap">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="498" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="550" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::defaultMoveRate" name="defaultMoveRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="531" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="583" />
       <undocumented-return />
     </function>
     <function id="machines::rpi::kosselrampsfd::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="535" />
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="587" />
       <undocumented-return />
     </function>
   </arguments>
   <references>
+    <field id="gparse::Command::arguments" name="arguments">
+      <location column="5" file="gparse/command.h" line="73" />
+      <doctype name="doc">
+        <ref name="std::string" />
+      </doctype>
+    </field>
+    <methodtemplate id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="62" />
+      <doctype component="pairs" name="params">
+        <ref name="std::string, std::string" />
+      </doctype>
+    </methodtemplate>
+    <methodtemplate id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="69" />
+      <doctype name="doc">
+        <ref name="std::string, std::string" />
+      </doctype>
+    </methodtemplate>
     <class id="plat::rpi::ChronoClock" name="ChronoClock">
       <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
       <doctype name="doc">
@@ -3369,24 +3433,6 @@ return values.
         <ref name="IoPin" />
       </doctype>
     </constructor>
-    <field id="gparse::Command::arguments" name="arguments">
-      <location column="5" file="gparse/command.h" line="73" />
-      <doctype name="doc">
-        <ref name="std::string" />
-      </doctype>
-    </field>
-    <methodtemplate id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="62" />
-      <doctype component="pairs" name="params">
-        <ref name="std::string, std::string" />
-      </doctype>
-    </methodtemplate>
-    <methodtemplate id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="69" />
-      <doctype name="doc">
-        <ref name="std::string, std::string" />
-      </doctype>
-    </methodtemplate>
     <method id="Vector3::tuple" name="tuple">
       <location column="3" file="common/vector3.h" line="45" />
       <doctype name="brief">

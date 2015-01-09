@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="iodrv::RCThermistor2Pin" name="RCThermistor2Pin" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+This class provides code to approximate a temperature via first determining the resistance of a thermistor
+  (resistor that varies its resistance according to temperature) via only a digital IO pin, fixed resistor and capacitor.
+The raspberry pi doesn't have any ADC pins, so we must use the method outlined below.
+The implementation is designed to be compatible with ramps-fd.
+
+               Vcc
+                \
+                / Rup
+                \
+        Rseries /        Rchrg
+     o---/\/\/\-+-----o-/\/\/\-o
+     \         _|_             |
+     / therm   ___ C           |
+     \          |              |
+  THERMPIN     GND          CHRG/MEAS
+
+ On ramps-fd Rup = 4.7k, Rseries = 22 ohm.
+ Rchrg can be anything &gt; ~200 ohms - make sure not to draw more than 16 mA from a pin.
+ If drawing a significant amount of current, make sure to configure the Pi's pin drive strength first.
+ Recommended Rchrg value is 1k ohm. The ratio Rchrg / Rup should be significantly less than 0.5 to ensure that the pin state actually changes
+ Also, Rseries should be such that the thermistor resistance + Rseries is always such that &lt; 16 mA is drawn.
+
+ Solve for Vcap(t) during a read:
+ Iin = (Vcc-Vcap)/Rup + (Vcc-Vcap)/(therm+Rseries)
+ capacitor equation: Q = CV, or, I = C*dV/dt
+ So, (Vcc-Vcap) * (1/Rup + 1/(therm+Rseries)) = C*Vcap'
+   (Vcc-Vcap) * (Rup + therm + Rseries) / (C*Rup*(therm+Rseries)) = Vcap'
+ Vcap' + Vcap*(Rup + therm + Rseries) / (C*Rup*(therm+Rseries))   = Vcc*(Rup + therm + Rseries) / (C*Rup*(therm+Rseries))
+ Vcap'*(C*Rup*(therm+Rseries))/(Rup + therm + Rseries) + Vcap = Vcc
+   *let Vcap = k*e^(l*t) + Vcc
+   then Vcap' = k*l*e^(l*t)
+ k*l*e^(l*t)*(C*Rup*(therm+Rseries))/(Rup + therm + Rseries) + k*e^(l*t) + Vcc = Vcc
+ k*e^(l*t) * [l*(C*Rup*(therm+Rseries))/(Rup + therm + Rseries) + 1] = 0
+   *So, l = -(C*Rup*(therm+Rseries))/(Rup + therm + Rseries)
+ Knowing Vcap(t=0) = Vcc * Rchrg / (Rchrg + Rup),
+   then k + Vcc = Vcc * Rchrg / (Rchrg + Rup)
+   *then k = Vcc*(Rchrg / (Rchrg + Rup) - 1)
+ Condensed, Vcap(t) = Vcc*(Rchrg / (Rchrg + Rup) - 1) * e^-(t*C*Rup*(therm+Rseries)/(Rup + therm + Rseries))
+
+ From the read, we can know Vcap(tr) = Vtoggle
+ From this, we want to solve for therm:
+ Vtoggle = Vcc*(Rchrg / (Rchrg + Rup) - 1) * e^-(tr*C*Rup*(therm+Rseries)/(Rup + therm + Rseries))
+ Vtoggle/(Vcc*(Rchrg / (Rchrg + Rup) - 1)) = e^-(tr*C*Rup*(therm+Rseries)/(Rup + therm + Rseries))
+ ln(Vtoggle/(Vcc*(Rchrg / (Rchrg + Rup) - 1))) = -tr*C*Rup*(therm+Rseries)/(Rup + therm + Rseries)
+ -1/(tr*C*Rup)*ln(Vtoggle/(Vcc*(Rchrg / (Rchrg + Rup) - 1))) = (therm+Rseries)/(Rup + therm + Rseries)
+   let LHS = -1/(tr*C*Rup)*ln(Vtoggle/(Vcc*(Rchrg / (Rchrg + Rup) - 1)))
+   then LHS*(Rup + therm + Rseries) = (therm+Rseries)
+   then (therm+Rseries)*(1-LHS) = LHS*Rup
+   then (therm+Rseries) = LHS*Rup / (1-LHS)
+ So, therm = LHS*Rup / (1-LHS) - Rseries
+</doc>
+  <constructor id="iodrv::RCThermistor2Pin::RCThermistor2Pin" name="RCThermistor2Pin">
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::thermPin" name="thermPin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::chargeMeasPin" name="chargeMeasPin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::RCHRG_OHMS" name="RCHRG_OHMS">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::RSERIES_OHMS" name="RSERIES_OHMS">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::RUP_OHMS" name="RUP_OHMS">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::C_FARADS" name="C_FARADS">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::VCC_V" name="VCC_V">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::V_TOGGLE_V" name="V_TOGGLE_V">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::T0_C" name="T0_C">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::R0_OHMS" name="R0_OHMS">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::BETA" name="BETA">
+      <type builtin="yes" name="float" />
+    </argument>
+  </constructor>
+  <method id="iodrv::RCThermistor2Pin::isReady" name="isReady">
+    <brief>called during the read.</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::RCThermistor2Pin::startRead" name="startRead">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::RCThermistor2Pin::timeSinceStartRead" name="timeSinceStartRead">
+    <brief>need to expose this information to assist in detecting freezes / failed reads.</brief>
+    <return>
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
+    </return>
+  </method>
+  <method id="iodrv::RCThermistor2Pin::value" name="value">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+</class>

@@ -17,6 +17,7 @@
   <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
   <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
   <class name="RCThermistor" ref="iodrv::RCThermistor#iodrv::RCThermistor" />
+  <class name="RCThermistor2Pin" ref="iodrv::RCThermistor2Pin#iodrv::RCThermistor2Pin" />
   <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
     <brief>Controls a Servo motor.</brief>
   </class>

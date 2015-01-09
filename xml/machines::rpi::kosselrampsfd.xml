@@ -39,7 +39,7 @@ attached to an end effector via fixed-length, rotatable rods.</doc>
   <method id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers" override="yes">
     <brief>return a list of miscellaneous IoDrivers (Endstops &amp; A4988 drivers are reachable via <ref ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd::getCoordMap">machines::rpi::kosselrampsfd::getCoordMap</ref> and <ref ref="machines::Machine#machines::Machine::getCoordMap">machines::Machine::getCoordMap</ref>)</brief>
     <return>
-      <type name="std::tuple&lt;iodrv::Fan&gt;" />
+      <type name="std::tuple&lt;iodrv::Fan, iodrv::TempControl&lt;iodrv::RCThermistor2Pin, PID, LowPassFilter&gt; &gt;" />
     </return>
     <override name="Machine::getIoDrivers" ref="machines::Machine#machines::Machine::getIoDrivers" />
   </method>

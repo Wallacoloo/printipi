@@ -9,6 +9,30 @@ Please note that most of its features require superuser priviledges, so you may 
   <struct name="InitMitpiType" ref="mitpi::InitMitpiType#mitpi::InitMitpiType">
     <brief>convenience type used to manage lifetime of mitpi.</brief>
   </struct>
+  <enum anonymous="yes" id="mitpi::GpioPadProperties" name="GpioPadProperties">
+    <brief>Each bank of pins can be set to have different drive strengths, hysteresis and slew.</brief>
+    <doc>pass a bitwise-or'd collection of flags to <ref ref="mitpi#mitpi::setPadProperties">mitpi::setPadProperties</ref></doc>
+    <enumvalue id="mitpi::PAD_DRIVE_2MA" name="PAD_DRIVE_2MA" value="0">
+      <brief>Per-pin drive strength. Defaults to 8 mA at boot.</brief>
+      <doc>Note: avoid drawing a total of &gt; 50 mA across ALL gpio pins / 3v3 supply</doc>
+    </enumvalue>
+    <enumvalue id="mitpi::PAD_DRIVE_4MA" name="PAD_DRIVE_4MA" value="1" />
+    <enumvalue id="mitpi::PAD_DRIVE_6MA" name="PAD_DRIVE_6MA" value="2" />
+    <enumvalue id="mitpi::PAD_DRIVE_8MA" name="PAD_DRIVE_8MA" value="3" />
+    <enumvalue id="mitpi::PAD_DRIVE_10MA" name="PAD_DRIVE_10MA" value="4" />
+    <enumvalue id="mitpi::PAD_DRIVE_12MA" name="PAD_DRIVE_12MA" value="5" />
+    <enumvalue id="mitpi::PAD_DRIVE_14MA" name="PAD_DRIVE_14MA" value="6" />
+    <enumvalue id="mitpi::PAD_DRIVE_16MA" name="PAD_DRIVE_16MA" value="7" />
+    <enumvalue id="mitpi::PAD_HYSTERESIS_DIS" name="PAD_HYSTERESIS_DIS" value="0">
+      <brief>Hysteresis settings:</brief>
+    </enumvalue>
+    <enumvalue id="mitpi::PAD_HYSTERESIS_EN" name="PAD_HYSTERESIS_EN" value="8" />
+    <enumvalue id="mitpi::PAD_SLEW_LIMIT" name="PAD_SLEW_LIMIT" value="0">
+      <brief>Slew rate limit</brief>
+      <doc>From Wikipedia: Slew rate is defined as the maximum rate of change of output voltage per unit of time and is expressed as volt per second.</doc>
+    </enumvalue>
+    <enumvalue id="mitpi::PAD_SLEW_NO_LIMIT" name="PAD_SLEW_NO_LIMIT" value="16" />
+  </enum>
   <enum anonymous="yes" id="mitpi::GpioPin" name="GpioPin">
     <brief>Map physical pin locations to logical pin ids used by the processor</brief>
     <enumvalue id="mitpi::V1_GPIO_P1_03" name="V1_GPIO_P1_03" value="0">
@@ -146,6 +170,20 @@ Physical numbering is ordered ... how?</doc>
     <return>
       <type name="uint64_t" />
     </return>
+  </function>
+  <function id="mitpi::setPadProperties" name="setPadProperties">
+    <brief>Set the drive strength, hysteresis and slew limits for a set of pins.</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPadProperties::flags" name="flags">
+      <doc>bitwise-or of GpioPadProperties flags</doc>
+      <type name="uint32_t" />
+    </argument>
+    <argument id="mitpi::setPadProperties::bank" name="bank">
+      <doc>0 for pins 0-27, 1 -&gt; pins 28-45, 2 -&gt; pins 46-53</doc>
+      <type builtin="yes" name="int" />
+    </argument>
   </function>
   <function id="mitpi::setPinHigh" name="setPinHigh">
     <return>
