@@ -20,6 +20,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+/*
+ * Note: BCM2835 documentation available: http://www.raspberrypi.org/wp-content/uploads/2012/02/BCM2835-ARM-Peripherals.pdf
+ * Additional Docs (GPIO Pads - hysteresis control, etc): http://www.scribd.com/doc/101830961/GPIO-Pads-Control2
+ */
  
 
 #ifndef PLATFORMS_RPI_MITPI_H
@@ -129,6 +134,28 @@ enum GpioPull {
     GPIOPULL_UP   = 2,
 };
 
+//Each bank of pins can be set to have different drive strengths, hysteresis and slew.
+//pass a bitwise-or'd collection of flags to <setPadProperties>
+enum GpioPadProperties {
+    //Per-pin drive strength. Defaults to 8 mA at boot.
+    //Note: avoid drawing a total of > 50 mA across ALL gpio pins / 3v3 supply
+    PAD_DRIVE_2MA  = 0,
+    PAD_DRIVE_4MA  = 1,
+    PAD_DRIVE_6MA  = 2,
+    PAD_DRIVE_8MA  = 3,
+    PAD_DRIVE_10MA = 4,
+    PAD_DRIVE_12MA = 5,
+    PAD_DRIVE_14MA = 6,
+    PAD_DRIVE_16MA = 7,
+    //Hysteresis settings:
+    PAD_HYSTERESIS_DIS = 0,
+    PAD_HYSTERESIS_EN  = (1 << 3),
+    //Slew rate limit
+    //From Wikipedia: Slew rate is defined as the maximum rate of change of output voltage per unit of time and is expressed as volt per second.
+    PAD_SLEW_LIMIT =   0,
+    PAD_SLEW_NO_LIMIT = (1 << 4),
+};
+
 volatile uint32_t* mapPeripheral(int memfd, int addr);
 
 bool init();
@@ -140,6 +167,10 @@ void setPinLow(int pin);
 void setPinState(int pin, bool state);
 bool readPinState(int pin);
 void setPinPull(int pin, GpioPull pull);
+//Set the drive strength, hysteresis and slew limits for a set of pins.
+//@flags bitwise-or of GpioPadProperties flags
+//@bank 0 for pins 0-27, 1 -> pins 28-45, 2 -> pins 46-53
+void setPadProperties(uint32_t flags, int bank);
 void usleep(unsigned int us);
 uint64_t readSysTime();
 

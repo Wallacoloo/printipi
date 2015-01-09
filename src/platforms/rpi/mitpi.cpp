@@ -23,6 +23,10 @@
 #define GPPUDCLK0 0x00000098 //GPIO Pull-up/down clock. Have to send a clock signal to the pull-up/down resistors to activate them.
 #define GPPUDCLK1 0x000000a0 //second register for GPPUDCLK (first is for pins 0-31, 2nd for the rest)
 
+//GPIO_PADS documentation from http://www.scribd.com/doc/101830961/GPIO-Pads-Control2
+#define GPIO_PADS_BASE    0x2010002c //address for hysteresis / slew rate / drive strength settings
+#define GPIO_PADS_PASSWRD 0x5A //any write to GPIO_PADS must be or'd with the password to prevent accidental writes
+
 #define TIMER_BASE 0x20003000
 #define TIMER_CLO 0x00000004 //lower 32-bits of 1 MHz timer
 #define TIMER_CHI 0x00000008 //upper 32-bits
@@ -39,8 +43,9 @@
 
 namespace mitpi {
 
-static volatile uint32_t *gpioBaseMem = nullptr;
-static volatile uint32_t *timerBaseMem = nullptr;
+static volatile uint32_t *gpioBaseMem    = nullptr;
+static volatile uint32_t *timerBaseMem   = nullptr;
+static volatile uint32_t *gpioPadBaseMem = nullptr;
 
 static void assertValidPin(int pin) {
     (void)pin; //unused when assertions are disabled.
@@ -85,8 +90,12 @@ bool init() {
         LOGE("Failed to open /dev/mem (did you remember to run as root?)\n");
         exit(1);
     }
-    gpioBaseMem = mapPeripheral(memfd, GPIO_BASE);
-    timerBaseMem = mapPeripheral(memfd, TIMER_BASE);
+    gpioBaseMem =    mapPeripheral(memfd, GPIO_BASE);
+    timerBaseMem =   mapPeripheral(memfd, TIMER_BASE);
+    gpioPadBaseMem = mapPeripheral(memfd, GPIO_PADS_BASE);
+    //disable hysteresis & slew limiting for user pins. Enable for 8 mA sink/source capability per-pin
+    //setPadProperties(PAD_DRIVE_8MA | PAD_HYSTERESIS_DIS | PAD_SLEW_NO_LIMIT, 0)
+    //setPadProperties(PAD_DRIVE_8MA | PAD_HYSTERESIS_DIS | PAD_SLEW_NO_LIMIT, 1)
     return 0; //init OK
 }
 
@@ -134,6 +143,12 @@ void setPinPull(int pin, GpioPull pull) {
     usleep(10);
     *pudAddr = GPIOPULL_NONE;
     *pudClkAddr = 0;
+}
+
+void setPadProperties(uint32_t flags, int bank) {
+    assert(0 <= bank && bank <= 2);
+    volatile uint32_t *padAddr = (volatile uint32_t*)(gpioPadBaseMem + bank);
+    *padAddr = (flags | GPIO_PADS_PASSWRD);
 }
 
 void usleep(unsigned int us) {
