@@ -10,12 +10,19 @@
       <type name="IoPin &amp;&amp;" />
     </argument>
   </constructor>
-  <method id="iodrv::Endstop::isNull" name="isNull">
+  <method id="iodrv::Endstop::isEndstop" name="isEndstop" override="yes">
     <return>
       <type builtin="yes" name="bool" />
     </return>
+    <override name="IODriver::isEndstop" ref="iodrv::IODriver#iodrv::IODriver::isEndstop" />
   </method>
-  <method id="iodrv::Endstop::isTriggered" name="isTriggered">
+  <method id="iodrv::Endstop::isEndstopTriggered" name="isEndstopTriggered" override="yes">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <override name="IODriver::isEndstopTriggered" ref="iodrv::IODriver#iodrv::IODriver::isEndstopTriggered" />
+  </method>
+  <method id="iodrv::Endstop::isNull" name="isNull">
     <return>
       <type builtin="yes" name="bool" />
     </return>

@@ -47,15 +47,15 @@ These implementations must provide the functions outlined further down in the he
     <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::lockAllAxis" name="lockAllAxis" static="yes">
+  <methodtemplate id="iodrv::IODriver::lockAllAxes" name="lockAllAxes" static="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="iodrv::IODriver::lockAllAxis::drivers" name="drivers">
+    <argument id="iodrv::IODriver::lockAllAxes::drivers" name="drivers">
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
-    <templatetypeparameter id="iodrv::IODriver::lockAllAxis::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::lockAllAxis::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
     <brief>called when the scheduler has extra time,</brief>
@@ -143,15 +143,15 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
     <templatetypeparameter id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::unlockAllAxis" name="unlockAllAxis" static="yes">
+  <methodtemplate id="iodrv::IODriver::unlockAllAxes" name="unlockAllAxes" static="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="iodrv::IODriver::unlockAllAxis::drivers" name="drivers">
+    <argument id="iodrv::IODriver::unlockAllAxes::drivers" name="drivers">
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
-    <templatetypeparameter id="iodrv::IODriver::unlockAllAxis::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::unlockAllAxis::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT" />
+    <templatetypeparameter id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT" />
   </methodtemplate>
   <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
   <method id="iodrv::IODriver::consumeNextEvent" name="consumeNextEvent">
@@ -169,6 +169,17 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
     <brief>OVERRIDE THIS (hotends / beds only)</brief>
     <return>
       <type name="CelciusType" ref="index#CelciusType" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::isEndstop" name="isEndstop">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODriver::isEndstopTriggered" name="isEndstopTriggered">
+    <brief>endstops only:</brief>
+    <return>
+      <type builtin="yes" name="bool" />
     </return>
   </method>
   <method id="iodrv::IODriver::isFan" name="isFan">

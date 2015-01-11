@@ -22,7 +22,7 @@ Currently, it assumes an RC-based thermistor, but in the future it may be expand
   </templatetypeparameter>
   <constructor id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;" name="TempControl&lt;Thermistor, PID, Filter&gt;">
     <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::hotType" name="hotType">
-      <type name="TempControlType" ref="iodrv#iodrv::TempControlType" />
+      <type name="TempControlType" qualifier=" const" ref="iodrv#iodrv::TempControlType" />
     </argument>
     <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::heater" name="heater">
       <type name="IoPin &amp;&amp;" />
