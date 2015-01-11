@@ -266,7 +266,7 @@ template <typename Drv> class State {
         bool isHotendReady();
         /* Set the hotend (and bed) fan to a duty cycle between 0.0 and 1.0 (if value > 1, it will assume a scale from 0-255) */
         void setFanRate(float rate);
-        std::string getEndstopStatusString() const;
+        std::string getEndstopStatusString();
 };
 
 
@@ -769,7 +769,7 @@ template <typename Drv> class State<Drv>::State__getEndstopStatusString {
     bool first;
     public:
         State__getEndstopStatusString() : first(true) {}
-        template <typename T> void operator()(std::size_t index, T &driver) {
+        template <typename T> void operator()(std::size_t index, const T &driver) {
             (void)index; //unused
             if (driver.isEndstop()) {
                 if (first) {
@@ -785,9 +785,9 @@ template <typename Drv> class State<Drv>::State__getEndstopStatusString {
         }
 };
 
-template <typename Drv> std::string State<Drv>::getEndstopStatusString() const {
+template <typename Drv> std::string State<Drv>::getEndstopStatusString() {
     State__getEndstopStatusString statusObj;
-    callOnAll(this->ioDrivers, &statusObj);
+    callOnAll(ioDrivers, &statusObj);
     return statusObj.str();
 }
 
