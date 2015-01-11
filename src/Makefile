@@ -36,12 +36,15 @@ ifeq "$(GCC_GTEQ_490)" "1"
 endif
 
 ifeq "$(GCC_GTEQ_470)" "1"
-	LTOFLAG=-flto #Enable link-time optimization
+	DEFAULT_LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
 else #gcc < 4.7, or non-gcc compiler
-	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
+	DEFAULT_LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
+
+#if no LTO flag present, then use the default. Note: the default may vary based on debug/release build
+LTOFLAG=$(DEFAULT_LTOFLAG)
 
 #Default machine if not given via command line argument:
 MACHINE=rpi/kosselrampsfd.h
@@ -127,6 +130,7 @@ all: debugrel
 
 #Configure debug/release settings:
 debug: TARGET=debug
+debug: DEFAULT_LTOFLAG=
 debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
 #optimized debug build, suitable for using with gdb, perf, etc:
