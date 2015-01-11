@@ -44,10 +44,13 @@ class Endstop : public IODriver {
             this->pin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
             this->pin.makeDigitalInput();
         }
+        inline bool isEndstop() const { 
+            return true;
+        }
         inline bool isNull() const {
             return pin.isNull();
         }
-        inline bool isTriggered() const {
+        inline bool isEndstopTriggered() const {
             //if the endstop is NULL, then always return triggered.
             bool t = isNull() ? true : pin.digitalRead();
             LOGV("LeverEndstop is %i\n", t);

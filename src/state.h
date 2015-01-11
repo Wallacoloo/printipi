@@ -159,6 +159,7 @@ template <typename Drv> class State {
             }
     };
     struct State__setFanRate; //forward declare a type used internally in setFanRate() function
+    class State__getEndstopStatusString; //forware declare a type used internally in getEndstopStatusString() function
     struct State__onIdleCpu; //forward declare a type used internally in onIdleCpu() function
     typedef Scheduler<SchedInterface> SchedType;
     //The ioDrivers are a combination of the ones used by the coordmap and the miscellaneous ones from the machine
@@ -265,6 +266,7 @@ template <typename Drv> class State {
         bool isHotendReady();
         /* Set the hotend (and bed) fan to a duty cycle between 0.0 and 1.0 (if value > 1, it will assume a scale from 0-255) */
         void setFanRate(float rate);
+        std::string getEndstopStatusString() const;
 };
 
 
@@ -505,7 +507,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (!_isHomed && _motionPlanner.doHomeBeforeFirstMovement()) {
             this->homeEndstops();
         }
-        LOGW("Warning: G3 is experimental\n");
+        LOGW("Warning: G2/G3 is experimental\n");
         //first, get the end coordinate and optional feed-rate:
         bool hasX, hasY, hasZ, hasE;
         bool hasF;
@@ -571,14 +573,14 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         setHostZeroPos(actualX, actualY, actualZ, actualE);
         reply(gparse::Response::Ok);
     } else if (cmd.isM0()) { //Stop; empty move buffer & exit cleanly
-        LOG("recieved M0 command: finishing moves, then exiting\n");
+        LOGD("recieved M0 command: finishing moves, then exiting\n");
         _doShutdownAfterMoveCompletes = true;
         reply(gparse::Response::Ok);
     } else if (cmd.isM17()) { //enable all stepper motors
-        iodrv::IODriver::lockAllAxis(this->ioDrivers);
+        iodrv::IODriver::lockAllAxes(this->ioDrivers);
         reply(gparse::Response::Ok);
     } else if (cmd.isM18()) { //allow stepper motors to move 'freely'
-        iodrv::IODriver::unlockAllAxis(this->ioDrivers);
+        iodrv::IODriver::unlockAllAxes(this->ioDrivers);
         reply(gparse::Response::Ok);
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         reply(gparse::Response::Ok);
@@ -597,7 +599,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         setExtruderPosMode(POS_RELATIVE);
         reply(gparse::Response::Ok);
     } else if (cmd.isM84()) { //stop idle hold: relax all motors (same as M18)
-        iodrv::IODriver::unlockAllAxis(this->ioDrivers);
+        iodrv::IODriver::unlockAllAxes(this->ioDrivers);
         reply(gparse::Response::Ok);
     } else if (cmd.isM99()) { //return from macro/subprogram
         //note: can't simply pop the top file, because then that causes memory access errors when trying to send it areply.
@@ -634,6 +636,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         setFanRate(s);
         reply(gparse::Response::Ok);
     } else if (cmd.isM107()) { //set fan = off.
+        LOGW("M107 is deprecated. Use M106 with S=0 instead.\n");
         setFanRate(0);
         reply(gparse::Response::Ok);
     } else if (cmd.isM109()) { //set extruder temperature to S param and wait.
@@ -671,6 +674,11 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if (cmd.isM117()) { //print message
         LOG("M117 message: '%s'\n", cmd.getSpecialStringParam().c_str());
         reply(gparse::Response::Ok);
+    } else if (cmd.isM119()) {
+        //get endstop status
+        LOGW("M119 not tested\n");
+        //reply(gparse::Response(gparse::ResponseOk, iodrv::IODriver::getEndstopNameStatusPairs(ioDrivers)));
+        reply(gparse::Response(gparse::ResponseOk, getEndstopStatusString()));
     } else if (cmd.isM140()) { //set BED temp and return immediately.
         LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");
         bool hasS;
@@ -754,6 +762,33 @@ template <typename Drv> struct State<Drv>::State__setFanRate {
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
     callOnAll(ioDrivers, State__setFanRate(), this, rate);
+}
+
+template <typename Drv> class State<Drv>::State__getEndstopStatusString {
+    std::ostringstream imploded;
+    bool first;
+    public:
+        State__getEndstopStatusString() : first(true) {}
+        template <typename T> void operator()(std::size_t index, T &driver) {
+            (void)index; //unused
+            if (driver.isEndstop()) {
+                if (first) {
+                    first = false;
+                } else {
+                    imploded << ' ';
+                }
+                imploded << (driver.isEndstopTriggered() ? "triggered" : "open");
+            }
+        }
+        std::string str() const {
+            return imploded.str();
+        }
+};
+
+template <typename Drv> std::string State<Drv>::getEndstopStatusString() const {
+    State__getEndstopStatusString statusObj;
+    callOnAll(this->ioDrivers, &statusObj);
+    return statusObj.str();
 }
 
 #endif

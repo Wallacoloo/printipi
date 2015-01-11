@@ -124,9 +124,11 @@ template <typename TupleT, typename Func, typename ...Args> bool tupleReduceLogi
 //Return @f(@t[@idx], args...)
 //Note: if @idx > the size of the tuple, behavior is undefined.
 //  Most likely, that would result in applying @f to the last item in the tuple (but no guarantee)
-template <typename TupleT, typename Func, typename ...Args> auto tupleCallOnIndex(TupleT &t, Func f, std::size_t idx, Args... args) -> decltype(__callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, idx, args...)) {
+template <typename TupleT, typename Func, typename ...Args> auto tupleCallOnIndex(TupleT &t, Func f, std::size_t idx, Args... args)
+   -> decltype(__callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, idx, args...)) {
     return __callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, idx, args...);
 }
+
 }
 
 using namespace tupleutil;

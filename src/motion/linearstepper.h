@@ -86,7 +86,7 @@ template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper 
         }
     //protected:
         inline void _nextStep(bool useEndstops) {
-            if (useEndstops && endstop->isTriggered()) {
+            if (useEndstops && endstop->isEndstopTriggered()) {
                 this->time = NAN; //at endstop; no more steps.
             } else {
                 this->time += timePerStep;

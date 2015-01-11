@@ -61,6 +61,9 @@ class IODriver {
         //OVERRIDE THIS (beds only: return true. No need to define a bed if it isn't heated).
         inline bool isHeatedBed() const { return false; } 
         inline bool isServo() const { return false;  }
+        inline bool isEndstop() const { return false; }
+        //endstops only:
+        inline bool isEndstopTriggered() const { return false; }
         //OVERRIDE THIS (hotends / beds only)
         inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
         //OVERRIDE THIS (hotends / beds only)
@@ -91,8 +94,8 @@ class IODriver {
             (void)dutyCycle;
             assert(false && "IoDriver::setFanDutyCycle() must be overriden by subclass");
         }
-        template <typename TupleT> static void lockAllAxis(TupleT &drivers);
-        template <typename TupleT> static void unlockAllAxis(TupleT &drivers);
+        template <typename TupleT> static void lockAllAxes(TupleT &drivers);
+        template <typename TupleT> static void unlockAllAxes(TupleT &drivers);
         template <typename TupleT> static void setHotendTemp(TupleT &drivers, CelciusType temp);
         template <typename TupleT> static void setBedTemp(TupleT &drivers, CelciusType temp);
         template <typename TupleT> static CelciusType getHotendTemp(TupleT &drivers);
@@ -106,16 +109,16 @@ class IODriver {
 namespace {
     //place helper functions in an unnamed namespace to limit visibility and hint the documentation generator
 
-    //IODriver::lockAllAxis helper
-    struct IODriver__lockAllAxis {
+    //IODriver::lockAllAxes helper
+    struct IODriver__lockAllAxes {
         template <typename T> void operator()(std::size_t index, T &driver) {
             (void)index; //unused;
             driver.lockAxis();
         }
     };
 
-    //IODriver::unlockAllAxis helper
-    struct IODriver__unlockAllAxis {
+    //IODriver::unlockAllAxes helper
+    struct IODriver__unlockAllAxes {
         template <typename T> void operator()(std::size_t index, T &driver) {
             (void)index; //unused;
             driver.unlockAxis();
@@ -221,11 +224,11 @@ namespace {
 
 
 
-template <typename TupleT> void IODriver::lockAllAxis(TupleT &drivers) {
-    callOnAll(drivers, IODriver__lockAllAxis());
+template <typename TupleT> void IODriver::lockAllAxes(TupleT &drivers) {
+    callOnAll(drivers, IODriver__lockAllAxes());
 }
-template <typename TupleT> void IODriver::unlockAllAxis(TupleT &drivers) {
-    callOnAll(drivers, IODriver__unlockAllAxis());
+template <typename TupleT> void IODriver::unlockAllAxes(TupleT &drivers) {
+    callOnAll(drivers, IODriver__unlockAllAxes());
 }
 template <typename TupleT> void IODriver::setHotendTemp(TupleT &drivers, CelciusType temp) {
     callOnAll(drivers, IODriver__setHotendTemp(), temp);

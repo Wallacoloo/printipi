@@ -264,7 +264,7 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaArcSteppe
             //Then we test that time for a backward step (sTotal - 1).
             //We choose the nearest resulting time as our next step.
             //This is necessary because axis velocity can actually reverse direction during a circular cartesian movement.
-            if (useEndstops && endstop->isTriggered()) {
+            if (useEndstops && endstop->isEndstopTriggered()) {
                 this->time = NAN; //at endstop; no more steps.
             } else {
                 float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.
@@ -403,7 +403,7 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
             //Then we test that time for a backward step (sTotal - 1).
             //We choose the nearest resulting time as our next step.
             //This is necessary because axis velocity can actually reverse direction during a linear cartesian movement.
-            if (useEndstops && endstop->isTriggered()) {
+            if (useEndstops && endstop->isEndstopTriggered()) {
                 this->time = NAN; //at endstop; no more steps.
             } else {
                 float negTime = testDir((this->sTotal-1)*MM_STEPS()); //get the time at which next steps would occur.

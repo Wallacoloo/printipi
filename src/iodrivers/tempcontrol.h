@@ -55,7 +55,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
     static const std::chrono::microseconds _intervalThresh;
     static const std::chrono::microseconds _readInterval;
     static const std::chrono::microseconds _maxRead;
-    TempControlType _hotType;
+    const TempControlType _hotType;
     IntervalTimer _intervalTimer;
     IoPin _heater;
     Thermistor _therm;
@@ -67,7 +67,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
     bool _isReading;
     EventClockT::time_point _nextReadTime;
     public:
-        inline TempControl(TempControlType hotType, IoPin &&heater, Thermistor &&therm, const PID &pid, const Filter &filter, float pwmPeriod=1./25000) 
+        inline TempControl(const TempControlType hotType, IoPin &&heater, Thermistor &&therm, const PID &pid, const Filter &filter, float pwmPeriod=1./25000) 
          : IODriver(), _hotType(hotType), _heater(std::move(heater)), _therm(std::move(therm)), _pid(pid), _filter(filter), _pwmPeriod(pwmPeriod), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.setDefaultState(IO_DEFAULT_LOW);
