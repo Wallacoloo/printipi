@@ -477,9 +477,11 @@
 
 //Refer to the RcThermistor2Pin documentation.
 //One pin is used to discharge the capacitor through the thermistor (variable resistance)
-#define PIN_THERMISTOR            mitpi::NULL_GPIO_PIN
-//One pin (fixed resistance) is used for charging the capacitor,
-#define PIN_THERMISTOR_CHARGE     mitpi::NULL_GPIO_PIN
+//  This pin should be connected through the thermistor to P301-2
+#define PIN_THERMISTOR            mitpi::V2_GPIO_P1_11
+//One pin (fixed resistance) is used for charging the capacitor.
+//  This pin should be connected through a ~1kohm resistor to THERM0 (AD0)
+#define PIN_THERMISTOR_CHARGE     mitpi::V2_GPIO_P1_12
 #define THERM_C_FARADS            10.10e-6
 #define THERM_V_TOGGLE_V          1.65
 #define THERM_RCHARGE_OHMS        1000
@@ -570,9 +572,11 @@ class kosselrampsfd : public Machine {
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_E_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_E_DIR), 
                       IoPin(PIN_STEPPER_EN_INVERSIONS, PIN_STEPPER_E_EN, PIN_STEPPER_EN_PULL)),
+                //A, B, C axis upper endstops:
                 Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_A, PIN_ENDSTOP_PULL)),
                 Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_B, PIN_ENDSTOP_PULL)),
                 Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_C, PIN_ENDSTOP_PULL)),
+                //bed-level matrix
                 Matrix3x3(
                 0.999975003, 0.000005356, -0.007070522, 
                 0.000005356, 0.999998852, 0.001515111, 
