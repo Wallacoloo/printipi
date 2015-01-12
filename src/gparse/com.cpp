@@ -35,8 +35,15 @@ bool Com::tendCom() {
     //clear any eof bit possibly set previously (if a stream and not a file)
     _readFd->clear();
     char chr;
-    //while (read(_readFd, &chr, 1) == 1) { //read all characters available on serial line.
-    while((chr = _readFd->get()) != std::char_traits<char>::eof()) {
+    //a call to get() may hang, especially if using a stream.
+    //rdbuf().in_avail() returns the expected number of characters that can be immediately read,
+    //  0 indicates: "Further calls may either retrieve more characters or return traits_type::eof()"
+    // -1 indicated: "Further calls will fail (either throwing or returning 'immediately'.)"
+    //  source: http://www.cplusplus.com/reference/streambuf/streambuf/in_avail/ , http://www.cplusplus.com/reference/streambuf/streambuf/showmanyc/
+    //  source: http://compgroups.net/comp.lang.c+/non-blocking-file-access-possible-in-c+/1017634#5544477932267335993
+    //the case of 0 is acceptable, as that is either a character or EOF
+    //the case of -1
+    while(_readFd->rdbuf()->in_avail() != 0 && (chr = _readFd->get()) != std::char_traits<char>::eof()) {
         if (chr == '\n') {
             _parsed = Command(_pending);
             _pending = "";

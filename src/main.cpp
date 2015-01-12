@@ -115,7 +115,10 @@ int main_(int argc, char **argv) {
     //if no arguments, or if first argument (and therefore all args) is an option, 
     //  then take gcode commands from stdin
     if (argc < 2 || argv[1][0] == '-') { 
-        com = std::move(gparse::Com(gparse::Com::shareOwnership(&std::cin)));
+        //std::cin does not allow to check if there are characters to be read, whereas /dev/stdin DOES.
+        //  we need nonblocking I/O, so this is crucial.
+        //com = std::move(gparse::Com(gparse::Com::shareOwnership(&std::cin)));
+        com = std::move(gparse::Com("/dev/stdin"));
         //reading from stdin; want to keep that channel active even when printing from file, etc.
         keepPersistentCom = true;
     } else {
