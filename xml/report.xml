@@ -53,47 +53,47 @@ return values.
       </undocumented>
       <undocumented id="mitpi::init" name="init">
         <location column="1" file="platforms/rpi/mitpi.h" line="161" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="84" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="85" />
       </undocumented>
       <undocumented id="mitpi::makeInput" name="makeInput">
         <location column="1" file="platforms/rpi/mitpi.h" line="164" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="107" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="108" />
       </undocumented>
       <undocumented id="mitpi::makeOutput" name="makeOutput">
         <location column="1" file="platforms/rpi/mitpi.h" line="163" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="102" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="103" />
       </undocumented>
       <undocumented id="mitpi::mapPeripheral" name="mapPeripheral">
         <location column="1" file="platforms/rpi/mitpi.h" line="159" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="66" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="67" />
       </undocumented>
       <undocumented id="mitpi::readPinState" name="readPinState">
         <location column="1" file="platforms/rpi/mitpi.h" line="168" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="129" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="130" />
       </undocumented>
       <undocumented id="mitpi::readSysTime" name="readSysTime">
         <location column="1" file="platforms/rpi/mitpi.h" line="175" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="159" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="160" />
       </undocumented>
       <undocumented id="mitpi::setPinHigh" name="setPinHigh">
         <location column="1" file="platforms/rpi/mitpi.h" line="165" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="112" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="113" />
       </undocumented>
       <undocumented id="mitpi::setPinLow" name="setPinLow">
         <location column="1" file="platforms/rpi/mitpi.h" line="166" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="119" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="120" />
       </undocumented>
       <undocumented id="mitpi::setPinPull" name="setPinPull">
         <location column="1" file="platforms/rpi/mitpi.h" line="169" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="136" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="137" />
       </undocumented>
       <undocumented id="mitpi::setPinState" name="setPinState">
         <location column="1" file="platforms/rpi/mitpi.h" line="167" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="126" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="127" />
       </undocumented>
       <undocumented id="mitpi::usleep" name="usleep">
         <location column="1" file="platforms/rpi/mitpi.h" line="174" />
-        <location column="1" file="platforms/rpi/mitpi.cpp" line="154" />
+        <location column="1" file="platforms/rpi/mitpi.cpp" line="155" />
       </undocumented>
     </type>
     <type documented="7" name="typedef" undocumented="17">
