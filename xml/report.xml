@@ -1097,15 +1097,15 @@ return values.
       </undocumented>
       <undocumented id="gparse::Com::hasReadFile" name="hasReadFile">
         <location column="9" file="gparse/com.h" line="118" />
-        <location column="1" file="gparse/com.cpp" line="60" />
+        <location column="1" file="gparse/com.cpp" line="67" />
       </undocumented>
       <undocumented id="gparse::Com::hasWriteFile" name="hasWriteFile">
         <location column="9" file="gparse/com.h" line="119" />
-        <location column="1" file="gparse/com.cpp" line="63" />
+        <location column="1" file="gparse/com.cpp" line="70" />
       </undocumented>
       <undocumented id="gparse::Com::reply" name="reply">
         <location column="9" file="gparse/com.h" line="130" />
-        <location column="1" file="gparse/com.cpp" line="73" />
+        <location column="1" file="gparse/com.cpp" line="80" />
       </undocumented>
       <undocumented id="gparse::Command::empty" name="empty">
         <location column="9" file="gparse/command.h" line="89" />
@@ -2739,12 +2739,12 @@ return values.
     </function>
     <function id="gparse::Com::isAtEof" name="isAtEof">
       <location column="9" file="gparse/com.h" line="123" />
-      <location column="1" file="gparse/com.cpp" line="66" />
+      <location column="1" file="gparse/com.cpp" line="73" />
       <undocumented-return />
     </function>
     <function id="gparse::Com::getCommand" name="getCommand">
       <location column="9" file="gparse/com.h" line="128" />
-      <location column="1" file="gparse/com.cpp" line="69" />
+      <location column="1" file="gparse/com.cpp" line="76" />
       <undocumented-return />
     </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
