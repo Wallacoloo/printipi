@@ -24,7 +24,8 @@
 #define GPPUDCLK1 0x000000a0 //second register for GPPUDCLK (first is for pins 0-31, 2nd for the rest)
 
 //GPIO_PADS documentation from http://www.scribd.com/doc/101830961/GPIO-Pads-Control2
-#define GPIO_PADS_BASE    0x2010002c //address for hysteresis / slew rate / drive strength settings
+#define GPIO_PADS_BASE    0x20100000
+#define GPIO_PAD0         0x0000002c //address for hysteresis / slew rate / drive strength settings
 #define GPIO_PADS_PASSWRD 0x5A //any write to GPIO_PADS must be or'd with the password to prevent accidental writes
 
 #define TIMER_BASE 0x20003000
@@ -147,7 +148,7 @@ void setPinPull(int pin, GpioPull pull) {
 
 void setPadProperties(uint32_t flags, int bank) {
     assert(0 <= bank && bank <= 2);
-    volatile uint32_t *padAddr = (volatile uint32_t*)(gpioPadBaseMem + bank);
+    volatile uint32_t *padAddr = (volatile uint32_t*)(gpioPadBaseMem + GPIO_PAD0/4 + bank);
     *padAddr = (flags | GPIO_PADS_PASSWRD);
 }
 
