@@ -874,9 +874,9 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
-        <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/command.cpp" line="26" />
         <location column="1" file="gparse/com.cpp" line="26" />
+        <location column="1" file="gparse/response.cpp" line="3" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -3379,11 +3379,6 @@ return values.
       <location column="9" file="platforms/rpi/primitiveiopin.h" line="84" />
       <undocumented name="lev" />
     </function>
-    <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
-      <location column="9" file="motion/lineardeltastepper.h" line="208" />
-      <undocumented-return />
-      <undocumented name="s" />
-    </function>
     <function id="iodrv::RCThermistor2Pin::isReady" name="isReady">
       <location column="9" file="iodrivers/rcthermistor2pin.h" line="118" />
       <undocumented-return />
@@ -3392,6 +3387,11 @@ return values.
     <function id="iodrv::RCThermistor2Pin::timeSinceStartRead" name="timeSinceStartRead">
       <location column="9" file="iodrivers/rcthermistor2pin.h" line="132" />
       <undocumented-return />
+    </function>
+    <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
+      <location column="9" file="motion/lineardeltastepper.h" line="208" />
+      <undocumented-return />
+      <undocumented name="s" />
     </function>
     <function id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
       <location column="9" file="machines/rpi/kosselrampsfd.h" line="517" />
