@@ -483,7 +483,9 @@
 //  This pin should be connected through a ~1kohm resistor to THERM0 (AD0)
 #define PIN_THERMISTOR_CHARGE     mitpi::V2_GPIO_P1_12
 #define THERM_C_FARADS            10.10e-6
-#define THERM_V_TOGGLE_V          1.65
+//With hysteresis disabled, at what input voltage does a pin (specifically, PIN_THERMISTOR) transition states?
+// This video suggests some results with hysteresis enabled, and we average them to get 1.27 V: https://www.youtube.com/watch?v=Wr49ia3oID4
+#define THERM_V_TOGGLE_V          1.27
 #define THERM_RCHARGE_OHMS        1000
 #define THERM_RSERIES_OHMS          22
 #define THERM_RUP_OHMS            4700
