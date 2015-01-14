@@ -89,6 +89,8 @@ namespace iodrv {
  *  therm[1+C*Rup/tr*ln((Vtoggle-Vcc)/k)] = C*Rup*Rseries/tr*ln((Vtoggle-Vcc)/k) - Rup - Rseries
  *  let denom = [1+C*Rup/tr*ln((Vtoggle-Vcc)/k)],
  *  then therm = (C*Rup*Rseries/tr*ln((Vtoggle-Vcc)/k) - Rup - Rseries) / denom
+ *
+
  */
 class RCThermistor2Pin {
     IoPin thermPin;
@@ -150,10 +152,29 @@ class RCThermistor2Pin {
         //@tr the time it took to charge the capacitor through the thermistor
         inline float guessRFromTime(float tr) const {
             //These equations are derived at the top of the file.
-            float k = Vcc*(Rchrg / (Rchrg + Rup) - 1);
-            float denom = 1+C*Rup/tr*log((Vtoggle-Vcc)/k);
-            float resistance = (C*Rup*Rseries/tr*log((Vtoggle-Vcc)/k) - Rup - Rseries) / denom;
-            return resistance;
+            //float k = Vcc*(Rchrg / (Rchrg + Rup) - 1);
+            //float denom = 1+C*Rup/tr*log((Vtoggle-Vcc)/k);
+            //float resistance = (C*Rup*Rseries/tr*log((Vtoggle-Vcc)/k) - Rup - Rseries) / denom;
+            /*Alternative solution (step response when switch to read mode):
+             *    v(0) = vi = Vcc*Rchrg / (Rup+Rchrg)
+             *    v(infinity) = vf = Vcc
+             *    T = Rread*C where Rread = Rup || (Rseries + therm) = (Rup+Rseries+therm)/(Rup*(Rseries+therm))
+             *    v(t) = (vi-vf)*e^(-t/T) + vf
+             *  knowing v(tr) = Vtoggle:
+             *    ln((Vtoggle - vf)/(vi-vf)) = -tr/(Rread*C)
+             *   *Rread = -tr/(C*ln((Vtoggle - vf)/(vi-vf)))
+             *  Then extract the thermistor value from the total resistance:
+             *    Rread = Rup*(Rseries+therm)/(Rup+Rseries+therm)
+             *    Rread*(Rup+Rseries+therm) = Rup*(Rseries+therm)
+             *    Rread*therm + Rread*(Rseries+Rup) = Rup*therm + Rup*Rseries
+             *    therm(Rread-Rup) = Rup*Rseries - Rread*(Rseries+Rup)
+             *    *therm = (Rup*Rseries - Rread*(Rseries+Rup)) / (Rread-Rup)
+             */
+            float vi = Vcc*Rchrg / (Rup+Rchrg);
+            float vf = Vcc;
+            float Rread = -tr/(C*log((Vtoggle - vf)/(vi-vf)));
+            float therm = (Rup*Rseries - Rread*(Rseries+Rup)) / (Rread-Rup);
+            return therm;
         }
         inline float temperatureFromR(float R) const {
             float K = 1. / (1./T0 + log(R/R0)/B); //resistance;
