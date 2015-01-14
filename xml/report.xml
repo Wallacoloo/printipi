@@ -1687,10 +1687,10 @@ return values.
         <location column="1" file="iodrivers/iopin.cpp" line="84" />
       </undocumented>
       <undocumented id="iodrv::RCThermistor2Pin::startRead" name="startRead">
-        <location column="9" file="iodrivers/rcthermistor2pin.h" line="109" />
+        <location column="9" file="iodrivers/rcthermistor2pin.h" line="112" />
       </undocumented>
       <undocumented id="iodrv::RCThermistor2Pin::value" name="value">
-        <location column="9" file="iodrivers/rcthermistor2pin.h" line="136" />
+        <location column="9" file="iodrivers/rcthermistor2pin.h" line="139" />
       </undocumented>
       <undocumented id="iodrv::RCThermistor::isReady" name="isReady">
         <location column="9" file="iodrivers/rcthermistor.h" line="79" />
@@ -2182,7 +2182,7 @@ return values.
         <location column="9" file="iodrivers/iopin.h" line="135" />
       </undocumented>
       <undocumented id="iodrv::RCThermistor2Pin::RCThermistor2Pin" name="RCThermistor2Pin">
-        <location column="9" file="iodrivers/rcthermistor2pin.h" line="101" />
+        <location column="9" file="iodrivers/rcthermistor2pin.h" line="104" />
       </undocumented>
       <undocumented id="iodrv::RCThermistor::RCThermistor" name="RCThermistor">
         <location column="9" file="iodrivers/rcthermistor.h" line="70" />
@@ -3380,12 +3380,12 @@ return values.
       <undocumented name="lev" />
     </function>
     <function id="iodrv::RCThermistor2Pin::isReady" name="isReady">
-      <location column="9" file="iodrivers/rcthermistor2pin.h" line="118" />
+      <location column="9" file="iodrivers/rcthermistor2pin.h" line="121" />
       <undocumented-return />
       <misspelled name="return" />
     </function>
     <function id="iodrv::RCThermistor2Pin::timeSinceStartRead" name="timeSinceStartRead">
-      <location column="9" file="iodrivers/rcthermistor2pin.h" line="132" />
+      <location column="9" file="iodrivers/rcthermistor2pin.h" line="135" />
       <undocumented-return />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
