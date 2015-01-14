@@ -109,7 +109,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
                         _isReading = false;
                         return false;
                     } else {
-                        return true; //need more cpu time.
+                        return true; //still waiting for result; need more cpu time.
                     }
                 }
             } else {
@@ -118,7 +118,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
                     _nextReadTime += _readInterval;
                     _therm.startRead();
                     _isReading = true;
-                    return true; //more cpu time needed.
+                    return true; //just started read; more cpu time needed.
                 } else { //wait until it's time for another read.
                     return false;
                 }
@@ -130,7 +130,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
 	        // into the the controller
             float filtered = _filter.feed(_lastTemp);
             float pwm = _pid.feed(_destTemp, filtered);
-            LOG("tempcontrol: pwm=%f, temp=%f *C\n", pwm, filtered);
+            LOG("tempcontrol: drive-strength=%f, temp=%f *C\n", pwm, filtered);
             cbInterface.schedPwm(_heater, pwm, _pwmPeriod);
         }
 };

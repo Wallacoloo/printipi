@@ -112,6 +112,7 @@ class RCThermistor2Pin {
             chargeMeasPin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
         }
         inline void startRead() {
+            //TODO: Also need to ensure that the we haven't been pre-empted between grabbing the time & setting the pins.
             _startReadTime = EventClockT::now();
             //disconnect charge pin from ground and use it to measure
             chargeMeasPin.makeDigitalInput();
