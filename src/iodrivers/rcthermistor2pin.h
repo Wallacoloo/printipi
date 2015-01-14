@@ -61,36 +61,12 @@ namespace iodrv {
  *  Note: in the case that Rchrg = 0, therm = infinite, discharge time = 0.69*RC = 32.8 mS with Rup=4k7, C=10.1e-6, Vtoggle=1.65
  *    so that's the absolute longest discharge time.
  *
- *  Solve for Vcap(t) during a read:
- *  Iin = (Vcc-Vcap)/Rup + (Vcc-Vcap)/(therm+Rseries) where Iin is the current entering C, and THERMPIN is tied to +Vcc
- *  capacitor equation: Q = CV, or, I = C*dV/dt
- *  So, (Vcc-Vcap) * (1/Rup + 1/(therm+Rseries)) = C*Vcap'
- *    (Vcc-Vcap) * (Rup + therm + Rseries) / (C*Rup*(therm+Rseries)) = Vcap'
- *  Vcc-Vcap = Vcap' * (C*Rup*(therm+Rseries)) / (Rup + therm + Rseries)
- *  Vcap'*(C*Rup*(therm+Rseries))/(Rup + therm + Rseries) + Vcap = Vcc
- *    let Vcap = (V0-Vfinal)*e^(l*t) + Vfinal
- *    Consider the circuit configured with THERMPIN = no-connect, CHRG/MEAS=gnd for a long time before t=0:
- *    then Vcap = k*e^(l*t) + Vcc where k = V0-Vcc.
- *      V0 = Vcc * Rchrg / (Rchrg + Rup),
- *      so *k = Vcc*(Rchrg / (Rchrg + Rup) - 1)
- *    then Vcap' = k*l*e^(l*t)
- *  k*l*e^(l*t)*(C*Rup*(therm+Rseries))/(Rup + therm + Rseries) + k*e^(l*t) + Vcc = Vcc
- *  k*e^(l*t) * [l*(C*Rup*(therm+Rseries))/(Rup + therm + Rseries) + 1] = 0
- *    So, l = -1 / [(C*Rup*(therm+Rseries))/(Rup + therm + Rseries)]
- *    *l = -(Rup + therm + Rseries) / (C*Rup*(therm+Rseries))
- *
- *  From the read, we can know Vcap(tr) = Vtoggle
- *  From this, we want to solve for therm:
- *  Vtoggle = k * e^(l*tr) + Vcc
- *  (Vtoggle-Vcc)/k = e^(l*tr)
- *  1.0/tr*ln((Vtoggle-Vcc)/k) = l = -(Rup + therm + Rseries) / (C*Rup*(therm+Rseries))
- *  C*Rup*(therm+Rseries)/tr*ln((Vtoggle-Vcc)/k) = -(Rup + therm + Rseries)
- *  therm* C*Rup/tr*ln((Vtoggle-Vcc)/k) + C*Rup*Rseries/tr*ln((Vtoggle-Vcc)/k) + therm = -Rup - Rseries
- *  therm[1+C*Rup/tr*ln((Vtoggle-Vcc)/k)] = C*Rup*Rseries/tr*ln((Vtoggle-Vcc)/k) - Rup - Rseries
- *  let denom = [1+C*Rup/tr*ln((Vtoggle-Vcc)/k)],
- *  then therm = (C*Rup*Rseries/tr*ln((Vtoggle-Vcc)/k) - Rup - Rseries) / denom
- *
-
+ *  TODO: given this thermistor circuit, it is possible to achieve some amount of auto-calibration upon boot.
+ *    Pull CHRG low, disactivate THERMPIN, and let the circuit reach steady-state.
+ *    Then put CHRG/MEAS into input mode, and measure the time it takes for the state to switch.
+ *    This time is dependent upon C, Rup, Vcc and Vtoggle only.
+ *    We can adjust one (or multiple) of those variables to reflect the actual measurement.
+ *    Vtoggle likely has the highest variability, so adjust that one.
  */
 class RCThermistor2Pin {
     IoPin thermPin;
@@ -152,11 +128,9 @@ class RCThermistor2Pin {
     private:
         //@tr the time it took to charge the capacitor through the thermistor
         inline float guessRFromTime(float tr) const {
-            //These equations are derived at the top of the file.
-            //float k = Vcc*(Rchrg / (Rchrg + Rup) - 1);
-            //float denom = 1+C*Rup/tr*log((Vtoggle-Vcc)/k);
-            //float resistance = (C*Rup*Rseries/tr*log((Vtoggle-Vcc)/k) - Rup - Rseries) / denom;
-            /*Alternative solution (step response when switch to read mode):
+            /*Derive the resistance as a function of the time taken to charge capacitor
+             *First, we want to solve for v(t) across the capacitor:
+             *  Step response when switched to read mode:
              *    v(0) = vi = Vcc*Rchrg / (Rup+Rchrg)
              *    v(infinity) = vf = Vcc
              *    T = Rread*C where Rread = Rup || (Rseries + therm) = (Rup+Rseries+therm)/(Rup*(Rseries+therm))
