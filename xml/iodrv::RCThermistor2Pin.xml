@@ -54,6 +54,8 @@ The implementation is designed to be compatible with ramps-fd.
  therm[1+C*Rup/tr*ln((Vtoggle-Vcc)/k)] = C*Rup*Rseries/tr*ln((Vtoggle-Vcc)/k) - Rup - Rseries
  let denom = [1+C*Rup/tr*ln((Vtoggle-Vcc)/k)],
  then therm = (C*Rup*Rseries/tr*ln((Vtoggle-Vcc)/k) - Rup - Rseries) / denom
+
+
 </doc>
   <constructor id="iodrv::RCThermistor2Pin::RCThermistor2Pin" name="RCThermistor2Pin">
     <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::thermPin" name="thermPin">
