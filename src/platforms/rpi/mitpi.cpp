@@ -95,8 +95,8 @@ bool init() {
     timerBaseMem =   mapPeripheral(memfd, TIMER_BASE);
     gpioPadBaseMem = mapPeripheral(memfd, GPIO_PADS_BASE);
     //disable hysteresis & slew limiting for user pins. Enable for 8 mA sink/source capability per-pin
-    //setPadProperties(PAD_DRIVE_8MA | PAD_HYSTERESIS_DIS | PAD_SLEW_NO_LIMIT, 0)
-    //setPadProperties(PAD_DRIVE_8MA | PAD_HYSTERESIS_DIS | PAD_SLEW_NO_LIMIT, 1)
+    setPadProperties(PAD_DRIVE_8MA | PAD_HYSTERESIS_DIS | PAD_SLEW_NO_LIMIT, 0);
+    setPadProperties(PAD_DRIVE_8MA | PAD_HYSTERESIS_DIS | PAD_SLEW_NO_LIMIT, 1);
     return 0; //init OK
 }
 
