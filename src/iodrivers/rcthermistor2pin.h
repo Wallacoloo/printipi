@@ -58,6 +58,9 @@ namespace iodrv {
  *  Recommended Rchrg value is 1k ohm. The ratio Rchrg / Rup should be significantly less than 0.5 to ensure that the pin state actually changes
  *  Also, Rseries should be such that the thermistor resistance + Rseries is always such that < 16 mA is drawn.
  *
+ *  Note: in the case that Rchrg = 0, therm = infinite, discharge time = 0.69*RC = 32.8 mS with Rup=4k7, C=10.1e-6, Vtoggle=1.65
+ *    so that's the absolute longest discharge time.
+ *
  *  Solve for Vcap(t) during a read:
  *  Iin = (Vcc-Vcap)/Rup + (Vcc-Vcap)/(therm+Rseries) where Iin is the current entering C, and THERMPIN is tied to +Vcc
  *  capacitor equation: Q = CV, or, I = C*dV/dt
