@@ -468,7 +468,7 @@
 //define the hotend:
 //  The hotend is controlled in the same PWM manner as the fan
 #define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
-#define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
+#define PIN_HOTEND_INVERSIONS     INVERT_WRITES           //Ramps-FD mosfets are inverted
 //hotend state during boot, if hardware pull resistors weren't present.
 //NOTE: if you have a hotend that is active LOW, then you want the pull resistor to pull HIGH!
 #define PIN_HOTEND_PULL           mitpi::GPIOPULL_DOWN
