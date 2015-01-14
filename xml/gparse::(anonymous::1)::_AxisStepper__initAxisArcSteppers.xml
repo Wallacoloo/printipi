@@ -21,7 +21,7 @@
       <type name="const CoordMapT" qualifier=" const *" />
     </argument>
     <argument id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" &amp;" />
     </argument>
     <argument id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()::center" name="center">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
