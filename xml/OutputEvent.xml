@@ -1,12 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="OutputEvent" name="OutputEvent" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief># to divide the NOMINAL_CLOCK_FREQ by before passing it to the PWM peripheral.</brief>
-  <doc>gpio frames per second is a product of the nominal clock frequency divided by BITS_PER_CLOCK and divided again by CLOCK_DIV
-At 500,000 frames/sec, memory bandwidth does not appear to be an issue (jitter of -1 to +2 uS)
-attempting 1,000,000 frames/sec results in an actual 800,000 frames/sec, though with a lot of jitter.
-Note that these numbers might vary with heavy network or usb usage.
-eg at 500,000 fps, with 1MB/sec network download, jitter is -1 to +30 uS
-at 250,000 fps, with 1MB/sec network download, jitter is only -3 to +3 uS</doc>
+  <doc>
+An OutputEvent encapsulates information about the desired state for a GPIO pin at a given time.
+  Eg, "set pin (2) (high) at t=(1234567) uS", or "set pin (44) (low) at t=(887766) uS"
+</doc>
   <constructor id="OutputEvent::OutputEvent" name="OutputEvent">
     <brief>default constructor. Creates an OutputEvent where isNull() will return true</brief>
   </constructor>

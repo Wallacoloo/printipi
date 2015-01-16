@@ -19,20 +19,6 @@ This gives the onIdleCpu function the possibility to schedule events using Sched
       <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
     </argument>
   </method>
-  <method id="Scheduler::schedPwm" name="schedPwm">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="Scheduler::schedPwm::idx" name="idx">
-      <type name="iodrv::IoPin" qualifier=" const &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
-    </argument>
-    <argument id="Scheduler::schedPwm::duty" name="duty">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="Scheduler::schedPwm::maxPeriod" name="maxPeriod">
-      <type builtin="yes" name="float" />
-    </argument>
-  </method>
   <methodtemplate id="Scheduler::setMaxSleep" name="setMaxSleep">
     <return>
       <type builtin="yes" name="void" />

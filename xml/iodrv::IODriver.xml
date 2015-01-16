@@ -57,21 +57,6 @@ These implementations must provide the functions outlined further down in the he
     <templatetypeparameter id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
-    <brief>called when the scheduler has extra time,</brief>
-    <doc>Can be used to check the status of inputs, etc.
-Return true if object needs to continue to be serviced, false otherwise.</doc>
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-    <argument id="iodrv::IODriver::onIdleCpu::interval" name="interval">
-      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
-    </argument>
-    <argument id="iodrv::IODriver::onIdleCpu::interface" name="interface">
-      <type name="const CallbackInterface" qualifier=" const &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::onIdleCpu::CallbackInterface" name="CallbackInterface" />
-  </methodtemplate>
   <methodtemplate id="iodrv::IODriver::setBedTemp" name="setBedTemp" static="yes">
     <return>
       <type builtin="yes" name="void" />
@@ -84,18 +69,6 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
     </argument>
     <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::setFanDutyCycle" name="setFanDutyCycle">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODriver::setFanDutyCycle::interface" name="interface">
-      <type name="const CallbackInterface" qualifier=" const &amp;" />
-    </argument>
-    <argument id="iodrv::IODriver::setFanDutyCycle::dutyCycle" name="dutyCycle">
-      <type builtin="yes" name="float" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::setFanDutyCycle::CallbackInterface" name="CallbackInterface" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODriver::setHotendTemp" name="setHotendTemp" static="yes">
     <return>
@@ -215,10 +188,29 @@ Return true if object needs to continue to be serviced, false otherwise.</doc>
       <type builtin="yes" name="void" />
     </return>
   </method>
+  <method id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
+    <brief>called when the scheduler has extra time,</brief>
+    <doc>Can be used to check the status of inputs, etc.
+Return true if object needs to continue to be serviced, false otherwise.</doc>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::IODriver::onIdleCpu::interval" name="interval">
+      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
+    </argument>
+  </method>
   <method id="iodrv::IODriver::peekNextEvent" name="peekNextEvent">
     <return>
       <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
     </return>
+  </method>
+  <method id="iodrv::IODriver::setFanDutyCycle" name="setFanDutyCycle">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODriver::setFanDutyCycle::dutyCycle" name="dutyCycle">
+      <type builtin="yes" name="float" />
+    </argument>
   </method>
   <method id="iodrv::IODriver::setServoAngleDegrees" name="setServoAngleDegrees">
     <brief>@angle the desired angle of the servo, in degrees</brief>

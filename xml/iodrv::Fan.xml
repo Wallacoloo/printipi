@@ -7,20 +7,6 @@ This class essentially wraps an IoPin so that it can be commanded and recognized
   <base access="public">
     <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
   </base>
-  <methodtemplate id="iodrv::Fan::setFanDutyCycle" name="setFanDutyCycle" override="yes">
-    <brief>called by State upon receiving an M106 gcode</brief>
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::Fan::setFanDutyCycle::interface" name="interface">
-      <type name="const CallbackInterface" qualifier=" const &amp;" />
-    </argument>
-    <argument id="iodrv::Fan::setFanDutyCycle::dutyCycle" name="dutyCycle">
-      <type builtin="yes" name="float" />
-    </argument>
-    <override name="IODriver::setFanDutyCycle" ref="iodrv::IODriver#iodrv::IODriver::setFanDutyCycle" />
-    <templatetypeparameter id="iodrv::Fan::setFanDutyCycle::CallbackInterface" name="CallbackInterface" />
-  </methodtemplate>
   <constructor id="iodrv::Fan::Fan" name="Fan">
     <brief>@pin the IoPin that powers the fan.</brief>
     <doc>In most cases, the fan should NOT be directly powered from the microcontroller.
@@ -42,5 +28,15 @@ or (if its a 3 wire fan), the fan should be powered from the power rail &amp; th
       <type builtin="yes" name="bool" />
     </return>
     <override name="IODriver::isFan" ref="iodrv::IODriver#iodrv::IODriver::isFan" />
+  </method>
+  <method id="iodrv::Fan::setFanDutyCycle" name="setFanDutyCycle" override="yes">
+    <brief>called by State upon receiving an M106 gcode</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::Fan::setFanDutyCycle::dutyCycle" name="dutyCycle">
+      <type builtin="yes" name="float" />
+    </argument>
+    <override name="IODriver::setFanDutyCycle" ref="iodrv::IODriver#iodrv::IODriver::setFanDutyCycle" />
   </method>
 </class>

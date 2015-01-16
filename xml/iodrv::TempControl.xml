@@ -74,17 +74,13 @@ Currently, it assumes an RC-based thermistor, but in the future it may be expand
     </return>
     <override name="IODriver::getTargetTemperature" ref="iodrv::IODriver#iodrv::IODriver::getTargetTemperature" />
   </method>
-  <methodtemplate id="iodrv::TempControl::onIdleCpu" name="onIdleCpu" override="yes">
+  <method id="iodrv::TempControl::onIdleCpu" name="onIdleCpu" override="yes">
     <return>
       <type builtin="yes" name="bool" />
     </return>
     <argument id="iodrv::TempControl::onIdleCpu::interval" name="interval">
       <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
     </argument>
-    <argument id="iodrv::TempControl::onIdleCpu::cbInterface" name="cbInterface">
-      <type name="CallbackInterface" qualifier=" &amp;" />
-    </argument>
     <override name="IODriver::onIdleCpu" ref="iodrv::IODriver#iodrv::IODriver::onIdleCpu" />
-    <templatetypeparameter id="iodrv::TempControl::onIdleCpu::CallbackInterface" name="CallbackInterface" />
-  </methodtemplate>
+  </method>
 </classtemplate>
