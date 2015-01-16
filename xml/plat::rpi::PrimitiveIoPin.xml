@@ -57,11 +57,35 @@ Of course, it's still a VERY GOOD IDEA to use hardware pull resistors as well.
       <type name="IoLevel" ref="index#IoLevel" />
     </argument>
   </method>
+  <method id="plat::rpi::PrimitiveIoPin::makePwmOutput" name="makePwmOutput">
+    <brief>configure the pin as a PWM output &amp; set its duty cycle and period (if applicable)</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::PrimitiveIoPin::makePwmOutput::duty" name="duty">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="plat::rpi::PrimitiveIoPin::makePwmOutput::desiredPeriod" name="desiredPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
   <method id="plat::rpi::PrimitiveIoPin::null" name="null" static="yes">
     <brief>@return a pin with an invalid output</brief>
     <doc>Note that it is undefined to call any function on a null pin except for <ref ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin::isNull">plat::rpi::PrimitiveIoPin::isNull</ref> and <ref ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin::id">plat::rpi::PrimitiveIoPin::id</ref>.</doc>
     <return>
       <type name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
     </return>
+  </method>
+  <method id="plat::rpi::PrimitiveIoPin::pwmWrite" name="pwmWrite">
+    <brief>set pwm duty cycle &amp; period (if applicable). Must call makePwmOutput beforehand.</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::rpi::PrimitiveIoPin::pwmWrite::duty" name="duty">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="plat::rpi::PrimitiveIoPin::pwmWrite::desiredPeriod" name="desiredPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
   </method>
 </class>

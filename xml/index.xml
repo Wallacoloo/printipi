@@ -153,7 +153,6 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
         <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
       </class>
     </class>
-    <class name="RCThermistor" ref="iodrv::RCThermistor#iodrv::RCThermistor" />
     <class name="RCThermistor2Pin" ref="iodrv::RCThermistor2Pin#iodrv::RCThermistor2Pin" />
     <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
       <brief>Controls a Servo motor.</brief>
@@ -263,7 +262,7 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     </struct>
   </namespace>
   <namespace name="plat" ref="plat#plat">
-    <brief># to divide the NOMINAL_CLOCK_FREQ by before passing it to the PWM peripheral.</brief>
+    <brief>defined in outputevent.h</brief>
     <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
       <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
@@ -284,6 +283,7 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
       <class name="HardwareScheduler" ref="plat::rpi::HardwareScheduler#plat::rpi::HardwareScheduler" />
       <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
       <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />
+      <class name="UnwrappedHardwareScheduler" ref="plat::rpi::UnwrappedHardwareScheduler#plat::rpi::UnwrappedHardwareScheduler" />
     </namespace>
   </namespace>
   <namespace name="tupleutil" ref="tupleutil#tupleutil" />

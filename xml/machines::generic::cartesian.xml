@@ -34,7 +34,7 @@
   </method>
   <method id="machines::generic::cartesian::getIoDrivers" name="getIoDrivers" override="yes">
     <return>
-      <type name="std::tuple&lt;iodrv::Fan, iodrv::Servo, iodrv::TempControl&lt;iodrv::RCThermistor, PID, LowPassFilter&gt; &gt;" />
+      <type name="std::tuple&lt;iodrv::Fan, iodrv::Servo, iodrv::TempControl&lt;iodrv::RCThermistor2Pin, PID, LowPassFilter&gt; &gt;" />
     </return>
     <override name="Machine::getIoDrivers" ref="machines::Machine#machines::Machine::getIoDrivers" />
   </method>

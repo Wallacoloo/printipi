@@ -80,6 +80,19 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type name="IoLevel" ref="index#IoLevel" />
     </argument>
   </method>
+  <method id="iodrv::IoPin::makePwmOutput" name="makePwmOutput">
+    <brief>set the pin as a pwm output &amp; give it the desired duty / period.</brief>
+    <doc>Doing these two actions together allow us to prevent the pin from ever being in an undefined state.</doc>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IoPin::makePwmOutput::duty" name="duty">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::IoPin::makePwmOutput::desiredPeriod" name="desiredPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
   <method abstract="yes" id="iodrv::IoPin::operator=" name="operator=">
     <return>
       <type name="IoPin" qualifier=" &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
@@ -101,6 +114,20 @@ Each microcontroller platform should provide its own IoPin implementation that i
     <return>
       <type name="PrimitiveIoPin" qualifier=" const &amp;" ref="index#PrimitiveIoPin" />
     </return>
+  </method>
+  <method id="iodrv::IoPin::pwmWrite" name="pwmWrite">
+    <brief>Set the pin to output a PWM signal. MUST first call makePwmOutput() to put the pin in pwm mode.</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IoPin::pwmWrite::duty" name="duty">
+      <doc>proportion of time that the pin should be ACTIVE (0.0 - 1.0).</doc>
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="iodrv::IoPin::pwmWrite::desiredPeriod" name="desiredPeriod">
+      <doc>*desired* PWM cycle length (the actual length isn't guaranteed). Useful for decreasing fet/relay switching frequency, etc.</doc>
+      <type builtin="yes" name="float" />
+    </argument>
   </method>
   <method id="iodrv::IoPin::setDefaultState" name="setDefaultState">
     <return>

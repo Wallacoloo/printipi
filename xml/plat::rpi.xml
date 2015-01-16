@@ -11,4 +11,5 @@
   <class name="HardwareScheduler" ref="plat::rpi::HardwareScheduler#plat::rpi::HardwareScheduler" />
   <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
   <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />
+  <class name="UnwrappedHardwareScheduler" ref="plat::rpi::UnwrappedHardwareScheduler#plat::rpi::UnwrappedHardwareScheduler" />
 </namespace>

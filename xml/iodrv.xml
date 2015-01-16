@@ -16,7 +16,6 @@
   <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
   <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
   <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
-  <class name="RCThermistor" ref="iodrv::RCThermistor#iodrv::RCThermistor" />
   <class name="RCThermistor2Pin" ref="iodrv::RCThermistor2Pin#iodrv::RCThermistor2Pin" />
   <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
     <brief>Controls a Servo motor.</brief>
@@ -63,6 +62,7 @@
     <enumvalue id="iodrv::IOPIN_MODE_UNSPECIFIED" name="IOPIN_MODE_UNSPECIFIED" value="0" />
     <enumvalue id="iodrv::IOPIN_MODE_INPUT" name="IOPIN_MODE_INPUT" value="1" />
     <enumvalue id="iodrv::IOPIN_MODE_OUTPUT" name="IOPIN_MODE_OUTPUT" value="2" />
+    <enumvalue id="iodrv::IOPIN_MODE_PWM" name="IOPIN_MODE_PWM" value="3" />
   </enum>
   <enum anonymous="yes" id="iodrv::TempControlType" name="TempControlType">
     <brief>enum passed to instructor to define the TempControl instance as either controlling a Hotend or a Heated Bed.</brief>

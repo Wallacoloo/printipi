@@ -53,9 +53,33 @@
       <type name="IoLevel" ref="index#IoLevel" />
     </argument>
   </method>
+  <method id="plat::generic::PrimitiveIoPin::makePwmOutput" name="makePwmOutput">
+    <brief>configure the pin as a PWM output &amp; set its duty cycle and period (if applicable)</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::PrimitiveIoPin::makePwmOutput::duty" name="duty">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="plat::generic::PrimitiveIoPin::makePwmOutput::desiredPeriod" name="desiredPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
   <method id="plat::generic::PrimitiveIoPin::null" name="null" static="yes">
     <return>
       <type name="PrimitiveIoPin" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin" />
     </return>
+  </method>
+  <method id="plat::generic::PrimitiveIoPin::pwmWrite" name="pwmWrite">
+    <brief>set pwm duty cycle &amp; period (if applicable). Must call makePwmOutput beforehand.</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="plat::generic::PrimitiveIoPin::pwmWrite::duty" name="duty">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="plat::generic::PrimitiveIoPin::pwmWrite::desiredPeriod" name="desiredPeriod">
+      <type builtin="yes" name="float" />
+    </argument>
   </method>
 </class>
