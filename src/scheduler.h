@@ -55,7 +55,6 @@ template <typename Interface> class Scheduler : public SchedulerBase {
     bool _doExit;
     public:
         void queue(const OutputEvent &evt);
-        void schedPwm(const iodrv::IoPin &idx, float duty, float maxPeriod);
         template <typename T> void setMaxSleep(T duration) {
             MAX_SLEEP = std::chrono::duration_cast<EventClockT::duration>(duration);
         }
@@ -80,11 +79,6 @@ template <typename Interface> Scheduler<Interface>::Scheduler(Interface interfac
 
 template <typename Interface> void Scheduler<Interface>::queue(const OutputEvent &evt) {
     this->nextEvent = evt;
-}
-
-template <typename Interface> void Scheduler<Interface>::schedPwm(const iodrv::IoPin &pin, float duty, float maxPeriod) {
-    duty = std::min(1.f, std::max(0.f, duty)); //clamp pwm between [0, 1]
-    this->interface.queuePwm(pin.primitiveIoPin(), pin.translateDutyCycleToPrimitive(duty), maxPeriod);
 }
 
 template <typename Interface> void Scheduler<Interface>::initSchedThread() const {

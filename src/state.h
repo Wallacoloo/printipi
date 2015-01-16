@@ -100,10 +100,6 @@ template <typename Drv> class State {
                 //schedule an event to happen at some time in the future (relay message to hardware scheduler)
                 _hardwareScheduler.queue(evt);
             }
-            inline void queuePwm(const PrimitiveIoPin &pin, float duty, float maxPeriod) {
-                //configure hardware pin with id 'pin' for PWM, and ensure the PWM period is < maxPeriod (if possible)
-                _hardwareScheduler.queuePwm(pin, duty, maxPeriod);
-            }
             EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
                 //if an event is to occur at evtTime, then return the soonest that we are capable of scheduling it in hardware (we may have limited buffers, etc).
                 return _hardwareScheduler.schedTime(evtTime);
@@ -123,17 +119,6 @@ template <typename Drv> class State {
             }
             CoordMapT getCoordMap() const {
                 return state.driver.getCoordMap();
-            }
-    };
-    //Drivers need certain extra information within their onIdleCpu handlers, etc.
-    class DriverCallbackInterface {
-        State<Drv> &state;
-        public:
-            DriverCallbackInterface(State<Drv> &state, AxisIdType index) : state(state) {
-                (void)index; //unused
-            }
-            void schedPwm(const iodrv::IoPin &pin, float duty, float maxPeriod) const {
-                state.scheduler.schedPwm(pin, duty, maxPeriod);
             }
     };
     //The CoordMap needs extra information when homing
@@ -370,9 +355,9 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 }
 
 template <typename Drv> struct State<Drv>::State__onIdleCpu {
-    template <typename T> bool operator()(std::size_t index, T &driver, OnIdleCpuIntervalT interval, State<Drv> *state) {
-        DriverCallbackInterface cbInterface(*state, index);
-        return driver.onIdleCpu(interval, cbInterface);
+    template <typename T> bool operator()(std::size_t index, T &driver, OnIdleCpuIntervalT interval) {
+        (void)index;
+        return driver.onIdleCpu(interval);
     }
 };
 
@@ -436,7 +421,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         }
     }
 
-    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), interval, this);
+    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), interval);
     return motionNeedsCpu || driversNeedCpu;
 }
 
@@ -753,15 +738,16 @@ template <typename Drv> bool State<Drv>::isHotendReady() {
 /* State utility class for setting the fan rate (State::setFanRate).
 Note: could be replaced with a generic lambda in C++14 (gcc-4.9) */
 template <typename Drv> struct State<Drv>::State__setFanRate {
-    template <typename T> void operator()(std::size_t index, T &fan, State *_this, float rate) {
+    template <typename T> void operator()(std::size_t index, T &fan, float rate) {
+        (void)index;
         if (fan.isFan()) {
-            fan.setFanDutyCycle(DriverCallbackInterface(*_this, index), rate);
+            fan.setFanDutyCycle(rate);
         }
     }
 };
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
-    callOnAll(ioDrivers, State__setFanRate(), this, rate);
+    callOnAll(ioDrivers, State__setFanRate(), rate);
 }
 
 template <typename Drv> class State<Drv>::State__getEndstopStatusString {

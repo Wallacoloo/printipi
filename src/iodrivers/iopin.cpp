@@ -27,6 +27,7 @@
 
 #include "schedulerbase.h" //for SchedulerBase::registerExitHandler
 #include "common/logging.h"
+#include "common/mathutil.h"
 //for the testsuite
 #include "catch.hpp"
 
@@ -82,7 +83,9 @@ IoLevel IoPin::translateWriteToPrimitive(IoLevel lev) const {
     return _invertWrites ? !lev : lev; 
 }
 float IoPin::translateDutyCycleToPrimitive(float pwm) const {
-    return _invertWrites ? 1-pwm : pwm;
+    float postInversion = _invertWrites ? 1-pwm : pwm;
+    float capped = mathutil::clamp(postInversion, 0.f, 1.f);
+    return capped;
 }
 const PrimitiveIoPin& IoPin::primitiveIoPin() const { 
     return _pin; 

@@ -71,7 +71,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
          : IODriver(), _hotType(hotType), _heater(std::move(heater)), _therm(std::move(therm)), _pid(pid), _filter(filter), _pwmPeriod(pwmPeriod), _destTemp(-300), _lastTemp(-300), _isReading(false),
          _nextReadTime(EventClockT::now()) {
             _heater.setDefaultState(IO_DEFAULT_LOW);
-            _heater.makeDigitalOutput(IoLow);
+            _heater.makePwmOutput(IoLow);
         }
         //register as the correct device type:
         inline bool isHotend() const {
@@ -89,7 +89,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
         inline CelciusType getTargetTemperature() const {
             return _destTemp;
         }
-        template <typename CallbackInterface> bool onIdleCpu(OnIdleCpuIntervalT interval, CallbackInterface &cbInterface) {
+        inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
             (void)interval;
             //LOGV("TempControl::onIdleCpu()\n");
             if (_isReading) {
@@ -100,7 +100,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
                         return true; //restart read.
                     } else {
                         _lastTemp = _therm.value();
-                        updatePwm(cbInterface);
+                        updatePwm();
                         return false; //no more cpu needed.
                     }
                 } else {
@@ -126,13 +126,13 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
             }
         }
     private:
-        template <typename CallbackInterface> void updatePwm(CallbackInterface &cbInterface) {
+        inline void updatePwm() {
 	        // Make this actually pass both the setpoint and process value
 	        // into the the controller
             float filtered = _filter.feed(_lastTemp);
             float pwm = _pid.feed(_destTemp, filtered);
             LOG("tempcontrol: drive-strength=%f, temp=%f *C\n", pwm, filtered);
-            cbInterface.schedPwm(_heater, pwm, _pwmPeriod);
+            _heater.pwmWrite(pwm, _pwmPeriod);
         }
 };
 

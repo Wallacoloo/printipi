@@ -48,14 +48,13 @@ class Fan : public IODriver {
         //  This is useful if using a transistor that cannot switch fast (like a relay).
         inline Fan(IoPin &&pin, DefaultIoState defaultState=IO_DEFAULT_NONE, float period=0) : IODriver(), pin(std::move(pin)), period(period) {
             this->pin.setDefaultState(defaultState);
-            this->pin.makeDigitalOutput(IoLow);
+            this->pin.makePwmOutput(0.0);
         }
         inline bool isFan() const { return true; }
         //called by State upon receiving an M106 gcode
-        template <typename CallbackInterface> inline void setFanDutyCycle(const CallbackInterface &interface, float dutyCycle) {
-            (void)interface;
+        inline void setFanDutyCycle(float dutyCycle) {
             (void)dutyCycle;
-            interface.schedPwm(pin, dutyCycle, period);
+            pin.pwmWrite(dutyCycle, period);
         }
 };
 
