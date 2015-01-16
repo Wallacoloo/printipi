@@ -102,6 +102,12 @@ void IoPin::makeDigitalInput() {
     #endif
     _pin.makeDigitalInput();
 }
+void IoPin::makePwmOutput(float duty, float desiredPeriod) {
+    #ifndef NDEBUG
+        _currentMode = IOPIN_MODE_PWM;
+    #endif
+    _pin.makePwmOutput(translateDutyCycleToPrimitive(duty), desiredPeriod);
+}
 IoLevel IoPin::digitalRead() const {
     #ifndef NDEBUG
         assert(_currentMode == IOPIN_MODE_INPUT);
@@ -115,6 +121,13 @@ void IoPin::digitalWrite(IoLevel lev) {
     #endif
     //relay the call to the real pin, performing any inversions necessary
     _pin.digitalWrite(translateWriteToPrimitive(lev));
+}
+void IoPin::pwmWrite(float duty, float desiredPeriod) {
+    #ifndef NDEBUG
+        assert(_currentMode == IOPIN_MODE_PWM);
+    #endif
+    //relay the call to the real pin, performing any inversions necessary
+    _pin.pwmWrite(translateDutyCycleToPrimitive(duty), desiredPeriod);
 }
 
 void IoPin::setToDefault() {

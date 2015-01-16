@@ -145,7 +145,6 @@
 
 #include "platforms/auto/chronoclock.h" //for EventClockT
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
-#include "outputevent.h" //We could do forward declaration, but queue(OutputEvent& evt) is called MANY times, so we want the performance boost potentially offered by defining the function in the header.
 
 //config settings:
 #define PWM_FIFO_SIZE 1 //The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.
@@ -164,6 +163,7 @@
 // eg at 500,000 fps, with 1MB/sec network download, jitter is -1 to +30 uS
 // at 250,000 fps, with 1MB/sec network download, jitter is only -3 to +3 uS
 
+class OutputEvent; //defined in outputevent.h
 
 namespace plat {
 namespace rpi {
@@ -187,7 +187,7 @@ struct GpioBufferFrame;
  * DMA timing is done by configuring the PWM module to request a sample at a given rate. Once this sample is requested, the entire DMA transaction is gated until the request is fulfilled. This allows one to copy a frame into the gpio bank and then fulfill the PWM sample request, which stalls the transaction until the PWM device requests another sample.
  *
  */
-class HardwareScheduler {
+class UnwrappedHardwareScheduler {
     struct DmaMem {
         //Memory used in DMA must bypass the CPU L1 cache, so we keep a L1-cached view & an L2-cache-coherent view
         void *virtL1;
@@ -197,7 +197,7 @@ class HardwareScheduler {
         uintptr_t physAddrAtByteOffset(std::size_t bytes) const;
         uintptr_t virtToPhys(void *virt) const;
         inline DmaMem() {}
-        DmaMem(const HardwareScheduler &sched, std::size_t numBytes);
+        DmaMem(const UnwrappedHardwareScheduler &sched, std::size_t numBytes);
     };
     int dmaCh;
     int memfd, pagemapfd;
@@ -212,14 +212,12 @@ class HardwareScheduler {
     int64_t _lastTimeAtFrame0;
     EventClockT::time_point _lastDmaSyncedTime;
     public:
-        HardwareScheduler();
+        UnwrappedHardwareScheduler();
         static void cleanup();
         inline EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
             return EventClockT::time_point(evtTime.time_since_epoch() - std::chrono::microseconds(SOURCE_BUFFER_FRAMES));
         }
-        inline void queue(const OutputEvent &evt) {
-            queue(evt.primitiveIoPin().id(), evt.state(), std::chrono::duration_cast<std::chrono::microseconds>(evt.time().time_since_epoch()).count());
-        }
+        void queue(const OutputEvent &evt);
         void queuePwm(const PrimitiveIoPin &pin, float ratio, float maxPeriod);
         bool onIdleCpu(OnIdleCpuIntervalT interval);
     private:
@@ -234,6 +232,27 @@ class HardwareScheduler {
         void syncDmaTime();
         void queue(int pin, int mode, uint64_t micros);
         void sleepUntilMicros(uint64_t micros) const;
+};
+
+class HardwareScheduler {
+    UnwrappedHardwareScheduler *_sched;
+    public:
+        inline HardwareScheduler() {
+            static UnwrappedHardwareScheduler singleton;
+            _sched = &singleton;
+        }
+        inline EventClockT::time_point schedTime(EventClockT::time_point evtTime) const {
+            return _sched->schedTime(evtTime);
+        }
+        inline void queue(const OutputEvent &evt) {
+            return _sched->queue(evt);
+        }
+        inline void queuePwm(const PrimitiveIoPin &pin, float ratio, float maxPeriod) {
+            return _sched->queuePwm(pin, ratio, maxPeriod);
+        }
+        inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
+            return _sched->onIdleCpu(interval);
+        }
 };
 
 }

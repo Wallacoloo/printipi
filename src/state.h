@@ -370,9 +370,9 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 }
 
 template <typename Drv> struct State<Drv>::State__onIdleCpu {
-    template <typename T> bool operator()(std::size_t index, T &driver, State<Drv> *state) {
+    template <typename T> bool operator()(std::size_t index, T &driver, OnIdleCpuIntervalT interval, State<Drv> *state) {
         DriverCallbackInterface cbInterface(*state, index);
-        return driver.onIdleCpu(cbInterface);
+        return driver.onIdleCpu(interval, cbInterface);
     }
 };
 
@@ -436,7 +436,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         }
     }
 
-    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), this);
+    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), interval, this);
     return motionNeedsCpu || driversNeedCpu;
 }
 

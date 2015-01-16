@@ -35,36 +35,46 @@ namespace generic {
 
 //Implementation for a basic (do-nothing) GPIO pin
 class PrimitiveIoPin {
-	public:
-		inline static PrimitiveIoPin null() { return PrimitiveIoPin(); }
-		inline bool isNull() const { return true; }
-		//We want to use this PrimitiveIoPin on any architecture, 
-		// so let it be constructed with whatever platform-specific arguments the config file uses with its IO pins
-		template <typename ...T> PrimitiveIoPin(T ...args) {
-			(void)std::make_tuple(args...); //unused
-		}
+    public:
+        inline static PrimitiveIoPin null() { return PrimitiveIoPin(); }
+        inline bool isNull() const { return true; }
+        //We want to use this PrimitiveIoPin on any architecture, 
+        // so let it be constructed with whatever platform-specific arguments the config file uses with its IO pins
+        template <typename ...T> PrimitiveIoPin(T ...args) {
+            (void)std::make_tuple(args...); //unused
+        }
 
-		//do-nothing implementations for basic functions
-		//Note: the return type of id() is platform-specific, though it must never be void.
-		inline int id() const { return -1; }
-		inline void makeDigitalOutput(IoLevel level) {
-			(void)level;
-			LOGW_ONCE("Attempt to makeDigitalOutput() the generic PrimitiveIoPin interface\n");
-		}
-	    //configure the pin to be an input
-	    inline void makeDigitalInput() {
-	    	LOGW_ONCE("Attempt to makeDigitalInput() the generic PrimitiveIoPin interface\n");
-	    }
-	    //read the pin's input value (assumes pin is configured as digital)
-	    inline IoLevel digitalRead() const { 
-	    	LOGW_ONCE("Attempt to digitalRead() the generic PrimitiveIoPin interface\n");
-	    	return IoLow; 
-	    }
-	    //Write a digital value to the pin. Note: must first call makeDigitalOutput.
-	    inline void digitalWrite(IoLevel level) {
-	    	(void)level;
-	    	LOGW_ONCE("Attempt to digitalWrite() the generic PrimitiveIoPin interface\n");
-	    }
+        //do-nothing implementations for basic functions
+        //Note: the return type of id() is platform-specific, though it must never be void.
+        inline int id() const { return -1; }
+        inline void makeDigitalOutput(IoLevel level) {
+            (void)level;
+            LOGW_ONCE("Attempt to makeDigitalOutput() the generic PrimitiveIoPin interface\n");
+        }
+        //configure the pin to be an input
+        inline void makeDigitalInput() {
+            LOGW_ONCE("Attempt to makeDigitalInput() the generic PrimitiveIoPin interface\n");
+        }
+        //configure the pin as a PWM output & set its duty cycle and period (if applicable)
+        inline void makePwmOutput(float duty, float desiredPeriod) {
+            (void)duty; (void)desiredPeriod;
+            LOGW_ONCE("Attempt to makePwmOutput() the generic PrimitiveIoPin interface\n");
+        }
+        //read the pin's input value (assumes pin is configured as digital)
+        inline IoLevel digitalRead() const { 
+            LOGW_ONCE("Attempt to digitalRead() the generic PrimitiveIoPin interface\n");
+            return IoLow; 
+        }
+        //Write a digital value to the pin. Note: must first call makeDigitalOutput.
+        inline void digitalWrite(IoLevel level) {
+            (void)level;
+            LOGW_ONCE("Attempt to digitalWrite() the generic PrimitiveIoPin interface\n");
+        }
+        //set pwm duty cycle & period (if applicable). Must call makePwmOutput beforehand.
+        inline void pwmWrite(float duty, float desiredPeriod) {
+            (void)duty; (void)desiredPeriod;
+            LOGW_ONCE("Attempt to pwmWrite() the generic PrimitiveIoPin interface\n");
+        }
 };
 
 }
