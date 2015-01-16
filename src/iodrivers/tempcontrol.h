@@ -89,7 +89,8 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
         inline CelciusType getTargetTemperature() const {
             return _destTemp;
         }
-        template <typename CallbackInterface> bool onIdleCpu(CallbackInterface &cbInterface) {
+        template <typename CallbackInterface> bool onIdleCpu(OnIdleCpuIntervalT interval, CallbackInterface &cbInterface) {
+            (void)interval;
             //LOGV("TempControl::onIdleCpu()\n");
             if (_isReading) {
                 if (_therm.isReady()) {

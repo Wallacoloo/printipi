@@ -88,7 +88,11 @@ class IODriver {
         //called when the scheduler has extra time,
         //Can be used to check the status of inputs, etc.
         //Return true if object needs to continue to be serviced, false otherwise. 
-        template <typename CallbackInterface> inline bool onIdleCpu(const CallbackInterface &) { return false; }
+        template <typename CallbackInterface> inline bool onIdleCpu(OnIdleCpuIntervalT interval, const CallbackInterface &interface) { 
+            (void)interval;
+            (void)interface;
+            return false; 
+        }
         template <typename CallbackInterface> inline void setFanDutyCycle(const CallbackInterface &interface, float dutyCycle) {
             (void)interface;
             (void)dutyCycle;
