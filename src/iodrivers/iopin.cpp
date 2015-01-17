@@ -64,9 +64,11 @@ IoPin& IoPin::operator=(IoPin &&other) {
     _defaultState = other._defaultState;
     #ifndef NDEBUG
         _currentMode = other._currentMode;
+        //make it so that attempted operations on the other pin raise an assertion:
+        other._currentMode = IOPIN_MODE_UNSPECIFIED;
     #endif
 	_pin = other._pin;
-	other._pin = IoPin::null()._pin; //PrimitiveIoPin::null()
+	other._pin = PrimitiveIoPin::null();
 	livingPins.insert(this);
     livingPins.erase(&other);
     return *this;
@@ -84,8 +86,8 @@ IoLevel IoPin::translateWriteToPrimitive(IoLevel lev) const {
 }
 float IoPin::translateDutyCycleToPrimitive(float pwm) const {
     float postInversion = _invertWrites ? 1-pwm : pwm;
-    float capped = mathutil::clamp(postInversion, 0.f, 1.f);
-    return capped;
+    float clamped = mathutil::clamp(postInversion, 0.f, 1.f);
+    return clamped;
 }
 const PrimitiveIoPin& IoPin::primitiveIoPin() const { 
     return _pin; 
@@ -149,13 +151,13 @@ void IoPin::setToDefault() {
 }
 
 TEST_CASE("IoPins will correctly invert writes", "[iopin]") {
-    SECTION("Inverted reads won't invert writes") {
+    SECTION("INVERT_READS won't invert writes") {
         iodrv::IoPin p(iodrv::INVERT_READS, PrimitiveIoPin::null());
         REQUIRE(p.translateWriteToPrimitive(IoLow) == IoLow);
         REQUIRE(p.translateWriteToPrimitive(IoHigh) == IoHigh);
         REQUIRE(p.translateDutyCycleToPrimitive(0.2) == Approx(0.2));
     }
-    SECTION("Inverted pins will invert writes") {
+    SECTION("INVERT_WRITES will invert writes") {
         iodrv::IoPin p(iodrv::INVERT_WRITES, PrimitiveIoPin::null());
         REQUIRE(p.translateWriteToPrimitive(IoLow) == IoHigh);
         REQUIRE(p.translateWriteToPrimitive(IoHigh) == IoLow);

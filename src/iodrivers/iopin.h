@@ -48,6 +48,7 @@ enum DefaultIoState {
     IO_DEFAULT_HIGH
 };
 
+//Used only in debug mode to detect errors when a write is attempted on a pin set to input mode, etc.
 enum IoPinMode {
     IOPIN_MODE_UNSPECIFIED,
     IOPIN_MODE_INPUT,
