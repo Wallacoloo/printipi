@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers" name="_AxisStepper__initAxisSteppers" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>Helper class for AxisStepper::initAxisSteppers</brief>
+  <methodtemplate id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()" name="operator()">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::_myIdx" name="_myIdx">
+      <type name="std::integral_constant&lt;_Tp, __v&gt;" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::stepper" name="stepper">
+      <type name="T" qualifier=" &amp;" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::steppers" name="steppers">
+      <type name="TupleT" qualifier="*" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::useEndstops" name="useEndstops">
+      <type builtin="yes" name="bool" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::map" name="map">
+      <type name="const CoordMapT" qualifier=" const *" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::curPos" name="curPos">
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" &amp;" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::vel" name="vel">
+      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
+    </argument>
+    <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MyIdx" name="MyIdx">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::TupleT" name="TupleT" />
+    <templatetypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::T" name="T" />
+    <templatetypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers::operator()::MechSize" name="MechSize">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+</struct>
