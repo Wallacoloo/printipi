@@ -87,19 +87,24 @@ class RCThermistor2Pin : public IODriver {
     float B;
     EventClockT::duration readInterval;
     EventClockT::duration readTimeout;
+    EventClockT::duration minTimingAccuracy;
+
     EventClockT::time_point startModeTime;
+    EventClockT::time_point lastServiceTime;
     bool isCalibrated;
     ThermMode mode;
     float lastTemp;
     public:
         inline RCThermistor2Pin(IoPin &&thermPin, IoPin &&chargeMeasPin, float RCHRG_OHMS, float RSERIES_OHMS, float RUP_OHMS,
             float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA, 
-            EventClockT::duration readInterval=std::chrono::milliseconds(3000))
+            EventClockT::duration readInterval=std::chrono::milliseconds(3000), 
+            EventClockT::duration minTimingAccuracy=std::chrono::microseconds(40))
           : thermPin(std::move(thermPin)), chargeMeasPin(std::move(chargeMeasPin)), 
             C(C_FARADS), Vcc(VCC_V), Rup(RUP_OHMS), Rchrg(RCHRG_OHMS), Rseries(RSERIES_OHMS),
             Vtoggle(V_TOGGLE_V), T0(mathutil::CtoK(T0_C)), R0(R0_OHMS), B(BETA),
             readInterval(readInterval), 
             readTimeout(this->readInterval.count()/10),
+            minTimingAccuracy(minTimingAccuracy),
             isCalibrated(false), mode(MODE_PREPARING), lastTemp(mathutil::ABSOLUTE_ZERO_CELCIUS) {
             thermPin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
             chargeMeasPin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
@@ -120,6 +125,7 @@ class RCThermistor2Pin : public IODriver {
                     return false;
                 }
             } else {
+                EventClockT::time_point timeNow = EventClockT::now();
                 if (chargeMeasPin.digitalRead() == IoLow) { 
                     //capacitor is still discharging; check for possible timeout
                     //note: when reading, the interval will always be OnIdleCpuIntervalShort, so we don't have an easy way to only check timeout periodically
@@ -129,21 +135,27 @@ class RCThermistor2Pin : public IODriver {
                         setModePreparing();
                         return false;
                     } else {
+                        lastServiceTime = timeNow;
                         return true;
                     }
                 } else {
-                    //reading is complete. Log the current time to determine discharge duration:
-                    float duration = std::chrono::duration_cast<std::chrono::duration<float> >(EventClockT::now() - startModeTime).count();
-                    if (mode == MODE_READING) {
-                        LOGV("time to read resistor: %f\n", duration);
-                        //now try to guess the resistance:
-                        float resistance = guessRFromTime(duration);
-                        LOGV("Resistance guess: %f\n", resistance);
-                        lastTemp = temperatureFromR(resistance);
-                        LOGV("Temperature guess: %f\n", lastTemp);
-                    } else if (mode == MODE_CALIBRATING) {
-                        updateValuesFromCalibrationData(duration);
-                        isCalibrated = true;
+                    //reading is complete.
+                    //Ensure we maintained the timimg accuracy requirements
+                    //Note: we must use a time measured AFTER chargeMeasPin.digitalRead(), as we may have been preempted during digitalRead()
+                    EventClockT::time_point endReadTime = EventClockT::now();
+                    if (endReadTime - lastServiceTime <= minTimingAccuracy) {
+                        float duration = std::chrono::duration_cast<std::chrono::duration<float> >(endReadTime - startModeTime).count();
+                        if (mode == MODE_READING) {
+                            LOGV("time to read resistor: %f\n", duration);
+                            //now try to guess the resistance:
+                            float resistance = guessRFromTime(duration);
+                            LOGV("Resistance guess: %f\n", resistance);
+                            lastTemp = temperatureFromR(resistance);
+                            LOGV("Temperature guess: %f\n", lastTemp);
+                        } else if (mode == MODE_CALIBRATING) {
+                            updateValuesFromCalibrationData(duration);
+                            isCalibrated = true;
+                        }
                     }
                     setModePreparing();
                     return false;
@@ -157,7 +169,7 @@ class RCThermistor2Pin : public IODriver {
         //bring the capacitor as close to ground as possible to prepare it for a read.
         inline void setModePreparing() {
             mode = MODE_PREPARING;
-            startModeTime = EventClockT::now();
+            startModeTime = lastServiceTime = EventClockT::now();
             //disconnect thermistor to allow the capacitor to be drained
             thermPin.makeDigitalInput();
             //prepare IOs for the next read (ie. drain the capacitor that was charged during reading)
@@ -167,21 +179,30 @@ class RCThermistor2Pin : public IODriver {
         //  configure the capacitor to be charged through the thermistor
         inline void setModeReading() {
             mode = MODE_READING;
-            //TODO: Also need to ensure that the we haven't been pre-empted between grabbing the time & setting the pins.
-            startModeTime = EventClockT::now();
+            startModeTime = lastServiceTime = EventClockT::now();
             //disconnect charge pin from ground and use it to measure
             chargeMeasPin.makeDigitalInput();
             //tie thermistor to high to begin drain
             thermPin.makeDigitalOutput(IoHigh);
+            //if we were pre-empted during the above routine, then abort the read & try again later
+            if (EventClockT::now() - startModeTime > minTimingAccuracy) {
+                LOGV("RCThermistor2Pin::setModeReading() pre-empted; discarding read\n");
+                setModePreparing();
+            }
         }
         inline void setModeCalibrating() {
             mode = MODE_CALIBRATING;
             //TODO: Also need to ensure that the we haven't been pre-empted between grabbing the time & setting the pins.
-            startModeTime = EventClockT::now();
+            startModeTime = lastServiceTime = EventClockT::now();
             //disconnect charge pin from ground and use it to measure
             chargeMeasPin.makeDigitalInput();
             //disconnect thermistor to drain only through Rup.
             thermPin.makeDigitalInput();
+            //if we were pre-empted during the above routine, then abort the read & try again later
+            if (EventClockT::now() - startModeTime > minTimingAccuracy) {
+                LOGV("RCThermistor2Pin::setModeCalibrating() pre-empted; discarding read\n");
+                setModePreparing();
+            }
         }
         //@tr the time it took to charge the capacitor through the thermistor
         inline float guessRFromTime(float tr) const {
@@ -216,6 +237,8 @@ class RCThermistor2Pin : public IODriver {
             float K = 1. / (1./T0 + log(R/R0)/B); //resistance;
             return mathutil::KtoC(K);
         }
+        //Given the results of a calibration measurement (charging capacitor through just the fixed Rup resistance),
+        //  approximate the actual component values such that this measurement makes sense.
         //@tr the time it took to charge the capacitor through the fixed resistance, Rup
         inline void updateValuesFromCalibrationData(float tr) {
             //During a calibration read, in which THERMPIN and CHRG/MEAS are both high-impedance,
