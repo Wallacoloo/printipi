@@ -75,6 +75,9 @@ The implementation is designed to be compatible with ramps-fd.
     <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::readInterval" name="readInterval">
       <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::minTimingAccuracy" name="minTimingAccuracy">
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
+    </argument>
   </constructor>
   <method id="iodrv::RCThermistor2Pin::onIdleCpu" name="onIdleCpu" override="yes">
     <return>
