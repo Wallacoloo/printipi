@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<structtemplate id="gparse::(anonymous::1)::__callOnAll" name="__callOnAll" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>callOnAll helper functions:</brief>
+  <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::TupleT" name="TupleT" />
+  <templatenontypeparameter default="std" id="gparse::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
+    <type name="std::size_t" />
+  </templatenontypeparameter>
+  <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::Func" name="Func" />
+  <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::Args" name="Args" />
+  <method id="gparse::(anonymous::1)::__callOnAll::operator()" name="operator()">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="gparse::(anonymous::1)::__callOnAll::operator()::t" name="t">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="gparse::(anonymous::1)::__callOnAll::operator()::f" name="f">
+      <type name="Func" qualifier=" &amp;" />
+    </argument>
+    <argument id="gparse::(anonymous::1)::__callOnAll::operator()::args" name="args">
+      <type name="Args..." />
+    </argument>
+  </method>
+</structtemplate>
