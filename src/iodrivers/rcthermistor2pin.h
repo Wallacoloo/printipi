@@ -128,8 +128,7 @@ class RCThermistor2Pin : public IODriver {
                 EventClockT::time_point timeNow = EventClockT::now();
                 if (chargeMeasPin.digitalRead() == IoLow) { 
                     //capacitor is still discharging; check for possible timeout
-                    //note: when reading, the interval will always be OnIdleCpuIntervalShort, so we don't have an easy way to only check timeout periodically
-                    if (/*interval == OnIdleCpuIntervalWide &&*/ EventClockT::now()-startModeTime > readTimeout) {
+                    if (timeNow-startModeTime > readTimeout) {
                         //read has timed out
                         LOG("RCThermistor2Pin read timeout\n");
                         setModePreparing();
