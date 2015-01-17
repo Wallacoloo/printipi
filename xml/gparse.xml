@@ -1,8 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="gparse" name="gparse" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <namespace name="(anonymous::1)" ref="gparse::(anonymous::1)#gparse::(anonymous::1)">
-    <brief>internal functions - treat as private</brief>
-  </namespace>
   <class name="Com" ref="gparse::Com#gparse::Com" />
   <class name="Command" ref="gparse::Command#gparse::Command" />
   <classtemplate name="ComStreamOwnershipMarker" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker">

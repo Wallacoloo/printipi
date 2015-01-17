@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent" name="IODriver__tupleConsumeNextEvent" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>IODriver::tupleConsumeNextEvent helper</brief>
+  <methodtemplate id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()" name="operator()">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::index" name="index">
+      <type name="std::size_t" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::driver" name="driver">
+      <type name="T" qualifier=" &amp;" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::desiredIndex" name="desiredIndex">
+      <type name="std::size_t" />
+    </argument>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::T" name="T" />
+  </methodtemplate>
+</struct>
