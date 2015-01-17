@@ -32,7 +32,12 @@ The implementation is designed to be compatible with ramps-fd.
    This time is dependent upon C, Rup, Vcc and Vtoggle only.
    We can adjust one (or multiple) of those variables to reflect the actual measurement.
    Vtoggle likely has the highest variability, so adjust that one.
+ We can actually achieve two calibration data:
+   One charging through only Rup, and the other charging through Rup and Rchrg
 </doc>
+  <base access="public">
+    <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  </base>
   <constructor id="iodrv::RCThermistor2Pin::RCThermistor2Pin" name="RCThermistor2Pin">
     <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::thermPin" name="thermPin">
       <type name="IoPin &amp;&amp;" />
@@ -67,23 +72,18 @@ The implementation is designed to be compatible with ramps-fd.
     <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::BETA" name="BETA">
       <type builtin="yes" name="float" />
     </argument>
+    <argument id="iodrv::RCThermistor2Pin::RCThermistor2Pin::readInterval" name="readInterval">
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
+    </argument>
   </constructor>
-  <method id="iodrv::RCThermistor2Pin::isReady" name="isReady">
-    <brief>called during the read.</brief>
+  <method id="iodrv::RCThermistor2Pin::onIdleCpu" name="onIdleCpu" override="yes">
     <return>
       <type builtin="yes" name="bool" />
     </return>
-  </method>
-  <method id="iodrv::RCThermistor2Pin::startRead" name="startRead">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-  </method>
-  <method id="iodrv::RCThermistor2Pin::timeSinceStartRead" name="timeSinceStartRead">
-    <brief>need to expose this information to assist in detecting freezes / failed reads.</brief>
-    <return>
-      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
-    </return>
+    <argument id="iodrv::RCThermistor2Pin::onIdleCpu::interval" name="interval">
+      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
+    </argument>
+    <override name="IODriver::onIdleCpu" ref="iodrv::IODriver#iodrv::IODriver::onIdleCpu" />
   </method>
   <method id="iodrv::RCThermistor2Pin::value" name="value">
     <return>

@@ -1,14 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="iodrv" name="iodrv" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <variable id="iodrv::_intervalThresh" name="_intervalThresh">
-    <type name="std::chrono::microseconds" qualifier=" const" />
-  </variable>
-  <variable id="iodrv::_maxRead" name="_maxRead">
-    <type name="std::chrono::microseconds" qualifier=" const" />
-  </variable>
-  <variable id="iodrv::_readInterval" name="_readInterval">
-    <type name="std::chrono::microseconds" qualifier=" const" />
-  </variable>
   <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
   <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
     <brief>forward declare for class in "endstop.h"</brief>
@@ -59,6 +50,7 @@
     </function>
   </enum>
   <enum anonymous="yes" id="iodrv::IoPinMode" name="IoPinMode">
+    <brief>Used only in debug mode to detect errors when a write is attempted on a pin set to input mode, etc.</brief>
     <enumvalue id="iodrv::IOPIN_MODE_UNSPECIFIED" name="IOPIN_MODE_UNSPECIFIED" value="0" />
     <enumvalue id="iodrv::IOPIN_MODE_INPUT" name="IOPIN_MODE_INPUT" value="1" />
     <enumvalue id="iodrv::IOPIN_MODE_OUTPUT" name="IOPIN_MODE_OUTPUT" value="2" />
