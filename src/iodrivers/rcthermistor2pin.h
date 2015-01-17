@@ -31,6 +31,7 @@
 #include "iodrivers/iopin.h"
 #include "common/mathutil.h" //for CtoK, etc
 #include "common/logging.h"
+#include "iodriver.h"
 
 namespace iodrv {
 
@@ -67,8 +68,15 @@ namespace iodrv {
  *    This time is dependent upon C, Rup, Vcc and Vtoggle only.
  *    We can adjust one (or multiple) of those variables to reflect the actual measurement.
  *    Vtoggle likely has the highest variability, so adjust that one.
+ *  We can actually achieve two calibration data:
+ *    One charging through only Rup, and the other charging through Rup and Rchrg
  */
-class RCThermistor2Pin {
+class RCThermistor2Pin : public IODriver {
+    enum ThermMode {
+        MODE_PREPARING,
+        MODE_READING,
+        MODE_CALIBRATING,
+    };
     IoPin thermPin;
     IoPin chargeMeasPin;
     float C, Vcc, Rup, Rchrg, Rseries;
@@ -77,55 +85,98 @@ class RCThermistor2Pin {
     float T0, R0; 
     //Thermistor Beta value; describes how thermistor changes resistance over the temperature range (listed on thermistor packaging or documentation page)
     float B;
-    EventClockT::time_point _startReadTime, _endReadTime;
+    EventClockT::duration readInterval;
+    EventClockT::duration readTimeout;
+    EventClockT::time_point startModeTime;
+    ThermMode mode;
+    float lastTemp;
     public:
         inline RCThermistor2Pin(IoPin &&thermPin, IoPin &&chargeMeasPin, float RCHRG_OHMS, float RSERIES_OHMS, float RUP_OHMS,
-            float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA)
+            float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA, 
+            EventClockT::duration readInterval=std::chrono::milliseconds(3000))
           : thermPin(std::move(thermPin)), chargeMeasPin(std::move(chargeMeasPin)), 
             C(C_FARADS), Vcc(VCC_V), Rup(RUP_OHMS), Rchrg(RCHRG_OHMS), Rseries(RSERIES_OHMS),
-            Vtoggle(V_TOGGLE_V), T0(mathutil::CtoK(T0_C)), R0(R0_OHMS), B(BETA) {
+            Vtoggle(V_TOGGLE_V), T0(mathutil::CtoK(T0_C)), R0(R0_OHMS), B(BETA),
+            readInterval(readInterval), 
+            readTimeout(this->readInterval.count()/10),
+            mode(MODE_PREPARING), lastTemp(mathutil::ABSOLUTE_ZERO_CELCIUS) {
             thermPin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
             chargeMeasPin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
+            setModePreparing();
         }
-        inline void startRead() {
+        inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
+            (void)interval;
+            if (mode == MODE_PREPARING) {
+                if ((EventClockT::now() - startModeTime) > readInterval) {
+                    //only read on a periodic basis because it requires busy-waiting (high cpu usage).
+                    setModeReading();
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if (chargeMeasPin.digitalRead() == IoLow) { 
+                    //capacitor is still discharging; check for possible timeout
+                    //note: when reading, the interval will always be OnIdleCpuIntervalShort, so we don't have an easy way to only check timeout periodically
+                    if (/*interval == OnIdleCpuIntervalWide &&*/ EventClockT::now()-startModeTime > readTimeout) {
+                        //read has timed out
+                        LOG("RCThermistor2Pin read timeout\n");
+                        setModePreparing();
+                        return false;
+                    } else {
+                        return true;
+                    }
+                } else {
+                    //reading is complete. Log the current time to determine discharge duration:
+                    float duration = std::chrono::duration_cast<std::chrono::duration<float> >(EventClockT::now() - startModeTime).count();
+                    if (mode == MODE_READING) {
+                        LOGV("time to read resistor: %f\n", duration);
+                        //now try to guess the resistance:
+                        float resistance = guessRFromTime(duration);
+                        LOGV("Resistance guess: %f\n", resistance);
+                        lastTemp = temperatureFromR(resistance);
+                        LOGV("Temperature guess: %f\n", lastTemp);
+                    } else if (mode == MODE_CALIBRATING) {
+                        //TODO: implement
+                    }
+                    setModePreparing();
+                    return false;
+                }
+            }
+        }
+        inline float value() const {
+            return lastTemp;
+        }
+    private:
+        //bring the capacitor as close to ground as possible to prepare it for a read.
+        inline void setModePreparing() {
+            mode = MODE_PREPARING;
+            startModeTime = EventClockT::now();
+            //disconnect thermistor to allow the capacitor to be drained
+            thermPin.makeDigitalInput();
+            //prepare IOs for the next read (ie. drain the capacitor that was charged during reading)
+            chargeMeasPin.makeDigitalOutput(IoLow);
+        }
+        //after a call to setModePreparing + a sufficient delay,
+        //  configure the capacitor to be charged through the thermistor
+        inline void setModeReading() {
+            mode = MODE_READING;
             //TODO: Also need to ensure that the we haven't been pre-empted between grabbing the time & setting the pins.
-            _startReadTime = EventClockT::now();
+            startModeTime = EventClockT::now();
             //disconnect charge pin from ground and use it to measure
             chargeMeasPin.makeDigitalInput();
             //tie thermistor to high to begin drain
             thermPin.makeDigitalOutput(IoHigh);
         }
-        //called during the read.
-        //@return true if the read is complete (ready to call value())
-        inline bool isReady() {
-            if (chargeMeasPin.digitalRead() == IoLow) { //capacitor is still discharging; not ready.
-                return false;
-            } else {
-                //reading is complete. Log the current time to determine discharge duration:
-                _endReadTime = EventClockT::now();
-                //disconnect thermistor to allow the capacitor to be drained
-                thermPin.makeDigitalInput();
-                //prepare IOs for the next read (ie. drain the capacitor that was charged during reading)
-                chargeMeasPin.makeDigitalOutput(IoLow);
-                return true;
-            }
+        inline void setModeCalibrating() {
+            mode = MODE_CALIBRATING;
+            //TODO: Also need to ensure that the we haven't been pre-empted between grabbing the time & setting the pins.
+            startModeTime = EventClockT::now();
+            //disconnect charge pin from ground and use it to measure
+            chargeMeasPin.makeDigitalInput();
+            //disconnect thermistor to drain only through Rup.
+            thermPin.makeDigitalInput();
         }
-        //need to expose this information to assist in detecting freezes / failed reads.
-        inline EventClockT::duration timeSinceStartRead() const {
-            return EventClockT::now() - _startReadTime;
-        }
-        
-        inline float value() const {
-            float duration = std::chrono::duration_cast<std::chrono::duration<float> >(_endReadTime - _startReadTime).count();
-            LOGV("time to read resistor: %f\n", duration);
-            //now try to guess the resistance:
-            float resistance = guessRFromTime(duration);
-            LOGV("Resistance guess: %f\n", resistance);
-            float temp = temperatureFromR(resistance);
-            LOGV("Temperature guess: %f\n", temp);
-            return temp;
-        }
-    private:
         //@tr the time it took to charge the capacitor through the thermistor
         inline float guessRFromTime(float tr) const {
             /*Derive the resistance as a function of the time taken to charge capacitor
