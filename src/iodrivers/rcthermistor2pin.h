@@ -88,6 +88,7 @@ class RCThermistor2Pin : public IODriver {
     EventClockT::duration readInterval;
     EventClockT::duration readTimeout;
     EventClockT::time_point startModeTime;
+    bool isCalibrated;
     ThermMode mode;
     float lastTemp;
     public:
@@ -99,7 +100,7 @@ class RCThermistor2Pin : public IODriver {
             Vtoggle(V_TOGGLE_V), T0(mathutil::CtoK(T0_C)), R0(R0_OHMS), B(BETA),
             readInterval(readInterval), 
             readTimeout(this->readInterval.count()/10),
-            mode(MODE_PREPARING), lastTemp(mathutil::ABSOLUTE_ZERO_CELCIUS) {
+            isCalibrated(false), mode(MODE_PREPARING), lastTemp(mathutil::ABSOLUTE_ZERO_CELCIUS) {
             thermPin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
             chargeMeasPin.setDefaultState(IO_DEFAULT_HIGH_IMPEDANCE);
             setModePreparing();
@@ -109,7 +110,11 @@ class RCThermistor2Pin : public IODriver {
             if (mode == MODE_PREPARING) {
                 if ((EventClockT::now() - startModeTime) > readInterval) {
                     //only read on a periodic basis because it requires busy-waiting (high cpu usage).
-                    setModeReading();
+                    if (isCalibrated) {
+                        setModeReading();
+                    } else {
+                        setModeCalibrating();
+                    }
                     return true;
                 } else {
                     return false;
@@ -137,7 +142,8 @@ class RCThermistor2Pin : public IODriver {
                         lastTemp = temperatureFromR(resistance);
                         LOGV("Temperature guess: %f\n", lastTemp);
                     } else if (mode == MODE_CALIBRATING) {
-                        //TODO: implement
+                        updateValuesFromCalibrationData(duration);
+                        isCalibrated = true;
                     }
                     setModePreparing();
                     return false;
@@ -184,8 +190,8 @@ class RCThermistor2Pin : public IODriver {
              *  Step response when switched to read mode:
              *    v(0) = vi = Vcc*Rchrg / (Rup+Rchrg)
              *    v(infinity) = vf = Vcc
-             *    T = Rread*C where Rread = Rup || (Rseries + therm) = (Rup+Rseries+therm)/(Rup*(Rseries+therm))
-             *    v(t) = (vi-vf)*e^(-t/T) + vf
+             *    Tau = Rread*C where Rread = Rup || (Rseries + therm) = (Rup+Rseries+therm)/(Rup*(Rseries+therm))
+             *    v(t) = (vi-vf)*e^(-t/Tau) + vf
              *  knowing v(tr) = Vtoggle:
              *    ln((Vtoggle - vf)/(vi-vf)) = -tr/(Rread*C)
              *   *Rread = -tr/(C*ln((Vtoggle - vf)/(vi-vf)))
@@ -203,9 +209,27 @@ class RCThermistor2Pin : public IODriver {
             return therm;
         }
         inline float temperatureFromR(float R) const {
+            if (R < 0) {
+                LOGE("RCThermistor2Pin guessRFromTime returned a negative value! (thermistor read error)\n");
+                return mathutil::ABSOLUTE_ZERO_CELCIUS;
+            }
             float K = 1. / (1./T0 + log(R/R0)/B); //resistance;
             return mathutil::KtoC(K);
         }
+        //@tr the time it took to charge the capacitor through the fixed resistance, Rup
+        inline void updateValuesFromCalibrationData(float tr) {
+            //During a calibration read, in which THERMPIN and CHRG/MEAS are both high-impedance,
+            //We have the following relation:
+            //  v(0) = vi = Vcc*Rchrg / (Rup+Rchrg)
+            //  v(infinity) = vf = Vcc
+            //  Tau = Rup*C
+            //  thus, v(t) = (vi-vf)*e^(-t/Tau) + vf
+            //  knowing that v(tr) SHOULD equal Vtoggle, we will thus adjust our Vtoggle value to math v(tr)
+            float Tau = Rup*C;
+            float vi = Vcc*Rchrg / (Rup+Rchrg);
+            float vf = Vcc;
+            Vtoggle = (vi-vf)*exp(-tr/Tau) + vf;
+        } 
 };
 
 
