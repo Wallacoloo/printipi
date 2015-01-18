@@ -85,7 +85,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
         }
         inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
             bool needMoreCpu = _therm.onIdleCpu(interval);
-            //periodically, map temperature to hotend power feedback & update pwm:
+            //periodically, map temperature to hotend power feedback & update pwm.
             if (interval == OnIdleCpuIntervalWide) {
                 updatePwm(_therm.value());
             }

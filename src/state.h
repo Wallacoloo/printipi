@@ -92,8 +92,12 @@ template <typename Drv> class State {
             bool onIdleCpu(OnIdleCpuIntervalT interval) {
                 //relay onIdleCpu event to hardware scheduler & state.
                 //return true if either one requests more cpu time. 
+                IntervalTimer timer;
+                timer.clock();
                 bool hwNeedsCpu = _hardwareScheduler.onIdleCpu(interval);
+                LOGV("Time spent in _hardwareScheduler:onIdleCpu: %llu, %i, ret %i\n", timer.clockDiff().count(), interval, hwNeedsCpu);
                 bool stateNeedsCpu = _state.onIdleCpu(interval);
+                LOGV("Time spent in state.h:onIdleCpu: %llu, %i, ret %i\n", timer.clockDiff().count(), interval, stateNeedsCpu);
                 return hwNeedsCpu || stateNeedsCpu;
             }
             inline void queue(const OutputEvent &evt) {
@@ -362,8 +366,6 @@ template <typename Drv> struct State<Drv>::State__onIdleCpu {
 };
 
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
-    IntervalTimer timer;
-    timer.clock();
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
         OutputEvent ioDriverEvt = iodrv::IODriver::tuplePeekNextEvent(ioDrivers);
@@ -424,7 +426,6 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
     }
 
     bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), interval);
-    LOGV("Time spent in state.h:onIdleCpu: %llu\n", timer.clockDiff().count());
     return motionNeedsCpu || driversNeedCpu;
 }
 

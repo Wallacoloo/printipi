@@ -116,12 +116,16 @@ class RCThermistor2Pin : public IODriver {
             (void)interval;
             if (mode == MODE_PREPARING) {
                 onIdleCpuTimer.clock();
+                //only do a thermistor read on a periodic basis because it requires busy-waiting (high cpu usage).
                 if ((EventClockT::now() - startModeTime) > readInterval) {
-                    //only read on a periodic basis because it requires busy-waiting (high cpu usage).
-                    if (isCalibrated) {
-                        setModeReading();
-                    } else {
-                        setModeCalibrating();
+                    //We should only begin a read on a short interval, otherwise other IoDrivers may stall us doing their WideInterval routines
+                    if (interval == OnIdleCpuIntervalShort) {
+                        if (isCalibrated) {
+                            setModeReading();
+                        } else {
+                            setModeCalibrating();
+                        }
+                        //LOGV("RCThermistor2Pin took how long to setMode: %llu\n", (EventClockT::now()-onIdleCpuTimer.get()).count());
                     }
                     return true;
                 } else {

@@ -104,6 +104,7 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
     while (!_doExit) {
         if (!nextEvent.isNull() && isEventTime(nextEvent)) {
             //queue the pending event and reset it
+            LOGV("Scheduler::queue\n");
             interface.queue(nextEvent);
             this->nextEvent = OutputEvent();
         }
@@ -114,6 +115,7 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
             }
             //if we don't need any onIdleCpu, then sleep until the event.
             //sleepUntilEvent won't always do the full sleep; it has a time limit.
+            LOGV("Scheduler::sleepUntilEvent\n");
             this->sleepUntilEvent(this->nextEvent);
             //We just slept for a while, which translates to a wide interval. Note that it may not actually be the event time yet.
             intervalT = OnIdleCpuIntervalWide;
@@ -123,6 +125,7 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
             intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
         }
     }
+    LOGV("Scheduler::eventLoop is exiting\n");
     _doExit = false;
 }
 
