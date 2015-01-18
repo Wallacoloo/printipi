@@ -61,6 +61,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
     EventClockT::duration _pwmUpdateInterval;
 
     float _destTemp;
+    float _filteredTemp;
     bool _isReading;
     EventClockT::time_point _nextPwmUpdate;
     public:
@@ -68,7 +69,8 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
             const PID &pid, const Filter &filter, float pwmPeriod=1./25000, EventClockT::duration pwmUpdateInterval=std::chrono::milliseconds(2000)) 
          : IODriver(), _hotType(hotType), _heater(std::move(heater)), _therm(std::move(therm)), _pid(pid), _filter(filter), 
          _pwmPeriod(pwmPeriod), _pwmUpdateInterval(pwmUpdateInterval), 
-         _destTemp(-300), _isReading(false), _nextPwmUpdate(EventClockT::now()) {
+         _destTemp(mathutil::ABSOLUTE_ZERO_CELCIUS), _filteredTemp(mathutil::ABSOLUTE_ZERO_CELCIUS), 
+         _isReading(false), _nextPwmUpdate(EventClockT::now()) {
             _heater.setDefaultState(IO_DEFAULT_LOW);
             _heater.makePwmOutput(0.0);
         }
@@ -83,7 +85,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
             _destTemp = t;
         }
         inline CelciusType getMeasuredTemperature() const {
-            return _therm.value();
+            return _filteredTemp; //don't return _therm.value(), as that's unfiltered
         }
         inline CelciusType getTargetTemperature() const {
             return _destTemp;
@@ -101,10 +103,10 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
     private:
         inline void updatePwm(float lastTemp) {
 	        //Filter the measurement values to compensate for jitter, etc
-            float filtered = _filter.feed(lastTemp);
+            _filteredTemp = _filter.feed(lastTemp);
             //Then feed the filtered measurements to a feedback controller
-            float pwm = _pid.feed(_destTemp, filtered);
-            LOG("tempcontrol: drive-strength=%f, temp=%f *C\n", pwm, filtered);
+            float pwm = _pid.feed(_destTemp, _filteredTemp);
+            LOG("tempcontrol: drive-strength=%f, temp=%f *C\n", pwm, _filteredTemp);
             _heater.pwmWrite(pwm, _pwmPeriod);
         }
 };
