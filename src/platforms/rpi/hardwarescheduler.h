@@ -147,21 +147,37 @@
 #include "schedulerbase.h" //for OnIdleCpuIntervalT
 
 //config settings:
-#define PWM_FIFO_SIZE 1 //The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.
-//#define SOURCE_BUFFER_FRAMES 8192 //number of gpio timeslices to buffer. These are processed at ~1 million/sec. So 1000 frames is 1 ms. Using a power-of-two is a good idea as it simplifies some of the arithmetic (modulus operations)
+//The DMA transaction is paced through the PWM FIFO. The PWM FIFO consumes 1 word every N uS (set in clock settings). 
+//  Once the fifo has fewer than PWM_FIFO_SIZE words available, it will request more data from DMA. 
+//  Thus, a high buffer length will be more resistant to clock drift, but may occasionally request multiple frames in a short succession 
+//  (faster than FRAME_PER_SEC) in the presence of bus contention, whereas a low buffer length 
+//  will always space frames AT LEAST 1/FRAMES_PER_SEC seconds apart, but may experience clock drift.
+#define PWM_FIFO_SIZE 1
+//number of gpio timeslices to buffer. These are processed at 0.25~1 million/sec, depending on clock settings (below). 
+//The buffer must be sufficiently large to handle kernel preemption / OS multitasking.
+//Using a power-of-two is a good idea as it simplifies some of the arithmetic (modulus operations).
+//Furthermore, since this buffer manages PWM as well, the amount of cpu time taken during any queuePwm() writes is proportional to the # of frames,
+//  so shorter is better.
+//On the other hand, the longer the buffer, the more resolution available to PWM.
+//  But keep in mind that most other systems out there only have 256 levels of PWM control, so even just 512 frames is already superior.
+//#define SOURCE_BUFFER_FRAMES 8192
 //#define SOURCE_BUFFER_FRAMES 16384
 //#define SOURCE_BUFFER_FRAMES 32768
 #define SOURCE_BUFFER_FRAMES 65536
 
-#define NOMINAL_CLOCK_FREQ 500000000 //PWM Clock runs at 500 MHz, unless overclocking
-#define BITS_PER_CLOCK 10 //# of bits to be used in each PWM cycle. Effectively acts as a clock divisor for us, since the PWM clock is in bits/second
-#define CLOCK_DIV 200 //# to divide the NOMINAL_CLOCK_FREQ by before passing it to the PWM peripheral.
+//PWM Clock runs at 500 MHz, unless overclocking
+#define NOMINAL_CLOCK_FREQ 500000000
+//# of bits to be used in each PWM cycle. Effectively acts as a clock divisor for us, since the PWM clock is in bits/second
+#define BITS_PER_CLOCK 10 
+//# to divide the NOMINAL_CLOCK_FREQ by before passing it to the PWM peripheral.
+#define CLOCK_DIV 200
 //gpio frames per second is a product of the nominal clock frequency divided by BITS_PER_CLOCK and divided again by CLOCK_DIV
 //At 500,000 frames/sec, memory bandwidth does not appear to be an issue (jitter of -1 to +2 uS)
 //attempting 1,000,000 frames/sec results in an actual 800,000 frames/sec, though with a lot of jitter.
 //Note that these numbers might vary with heavy network or usb usage.
 // eg at 500,000 fps, with 1MB/sec network download, jitter is -1 to +30 uS
 // at 250,000 fps, with 1MB/sec network download, jitter is only -3 to +3 uS
+
 #define FRAMES_PER_SEC NOMINAL_CLOCK_FREQ/BITS_PER_CLOCK/CLOCK_DIV
 #define SEC_TO_FRAME(s) ((int64_t)(s)*FRAMES_PER_SEC)
 #define USEC_TO_FRAME(u) (SEC_TO_FRAME(u)/1000000)
@@ -175,29 +191,23 @@
 #define MAX_SCHED_AHEAD_FRAME (SOURCE_BUFFER_FRAMES - (SOURCE_BUFFER_FRAMES>>6))
 #define MAX_SCHED_AHEAD_USEC (FRAME_TO_USEC(MAX_SCHED_AHEAD_FRAME))
 
-class OutputEvent; //defined in outputevent.h
+//forward declare class defined in outputevent.h
+class OutputEvent;
 
 namespace plat {
 namespace rpi {
 
-class PrimitiveIoPin; //defined in primitiveiopin.h
+//forward declare class defined in platforms/rpi/primitiveiopin.h
+class PrimitiveIoPin;
 
+//forward declare classes defined in the platforms/rpi/hardwarescheduler.cpp
 struct DmaChannelHeader;
 struct DmaControlBlock;
 struct PwmHeader;
 struct GpioBufferFrame;
 
-
 /*
- * implements the HardwareScheduler interface defined in platforms/generic/hardwarescheduler.h
- *
- * It works by maintaining a circular queue of, say, 10 ms in length.
- * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
- * Meanwhile, a CPU peripheral called DMA (Direct Memory Access) is constantly each frame of this queue into the memory-mapped GPIO bank at a mostly constant rate.
- * This memory streaming happens constantly, regardless of what the CPU is doing. Logically, it's almost like an entirely separate entity from the cpu.
- * 
- * DMA timing is done by configuring the PWM module to request a sample at a given rate. Once this sample is requested, the entire DMA transaction is gated until the request is fulfilled. This allows one to copy a frame into the gpio bank and then fulfill the PWM sample request, which stalls the transaction until the PWM device requests another sample.
- *
+ * Underlying class that is abstracted by the actual HardwareScheduler (defined further below).
  */
 class UnwrappedHardwareScheduler {
     struct DmaMem {
@@ -246,10 +256,25 @@ class UnwrappedHardwareScheduler {
         void sleepUntilMicros(uint64_t micros) const;
 };
 
+
+/*
+ * implements the HardwareScheduler interface defined in platforms/generic/hardwarescheduler.h
+ *
+ * It works by maintaining a circular queue of, say, 10 ms in length.
+ * When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
+ * Meanwhile, a CPU peripheral called DMA (Direct Memory Access) is constantly each frame of this queue into the memory-mapped GPIO bank at a mostly constant rate.
+ * This memory streaming happens constantly, regardless of what the CPU is doing. Logically, it's almost like an entirely separate entity from the cpu.
+ * 
+ * DMA timing is done by configuring the PWM module to request a sample at a given rate. Once this sample is requested, the entire DMA transaction is gated until the request is fulfilled. This allows one to copy a frame into the gpio bank and then fulfill the PWM sample request, which stalls the transaction until the PWM device requests another sample.
+ *
+ */
 class HardwareScheduler {
     UnwrappedHardwareScheduler *_sched;
     public:
         inline HardwareScheduler() {
+            //Only ever create 1 actual UnwrappedHardwareScheduler,
+            //but allow any number of HardwareSchedulers that just refer to this same underlying instance.
+            //Note: this is only needed because other parts of the rpi platform need access to the HardwareScheduler.
             static UnwrappedHardwareScheduler singleton;
             _sched = &singleton;
         }
