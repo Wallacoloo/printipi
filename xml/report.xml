@@ -31,72 +31,72 @@ return values.
         <location column="5" file="gparse/command.h" line="59" />
       </undocumented>
       <undocumented id="logging::disable" name="disable">
-        <location column="5" file="common/logging.h" line="94" />
-      </undocumented>
-      <undocumented id="logging::enableDebug" name="enableDebug">
         <location column="5" file="common/logging.h" line="100" />
       </undocumented>
+      <undocumented id="logging::enableDebug" name="enableDebug">
+        <location column="5" file="common/logging.h" line="106" />
+      </undocumented>
       <undocumented id="logging::enableInfo" name="enableInfo">
-        <location column="5" file="common/logging.h" line="108" />
+        <location column="5" file="common/logging.h" line="114" />
       </undocumented>
       <undocumented id="logging::enableVerbose" name="enableVerbose">
-        <location column="5" file="common/logging.h" line="104" />
+        <location column="5" file="common/logging.h" line="110" />
       </undocumented>
       <undocumented id="logging::isDebugEnabled" name="isDebugEnabled">
-        <location column="5" file="common/logging.h" line="87" />
+        <location column="5" file="common/logging.h" line="93" />
       </undocumented>
       <undocumented id="logging::isInfoEnabled" name="isInfoEnabled">
-        <location column="5" file="common/logging.h" line="84" />
-      </undocumented>
-      <undocumented id="logging::isVerboseEnabled" name="isVerboseEnabled">
         <location column="5" file="common/logging.h" line="90" />
       </undocumented>
+      <undocumented id="logging::isVerboseEnabled" name="isVerboseEnabled">
+        <location column="5" file="common/logging.h" line="96" />
+      </undocumented>
       <undocumented id="mitpi::init" name="init">
-        <location column="1" file="platforms/rpi/mitpi.h" line="161" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="163" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="85" />
       </undocumented>
       <undocumented id="mitpi::makeInput" name="makeInput">
-        <location column="1" file="platforms/rpi/mitpi.h" line="164" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="166" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="108" />
       </undocumented>
       <undocumented id="mitpi::makeOutput" name="makeOutput">
-        <location column="1" file="platforms/rpi/mitpi.h" line="163" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="165" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="103" />
       </undocumented>
       <undocumented id="mitpi::mapPeripheral" name="mapPeripheral">
-        <location column="1" file="platforms/rpi/mitpi.h" line="159" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="161" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="67" />
       </undocumented>
       <undocumented id="mitpi::readPinState" name="readPinState">
-        <location column="1" file="platforms/rpi/mitpi.h" line="168" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="170" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="130" />
       </undocumented>
       <undocumented id="mitpi::readSysTime" name="readSysTime">
-        <location column="1" file="platforms/rpi/mitpi.h" line="175" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="177" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="160" />
       </undocumented>
       <undocumented id="mitpi::setPinHigh" name="setPinHigh">
-        <location column="1" file="platforms/rpi/mitpi.h" line="165" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="167" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="113" />
       </undocumented>
       <undocumented id="mitpi::setPinLow" name="setPinLow">
-        <location column="1" file="platforms/rpi/mitpi.h" line="166" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="168" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="120" />
       </undocumented>
       <undocumented id="mitpi::setPinPull" name="setPinPull">
-        <location column="1" file="platforms/rpi/mitpi.h" line="169" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="171" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="137" />
       </undocumented>
       <undocumented id="mitpi::setPinState" name="setPinState">
-        <location column="1" file="platforms/rpi/mitpi.h" line="167" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="169" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="127" />
       </undocumented>
       <undocumented id="mitpi::usleep" name="usleep">
-        <location column="1" file="platforms/rpi/mitpi.h" line="174" />
+        <location column="1" file="platforms/rpi/mitpi.h" line="176" />
         <location column="1" file="platforms/rpi/mitpi.cpp" line="155" />
       </undocumented>
     </type>
-    <type documented="7" name="typedef" undocumented="17">
+    <type documented="7" name="typedef" undocumented="18">
       <undocumented id="CelciusType" name="CelciusType">
         <location column="1" file="compileflags.h" line="86" />
       </undocumented>
@@ -114,6 +114,9 @@ return values.
       </undocumented>
       <undocumented id="SleepT" name="SleepT">
         <location column="9" file="platforms/auto/thisthreadsleep.h" line="42" />
+      </undocumented>
+      <undocumented id="mitpi::PinIntType" name="PinIntType">
+        <location column="1" file="platforms/rpi/mitpi.h" line="159" />
       </undocumented>
       <undocumented id="motion::AxisStepper::GetArcStepperTypes::ArcStepperTypes" name="ArcStepperTypes">
         <location column="13" file="motion/axisstepper.h" line="91" />
@@ -850,9 +853,9 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
-        <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/command.cpp" line="26" />
         <location column="1" file="gparse/com.cpp" line="26" />
+        <location column="1" file="gparse/response.cpp" line="3" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -944,7 +947,7 @@ return values.
         <location column="9" file="common/intervaltimer.h" line="38" />
       </undocumented>
       <undocumented id="LowPassFilter::feed" name="feed">
-        <location column="9" file="common/filters/lowpassfilter.h" line="46" />
+        <location column="9" file="common/filters/lowpassfilter.h" line="47" />
       </undocumented>
       <undocumented id="NoFilter::feed" name="feed">
         <location column="5" file="common/filters/nofilter.h" line="32" />
@@ -1682,19 +1685,19 @@ return values.
         <location column="1" file="iodrivers/servo.cpp" line="29" />
       </undocumented>
       <undocumented id="iodrv::TempControl::getMeasuredTemperature" name="getMeasuredTemperature">
-        <location column="9" file="iodrivers/tempcontrol.h" line="85" />
+        <location column="9" file="iodrivers/tempcontrol.h" line="87" />
       </undocumented>
       <undocumented id="iodrv::TempControl::getTargetTemperature" name="getTargetTemperature">
-        <location column="9" file="iodrivers/tempcontrol.h" line="88" />
+        <location column="9" file="iodrivers/tempcontrol.h" line="90" />
       </undocumented>
       <undocumented id="iodrv::TempControl::isHeatedBed" name="isHeatedBed">
-        <location column="9" file="iodrivers/tempcontrol.h" line="79" />
+        <location column="9" file="iodrivers/tempcontrol.h" line="81" />
       </undocumented>
       <undocumented id="iodrv::TempControl::onIdleCpu" name="onIdleCpu">
-        <location column="9" file="iodrivers/tempcontrol.h" line="91" />
+        <location column="9" file="iodrivers/tempcontrol.h" line="93" />
       </undocumented>
       <undocumented id="iodrv::TempControl::setTargetTemperature" name="setTargetTemperature">
-        <location column="9" file="iodrivers/tempcontrol.h" line="82" />
+        <location column="9" file="iodrivers/tempcontrol.h" line="84" />
       </undocumented>
       <undocumented id="machines::Machine::clampMoveRate" name="clampMoveRate">
         <location column="9" file="machines/machine.h" line="55" />
@@ -2065,7 +2068,7 @@ return values.
         <location column="9" file="common/intervaltimer.h" line="37" />
       </undocumented>
       <undocumented id="LowPassFilter::LowPassFilter" name="LowPassFilter">
-        <location column="9" file="common/filters/lowpassfilter.h" line="45" />
+        <location column="9" file="common/filters/lowpassfilter.h" line="46" />
       </undocumented>
       <undocumented id="Matrix3x3::Matrix3x3" name="Matrix3x3">
         <location column="9" file="common/matrix.h" line="38" />
@@ -2168,10 +2171,10 @@ return values.
         <location column="9" file="iodrivers/rcthermistor2pin.h" line="100" />
       </undocumented>
       <undocumented id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;" name="TempControl&lt;Thermistor, PID, Filter&gt;">
-        <location column="9" file="iodrivers/tempcontrol.h" line="67" />
+        <location column="9" file="iodrivers/tempcontrol.h" line="68" />
       </undocumented>
       <undocumented id="mitpi::InitMitpiType::InitMitpiType" name="InitMitpiType">
-        <location column="5" file="platforms/rpi/mitpi.h" line="189" />
+        <location column="5" file="platforms/rpi/mitpi.h" line="191" />
       </undocumented>
       <undocumented id="motion::AxisStepper::AxisStepper" name="AxisStepper">
         <location column="9" file="motion/axisstepper.h" line="81" />
@@ -2224,15 +2227,15 @@ return values.
         <location column="1" file="common/optionalarg.h" line="46" />
       </undocumented>
       <undocumented id="logging::_debug" name="_debug">
-        <location column="5" file="common/logging.h" line="81" />
+        <location column="5" file="common/logging.h" line="87" />
         <location column="1" file="common/logging.cpp" line="31" />
       </undocumented>
       <undocumented id="logging::_info" name="_info">
-        <location column="5" file="common/logging.h" line="80" />
+        <location column="5" file="common/logging.h" line="86" />
         <location column="1" file="common/logging.cpp" line="30" />
       </undocumented>
       <undocumented id="logging::_verbose" name="_verbose">
-        <location column="5" file="common/logging.h" line="82" />
+        <location column="5" file="common/logging.h" line="88" />
         <location column="1" file="common/logging.cpp" line="32" />
       </undocumented>
       <undocumented id="plat::generic::ChronoClock::is_steady" name="is_steady">
@@ -3325,7 +3328,7 @@ return values.
       <undocumented name="pv" />
     </function>
     <function id="iodrv::TempControl::isHotend" name="isHotend">
-      <location column="9" file="iodrivers/tempcontrol.h" line="76" />
+      <location column="9" file="iodrivers/tempcontrol.h" line="78" />
       <undocumented-return />
     </function>
     <function id="iodrv::Servo::Servo" name="Servo">

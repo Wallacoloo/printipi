@@ -190,6 +190,9 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <struct name="InitMitpiType" ref="mitpi::InitMitpiType#mitpi::InitMitpiType">
       <brief>convenience type used to manage lifetime of mitpi.</brief>
     </struct>
+    <typedef name="PinIntType" ref="mitpi::PinIntType#mitpi::PinIntType">
+      <type builtin="yes" name="unsigned int" />
+    </typedef>
   </namespace>
   <namespace name="motion" ref="motion#motion">
     <brief>for motion::USE_ENDSTOPS</brief>

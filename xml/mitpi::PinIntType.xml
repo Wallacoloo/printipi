@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='utf-8'?>
+<typedef id="mitpi::PinIntType" name="PinIntType" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <type builtin="yes" name="unsigned int" />
+  <function id="mitpi::makeInput" name="makeInput">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::makeInput::pin" name="pin">
+      <type name="PinIntType" ref="mitpi::PinIntType#mitpi::PinIntType" />
+    </argument>
+  </function>
+  <function id="mitpi::makeOutput" name="makeOutput">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::makeOutput::pin" name="pin">
+      <type name="PinIntType" ref="mitpi::PinIntType#mitpi::PinIntType" />
+    </argument>
+  </function>
+  <function id="mitpi::readPinState" name="readPinState">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="mitpi::readPinState::pin" name="pin">
+      <type name="PinIntType" ref="mitpi::PinIntType#mitpi::PinIntType" />
+    </argument>
+  </function>
+  <function id="mitpi::setPinHigh" name="setPinHigh">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPinHigh::pin" name="pin">
+      <type name="PinIntType" ref="mitpi::PinIntType#mitpi::PinIntType" />
+    </argument>
+  </function>
+  <function id="mitpi::setPinLow" name="setPinLow">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPinLow::pin" name="pin">
+      <type name="PinIntType" ref="mitpi::PinIntType#mitpi::PinIntType" />
+    </argument>
+  </function>
+  <function id="mitpi::setPinPull" name="setPinPull">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPinPull::pin" name="pin">
+      <type name="PinIntType" ref="mitpi::PinIntType#mitpi::PinIntType" />
+    </argument>
+    <argument id="mitpi::setPinPull::pull" name="pull">
+      <type name="GpioPull" ref="mitpi#mitpi::GpioPull" />
+    </argument>
+  </function>
+  <function id="mitpi::setPinState" name="setPinState">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="mitpi::setPinState::pin" name="pin">
+      <type name="PinIntType" ref="mitpi::PinIntType#mitpi::PinIntType" />
+    </argument>
+    <argument id="mitpi::setPinState::state" name="state">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </function>
+</typedef>
