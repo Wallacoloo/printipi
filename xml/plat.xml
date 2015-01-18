@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="plat" name="plat" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>defined in outputevent.h</brief>
   <namespace name="generic" ref="plat::generic#plat::generic" />
   <namespace name="rpi" ref="plat::rpi#plat::rpi" />
 </namespace>

@@ -1,4 +1,4 @@
 <?xml version='1.0' encoding='utf-8'?>
 <struct id="plat::rpi::DmaChannelHeader" name="DmaChannelHeader" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>defined in primitiveiopin.h</brief>
+  <brief>forward declare classes defined in the platforms/rpi/hardwarescheduler.cpp</brief>
 </struct>

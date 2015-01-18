@@ -19,6 +19,9 @@ or (if its a 3 wire fan), the fan should be powered from the power rail &amp; th
     <argument id="iodrv::Fan::Fan::defaultState" name="defaultState">
       <type name="DefaultIoState" ref="iodrv#iodrv::DefaultIoState" />
     </argument>
+    <argument id="iodrv::Fan::Fan::multiplier" name="multiplier">
+      <type builtin="yes" name="float" />
+    </argument>
     <argument id="iodrv::Fan::Fan::period" name="period">
       <type builtin="yes" name="float" />
     </argument>

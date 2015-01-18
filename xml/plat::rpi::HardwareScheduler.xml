@@ -1,5 +1,16 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="plat::rpi::HardwareScheduler" name="HardwareScheduler" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+implements the HardwareScheduler interface defined in platforms/generic/hardwarescheduler.h
+
+It works by maintaining a circular queue of, say, 10 ms in length.
+When it is told to toggle a pin at a specific time (via the 'queue' function), it edits this queue.
+Meanwhile, a CPU peripheral called DMA (Direct Memory Access) is constantly each frame of this queue into the memory-mapped GPIO bank at a mostly constant rate.
+This memory streaming happens constantly, regardless of what the CPU is doing. Logically, it's almost like an entirely separate entity from the cpu.
+
+DMA timing is done by configuring the PWM module to request a sample at a given rate. Once this sample is requested, the entire DMA transaction is gated until the request is fulfilled. This allows one to copy a frame into the gpio bank and then fulfill the PWM sample request, which stalls the transaction until the PWM device requests another sample.
+
+</doc>
   <constructor id="plat::rpi::HardwareScheduler::HardwareScheduler" name="HardwareScheduler" />
   <method id="plat::rpi::HardwareScheduler::onIdleCpu" name="onIdleCpu">
     <return>

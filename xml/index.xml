@@ -262,7 +262,6 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     </struct>
   </namespace>
   <namespace name="plat" ref="plat#plat">
-    <brief>defined in outputevent.h</brief>
     <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
       <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
@@ -274,14 +273,16 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <namespace name="rpi" ref="plat::rpi#plat::rpi">
       <class name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
       <struct name="DmaChannelHeader" ref="plat::rpi::DmaChannelHeader#plat::rpi::DmaChannelHeader">
-        <brief>defined in primitiveiopin.h</brief>
+        <brief>forward declare classes defined in the platforms/rpi/hardwarescheduler.cpp</brief>
       </struct>
       <struct name="DmaControlBlock" ref="plat::rpi::DmaControlBlock#plat::rpi::DmaControlBlock" />
       <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame">
         <brief>custom structure used for storing the GPIO buffer.</brief>
       </struct>
       <class name="HardwareScheduler" ref="plat::rpi::HardwareScheduler#plat::rpi::HardwareScheduler" />
-      <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
+      <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin">
+        <brief>forward declare class defined in platforms/rpi/primitiveiopin.h</brief>
+      </class>
       <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />
       <class name="UnwrappedHardwareScheduler" ref="plat::rpi::UnwrappedHardwareScheduler#plat::rpi::UnwrappedHardwareScheduler" />
     </namespace>
@@ -300,7 +301,9 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <brief>allow for a function default value that is not a constant.</brief>
     <templatetypeparameter id="OptionalArg::T" name="T" />
   </classtemplate>
-  <class name="OutputEvent" ref="OutputEvent#OutputEvent" />
+  <class name="OutputEvent" ref="OutputEvent#OutputEvent">
+    <brief>forward declare class defined in outputevent.h</brief>
+  </class>
   <class name="PID" ref="PID#PID" />
   <classtemplate name="Scheduler" ref="Scheduler#Scheduler">
     <templatetypeparameter id="Scheduler::Interface" name="Interface" />

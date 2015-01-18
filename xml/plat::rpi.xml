@@ -2,14 +2,16 @@
 <namespace id="plat::rpi" name="rpi" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <class name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
   <struct name="DmaChannelHeader" ref="plat::rpi::DmaChannelHeader#plat::rpi::DmaChannelHeader">
-    <brief>defined in primitiveiopin.h</brief>
+    <brief>forward declare classes defined in the platforms/rpi/hardwarescheduler.cpp</brief>
   </struct>
   <struct name="DmaControlBlock" ref="plat::rpi::DmaControlBlock#plat::rpi::DmaControlBlock" />
   <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame">
     <brief>custom structure used for storing the GPIO buffer.</brief>
   </struct>
   <class name="HardwareScheduler" ref="plat::rpi::HardwareScheduler#plat::rpi::HardwareScheduler" />
-  <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
+  <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin">
+    <brief>forward declare class defined in platforms/rpi/primitiveiopin.h</brief>
+  </class>
   <struct name="PwmHeader" ref="plat::rpi::PwmHeader#plat::rpi::PwmHeader" />
   <class name="UnwrappedHardwareScheduler" ref="plat::rpi::UnwrappedHardwareScheduler#plat::rpi::UnwrappedHardwareScheduler" />
 </namespace>
