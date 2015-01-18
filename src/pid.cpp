@@ -29,7 +29,8 @@ float PID::feed(float setpoint, float pv) {
     float error = setpoint - pv;
     float deltaT = refreshTime();
     // Use a simple 1st order finite difference for the derivative - no fancy filtering.
-    float errorD = (pv-lastValue)/deltaT;
+    // Note the negation: this is because the D term is the derivative of the *error* (setpoint - pv).
+    float errorD = -(pv-lastValue)/deltaT;
     lastValue = pv;
     // Then figure out the change for the integral
     float update = I() * error * deltaT;
