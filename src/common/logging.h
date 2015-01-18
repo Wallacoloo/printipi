@@ -25,6 +25,7 @@
 #define COMMON_LOGGING_H
 
 #include <stdio.h>
+#include <inttypes.h> //allow use of PRId64 by other files that make use of logging
 #include "compileflags.h"
 
 #if DO_LOG

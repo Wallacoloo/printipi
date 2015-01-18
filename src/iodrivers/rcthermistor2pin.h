@@ -133,7 +133,7 @@ class RCThermistor2Pin : public IODriver {
                 }
             } else {
                 EventClockT::time_point timeNow = EventClockT::now();
-                LOGV("RCThermistor2Pin onIdleCpu latency: %zu\n", onIdleCpuTimer.clockDiff().count());
+                LOGV("RCThermistor2Pin onIdleCpu latency: %" PRId64 "\n", onIdleCpuTimer.clockDiff().count());
                 if (chargeMeasPin.digitalRead() == IoLow) { 
                     //capacitor is still discharging; check for possible timeout
                     if (timeNow-startModeTime > readTimeout) {
