@@ -304,7 +304,9 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <brief>allow for a function default value that is not a constant.</brief>
     <templatetypeparameter id="OptionalArg::T" name="T" />
   </classtemplate>
-  <class name="OutputEvent" ref="OutputEvent#OutputEvent" />
+  <class name="OutputEvent" ref="OutputEvent#OutputEvent">
+    <brief>forward declare class defined in outputevent.h</brief>
+  </class>
   <class name="PID" ref="PID#PID" />
   <classtemplate name="Scheduler" ref="Scheduler#Scheduler">
     <templatetypeparameter id="Scheduler::Interface" name="Interface" />
