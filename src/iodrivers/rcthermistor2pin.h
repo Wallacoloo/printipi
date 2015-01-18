@@ -31,6 +31,7 @@
 #include "iodrivers/iopin.h"
 #include "common/mathutil.h" //for CtoK, etc
 #include "common/logging.h"
+#include "common/intervaltimer.h"
 #include "iodriver.h"
 
 namespace iodrv {
@@ -94,6 +95,7 @@ class RCThermistor2Pin : public IODriver {
     bool isCalibrated;
     ThermMode mode;
     float lastTemp;
+    IntervalTimer onIdleCpuTimer;
     public:
         inline RCThermistor2Pin(IoPin &&thermPin, IoPin &&chargeMeasPin, float RCHRG_OHMS, float RSERIES_OHMS, float RUP_OHMS,
             float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA, 
@@ -112,6 +114,7 @@ class RCThermistor2Pin : public IODriver {
         }
         inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
             (void)interval;
+            LOGV("RCThermistor2Pin onIdleCpu latency: %llu\n", onIdleCpuTimer.clockDiff());
             if (mode == MODE_PREPARING) {
                 if ((EventClockT::now() - startModeTime) > readInterval) {
                     //only read on a periodic basis because it requires busy-waiting (high cpu usage).
@@ -142,7 +145,9 @@ class RCThermistor2Pin : public IODriver {
                     //Ensure we maintained the timimg accuracy requirements
                     //Note: we must use a time measured AFTER chargeMeasPin.digitalRead(), as we may have been preempted during digitalRead()
                     EventClockT::time_point endReadTime = EventClockT::now();
-                    if (endReadTime - lastServiceTime <= minTimingAccuracy) {
+                    if (endReadTime - lastServiceTime > minTimingAccuracy) {
+                        LOGV("RCThermistor2Pin could not meet timing requirements; discarding read\n");
+                    } else {
                         float duration = std::chrono::duration_cast<std::chrono::duration<float> >(endReadTime - startModeTime).count();
                         if (mode == MODE_READING) {
                             LOGV("time to read resistor: %f\n", duration);
@@ -251,6 +256,7 @@ class RCThermistor2Pin : public IODriver {
             float vi = Vcc*Rchrg / (Rup+Rchrg);
             float vf = Vcc;
             Vtoggle = (vi-vf)*exp(-tr/Tau) + vf;
+            LOG("RCThermistor2Pin calibrated Vtoggle: %f\n", Vtoggle);
         } 
 };
 

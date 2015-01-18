@@ -97,7 +97,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
             float filtered = _filter.feed(lastTemp);
             //Then feed the filtered measurements to a feedback controller
             float pwm = _pid.feed(_destTemp, filtered);
-            LOG("tempcontrol: drive-strength=%f, temp=%f *C\n", pwm, filtered);
+            LOGV("tempcontrol: drive-strength=%f, temp=%f *C\n", pwm, filtered);
             _heater.pwmWrite(pwm, _pwmPeriod);
         }
 };

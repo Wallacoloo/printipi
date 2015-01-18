@@ -44,6 +44,12 @@ class IntervalTimer {
         inline const EventClockT::time_point& get() const {
             return _last;
         }
+        inline EventClockT::duration clockDiff() {
+            EventClockT::time_point next = EventClockT::now();
+            EventClockT::duration diff = next-_last;
+            _last = next;
+            return diff;
+        }
         template <typename DurT> int clockCmp(const DurT &cmp, int dflt=0) {
             int ret;
             EventClockT::time_point now = EventClockT::now();

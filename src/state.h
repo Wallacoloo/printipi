@@ -362,6 +362,8 @@ template <typename Drv> struct State<Drv>::State__onIdleCpu {
 };
 
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
+    IntervalTimer timer;
+    timer.clock();
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
         OutputEvent ioDriverEvt = iodrv::IODriver::tuplePeekNextEvent(ioDrivers);
@@ -422,6 +424,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
     }
 
     bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), interval);
+    LOGV("Time spent in state.h:onIdleCpu: %llu\n", timer.clockDiff().count());
     return motionNeedsCpu || driversNeedCpu;
 }
 
