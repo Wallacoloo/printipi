@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct id="gparse::(anonymous::1)::IODriver__lockAllAxes" name="IODriver__lockAllAxes" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>IODriver::lockAllAxes helper</brief>
+  <methodtemplate id="gparse::(anonymous::1)::IODriver__lockAllAxes::operator()" name="operator()">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="gparse::(anonymous::1)::IODriver__lockAllAxes::operator()::index" name="index">
+      <type name="std::size_t" />
+    </argument>
+    <argument id="gparse::(anonymous::1)::IODriver__lockAllAxes::operator()::driver" name="driver">
+      <type name="T" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="gparse::(anonymous::1)::IODriver__lockAllAxes::operator()::T" name="T" />
+  </methodtemplate>
+</struct>

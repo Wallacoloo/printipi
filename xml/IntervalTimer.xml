@@ -22,6 +22,11 @@ This can be used to detect when an input isn't being serviced regularaly enough 
       <type name="plat::generic::ChronoClock::time_point" qualifier=" const &amp;" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
     </return>
   </method>
+  <method id="IntervalTimer::clockDiff" name="clockDiff">
+    <return>
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
+    </return>
+  </method>
   <method id="IntervalTimer::get" name="get">
     <return>
       <type name="plat::generic::ChronoClock::time_point" qualifier=" const &amp;" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
