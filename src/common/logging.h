@@ -28,6 +28,11 @@
 #include <inttypes.h> //allow use of PRId64 by other files that make use of logging
 #include "compileflags.h"
 
+//64-bit printf specifier
+#ifndef PRId64
+    #define PRId64 "lld"
+#endif
+
 #if DO_LOG
     //NOTE: these logging functions must be implemented as macros, instead of templated functions
     // in order to get format verification at compile time.
