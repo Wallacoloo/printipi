@@ -108,18 +108,18 @@ template <typename Interface> void Scheduler<Interface>::eventLoop() {
             this->nextEvent = OutputEvent();
         }
         if (!interface.onIdleCpu(intervalT)) {
-            //if we don't need any onIdleCpu, then sleep until the event.
-            //sleepUntilEvent won't always do the full sleep; it has a time limit.
             if (_doExit) {
                 //check exit flag (may have changed in onIdleCpu call) again before entering a long sleep
                 break;
             }
+            //if we don't need any onIdleCpu, then sleep until the event.
+            //sleepUntilEvent won't always do the full sleep; it has a time limit.
             this->sleepUntilEvent(this->nextEvent);
             //We just slept for a while, which translates to a wide interval. Note that it may not actually be the event time yet.
             intervalT = OnIdleCpuIntervalWide;
             //numShortIntervals = 0;
         } else {
-            //after 2048 (just a nice binary number) short intervals, insert a wide interval instead:
+            //after 2048 (just a nice binary number) short intervals, insert a wide interval instead (this won't force a sleep).
             intervalT = (++numShortIntervals % 2048) ? OnIdleCpuIntervalShort : OnIdleCpuIntervalWide;
         }
     }
