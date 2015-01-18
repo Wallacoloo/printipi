@@ -62,7 +62,8 @@
 #include MACHINE_PATH
 
 
-#define STRINGIFY(x) #x
+#define STRINGIFY_(x) #x
+#define STRINGIFY(x) STRINGIFY_(x)
 
 static void printUsage(char* cmd) {
     //#ifndef NO_USAGE_INFO
