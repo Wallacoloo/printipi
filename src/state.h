@@ -95,9 +95,9 @@ template <typename Drv> class State {
                 IntervalTimer timer;
                 timer.clock();
                 bool hwNeedsCpu = _hardwareScheduler.onIdleCpu(interval);
-                LOGV("Time spent in _hardwareScheduler:onIdleCpu: %llu, %i, ret %i\n", timer.clockDiff().count(), interval, hwNeedsCpu);
+                LOGV("Time spent in _hardwareScheduler:onIdleCpu: %zu, %i, ret %i\n", timer.clockDiff().count(), interval, hwNeedsCpu);
                 bool stateNeedsCpu = _state.onIdleCpu(interval);
-                LOGV("Time spent in state.h:onIdleCpu: %llu, %i, ret %i\n", timer.clockDiff().count(), interval, stateNeedsCpu);
+                LOGV("Time spent in state.h:onIdleCpu: %zu, %i, ret %i\n", timer.clockDiff().count(), interval, stateNeedsCpu);
                 return hwNeedsCpu || stateNeedsCpu;
             }
             inline void queue(const OutputEvent &evt) {
@@ -683,6 +683,11 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
             float angleDeg = cmd.getS(0);
             iodrv::IODriver::setServoAngleAtServoIndex(ioDrivers, index, angleDeg);
         }
+        reply(gparse::Response::Ok);
+    } else if (cmd.isM999()) {
+        //Restart after being stopped by error.
+        //I think this gets sent whenever Octoprint temporarily loses communication with the program
+        //  (e.g. you kill the firmware with ctrl+c, then restart it).
         reply(gparse::Response::Ok);
     } else if (cmd.isTxxx()) { //set tool number
         LOGW("(gparse/state.h): OP_T[n] (set tool number) not implemented\n");
