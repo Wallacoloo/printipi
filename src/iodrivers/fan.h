@@ -37,6 +37,7 @@ namespace iodrv {
  */
 class Fan : public IODriver {
     IoPin pin;
+    float multiplier;
     float period;
     public:
         //@pin the IoPin that powers the fan.
@@ -44,9 +45,12 @@ class Fan : public IODriver {
         //  It should either be behind a transistor whose input is connected to @pin,
         //  or (if its a 3 wire fan), the fan should be powered from the power rail & the control signal (3rd wire) should be connected to @pin
         //@defaultState the state to place this pin in upon shutdown
+        //@multiplier is a weight to apply to the desired PWM value.
+        //  This is useful to allow M106 to set this fan to a different value than the rest.
         //@period the desired cycle length (in seconds) to use for PWM control. Most users will be happy keeping this at the default, 0.
         //  This is useful if using a transistor that cannot switch fast (like a relay).
-        inline Fan(IoPin &&pin, DefaultIoState defaultState=IO_DEFAULT_NONE, float period=0) : IODriver(), pin(std::move(pin)), period(period) {
+        inline Fan(IoPin &&pin, DefaultIoState defaultState=IO_DEFAULT_NONE, float multiplier=1.0, float period=0)
+          : pin(std::move(pin)), multiplier(multiplier), period(period) {
             this->pin.setDefaultState(defaultState);
             this->pin.makePwmOutput(0.0);
         }
@@ -54,7 +58,7 @@ class Fan : public IODriver {
         //called by State upon receiving an M106 gcode
         inline void setFanDutyCycle(float dutyCycle) {
             (void)dutyCycle;
-            pin.pwmWrite(dutyCycle, period);
+            pin.pwmWrite(dutyCycle*multiplier, period);
         }
 };
 

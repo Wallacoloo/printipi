@@ -443,6 +443,7 @@
 #define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
 //during RPi boot, fan can be set to be either on or off by using internal pull resistors
 #define PIN_FAN_PULL              mitpi::GPIOPULL_UP
+#define FAN_PWM_MULTIPLIER        0.60                    //weight the fan's PWM value to be XXX * (whatever value received by M106)
 #define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency             
 
 #define PIN_STEPPER_A_EN          mitpi::V2_GPIO_P5_04    //maps to FD Shield D48  (X_EN)
@@ -485,6 +486,7 @@
 #define THERM_C_FARADS            10.10e-6
 //With hysteresis disabled, at what input voltage does a pin (specifically, PIN_THERMISTOR) transition states?
 // This video suggests some results with hysteresis enabled, and we average them to get 1.27 V: https://www.youtube.com/watch?v=Wr49ia3oID4
+// Note that this value will be automatically re-calibrated at startup by default.
 #define THERM_V_TOGGLE_V          1.27
 #define THERM_RCHARGE_OHMS        1000
 #define THERM_RSERIES_OHMS          22
@@ -500,9 +502,9 @@
 //  We need to take the current temperature and use that to drive how much power we are sending to the hotend.
 //  Note especially that a thermistor takes a few seconds to adjust, so there is some latency in readings.
 //  The feedback algorithm is explained in pid.h and http://en.wikipedia.org/wiki/PID_controller
-#define HOTEND_PID_P 18.000
-#define HOTEND_PID_I  0.250
-#define HOTEND_PID_D  1.000
+#define HOTEND_PID_P  0.018000
+#define HOTEND_PID_I  0.000250
+#define HOTEND_PID_D  0.001000
 
 namespace machines {
 namespace rpi {
@@ -518,7 +520,7 @@ class kosselrampsfd : public Machine {
         //return a list of miscellaneous IoDrivers (Endstops & A4988 drivers are reachable via <getCoordMap>)
         inline std::tuple<Fan, TempControl<RCThermistor2Pin, PID, LowPassFilter> > getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD),
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_PWM_MULTIPLIER, FAN_MIN_PWM_PERIOD),
                 TempControl<RCThermistor2Pin, PID, LowPassFilter>(
                     iodrv::HotendType,
                     IoPin(PIN_HOTEND_INVERSIONS, PIN_HOTEND), 
