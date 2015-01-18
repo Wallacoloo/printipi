@@ -39,6 +39,9 @@ Currently, it assumes an RC-based thermistor, but in the future it may be expand
     <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::pwmPeriod" name="pwmPeriod">
       <type builtin="yes" name="float" />
     </argument>
+    <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::pwmUpdateInterval" name="pwmUpdateInterval">
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
+    </argument>
   </constructor>
   <method id="iodrv::TempControl::isHotend" name="isHotend" override="yes">
     <brief>register as the correct device type</brief>
