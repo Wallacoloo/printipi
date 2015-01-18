@@ -58,14 +58,19 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
     PID _pid;
     Filter _filter;
     float _pwmPeriod;
+    EventClockT::duration _pwmUpdateInterval;
+
     float _destTemp;
     bool _isReading;
+    EventClockT::time_point _nextPwmUpdate;
     public:
-        inline TempControl(TempControlType hotType, IoPin &&heater, Thermistor &&therm, const PID &pid, const Filter &filter, float pwmPeriod=1./25000) 
+        inline TempControl(TempControlType hotType, IoPin &&heater, Thermistor &&therm, 
+            const PID &pid, const Filter &filter, float pwmPeriod=1./25000, EventClockT::duration pwmUpdateInterval=std::chrono::milliseconds(2000)) 
          : IODriver(), _hotType(hotType), _heater(std::move(heater)), _therm(std::move(therm)), _pid(pid), _filter(filter), 
-         _pwmPeriod(pwmPeriod), _destTemp(-300), _isReading(false) {
+         _pwmPeriod(pwmPeriod), _pwmUpdateInterval(pwmUpdateInterval), 
+         _destTemp(-300), _isReading(false), _nextPwmUpdate(EventClockT::now()) {
             _heater.setDefaultState(IO_DEFAULT_LOW);
-            _heater.makePwmOutput(IoLow);
+            _heater.makePwmOutput(0.0);
         }
         //register as the correct device type
         inline bool isHotend() const {
@@ -86,7 +91,9 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
         inline bool onIdleCpu(OnIdleCpuIntervalT interval) {
             bool needMoreCpu = _therm.onIdleCpu(interval);
             //periodically, map temperature to hotend power feedback & update pwm.
-            if (interval == OnIdleCpuIntervalWide) {
+            //Note: even updating on the wide intervals alone may be too much if the platform's pwmWrite() function is expensive like on rpi
+            if (interval == OnIdleCpuIntervalWide && EventClockT::now() >= _nextPwmUpdate) {
+                _nextPwmUpdate += _pwmUpdateInterval;
                 updatePwm(_therm.value());
             }
             return needMoreCpu;
@@ -97,7 +104,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
             float filtered = _filter.feed(lastTemp);
             //Then feed the filtered measurements to a feedback controller
             float pwm = _pid.feed(_destTemp, filtered);
-            LOGV("tempcontrol: drive-strength=%f, temp=%f *C\n", pwm, filtered);
+            LOG("tempcontrol: drive-strength=%f, temp=%f *C\n", pwm, filtered);
             _heater.pwmWrite(pwm, _pwmPeriod);
         }
 };

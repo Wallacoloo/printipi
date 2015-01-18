@@ -151,16 +151,16 @@ class RCThermistor2Pin : public IODriver {
                     //Note: we must use a time measured AFTER chargeMeasPin.digitalRead(), as we may have been preempted during digitalRead()
                     EventClockT::time_point endReadTime = EventClockT::now();
                     if (endReadTime - lastServiceTime > minTimingAccuracy) {
-                        LOGV("RCThermistor2Pin could not meet timing requirements; discarding read\n");
+                        LOGD("RCThermistor2Pin could not meet timing requirements; discarding read\n");
                     } else {
                         float duration = std::chrono::duration_cast<std::chrono::duration<float> >(endReadTime - startModeTime).count();
                         if (mode == MODE_READING) {
-                            LOGV("time to read resistor: %f\n", duration);
+                            LOGD("time to read resistor: %f\n", duration);
                             //now try to guess the resistance:
                             float resistance = guessRFromTime(duration);
-                            LOGV("Resistance guess: %f\n", resistance);
+                            LOGD("Resistance guess: %f\n", resistance);
                             lastTemp = temperatureFromR(resistance);
-                            LOGV("Temperature guess: %f\n", lastTemp);
+                            LOGD("Temperature guess: %f\n", lastTemp);
                         } else if (mode == MODE_CALIBRATING) {
                             updateValuesFromCalibrationData(duration);
                             isCalibrated = true;
@@ -195,7 +195,7 @@ class RCThermistor2Pin : public IODriver {
             thermPin.makeDigitalOutput(IoHigh);
             //if we were pre-empted during the above routine, then abort the read & try again later
             if (EventClockT::now() - startModeTime > minTimingAccuracy) {
-                LOGV("RCThermistor2Pin::setModeReading() pre-empted; discarding read\n");
+                LOGD("RCThermistor2Pin::setModeReading() pre-empted; discarding read\n");
                 setModePreparing();
             }
         }
@@ -209,7 +209,7 @@ class RCThermistor2Pin : public IODriver {
             thermPin.makeDigitalInput();
             //if we were pre-empted during the above routine, then abort the read & try again later
             if (EventClockT::now() - startModeTime > minTimingAccuracy) {
-                LOGV("RCThermistor2Pin::setModeCalibrating() pre-empted; discarding read\n");
+                LOGD("RCThermistor2Pin::setModeCalibrating() pre-empted; discarding read\n");
                 setModePreparing();
             }
         }
@@ -261,6 +261,7 @@ class RCThermistor2Pin : public IODriver {
             float vi = Vcc*Rchrg / (Rup+Rchrg);
             float vf = Vcc;
             Vtoggle = (vi-vf)*exp(-tr/Tau) + vf;
+            LOGD("RCThermistor2Pin calibration measurement took %f sec\n", tr);
             LOG("RCThermistor2Pin calibrated Vtoggle: %f\n", Vtoggle);
         } 
 };
