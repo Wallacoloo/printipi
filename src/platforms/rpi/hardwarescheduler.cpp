@@ -616,7 +616,7 @@ void UnwrappedHardwareScheduler::initDma() {
 void UnwrappedHardwareScheduler::syncDmaTime() {
     //returns the last time that a frame idx=0 occured.
     EventClockT::time_point _now = EventClockT::now();
-    if (_now > _lastDmaSyncedTime + std::chrono::microseconds(32768)) { //resync only occasionally (every 32.768 ms). 32768 is just a friendly number of about the right magnitude.
+    if (_now > _lastDmaSyncedTime) {
         _lastDmaSyncedTime = _now;
         int srcIdx;
         EventClockT::time_point curTime1, curTime2;
