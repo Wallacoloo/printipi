@@ -26,7 +26,7 @@
 
 
 /* 
- * Provides a low-pass filter implementation for algorithms that allow a filter parameter, such as in src/drivers/tempcontrol.h
+ * Provides a low-pass filter implementation for algorithms that allow a filter parameter, such as in src/iodrivers/tempcontrol.h
  * A low-pass filter allows low-frequency signals to pass while attenuating (decreasing the amplitude of) the higher frequencies.
  * 
  * Note that this implementation currently assumes it is fed 1 sample per second.
@@ -34,7 +34,8 @@
  *  y[n] = y[n-1] + a(x[n] - y[n-1]), where x=input, y=output, n=sample number, a = dt / (RC + dt)
  *  http://www.dsplog.com/2007/12/02/digital-implementation-of-rc-low-pass-filter/
  *  y[n] = y[n-1] + k(x[n-1] - y[n-1]), where k=1/(RC)
- *  Lower k = tighter frequency response
+ *  Lower k = tighter frequency response.
+ *    that is, higher RC = lower frequency cutoff/more aggressive filtering
  *  Will need to convert this to work with seconds, and not sample numbers.
 */
 class LowPassFilter {
