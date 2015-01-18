@@ -156,17 +156,19 @@ enum GpioPadProperties {
     PAD_SLEW_NO_LIMIT = (1 << 4),
 };
 
+typedef unsigned int PinIntType;
+
 volatile uint32_t* mapPeripheral(int memfd, int addr);
 
 bool init();
 
-void makeOutput(int pin);
-void makeInput(int pin);
-void setPinHigh(int pin);
-void setPinLow(int pin);
-void setPinState(int pin, bool state);
-bool readPinState(int pin);
-void setPinPull(int pin, GpioPull pull);
+void makeOutput(PinIntType pin);
+void makeInput(PinIntType pin);
+void setPinHigh(PinIntType pin);
+void setPinLow(PinIntType pin);
+void setPinState(PinIntType pin, bool state);
+bool readPinState(PinIntType pin);
+void setPinPull(PinIntType pin, GpioPull pull);
 //Set the drive strength, hysteresis and slew limits for a set of pins.
 //@flags bitwise-or of GpioPadProperties flags
 //@bank 0 for pins 0-27, 1 -> pins 28-45, 2 -> pins 46-53

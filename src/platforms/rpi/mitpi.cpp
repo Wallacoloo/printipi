@@ -48,7 +48,7 @@ static volatile uint32_t *gpioBaseMem    = nullptr;
 static volatile uint32_t *timerBaseMem   = nullptr;
 static volatile uint32_t *gpioPadBaseMem = nullptr;
 
-static void assertValidPin(int pin) {
+static void assertValidPin(PinIntType pin) {
     (void)pin; //unused when assertions are disabled.
     assert(pin >= 0 && pin < 64);
 }
@@ -100,41 +100,41 @@ bool init() {
     return 0; //init OK
 }
 
-void makeOutput(int pin) {
+void makeOutput(PinIntType pin) {
     assertValidPin(pin);
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + pin/10);
     writeBitmasked(fselAddr, 0x7 << (3*(pin%10)), 0x1 << (3*(pin%10))); //0x7  is bitmask to select just our pin, 0x1 is mode to make pin an output
 }
-void makeInput(int pin) {
+void makeInput(PinIntType pin) {
     assertValidPin(pin);
     volatile uint32_t *fselAddr = (volatile uint32_t*)(gpioBaseMem + GPFSEL0/4 + pin/10);
     writeBitmasked(fselAddr, 0x7 << (3*(pin%10)), 0x0 << (3*(pin%10))); //0x7 is bitmask to select just our pin, 0x0 is mode to make pin an input
 }
-void setPinHigh(int pin) {
+void setPinHigh(PinIntType pin) {
     assertValidPin(pin);
     //first, select the appropriate register. The first register controls pins 0-31, the second pins 32-63.
     volatile uint32_t *gpSetAddr = (volatile uint32_t*)(gpioBaseMem + GPSET0/4 + (pin/32));
     //now write a 1 ONLY to our pin. The act of writing a 1 to the address triggers it to be set high.
     *gpSetAddr = 1 << (pin & 31);
 }
-void setPinLow(int pin) {
+void setPinLow(PinIntType pin) {
     assertValidPin(pin);
     //first, select the appropriate register. The first register controls pins 0-31, the second pins 32-63.
     volatile uint32_t *gpClrAddr = (volatile uint32_t*)(gpioBaseMem + GPCLR0/4 + (pin/32));
     //now write a 1 ONLY to our pin. The act of writing a 1 to the address triggers it to be set high.
     *gpClrAddr = 1 << (pin & 31);
 }
-void setPinState(int pin, bool state) {
+void setPinState(PinIntType pin, bool state) {
     state ? setPinHigh(pin) : setPinLow(pin);
 }
-bool readPinState(int pin) {
+bool readPinState(PinIntType pin) {
     assertValidPin(pin);
     volatile uint32_t* gpLevAddr = (volatile uint32_t*)(gpioBaseMem + GPLEV0/4 + (pin/32));
     uint32_t value = *gpLevAddr;
     return (value & (1 << (pin & 31))) ? 1 : 0;
 }
 
-void setPinPull(int pin, GpioPull pull) {
+void setPinPull(PinIntType pin, GpioPull pull) {
     assertValidPin(pin);
     volatile uint32_t *pudAddr = (volatile uint32_t*)(gpioBaseMem + GPPUD/4);
     volatile uint32_t *pudClkAddr = (volatile uint32_t*)(gpioBaseMem + GPPUDCLK0/4 + pin/32);
