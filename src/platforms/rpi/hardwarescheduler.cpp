@@ -20,19 +20,6 @@
 #include "platforms/auto/thisthreadsleep.h" //for SleepT 
 #include "compileflags.h" //for RUNNING_IN_VM
 
-#define FRAMES_PER_SEC NOMINAL_CLOCK_FREQ/BITS_PER_CLOCK/CLOCK_DIV
-#define SEC_TO_FRAME(s) ((int64_t)(s)*FRAMES_PER_SEC)
-#define USEC_TO_FRAME(u) (SEC_TO_FRAME(u)/1000000)
-#define FRAME_TO_SEC(f) ((int64_t)(f)*BITS_PER_CLOCK*CLOCK_DIV/NOMINAL_CLOCK_FREQ)
-#define FRAME_TO_USEC(f) FRAME_TO_SEC((int64_t)(f)*1000000)
-//Do to timing variance, an event scheduled at the very front of the queue might actually end up being placed at the *end* of the queue instead, so don't place anything into the frames < MIN_SCHED_AHEAD_FRAME ahead current frame
-#define MIN_SCHED_AHEAD_FRAME (SOURCE_BUFFER_FRAMES>>8)
-#define MIN_SCHED_AHEAD_USEC (FRAME_TO_USEC(MIN_SCHED_AHEAD_FRAME))
-//Also want to avoid placing things too deep in the queue, for the same wrap-around issue.
-//Can get away with a wider dead-space because we have looser tolerance here.
-#define MAX_SCHED_AHEAD_FRAME (SOURCE_BUFFER_FRAMES - (SOURCE_BUFFER_FRAMES>>6))
-#define MAX_SCHED_AHEAD_USEC (FRAME_TO_USEC(MAX_SCHED_AHEAD_FRAME))
-
 #if MAX_RPI_PIN_ID < 32
     #define NUM_GPIO_WORDS 1
 #else
