@@ -48,6 +48,15 @@ These implementations must provide the functions outlined further down in the he
     <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
   </methodtemplate>
+  <methodtemplate id="iodrv::IODriver::iter" name="iter" static="yes">
+    <return>
+      <type name="WrapperIter&lt;TupleT&gt;" ref="iodrv::IODriver::WrapperIter#iodrv::IODriver::WrapperIter" />
+    </return>
+    <argument id="iodrv::IODriver::iter::t" name="t">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODriver::iter::TupleT" name="TupleT" />
+  </methodtemplate>
   <methodtemplate id="iodrv::IODriver::lockAllAxes" name="lockAllAxes" static="yes">
     <return>
       <type builtin="yes" name="void" />
@@ -130,6 +139,12 @@ These implementations must provide the functions outlined further down in the he
     <templatetypeparameter id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT" />
   </methodtemplate>
+  <classtemplate name="iterator" ref="iodrv::IODriver::iterator#iodrv::IODriver::iterator">
+    <templatetypeparameter id="iodrv::IODriver::iterator::TupleT" name="TupleT" />
+  </classtemplate>
+  <classtemplate name="WrapperIter" ref="iodrv::IODriver::WrapperIter#iodrv::IODriver::WrapperIter">
+    <templatetypeparameter id="iodrv::IODriver::WrapperIter::TupleT" name="TupleT" />
+  </classtemplate>
   <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
   <method id="iodrv::IODriver::consumeNextEvent" name="consumeNextEvent">
     <return>

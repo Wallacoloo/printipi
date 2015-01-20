@@ -152,7 +152,7 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="47" />
       </undocumented>
     </type>
-    <type documented="14" name="methodtemplate" undocumented="46">
+    <type documented="14" name="methodtemplate" undocumented="58">
       <undocumented id="IntervalTimer::clockCmp" name="clockCmp">
         <location column="9" file="common/intervaltimer.h" line="53" />
       </undocumented>
@@ -178,34 +178,19 @@ return values.
         <location column="5" file="boilerplate/thisthreadsleepadapter.h" line="34" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="178" />
+        <location column="9" file="iodrivers/iodriver.h" line="323" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="166" />
+        <location column="9" file="iodrivers/iodriver.h" line="311" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="154" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__lockAllAxes::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="116" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setBedTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="142" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setHotendTemp::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="132" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="216" />
+        <location column="9" file="iodrivers/iodriver.h" line="299" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="201" />
+        <location column="9" file="iodrivers/iodriver.h" line="346" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="191" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__unlockAllAxes::operator()" name="operator()">
-        <location column="9" file="iodrivers/iodriver.h" line="124" />
+        <location column="9" file="iodrivers/iodriver.h" line="336" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers::operator()" name="operator()">
         <location column="9" file="motion/axisstepper.h" line="147" />
@@ -221,43 +206,94 @@ return values.
       </undocumented>
       <undocumented id="iodrv::IODriver::getBedTemp" name="getBedTemp">
         <location column="9" file="iodrivers/iodriver.h" line="105" />
-        <location column="1" file="iodrivers/iodriver.h" line="251" />
+        <location column="1" file="iodrivers/iodriver.h" line="391" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTargetTemp" name="getHotendTargetTemp">
         <location column="9" file="iodrivers/iodriver.h" line="104" />
-        <location column="1" file="iodrivers/iodriver.h" line="246" />
+        <location column="1" file="iodrivers/iodriver.h" line="386" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTemp" name="getHotendTemp">
         <location column="9" file="iodrivers/iodriver.h" line="103" />
-        <location column="1" file="iodrivers/iodriver.h" line="241" />
+        <location column="1" file="iodrivers/iodriver.h" line="381" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iter" name="iter">
+        <location column="9" file="iodrivers/iodriver.h" line="287" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperConsumeNextEvent::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="196" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperGetMeasuredTemperature::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="178" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperGetTargetTemperature::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="172" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsEndstop::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="148" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsEndstopTriggered::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="154" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsFan::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="124" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsHeatedBed::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="136" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsHotend::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="130" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsServo::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="142" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperLockAxis::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="112" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperOnIdleCpu::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="202" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperPeekNextEvent::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="190" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperSetFanDutyCycle::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="160" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperSetServoAngleDegrees::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="184" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperSetTargetTemperature::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="166" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperUnlockAxis::operator()" name="operator()">
+        <location column="17" file="iodrivers/iodriver.h" line="118" />
       </undocumented>
       <undocumented id="iodrv::IODriver::lockAllAxes" name="lockAllAxes">
         <location column="9" file="iodrivers/iodriver.h" line="99" />
-        <location column="1" file="iodrivers/iodriver.h" line="229" />
+        <location column="1" file="iodrivers/iodriver.h" line="357" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setBedTemp" name="setBedTemp">
         <location column="9" file="iodrivers/iodriver.h" line="102" />
-        <location column="1" file="iodrivers/iodriver.h" line="238" />
+        <location column="1" file="iodrivers/iodriver.h" line="374" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setHotendTemp" name="setHotendTemp">
         <location column="9" file="iodrivers/iodriver.h" line="101" />
-        <location column="1" file="iodrivers/iodriver.h" line="235" />
+        <location column="1" file="iodrivers/iodriver.h" line="367" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setServoAngleAtServoIndex" name="setServoAngleAtServoIndex">
         <location column="9" file="iodrivers/iodriver.h" line="108" />
-        <location column="1" file="iodrivers/iodriver.h" line="273" />
+        <location column="1" file="iodrivers/iodriver.h" line="413" />
       </undocumented>
       <undocumented id="iodrv::IODriver::tupleConsumeNextEvent" name="tupleConsumeNextEvent">
         <location column="9" file="iodrivers/iodriver.h" line="107" />
-        <location column="1" file="iodrivers/iodriver.h" line="264" />
+        <location column="1" file="iodrivers/iodriver.h" line="404" />
       </undocumented>
       <undocumented id="iodrv::IODriver::tuplePeekNextEvent" name="tuplePeekNextEvent">
         <location column="9" file="iodrivers/iodriver.h" line="106" />
-        <location column="1" file="iodrivers/iodriver.h" line="257" />
+        <location column="1" file="iodrivers/iodriver.h" line="397" />
       </undocumented>
       <undocumented id="iodrv::IODriver::unlockAllAxes" name="unlockAllAxes">
         <location column="9" file="iodrivers/iodriver.h" line="100" />
-        <location column="1" file="iodrivers/iodriver.h" line="232" />
+        <location column="1" file="iodrivers/iodriver.h" line="362" />
       </undocumented>
       <undocumented id="motion::AxisStepper::getNextTime" name="getNextTime">
         <location column="9" file="motion/axisstepper.h" line="76" />
@@ -306,7 +342,7 @@ return values.
         <location column="13" file="platforms/generic/thisthreadsleep.h" line="40" />
       </undocumented>
     </type>
-    <type documented="19" name="struct" undocumented="6">
+    <type documented="14" name="struct" undocumented="6">
       <undocumented id="DefaultGetAccelerationProfile" name="DefaultGetAccelerationProfile">
         <location column="1" file="testhelper.h" line="68" />
       </undocumented>
@@ -328,7 +364,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="254" />
       </undocumented>
     </type>
-    <type documented="2" name="templatetypeparameter" undocumented="165">
+    <type documented="2" name="templatetypeparameter" undocumented="179">
       <undocumented id="Drv" name="Drv">
         <location column="11" file="state.h" line="456" />
       </undocumented>
@@ -429,34 +465,19 @@ return values.
         <location column="13" file="common/vector4.h" line="45" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="178" />
+        <location column="19" file="iodrivers/iodriver.h" line="323" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="166" />
+        <location column="19" file="iodrivers/iodriver.h" line="311" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="154" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__lockAllAxes::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="116" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setBedTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="142" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setHotendTemp::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="132" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="216" />
+        <location column="19" file="iodrivers/iodriver.h" line="299" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="201" />
+        <location column="19" file="iodrivers/iodriver.h" line="346" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="191" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__unlockAllAxes::operator()::T" name="T">
-        <location column="19" file="iodrivers/iodriver.h" line="124" />
+        <location column="19" file="iodrivers/iodriver.h" line="336" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT">
         <location column="15" file="motion/axisstepper.h" line="114" />
@@ -536,65 +557,122 @@ return values.
       <undocumented id="gparse::Response::joinPairsAndStr::Container" name="Container">
         <location column="19" file="gparse/response.h" line="79" />
       </undocumented>
+      <undocumented id="iodrv::IODriver::WrapperIter::TupleT" name="TupleT">
+        <location column="19" file="iodrivers/iodriver.h" line="276" />
+      </undocumented>
       <undocumented id="iodrv::IODriver::getBedTemp::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="105" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getBedTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="251" />
+        <location column="11" file="iodrivers/iodriver.h" line="391" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="104" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="246" />
+        <location column="11" file="iodrivers/iodriver.h" line="386" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="103" />
       </undocumented>
       <undocumented id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="241" />
+        <location column="11" file="iodrivers/iodriver.h" line="381" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iter::TupleT" name="TupleT">
+        <location column="19" file="iodrivers/iodriver.h" line="287" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::TupleT" name="TupleT">
+        <location column="19" file="iodrivers/iodriver.h" line="110" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperConsumeNextEvent::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="196" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperGetMeasuredTemperature::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="178" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperGetTargetTemperature::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="172" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsEndstop::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="148" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsEndstopTriggered::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="154" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsFan::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="124" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsHeatedBed::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="136" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsHotend::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="130" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperIsServo::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="142" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperLockAxis::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="112" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperOnIdleCpu::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="202" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperPeekNextEvent::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="190" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperSetFanDutyCycle::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="160" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperSetServoAngleDegrees::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="184" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperSetTargetTemperature::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="166" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::WrapperUnlockAxis::operator()::T" name="T">
+        <location column="27" file="iodrivers/iodriver.h" line="118" />
       </undocumented>
       <undocumented id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="99" />
       </undocumented>
       <undocumented id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="229" />
+        <location column="11" file="iodrivers/iodriver.h" line="357" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="102" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="238" />
+        <location column="11" file="iodrivers/iodriver.h" line="374" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="101" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="235" />
+        <location column="11" file="iodrivers/iodriver.h" line="367" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setServoAngleAtServoIndex::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="108" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setServoAngleAtServoIndex::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="273" />
+        <location column="11" file="iodrivers/iodriver.h" line="413" />
       </undocumented>
       <undocumented id="iodrv::IODriver::tupleConsumeNextEvent::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="107" />
       </undocumented>
       <undocumented id="iodrv::IODriver::tupleConsumeNextEvent::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="264" />
+        <location column="11" file="iodrivers/iodriver.h" line="404" />
       </undocumented>
       <undocumented id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="106" />
       </undocumented>
       <undocumented id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="257" />
+        <location column="11" file="iodrivers/iodriver.h" line="397" />
       </undocumented>
       <undocumented id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT">
         <location column="19" file="iodrivers/iodriver.h" line="100" />
       </undocumented>
       <undocumented id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT">
-        <location column="11" file="iodrivers/iodriver.h" line="232" />
+        <location column="11" file="iodrivers/iodriver.h" line="362" />
       </undocumented>
       <undocumented id="iodrv::IoPin::IoPin::Args" name="Args">
         <location column="19" file="iodrivers/iopin.h" line="95" />
@@ -906,12 +984,18 @@ return values.
         <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
       </undocumented>
     </type>
-    <type documented="13" name="classtemplate" undocumented="4">
+    <type documented="13" name="classtemplate" undocumented="6">
       <undocumented id="TestHelper" name="TestHelper">
         <location column="1" file="testhelper.h" line="93" />
       </undocumented>
       <undocumented id="TestMachine" name="TestMachine">
         <location column="1" file="testhelper.h" line="74" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::WrapperIter" name="WrapperIter">
+        <location column="9" file="iodrivers/iodriver.h" line="276" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator" name="iterator">
+        <location column="9" file="iodrivers/iodriver.h" line="110" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver" name="AxisStepperWithDriver">
         <location column="1" file="motion/axisstepper.h" line="97" />
@@ -920,7 +1004,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="130" name="method" undocumented="331">
+    <type documented="130" name="method" undocumented="352">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1641,8 +1725,14 @@ return values.
       <undocumented id="iodrv::Fan::isFan" name="isFan">
         <location column="9" file="iodrivers/fan.h" line="57" />
       </undocumented>
+      <undocumented id="iodrv::IODriver::WrapperIter::begin" name="begin">
+        <location column="17" file="iodrivers/iodriver.h" line="280" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::WrapperIter::end" name="end">
+        <location column="17" file="iodrivers/iodriver.h" line="283" />
+      </undocumented>
       <undocumented id="iodrv::IODriver::consumeNextEvent" name="consumeNextEvent">
-        <location column="9" file="iodrivers/iodriver.h" line="87" />
+        <location column="9" file="iodrivers/iodriver.h" line="91" />
       </undocumented>
       <undocumented id="iodrv::IODriver::isEndstop" name="isEndstop">
         <location column="9" file="iodrivers/iodriver.h" line="64" />
@@ -1650,11 +1740,68 @@ return values.
       <undocumented id="iodrv::IODriver::isServo" name="isServo">
         <location column="9" file="iodrivers/iodriver.h" line="63" />
       </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::consumeNextEvent" name="consumeNextEvent">
+        <location column="17" file="iodrivers/iodriver.h" line="268" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::getMeasuredTemperature" name="getMeasuredTemperature">
+        <location column="17" file="iodrivers/iodriver.h" line="259" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::getTargetTemperature" name="getTargetTemperature">
+        <location column="17" file="iodrivers/iodriver.h" line="256" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::isEndstop" name="isEndstop">
+        <location column="17" file="iodrivers/iodriver.h" line="244" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::isEndstopTriggered" name="isEndstopTriggered">
+        <location column="17" file="iodrivers/iodriver.h" line="247" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::isFan" name="isFan">
+        <location column="17" file="iodrivers/iodriver.h" line="232" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::isHeatedBed" name="isHeatedBed">
+        <location column="17" file="iodrivers/iodriver.h" line="238" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::isHotend" name="isHotend">
+        <location column="17" file="iodrivers/iodriver.h" line="235" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::isServo" name="isServo">
+        <location column="17" file="iodrivers/iodriver.h" line="241" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::lockAxis" name="lockAxis">
+        <location column="17" file="iodrivers/iodriver.h" line="226" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::onIdleCpu" name="onIdleCpu">
+        <location column="17" file="iodrivers/iodriver.h" line="271" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::operator*" name="operator*">
+        <location column="17" file="iodrivers/iodriver.h" line="211" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::operator+" name="operator+">
+        <location column="17" file="iodrivers/iodriver.h" line="217" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::operator++" name="operator++">
+        <location column="17" file="iodrivers/iodriver.h" line="214" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::peekNextEvent" name="peekNextEvent">
+        <location column="17" file="iodrivers/iodriver.h" line="265" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::setFanDutyCycle" name="setFanDutyCycle">
+        <location column="17" file="iodrivers/iodriver.h" line="250" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::setServoAngleDegrees" name="setServoAngleDegrees">
+        <location column="17" file="iodrivers/iodriver.h" line="262" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::setTargetTemperature" name="setTargetTemperature">
+        <location column="17" file="iodrivers/iodriver.h" line="253" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::unlockAxis" name="unlockAxis">
+        <location column="17" file="iodrivers/iodriver.h" line="229" />
+      </undocumented>
       <undocumented id="iodrv::IODriver::peekNextEvent" name="peekNextEvent">
-        <location column="9" file="iodrivers/iodriver.h" line="84" />
+        <location column="9" file="iodrivers/iodriver.h" line="88" />
       </undocumented>
       <undocumented id="iodrv::IODriver::setFanDutyCycle" name="setFanDutyCycle">
-        <location column="9" file="iodrivers/iodriver.h" line="95" />
+        <location column="9" file="iodrivers/iodriver.h" line="67" />
       </undocumented>
       <undocumented id="iodrv::IoPin::operator=" name="operator=">
         <location column="9" file="iodrivers/iopin.h" line="88" />
@@ -2014,21 +2161,21 @@ return values.
         <location column="19" file="motion/motionplanner.h" line="203" />
       </undocumented>
     </type>
-    <type documented="6" name="field" undocumented="9">
+    <type documented="5" name="field" undocumented="9">
       <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="176" />
+        <location column="9" file="iodrivers/iodriver.h" line="321" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="164" />
+        <location column="9" file="iodrivers/iodriver.h" line="309" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="152" />
+        <location column="9" file="iodrivers/iodriver.h" line="297" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::index" name="index">
-        <location column="9" file="iodrivers/iodriver.h" line="189" />
+        <location column="9" file="iodrivers/iodriver.h" line="334" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::value" name="value">
-        <location column="9" file="iodrivers/iodriver.h" line="188" />
+        <location column="9" file="iodrivers/iodriver.h" line="333" />
       </undocumented>
       <undocumented id="motion::AxisStepper::time" name="time">
         <location column="9" file="motion/axisstepper.h" line="71" />
@@ -2059,7 +2206,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="52" />
       </undocumented>
     </type>
-    <type documented="18" name="constructor" undocumented="51">
+    <type documented="18" name="constructor" undocumented="52">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="32" />
         <location column="1" file="filesystem.cpp" line="26" />
@@ -2111,19 +2258,16 @@ return values.
         <location column="9" file="testhelper.h" line="79" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getBedTemp::IODriver__getBedTemp" name="IODriver__getBedTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="177" />
+        <location column="9" file="iodrivers/iodriver.h" line="322" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTargetTemp::IODriver__getHotendTargetTemp" name="IODriver__getHotendTargetTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="165" />
+        <location column="9" file="iodrivers/iodriver.h" line="310" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__getHotendTemp::IODriver__getHotendTemp" name="IODriver__getHotendTemp">
-        <location column="9" file="iodrivers/iodriver.h" line="153" />
-      </undocumented>
-      <undocumented id="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex::IODriver__setServoAngleAtServoIndex" name="IODriver__setServoAngleAtServoIndex">
-        <location column="9" file="iodrivers/iodriver.h" line="215" />
+        <location column="9" file="iodrivers/iodriver.h" line="298" />
       </undocumented>
       <undocumented id="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent::IODriver__tuplePeekNextEvent" name="IODriver__tuplePeekNextEvent">
-        <location column="9" file="iodrivers/iodriver.h" line="190" />
+        <location column="9" file="iodrivers/iodriver.h" line="335" />
       </undocumented>
       <undocumented id="gparse::Com::ComStreamDeleter::ComStreamDeleter" name="ComStreamDeleter">
         <location column="13" file="gparse/com.h" line="73" />
@@ -2163,6 +2307,12 @@ return values.
       </undocumented>
       <undocumented id="iodrv::IODriver::IODriver" name="IODriver">
         <location column="9" file="iodrivers/iodriver.h" line="50" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::WrapperIter::WrapperIter&lt;TupleT&gt;" name="WrapperIter&lt;TupleT&gt;">
+        <location column="17" file="iodrivers/iodriver.h" line="279" />
+      </undocumented>
+      <undocumented id="iodrv::IODriver::iterator::iterator&lt;TupleT&gt;" name="iterator&lt;TupleT&gt;">
+        <location column="17" file="iodrivers/iodriver.h" line="210" />
       </undocumented>
       <undocumented id="iodrv::IoPin::null::null" name="null">
         <location column="9" file="iodrivers/iopin.h" line="144" />
@@ -3133,23 +3283,23 @@ return values.
       <undocumented-return />
     </function>
     <function id="iodrv::IODriver::setTargetTemperature" name="setTargetTemperature">
-      <location column="9" file="iodrivers/iodriver.h" line="68" />
+      <location column="9" file="iodrivers/iodriver.h" line="72" />
       <undocumented name="" />
     </function>
     <function id="iodrv::IODriver::getTargetTemperature" name="getTargetTemperature">
-      <location column="9" file="iodrivers/iodriver.h" line="70" />
+      <location column="9" file="iodrivers/iodriver.h" line="74" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODriver::getMeasuredTemperature" name="getMeasuredTemperature">
-      <location column="9" file="iodrivers/iodriver.h" line="75" />
+      <location column="9" file="iodrivers/iodriver.h" line="79" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODriver::setServoAngleDegrees" name="setServoAngleDegrees">
-      <location column="9" file="iodrivers/iodriver.h" line="80" />
+      <location column="9" file="iodrivers/iodriver.h" line="84" />
       <undocumented name="angle" />
     </function>
     <function id="iodrv::IODriver::onIdleCpu" name="onIdleCpu">
-      <location column="9" file="iodrivers/iodriver.h" line="91" />
+      <location column="9" file="iodrivers/iodriver.h" line="95" />
       <undocumented-return />
       <undocumented name="interval" />
     </function>

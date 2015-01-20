@@ -55,26 +55,11 @@
   <struct name="IODriver__getHotendTemp" ref="gparse::(anonymous::1)::IODriver__getHotendTemp#gparse::(anonymous::1)::IODriver__getHotendTemp">
     <brief>IODriver::getHotendTemp helper</brief>
   </struct>
-  <struct name="IODriver__lockAllAxes" ref="gparse::(anonymous::1)::IODriver__lockAllAxes#gparse::(anonymous::1)::IODriver__lockAllAxes">
-    <brief>IODriver::lockAllAxes helper</brief>
-  </struct>
-  <struct name="IODriver__setBedTemp" ref="gparse::(anonymous::1)::IODriver__setBedTemp#gparse::(anonymous::1)::IODriver__setBedTemp">
-    <brief>IODriver::setBedTemp helper</brief>
-  </struct>
-  <struct name="IODriver__setHotendTemp" ref="gparse::(anonymous::1)::IODriver__setHotendTemp#gparse::(anonymous::1)::IODriver__setHotendTemp">
-    <brief>IODriver::setHotendTemp helper</brief>
-  </struct>
-  <struct name="IODriver__setServoAngleAtServoIndex" ref="gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex#gparse::(anonymous::1)::IODriver__setServoAngleAtServoIndex">
-    <brief>IODriver::setServoAngleAtServoIndex helper</brief>
-  </struct>
   <struct name="IODriver__tupleConsumeNextEvent" ref="gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent#gparse::(anonymous::1)::IODriver__tupleConsumeNextEvent">
     <brief>IODriver::tupleConsumeNextEvent helper</brief>
   </struct>
   <struct name="IODriver__tuplePeekNextEvent" ref="gparse::(anonymous::1)::IODriver__tuplePeekNextEvent#gparse::(anonymous::1)::IODriver__tuplePeekNextEvent">
     <brief>IODriver::tuplePeekNextEvent helper</brief>
-  </struct>
-  <struct name="IODriver__unlockAllAxes" ref="gparse::(anonymous::1)::IODriver__unlockAllAxes#gparse::(anonymous::1)::IODriver__unlockAllAxes">
-    <brief>IODriver::unlockAllAxes helper</brief>
   </struct>
   <function id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
     <brief>bigEndianStr turns a series of characters into a uint32_t for fast string-comparisons.</brief>
