@@ -132,14 +132,11 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
       <brief>forward declare for class in "endstop.h"</brief>
     </class>
     <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
-    <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver">
-      <classtemplate name="iterator" ref="iodrv::IODriver::iterator#iodrv::IODriver::iterator">
-        <templatetypeparameter id="iodrv::IODriver::iterator::TupleT" name="TupleT" />
-      </classtemplate>
-      <classtemplate name="WrapperIter" ref="iodrv::IODriver::WrapperIter#iodrv::IODriver::WrapperIter">
-        <templatetypeparameter id="iodrv::IODriver::WrapperIter::TupleT" name="TupleT" />
-      </classtemplate>
-    </class>
+    <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+    <classtemplate name="IODrivers" ref="iodrv::IODrivers#iodrv::IODrivers">
+      <templatetypeparameter id="iodrv::IODrivers::TupleT" name="TupleT" />
+      <class name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+    </classtemplate>
     <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin">
       <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
         <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class id="iodrv::IODriver" name="IODriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<class abstract="true" id="iodrv::IODriver" name="IODriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
 IODrivers control the electrical interface to each component.
 One IODriver is needed for each stepper motor, fan, hotend, etc.
@@ -48,16 +48,7 @@ These implementations must provide the functions outlined further down in the he
     <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::iter" name="iter" static="yes">
-    <return>
-      <type name="WrapperIter&lt;TupleT&gt;" ref="iodrv::IODriver::WrapperIter#iodrv::IODriver::WrapperIter" />
-    </return>
-    <argument id="iodrv::IODriver::iter::t" name="t">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::iter::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::lockAllAxes" name="lockAllAxes" static="yes">
+  <methodtemplate abstract="yes" id="iodrv::IODriver::lockAllAxes" name="lockAllAxes" static="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -65,9 +56,8 @@ These implementations must provide the functions outlined further down in the he
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
     <templatetypeparameter id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::setBedTemp" name="setBedTemp" static="yes">
+  <methodtemplate abstract="yes" id="iodrv::IODriver::setBedTemp" name="setBedTemp" static="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -78,9 +68,8 @@ These implementations must provide the functions outlined further down in the he
       <type name="CelciusType" ref="index#CelciusType" />
     </argument>
     <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::setHotendTemp" name="setHotendTemp" static="yes">
+  <methodtemplate abstract="yes" id="iodrv::IODriver::setHotendTemp" name="setHotendTemp" static="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -91,9 +80,8 @@ These implementations must provide the functions outlined further down in the he
       <type name="CelciusType" ref="index#CelciusType" />
     </argument>
     <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::setServoAngleAtServoIndex" name="setServoAngleAtServoIndex" static="yes">
+  <methodtemplate abstract="yes" id="iodrv::IODriver::setServoAngleAtServoIndex" name="setServoAngleAtServoIndex" static="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -106,7 +94,6 @@ These implementations must provide the functions outlined further down in the he
     <argument id="iodrv::IODriver::setServoAngleAtServoIndex::angleDeg" name="angleDeg">
       <type builtin="yes" name="float" />
     </argument>
-    <templatetypeparameter id="iodrv::IODriver::setServoAngleAtServoIndex::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::setServoAngleAtServoIndex::TupleT" name="TupleT" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODriver::tupleConsumeNextEvent" name="tupleConsumeNextEvent" static="yes">
@@ -129,7 +116,7 @@ These implementations must provide the functions outlined further down in the he
     <templatetypeparameter id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT" />
     <templatetypeparameter id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::unlockAllAxes" name="unlockAllAxes" static="yes">
+  <methodtemplate abstract="yes" id="iodrv::IODriver::unlockAllAxes" name="unlockAllAxes" static="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -137,14 +124,7 @@ These implementations must provide the functions outlined further down in the he
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
     <templatetypeparameter id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT" />
   </methodtemplate>
-  <classtemplate name="iterator" ref="iodrv::IODriver::iterator#iodrv::IODriver::iterator">
-    <templatetypeparameter id="iodrv::IODriver::iterator::TupleT" name="TupleT" />
-  </classtemplate>
-  <classtemplate name="WrapperIter" ref="iodrv::IODriver::WrapperIter#iodrv::IODriver::WrapperIter">
-    <templatetypeparameter id="iodrv::IODriver::WrapperIter::TupleT" name="TupleT" />
-  </classtemplate>
   <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
   <method id="iodrv::IODriver::consumeNextEvent" name="consumeNextEvent">
     <return>

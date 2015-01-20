@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="iodrv::IODrivers" name="IODrivers" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="iodrv::IODrivers::TupleT" name="TupleT" />
+  <constructor id="iodrv::IODrivers::IODrivers&lt;TupleT&gt;" name="IODrivers&lt;TupleT&gt;">
+    <argument id="iodrv::IODrivers::IODrivers&lt;TupleT&gt;::ioDrivers" name="ioDrivers">
+      <type name="TupleT &amp;&amp;" />
+    </argument>
+  </constructor>
+  <method id="iodrv::IODrivers::tuple" name="tuple">
+    <return>
+      <type name="TupleT" qualifier=" &amp;" />
+    </return>
+  </method>
+  <class name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+  <method id="iodrv::IODrivers::begin" name="begin">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::end" name="end">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::lockAllAxes" name="lockAllAxes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::unlockAllAxes" name="unlockAllAxes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::setHotendTemp" name="setHotendTemp">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODrivers::setHotendTemp::temp" name="temp">
+      <type name="CelciusType" ref="index#CelciusType" />
+    </argument>
+  </method>
+  <method id="iodrv::IODrivers::setBedTemp" name="setBedTemp">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODrivers::setBedTemp::temp" name="temp">
+      <type name="CelciusType" ref="index#CelciusType" />
+    </argument>
+  </method>
+  <method id="iodrv::IODrivers::setServoAngleAtServoIndex" name="setServoAngleAtServoIndex">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODrivers::setServoAngleAtServoIndex::index" name="index">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="iodrv::IODrivers::setServoAngleAtServoIndex::angleDeg" name="angleDeg">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+</classtemplate>

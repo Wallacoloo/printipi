@@ -6,6 +6,9 @@
   </class>
   <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
   <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  <classtemplate name="IODrivers" ref="iodrv::IODrivers#iodrv::IODrivers">
+    <templatetypeparameter id="iodrv::IODrivers::TupleT" name="TupleT" />
+  </classtemplate>
   <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
   <class name="RCThermistor2Pin" ref="iodrv::RCThermistor2Pin#iodrv::RCThermistor2Pin" />
   <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
