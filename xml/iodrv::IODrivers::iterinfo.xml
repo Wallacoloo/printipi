@@ -2,7 +2,7 @@
 <classtemplate id="iodrv::IODrivers::iterinfo" name="iterinfo" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <templatetypeparameter id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
     <default>
-      <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+      <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
     </default>
   </templatetypeparameter>
   <constructor id="iodrv::IODrivers::iterinfo::iterinfo&lt;Predicate&gt;" name="iterinfo&lt;Predicate&gt;">

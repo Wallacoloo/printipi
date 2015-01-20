@@ -135,36 +135,17 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
     <classtemplate name="IODrivers" ref="iodrv::IODrivers#iodrv::IODrivers">
       <templatetypeparameter id="iodrv::IODrivers::TupleT" name="TupleT" />
-      <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase">
-        <struct name="NoPredicate" ref="iodrv::IODrivers::iteratorbase::NoPredicate#iodrv::IODrivers::iteratorbase::NoPredicate" />
-        <struct name="WrapperConsumeNextEvent" ref="iodrv::IODrivers::iteratorbase::WrapperConsumeNextEvent#iodrv::IODrivers::iteratorbase::WrapperConsumeNextEvent" />
-        <struct name="WrapperGetMeasuredTemperature" ref="iodrv::IODrivers::iteratorbase::WrapperGetMeasuredTemperature#iodrv::IODrivers::iteratorbase::WrapperGetMeasuredTemperature" />
-        <struct name="WrapperGetTargetTemperature" ref="iodrv::IODrivers::iteratorbase::WrapperGetTargetTemperature#iodrv::IODrivers::iteratorbase::WrapperGetTargetTemperature" />
-        <struct name="WrapperIsEndstop" ref="iodrv::IODrivers::iteratorbase::WrapperIsEndstop#iodrv::IODrivers::iteratorbase::WrapperIsEndstop" />
-        <struct name="WrapperIsEndstopTriggered" ref="iodrv::IODrivers::iteratorbase::WrapperIsEndstopTriggered#iodrv::IODrivers::iteratorbase::WrapperIsEndstopTriggered" />
-        <struct name="WrapperIsFan" ref="iodrv::IODrivers::iteratorbase::WrapperIsFan#iodrv::IODrivers::iteratorbase::WrapperIsFan" />
-        <struct name="WrapperIsHeatedBed" ref="iodrv::IODrivers::iteratorbase::WrapperIsHeatedBed#iodrv::IODrivers::iteratorbase::WrapperIsHeatedBed" />
-        <struct name="WrapperIsHotend" ref="iodrv::IODrivers::iteratorbase::WrapperIsHotend#iodrv::IODrivers::iteratorbase::WrapperIsHotend" />
-        <struct name="WrapperIsServo" ref="iodrv::IODrivers::iteratorbase::WrapperIsServo#iodrv::IODrivers::iteratorbase::WrapperIsServo" />
-        <struct name="WrapperLockAxis" ref="iodrv::IODrivers::iteratorbase::WrapperLockAxis#iodrv::IODrivers::iteratorbase::WrapperLockAxis" />
-        <struct name="WrapperOnIdleCpu" ref="iodrv::IODrivers::iteratorbase::WrapperOnIdleCpu#iodrv::IODrivers::iteratorbase::WrapperOnIdleCpu" />
-        <struct name="WrapperPeekNextEvent" ref="iodrv::IODrivers::iteratorbase::WrapperPeekNextEvent#iodrv::IODrivers::iteratorbase::WrapperPeekNextEvent" />
-        <struct name="WrapperSetFanDutyCycle" ref="iodrv::IODrivers::iteratorbase::WrapperSetFanDutyCycle#iodrv::IODrivers::iteratorbase::WrapperSetFanDutyCycle" />
-        <struct name="WrapperSetServoAngleDegrees" ref="iodrv::IODrivers::iteratorbase::WrapperSetServoAngleDegrees#iodrv::IODrivers::iteratorbase::WrapperSetServoAngleDegrees" />
-        <struct name="WrapperSetTargetTemperature" ref="iodrv::IODrivers::iteratorbase::WrapperSetTargetTemperature#iodrv::IODrivers::iteratorbase::WrapperSetTargetTemperature" />
-        <struct name="WrapperUnlockAxis" ref="iodrv::IODrivers::iteratorbase::WrapperUnlockAxis#iodrv::IODrivers::iteratorbase::WrapperUnlockAxis" />
-      </class>
       <classtemplate name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator">
         <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
           <default>
-            <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+            <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
           </default>
         </templatetypeparameter>
       </classtemplate>
       <classtemplate name="iterinfo" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">
         <templatetypeparameter id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
           <default>
-            <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+            <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
           </default>
         </templatetypeparameter>
       </classtemplate>

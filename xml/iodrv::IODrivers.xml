@@ -11,18 +11,17 @@
       <type name="TupleT" qualifier=" &amp;" />
     </return>
   </method>
-  <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
   <classtemplate name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator">
     <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
       <default>
-        <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+        <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
       </default>
     </templatetypeparameter>
   </classtemplate>
   <classtemplate name="iterinfo" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
       <default>
-        <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+        <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
       </default>
     </templatetypeparameter>
   </classtemplate>
@@ -45,6 +44,7 @@
     </argument>
   </method>
   <methodtemplate id="iodrv::IODrivers::filter" name="filter">
+    <brief>pass the predicate by value to achieve type deduction</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
     </return>
@@ -53,6 +53,31 @@
     </argument>
     <templatetypeparameter id="iodrv::IODrivers::filter::Predicate" name="Predicate" />
   </methodtemplate>
+  <method id="iodrv::IODrivers::fans" name="fans">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::hotends" name="hotends">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::heatedBeds" name="heatedBeds">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::servos" name="servos">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::endstops" name="endstops">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+  </method>
   <method id="iodrv::IODrivers::lockAllAxes" name="lockAllAxes">
     <return>
       <type builtin="yes" name="void" />
