@@ -1,73 +1,89 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="iodrv::IODrivers" name="IODrivers" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+Container type for IODrivers.
+Provides several conveniences, like iterators and filtering
+  while still maintaining type-information for each item
+</doc>
   <templatetypeparameter id="iodrv::IODrivers::TupleT" name="TupleT" />
   <constructor id="iodrv::IODrivers::IODrivers&lt;TupleT&gt;" name="IODrivers&lt;TupleT&gt;">
+    <brief>@ioDrivers std::tuple of IODrivers to construct from (will be moved).</brief>
+    <doc>Eg IODrivers(std::make_tuple(Fan(), A4988(), Endstop()))</doc>
     <argument id="iodrv::IODrivers::IODrivers&lt;TupleT&gt;::ioDrivers" name="ioDrivers">
       <type name="TupleT &amp;&amp;" />
     </argument>
   </constructor>
   <method id="iodrv::IODrivers::tuple" name="tuple">
+    <brief>@return a reference to the underlying tuple of IODrivers</brief>
     <return>
       <type name="TupleT" qualifier=" &amp;" />
     </return>
   </method>
-  <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
-  <typedef id="iodrv::IODrivers::WrapperLockAxis" name="WrapperLockAxis">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperLockAxis" ref="iodrv::IODrivers::_WrapperLockAxis#iodrv::IODrivers::_WrapperLockAxis" />
+  <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase">
+    <brief>Base type for iterators.</brief>
+  </class>
+  <typedef id="iodrv::IODrivers::GenericLockAxis" name="GenericLockAxis">
+    <brief>Wrap the generic functions to either accept (driver, args...) or (index, driver, args...) as function arguments</brief>
+    <doc>The index argument is provided by tupleutil::callOn*, but other places (e.g. predicates) expect no index argument.</doc>
+    <type name="IODrivers&lt;TupleT&gt;::_GenericLockAxis" ref="iodrv::IODrivers::_GenericLockAxis#iodrv::IODrivers::_GenericLockAxis" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperUnlockAxis" name="WrapperUnlockAxis">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperUnlockAxis" ref="iodrv::IODrivers::_WrapperUnlockAxis#iodrv::IODrivers::_WrapperUnlockAxis" />
+  <typedef id="iodrv::IODrivers::GenericUnlockAxis" name="GenericUnlockAxis">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericUnlockAxis" ref="iodrv::IODrivers::_GenericUnlockAxis#iodrv::IODrivers::_GenericUnlockAxis" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperIsFan" name="WrapperIsFan">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsFan" ref="iodrv::IODrivers::_WrapperIsFan#iodrv::IODrivers::_WrapperIsFan" />
+  <typedef id="iodrv::IODrivers::GenericIsFan" name="GenericIsFan">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericIsFan" ref="iodrv::IODrivers::_GenericIsFan#iodrv::IODrivers::_GenericIsFan" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperIsHotend" name="WrapperIsHotend">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsHotend" ref="iodrv::IODrivers::_WrapperIsHotend#iodrv::IODrivers::_WrapperIsHotend" />
+  <typedef id="iodrv::IODrivers::GenericIsHotend" name="GenericIsHotend">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericIsHotend" ref="iodrv::IODrivers::_GenericIsHotend#iodrv::IODrivers::_GenericIsHotend" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperIsHeatedBed" name="WrapperIsHeatedBed">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsHeatedBed" ref="iodrv::IODrivers::_WrapperIsHeatedBed#iodrv::IODrivers::_WrapperIsHeatedBed" />
+  <typedef id="iodrv::IODrivers::GenericIsHeatedBed" name="GenericIsHeatedBed">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericIsHeatedBed" ref="iodrv::IODrivers::_GenericIsHeatedBed#iodrv::IODrivers::_GenericIsHeatedBed" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperIsServo" name="WrapperIsServo">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsServo" ref="iodrv::IODrivers::_WrapperIsServo#iodrv::IODrivers::_WrapperIsServo" />
+  <typedef id="iodrv::IODrivers::GenericIsServo" name="GenericIsServo">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericIsServo" ref="iodrv::IODrivers::_GenericIsServo#iodrv::IODrivers::_GenericIsServo" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperIsEndstop" name="WrapperIsEndstop">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsEndstop" ref="iodrv::IODrivers::_WrapperIsEndstop#iodrv::IODrivers::_WrapperIsEndstop" />
+  <typedef id="iodrv::IODrivers::GenericIsEndstop" name="GenericIsEndstop">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericIsEndstop" ref="iodrv::IODrivers::_GenericIsEndstop#iodrv::IODrivers::_GenericIsEndstop" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperIsEndstopTriggered" name="WrapperIsEndstopTriggered">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsEndstopTriggered" ref="iodrv::IODrivers::_WrapperIsEndstopTriggered#iodrv::IODrivers::_WrapperIsEndstopTriggered" />
+  <typedef id="iodrv::IODrivers::GenericIsEndstopTriggered" name="GenericIsEndstopTriggered">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericIsEndstopTriggered" ref="iodrv::IODrivers::_GenericIsEndstopTriggered#iodrv::IODrivers::_GenericIsEndstopTriggered" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperSetFanDutyCycle" name="WrapperSetFanDutyCycle">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperSetFanDutyCycle" ref="iodrv::IODrivers::_WrapperSetFanDutyCycle#iodrv::IODrivers::_WrapperSetFanDutyCycle" />
+  <typedef id="iodrv::IODrivers::GenericSetFanDutyCycle" name="GenericSetFanDutyCycle">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericSetFanDutyCycle" ref="iodrv::IODrivers::_GenericSetFanDutyCycle#iodrv::IODrivers::_GenericSetFanDutyCycle" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperSetTargetTemperature" name="WrapperSetTargetTemperature">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperSetTargetTemperature" ref="iodrv::IODrivers::_WrapperSetTargetTemperature#iodrv::IODrivers::_WrapperSetTargetTemperature" />
+  <typedef id="iodrv::IODrivers::GenericSetTargetTemperature" name="GenericSetTargetTemperature">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericSetTargetTemperature" ref="iodrv::IODrivers::_GenericSetTargetTemperature#iodrv::IODrivers::_GenericSetTargetTemperature" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperGetTargetTemperature" name="WrapperGetTargetTemperature">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperGetTargetTemperature" ref="iodrv::IODrivers::_WrapperGetTargetTemperature#iodrv::IODrivers::_WrapperGetTargetTemperature" />
+  <typedef id="iodrv::IODrivers::GenericGetTargetTemperature" name="GenericGetTargetTemperature">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericGetTargetTemperature" ref="iodrv::IODrivers::_GenericGetTargetTemperature#iodrv::IODrivers::_GenericGetTargetTemperature" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperGetMeasuredTemperature" name="WrapperGetMeasuredTemperature">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperGetMeasuredTemperature" ref="iodrv::IODrivers::_WrapperGetMeasuredTemperature#iodrv::IODrivers::_WrapperGetMeasuredTemperature" />
+  <typedef id="iodrv::IODrivers::GenericGetMeasuredTemperature" name="GenericGetMeasuredTemperature">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericGetMeasuredTemperature" ref="iodrv::IODrivers::_GenericGetMeasuredTemperature#iodrv::IODrivers::_GenericGetMeasuredTemperature" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperSetServoAngleDegrees" name="WrapperSetServoAngleDegrees">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperSetServoAngleDegrees" ref="iodrv::IODrivers::_WrapperSetServoAngleDegrees#iodrv::IODrivers::_WrapperSetServoAngleDegrees" />
+  <typedef id="iodrv::IODrivers::GenericSetServoAngleDegrees" name="GenericSetServoAngleDegrees">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericSetServoAngleDegrees" ref="iodrv::IODrivers::_GenericSetServoAngleDegrees#iodrv::IODrivers::_GenericSetServoAngleDegrees" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperPeekNextEvent" name="WrapperPeekNextEvent">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperPeekNextEvent" ref="iodrv::IODrivers::_WrapperPeekNextEvent#iodrv::IODrivers::_WrapperPeekNextEvent" />
+  <typedef id="iodrv::IODrivers::GenericPeekNextEvent" name="GenericPeekNextEvent">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericPeekNextEvent" ref="iodrv::IODrivers::_GenericPeekNextEvent#iodrv::IODrivers::_GenericPeekNextEvent" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperConsumeNextEvent" name="WrapperConsumeNextEvent">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperConsumeNextEvent" ref="iodrv::IODrivers::_WrapperConsumeNextEvent#iodrv::IODrivers::_WrapperConsumeNextEvent" />
+  <typedef id="iodrv::IODrivers::GenericConsumeNextEvent" name="GenericConsumeNextEvent">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericConsumeNextEvent" ref="iodrv::IODrivers::_GenericConsumeNextEvent#iodrv::IODrivers::_GenericConsumeNextEvent" />
   </typedef>
-  <typedef id="iodrv::IODrivers::WrapperOnIdleCpu" name="WrapperOnIdleCpu">
-    <type name="IODrivers&lt;TupleT&gt;::_WrapperOnIdleCpu" ref="iodrv::IODrivers::_WrapperOnIdleCpu#iodrv::IODrivers::_WrapperOnIdleCpu" />
+  <typedef id="iodrv::IODrivers::GenericOnIdleCpu" name="GenericOnIdleCpu">
+    <type name="IODrivers&lt;TupleT&gt;::_GenericOnIdleCpu" ref="iodrv::IODrivers::_GenericOnIdleCpu#iodrv::IODrivers::_GenericOnIdleCpu" />
   </typedef>
   <classtemplate name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator">
+    <brief>iterator class that also supports a filter predicate.</brief>
     <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
+      <brief>function that should return false for any item that is not part of the desired set.</brief>
+      <doc>Note that the Predicate function cannot easily store state info, as it may be instantiated for each item.</doc>
       <default>
         <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
       </default>
     </templatetypeparameter>
   </classtemplate>
   <classtemplate name="iterinfo" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">
+    <brief>Allow one to build a filter before iterating.</brief>
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
       <default>
         <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
@@ -75,21 +91,25 @@
     </templatetypeparameter>
   </classtemplate>
   <method id="iodrv::IODrivers::all" name="all">
+    <brief>return an iterable/indexable object containing ALL the iodrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
     </return>
   </method>
   <method id="iodrv::IODrivers::begin" name="begin">
+    <brief>begin iterator for the set of all IODrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
     </return>
   </method>
   <method id="iodrv::IODrivers::end" name="end">
+    <brief>end iterator for the set of all IODrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
     </return>
   </method>
   <method id="iodrv::IODrivers::operator[]" name="operator[]">
+    <brief>access an IODriver by index</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
     </return>
@@ -98,8 +118,13 @@
     </argument>
   </method>
   <methodtemplate id="iodrv::IODrivers::filter" name="filter">
-    <brief>pass the predicate by value to achieve type deduction</brief>
+    <brief>obtain the set of all IODrivers that pass the filter Predicate.</brief>
+    <doc>The predicate should accept an IODriver::iteratorbase as its argument
+and return true if that IODriver is to be included in the set.
+The predicate is passed by value to achieve type deduction, but a new Predicate may be instantiated for each IODriver.
+</doc>
     <return>
+      <doc>an iterable <ref ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">iodrv::IODrivers::iterinfo</ref> object based on the Predicate</doc>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
     </return>
     <argument id="iodrv::IODrivers::filter::p" name="p">
@@ -108,41 +133,49 @@
     <templatetypeparameter id="iodrv::IODrivers::filter::Predicate" name="Predicate" />
   </methodtemplate>
   <method id="iodrv::IODrivers::fans" name="fans">
+    <brief>@return an iterable <ref ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">iodrv::IODrivers::iterinfo</ref> object that contains only the fan IODrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
     </return>
   </method>
   <method id="iodrv::IODrivers::hotends" name="hotends">
+    <brief>@return an iterable <ref ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">iodrv::IODrivers::iterinfo</ref> object that contains only the hotend IODrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
     </return>
   </method>
   <method id="iodrv::IODrivers::heatedBeds" name="heatedBeds">
+    <brief>@return an iterable <ref ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">iodrv::IODrivers::iterinfo</ref> object that contains only the heated bed IODrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
     </return>
   </method>
   <method id="iodrv::IODrivers::servos" name="servos">
+    <brief>@return an iterable <ref ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">iodrv::IODrivers::iterinfo</ref> object that contains only the servo IODrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
     </return>
   </method>
   <method id="iodrv::IODrivers::endstops" name="endstops">
+    <brief>@return an iterable <ref ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">iodrv::IODrivers::iterinfo</ref> object that contains only the endstop IODrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
     </return>
   </method>
   <method id="iodrv::IODrivers::lockAllAxes" name="lockAllAxes">
+    <brief>apply T::lockAxis on each IODriver in the set</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
   <method id="iodrv::IODrivers::unlockAllAxes" name="unlockAllAxes">
+    <brief>apply T::unlockAxis on each IODriver in the set</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
   <method id="iodrv::IODrivers::setHotendTemp" name="setHotendTemp">
+    <brief>apply T::setTargetTemperature(temp) on each hotend in the set</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -151,22 +184,12 @@
     </argument>
   </method>
   <method id="iodrv::IODrivers::setBedTemp" name="setBedTemp">
+    <brief>apply T::setTargetTemperature(temp) on each heated bed in the set</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
     <argument id="iodrv::IODrivers::setBedTemp::temp" name="temp">
       <type name="CelciusType" ref="index#CelciusType" />
-    </argument>
-  </method>
-  <method id="iodrv::IODrivers::setServoAngleAtServoIndex" name="setServoAngleAtServoIndex">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODrivers::setServoAngleAtServoIndex::index" name="index">
-      <type builtin="yes" name="int" />
-    </argument>
-    <argument id="iodrv::IODrivers::setServoAngleAtServoIndex::angleDeg" name="angleDeg">
-      <type builtin="yes" name="float" />
     </argument>
   </method>
 </classtemplate>

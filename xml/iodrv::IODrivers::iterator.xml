@@ -1,9 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="iodrv::IODrivers::iterator" name="iterator" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>iterator class that also supports a filter predicate.</brief>
   <base access="public">
     <type name="IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
   </base>
   <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
+    <brief>function that should return false for any item that is not part of the desired set.</brief>
+    <doc>Note that the Predicate function cannot easily store state info, as it may be instantiated for each item.</doc>
     <default>
       <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
     </default>
@@ -20,11 +23,13 @@
     </argument>
   </constructor>
   <method id="iodrv::IODrivers::iterator::operator++" name="operator++">
+    <brief>Increment to the next item that passes the predicate</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
   <method id="iodrv::IODrivers::iterator::operator+" name="operator+">
+    <brief>Apply the increment operator @add times</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
     </return>

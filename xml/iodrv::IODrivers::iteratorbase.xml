@@ -1,5 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="iodrv::IODrivers::iteratorbase" name="iteratorbase" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>Base type for iterators.</brief>
+  <doc>Implements all the generic functions to apply to the IODriver currently pointed to
+as well as comparison operators.
+But it does not implement operator++;
+this is expected to be implemented by the derived types which may do filtering.</doc>
   <constructor id="iodrv::IODrivers::iteratorbase::iteratorbase" name="iteratorbase">
     <argument id="iodrv::IODrivers::iteratorbase::iteratorbase::tuple" name="tuple">
       <type name="TupleT" qualifier=" &amp;" />
@@ -108,4 +113,9 @@
   <field access="protected" id="iodrv::IODrivers::iteratorbase::idx" name="idx">
     <type name="std::size_t" />
   </field>
+  <method access="protected" id="iodrv::IODrivers::iteratorbase::isAtEnd" name="isAtEnd">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
 </class>

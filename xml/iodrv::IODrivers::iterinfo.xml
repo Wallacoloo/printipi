@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="iodrv::IODrivers::iterinfo" name="iterinfo" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>Allow one to build a filter before iterating.</brief>
+  <doc>Also supports indexing and convenience functions that operate on the whole set.</doc>
   <templatetypeparameter id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
     <default>
       <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
@@ -40,5 +42,23 @@
     </argument>
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::apply::F" name="F" />
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::apply::Args" name="Args" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::accumulate" name="accumulate">
+    <brief>Return f(f(..., ioDrivers[1]), ioDrivers[0])</brief>
+    <return>
+      <type name="Ret" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::accumulate::f" name="f">
+      <type name="F &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::IODrivers::iterinfo::accumulate::dflt" name="dflt">
+      <type name="Ret" />
+    </argument>
+    <argument id="iodrv::IODrivers::iterinfo::accumulate::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::accumulate::F" name="F" />
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::accumulate::Ret" name="Ret" />
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::accumulate::Args" name="Args" />
   </methodtemplate>
 </classtemplate>
