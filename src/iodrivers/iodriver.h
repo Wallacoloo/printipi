@@ -203,13 +203,5 @@ template <typename TupleT> void IODriver::tupleConsumeNextEvent(TupleT &drivers)
     callOnAll(drivers, &consumer, peeker.index);
 }
 
-/*template <typename TupleT> void IODriver::setServoAngleAtServoIndex(TupleT &drivers, int index, float angleDeg) {
-    for (auto& d : IODriver::iter(drivers)) {
-        if (d.isServo() && index-- == 0) {
-            d.setServoAngleDegrees(angleDeg);
-        }
-    }
-}*/
-
 }
 #endif

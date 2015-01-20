@@ -37,7 +37,15 @@ template <typename TupleT> class IODrivers {
 			return drivers;
 		}
 
-		class iterator {
+		class iteratorbase {
+		public:
+			struct NoPredicate {
+				bool operator()(const iteratorbase &self) {
+					(void)self; //unused
+					return true;
+				}
+			};
+		protected:
             struct WrapperLockAxis {
                 template <typename T> void operator()(std::size_t index, T &driver) {
                     (void)index; //unused;
@@ -137,20 +145,15 @@ template <typename TupleT> class IODrivers {
             TupleT &tuple;
             std::size_t idx;
             public:
-                iterator(TupleT &tuple, std::size_t idx=0) : tuple(tuple), idx(idx) {}
-                iterator& operator*() {
+                iteratorbase(TupleT &tuple, std::size_t idx=0) : tuple(tuple), idx(idx) {
+                }
+                iteratorbase& operator*() {
                     return *this;
                 }
-                void operator++() {
-                    ++idx;
-                }
-                iterator operator+(std::size_t add) {
-                    return iterator(tuple, idx+add);
-                }
-                friend bool operator==(const iterator &a, const iterator &b) {
+                friend bool operator==(const iteratorbase &a, const iteratorbase &b) {
                     return a.idx == b.idx;
                 }
-                friend bool operator!=(const iterator &a, const iterator &b) {
+                friend bool operator!=(const iteratorbase &a, const iteratorbase &b) {
                     return !(a == b);
                 }
                 void lockAxis() const {
@@ -203,12 +206,56 @@ template <typename TupleT> class IODrivers {
                 }
         };
 
-        iterator begin() {
-            return iterator(drivers, 0);
+        template <typename Predicate=typename iteratorbase::NoPredicate> class iterator : public iteratorbase {
+        	public:
+        		iterator(TupleT &drivers, std::size_t idx=0, bool filterFirst=true)
+        		 : iteratorbase(drivers, idx) {
+        		 	while (filterFirst && !Predicate()(*this)) {
+        		 		++this->idx;
+        		 	}
+        		}
+        		void operator++() {
+        		 	do {
+                    	++this->idx;
+                    } while (!Predicate()(*this));
+        		}
+        		iterator operator+(std::size_t add) {
+        			iterator other = *this;
+        			while (add--) {
+        				other++;
+        			}
+        			return other;
+        		}
+
+    	};
+
+    	template <typename Predicate=typename iteratorbase::NoPredicate> class iterinfo {
+    		TupleT &drivers;
+	    	public:
+	    		iterinfo(TupleT &drivers) : drivers(drivers) {}
+	    		iterator<Predicate> begin() {
+	    			return iterator<Predicate>(drivers);
+	    		}
+	    		iterator<Predicate> end() {
+	    			return iterator<Predicate>(drivers, std::tuple_size<TupleT>::value, false);
+	    		}
+	    		iterator<Predicate> operator[](std::size_t idx) {
+	    			return begin() + idx;
+	    		}
+    	};
+
+        iterator<> begin() {
+            return iterinfo<>(drivers).begin();
         }
-        iterator end() {
-            return iterator(drivers, std::tuple_size<TupleT>::value);
+        iterator<> end() {
+            return iterinfo<>(drivers).end();
         }
+        iterator<> operator[](std::size_t idx) {
+        	return iterinfo<>(drivers)[idx];
+        }
+        template <typename Predicate> iterinfo<Predicate> filter(const Predicate &p) {
+        	return iterinfo<Predicate>(drivers);
+    	}
 
         void lockAllAxes() {
 		    for (auto& d : *this) {
