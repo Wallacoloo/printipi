@@ -37,8 +37,8 @@ template <typename TupleT> class IODrivers {
 		TupleT& tuple() {
 			return drivers;
 		}
-	private:
 		class iteratorbase;
+	private:
 		struct NoPredicate {
 			bool operator()(const iteratorbase &self) {
 				(void)self; //unused
@@ -151,7 +151,7 @@ template <typename TupleT> class IODrivers {
 		typedef IndexOptional<_WrapperPeekNextEvent> WrapperPeekNextEvent;
 		typedef IndexOptional<_WrapperConsumeNextEvent> WrapperConsumeNextEvent;
         typedef IndexOptional<_WrapperOnIdleCpu> WrapperOnIdleCpu;
-    private:
+
 		class iteratorbase {
             TupleT &tuple;
         	protected:
