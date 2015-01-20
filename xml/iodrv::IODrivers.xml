@@ -11,6 +11,54 @@
       <type name="TupleT" qualifier=" &amp;" />
     </return>
   </method>
+  <typedef id="iodrv::IODrivers::WrapperLockAxis" name="WrapperLockAxis">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperLockAxis" ref="iodrv::IODrivers::_WrapperLockAxis#iodrv::IODrivers::_WrapperLockAxis" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperUnlockAxis" name="WrapperUnlockAxis">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperUnlockAxis" ref="iodrv::IODrivers::_WrapperUnlockAxis#iodrv::IODrivers::_WrapperUnlockAxis" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperIsFan" name="WrapperIsFan">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsFan" ref="iodrv::IODrivers::_WrapperIsFan#iodrv::IODrivers::_WrapperIsFan" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperIsHotend" name="WrapperIsHotend">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsHotend" ref="iodrv::IODrivers::_WrapperIsHotend#iodrv::IODrivers::_WrapperIsHotend" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperIsHeatedBed" name="WrapperIsHeatedBed">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsHeatedBed" ref="iodrv::IODrivers::_WrapperIsHeatedBed#iodrv::IODrivers::_WrapperIsHeatedBed" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperIsServo" name="WrapperIsServo">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsServo" ref="iodrv::IODrivers::_WrapperIsServo#iodrv::IODrivers::_WrapperIsServo" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperIsEndstop" name="WrapperIsEndstop">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsEndstop" ref="iodrv::IODrivers::_WrapperIsEndstop#iodrv::IODrivers::_WrapperIsEndstop" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperIsEndstopTriggered" name="WrapperIsEndstopTriggered">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperIsEndstopTriggered" ref="iodrv::IODrivers::_WrapperIsEndstopTriggered#iodrv::IODrivers::_WrapperIsEndstopTriggered" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperSetFanDutyCycle" name="WrapperSetFanDutyCycle">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperSetFanDutyCycle" ref="iodrv::IODrivers::_WrapperSetFanDutyCycle#iodrv::IODrivers::_WrapperSetFanDutyCycle" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperSetTargetTemperature" name="WrapperSetTargetTemperature">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperSetTargetTemperature" ref="iodrv::IODrivers::_WrapperSetTargetTemperature#iodrv::IODrivers::_WrapperSetTargetTemperature" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperGetTargetTemperature" name="WrapperGetTargetTemperature">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperGetTargetTemperature" ref="iodrv::IODrivers::_WrapperGetTargetTemperature#iodrv::IODrivers::_WrapperGetTargetTemperature" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperGetMeasuredTemperature" name="WrapperGetMeasuredTemperature">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperGetMeasuredTemperature" ref="iodrv::IODrivers::_WrapperGetMeasuredTemperature#iodrv::IODrivers::_WrapperGetMeasuredTemperature" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperSetServoAngleDegrees" name="WrapperSetServoAngleDegrees">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperSetServoAngleDegrees" ref="iodrv::IODrivers::_WrapperSetServoAngleDegrees#iodrv::IODrivers::_WrapperSetServoAngleDegrees" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperPeekNextEvent" name="WrapperPeekNextEvent">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperPeekNextEvent" ref="iodrv::IODrivers::_WrapperPeekNextEvent#iodrv::IODrivers::_WrapperPeekNextEvent" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperConsumeNextEvent" name="WrapperConsumeNextEvent">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperConsumeNextEvent" ref="iodrv::IODrivers::_WrapperConsumeNextEvent#iodrv::IODrivers::_WrapperConsumeNextEvent" />
+  </typedef>
+  <typedef id="iodrv::IODrivers::WrapperOnIdleCpu" name="WrapperOnIdleCpu">
+    <type name="IODrivers&lt;TupleT&gt;::_WrapperOnIdleCpu" ref="iodrv::IODrivers::_WrapperOnIdleCpu#iodrv::IODrivers::_WrapperOnIdleCpu" />
+  </typedef>
   <classtemplate name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator">
     <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
       <default>
@@ -25,6 +73,11 @@
       </default>
     </templatetypeparameter>
   </classtemplate>
+  <method id="iodrv::IODrivers::all" name="all">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+  </method>
   <method id="iodrv::IODrivers::begin" name="begin">
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />

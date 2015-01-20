@@ -40,7 +40,7 @@ LinearStepper implements the AxisStepper interface for Cartesian-style robots.
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::curPos" name="curPos">
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::vel" name="vel">
       <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
@@ -62,7 +62,7 @@ LinearStepper implements the AxisStepper interface for Cartesian-style robots.
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::curPos" name="curPos">
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::center" name="center">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />

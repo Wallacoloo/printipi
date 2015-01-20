@@ -28,4 +28,17 @@
       <type name="std::size_t" />
     </argument>
   </method>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::apply" name="apply">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::apply::f" name="f">
+      <type name="F &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::IODrivers::iterinfo::apply::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::apply::F" name="F" />
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::apply::Args" name="Args" />
+  </methodtemplate>
 </classtemplate>
