@@ -1,9 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="OutputEvent" name="OutputEvent" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <doc>
-An OutputEvent encapsulates information about the desired state for a GPIO pin at a given time.
-  Eg, "set pin (2) (high) at t=(1234567) uS", or "set pin (44) (low) at t=(887766) uS"
-</doc>
+  <brief>forward declare class defined in outputevent.h</brief>
   <constructor id="OutputEvent::OutputEvent" name="OutputEvent">
     <brief>default constructor. Creates an OutputEvent where isNull() will return true</brief>
   </constructor>

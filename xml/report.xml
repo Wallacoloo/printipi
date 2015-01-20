@@ -902,8 +902,8 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
-        <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/command.cpp" line="26" />
+        <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/com.cpp" line="26" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
@@ -933,14 +933,14 @@ return values.
       </undocumented>
       <undocumented id="plat" name="plat">
         <location column="5" file="platforms/generic/chronoclock.h" line="37" />
-        <location column="1" file="platforms/generic/primitiveiopin.h" line="33" />
-        <location column="5" file="platforms/generic/thisthreadsleep.h" line="32" />
-        <location column="1" file="platforms/generic/hardwarescheduler.h" line="38" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="197" />
-        <location column="1" file="platforms/rpi/primitiveiopin.h" line="34" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="174" />
         <location column="1" file="platforms/rpi/chronoclock.h" line="32" />
         <location column="1" file="platforms/rpi/chronoclock.cpp" line="26" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.h" line="197" />
+        <location column="1" file="platforms/rpi/primitiveiopin.h" line="34" />
+        <location column="1" file="platforms/generic/primitiveiopin.h" line="33" />
+        <location column="5" file="platforms/generic/thisthreadsleep.h" line="32" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="174" />
+        <location column="1" file="platforms/generic/hardwarescheduler.h" line="38" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
         <location column="5" file="platforms/generic/chronoclock.h" line="38" />
@@ -949,11 +949,11 @@ return values.
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="39" />
       </undocumented>
       <undocumented id="plat::rpi" name="rpi">
+        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
+        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="198" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="35" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="175" />
-        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
-        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
       </undocumented>
     </type>
     <type documented="13" name="classtemplate" undocumented="5">
@@ -2764,113 +2764,57 @@ return values.
     </type>
   </coverage>
   <arguments>
-    <function id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
-      <location column="5" file="gparse/command.h" line="50" />
+    <function id="PID::feed" name="feed">
+      <location column="9" file="pid.h" line="51" />
+      <location column="1" file="pid.cpp" line="28" />
       <undocumented-return />
-      <undocumented name="a" />
+      <undocumented name="setpoint" />
+      <undocumented name="pv" />
     </function>
-    <function id="gparse::Command::Command" name="Command">
-      <location column="9" file="gparse/command.h" line="88" />
-      <location column="1" file="gparse/command.cpp" line="29" />
-      <undocumented name="" />
-    </function>
-    <function id="gparse::Command::getFloatParam" name="getFloatParam">
-      <location column="9" file="gparse/command.h" line="96" />
-      <location column="1" file="gparse/command.cpp" line="172" />
+    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
+      <location column="9" file="schedulerbase.h" line="61" />
+      <location column="1" file="schedulerbase.cpp" line="79" />
       <undocumented-return />
-      <undocumented name="hasParam" />
-      <undocumented name="def" />
-      <undocumented name="label" />
+      <undocumented name="handler" />
+      <undocumented name="level" />
     </function>
-    <function id="gparse::Command::getSpecialStringParam" name="getSpecialStringParam">
-      <location column="9" file="gparse/command.h" line="105" />
+    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="44" />
       <undocumented-return />
     </function>
-    <function id="gparse::Command::getE" name="getE">
-      <location column="9" file="gparse/command.h" line="109" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getF" name="getF">
-      <location column="9" file="gparse/command.h" line="116" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getI" name="getI">
-      <location column="9" file="gparse/command.h" line="123" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getJ" name="getJ">
-      <location column="9" file="gparse/command.h" line="130" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getK" name="getK">
-      <location column="9" file="gparse/command.h" line="137" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getP" name="getP">
-      <location column="9" file="gparse/command.h" line="144" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::getS" name="getS">
-      <location column="9" file="gparse/command.h" line="151" />
-      <undocumented-return />
-      <undocumented name="def" />
-    </function>
-    <function id="gparse::Command::isG0" name="isG0">
-      <location column="9" file="gparse/command.h" line="203" />
+    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="48" />
       <undocumented-return />
     </function>
-    <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="56" />
-      <undocumented name="code" />
-      <undocumented name="rest" />
+    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="58" />
+      <undocumented name="pinIdx" />
     </function>
-    <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="62" />
-      <undocumented name="code" />
-      <undocumented name="rest" />
-    </function>
-    <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="69" />
-      <undocumented name="pairs" />
-      <undocumented name="code" />
-      <undocumented name="rest" />
-    </function>
-    <function id="gparse::Com::shareOwnership" name="shareOwnership">
-      <location column="9" file="gparse/com.h" line="95" />
-      <undocumented-return />
-      <undocumented name="stream" />
-    </function>
-    <function id="gparse::Com::giveFullOwnership" name="giveFullOwnership">
-      <location column="9" file="gparse/com.h" line="100" />
-      <undocumented-return />
-      <undocumented name="stream" />
-    </function>
-    <function id="gparse::Com::Com" name="Com">
-      <location column="9" file="gparse/com.h" line="107" />
-      <undocumented name="writeStream" />
-      <undocumented name="readStream" />
-      <undocumented name="dieOnEof" />
-    </function>
-    <function id="gparse::Com::tendCom" name="tendCom">
-      <location column="9" file="gparse/com.h" line="116" />
-      <location column="1" file="gparse/com.cpp" line="28" />
+    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="68" />
       <undocumented-return />
     </function>
-    <function id="gparse::Com::isAtEof" name="isAtEof">
-      <location column="9" file="gparse/com.h" line="123" />
-      <location column="1" file="gparse/com.cpp" line="73" />
+    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="72" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makePwmOutput" name="makePwmOutput">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="77" />
+      <undocumented name="duty" />
+      <undocumented name="desiredPeriod" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/rpi/primitiveiopin.h" line="86" />
       <undocumented-return />
     </function>
-    <function id="gparse::Com::getCommand" name="getCommand">
-      <location column="9" file="gparse/com.h" line="128" />
-      <location column="1" file="gparse/com.cpp" line="76" />
-      <undocumented-return />
+    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="90" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::pwmWrite" name="pwmWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="94" />
+      <undocumented name="duty" />
+      <undocumented name="desiredPeriod" />
     </function>
     <function id="plat::generic::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
       <location column="9" file="platforms/generic/primitiveiopin.h" line="43" />
@@ -2980,12 +2924,113 @@ return values.
       <location column="9" file="outputevent.h" line="75" />
       <undocumented-return />
     </function>
-    <function id="SchedulerBase::registerExitHandler" name="registerExitHandler">
-      <location column="9" file="schedulerbase.h" line="61" />
-      <location column="1" file="schedulerbase.cpp" line="79" />
+    <function id="gparse::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+      <location column="5" file="gparse/command.h" line="50" />
       <undocumented-return />
-      <undocumented name="handler" />
-      <undocumented name="level" />
+      <undocumented name="a" />
+    </function>
+    <function id="gparse::Command::Command" name="Command">
+      <location column="9" file="gparse/command.h" line="88" />
+      <location column="1" file="gparse/command.cpp" line="29" />
+      <undocumented name="" />
+    </function>
+    <function id="gparse::Command::getFloatParam" name="getFloatParam">
+      <location column="9" file="gparse/command.h" line="96" />
+      <location column="1" file="gparse/command.cpp" line="172" />
+      <undocumented-return />
+      <undocumented name="hasParam" />
+      <undocumented name="def" />
+      <undocumented name="label" />
+    </function>
+    <function id="gparse::Command::getSpecialStringParam" name="getSpecialStringParam">
+      <location column="9" file="gparse/command.h" line="105" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Command::getE" name="getE">
+      <location column="9" file="gparse/command.h" line="109" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getF" name="getF">
+      <location column="9" file="gparse/command.h" line="116" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getI" name="getI">
+      <location column="9" file="gparse/command.h" line="123" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getJ" name="getJ">
+      <location column="9" file="gparse/command.h" line="130" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getK" name="getK">
+      <location column="9" file="gparse/command.h" line="137" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getP" name="getP">
+      <location column="9" file="gparse/command.h" line="144" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::getS" name="getS">
+      <location column="9" file="gparse/command.h" line="151" />
+      <undocumented-return />
+      <undocumented name="def" />
+    </function>
+    <function id="gparse::Command::isG0" name="isG0">
+      <location column="9" file="gparse/command.h" line="203" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="56" />
+      <undocumented name="code" />
+      <undocumented name="rest" />
+    </function>
+    <function id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="62" />
+      <undocumented name="code" />
+      <undocumented name="rest" />
+    </function>
+    <function id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="69" />
+      <undocumented name="pairs" />
+      <undocumented name="code" />
+      <undocumented name="rest" />
+    </function>
+    <function id="gparse::Com::shareOwnership" name="shareOwnership">
+      <location column="9" file="gparse/com.h" line="95" />
+      <undocumented-return />
+      <undocumented name="stream" />
+    </function>
+    <function id="gparse::Com::giveFullOwnership" name="giveFullOwnership">
+      <location column="9" file="gparse/com.h" line="100" />
+      <undocumented-return />
+      <undocumented name="stream" />
+    </function>
+    <function id="gparse::Com::Com" name="Com">
+      <location column="9" file="gparse/com.h" line="107" />
+      <undocumented name="writeStream" />
+      <undocumented name="readStream" />
+      <undocumented name="dieOnEof" />
+    </function>
+    <function id="gparse::Com::tendCom" name="tendCom">
+      <location column="9" file="gparse/com.h" line="116" />
+      <location column="1" file="gparse/com.cpp" line="28" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::isAtEof" name="isAtEof">
+      <location column="9" file="gparse/com.h" line="123" />
+      <location column="1" file="gparse/com.cpp" line="73" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Com::getCommand" name="getCommand">
+      <location column="9" file="gparse/com.h" line="128" />
+      <location column="1" file="gparse/com.cpp" line="76" />
+      <undocumented-return />
     </function>
     <function id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
       <location column="9" file="scheduler.h" line="66" />
@@ -3460,13 +3505,6 @@ return values.
       <location column="9" file="iodrivers/fan.h" line="59" />
       <undocumented name="dutyCycle" />
     </function>
-    <function id="PID::feed" name="feed">
-      <location column="9" file="pid.h" line="51" />
-      <location column="1" file="pid.cpp" line="28" />
-      <undocumented-return />
-      <undocumented name="setpoint" />
-      <undocumented name="pv" />
-    </function>
     <function id="iodrv::TempControl::isHotend" name="isHotend">
       <location column="9" file="iodrivers/tempcontrol.h" line="78" />
       <undocumented-return />
@@ -3491,44 +3529,6 @@ return values.
     <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/generic/cartesian.h" line="195" />
       <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="44" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="48" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="58" />
-      <undocumented name="pinIdx" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="68" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="72" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makePwmOutput" name="makePwmOutput">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="77" />
-      <undocumented name="duty" />
-      <undocumented name="desiredPeriod" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/rpi/primitiveiopin.h" line="86" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="90" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::pwmWrite" name="pwmWrite">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="94" />
-      <undocumented name="duty" />
-      <undocumented name="desiredPeriod" />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
       <location column="9" file="motion/lineardeltastepper.h" line="208" />
@@ -3557,6 +3557,28 @@ return values.
     </function>
   </arguments>
   <references>
+    <class id="plat::rpi::ChronoClock" name="ChronoClock">
+      <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
+      <doctype name="doc">
+        <ref name="clock" />
+      </doctype>
+    </class>
+    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="58" />
+      <doctype component="pullUpDown" name="params">
+        <ref name="IoPin" />
+      </doctype>
+    </constructor>
+    <method id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
+      <location column="9" file="iodrivers/iopin.h" line="119" />
+      <location column="1" file="iodrivers/iopin.cpp" line="84" />
+      <doctype name="doc">
+        <ref name="translated level" />
+      </doctype>
+      <doctype name="brief">
+        <ref name="translated level" />
+      </doctype>
+    </method>
     <field id="gparse::Command::arguments" name="arguments">
       <location column="5" file="gparse/command.h" line="73" />
       <doctype name="doc">
@@ -3575,16 +3597,6 @@ return values.
         <ref name="std::string, std::string" />
       </doctype>
     </methodtemplate>
-    <method id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
-      <location column="9" file="iodrivers/iopin.h" line="119" />
-      <location column="1" file="iodrivers/iopin.cpp" line="84" />
-      <doctype name="doc">
-        <ref name="translated level" />
-      </doctype>
-      <doctype name="brief">
-        <ref name="translated level" />
-      </doctype>
-    </method>
     <method id="Vector3::tuple" name="tuple">
       <location column="3" file="common/vector3.h" line="45" />
       <doctype name="brief">
@@ -3688,18 +3700,6 @@ return values.
       <location column="1" file="motion/constantacceleration.h" line="41" />
       <doctype name="doc">
         <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
-      </doctype>
-    </class>
-    <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="58" />
-      <doctype component="pullUpDown" name="params">
-        <ref name="IoPin" />
-      </doctype>
-    </constructor>
-    <class id="plat::rpi::ChronoClock" name="ChronoClock">
-      <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
-      <doctype name="doc">
-        <ref name="clock" />
       </doctype>
     </class>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">
