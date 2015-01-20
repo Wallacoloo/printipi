@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<struct access="protected" id="iodrv::IODrivers::iteratorbase::WrapperPeekNextEvent" name="WrapperPeekNextEvent" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <methodtemplate id="iodrv::IODrivers::iteratorbase::WrapperPeekNextEvent::operator()" name="operator()">
+    <return>
+      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
+    </return>
+    <argument id="iodrv::IODrivers::iteratorbase::WrapperPeekNextEvent::operator()::index" name="index">
+      <type name="std::size_t" />
+    </argument>
+    <argument id="iodrv::IODrivers::iteratorbase::WrapperPeekNextEvent::operator()::driver" name="driver">
+      <type name="T" qualifier=" &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iteratorbase::WrapperPeekNextEvent::operator()::T" name="T" />
+  </methodtemplate>
+</struct>

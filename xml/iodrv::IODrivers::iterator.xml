@@ -1,74 +1,27 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class id="iodrv::IODrivers::iterator" name="iterator" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <constructor id="iodrv::IODrivers::iterator::iterator" name="iterator">
-    <argument id="iodrv::IODrivers::iterator::iterator::tuple" name="tuple">
+<classtemplate id="iodrv::IODrivers::iterator" name="iterator" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <base access="public">
+    <type name="IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+  </base>
+  <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
+    <default>
+      <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+    </default>
+  </templatetypeparameter>
+  <constructor id="iodrv::IODrivers::iterator::iterator&lt;Predicate&gt;" name="iterator&lt;Predicate&gt;">
+    <argument id="iodrv::IODrivers::iterator::iterator&lt;Predicate&gt;::drivers" name="drivers">
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
-    <argument id="iodrv::IODrivers::iterator::iterator::idx" name="idx">
+    <argument id="iodrv::IODrivers::iterator::iterator&lt;Predicate&gt;::idx" name="idx">
       <type name="std::size_t" />
     </argument>
-  </constructor>
-  <method id="iodrv::IODrivers::iterator::consumeNextEvent" name="consumeNextEvent">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::getMeasuredTemperature" name="getMeasuredTemperature">
-    <return>
-      <type name="CelciusType" ref="index#CelciusType" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::getTargetTemperature" name="getTargetTemperature">
-    <return>
-      <type name="CelciusType" ref="index#CelciusType" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::isEndstop" name="isEndstop">
-    <return>
+    <argument id="iodrv::IODrivers::iterator::iterator&lt;Predicate&gt;::filterFirst" name="filterFirst">
       <type builtin="yes" name="bool" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::isEndstopTriggered" name="isEndstopTriggered">
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::isFan" name="isFan">
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::isHeatedBed" name="isHeatedBed">
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::isHotend" name="isHotend">
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::isServo" name="isServo">
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::lockAxis" name="lockAxis">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::onIdleCpu" name="onIdleCpu">
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-    <argument id="iodrv::IODrivers::iterator::onIdleCpu::interval" name="interval">
-      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
     </argument>
-  </method>
-  <method id="iodrv::IODrivers::iterator::operator*" name="operator*">
+  </constructor>
+  <method id="iodrv::IODrivers::iterator::operator++" name="operator++">
     <return>
-      <type name="IODrivers&lt;TupleT&gt;::iterator" qualifier=" &amp;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+      <type builtin="yes" name="void" />
     </return>
   </method>
   <method id="iodrv::IODrivers::iterator::operator+" name="operator+">
@@ -79,43 +32,4 @@
       <type name="std::size_t" />
     </argument>
   </method>
-  <method id="iodrv::IODrivers::iterator::operator++" name="operator++">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::peekNextEvent" name="peekNextEvent">
-    <return>
-      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
-    </return>
-  </method>
-  <method id="iodrv::IODrivers::iterator::setFanDutyCycle" name="setFanDutyCycle">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODrivers::iterator::setFanDutyCycle::duty" name="duty">
-      <type builtin="yes" name="float" />
-    </argument>
-  </method>
-  <method id="iodrv::IODrivers::iterator::setServoAngleDegrees" name="setServoAngleDegrees">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODrivers::iterator::setServoAngleDegrees::angle" name="angle">
-      <type builtin="yes" name="float" />
-    </argument>
-  </method>
-  <method id="iodrv::IODrivers::iterator::setTargetTemperature" name="setTargetTemperature">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODrivers::iterator::setTargetTemperature::temp" name="temp">
-      <type name="CelciusType" ref="index#CelciusType" />
-    </argument>
-  </method>
-  <method id="iodrv::IODrivers::iterator::unlockAxis" name="unlockAxis">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-  </method>
-</class>
+</classtemplate>

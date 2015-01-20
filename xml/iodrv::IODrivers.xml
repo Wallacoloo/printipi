@@ -11,17 +11,48 @@
       <type name="TupleT" qualifier=" &amp;" />
     </return>
   </method>
-  <class name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+  <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+  <classtemplate name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator">
+    <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
+      <default>
+        <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+      </default>
+    </templatetypeparameter>
+  </classtemplate>
+  <classtemplate name="iterinfo" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
+      <default>
+        <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+      </default>
+    </templatetypeparameter>
+  </classtemplate>
   <method id="iodrv::IODrivers::begin" name="begin">
     <return>
-      <type name="IODrivers&lt;TupleT&gt;::iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+      <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
     </return>
   </method>
   <method id="iodrv::IODrivers::end" name="end">
     <return>
-      <type name="IODrivers&lt;TupleT&gt;::iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+      <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
     </return>
   </method>
+  <method id="iodrv::IODrivers::operator[]" name="operator[]">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+    </return>
+    <argument id="iodrv::IODrivers::operator[]::idx" name="idx">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <methodtemplate id="iodrv::IODrivers::filter" name="filter">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+    <argument id="iodrv::IODrivers::filter::p" name="p">
+      <type name="const Predicate" qualifier=" const &amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::filter::Predicate" name="Predicate" />
+  </methodtemplate>
   <method id="iodrv::IODrivers::lockAllAxes" name="lockAllAxes">
     <return>
       <type builtin="yes" name="void" />

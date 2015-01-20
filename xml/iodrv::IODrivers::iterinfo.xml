@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="iodrv::IODrivers::iterinfo" name="iterinfo" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <templatetypeparameter id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
+    <default>
+      <type name="iodrv::IODrivers&lt;TupleT&gt;::iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+    </default>
+  </templatetypeparameter>
+  <constructor id="iodrv::IODrivers::iterinfo::iterinfo&lt;Predicate&gt;" name="iterinfo&lt;Predicate&gt;">
+    <argument id="iodrv::IODrivers::iterinfo::iterinfo&lt;Predicate&gt;::drivers" name="drivers">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+  </constructor>
+  <method id="iodrv::IODrivers::iterinfo::begin" name="begin">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iterinfo::end" name="end">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iterinfo::operator[]" name="operator[]">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::operator[]::idx" name="idx">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+</classtemplate>
