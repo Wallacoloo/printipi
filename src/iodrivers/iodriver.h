@@ -64,6 +64,10 @@ class IODriver {
         inline bool isEndstop() const { return false; }
         //endstops only:
         inline bool isEndstopTriggered() const { return false; }
+        inline void setFanDutyCycle(float dutyCycle) {
+            (void)dutyCycle;
+            assert(false && "IoDriver::setFanDutyCycle() must be overriden by subclass");
+        }
         //OVERRIDE THIS (hotends / beds only)
         inline void setTargetTemperature(CelciusType) { assert(false && "IoDriver::setTargetTemperature() must be overriden by subclass."); }
         //OVERRIDE THIS (hotends / beds only)
@@ -92,10 +96,6 @@ class IODriver {
             (void)interval;
             return false; 
         }
-        inline void setFanDutyCycle(float dutyCycle) {
-            (void)dutyCycle;
-            assert(false && "IoDriver::setFanDutyCycle() must be overriden by subclass");
-        }
         template <typename TupleT> static void lockAllAxes(TupleT &drivers);
         template <typename TupleT> static void unlockAllAxes(TupleT &drivers);
         template <typename TupleT> static void setHotendTemp(TupleT &drivers, CelciusType temp);
@@ -106,46 +106,191 @@ class IODriver {
         template <typename TupleT> static OutputEvent tuplePeekNextEvent(TupleT &drivers);
         template <typename TupleT> static void tupleConsumeNextEvent(TupleT &drivers);
         template <typename TupleT> static void setServoAngleAtServoIndex(TupleT &drivers, int index, float angleDeg);
+
+        template <typename TupleT> class iterator {
+            struct WrapperLockAxis {
+                template <typename T> void operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    driver.lockAxis();
+                }
+            };
+            struct WrapperUnlockAxis {
+                template <typename T> void operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    driver.unlockAxis();
+                }
+            };
+            struct WrapperIsFan {
+                template <typename T> bool operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.isFan();
+                }
+            };
+            struct WrapperIsHotend {
+                template <typename T> bool operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.isHotend();
+                }
+            };
+            struct WrapperIsHeatedBed {
+                template <typename T> bool operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.isHeatedBed();
+                }
+            };
+            struct WrapperIsServo {
+                template <typename T> bool operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.isServo();
+                }
+            };
+            struct WrapperIsEndstop {
+                template <typename T> bool operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.isEndstop();
+                }
+            };
+            struct WrapperIsEndstopTriggered {
+                template <typename T> bool operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.isEndstopTriggered();
+                }
+            };
+            struct WrapperSetFanDutyCycle {
+                template <typename T> void operator()(std::size_t index, T &driver, float duty) {
+                    (void)index; //unused;
+                    driver.setFanDutyCycle(duty);
+                }
+            };
+            struct WrapperSetTargetTemperature {
+                template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
+                    (void)index; //unused;
+                    driver.setTargetTemperature(temp);
+                }
+            };
+            struct WrapperGetTargetTemperature {
+                template <typename T> CelciusType operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.getTargetTemperature();
+                }
+            };
+            struct WrapperGetMeasuredTemperature {
+                template <typename T> CelciusType operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.getMeasuredTemperature();
+                }
+            };
+            struct WrapperSetServoAngleDegrees {
+                template <typename T> void operator()(std::size_t index, T &driver, float angle) {
+                    (void)index; //unused;
+                    driver.setServoAngleDegrees(angle);
+                }
+            };
+            struct WrapperPeekNextEvent {
+                template <typename T> OutputEvent operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.peekNextEvent();
+                }
+            };
+            struct WrapperConsumeNextEvent {
+                template <typename T> void operator()(std::size_t index, T &driver) {
+                    (void)index; //unused;
+                    return driver.consumeNextEvent();
+                }
+            };
+            struct WrapperOnIdleCpu {
+                template <typename T> bool operator()(std::size_t index, T &driver, OnIdleCpuIntervalT interval) {
+                    (void)index; //unused;
+                    return driver.onIdleCpu(interval);
+                }
+            };
+            TupleT &tuple;
+            std::size_t idx;
+            public:
+                iterator(TupleT &tuple, std::size_t idx=0) : tuple(tuple), idx(idx) {}
+                iterator& operator*() {
+                    return *this;
+                }
+                void operator++() {
+                    ++idx;
+                }
+                iterator operator+(std::size_t add) {
+                    return iterator(tuple, idx+add);
+                }
+                friend bool operator==(const iterator &a, const iterator &b) {
+                    return a.idx == b.idx;
+                }
+                friend bool operator!=(const iterator &a, const iterator &b) {
+                    return !(a == b);
+                }
+                void lockAxis() const {
+                    return tupleCallOnIndex(tuple, WrapperLockAxis(), idx);
+                }
+                void unlockAxis() const {
+                    return tupleCallOnIndex(tuple, WrapperUnlockAxis(), idx);
+                }
+                bool isFan() const {
+                    return tupleCallOnIndex(tuple, WrapperIsFan(), idx);
+                }
+                bool isHotend() const {
+                    return tupleCallOnIndex(tuple, WrapperIsHotend(), idx);
+                }
+                bool isHeatedBed() const {
+                    return tupleCallOnIndex(tuple, WrapperIsHeatedBed(), idx);
+                }
+                bool isServo() const {
+                    return tupleCallOnIndex(tuple, WrapperIsServo(), idx);
+                }
+                bool isEndstop() const {
+                    return tupleCallOnIndex(tuple, WrapperIsEndstop(), idx);
+                }
+                bool isEndstopTriggered() const {
+                    return tupleCallOnIndex(tuple, WrapperIsEndstopTriggered(), idx);
+                }
+                void setFanDutyCycle(float duty) {
+                    tupleCallOnIndex(tuple, WrapperSetFanDutyCycle(), idx, duty);
+                }
+                void setTargetTemperature(CelciusType temp) {
+                    tupleCallOnIndex(tuple, WrapperSetTargetTemperature(), idx, temp);
+                }
+                CelciusType getTargetTemperature() const {
+                    return tupleCallOnIndex(tuple, WrapperGetTargetTemperature(), idx);
+                }
+                CelciusType getMeasuredTemperature() const {
+                    return tupleCallOnIndex(tuple, WrapperGetMeasuredTemperature(), idx);
+                }
+                void setServoAngleDegrees(float angle) {
+                    tupleCallOnIndex(tuple, WrapperSetServoAngleDegrees(), idx, angle);
+                }
+                OutputEvent peekNextEvent() const {
+                    return tupleCallOnIndex(tuple, WrapperPeekNextEvent(), idx);
+                }
+                void consumeNextEvent() {
+                    tupleCallOnIndex(tuple, WrapperConsumeNextEvent(), idx);
+                }
+                bool onIdleCpu(OnIdleCpuIntervalT interval) {
+                    return tupleCallOnIndex(tuple, WrapperOnIdleCpu(), idx, interval);
+                }
+        };
+
+        template <typename TupleT> class WrapperIter {
+            TupleT &tuple;
+            public:
+                WrapperIter(TupleT &tuple) : tuple(tuple) {}
+                IODriver::iterator<TupleT> begin() {
+                    return IODriver::iterator<TupleT>(tuple, 0);
+                }
+                IODriver::iterator<TupleT> end() {
+                    return IODriver::iterator<TupleT>(tuple, std::tuple_size<TupleT>::value);
+                }
+        };
+        template <typename TupleT> static WrapperIter<TupleT> iter(TupleT &t) {
+            return WrapperIter<TupleT>(t);
+        }
 };
 
 namespace {
     //place helper functions in an unnamed namespace to limit visibility and hint the documentation generator
-
-    //IODriver::lockAllAxes helper
-    struct IODriver__lockAllAxes {
-        template <typename T> void operator()(std::size_t index, T &driver) {
-            (void)index; //unused;
-            driver.lockAxis();
-        }
-    };
-
-    //IODriver::unlockAllAxes helper
-    struct IODriver__unlockAllAxes {
-        template <typename T> void operator()(std::size_t index, T &driver) {
-            (void)index; //unused;
-            driver.unlockAxis();
-        }
-    };
-
-    //IODriver::setHotendTemp helper
-    struct IODriver__setHotendTemp {
-        template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
-            (void)index; //unused;
-            if (driver.isHotend()) {
-                driver.setTargetTemperature(temp);
-            }
-        }
-    };
-
-    //IODriver::setBedTemp helper
-    struct IODriver__setBedTemp {
-        template <typename T> void operator()(std::size_t index, T &driver, CelciusType temp) {
-            (void)index; //unused;
-            if (driver.isHeatedBed()) {
-                driver.setTargetTemperature(temp);
-            }
-        }
-    };
 
     //IODriver::getHotendTemp helper
     struct IODriver__getHotendTemp {
@@ -205,38 +350,33 @@ namespace {
             }
         }
     };
-
-    //IODriver::setServoAngleAtServoIndex helper
-    struct IODriver__setServoAngleAtServoIndex {
-        //access servos by their SERVO index, not their index in the ioDrivers tuple.
-        //That is, servo #0 is the first servo in the tuple,
-        //  servo #1 is the second, and so on.
-        std::size_t numServosSeen;
-        IODriver__setServoAngleAtServoIndex() : numServosSeen(0) {}
-        template <typename T> void operator()(std::size_t index, T &driver, std::size_t desiredIndex, float angleDeg) {
-            (void)index; //unused
-            if (driver.isServo()) {
-                if (numServosSeen++ == desiredIndex) {
-                    driver.setServoAngleDegrees(angleDeg);
-                }
-            }
-        }
-    };
 }
 
 
 
 template <typename TupleT> void IODriver::lockAllAxes(TupleT &drivers) {
-    callOnAll(drivers, IODriver__lockAllAxes());
+    for (auto& d : IODriver::iter(drivers)) {
+        d.lockAxis();
+    }
 }
 template <typename TupleT> void IODriver::unlockAllAxes(TupleT &drivers) {
-    callOnAll(drivers, IODriver__unlockAllAxes());
+    for (auto& d : IODriver::iter(drivers)) {
+        d.unlockAxis();
+    }
 }
 template <typename TupleT> void IODriver::setHotendTemp(TupleT &drivers, CelciusType temp) {
-    callOnAll(drivers, IODriver__setHotendTemp(), temp);
+    for (auto& d : IODriver::iter(drivers)) {
+        if (d.isHotend()) {
+            d.setTargetTemperature(temp);
+        }
+    }
 }
 template <typename TupleT> void IODriver::setBedTemp(TupleT &drivers, CelciusType temp) {
-    callOnAll(drivers, IODriver__setBedTemp(), temp);
+    for (auto& d : IODriver::iter(drivers)) {
+        if (d.isHeatedBed()) {
+            d.setTargetTemperature(temp);
+        }
+    }
 }
 template <typename TupleT> CelciusType IODriver::getHotendTemp(TupleT &drivers) {
     IODriver__getHotendTemp t;
@@ -271,8 +411,11 @@ template <typename TupleT> void IODriver::tupleConsumeNextEvent(TupleT &drivers)
 }
 
 template <typename TupleT> void IODriver::setServoAngleAtServoIndex(TupleT &drivers, int index, float angleDeg) {
-    IODriver__setServoAngleAtServoIndex indexer;
-    callOnAll(drivers, &indexer, index, angleDeg);
+    for (auto& d : IODriver::iter(drivers)) {
+        if (d.isServo() && index-- == 0) {
+            d.setServoAngleDegrees(angleDeg);
+        }
+    }
 }
 
 }
