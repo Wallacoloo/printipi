@@ -46,6 +46,7 @@
 #include "motion/motionplanner.h"
 #include "common/mathutil.h"
 #include "iodrivers/iodriver.h"
+#include "iodrivers/iodrivers.h"
 #include "platforms/auto/chronoclock.h" //for EventClockT
 #include "platforms/auto/hardwarescheduler.h" //for HardwareScheduler
 #include "iodrivers/iopin.h"
@@ -152,9 +153,9 @@ template <typename Drv> class State {
     struct State__onIdleCpu; //forward declare a type used internally in onIdleCpu() function
     typedef Scheduler<SchedInterface> SchedType;
     //The ioDrivers are a combination of the ones used by the coordmap and the miscellaneous ones from the machine
-    typedef decltype(std::tuple_cat(
+    typedef iodrv::IODrivers<decltype(std::tuple_cat(
         std::declval<Drv>().getCoordMap().getDependentIoDrivers(), 
-        std::declval<Drv>().getIoDrivers())) IODriverTypes;
+        std::declval<Drv>().getIoDrivers()))> IODriverTypes;
 
     //flag set by M0. Indicates that the machine should shut down after any current moves complete.
     bool _doShutdownAfterMoveCompletes;
@@ -368,7 +369,7 @@ template <typename Drv> struct State<Drv>::State__onIdleCpu {
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
-        OutputEvent ioDriverEvt = iodrv::IODriver::tuplePeekNextEvent(ioDrivers);
+        OutputEvent ioDriverEvt = iodrv::IODriver::tuplePeekNextEvent(ioDrivers.tuple());
         OutputEvent motionEvt = _motionPlanner.peekNextEvent();
 
         //iodrv::IODriver::tupleConsumeNextEvent(ioDrivers);
@@ -380,7 +381,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         if (doServiceIoDriver) {
             //IoDriver event occurs first, so queue it & consume it.
             this->scheduler.queue(ioDriverEvt);
-            iodrv::IODriver::tupleConsumeNextEvent(ioDrivers);
+            iodrv::IODriver::tupleConsumeNextEvent(ioDrivers.tuple());
         } else if (_doBufferMoves || _lastMotionPlannedTime <= EventClockT::now()) { 
             //if we're homing (_doBufferMoves==false), we don't want to queue the next step until the current one has actually completed.
             //Although the IoDriver event does not occur first, that doesn't mean there is necessarily a motion event.
@@ -425,7 +426,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         }
     }
 
-    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers, State__onIdleCpu(), interval);
+    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers.tuple(), State__onIdleCpu(), interval);
     return motionNeedsCpu || driversNeedCpu;
 }
 
@@ -566,10 +567,12 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         _doShutdownAfterMoveCompletes = true;
         reply(gparse::Response::Ok);
     } else if (cmd.isM17()) { //enable all stepper motors
-        iodrv::IODriver::lockAllAxes(this->ioDrivers);
+        ioDrivers.lockAllAxes();
+        //iodrv::IODriver::lockAllAxes(this->ioDrivers.tuple());
         reply(gparse::Response::Ok);
     } else if (cmd.isM18()) { //allow stepper motors to move 'freely'
-        iodrv::IODriver::unlockAllAxes(this->ioDrivers);
+        ioDrivers.unlockAllAxes();
+        //iodrv::IODriver::unlockAllAxes(this->ioDrivers.tuple());
         reply(gparse::Response::Ok);
     } else if (cmd.isM21()) { //initialize SD card (nothing to do).
         reply(gparse::Response::Ok);
@@ -588,7 +591,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         setExtruderPosMode(POS_RELATIVE);
         reply(gparse::Response::Ok);
     } else if (cmd.isM84()) { //stop idle hold: relax all motors (same as M18)
-        iodrv::IODriver::unlockAllAxes(this->ioDrivers);
+        ioDrivers.unlockAllAxes();
+        //iodrv::IODriver::unlockAllAxes(this->ioDrivers.tuple());
         reply(gparse::Response::Ok);
     } else if (cmd.isM99()) { //return from macro/subprogram
         //note: can't simply pop the top file, because then that causes memory access errors when trying to send it areply.
@@ -606,13 +610,14 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         bool hasS;
         float t = cmd.getS(hasS);
         if (hasS) {
-            iodrv::IODriver::setHotendTemp(ioDrivers, t);
+            ioDrivers.setHotendTemp(t);
+            //iodrv::IODriver::setHotendTemp(ioDrivers.tuple(), t);
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM105()) { //get temperature, in C
         CelciusType t, b;
-        t = iodrv::IODriver::getHotendTemp(ioDrivers);
-        b = iodrv::IODriver::getBedTemp(ioDrivers);
+        t = iodrv::IODriver::getHotendTemp(ioDrivers.tuple());
+        b = iodrv::IODriver::getBedTemp(ioDrivers.tuple());
         reply(gparse::Response(gparse::ResponseOk, {
             std::make_pair("T", std::to_string(t)),
             std::make_pair("B", std::to_string(b))
@@ -633,7 +638,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         bool hasS;
         float t = cmd.getS(hasS);
         if (hasS) {
-            iodrv::IODriver::setHotendTemp(ioDrivers, t);
+            ioDrivers.setHotendTemp(t);
+            //iodrv::IODriver::setHotendTemp(ioDrivers.tuple(), t);
         }
         _isWaitingForHotend = true;
         reply(gparse::Response::Ok);
@@ -673,7 +679,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         bool hasS;
         float t = cmd.getS(hasS);
         if (hasS) {
-            iodrv::IODriver::setBedTemp(ioDrivers, t);
+            ioDrivers.setBedTemp(t);
+            //iodrv::IODriver::setBedTemp(ioDrivers.tuple(), t);
         }
         reply(gparse::Response::Ok);
     } else if(cmd.isM280()) {
@@ -681,7 +688,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         int index = cmd.getP(-1);
         if (index >= 0) {
             float angleDeg = cmd.getS(0);
-            iodrv::IODriver::setServoAngleAtServoIndex(ioDrivers, index, angleDeg);
+            ioDrivers.setServoAngleAtServoIndex(index, angleDeg);
+            //iodrv::IODriver::setServoAngleAtServoIndex(ioDrivers.tuple(), index, angleDeg);
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM999()) {
@@ -737,8 +745,8 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 template <typename Drv> bool State<Drv>::isHotendReady() {
     if (_isWaitingForHotend) {
         //TODO: check ALL heaters, not just the first hotend.
-        CelciusType current = iodrv::IODriver::getHotendTemp(ioDrivers);
-        CelciusType target = iodrv::IODriver::getHotendTargetTemp(ioDrivers);
+        CelciusType current = iodrv::IODriver::getHotendTemp(ioDrivers.tuple());
+        CelciusType target = iodrv::IODriver::getHotendTargetTemp(ioDrivers.tuple());
         _isWaitingForHotend = current < target;
     }
     return !_isWaitingForHotend;
@@ -756,7 +764,7 @@ template <typename Drv> struct State<Drv>::State__setFanRate {
 };
 
 template <typename Drv> void State<Drv>::setFanRate(float rate) {
-    callOnAll(ioDrivers, State__setFanRate(), rate);
+    callOnAll(ioDrivers.tuple(), State__setFanRate(), rate);
 }
 
 template <typename Drv> class State<Drv>::State__getEndstopStatusString {
@@ -782,7 +790,7 @@ template <typename Drv> class State<Drv>::State__getEndstopStatusString {
 
 template <typename Drv> std::string State<Drv>::getEndstopStatusString() {
     State__getEndstopStatusString statusObj;
-    callOnAll(ioDrivers, &statusObj);
+    callOnAll(ioDrivers.tuple(), &statusObj);
     return statusObj.str();
 }
 
