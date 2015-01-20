@@ -257,6 +257,7 @@ template <typename TupleT> class IODrivers {
         		//Increment to the next item that passes the predicate
         		void operator++() {
         		 	do {
+        		 		assert(!this->isAtEnd()); //illegal to increment an end iterator
                     	++this->idx;
                     } while (!Predicate()(*this) && !this->isAtEnd());
         		}
@@ -354,9 +355,6 @@ template <typename TupleT> class IODrivers {
 		//apply T::setTargetTemperature(temp) on each heated bed in the set
 		void setBedTemp(CelciusType temp) {
 			heatedBeds().apply(GenericSetTargetTemperature(), temp);
-		}
-		void setServoAngleAtServoIndex(int index, float angleDeg) {
-			servos()[index].setServoAngleDegrees(angleDeg);
 		}
 };
 

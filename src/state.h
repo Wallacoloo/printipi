@@ -688,8 +688,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         int index = cmd.getP(-1);
         if (index >= 0) {
             float angleDeg = cmd.getS(0);
-            ioDrivers.setServoAngleAtServoIndex(index, angleDeg);
-            //iodrv::IODriver::setServoAngleAtServoIndex(ioDrivers.tuple(), index, angleDeg);
+            ioDrivers.servos()[index].setServoAngleDegrees(angleDeg);
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM999()) {
