@@ -994,9 +994,9 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
+        <location column="1" file="gparse/com.cpp" line="26" />
         <location column="1" file="gparse/command.cpp" line="26" />
         <location column="1" file="gparse/response.cpp" line="3" />
-        <location column="1" file="gparse/com.cpp" line="26" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -1028,11 +1028,11 @@ return values.
         <location column="5" file="platforms/generic/chronoclock.h" line="37" />
         <location column="5" file="platforms/generic/thisthreadsleep.h" line="32" />
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="38" />
-        <location column="1" file="platforms/rpi/chronoclock.h" line="32" />
-        <location column="1" file="platforms/rpi/chronoclock.cpp" line="26" />
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="197" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="34" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="174" />
+        <location column="1" file="platforms/rpi/chronoclock.h" line="32" />
+        <location column="1" file="platforms/rpi/chronoclock.cpp" line="26" />
       </undocumented>
       <undocumented id="plat::generic" name="generic">
         <location column="1" file="platforms/generic/primitiveiopin.h" line="34" />
@@ -1041,11 +1041,11 @@ return values.
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="39" />
       </undocumented>
       <undocumented id="plat::rpi" name="rpi">
-        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
-        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="198" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="35" />
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="175" />
+        <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
+        <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
       </undocumented>
     </type>
     <type documented="6" name="structtemplate" undocumented="1">
@@ -3570,43 +3570,12 @@ return values.
       <undocumented name="getIoDrivers" />
       <undocumented name="getAccelerationProfile" />
     </function>
-    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="44" />
+    <function id="PID::feed" name="feed">
+      <location column="9" file="pid.h" line="51" />
+      <location column="1" file="pid.cpp" line="28" />
       <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="48" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="58" />
-      <undocumented name="pinIdx" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="68" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
-      <location column="3" file="platforms/rpi/primitiveiopin.h" line="72" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::makePwmOutput" name="makePwmOutput">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="77" />
-      <undocumented name="duty" />
-      <undocumented name="desiredPeriod" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
-      <location column="6" file="platforms/rpi/primitiveiopin.h" line="86" />
-      <undocumented-return />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="90" />
-      <undocumented name="lev" />
-    </function>
-    <function id="plat::rpi::PrimitiveIoPin::pwmWrite" name="pwmWrite">
-      <location column="9" file="platforms/rpi/primitiveiopin.h" line="94" />
-      <undocumented name="duty" />
-      <undocumented name="desiredPeriod" />
+      <undocumented name="setpoint" />
+      <undocumented name="pv" />
     </function>
     <function id="motion::ConstantAcceleration::transform" name="transform">
       <location column="9" file="motion/constantacceleration.h" line="61" />
@@ -3647,13 +3616,6 @@ return values.
       <location column="9" file="iodrivers/fan.h" line="59" />
       <undocumented name="dutyCycle" />
     </function>
-    <function id="PID::feed" name="feed">
-      <location column="9" file="pid.h" line="51" />
-      <location column="1" file="pid.cpp" line="28" />
-      <undocumented-return />
-      <undocumented name="setpoint" />
-      <undocumented name="pv" />
-    </function>
     <function id="iodrv::TempControl::isHotend" name="isHotend">
       <location column="9" file="iodrivers/tempcontrol.h" line="78" />
       <undocumented-return />
@@ -3665,6 +3627,44 @@ return values.
     <function id="machines::generic::cartesian::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/generic/cartesian.h" line="195" />
       <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::null" name="null">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="44" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::isNull" name="isNull">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="48" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="58" />
+      <undocumented name="pinIdx" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::id" name="id">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="68" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makeDigitalOutput" name="makeDigitalOutput">
+      <location column="3" file="platforms/rpi/primitiveiopin.h" line="72" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::makePwmOutput" name="makePwmOutput">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="77" />
+      <undocumented name="duty" />
+      <undocumented name="desiredPeriod" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalRead" name="digitalRead">
+      <location column="6" file="platforms/rpi/primitiveiopin.h" line="86" />
+      <undocumented-return />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::digitalWrite" name="digitalWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="90" />
+      <undocumented name="lev" />
+    </function>
+    <function id="plat::rpi::PrimitiveIoPin::pwmWrite" name="pwmWrite">
+      <location column="9" file="platforms/rpi/primitiveiopin.h" line="94" />
+      <undocumented name="duty" />
+      <undocumented name="desiredPeriod" />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
       <location column="9" file="motion/lineardeltastepper.h" line="208" />
@@ -3820,10 +3820,10 @@ return values.
         <ref name="Args..." />
       </doctype>
     </functiontemplate>
-    <class id="plat::rpi::ChronoClock" name="ChronoClock">
-      <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
+    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
+      <location column="1" file="motion/constantacceleration.h" line="41" />
       <doctype name="doc">
-        <ref name="clock" />
+        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
       </doctype>
     </class>
     <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
@@ -3832,10 +3832,10 @@ return values.
         <ref name="IoPin" />
       </doctype>
     </constructor>
-    <class id="motion::ConstantAcceleration" name="ConstantAcceleration">
-      <location column="1" file="motion/constantacceleration.h" line="41" />
+    <class id="plat::rpi::ChronoClock" name="ChronoClock">
+      <location column="1" file="platforms/rpi/chronoclock.h" line="41" />
       <doctype name="doc">
-        <ref name=" vmax], vmax [if t &lt; duration-accelTime], vmax - a(t-t1) [if t " />
+        <ref name="clock" />
       </doctype>
     </class>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">
