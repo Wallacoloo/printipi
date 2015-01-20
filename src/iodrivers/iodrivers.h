@@ -292,6 +292,14 @@ template <typename TupleT> class IODrivers {
 		    			f(d, args...);
 		    		}
 		    	}
+		    	//Return f(f(..., ioDrivers[1]), ioDrivers[0])
+		    	template <typename F, typename Ret, typename ...Args> Ret accumulate(F &&f, Ret dflt, Args ...args) {
+		    		Ret accumulated=dflt;
+		    		for (auto &d : *this) {
+		    			accumulated = f(accumulated, d, args...);
+		    		}
+		    		return accumulated;
+		    	}
     	};
 
     	//return an iterable/indexable object containing ALL the iodrivers
