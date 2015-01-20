@@ -129,8 +129,7 @@ template <typename TupleT> class IODrivers {
             }
         };
         struct _WrapperOnIdleCpu {
-            template <typename T> bool operator()(std::size_t index, T &driver, OnIdleCpuIntervalT interval) const {
-                (void)index; //unused;
+            template <typename T> bool operator()(T &driver, OnIdleCpuIntervalT interval) const {
                 return driver.onIdleCpu(interval);
             }
         };
