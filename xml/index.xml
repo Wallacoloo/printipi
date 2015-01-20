@@ -135,6 +135,7 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
     <classtemplate name="IODrivers" ref="iodrv::IODrivers#iodrv::IODrivers">
       <templatetypeparameter id="iodrv::IODrivers::TupleT" name="TupleT" />
+      <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
       <classtemplate name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator">
         <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
           <default>

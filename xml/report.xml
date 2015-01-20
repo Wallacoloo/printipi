@@ -977,9 +977,9 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
+        <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/command.cpp" line="26" />
         <location column="1" file="gparse/com.cpp" line="26" />
-        <location column="1" file="gparse/response.cpp" line="3" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -2868,7 +2868,7 @@ return values.
         <location column="1" file="iodrivers/iopin.cpp" line="51" />
       </undocumented>
     </type>
-    <type documented="28" name="class" undocumented="5">
+    <type documented="28" name="class" undocumented="6">
       <undocumented id="FileSystem" name="FileSystem">
         <location column="1" file="filesystem.h" line="29" />
       </undocumented>
@@ -2877,6 +2877,10 @@ return values.
       </undocumented>
       <undocumented id="gparse::ComStreamOwnershipMarker" name="ComStreamOwnershipMarker">
         <location column="1" file="gparse/com.h" line="48" />
+      </undocumented>
+      <undocumented id="iodrv::IODrivers::iteratorbase" name="iteratorbase">
+        <location column="3" file="iodrivers/iodrivers.h" line="40" />
+        <location column="3" file="iodrivers/iodrivers.h" line="155" />
       </undocumented>
       <undocumented id="machines::Machine" name="Machine">
         <location column="1" file="machines/machine.h" line="34" />

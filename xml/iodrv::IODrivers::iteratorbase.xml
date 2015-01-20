@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="iodrv::IODrivers::iteratorbase" name="iteratorbase" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <constructor id="iodrv::IODrivers::iteratorbase::iteratorbase" name="iteratorbase">
+    <argument id="iodrv::IODrivers::iteratorbase::iteratorbase::tuple" name="tuple">
+      <type name="TupleT" qualifier=" &amp;" />
+    </argument>
+    <argument id="iodrv::IODrivers::iteratorbase::iteratorbase::idx" name="idx">
+      <type name="std::size_t" />
+    </argument>
+  </constructor>
+  <method id="iodrv::IODrivers::iteratorbase::consumeNextEvent" name="consumeNextEvent">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::getMeasuredTemperature" name="getMeasuredTemperature">
+    <return>
+      <type name="CelciusType" ref="index#CelciusType" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::getTargetTemperature" name="getTargetTemperature">
+    <return>
+      <type name="CelciusType" ref="index#CelciusType" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::isEndstop" name="isEndstop">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::isEndstopTriggered" name="isEndstopTriggered">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::isFan" name="isFan">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::isHeatedBed" name="isHeatedBed">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::isHotend" name="isHotend">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::isServo" name="isServo">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::lockAxis" name="lockAxis">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::onIdleCpu" name="onIdleCpu">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::IODrivers::iteratorbase::onIdleCpu::interval" name="interval">
+      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
+    </argument>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::operator*" name="operator*">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iteratorbase" qualifier=" &amp;" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::peekNextEvent" name="peekNextEvent">
+    <return>
+      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::setFanDutyCycle" name="setFanDutyCycle">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODrivers::iteratorbase::setFanDutyCycle::duty" name="duty">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::setServoAngleDegrees" name="setServoAngleDegrees">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODrivers::iteratorbase::setServoAngleDegrees::angle" name="angle">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::setTargetTemperature" name="setTargetTemperature">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODrivers::iteratorbase::setTargetTemperature::temp" name="temp">
+      <type name="CelciusType" ref="index#CelciusType" />
+    </argument>
+  </method>
+  <method id="iodrv::IODrivers::iteratorbase::unlockAxis" name="unlockAxis">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <field access="protected" id="iodrv::IODrivers::iteratorbase::idx" name="idx">
+    <type name="std::size_t" />
+  </field>
+</class>

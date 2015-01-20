@@ -11,6 +11,7 @@
       <type name="TupleT" qualifier=" &amp;" />
     </return>
   </method>
+  <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
   <typedef id="iodrv::IODrivers::WrapperLockAxis" name="WrapperLockAxis">
     <type name="IODrivers&lt;TupleT&gt;::_WrapperLockAxis" ref="iodrv::IODrivers::_WrapperLockAxis#iodrv::IODrivers::_WrapperLockAxis" />
   </typedef>
