@@ -43,22 +43,26 @@
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::apply::F" name="F" />
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::apply::Args" name="Args" />
   </methodtemplate>
-  <methodtemplate id="iodrv::IODrivers::iterinfo::accumulate" name="accumulate">
-    <brief>Return f(f(..., ioDrivers[1]), ioDrivers[0])</brief>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::reduce" name="reduce">
+    <brief>Standard reduce function found in functional languages</brief>
+    <doc>Return dflt if the collection is empty
+Return f(dflt, ioDrivers[0]) for a one-item collection
+Return f(f(dflt, ioDrivers[0]), ioDrivers[1]) for a two-item collection
+Generalizes to f(...(dflt, ioDrivers[0]), ioDrivers[n]) for an n-item collection</doc>
     <return>
       <type name="Ret" />
     </return>
-    <argument id="iodrv::IODrivers::iterinfo::accumulate::f" name="f">
+    <argument id="iodrv::IODrivers::iterinfo::reduce::f" name="f">
       <type name="F &amp;&amp;" />
     </argument>
-    <argument id="iodrv::IODrivers::iterinfo::accumulate::dflt" name="dflt">
+    <argument id="iodrv::IODrivers::iterinfo::reduce::dflt" name="dflt">
       <type name="Ret" />
     </argument>
-    <argument id="iodrv::IODrivers::iterinfo::accumulate::args" name="args">
+    <argument id="iodrv::IODrivers::iterinfo::reduce::args" name="args">
       <type name="Args..." />
     </argument>
-    <templatetypeparameter id="iodrv::IODrivers::iterinfo::accumulate::F" name="F" />
-    <templatetypeparameter id="iodrv::IODrivers::iterinfo::accumulate::Ret" name="Ret" />
-    <templatetypeparameter id="iodrv::IODrivers::iterinfo::accumulate::Args" name="Args" />
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::reduce::F" name="F" />
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::reduce::Ret" name="Ret" />
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::reduce::Args" name="Args" />
   </methodtemplate>
 </classtemplate>

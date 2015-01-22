@@ -192,4 +192,23 @@ The predicate is passed by value to achieve type deduction, but a new Predicate 
       <type name="CelciusType" ref="index#CelciusType" />
     </argument>
   </method>
+  <method id="iodrv::IODrivers::setFanDutyCycle" name="setFanDutyCycle">
+    <brief>apply T::setFanDutyCycle(duty) on each fan in the set</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="iodrv::IODrivers::setFanDutyCycle::duty" name="duty">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="iodrv::IODrivers::onIdleCpu" name="onIdleCpu">
+    <brief>Call EVERY device's onIdleCpu handler, and return true if AT LEAST one of those handlers requests more time</brief>
+    <doc>A request for more time is made by a specific IoDriver be returning true from its onIdleCpu handler.</doc>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::IODrivers::onIdleCpu::interval" name="interval">
+      <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
+    </argument>
+  </method>
 </classtemplate>
