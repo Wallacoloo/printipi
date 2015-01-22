@@ -148,9 +148,7 @@ template <typename Drv> class State {
                 state._motionPlanner.resetAxisPositions(pos);
             }
     };
-    struct State__setFanRate; //forward declare a type used internally in setFanRate() function
     class State__getEndstopStatusString; //forware declare a type used internally in getEndstopStatusString() function
-    struct State__onIdleCpu; //forward declare a type used internally in onIdleCpu() function
     typedef Scheduler<SchedInterface> SchedType;
     //The ioDrivers are a combination of the ones used by the coordmap and the miscellaneous ones from the machine
     typedef iodrv::IODrivers<decltype(std::tuple_cat(
@@ -254,8 +252,6 @@ template <typename Drv> class State {
         void homeEndstops();
         //Check if M109 (set temperature and wait until reached) has been satisfied.
         bool isHotendReady();
-        /* Set the hotend (and bed) fan to a duty cycle between 0.0 and 1.0 (if value > 1, it will assume a scale from 0-255) */
-        void setFanRate(float rate);
         std::string getEndstopStatusString();
 };
 
@@ -359,13 +355,6 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
     //x = _destXPrimitive - _hostZeroX;
 }
 
-template <typename Drv> struct State<Drv>::State__onIdleCpu {
-    template <typename T> bool operator()(std::size_t index, T &driver, OnIdleCpuIntervalT interval) {
-        (void)index;
-        return driver.onIdleCpu(interval);
-    }
-};
-
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
@@ -426,7 +415,7 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         }
     }
 
-    bool driversNeedCpu = tupleReduceLogicalOr(this->ioDrivers.tuple(), State__onIdleCpu(), interval);
+    bool driversNeedCpu = this->ioDrivers.onIdleCpu(interval);
     return motionNeedsCpu || driversNeedCpu;
 }
 
@@ -627,11 +616,11 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (s > 1) { //host thinks we're working from 0 to 255
             s = s/256.0; //TODO: move this logic into cmd.getSNorm()
         }
-        setFanRate(s);
+        this->ioDrivers.setFanDutyCycle(s);
         reply(gparse::Response::Ok);
     } else if (cmd.isM107()) { //set fan = off.
         LOGW("M107 is deprecated. Use M106 with S=0 instead.\n");
-        setFanRate(0);
+        this->ioDrivers.setFanDutyCycle(0);
         reply(gparse::Response::Ok);
     } else if (cmd.isM109()) { //set extruder temperature to S param and wait.
         LOGW("(state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
@@ -749,21 +738,6 @@ template <typename Drv> bool State<Drv>::isHotendReady() {
         _isWaitingForHotend = current < target;
     }
     return !_isWaitingForHotend;
-}
-
-/* State utility class for setting the fan rate (State::setFanRate).
-Note: could be replaced with a generic lambda in C++14 (gcc-4.9) */
-template <typename Drv> struct State<Drv>::State__setFanRate {
-    template <typename T> void operator()(std::size_t index, T &fan, float rate) {
-        (void)index;
-        if (fan.isFan()) {
-            fan.setFanDutyCycle(rate);
-        }
-    }
-};
-
-template <typename Drv> void State<Drv>::setFanRate(float rate) {
-    callOnAll(ioDrivers.tuple(), State__setFanRate(), rate);
 }
 
 template <typename Drv> class State<Drv>::State__getEndstopStatusString {

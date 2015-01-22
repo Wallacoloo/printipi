@@ -292,13 +292,17 @@ template <typename TupleT> class IODrivers {
 		    			f(d, args...);
 		    		}
 		    	}
-		    	//Return f(f(..., ioDrivers[1]), ioDrivers[0])
-		    	template <typename F, typename Ret, typename ...Args> Ret accumulate(F &&f, Ret dflt, Args ...args) {
-		    		Ret accumulated=dflt;
+		    	//Standard reduce function found in functional languages
+		    	//Return dflt if the collection is empty
+		    	//Return f(dflt, ioDrivers[0]) for a one-item collection
+		    	//Return f(f(dflt, ioDrivers[0]), ioDrivers[1]) for a two-item collection
+		    	//Generalizes to f(...(dflt, ioDrivers[0]), ioDrivers[n]) for an n-item collection
+		    	template <typename F, typename Ret, typename ...Args> Ret reduce(F &&f, Ret dflt, Args ...args) {
+		    		Ret reduced=dflt;
 		    		for (auto &d : *this) {
-		    			accumulated = f(accumulated, d, args...);
+		    			reduced = f(reduced, d, args...);
 		    		}
-		    		return accumulated;
+		    		return reduced;
 		    	}
     	};
 
@@ -363,6 +367,17 @@ template <typename TupleT> class IODrivers {
 		//apply T::setTargetTemperature(temp) on each heated bed in the set
 		void setBedTemp(CelciusType temp) {
 			heatedBeds().apply(GenericSetTargetTemperature(), temp);
+		}
+		//apply T::setFanDutyCycle(duty) on each fan in the set
+		void setFanDutyCycle(float duty) {
+			fans().apply(GenericSetFanDutyCycle(), duty);
+		}
+		//Call EVERY device's onIdleCpu handler, and return true if AT LEAST one of those handlers requests more time
+		//A request for more time is made by a specific IoDriver be returning true from its onIdleCpu handler.
+		bool onIdleCpu(OnIdleCpuIntervalT interval) {
+			return all().reduce([interval](bool reduced, iteratorbase &d) { 
+				return d.onIdleCpu(interval) || reduced;
+			}, false);
 		}
 };
 
