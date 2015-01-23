@@ -311,18 +311,20 @@ template <typename TupleT> class IODrivers {
 		    	//Stadard any function found in functional languages.
 		    	//return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
 		    	//Control short-circuit evaluation via the shortCircuit flag.
-		    	template <typename F, typename ...Args> bool any(F &&f, ShortCircuitType shortCircuit, Args ...args) {
-		    		return reduce([&](bool reduced, iteratorbase &d) {
+		    	template <typename F, typename ...Args> bool any(F &&f, ShortCircuitType shortCircuit, Args&& ...args) {
+		    		//gcc-4.6 cannot bind args... to the lambda, so we must relay them to the reduce function.
+		    		return reduce([&](bool reduced, iteratorbase &d, Args&& ...args) {
 		    			return (shortCircuit == DO_SHORT_CIRCUIT) ? (reduced || f(d, args...)) : (f(d, args...) || reduced);
-		    		}, false);
+		    		}, false, args...);
 		    	}
 		    	//Stadard any function found in functional languages.
 		    	//return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
 		    	//Control short-circuit evaluation via the shortCircuit flag.
-		    	template <typename F, typename ...Args> bool all(F &&f, ShortCircuitType shortCircuit, Args ...args) {
-		    		return reduce([&](bool reduced, iteratorbase &d) {
+		    	template <typename F, typename ...Args> bool all(F &&f, ShortCircuitType shortCircuit, Args&& ...args) {
+		    		//gcc-4.6 cannot bind args... to the lambda, so we must relay them to the reduce function.
+		    		return reduce([&](bool reduced, iteratorbase &d, Args&& ...args) {
 		    			return (shortCircuit == DO_SHORT_CIRCUIT) ? (reduced && f(d, args...)) : (f(d, args...) && reduced);
-		    		}, true);
+		    		}, true, args...);
 		    	}
     	};
 
