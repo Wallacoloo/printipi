@@ -7,6 +7,10 @@
       <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
     </default>
   </templatetypeparameter>
+  <enum anonymous="yes" id="iodrv::IODrivers::iterinfo::ShortCircuitType" name="ShortCircuitType">
+    <enumvalue id="iodrv::IODrivers::iterinfo::NO_SHORT_CIRCUIT" name="NO_SHORT_CIRCUIT" value="0" />
+    <enumvalue id="iodrv::IODrivers::iterinfo::DO_SHORT_CIRCUIT" name="DO_SHORT_CIRCUIT" value="0" />
+  </enum>
   <constructor id="iodrv::IODrivers::iterinfo::iterinfo&lt;Predicate&gt;" name="iterinfo&lt;Predicate&gt;">
     <argument id="iodrv::IODrivers::iterinfo::iterinfo&lt;Predicate&gt;::drivers" name="drivers">
       <type name="TupleT" qualifier=" &amp;" />
@@ -64,5 +68,43 @@ Generalizes to f(...(dflt, ioDrivers[0]), ioDrivers[n]) for an n-item collection
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::reduce::F" name="F" />
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::reduce::Ret" name="Ret" />
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::reduce::Args" name="Args" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::any" name="any">
+    <brief>Stadard any function found in functional languages.</brief>
+    <doc>return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
+Control short-circuit evaluation via the shortCircuit flag.</doc>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::any::f" name="f">
+      <type name="F &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::IODrivers::iterinfo::any::shortCircuit" name="shortCircuit">
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;::ShortCircuitType" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo::ShortCircuitType" />
+    </argument>
+    <argument id="iodrv::IODrivers::iterinfo::any::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::any::F" name="F" />
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::any::Args" name="Args" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::all" name="all">
+    <brief>Stadard any function found in functional languages.</brief>
+    <doc>return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
+Control short-circuit evaluation via the shortCircuit flag.</doc>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::all::f" name="f">
+      <type name="F &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::IODrivers::iterinfo::all::shortCircuit" name="shortCircuit">
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;::ShortCircuitType" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo::ShortCircuitType" />
+    </argument>
+    <argument id="iodrv::IODrivers::iterinfo::all::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::all::F" name="F" />
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::all::Args" name="Args" />
   </methodtemplate>
 </classtemplate>

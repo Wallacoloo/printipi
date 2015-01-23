@@ -197,7 +197,7 @@ return values.
         <location column="9" file="platforms/rpi/chronoclock.h" line="47" />
       </undocumented>
     </type>
-    <type documented="16" name="methodtemplate" undocumented="57">
+    <type documented="18" name="methodtemplate" undocumented="56">
       <undocumented id="IntervalTimer::clockCmp" name="clockCmp">
         <location column="9" file="common/intervaltimer.h" line="53" />
       </undocumented>
@@ -206,9 +206,6 @@ return values.
       </undocumented>
       <undocumented id="Scheduler::setMaxSleep" name="setMaxSleep">
         <location column="9" file="scheduler.h" line="58" />
-      </undocumented>
-      <undocumented id="State::State__getEndstopStatusString::operator()" name="operator()">
-        <location column="9" file="state.h" line="748" />
       </undocumented>
       <undocumented id="ThisThreadSleepAdapter::sleep_for" name="sleep_for">
         <location column="5" file="boilerplate/thisthreadsleepadapter.h" line="39" />
@@ -330,7 +327,7 @@ return values.
         <location column="13" file="iodrivers/iodrivers.h" line="78" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::apply" name="apply">
-        <location column="8" file="iodrivers/iodrivers.h" line="290" />
+        <location column="8" file="iodrivers/iodrivers.h" line="294" />
       </undocumented>
       <undocumented id="motion::AxisStepper::getNextTime" name="getNextTime">
         <location column="9" file="motion/axisstepper.h" line="76" />
@@ -401,9 +398,9 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="254" />
       </undocumented>
     </type>
-    <type documented="3" name="templatetypeparameter" undocumented="179">
+    <type documented="3" name="templatetypeparameter" undocumented="182">
       <undocumented id="Drv" name="Drv">
-        <location column="11" file="state.h" line="446" />
+        <location column="11" file="state.h" line="445" />
       </undocumented>
       <undocumented id="IntervalTimer::clockCmp::DurT" name="DurT">
         <location column="19" file="common/intervaltimer.h" line="53" />
@@ -423,14 +420,11 @@ return values.
       <undocumented id="State::Drv" name="Drv">
         <location column="11" file="state.h" line="78" />
       </undocumented>
-      <undocumented id="State::State__getEndstopStatusString::operator()::T" name="T">
-        <location column="19" file="state.h" line="748" />
+      <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
+        <location column="19" file="state.h" line="247" />
       </undocumented>
       <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
-        <location column="19" file="state.h" line="246" />
-      </undocumented>
-      <undocumented id="State::execute::ReplyFunc" name="ReplyFunc">
-        <location column="35" file="state.h" line="446" />
+        <location column="35" file="state.h" line="445" />
       </undocumented>
       <undocumented id="TestHelper::MachineT" name="MachineT">
         <location column="11" file="testhelper.h" line="93" />
@@ -691,25 +685,37 @@ return values.
         <location column="23" file="iodrivers/iodrivers.h" line="78" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::filter::Predicate" name="Predicate">
-        <location column="19" file="iodrivers/iodrivers.h" line="331" />
+        <location column="19" file="iodrivers/iodrivers.h" line="351" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
         <location column="16" file="iodrivers/iodrivers.h" line="277" />
       </undocumented>
+      <undocumented id="iodrv::IODrivers::iterinfo::all::Args" name="Args">
+        <location column="30" file="iodrivers/iodrivers.h" line="322" />
+      </undocumented>
+      <undocumented id="iodrv::IODrivers::iterinfo::all::F" name="F">
+        <location column="18" file="iodrivers/iodrivers.h" line="322" />
+      </undocumented>
+      <undocumented id="iodrv::IODrivers::iterinfo::any::Args" name="Args">
+        <location column="30" file="iodrivers/iodrivers.h" line="314" />
+      </undocumented>
+      <undocumented id="iodrv::IODrivers::iterinfo::any::F" name="F">
+        <location column="18" file="iodrivers/iodrivers.h" line="314" />
+      </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::apply::Args" name="Args">
-        <location column="30" file="iodrivers/iodrivers.h" line="290" />
+        <location column="30" file="iodrivers/iodrivers.h" line="294" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::apply::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="290" />
+        <location column="18" file="iodrivers/iodrivers.h" line="294" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::Args" name="Args">
-        <location column="44" file="iodrivers/iodrivers.h" line="300" />
+        <location column="44" file="iodrivers/iodrivers.h" line="304" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="300" />
+        <location column="18" file="iodrivers/iodrivers.h" line="304" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::Ret" name="Ret">
-        <location column="30" file="iodrivers/iodrivers.h" line="300" />
+        <location column="30" file="iodrivers/iodrivers.h" line="304" />
       </undocumented>
       <undocumented id="iodrv::IoPin::IoPin::Args" name="Args">
         <location column="19" file="iodrivers/iopin.h" line="95" />
@@ -940,7 +946,7 @@ return values.
         <location column="11" file="common/tupleutil.h" line="120" />
       </undocumented>
     </type>
-    <type documented="10" name="enum" undocumented="7">
+    <type documented="10" name="enum" undocumented="8">
       <undocumented id="TestHelperCtorFlags" name="TestHelperCtorFlags">
         <location column="1" file="testhelper.h" line="44" />
       </undocumented>
@@ -949,6 +955,9 @@ return values.
       </undocumented>
       <undocumented id="iodrv::DefaultIoState" name="DefaultIoState">
         <location column="1" file="iodrivers/iopin.h" line="44" />
+      </undocumented>
+      <undocumented id="iodrv::IODrivers::iterinfo::ShortCircuitType" name="ShortCircuitType">
+        <location column="8" file="iodrivers/iodrivers.h" line="280" />
       </undocumented>
       <undocumented id="iodrv::IoPinInversions" name="IoPinInversions">
         <location column="1" file="iodrivers/iopin.h" line="33" />
@@ -968,9 +977,9 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
+        <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/command.cpp" line="26" />
         <location column="1" file="gparse/com.cpp" line="26" />
-        <location column="1" file="gparse/response.cpp" line="3" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -1036,7 +1045,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="148" name="method" undocumented="353">
+    <type documented="148" name="method" undocumented="352">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1118,11 +1127,8 @@ return values.
       <undocumented id="State::SchedInterface::schedTime" name="schedTime">
         <location column="13" file="state.h" line="108" />
       </undocumented>
-      <undocumented id="State::State__getEndstopStatusString::str" name="str">
-        <location column="9" file="state.h" line="759" />
-      </undocumented>
       <undocumented id="State::addComChannel" name="addComChannel">
-        <location column="9" file="state.h" line="212" />
+        <location column="9" file="state.h" line="213" />
       </undocumented>
       <undocumented id="TestHelper::exitOnce" name="exitOnce">
         <location column="9" file="testhelper.h" line="178" />
@@ -1830,13 +1836,13 @@ return values.
         <location column="17" file="iodrivers/iodrivers.h" line="199" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::begin" name="begin">
-        <location column="8" file="iodrivers/iodrivers.h" line="281" />
+        <location column="8" file="iodrivers/iodrivers.h" line="285" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::end" name="end">
-        <location column="8" file="iodrivers/iodrivers.h" line="284" />
+        <location column="8" file="iodrivers/iodrivers.h" line="288" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::operator[]" name="operator[]">
-        <location column="8" file="iodrivers/iodrivers.h" line="287" />
+        <location column="8" file="iodrivers/iodrivers.h" line="291" />
       </undocumented>
       <undocumented id="iodrv::IoPin::operator=" name="operator=">
         <location column="9" file="iodrivers/iopin.h" line="88" />
@@ -2247,7 +2253,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="52" />
       </undocumented>
     </type>
-    <type documented="19" name="constructor" undocumented="53">
+    <type documented="19" name="constructor" undocumented="52">
       <undocumented id="FileSystem::FileSystem" name="FileSystem">
         <location column="9" file="filesystem.h" line="32" />
         <location column="1" file="filesystem.cpp" line="26" />
@@ -2285,9 +2291,6 @@ return values.
       </undocumented>
       <undocumented id="State::SchedInterface::SchedInterface" name="SchedInterface">
         <location column="13" file="state.h" line="92" />
-      </undocumented>
-      <undocumented id="State::State__getEndstopStatusString::State__getEndstopStatusString" name="State__getEndstopStatusString">
-        <location column="9" file="state.h" line="747" />
       </undocumented>
       <undocumented id="TestHelper::TestHelper&lt;MachineT&gt;" name="TestHelper&lt;MachineT&gt;">
         <location column="9" file="testhelper.h" line="101" />
@@ -2356,7 +2359,7 @@ return values.
         <location column="17" file="iodrivers/iodrivers.h" line="185" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::iterinfo&lt;Predicate&gt;" name="iterinfo&lt;Predicate&gt;">
-        <location column="8" file="iodrivers/iodrivers.h" line="280" />
+        <location column="8" file="iodrivers/iodrivers.h" line="284" />
       </undocumented>
       <undocumented id="iodrv::IoPin::null::null" name="null">
         <location column="9" file="iodrivers/iopin.h" line="144" />
@@ -2440,7 +2443,7 @@ return values.
       </undocumented>
     </type>
     <type documented="6" name="conversionfunction" undocumented="0" />
-    <type documented="9" name="enumvalue" undocumented="116">
+    <type documented="9" name="enumvalue" undocumented="118">
       <undocumented id="OnIdleCpuIntervalShort" name="OnIdleCpuIntervalShort">
         <location column="5" file="schedulerbase.h" line="43" />
       </undocumented>
@@ -2488,6 +2491,12 @@ return values.
       </undocumented>
       <undocumented id="iodrv::INVERT_WRITES" name="INVERT_WRITES">
         <location column="5" file="iodrivers/iopin.h" line="37" />
+      </undocumented>
+      <undocumented id="iodrv::IODrivers::iterinfo::DO_SHORT_CIRCUIT" name="DO_SHORT_CIRCUIT">
+        <location column="9" file="iodrivers/iodrivers.h" line="282" />
+      </undocumented>
+      <undocumented id="iodrv::IODrivers::iterinfo::NO_SHORT_CIRCUIT" name="NO_SHORT_CIRCUIT">
+        <location column="9" file="iodrivers/iodrivers.h" line="281" />
       </undocumented>
       <undocumented id="iodrv::IOPIN_MODE_INPUT" name="IOPIN_MODE_INPUT">
         <location column="5" file="iodrivers/iopin.h" line="54" />
@@ -3361,68 +3370,82 @@ return values.
       <undocumented name="add" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::reduce" name="reduce">
-      <location column="8" file="iodrivers/iodrivers.h" line="300" />
+      <location column="8" file="iodrivers/iodrivers.h" line="304" />
       <undocumented-return />
       <undocumented name="args" />
       <undocumented name="dflt" />
       <undocumented name="f" />
     </function>
-    <function id="iodrv::IODrivers::all" name="all">
-      <location column="6" file="iodrivers/iodrivers.h" line="310" />
+    <function id="iodrv::IODrivers::iterinfo::any" name="any">
+      <location column="8" file="iodrivers/iodrivers.h" line="314" />
+      <undocumented-return />
+      <undocumented name="shortCircuit" />
+      <undocumented name="args" />
+      <undocumented name="f" />
+    </function>
+    <function id="iodrv::IODrivers::iterinfo::all" name="all">
+      <location column="8" file="iodrivers/iodrivers.h" line="322" />
+      <undocumented-return />
+      <undocumented name="shortCircuit" />
+      <undocumented name="args" />
+      <undocumented name="f" />
+    </function>
+    <function id="iodrv::IODrivers::iter" name="iter">
+      <location column="6" file="iodrivers/iodrivers.h" line="330" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::begin" name="begin">
-      <location column="9" file="iodrivers/iodrivers.h" line="314" />
+      <location column="9" file="iodrivers/iodrivers.h" line="334" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::end" name="end">
-      <location column="9" file="iodrivers/iodrivers.h" line="318" />
+      <location column="9" file="iodrivers/iodrivers.h" line="338" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::operator[]" name="operator[]">
-      <location column="9" file="iodrivers/iodrivers.h" line="323" />
+      <location column="9" file="iodrivers/iodrivers.h" line="343" />
       <undocumented-return />
       <undocumented name="idx" />
       <misspelled name="return" />
     </function>
     <function id="iodrv::IODrivers::filter" name="filter">
-      <location column="9" file="iodrivers/iodrivers.h" line="331" />
+      <location column="9" file="iodrivers/iodrivers.h" line="351" />
       <undocumented name="p" />
     </function>
     <function id="iodrv::IODrivers::fans" name="fans">
-      <location column="6" file="iodrivers/iodrivers.h" line="336" />
+      <location column="6" file="iodrivers/iodrivers.h" line="356" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::hotends" name="hotends">
-      <location column="6" file="iodrivers/iodrivers.h" line="340" />
+      <location column="6" file="iodrivers/iodrivers.h" line="360" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::heatedBeds" name="heatedBeds">
-      <location column="6" file="iodrivers/iodrivers.h" line="344" />
+      <location column="6" file="iodrivers/iodrivers.h" line="364" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::servos" name="servos">
-      <location column="6" file="iodrivers/iodrivers.h" line="348" />
+      <location column="6" file="iodrivers/iodrivers.h" line="368" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::endstops" name="endstops">
-      <location column="6" file="iodrivers/iodrivers.h" line="352" />
+      <location column="6" file="iodrivers/iodrivers.h" line="372" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::setHotendTemp" name="setHotendTemp">
-      <location column="3" file="iodrivers/iodrivers.h" line="364" />
+      <location column="3" file="iodrivers/iodrivers.h" line="384" />
       <undocumented name="temp" />
     </function>
     <function id="iodrv::IODrivers::setBedTemp" name="setBedTemp">
-      <location column="3" file="iodrivers/iodrivers.h" line="368" />
+      <location column="3" file="iodrivers/iodrivers.h" line="388" />
       <undocumented name="temp" />
     </function>
     <function id="iodrv::IODrivers::setFanDutyCycle" name="setFanDutyCycle">
-      <location column="3" file="iodrivers/iodrivers.h" line="372" />
+      <location column="3" file="iodrivers/iodrivers.h" line="392" />
       <undocumented name="duty" />
     </function>
     <function id="iodrv::IODrivers::onIdleCpu" name="onIdleCpu">
-      <location column="3" file="iodrivers/iodrivers.h" line="377" />
+      <location column="3" file="iodrivers/iodrivers.h" line="397" />
       <undocumented-return />
       <undocumented name="interval" />
     </function>
@@ -3456,19 +3479,12 @@ return values.
       <undocumented name="velXyz" />
       <undocumented name="flags" />
     </function>
-    <function id="State::State&lt;Drv&gt;" name="State&lt;Drv&gt;">
-      <location column="9" file="state.h" line="199" />
-      <location column="1" file="state.h" line="259" />
-      <undocumented name="fs" />
-      <undocumented name="needPersistentCom" />
-      <undocumented name="drv" />
-    </function>
     <function id="State::motionPlanner" name="motionPlanner">
-      <location column="9" file="state.h" line="205" />
+      <location column="9" file="state.h" line="206" />
       <undocumented-return />
     </function>
     <function id="State::setPersistentHostCom" name="setPersistentHostCom">
-      <location column="9" file="state.h" line="209" />
+      <location column="9" file="state.h" line="210" />
       <undocumented name="persistence" />
     </function>
     <function id="motion::CoordMap::getDependentIoDrivers" name="getDependentIoDrivers">

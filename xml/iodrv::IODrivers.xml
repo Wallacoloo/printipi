@@ -90,7 +90,7 @@ Provides several conveniences, like iterators and filtering
       </default>
     </templatetypeparameter>
   </classtemplate>
-  <method id="iodrv::IODrivers::all" name="all">
+  <method id="iodrv::IODrivers::iter" name="iter">
     <brief>return an iterable/indexable object containing ALL the iodrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
