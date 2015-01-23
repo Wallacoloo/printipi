@@ -277,6 +277,10 @@ template <typename TupleT> class IODrivers {
     	template <typename Predicate=NoPredicate> class iterinfo {
     		TupleT &drivers;
 	    	public:
+	    		enum ShortCircuitType {
+	    			NO_SHORT_CIRCUIT = 0,
+	    			DO_SHORT_CIRCUIT = 1,
+	    		};
 	    		iterinfo(TupleT &drivers) : drivers(drivers) {}
 	    		iterator<Predicate> begin() {
 	    			return iterator<Predicate>(drivers);
@@ -304,24 +308,40 @@ template <typename TupleT> class IODrivers {
 		    		}
 		    		return reduced;
 		    	}
+		    	//Stadard any function found in functional languages.
+		    	//return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
+		    	//Control short-circuit evaluation via the shortCircuit flag.
+		    	template <typename F, typename ...Args> bool any(F &&f, ShortCircuitType shortCircuit, Args ...args) {
+		    		return reduce([&](bool reduced, iteratorbase &d) {
+		    			return (shortCircuit == DO_SHORT_CIRCUIT) ? (reduced || f(d, args...)) : (f(d, args...) || reduced);
+		    		}, false);
+		    	}
+		    	//Stadard any function found in functional languages.
+		    	//return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
+		    	//Control short-circuit evaluation via the shortCircuit flag.
+		    	template <typename F, typename ...Args> bool all(F &&f, ShortCircuitType shortCircuit, Args ...args) {
+		    		return reduce([&](bool reduced, iteratorbase &d) {
+		    			return (shortCircuit == DO_SHORT_CIRCUIT) ? (reduced && f(d, args...)) : (f(d, args...) && reduced);
+		    		}, true);
+		    	}
     	};
 
     	//return an iterable/indexable object containing ALL the iodrivers
-    	iterinfo<> all() {
+    	iterinfo<> iter() {
     		return iterinfo<>(drivers);
     	}
     	//begin iterator for the set of all IODrivers
         iterator<> begin() {
-            return all().begin();
+            return iter().begin();
         }
         //end iterator for the set of all IODrivers
         iterator<> end() {
-            return all().end();
+            return iter().end();
         }
         //access an IODriver by index
         //@return an iterator pointing to the IODriver at index @idx
         iterator<> operator[](std::size_t idx) {
-        	return all()[idx];
+        	return iter()[idx];
         }
         //obtain the set of all IODrivers that pass the filter Predicate.
         //  The predicate should accept an IODriver::iteratorbase as its argument 
@@ -354,11 +374,11 @@ template <typename TupleT> class IODrivers {
     	}
     	//apply T::lockAxis on each IODriver in the set
         void lockAllAxes() {
-        	all().apply(GenericLockAxis());
+        	iter().apply(GenericLockAxis());
 		}
 		//apply T::unlockAxis on each IODriver in the set
 		void unlockAllAxes() {
-		    all().apply(GenericUnlockAxis());
+		    iter().apply(GenericUnlockAxis());
 		}
 		//apply T::setTargetTemperature(temp) on each hotend in the set
 		void setHotendTemp(CelciusType temp) {
@@ -375,9 +395,7 @@ template <typename TupleT> class IODrivers {
 		//Call EVERY device's onIdleCpu handler, and return true if AT LEAST one of those handlers requests more time
 		//A request for more time is made by a specific IoDriver be returning true from its onIdleCpu handler.
 		bool onIdleCpu(OnIdleCpuIntervalT interval) {
-			return all().reduce([interval](bool reduced, iteratorbase &d) { 
-				return d.onIdleCpu(interval) || reduced;
-			}, false);
+			return iter().any(GenericOnIdleCpu(), iterinfo<>::NO_SHORT_CIRCUIT, interval);
 		}
 };
 
