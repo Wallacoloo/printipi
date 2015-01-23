@@ -83,7 +83,7 @@ Control short-circuit evaluation via the shortCircuit flag.</doc>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;::ShortCircuitType" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo::ShortCircuitType" />
     </argument>
     <argument id="iodrv::IODrivers::iterinfo::any::args" name="args">
-      <type name="Args..." />
+      <type name="Args &amp;&amp;..." />
     </argument>
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::any::F" name="F" />
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::any::Args" name="Args" />
@@ -102,7 +102,7 @@ Control short-circuit evaluation via the shortCircuit flag.</doc>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;::ShortCircuitType" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo::ShortCircuitType" />
     </argument>
     <argument id="iodrv::IODrivers::iterinfo::all::args" name="args">
-      <type name="Args..." />
+      <type name="Args &amp;&amp;..." />
     </argument>
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::all::F" name="F" />
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::all::Args" name="Args" />
