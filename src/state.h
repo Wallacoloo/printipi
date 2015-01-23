@@ -148,7 +148,6 @@ template <typename Drv> class State {
                 state._motionPlanner.resetAxisPositions(pos);
             }
     };
-    class State__getEndstopStatusString; //forware declare a type used internally in getEndstopStatusString() function
     typedef Scheduler<SchedInterface> SchedType;
     //The ioDrivers are a combination of the ones used by the coordmap and the miscellaneous ones from the machine
     typedef iodrv::IODrivers<decltype(std::tuple_cat(
@@ -192,7 +191,9 @@ template <typename Drv> class State {
     IODriverTypes ioDrivers;
     public:
         //Initialize the state:
-        //  Needs a driver object (drv), a communications channel (com), and needs to know whether or not the com channel must be persistent
+        //@drv Machine instance to take ownership of
+        //@fs FileSystem object that describes where to look when asked to open a gcode file
+        //@needPersistentCom flag to always keep the first communication channel (e.g. stdio) open
         //  M32 command allows branching to another, local gcode file. By default, this will PAUSE reading/writing from the previous com channel.
         //  But if we want to continue reading from that original com channel while simultaneously reading from the new gcode file, then 'needPersistentCom' should be set to true.
         //  This is normally only relevant for communication with a host, like Octoprint, where we want temperature reading, emergency stop, etc to still work.
@@ -430,13 +431,11 @@ template <typename Drv> void State<Drv>::tendComChannel(gparse::Com &com) {
         auto cmd = com.getCommand();
         
         execute(cmd, [&](const gparse::Response &resp) {
-            //if (!resp.isNull()) { //returning Command::Null means we're not ready to handle the command.
             if (!NO_LOG_M105 || !cmd.isM105()) {
                 LOG("command: %s\n", cmd.toGCode().c_str());
                 LOG("response: %s\n", resp.toString().c_str());
             }
             com.reply(resp);
-            //}
         });
         //if the above callback isn't called (because the command isn't ready to be serviced), 
         // then a future call to com.getCommand() will return the same command we just read (as opposed to the next line)
@@ -740,31 +739,18 @@ template <typename Drv> bool State<Drv>::isHotendReady() {
     return !_isWaitingForHotend;
 }
 
-template <typename Drv> class State<Drv>::State__getEndstopStatusString {
-    std::ostringstream imploded;
-    bool first;
-    public:
-        State__getEndstopStatusString() : first(true) {}
-        template <typename T> void operator()(std::size_t index, const T &driver) {
-            (void)index; //unused
-            if (driver.isEndstop()) {
-                if (first) {
-                    first = false;
-                } else {
-                    imploded << ' ';
-                }
-                imploded << (driver.isEndstopTriggered() ? "triggered" : "open");
-            }
-        }
-        std::string str() const {
-            return imploded.str();
-        }
-};
-
 template <typename Drv> std::string State<Drv>::getEndstopStatusString() {
-    State__getEndstopStatusString statusObj;
-    callOnAll(ioDrivers.tuple(), &statusObj);
-    return statusObj.str();
+    std::ostringstream imploded;
+    bool first = true;
+    for (auto& driver : ioDrivers.endstops()) {
+        if (first) {
+            first = false;
+        } else {
+            imploded << ' ';
+        }
+        imploded << (driver.isEndstopTriggered() ? "triggered" : "open");
+    }
+    return imploded.str();
 }
 
 #endif
