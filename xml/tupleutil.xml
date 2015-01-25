@@ -65,7 +65,4 @@ Most likely, that would result in applying @f to the last item in the tuple (but
     <templatetypeparameter id="tupleutil::tupleCallOnIndex::Func" name="Func" />
     <templatetypeparameter id="tupleutil::tupleCallOnIndex::Args" name="Args" />
   </functiontemplate>
-  <namespace name="(anonymous::1)" ref="tupleutil::(anonymous::1)#tupleutil::(anonymous::1)">
-    <brief>internal functions - treat as private</brief>
-  </namespace>
 </namespace>
