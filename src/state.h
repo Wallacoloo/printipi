@@ -359,7 +359,10 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
-        OutputEvent ioDriverEvt = iodrv::IODriver::tuplePeekNextEvent(ioDrivers.tuple());
+        //OutputEvent ioDriverEvt = iodrv::IODriver::tuplePeekNextEvent(ioDrivers.tuple());
+        auto ioDriverIterEvtPair = ioDrivers.peekNextEvent();
+        auto ioDriverEvtIter = ioDriverIterEvtPair.first;
+        OutputEvent ioDriverEvt = ioDriverIterEvtPair.second;
         OutputEvent motionEvt = _motionPlanner.peekNextEvent();
 
         //iodrv::IODriver::tupleConsumeNextEvent(ioDrivers);
@@ -371,7 +374,8 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
         if (doServiceIoDriver) {
             //IoDriver event occurs first, so queue it & consume it.
             this->scheduler.queue(ioDriverEvt);
-            iodrv::IODriver::tupleConsumeNextEvent(ioDrivers.tuple());
+            ioDriverEvtIter.consumeNextEvent();
+            //iodrv::IODriver::tupleConsumeNextEvent(ioDrivers.tuple());
         } else if (_doBufferMoves || _lastMotionPlannedTime <= EventClockT::now()) { 
             //if we're homing (_doBufferMoves==false), we don't want to queue the next step until the current one has actually completed.
             //Although the IoDriver event does not occur first, that doesn't mean there is necessarily a motion event.

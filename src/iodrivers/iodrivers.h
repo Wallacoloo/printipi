@@ -175,14 +175,20 @@ template <typename TupleT> class IODrivers {
         //But it does not implement operator++;
         //  this is expected to be implemented by the derived types which may do filtering.
 		class iteratorbase {
-            TupleT &tuple;
+            TupleT *_tuple;
         	protected:
             	std::size_t idx;
             	bool isAtEnd() const {
             		return idx == std::tuple_size<TupleT>::value;
             	}
+                TupleT& tuple() {
+                    return *_tuple;
+                }
+                const TupleT& tuple() const {
+                    return *_tuple;
+                }
             public:
-                iteratorbase(TupleT &tuple, std::size_t idx=0) : tuple(tuple), idx(idx) {
+                iteratorbase(TupleT &tuple, std::size_t idx=0) : _tuple(&tuple), idx(idx) {
                 }
                 iteratorbase& operator*() {
                     return *this;
@@ -193,53 +199,53 @@ template <typename TupleT> class IODrivers {
                 friend bool operator!=(const iteratorbase &a, const iteratorbase &b) {
                     return !(a == b);
                 }
-                void lockAxis() const {
-                    return tupleCallOnIndex(tuple, GenericLockAxis(), idx);
+                void lockAxis() {
+                    return tupleCallOnIndex(tuple(), GenericLockAxis(), idx);
                 }
-                void unlockAxis() const {
-                    return tupleCallOnIndex(tuple, GenericUnlockAxis(), idx);
+                void unlockAxis() {
+                    return tupleCallOnIndex(tuple(), GenericUnlockAxis(), idx);
                 }
                 bool isFan() const {
-                    return tupleCallOnIndex(tuple, GenericIsFan(), idx);
+                    return tupleCallOnIndex(tuple(), GenericIsFan(), idx);
                 }
                 bool isHotend() const {
-                    return tupleCallOnIndex(tuple, GenericIsHotend(), idx);
+                    return tupleCallOnIndex(tuple(), GenericIsHotend(), idx);
                 }
                 bool isHeatedBed() const {
-                    return tupleCallOnIndex(tuple, GenericIsHeatedBed(), idx);
+                    return tupleCallOnIndex(tuple(), GenericIsHeatedBed(), idx);
                 }
                 bool isServo() const {
-                    return tupleCallOnIndex(tuple, GenericIsServo(), idx);
+                    return tupleCallOnIndex(tuple(), GenericIsServo(), idx);
                 }
                 bool isEndstop() const {
-                    return tupleCallOnIndex(tuple, GenericIsEndstop(), idx);
+                    return tupleCallOnIndex(tuple(), GenericIsEndstop(), idx);
                 }
                 bool isEndstopTriggered() const {
-                    return tupleCallOnIndex(tuple, GenericIsEndstopTriggered(), idx);
+                    return tupleCallOnIndex(tuple(), GenericIsEndstopTriggered(), idx);
                 }
                 void setFanDutyCycle(float duty) {
-                    tupleCallOnIndex(tuple, GenericSetFanDutyCycle(), idx, duty);
+                    tupleCallOnIndex(tuple(), GenericSetFanDutyCycle(), idx, duty);
                 }
                 void setTargetTemperature(CelciusType temp) {
-                    tupleCallOnIndex(tuple, GenericSetTargetTemperature(), idx, temp);
+                    tupleCallOnIndex(tuple(), GenericSetTargetTemperature(), idx, temp);
                 }
                 CelciusType getTargetTemperature() const {
-                    return tupleCallOnIndex(tuple, GenericGetTargetTemperature(), idx);
+                    return tupleCallOnIndex(tuple(), GenericGetTargetTemperature(), idx);
                 }
                 CelciusType getMeasuredTemperature() const {
-                    return tupleCallOnIndex(tuple, GenericGetMeasuredTemperature(), idx);
+                    return tupleCallOnIndex(tuple(), GenericGetMeasuredTemperature(), idx);
                 }
                 void setServoAngleDegrees(float angle) {
-                    tupleCallOnIndex(tuple, GenericSetServoAngleDegrees(), idx, angle);
+                    tupleCallOnIndex(tuple(), GenericSetServoAngleDegrees(), idx, angle);
                 }
                 OutputEvent peekNextEvent() const {
-                    return tupleCallOnIndex(tuple, GenericPeekNextEvent(), idx);
+                    return tupleCallOnIndex(tuple(), GenericPeekNextEvent(), idx);
                 }
                 void consumeNextEvent() {
-                    tupleCallOnIndex(tuple, GenericConsumeNextEvent(), idx);
+                    tupleCallOnIndex(tuple(), GenericConsumeNextEvent(), idx);
                 }
                 bool onIdleCpu(OnIdleCpuIntervalT interval) {
-                    return tupleCallOnIndex(tuple, GenericOnIdleCpu(), idx, interval);
+                    return tupleCallOnIndex(tuple(), GenericOnIdleCpu(), idx, interval);
                 }
         };
     public:
@@ -301,10 +307,10 @@ template <typename TupleT> class IODrivers {
 		    	//Return f(dflt, ioDrivers[0]) for a one-item collection
 		    	//Return f(f(dflt, ioDrivers[0]), ioDrivers[1]) for a two-item collection
 		    	//Generalizes to f(...(dflt, ioDrivers[0]), ioDrivers[n]) for an n-item collection
-		    	template <typename F, typename Ret, typename ...Args> Ret reduce(F &&f, Ret dflt, Args ...args) {
-		    		Ret reduced=dflt;
+		    	template <typename F, typename Ret, typename ...Args> Ret reduce(F &&f, Ret &&dflt, Args ...args) {
+		    		Ret reduced(std::move(dflt));
 		    		for (auto &d : *this) {
-		    			reduced = f(reduced, d, args...);
+		    			reduced = f(std::move(reduced), d, args...);
 		    		}
 		    		return reduced;
 		    	}
@@ -399,6 +405,13 @@ template <typename TupleT> class IODrivers {
 		bool onIdleCpu(OnIdleCpuIntervalT interval) {
 			return iter().any(GenericOnIdleCpu(), iterinfo<>::NO_SHORT_CIRCUIT, interval);
 		}
+        std::pair<iteratorbase, OutputEvent> peekNextEvent() {
+            return iter().reduce([](std::pair<iteratorbase, OutputEvent> &&reduced, iteratorbase &d) {
+                OutputEvent curEvt = d.peekNextEvent();
+                bool isCurEvtSooner = reduced.second.isNull() || (!curEvt.isNull() && curEvt.time() < reduced.second.time());
+                return isCurEvtSooner ? std::make_pair(d, curEvt) : reduced;
+            }, std::pair<iteratorbase, OutputEvent>(iter().end(), OutputEvent()));
+        }
 };
 
 }
