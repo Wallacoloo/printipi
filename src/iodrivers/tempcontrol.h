@@ -96,7 +96,12 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
             //Note: even updating on the wide intervals alone may be too much if the platform's pwmWrite() function is expensive like on rpi
             if (interval == OnIdleCpuIntervalWide && EventClockT::now() >= _nextPwmUpdate) {
                 _nextPwmUpdate += _pwmUpdateInterval;
-                updatePwm(_therm.value());
+                float t = _therm.value();
+                //a temperature <= absolute zero is used to signal errors.
+                //TODO: raise a fatal error (machine shutdown) if thermistor read errors persist for more than, say, 10 sec.
+                if (t > mathutil::ABSOLUTE_ZERO_CELCIUS) {
+                    updatePwm(t);
+                }
             }
             return needMoreCpu;
         }
