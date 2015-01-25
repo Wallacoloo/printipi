@@ -60,14 +60,4 @@ TEST_CASE("Tupleutil operations are correct", "[tupleutil]") {
 		REQUIRE(std::get<2>(t) == Approx(3   +3*2));
 		REQUIRE(std::get<3>(t) == Approx(4.25    ));
 	}
-	SECTION("Test tupleutil::tupleReduce") {
-		REQUIRE(tupleReduce(t, ReturnAddIndex(), [](float a, float b) { return a+b; }, -10.0, 3)
-		  == Approx(-10.0 + (1+3*0) + (2.5+3*1) + (3+3*2) + (4.25+3*3)));
-	}
-	SECTION("Test tupleutil::tupleReduceLogicalOr") {
-		//One of the tuple elements is equal to 3.
-		REQUIRE(tupleReduceLogicalOr(t, TestEquality(), 3) == true);
-		//None of the tuple elements are equal to 2.
-		REQUIRE(tupleReduceLogicalOr(t, TestEquality(), 2) == false);
-	}
 }

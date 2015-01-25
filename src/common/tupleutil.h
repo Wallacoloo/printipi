@@ -30,18 +30,10 @@
 //for std::integral_constant
 #include <type_traits>
 
-//TODO: It may be better to simplify the tupleReduce function, which currently takes a getter function AND a reducing function
-//TODO:   into a simpler tupleMap() and tupleReduce() that each take only 1 function.
-//TODO:   tupleMap would apply f to each item and return a new tuple
-//TODO:   tupleReduce would reduce the tuple over f.
-//TODO:   Thus, the current tupleReduceLegacy(tuple, func, reducer) could be implemented as
-//TODO:     tupleReduce(tupleMap(tuple, func), reducer)
-
 
 /* 
  * This namespace provides utilities for manipulating tuples.
  * Namely, it provides a way to apply a polymorphic (templated) function to each item in a tuple (callOnAll)
- * Or a reducing (folding) function to each element of a tuple. (tupleReduce)
  * Or call a function with the nth element of a tuple, where n is not a compile-time constant. (tupleCallOnIndex)
  */
 namespace tupleutil {
@@ -59,23 +51,6 @@ namespace {
     //handle callOnAll base recursion case.
     template <typename TupleT, typename Func, typename ...Args> struct __callOnAll<TupleT, 0, Func, Args...> {
         void operator()(TupleT &, Func &, Args... ) {}
-    };
-
-
-    //tupleReduce helper functions:
-    template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> struct __callOnAllReduce {
-        auto operator()(TupleT &t, Func &f, Reduce &r, ReducedDefault d, Args... args) -> decltype(d) {
-            auto prev = __callOnAllReduce<TupleT, IdxPlusOne-1, Func, Reduce, ReducedDefault, Args...>()(t, f, r, d, args...); //result of all previous items;
-            auto cur = f(IdxPlusOne-1, std::get<IdxPlusOne-1>(t), args...); //call on this index.
-            return r(prev, cur);
-        }
-    };
-
-    //handle tupleReduce base recursion case
-    template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> struct __callOnAllReduce<TupleT, 0, Func, Reduce, ReducedDefault, Args...> {
-        auto operator()(TupleT &, Func &, Reduce &, ReducedDefault d, Args... ) -> decltype(d) {
-            return d;
-        }
     };
 
     //callOnIndex helper functions:
@@ -109,17 +84,6 @@ template <typename TupleT, typename Func, typename ...Args> void callOnAll(Tuple
 //This second version allows to pass a function object by pointer, so that it can perhaps be modified. TODO: Maybe just use an auto reference (Func &&f)?
 template <typename TupleT, typename Func, typename ...Args> void callOnAll(TupleT &t, Func *f, Args... args) {
     __callOnAll<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, *f, args...);
-}
-//Apply @r( @r( d, @f(@t[0], @args...) ), @f(@t[1], @args...) ), ...
-//This function is also sometime known as "fold".
-//If, for example, the reducing function @r sums its two arguments, then the result will be the sum of ALL items in the tuple.
-template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> auto tupleReduce(TupleT &t, Func f, Reduce r, ReducedDefault d, Args... args) -> decltype(d) {
-    return __callOnAllReduce<TupleT, std::tuple_size<TupleT>::value, Func, Reduce, ReducedDefault, Args...>()(t, f, r, d, args...);
-}
-//Return @f(@t[0], args...) || @f(@t[1], args...) || @f(@t[2], args...) || ...
-template <typename TupleT, typename Func, typename ...Args> bool tupleReduceLogicalOr(TupleT &t, Func f, Args... args) {
-    //default value must be false, otherwise the only value ever returned would be <True>
-    return tupleReduce(t, f, [](bool a, bool b) { return a||b; }, false, args...);
 }
 //Return @f(@t[@idx], args...)
 //Note: if @idx > the size of the tuple, behavior is undefined.
