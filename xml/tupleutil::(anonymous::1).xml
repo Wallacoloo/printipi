@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='utf-8'?>
+<namespace id="tupleutil::(anonymous::1)" name="(anonymous::1)" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>internal functions - treat as private</brief>
+  <structtemplate name="__callOnAll" ref="tupleutil::(anonymous::1)::__callOnAll#tupleutil::(anonymous::1)::__callOnAll">
+    <brief>callOnAll helper functions:</brief>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::TupleT" name="TupleT" />
+    <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::Func" name="Func" />
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::Args" name="Args" />
+  </structtemplate>
+  <structtemplate name="__callOnAllReduce" ref="tupleutil::(anonymous::1)::__callOnAllReduce#tupleutil::(anonymous::1)::__callOnAllReduce">
+    <brief>tupleReduce helper functions:</brief>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::TupleT" name="TupleT" />
+    <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnAllReduce::IdxPlusOne" name="IdxPlusOne">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Func" name="Func" />
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Reduce" name="Reduce" />
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::ReducedDefault" name="ReducedDefault" />
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAllReduce::Args" name="Args" />
+  </structtemplate>
+  <structtemplate name="__callOnIndex" ref="tupleutil::(anonymous::1)::__callOnIndex#tupleutil::(anonymous::1)::__callOnIndex">
+    <brief>callOnIndex helper functions:</brief>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::TupleT" name="TupleT" />
+    <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::Func" name="Func" />
+    <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::Args" name="Args" />
+  </structtemplate>
+  <structtemplate name="_AxisStepper__getNextTime" ref="tupleutil::(anonymous::1)::_AxisStepper__getNextTime#tupleutil::(anonymous::1)::_AxisStepper__getNextTime">
+    <brief>Helper classes for AxisStepper::getNextTime method</brief>
+    <templatetypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT" />
+    <templatenontypeparameter id="tupleutil::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </templatenontypeparameter>
+  </structtemplate>
+  <struct name="_AxisStepper__initAxisArcSteppers" ref="tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers#tupleutil::(anonymous::1)::_AxisStepper__initAxisArcSteppers">
+    <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
+  </struct>
+  <struct name="_AxisStepper__initAxisSteppers" ref="tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers#tupleutil::(anonymous::1)::_AxisStepper__initAxisSteppers">
+    <brief>Helper class for AxisStepper::initAxisSteppers</brief>
+  </struct>
+  <struct name="_AxisStepper__nextStep" ref="tupleutil::(anonymous::1)::_AxisStepper__nextStep#tupleutil::(anonymous::1)::_AxisStepper__nextStep">
+    <brief>Helper class for AxisStepper::nextStep method</brief>
+  </struct>
+  <struct name="IODriver__getBedTemp" ref="tupleutil::(anonymous::1)::IODriver__getBedTemp#tupleutil::(anonymous::1)::IODriver__getBedTemp">
+    <brief>IODriver::getBedTemp helper</brief>
+  </struct>
+  <struct name="IODriver__getHotendTargetTemp" ref="tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp#tupleutil::(anonymous::1)::IODriver__getHotendTargetTemp">
+    <brief>IODriver::getHotendTargetTemp helper</brief>
+  </struct>
+  <struct name="IODriver__getHotendTemp" ref="tupleutil::(anonymous::1)::IODriver__getHotendTemp#tupleutil::(anonymous::1)::IODriver__getHotendTemp">
+    <brief>IODriver::getHotendTemp helper</brief>
+  </struct>
+  <struct name="IODriver__tupleConsumeNextEvent" ref="tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent#tupleutil::(anonymous::1)::IODriver__tupleConsumeNextEvent">
+    <brief>IODriver::tupleConsumeNextEvent helper</brief>
+  </struct>
+  <struct name="IODriver__tuplePeekNextEvent" ref="tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent#tupleutil::(anonymous::1)::IODriver__tuplePeekNextEvent">
+    <brief>IODriver::tuplePeekNextEvent helper</brief>
+  </struct>
+  <function id="tupleutil::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+    <brief>bigEndianStr turns a series of characters into a uint32_t for fast string-comparisons.</brief>
+    <doc>Eg bigEndianStr('G', '1', '0') is similar to an array, x, where x[0] == 'G', x[1] == '1' and x[2] == '0', but held in fixed-width.</doc>
+    <return>
+      <type name="uint32_t" />
+    </return>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::a" name="a">
+      <type builtin="yes" name="char" />
+    </argument>
+  </function>
+  <function id="tupleutil::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+    <return>
+      <type name="uint32_t" />
+    </return>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::a" name="a">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::b" name="b">
+      <type builtin="yes" name="char" />
+    </argument>
+  </function>
+  <function id="tupleutil::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+    <return>
+      <type name="uint32_t" />
+    </return>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::a" name="a">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::b" name="b">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::c" name="c">
+      <type builtin="yes" name="char" />
+    </argument>
+  </function>
+  <function id="tupleutil::(anonymous::1)::bigEndianStr" name="bigEndianStr">
+    <return>
+      <type name="uint32_t" />
+    </return>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::a" name="a">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::b" name="b">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::c" name="c">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="tupleutil::(anonymous::1)::bigEndianStr::d" name="d">
+      <type builtin="yes" name="char" />
+    </argument>
+  </function>
+</namespace>
