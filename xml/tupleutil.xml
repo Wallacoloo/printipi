@@ -3,7 +3,6 @@
   <doc>
 This namespace provides utilities for manipulating tuples.
 Namely, it provides a way to apply a polymorphic (templated) function to each item in a tuple (callOnAll)
-Or a reducing (folding) function to each element of a tuple. (tupleReduce)
 Or call a function with the nth element of a tuple, where n is not a compile-time constant. (tupleCallOnIndex)
 </doc>
   <functiontemplate id="tupleutil::callOnAll" name="callOnAll">
@@ -66,50 +65,7 @@ Most likely, that would result in applying @f to the last item in the tuple (but
     <templatetypeparameter id="tupleutil::tupleCallOnIndex::Func" name="Func" />
     <templatetypeparameter id="tupleutil::tupleCallOnIndex::Args" name="Args" />
   </functiontemplate>
-  <functiontemplate id="tupleutil::tupleReduce" name="tupleReduce">
-    <brief>Apply @r( @r( d, @f(@t[0], @args...) ), @f(@t[1], @args...) ), ...</brief>
-    <doc>This function is also sometime known as "fold".
-If, for example, the reducing function @r sums its two arguments, then the result will be the sum of ALL items in the tuple.</doc>
-    <return>
-      <type name="decltype(d)" />
-    </return>
-    <argument id="tupleutil::tupleReduce::t" name="t">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="tupleutil::tupleReduce::f" name="f">
-      <type name="Func" />
-    </argument>
-    <argument id="tupleutil::tupleReduce::r" name="r">
-      <type name="Reduce" />
-    </argument>
-    <argument id="tupleutil::tupleReduce::d" name="d">
-      <type name="ReducedDefault" />
-    </argument>
-    <argument id="tupleutil::tupleReduce::args" name="args">
-      <type name="Args..." />
-    </argument>
-    <templatetypeparameter id="tupleutil::tupleReduce::TupleT" name="TupleT" />
-    <templatetypeparameter id="tupleutil::tupleReduce::Func" name="Func" />
-    <templatetypeparameter id="tupleutil::tupleReduce::Reduce" name="Reduce" />
-    <templatetypeparameter id="tupleutil::tupleReduce::ReducedDefault" name="ReducedDefault" />
-    <templatetypeparameter id="tupleutil::tupleReduce::Args" name="Args" />
-  </functiontemplate>
-  <functiontemplate id="tupleutil::tupleReduceLogicalOr" name="tupleReduceLogicalOr">
-    <brief>Return @f(@t[0], args...) || @f(@t[1], args...) || @f(@t[2], args...) || ...</brief>
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-    <argument id="tupleutil::tupleReduceLogicalOr::t" name="t">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="tupleutil::tupleReduceLogicalOr::f" name="f">
-      <type name="Func" />
-    </argument>
-    <argument id="tupleutil::tupleReduceLogicalOr::args" name="args">
-      <type name="Args..." />
-    </argument>
-    <templatetypeparameter id="tupleutil::tupleReduceLogicalOr::TupleT" name="TupleT" />
-    <templatetypeparameter id="tupleutil::tupleReduceLogicalOr::Func" name="Func" />
-    <templatetypeparameter id="tupleutil::tupleReduceLogicalOr::Args" name="Args" />
-  </functiontemplate>
+  <namespace name="(anonymous::1)" ref="tupleutil::(anonymous::1)#tupleutil::(anonymous::1)">
+    <brief>internal functions - treat as private</brief>
+  </namespace>
 </namespace>

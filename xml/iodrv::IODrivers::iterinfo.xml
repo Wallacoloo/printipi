@@ -7,10 +7,6 @@
       <type name="iodrv::IODrivers&lt;TupleT&gt;::NoPredicate" ref="iodrv::IODrivers::NoPredicate#iodrv::IODrivers::NoPredicate" />
     </default>
   </templatetypeparameter>
-  <enum anonymous="yes" id="iodrv::IODrivers::iterinfo::ShortCircuitType" name="ShortCircuitType">
-    <enumvalue id="iodrv::IODrivers::iterinfo::NO_SHORT_CIRCUIT" name="NO_SHORT_CIRCUIT" value="0" />
-    <enumvalue id="iodrv::IODrivers::iterinfo::DO_SHORT_CIRCUIT" name="DO_SHORT_CIRCUIT" value="0" />
-  </enum>
   <constructor id="iodrv::IODrivers::iterinfo::iterinfo&lt;Predicate&gt;" name="iterinfo&lt;Predicate&gt;">
     <argument id="iodrv::IODrivers::iterinfo::iterinfo&lt;Predicate&gt;::drivers" name="drivers">
       <type name="TupleT" qualifier=" &amp;" />
@@ -34,7 +30,26 @@
       <type name="std::size_t" />
     </argument>
   </method>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::unionWith" name="unionWith">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::unionWith::other" name="other">
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" qualifier=" const &amp;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::unionWith::PredB" name="PredB" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::filter" name="filter">
+    <return>
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::filter::other" name="other">
+      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" qualifier=" const &amp;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::filter::PredB" name="PredB" />
+  </methodtemplate>
   <methodtemplate id="iodrv::IODrivers::iterinfo::apply" name="apply">
+    <brief>apply <ref ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo::apply::f">f</ref> to every item in the iterator set.</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -80,13 +95,23 @@ Control short-circuit evaluation via the shortCircuit flag.</doc>
       <type name="F &amp;&amp;" />
     </argument>
     <argument id="iodrv::IODrivers::iterinfo::any::shortCircuit" name="shortCircuit">
-      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;::ShortCircuitType" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo::ShortCircuitType" />
+      <type name="IODrivers&lt;TupleT&gt;::ShortCircuitType" ref="iodrv::IODrivers#iodrv::IODrivers::ShortCircuitType" />
     </argument>
     <argument id="iodrv::IODrivers::iterinfo::any::args" name="args">
       <type name="Args &amp;&amp;..." />
     </argument>
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::any::F" name="F" />
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::any::Args" name="Args" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::any" name="any">
+    <brief>Have 'any' function default to short-circuiting</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::any::f" name="f">
+      <type name="F &amp;&amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::any::F" name="F" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODrivers::iterinfo::all" name="all">
     <brief>Stadard 'all' function found in functional languages.</brief>
@@ -99,12 +124,22 @@ Control short-circuit evaluation via the shortCircuit flag.</doc>
       <type name="F &amp;&amp;" />
     </argument>
     <argument id="iodrv::IODrivers::iterinfo::all::shortCircuit" name="shortCircuit">
-      <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;::ShortCircuitType" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo::ShortCircuitType" />
+      <type name="IODrivers&lt;TupleT&gt;::ShortCircuitType" ref="iodrv::IODrivers#iodrv::IODrivers::ShortCircuitType" />
     </argument>
     <argument id="iodrv::IODrivers::iterinfo::all::args" name="args">
       <type name="Args &amp;&amp;..." />
     </argument>
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::all::F" name="F" />
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::all::Args" name="Args" />
+  </methodtemplate>
+  <methodtemplate id="iodrv::IODrivers::iterinfo::all" name="all">
+    <brief>Have 'all' function default to short-circuiting</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="iodrv::IODrivers::iterinfo::all::f" name="f">
+      <type name="F &amp;&amp;" />
+    </argument>
+    <templatetypeparameter id="iodrv::IODrivers::iterinfo::all::F" name="F" />
   </methodtemplate>
 </classtemplate>

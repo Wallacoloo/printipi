@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class abstract="true" id="iodrv::IODriver" name="IODriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<class id="iodrv::IODriver" name="IODriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
 IODrivers control the electrical interface to each component.
 One IODriver is needed for each stepper motor, fan, hotend, etc.
@@ -13,118 +13,11 @@ These implementations must provide the functions outlined further down in the he
   <subclass access="public" name="Servo" ref="iodrv::Servo#iodrv::Servo">
     <brief>Controls a Servo motor.</brief>
   </subclass>
-  <subclass access="public" name="A4988" ref="iodrv::A4988#iodrv::A4988" />
   <subclass access="public" name="TempControl" ref="iodrv::TempControl#iodrv::TempControl" />
   <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
     <brief>forward declare for class in "endstop.h"</brief>
   </subclass>
-  <methodtemplate id="iodrv::IODriver::getBedTemp" name="getBedTemp" static="yes">
-    <return>
-      <type name="CelciusType" ref="index#CelciusType" />
-    </return>
-    <argument id="iodrv::IODriver::getBedTemp::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::getBedTemp::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::getBedTemp::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::getHotendTargetTemp" name="getHotendTargetTemp" static="yes">
-    <return>
-      <type name="CelciusType" ref="index#CelciusType" />
-    </return>
-    <argument id="iodrv::IODriver::getHotendTargetTemp::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::getHotendTargetTemp::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::getHotendTemp" name="getHotendTemp" static="yes">
-    <return>
-      <type name="CelciusType" ref="index#CelciusType" />
-    </return>
-    <argument id="iodrv::IODriver::getHotendTemp::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::getHotendTemp::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate abstract="yes" id="iodrv::IODriver::lockAllAxes" name="lockAllAxes" static="yes">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODriver::lockAllAxes::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::lockAllAxes::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate abstract="yes" id="iodrv::IODriver::setBedTemp" name="setBedTemp" static="yes">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODriver::setBedTemp::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="iodrv::IODriver::setBedTemp::temp" name="temp">
-      <type name="CelciusType" ref="index#CelciusType" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::setBedTemp::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate abstract="yes" id="iodrv::IODriver::setHotendTemp" name="setHotendTemp" static="yes">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODriver::setHotendTemp::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="iodrv::IODriver::setHotendTemp::temp" name="temp">
-      <type name="CelciusType" ref="index#CelciusType" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::setHotendTemp::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate abstract="yes" id="iodrv::IODriver::setServoAngleAtServoIndex" name="setServoAngleAtServoIndex" static="yes">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODriver::setServoAngleAtServoIndex::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="iodrv::IODriver::setServoAngleAtServoIndex::index" name="index">
-      <type builtin="yes" name="int" />
-    </argument>
-    <argument id="iodrv::IODriver::setServoAngleAtServoIndex::angleDeg" name="angleDeg">
-      <type builtin="yes" name="float" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::setServoAngleAtServoIndex::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::tupleConsumeNextEvent" name="tupleConsumeNextEvent" static="yes">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODriver::tupleConsumeNextEvent::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::tupleConsumeNextEvent::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::tupleConsumeNextEvent::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate id="iodrv::IODriver::tuplePeekNextEvent" name="tuplePeekNextEvent" static="yes">
-    <return>
-      <type name="OutputEvent" ref="OutputEvent#OutputEvent" />
-    </return>
-    <argument id="iodrv::IODriver::tuplePeekNextEvent::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT" />
-    <templatetypeparameter id="iodrv::IODriver::tuplePeekNextEvent::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate abstract="yes" id="iodrv::IODriver::unlockAllAxes" name="unlockAllAxes" static="yes">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="iodrv::IODriver::unlockAllAxes::drivers" name="drivers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <templatetypeparameter id="iodrv::IODriver::unlockAllAxes::TupleT" name="TupleT" />
-  </methodtemplate>
+  <subclass access="public" name="A4988" ref="iodrv::A4988#iodrv::A4988" />
   <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
   <method id="iodrv::IODriver::consumeNextEvent" name="consumeNextEvent">
     <return>

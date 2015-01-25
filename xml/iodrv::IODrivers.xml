@@ -82,6 +82,11 @@ Provides several conveniences, like iterators and filtering
       </default>
     </templatetypeparameter>
   </classtemplate>
+  <enum anonymous="yes" id="iodrv::IODrivers::ShortCircuitType" name="ShortCircuitType">
+    <brief>short-circuit options used in the all() and any() functions</brief>
+    <enumvalue id="iodrv::IODrivers::NO_SHORT_CIRCUIT" name="NO_SHORT_CIRCUIT" value="0" />
+    <enumvalue id="iodrv::IODrivers::DO_SHORT_CIRCUIT" name="DO_SHORT_CIRCUIT" value="0" />
+  </enum>
   <classtemplate name="iterinfo" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">
     <brief>Allow one to build a filter before iterating.</brief>
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
@@ -148,6 +153,11 @@ The predicate is passed by value to achieve type deduction, but a new Predicate 
     <brief>@return an iterable <ref ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo">iodrv::IODrivers::iterinfo</ref> object that contains only the heated bed IODrivers</brief>
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterinfo&lt;Predicate&gt;" ref="iodrv::IODrivers::iterinfo#iodrv::IODrivers::iterinfo" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::heaters" name="heaters">
+    <return>
+      <type name="decltype(std::declval&lt;IODrivers&lt;TupleT&gt; &gt;().hotends().unionWith(std::declval&lt;IODrivers&lt;TupleT&gt; &gt;().heatedBeds()))" />
     </return>
   </method>
   <method id="iodrv::IODrivers::servos" name="servos">
