@@ -296,7 +296,7 @@ template <typename TupleT> class IODrivers {
 		    			f(d, args...);
 		    		}
 		    	}
-		    	//Standard reduce function found in functional languages
+		    	//Standard 'reduce' function found in functional languages
 		    	//Return dflt if the collection is empty
 		    	//Return f(dflt, ioDrivers[0]) for a one-item collection
 		    	//Return f(f(dflt, ioDrivers[0]), ioDrivers[1]) for a two-item collection
@@ -308,7 +308,7 @@ template <typename TupleT> class IODrivers {
 		    		}
 		    		return reduced;
 		    	}
-		    	//Stadard any function found in functional languages.
+		    	//Stadard 'any' function found in functional languages.
 		    	//return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
 		    	//Control short-circuit evaluation via the shortCircuit flag.
 		    	template <typename F, typename ...Args> bool any(F &&f, ShortCircuitType shortCircuit, Args&& ...args) {
@@ -317,8 +317,8 @@ template <typename TupleT> class IODrivers {
 		    			return (shortCircuit == DO_SHORT_CIRCUIT) ? (reduced || f(d, args...)) : (f(d, args...) || reduced);
 		    		}, false, args...);
 		    	}
-		    	//Stadard any function found in functional languages.
-		    	//return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
+		    	//Stadard 'all' function found in functional languages.
+		    	//return f(ioDrivers[0], args...) && f(ioDrivers[1], args...) || ...
 		    	//Control short-circuit evaluation via the shortCircuit flag.
 		    	template <typename F, typename ...Args> bool all(F &&f, ShortCircuitType shortCircuit, Args&& ...args) {
 		    		//gcc-4.6 cannot bind args... to the lambda, so we must relay them to the reduce function.
