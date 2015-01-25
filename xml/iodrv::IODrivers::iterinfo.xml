@@ -60,7 +60,7 @@ Generalizes to f(...(dflt, ioDrivers[0]), ioDrivers[n]) for an n-item collection
       <type name="F &amp;&amp;" />
     </argument>
     <argument id="iodrv::IODrivers::iterinfo::reduce::dflt" name="dflt">
-      <type name="Ret" />
+      <type name="Ret &amp;&amp;" />
     </argument>
     <argument id="iodrv::IODrivers::iterinfo::reduce::args" name="args">
       <type name="Args..." />

@@ -211,4 +211,9 @@ The predicate is passed by value to achieve type deduction, but a new Predicate 
       <type name="OnIdleCpuIntervalT" ref="index#OnIdleCpuIntervalT" />
     </argument>
   </method>
+  <method id="iodrv::IODrivers::peekNextEvent" name="peekNextEvent">
+    <return>
+      <type name="std::pair&lt;_T1, _T2&gt;" />
+    </return>
+  </method>
 </classtemplate>

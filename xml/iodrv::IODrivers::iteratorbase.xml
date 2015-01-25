@@ -118,4 +118,14 @@ this is expected to be implemented by the derived types which may do filtering.<
       <type builtin="yes" name="bool" />
     </return>
   </method>
+  <method access="protected" id="iodrv::IODrivers::iteratorbase::tuple" name="tuple">
+    <return>
+      <type name="TupleT" qualifier=" &amp;" />
+    </return>
+  </method>
+  <method access="protected" id="iodrv::IODrivers::iteratorbase::tuple" name="tuple">
+    <return>
+      <type name="const TupleT" qualifier=" const &amp;" />
+    </return>
+  </method>
 </class>
