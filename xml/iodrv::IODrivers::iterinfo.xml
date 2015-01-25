@@ -48,7 +48,7 @@
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::apply::Args" name="Args" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODrivers::iterinfo::reduce" name="reduce">
-    <brief>Standard reduce function found in functional languages</brief>
+    <brief>Standard 'reduce' function found in functional languages</brief>
     <doc>Return dflt if the collection is empty
 Return f(dflt, ioDrivers[0]) for a one-item collection
 Return f(f(dflt, ioDrivers[0]), ioDrivers[1]) for a two-item collection
@@ -70,7 +70,7 @@ Generalizes to f(...(dflt, ioDrivers[0]), ioDrivers[n]) for an n-item collection
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::reduce::Args" name="Args" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODrivers::iterinfo::any" name="any">
-    <brief>Stadard any function found in functional languages.</brief>
+    <brief>Stadard 'any' function found in functional languages.</brief>
     <doc>return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
 Control short-circuit evaluation via the shortCircuit flag.</doc>
     <return>
@@ -89,8 +89,8 @@ Control short-circuit evaluation via the shortCircuit flag.</doc>
     <templatetypeparameter id="iodrv::IODrivers::iterinfo::any::Args" name="Args" />
   </methodtemplate>
   <methodtemplate id="iodrv::IODrivers::iterinfo::all" name="all">
-    <brief>Stadard any function found in functional languages.</brief>
-    <doc>return f(ioDrivers[0], args...) || f(ioDrivers[1], args...) || ...
+    <brief>Stadard 'all' function found in functional languages.</brief>
+    <doc>return f(ioDrivers[0], args...) &amp;&amp; f(ioDrivers[1], args...) || ...
 Control short-circuit evaluation via the shortCircuit flag.</doc>
     <return>
       <type builtin="yes" name="bool" />
