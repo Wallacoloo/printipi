@@ -53,6 +53,20 @@ template <typename TupleT> class IODrivers {
 				return true;
 			}
 		};
+        //Filter function that returns true for every item passing PredA OR PredB
+        //  This allows for the unionization of two iteration sets.
+        template <typename PredA, typename PredB> struct Union {
+            bool operator()(const iteratorbase &self) {
+                return PredA()(self) || PredB()(self);
+            }
+        };
+        //Filter function that returns true for every item passing PredA AND PredB
+        //  This allows for the itersection of two iteration sets.
+        template <typename PredA, typename PredB> struct Intersection {
+            bool operator()(const iteratorbase &self) {
+                return PredA()(self) && PredB()(self);
+            }
+        };
 		//tupleutil::callOnIndex and callOnAll pass both the index and the tuple item as an argument to the function
 		//On the other hand, IODrivers::filter only passes the tuple item.
 		//Use this class to wrap a function object that expects only the tuple item and make it also work with (index, item)
@@ -248,7 +262,7 @@ template <typename TupleT> class IODrivers {
                     return tupleCallOnIndex(tuple(), GenericOnIdleCpu(), idx, interval);
                 }
         };
-    public:
+
     	//iterator class that also supports a filter predicate.
     	//@Predicate function that should return false for any item that is not part of the desired set.
     	//  Note that the Predicate function cannot easily store state info, as it may be instantiated for each item.
@@ -278,15 +292,17 @@ template <typename TupleT> class IODrivers {
 
     	};
 
+        //short-circuit options used in the all() and any() functions
+        enum ShortCircuitType {
+            NO_SHORT_CIRCUIT = 0,
+            DO_SHORT_CIRCUIT = 1,
+        };
+
     	//Allow one to build a filter before iterating.
     	//Also supports indexing and convenience functions that operate on the whole set.
     	template <typename Predicate=NoPredicate> class iterinfo {
     		TupleT &drivers;
 	    	public:
-	    		enum ShortCircuitType {
-	    			NO_SHORT_CIRCUIT = 0,
-	    			DO_SHORT_CIRCUIT = 1,
-	    		};
 	    		iterinfo(TupleT &drivers) : drivers(drivers) {}
 	    		iterator<Predicate> begin() {
 	    			return iterator<Predicate>(drivers);
@@ -297,6 +313,15 @@ template <typename TupleT> class IODrivers {
 	    		iterator<Predicate> operator[](std::size_t idx) {
 	    			return begin() + idx;
 	    		}
+                template <typename PredB> iterinfo<Union<Predicate, PredB> > unionWith(const iterinfo<PredB> &other) {
+                    (void)other; //only used for type-deducation
+                    return iterinfo<Union<Predicate, PredB> >(drivers);
+                }
+                template <typename PredB> iterinfo<Intersection<Predicate, PredB> > filter(const iterinfo<PredB> &other) {
+                    (void)other; //only used for type-deducation
+                    return iterinfo<Intersection<Predicate, PredB> >(drivers);
+                }
+                //apply <f> to every item in the iterator set.
 	    		template <typename F, typename ...Args> void apply(F &&f, Args ...args) {
 		    		for (auto &d : *this) {
 		    			f(d, args...);
@@ -323,6 +348,10 @@ template <typename TupleT> class IODrivers {
 		    			return (shortCircuit == DO_SHORT_CIRCUIT) ? (reduced || f(d, args...)) : (f(d, args...) || reduced);
 		    		}, false, args...);
 		    	}
+                //Have 'any' function default to short-circuiting
+                template <typename F> bool any(F &&f) {
+                    return any(std::move(f), DO_SHORT_CIRCUIT);
+                }
 		    	//Stadard 'all' function found in functional languages.
 		    	//return f(ioDrivers[0], args...) && f(ioDrivers[1], args...) || ...
 		    	//Control short-circuit evaluation via the shortCircuit flag.
@@ -332,6 +361,10 @@ template <typename TupleT> class IODrivers {
 		    			return (shortCircuit == DO_SHORT_CIRCUIT) ? (reduced && f(d, args...)) : (f(d, args...) && reduced);
 		    		}, true, args...);
 		    	}
+                //Have 'all' function default to short-circuiting
+                template <typename F> bool all(F &&f) {
+                    return all(std::move(f), DO_SHORT_CIRCUIT);
+                }
     	};
 
     	//return an iterable/indexable object containing ALL the iodrivers
@@ -372,6 +405,9 @@ template <typename TupleT> class IODrivers {
     	iterinfo<GenericIsHeatedBed> heatedBeds() {
     		return filter(GenericIsHeatedBed());
     	}
+        auto heaters() -> decltype(std::declval<IODrivers<TupleT> >().hotends().unionWith(std::declval<IODrivers<TupleT> >().heatedBeds())) {
+            return hotends().unionWith(heatedBeds());
+        }
     	//@return an iterable <iterinfo> object that contains only the servo IODrivers
     	iterinfo<GenericIsServo> servos() {
     		return filter(GenericIsServo());
@@ -403,7 +439,7 @@ template <typename TupleT> class IODrivers {
 		//Call EVERY device's onIdleCpu handler, and return true if AT LEAST one of those handlers requests more time
 		//A request for more time is made by a specific IoDriver be returning true from its onIdleCpu handler.
 		bool onIdleCpu(OnIdleCpuIntervalT interval) {
-			return iter().any(GenericOnIdleCpu(), iterinfo<>::NO_SHORT_CIRCUIT, interval);
+			return iter().any(GenericOnIdleCpu(), NO_SHORT_CIRCUIT, interval);
 		}
         std::pair<iteratorbase, OutputEvent> peekNextEvent() {
             return iter().reduce([](std::pair<iteratorbase, OutputEvent> &&reduced, iteratorbase &d) {

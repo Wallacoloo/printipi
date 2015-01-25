@@ -359,13 +359,11 @@ template <typename Drv> void State<Drv>::setHostZeroPos(float x, float y, float 
 template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) {
     bool motionNeedsCpu = false;
     if (scheduler.isRoomInBuffer()) { 
-        //OutputEvent ioDriverEvt = iodrv::IODriver::tuplePeekNextEvent(ioDrivers.tuple());
         auto ioDriverIterEvtPair = ioDrivers.peekNextEvent();
         auto ioDriverEvtIter = ioDriverIterEvtPair.first;
         OutputEvent ioDriverEvt = ioDriverIterEvtPair.second;
         OutputEvent motionEvt = _motionPlanner.peekNextEvent();
 
-        //iodrv::IODriver::tupleConsumeNextEvent(ioDrivers);
         //LOG("Next IoDriverEvt at %lu, state: %i\n", ioDriverEvt.time().time_since_epoch().count(), ioDriverEvt.state());
         //bool doServiceMotion =   !motionEvt.isNull()   && (ioDriverEvt.isNull() || motionEvt.time() <= ioDriverEvt.time());
         bool doServiceIoDriver = !ioDriverEvt.isNull() && (motionEvt.isNull()   || ioDriverEvt.time() <= motionEvt.time());
@@ -375,7 +373,6 @@ template <typename Drv> bool State<Drv>::onIdleCpu(OnIdleCpuIntervalT interval) 
             //IoDriver event occurs first, so queue it & consume it.
             this->scheduler.queue(ioDriverEvt);
             ioDriverEvtIter.consumeNextEvent();
-            //iodrv::IODriver::tupleConsumeNextEvent(ioDrivers.tuple());
         } else if (_doBufferMoves || _lastMotionPlannedTime <= EventClockT::now()) { 
             //if we're homing (_doBufferMoves==false), we don't want to queue the next step until the current one has actually completed.
             //Although the IoDriver event does not occur first, that doesn't mean there is necessarily a motion event.
@@ -608,8 +605,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         reply(gparse::Response::Ok);
     } else if (cmd.isM105()) { //get temperature, in C
         CelciusType t, b;
-        t = iodrv::IODriver::getHotendTemp(ioDrivers.tuple());
-        b = iodrv::IODriver::getBedTemp(ioDrivers.tuple());
+        t = ioDrivers.hotends()[0].getMeasuredTemperature();
+        b = ioDrivers.heatedBeds()[0].getMeasuredTemperature();
         reply(gparse::Response(gparse::ResponseOk, {
             std::make_pair("T", std::to_string(t)),
             std::make_pair("B", std::to_string(b))
@@ -735,10 +732,9 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 
 template <typename Drv> bool State<Drv>::isHotendReady() {
     if (_isWaitingForHotend) {
-        //TODO: check ALL heaters, not just the first hotend.
-        CelciusType current = iodrv::IODriver::getHotendTemp(ioDrivers.tuple());
-        CelciusType target = iodrv::IODriver::getHotendTargetTemp(ioDrivers.tuple());
-        _isWaitingForHotend = current < target;
+        return ioDrivers.heaters().all([](typename IODriverTypes::iteratorbase &d) {
+            return d.getMeasuredTemperature() > d.getTargetTemperature();
+        });
     }
     return !_isWaitingForHotend;
 }
