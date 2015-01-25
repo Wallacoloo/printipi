@@ -99,7 +99,7 @@ class RCThermistor2Pin : public IODriver {
     public:
         inline RCThermistor2Pin(IoPin &&thermPin, IoPin &&chargeMeasPin, float RCHRG_OHMS, float RSERIES_OHMS, float RUP_OHMS,
             float C_FARADS, float VCC_V, float V_TOGGLE_V, float T0_C, float R0_OHMS, float BETA, 
-            EventClockT::duration readInterval=std::chrono::milliseconds(3000), 
+            EventClockT::duration readInterval=std::chrono::milliseconds(200), 
             EventClockT::duration minTimingAccuracy=std::chrono::microseconds(40))
           : thermPin(std::move(thermPin)), chargeMeasPin(std::move(chargeMeasPin)), 
             C(C_FARADS), Vcc(VCC_V), Rup(RUP_OHMS), Rchrg(RCHRG_OHMS), Rseries(RSERIES_OHMS),

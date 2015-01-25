@@ -66,7 +66,7 @@ template <typename Thermistor, typename PID=PID, typename Filter=NoFilter> class
     EventClockT::time_point _nextPwmUpdate;
     public:
         inline TempControl(TempControlType hotType, IoPin &&heater, Thermistor &&therm, 
-            const PID &pid, const Filter &filter, float pwmPeriod=1./25000, EventClockT::duration pwmUpdateInterval=std::chrono::milliseconds(1000)) 
+            const PID &pid, const Filter &filter, float pwmPeriod=1./25000, EventClockT::duration pwmUpdateInterval=std::chrono::milliseconds(200)) 
          : IODriver(), _hotType(hotType), _heater(std::move(heater)), _therm(std::move(therm)), _pid(pid), _filter(filter), 
          _pwmPeriod(pwmPeriod), _pwmUpdateInterval(pwmUpdateInterval), 
          _destTemp(mathutil::ABSOLUTE_ZERO_CELCIUS), _filteredTemp(mathutil::ABSOLUTE_ZERO_CELCIUS), 
