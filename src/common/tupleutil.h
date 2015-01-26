@@ -55,22 +55,25 @@ namespace {
 
     //callOnIndex helper functions:
     template <typename TupleT, std::size_t MyIdxPlusOne, typename Func, typename ...Args> struct __callOnIndex {
-        auto operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args)
-           -> decltype(f(std::integral_constant<std::size_t, MyIdxPlusOne-1>(), std::get<MyIdxPlusOne-1>(t), args...)) {
+        typedef decltype(std::declval<Func>()(
+            std::integral_constant<std::size_t, 0>(), std::get<0>(std::declval<TupleT&>()), std::declval<Args>()...)) Ret;
+        Ret operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args) {
             return desiredIdx < MyIdxPlusOne-1 ? __callOnIndex<TupleT, MyIdxPlusOne-1, Func, Args...>()(t, f, desiredIdx, args...)
                                                : f(std::integral_constant<std::size_t, MyIdxPlusOne-1>(), std::get<MyIdxPlusOne-1>(t), args...);
         }
     };
     //callOnIndex recursion base case:
     template <typename TupleT, typename Func, typename ...Args> struct __callOnIndex<TupleT, 1, Func, Args...> {
-        auto operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args) -> decltype(f(std::integral_constant<std::size_t, 0>(), std::get<0>(t), args...)) {
+        typedef decltype(std::declval<Func>()(
+            std::integral_constant<std::size_t, 0>(), std::get<0>(std::declval<TupleT&>()), std::declval<Args>()...)) Ret;
+        Ret operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args) {
             (void)desiredIdx; //unused
             return f(std::integral_constant<std::size_t, 0>(), std::get<0>(t), args...);
         }
     };
     //special callOnIndex case for TupleT::size == 0 (auto return type doesn't work, so we use void)
     template <typename Func, typename ...Args> struct __callOnIndex<std::tuple<>, 0, Func, Args...> {
-        void operator()(std::tuple<>&, Func &, std::size_t , Args...) {
+        void operator()(const std::tuple<>&, Func &, std::size_t , Args...) {
         }
     };
 }
@@ -91,6 +94,11 @@ template <typename TupleT, typename Func, typename ...Args> void callOnAll(Tuple
 template <typename TupleT, typename Func, typename ...Args> auto tupleCallOnIndex(TupleT &t, Func f, std::size_t idx, Args... args)
    -> decltype(__callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, idx, args...)) {
     return __callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, idx, args...);
+}
+//hack-ish overload for const tuples (needed for gcc-4.6)
+template <typename TupleT, typename Func, typename ...Args> auto tupleCallOnIndex(const TupleT &t, Func f, std::size_t idx, Args... args)
+   -> decltype(__callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(const_cast<TupleT&>(t), f, idx, args...)) {
+    return __callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(const_cast<TupleT&>(t), f, idx, args...);
 }
 
 }
