@@ -169,9 +169,13 @@ bool Command::hasParam(char label) const {
   We should instead just replace GPARSE_ARG_NOT_PRESENT with NaN and use std::isnan
 */
 
-float Command::getFloatParam(char label, float def, bool &hasParam) const {
-    hasParam = this->hasParam(label);
-    return hasParam ? arguments[upper(label)-'A'] : def;
+float Command::getFloatParam(char label) const {
+    return arguments[upper(label)-'A'];
+}
+
+float Command::getFloatParam(char label, float def) const {
+    bool hasParam = this->hasParam(label);
+    return hasParam ? getFloatParam(label) : def;
 }
 
 }

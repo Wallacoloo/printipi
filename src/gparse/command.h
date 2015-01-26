@@ -93,53 +93,82 @@ class Command {
         std::string toGCode() const;
         bool hasParam(char label) const;
         
-        float getFloatParam(char label, float def, bool &hasParam) const;
+        /*float getFloatParam(char label, float def, bool &hasParam) const;
         inline float getFloatParam(char label, float def=NAN) const {
             bool _ignore;
             return getFloatParam(label, def, _ignore);
-        }
-        inline float getFloatParam(char label, bool &hasParam) const {
-            return getFloatParam(label, NAN, hasParam);
-        }
+        }*/
+        float getFloatParam(char label, float def) const;
+        float getFloatParam(char label) const;
         //The specialStringParam is a filename, for M32, or a message to display, for M117.
         inline const std::string& getSpecialStringParam() const {
             return specialStringParam;
         }
         //extrusion distance
-        inline float getE(float def=NAN) const {
+        inline float getE() const {
+            return getFloatParam('E');
+        }
+        inline float getE(float def) const {
             return getFloatParam('E', def);
         }
         //extruder feed-rate
-        inline float getF(float def=NAN) const {
+        inline float getF() const {
+            return getFloatParam('F');
+        }
+        inline float getF(float def) const {
             return getFloatParam('F', def);
         }
         //arc center X coordinate
-        inline float getI(float def=NAN) const {
+        inline float getI() const {
+            return getFloatParam('I');
+        }
+        inline float getI(float def) const {
             return getFloatParam('I', def);
         }
         //arc center Y coordinate
-        inline float getJ(float def=NAN) const {
+        inline float getJ() const {
+            return getFloatParam('J');
+        }
+        inline float getJ(float def) const {
             return getFloatParam('J', def);
         }
         //arc center Z coordinate
-        inline float getK(float def=NAN) const {
+        inline float getK() const {
+            return getFloatParam('K');
+        }
+        inline float getK(float def) const {
             return getFloatParam('K', def);
         }
         //Servo Index
-        inline float getP(float def=NAN) const {
+        inline float getP() const {
+            return getFloatParam('P');
+        }
+        inline float getP(float def) const {
             return getFloatParam('P', def);
         }
         //PWM rate or servo angle
-        inline float getS(float def=NAN) const {
+        inline float getS() const {
+            return getFloatParam('S');
+        }
+        inline float getS(float def) const {
             return getFloatParam('S', def);
         }
-        inline float getX(float def=NAN) const {
-            return getFloatParam('C', def);
+        inline float getX() const {
+            return getFloatParam('X');
         }
-        inline float getY(float def=NAN) const {
+        inline float getX(float def) const {
+            return getFloatParam('X', def);
+        }
+        inline float getY() const {
+            return getFloatParam('Y');
+        }
+        inline float getY(float def) const {
             return getFloatParam('Y', def);
         }
-        inline float getZ(float def=NAN) const {
+        inline float getZ() const {
+            return getFloatParam('Z');
+        }
+        inline float getZ(float def) const {
             return getFloatParam('Z', def);
         }
         inline bool hasE() const {
