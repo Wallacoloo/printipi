@@ -43,16 +43,13 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getE::def" name="def">
-      <type builtin="yes" name="float" />
-    </argument>
   </method>
   <method id="gparse::Command::getE" name="getE">
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getE::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    <argument id="gparse::Command::getE::def" name="def">
+      <type builtin="yes" name="float" />
     </argument>
   </method>
   <method id="gparse::Command::getF" name="getF">
@@ -60,16 +57,29 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getF::def" name="def">
-      <type builtin="yes" name="float" />
-    </argument>
   </method>
   <method id="gparse::Command::getF" name="getF">
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getF::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    <argument id="gparse::Command::getF::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getFloatParam" name="getFloatParam">
+    <brief>float getFloatParam(char label, float def, bool &amp;hasParam) const;</brief>
+    <doc>inline float getFloatParam(char label, float def=NAN) const {
+ bool _ignore;
+ return getFloatParam(label, def, _ignore);
+}</doc>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getFloatParam::label" name="label">
+      <type builtin="yes" name="char" />
+    </argument>
+    <argument id="gparse::Command::getFloatParam::def" name="def">
+      <type builtin="yes" name="float" />
     </argument>
   </method>
   <method id="gparse::Command::getFloatParam" name="getFloatParam">
@@ -81,37 +91,14 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     <argument id="gparse::Command::getFloatParam::label" name="label">
       <type builtin="yes" name="char" />
     </argument>
-    <argument id="gparse::Command::getFloatParam::def" name="def">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="gparse::Command::getFloatParam::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
-    </argument>
-  </method>
-  <method id="gparse::Command::getFloatParam" name="getFloatParam">
-    <return>
-      <type builtin="yes" name="float" />
-    </return>
-    <argument id="gparse::Command::getFloatParam::label" name="label">
-      <type builtin="yes" name="char" />
-    </argument>
-    <argument id="gparse::Command::getFloatParam::def" name="def">
-      <type builtin="yes" name="float" />
-    </argument>
-  </method>
-  <method id="gparse::Command::getFloatParam" name="getFloatParam">
-    <return>
-      <type builtin="yes" name="float" />
-    </return>
-    <argument id="gparse::Command::getFloatParam::label" name="label">
-      <type builtin="yes" name="char" />
-    </argument>
-    <argument id="gparse::Command::getFloatParam::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
-    </argument>
   </method>
   <method id="gparse::Command::getI" name="getI">
     <brief>arc center X coordinate</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="gparse::Command::getI" name="getI">
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -119,16 +106,13 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="float" />
     </argument>
   </method>
-  <method id="gparse::Command::getI" name="getI">
+  <method id="gparse::Command::getJ" name="getJ">
+    <brief>arc center Y coordinate</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getI::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
-    </argument>
   </method>
   <method id="gparse::Command::getJ" name="getJ">
-    <brief>arc center Y coordinate</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -136,29 +120,18 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="float" />
     </argument>
   </method>
-  <method id="gparse::Command::getJ" name="getJ">
-    <return>
-      <type builtin="yes" name="float" />
-    </return>
-    <argument id="gparse::Command::getJ::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
-    </argument>
-  </method>
   <method id="gparse::Command::getK" name="getK">
     <brief>arc center Z coordinate</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getK::def" name="def">
-      <type builtin="yes" name="float" />
-    </argument>
   </method>
   <method id="gparse::Command::getK" name="getK">
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getK::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    <argument id="gparse::Command::getK::def" name="def">
+      <type builtin="yes" name="float" />
     </argument>
   </method>
   <method id="gparse::Command::getOpcode" name="getOpcode">
@@ -171,16 +144,13 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getP::def" name="def">
-      <type builtin="yes" name="float" />
-    </argument>
   </method>
   <method id="gparse::Command::getP" name="getP">
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getP::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    <argument id="gparse::Command::getP::def" name="def">
+      <type builtin="yes" name="float" />
     </argument>
   </method>
   <method id="gparse::Command::getS" name="getS">
@@ -188,16 +158,13 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getS::def" name="def">
-      <type builtin="yes" name="float" />
-    </argument>
   </method>
   <method id="gparse::Command::getS" name="getS">
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getS::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    <argument id="gparse::Command::getS::def" name="def">
+      <type builtin="yes" name="float" />
     </argument>
   </method>
   <method id="gparse::Command::getSpecialStringParam" name="getSpecialStringParam">
@@ -210,17 +177,19 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getX::def" name="def">
-      <type builtin="yes" name="float" />
-    </argument>
   </method>
   <method id="gparse::Command::getX" name="getX">
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getX::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
+    <argument id="gparse::Command::getX::def" name="def">
+      <type builtin="yes" name="float" />
     </argument>
+  </method>
+  <method id="gparse::Command::getY" name="getY">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
   </method>
   <method id="gparse::Command::getY" name="getY">
     <return>
@@ -230,13 +199,10 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="float" />
     </argument>
   </method>
-  <method id="gparse::Command::getY" name="getY">
+  <method id="gparse::Command::getZ" name="getZ">
     <return>
       <type builtin="yes" name="float" />
     </return>
-    <argument id="gparse::Command::getY::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
-    </argument>
   </method>
   <method id="gparse::Command::getZ" name="getZ">
     <return>
@@ -244,14 +210,6 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </return>
     <argument id="gparse::Command::getZ::def" name="def">
       <type builtin="yes" name="float" />
-    </argument>
-  </method>
-  <method id="gparse::Command::getZ" name="getZ">
-    <return>
-      <type builtin="yes" name="float" />
-    </return>
-    <argument id="gparse::Command::getZ::hasParam" name="hasParam">
-      <type builtin="yes" name="bool" qualifier=" &amp;" />
     </argument>
   </method>
   <method id="gparse::Command::hasAnyXYZEParam" name="hasAnyXYZEParam">
@@ -270,6 +228,21 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </return>
   </method>
   <method id="gparse::Command::hasF" name="hasF">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasI" name="hasI">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasJ" name="hasJ">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="gparse::Command::hasK" name="hasK">
     <return>
       <type builtin="yes" name="bool" />
     </return>
