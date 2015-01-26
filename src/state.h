@@ -615,11 +615,19 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (s > 1) { //host thinks we're working from 0 to 255
             s = s/256.0; //TODO: move this logic into cmd.getSNorm()
         }
-        this->ioDrivers.setFanDutyCycle(s);
+        if (cmd.hasP()) {
+            this->ioDrivers.fans()[cmd.getP()].setFanDutyCycle(s);
+        } else {
+            this->ioDrivers.setFanDutyCycle(s);
+        }
         reply(gparse::Response::Ok);
     } else if (cmd.isM107()) { //set fan = off.
         LOGW("M107 is deprecated. Use M106 with S=0 instead.\n");
-        this->ioDrivers.setFanDutyCycle(0);
+        if (cmd.hasP()) {
+            this->ioDrivers.fans()[cmd.getP()].setFanDutyCycle(0);
+        } else {
+            this->ioDrivers.setFanDutyCycle(0);
+        }
         reply(gparse::Response::Ok);
     } else if (cmd.isM109()) { //set extruder temperature to S param and wait.
         LOGW("(state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
