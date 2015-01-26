@@ -65,4 +65,25 @@ Most likely, that would result in applying @f to the last item in the tuple (but
     <templatetypeparameter id="tupleutil::tupleCallOnIndex::Func" name="Func" />
     <templatetypeparameter id="tupleutil::tupleCallOnIndex::Args" name="Args" />
   </functiontemplate>
+  <functiontemplate id="tupleutil::tupleCallOnIndex" name="tupleCallOnIndex">
+    <brief>hack-ish overload for const tuples (needed for gcc-4.6)</brief>
+    <return>
+      <type name="decltype(__callOnIndex&lt;TupleT, std::tuple_size&lt;TupleT&gt;::value, Func, Args...&gt;()(const_cast&lt;TupleT &amp;&gt;(t), f, idx, args...))" />
+    </return>
+    <argument id="tupleutil::tupleCallOnIndex::t" name="t">
+      <type name="const TupleT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="tupleutil::tupleCallOnIndex::f" name="f">
+      <type name="Func" />
+    </argument>
+    <argument id="tupleutil::tupleCallOnIndex::idx" name="idx">
+      <type name="std::size_t" />
+    </argument>
+    <argument id="tupleutil::tupleCallOnIndex::args" name="args">
+      <type name="Args..." />
+    </argument>
+    <templatetypeparameter id="tupleutil::tupleCallOnIndex::TupleT" name="TupleT" />
+    <templatetypeparameter id="tupleutil::tupleCallOnIndex::Func" name="Func" />
+    <templatetypeparameter id="tupleutil::tupleCallOnIndex::Args" name="Args" />
+  </functiontemplate>
 </namespace>
