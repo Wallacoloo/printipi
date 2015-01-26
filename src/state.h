@@ -252,7 +252,7 @@ template <typename Drv> class State {
         /* Home to the endstops. */
         void homeEndstops();
         //Check if M109 (set temperature and wait until reached) has been satisfied.
-        bool isHotendReady();
+        bool areHeatersReady();
         std::string getEndstopStatusString();
 };
 
@@ -449,7 +449,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (!_motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
             return;
         }
-        if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
+        if (!areHeatersReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return;
         }
         if (_isHoming) {
@@ -477,7 +477,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (!_motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
             return;
         }
-        if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
+        if (!areHeatersReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return;
         }
         if (_isHoming) {
@@ -519,7 +519,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (!_motionPlanner.readyForNextMove()) { //don't queue another command unless we have the memory for it.
             return;
         }
-        if (!isHotendReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
+        if (!areHeatersReady()) { //make sure that a call to M109 doesn't allow movements until it's complete.
             return;
         }
         if (_isHoming) {
@@ -584,7 +584,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         //iodrv::IODriver::unlockAllAxes(this->ioDrivers.tuple());
         reply(gparse::Response::Ok);
     } else if (cmd.isM99()) { //return from macro/subprogram
-        //note: can't simply pop the top file, because then that causes memory access errors when trying to send it areply.
+        //note: can't simply pop the top file, because then that causes memory access errors when trying to send it a reply.
         //Need to check if com channel that received this command is the top one. If yes, then pop it and return Response::Null so that no response will be sent.
         //  else, pop it and return Response::Ok.
         if (gcodeFileStack.empty()) { //return from the main I/O routine = kill program
@@ -600,7 +600,6 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float t = cmd.getS(hasS);
         if (hasS) {
             ioDrivers.setHotendTemp(t);
-            //iodrv::IODriver::setHotendTemp(ioDrivers.tuple(), t);
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM105()) { //get temperature, in C
@@ -628,7 +627,6 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float t = cmd.getS(hasS);
         if (hasS) {
             ioDrivers.setHotendTemp(t);
-            //iodrv::IODriver::setHotendTemp(ioDrivers.tuple(), t);
         }
         _isWaitingForHotend = true;
         reply(gparse::Response::Ok);
@@ -661,7 +659,6 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if (cmd.isM119()) {
         //get endstop status
         LOGW("M119 not tested\n");
-        //reply(gparse::Response(gparse::ResponseOk, iodrv::IODriver::getEndstopNameStatusPairs(ioDrivers)));
         reply(gparse::Response(gparse::ResponseOk, getEndstopStatusString()));
     } else if (cmd.isM140()) { //set BED temp and return immediately.
         LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");
@@ -669,7 +666,6 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float t = cmd.getS(hasS);
         if (hasS) {
             ioDrivers.setBedTemp(t);
-            //iodrv::IODriver::setBedTemp(ioDrivers.tuple(), t);
         }
         reply(gparse::Response::Ok);
     } else if(cmd.isM280()) {
@@ -730,13 +726,14 @@ template <typename Drv> void State<Drv>::homeEndstops() {
     this->_isHoming = false;
 }
 
-template <typename Drv> bool State<Drv>::isHotendReady() {
+template <typename Drv> bool State<Drv>::areHeatersReady() {
     if (_isWaitingForHotend) {
         return ioDrivers.heaters().all([](typename IODriverTypes::iteratorbase &d) {
             return d.getMeasuredTemperature() > d.getTargetTemperature();
         });
+    } else {
+        return true;
     }
-    return !_isWaitingForHotend;
 }
 
 template <typename Drv> std::string State<Drv>::getEndstopStatusString() {
