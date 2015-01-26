@@ -21,9 +21,13 @@
  * SOFTWARE.
  */
  
+
+#ifndef MOTION_ACCELERATIONPROFILE_H
+#define MOTION_ACCELERATIONPROFILE_H
+
+namespace motion {
+
 /* 
- * Printipi/motion/accelerationprofile.h
- *
  * An AccelerationProfile takes event times and transforms them into a refined time based upon the acceleration mode.
  * As an example, a movement at 30 mm/sec with duration=0.6 sec might have Events with times like this:
  * 0.1, 0.2, 0.3, 0.4, 0.5, 0.6
@@ -34,19 +38,19 @@
  *
  * Note: AccelerationProfile is an interface and all derivatives must implement the methods outlined in the AccelerationProfile class. NoAcceleration can be considered a default implementation of this interface.
  */
-
-#ifndef MOTION_ACCELERATIONPROFILE_H
-#define MOTION_ACCELERATIONPROFILE_H
-
-
 struct AccelerationProfile {
-    inline void begin(float /*moveDuration*/, float /*Vmax*/) {} //Optional, but almost surely needed.
+	//Optional, but almost surely needed:
+    inline void begin(float moveDuration, float Vmax) {
+    	(void)moveDuration; (void)Vmax; //unused
+    }
     //float transform(float inp, float moveDuration, float Vmax);
 };
 
+//AccelerationProfile implementation that doesn't perform any acceleration transformation
 struct NoAcceleration : public AccelerationProfile {
-    float transform(float inp) { return inp; }
+    inline float transform(float inp) { return inp; }
 };
 
+}
 
 #endif

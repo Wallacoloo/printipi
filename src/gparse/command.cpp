@@ -1,3 +1,26 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "command.h"
 
 namespace gparse {
@@ -13,15 +36,21 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
     //G1 ;LALALA
     //;^_^;
     //initialize the command from a line of GCode
-    std::string::const_iterator argumentStart; //iterator pointing to the first character in the current argument being parsed.
+    //iterator pointing to the first character in the current argument being parsed.
+    std::string::const_iterator argumentStart; 
     std::string::const_iterator it=cmd.begin();
-    for(; it != cmd.end() && (*it == ' ' || *it == '\t'); ++it) {} //skip leading spaces
-    if (cmd[0] == 'N' || cmd[0] == 'n') { //line-number
+
+    //skip leading spaces
+    for(; it != cmd.end() && (*it == ' ' || *it == '\t'); ++it) {} 
+    //Check for a line-number
+    if (cmd[0] == 'N' || cmd[0] == 'n') {
         do {
             ++it;
         } while (it != cmd.end() && *it != ' ' && *it != '\n' && *it != '\t' && *it != '*' && *it != ';');
-        for(; it != cmd.end() && (*it == ' ' || *it == '\t'); ++it) {} //skip spaces between line-number and opcode.
+        //skip spaces between line-number and opcode.
+        for(; it != cmd.end() && (*it == ' ' || *it == '\t'); ++it) {} 
     }
+
     //now at the first character of the opcode
     for (; it != cmd.end() && *it != ' ' && *it != '\n' && *it != '\t' && *it != '*' && *it != ';'; ++it) {
         opcodeStr = (opcodeStr << 8) + upper(*it); //Note: only the first really character needs to be 'upper'd
@@ -36,13 +65,20 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
         //now at a LETTER, assuming valid command.
         char param = *it++;
         //now at either the end, space, * or ; OR a number OR a slash (/) if a filename
-        if (param == '/') { //filename; have to parse as a string.
+        //if (param == '/') { //filename; have to parse as a string.
+        if (isM117() || isM32()) {
+            //Some whackjob decided that M117 and M32 were special enough to require an entirely different parameter parsing routine,
+            // and we are forced to do their bidding here.
+            // God save us if we ever want to add additional parameters to either of these m-codes
             std::string::const_iterator first = it-1;
-            //advance to the end of the file name:
-            for (; it != cmd.end() && *it != ' ' && *it != '\t' && *it != '\n' && *it != '*' && *it != ';'; ++it) {}
-            //get the filename as a substr (likely more efficient than just appending the characters one-by-one):
-            std::string filename = cmd.substr(first - cmd.begin(), it-first);
-            this->filepathParam = filename;
+            //advance to the end of the string parameter:
+            for (; it != cmd.end() /*&& *it != ' ' && *it != '\t' */ && *it != '\n' && *it != '*' && *it != ';'; ++it) {}
+            //Probably a good idea to trim trailing whitespace
+            std::string::const_iterator lastCharToInclude = it;
+            do { --lastCharToInclude; } while(*lastCharToInclude == ' ' || *lastCharToInclude == '\t');
+            //now the iterator will point to the last character which we want to include as part of the parameter
+            //get the string parameter as a substr (likely more efficient than just appending the characters one-by-one):
+            this->specialStringParam = cmd.substr(first - cmd.begin(), lastCharToInclude+1-first);
         } else {
             float value = 0;
             if (it != cmd.end() && *it != ' ' && *it != '\t' && *it != '\n' && *it != '*' && *it != ';') { 
@@ -58,8 +94,10 @@ Command::Command(std::string const& cmd) : opcodeStr(0) {
                 char *afterVal;
                 const char *cmdCStr = cmd.c_str();
                 const char *floatStart = cmdCStr + (it-cmd.begin());
-                value = strtof(floatStart, &afterVal); //read a float and set afterVal to point 
-                it += (afterVal-floatStart); //advance iterator to past the number.
+                //read a float and set afterVal to point to the first character (or null-terminator) after the float
+                value = strtof(floatStart, &afterVal); 
+                //advance iterator to past the number.
+                it += (afterVal-floatStart); 
             }
             setArgument(param, value);
         }
@@ -113,35 +151,31 @@ std::string Command::toGCode() const {
             r += std::to_string(getFloatParam(c));
         }
     }
-    if (!getFilepathParam().empty()) {
+    if (!getSpecialStringParam().empty()) {
         r += ' ';
-        r += getFilepathParam();
+        r += getSpecialStringParam();
     }
-    return r + '\n';
+    return r;
 }
 
 bool Command::hasParam(char label) const {
-    /*for (const std::string &p : this->pieces) {
-        if (p[0] == label) {
-            return true;
-        }
-    }
-    return false;*/
     //return arguments[upper(label)-'A'] != GPARSE_ARG_NOT_PRESENT; //BREAKS FOR NAN
     bool a = arguments[upper(label)-'A'] != GPARSE_ARG_NOT_PRESENT;
     bool b = (!std::isnan(GPARSE_ARG_NOT_PRESENT) || !std::isnan(arguments[upper(label)-'A']));
     return a && b;
 }
 
-/*float Command::getFloatParam(char label) const {
-    return arguments[upper(label)-'A'];
-}*/
+/* TODO: hasParam will always return false when GPARSE_ARG_NOT_PRESENT is NaN (a will be false).
+  We should instead just replace GPARSE_ARG_NOT_PRESENT with NaN and use std::isnan
+*/
 
-float Command::getFloatParam(char label, float def, bool &hasParam) const {
-    hasParam = this->hasParam(label);
-    return hasParam ? arguments[upper(label)-'A'] : def;
-    //std::string s = this->getStrParam(label, hasParam);
-    //return hasParam ? std::stof(s) : def;
+float Command::getFloatParam(char label) const {
+    return arguments[upper(label)-'A'];
+}
+
+float Command::getFloatParam(char label, float def) const {
+    bool hasParam = this->hasParam(label);
+    return hasParam ? getFloatParam(label) : def;
 }
 
 }

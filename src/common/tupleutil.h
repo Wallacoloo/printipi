@@ -1,100 +1,107 @@
+/* The MIT License (MIT)
+ *
+ * Copyright (c) 2014 Colin Wallace
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #ifndef COMMON_TUPLEUTIL_H
 #define COMMON_TUPLEUTIL_H
-
-/* 
- * Printipi/common/tupleutil.h
- * (c) 2014 Colin Wallace
- *
- * This file provides utilities for manipulating tuples.
- * Namely, it provides a way to apply a polymorphic (templated) function to each item in a tuple.
- */
 
 #include <tuple>
 #include <cassert>
 #include <utility> //for std::forward
+//for std::integral_constant
+#include <type_traits>
 
-template <std::size_t Value> struct CVTemplateWrapper {
-    //Const-Value template wrapper.
-    //callOnAll function gives an object and a tuple index, both are which are compile-time constants - as function arguments
-    //One can template on the object *type*, but one can't template on the index (a *value*). So in order for the user function to know the index as a compile-time constant, we must wrap it as a type. Hence CVTemplateWrapper<index>
-    static constexpr std::size_t value = Value;
-    CVTemplateWrapper(std::size_t v) {
-        assert(v == Value);
-    }
-    operator std::size_t() const { return Value; }
-};
 
-//callOnAll helper functions:
+/* 
+ * This namespace provides utilities for manipulating tuples.
+ * Namely, it provides a way to apply a polymorphic (templated) function to each item in a tuple (callOnAll)
+ * Or call a function with the nth element of a tuple, where n is not a compile-time constant. (tupleCallOnIndex)
+ */
+namespace tupleutil {
+namespace {
+    //place helper functions in an unnamed namespace to limit visibility and hint the documentation generator
 
-template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename ...Args> struct __callOnAll {
-    void operator()(TupleT &t, Func &f, Args... args) {
-        __callOnAll<TupleT, IdxPlusOne-1, Func, Args...>()(t, f, args...); //call on all previous indices
-        f(CVTemplateWrapper<IdxPlusOne-1>(IdxPlusOne-1), std::get<IdxPlusOne-1>(t), args...); //call on our index.
-    }
-};
+    //callOnAll helper functions:
+    template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename ...Args> struct __callOnAll {
+        void operator()(TupleT &t, Func &f, Args... args) {
+            __callOnAll<TupleT, IdxPlusOne-1, Func, Args...>()(t, f, args...); //call on all previous indices
+            f(std::integral_constant<std::size_t, IdxPlusOne-1>(), std::get<IdxPlusOne-1>(t), args...); //call on our index.
+        }
+    };
 
-template <typename TupleT, typename Func, typename ...Args> struct __callOnAll<TupleT, 0, Func, Args...> {
-    //handle the base recursion case.
-    void operator()(TupleT &, Func &, Args... ) {}
-};
+    //handle callOnAll base recursion case.
+    template <typename TupleT, typename Func, typename ...Args> struct __callOnAll<TupleT, 0, Func, Args...> {
+        void operator()(TupleT &, Func &, Args... ) {}
+    };
 
+    //callOnIndex helper functions:
+    template <typename TupleT, std::size_t MyIdxPlusOne, typename Func, typename ...Args> struct __callOnIndex {
+        typedef decltype(std::declval<Func>()(
+            std::integral_constant<std::size_t, 0>(), std::get<0>(std::declval<TupleT&>()), std::declval<Args>()...)) Ret;
+        Ret operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args) {
+            return desiredIdx < MyIdxPlusOne-1 ? __callOnIndex<TupleT, MyIdxPlusOne-1, Func, Args...>()(t, f, desiredIdx, args...)
+                                               : f(std::integral_constant<std::size_t, MyIdxPlusOne-1>(), std::get<MyIdxPlusOne-1>(t), args...);
+        }
+    };
+    //callOnIndex recursion base case:
+    template <typename TupleT, typename Func, typename ...Args> struct __callOnIndex<TupleT, 1, Func, Args...> {
+        typedef decltype(std::declval<Func>()(
+            std::integral_constant<std::size_t, 0>(), std::get<0>(std::declval<TupleT&>()), std::declval<Args>()...)) Ret;
+        Ret operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args) {
+            (void)desiredIdx; //unused
+            return f(std::integral_constant<std::size_t, 0>(), std::get<0>(t), args...);
+        }
+    };
+    //special callOnIndex case for TupleT::size == 0 (auto return type doesn't work, so we use void)
+    template <typename Func, typename ...Args> struct __callOnIndex<std::tuple<>, 0, Func, Args...> {
+        void operator()(const std::tuple<>&, Func &, std::size_t , Args...) {
+        }
+    };
+}
+
+
+//Apply @f(item, @args...) for each item in the tuple @t
 template <typename TupleT, typename Func, typename ...Args> void callOnAll(TupleT &t, Func f, Args... args) {
     __callOnAll<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, args...);
-};
+}
+//Apply @f(item, @args...) for each item in the tuple @t
 //This second version allows to pass a function object by pointer, so that it can perhaps be modified. TODO: Maybe just use an auto reference (Func &&f)?
 template <typename TupleT, typename Func, typename ...Args> void callOnAll(TupleT &t, Func *f, Args... args) {
     __callOnAll<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, *f, args...);
-};
-
-//tupleReduce helper functions:
-
-template <typename TupleT, std::size_t IdxPlusOne, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> struct __callOnAllReduce {
-    auto operator()(TupleT &t, Func &f, Reduce &r, ReducedDefault d, Args... args) -> decltype(d) {
-        auto prev = __callOnAllReduce<TupleT, IdxPlusOne-1, Func, Reduce, ReducedDefault, Args...>()(t, f, r, d, args...); //result of all previous items;
-        auto cur = f(IdxPlusOne-1, std::get<IdxPlusOne-1>(t), args...); //call on this index.
-        return r(prev, cur);
-    }
-};
-
-template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> struct __callOnAllReduce<TupleT, 0, Func, Reduce, ReducedDefault, Args...> {
-    //handle the base recursion case
-    auto operator()(TupleT &, Func &, Reduce &, ReducedDefault d, Args... ) -> decltype(d) {
-        return d;
-    }
-};
-
-template <typename TupleT, typename Func, typename Reduce, typename ReducedDefault, typename ...Args> auto tupleReduce(TupleT &t, Func f, Reduce r, ReducedDefault d, Args... args) -> decltype(d) {
-    return __callOnAllReduce<TupleT, std::tuple_size<TupleT>::value, Func, Reduce, ReducedDefault, Args...>()(t, f, r, d, args...);
 }
-
-
-template <typename TupleT, typename Func, typename ...Args> bool tupleReduceLogicalOr(TupleT &t, Func f, Args... args) {
-    //default value must be false, otherwise the only value ever returned would be <True>
-    return tupleReduce(t, f, [](bool a, bool b) { return a||b; }, false, args...);
-}
-
-
-//callOnIndex helper functions:
-
-template <typename TupleT, std::size_t MyIdxPlusOne, typename Func, typename ...Args> struct __callOnIndex {
-    auto operator()(TupleT &t, Func &f, std::size_t desiredIdx, Args... args) -> decltype(f(std::get<MyIdxPlusOne-1>(t), args...)) {
-        return desiredIdx < MyIdxPlusOne-1 ? __callOnIndex<TupleT, MyIdxPlusOne-1, Func, Args...>()(t, f, desiredIdx, args...) : f(std::get<MyIdxPlusOne-1>(t), args...);
-    }
-};
-//recursion base case:
-template <typename TupleT, typename Func, typename ...Args> struct __callOnIndex<TupleT, 1, Func, Args...> {
-    auto operator()(TupleT &t, Func &f, std::size_t /*desiredIdx*/, Args... args) -> decltype(f(std::get<0>(t), args...)) {
-        return f(std::get<0>(t), args...);
-    }
-};
-//special case for TupleT::size == 0 (auto return type doesn't work, so we use void)
-template <typename Func, typename ...Args> struct __callOnIndex<std::tuple<>, 0, Func, Args...> {
-    void operator()(std::tuple<>&, Func &, std::size_t , Args...) {
-    }
-};
-
-template <typename TupleT, typename Func, typename ...Args> auto tupleCallOnIndex(TupleT &t, Func f, std::size_t idx, Args... args) -> decltype(__callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, idx, args...)) {
+//Return @f(@t[@idx], args...)
+//Note: if @idx > the size of the tuple, behavior is undefined.
+//  Most likely, that would result in applying @f to the last item in the tuple (but no guarantee)
+template <typename TupleT, typename Func, typename ...Args> auto tupleCallOnIndex(TupleT &t, Func f, std::size_t idx, Args... args)
+   -> decltype(__callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, idx, args...)) {
     return __callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(t, f, idx, args...);
 }
+//hack-ish overload for const tuples (needed for gcc-4.6)
+template <typename TupleT, typename Func, typename ...Args> auto tupleCallOnIndex(const TupleT &t, Func f, std::size_t idx, Args... args)
+   -> decltype(__callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(const_cast<TupleT&>(t), f, idx, args...)) {
+    return __callOnIndex<TupleT, std::tuple_size<TupleT>::value, Func, Args...>()(const_cast<TupleT&>(t), f, idx, args...);
+}
 
+}
+
+using namespace tupleutil;
 #endif

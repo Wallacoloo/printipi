@@ -28,16 +28,27 @@
  * main handles command line arguments, and instantiates the serial communications, State, and machine-specific driver.
  * Driver type is passed into this compilation unit as a command-line argument (gcc -DMACHINE=...)
  *
- * Printipi discussions:
+ * Printipi Github repository: https://github.com/Wallacoloo/printipi/
+ * Printipi Google Group (forum): https://groups.google.com/forum/#!forum/printipi
+ *
+ * Miscellaneous Printipi discussions:
  *   http://forums.reprap.org/read.php?2,396157
  *   https://groups.google.com/forum/#!searchin/deltabot/wallacoloo|sort:relevance/deltabot/JQNpmnlYYUc/_6V6SYcOGMUJ
  *   http://youtube.com/watch?v=g4UD5MRas3E
+ *   http://youtube.com/watch?v=gAruwqOEuPs
  */
 
+#define COMPILING_MAIN //used elsewhere to do one-time warnings, etc.
 
-#define COMPILING_MAIN //used elsewhere to do only one-time warnings, etc.
+#include "compileflags.h"
+
+//Includes for the CATCH testing framework
+#define CATCH_CONFIG_RUNNER
+#include "catch.hpp"
+
 #include <string>
 #include <sys/mman.h> //for mlockall
+#include <iostream> //for std::cin
 #include "common/logging.h"
 
 #include "gparse/com.h"
@@ -50,22 +61,32 @@
 //or, call make MACHINE=<machine>, eg MACHINE=rpi::KosselPi (case-sensitive) and the path will be calculated from that (src/machines/rpi/kossel.h)
 #include MACHINE_PATH
 
-void printUsage(char* cmd) {
+
+#define STRINGIFY_(x) #x
+#define STRINGIFY(x) STRINGIFY_(x)
+
+static void printUsage(char* cmd) {
     //#ifndef NO_USAGE_INFO
     LOGE("usage: %s [input file=/dev/stdin] [output file=/dev/null] [--help] [--quiet] [--verbose]\n", cmd);
     LOGE("examples:\n");
     LOGE("  print a gcode file: %s file.gcode\n", cmd);
     LOGE("  mock serial port: %s /dev/tty3dpm /dev/tty3dps\n", cmd);
-    //std::cerr << "usage: " << cmd << " ttyFile" << std::endl;
-    //#endif
-    //exit(1);
 }
 
-int main_(int argc, char** argv) {
-    std::string defaultSerialFile("/dev/stdin");
-    std::string serialFileName;
-    std::string outFile = gparse::Com::NULL_FILE_STR;
-    SchedulerBase::configureExitHandlers(); //useful to do this first-thing for catching debug info.
+int testmain(int argc, char **argv) {
+    //if the program was compiled in test mode, then run the unit tests and exit
+    #if DO_TESTS
+        int result = Catch::Session().run(argc, argv);
+        return result;
+    #else
+        (void)argc; (void)argv; //unused
+    #endif
+    return 0;
+}
+
+int main_(int argc, char **argv) {
+    //useful to setup fail-safe exit routines first-thing for catching debug info.
+    SchedulerBase::configureExitHandlers(); 
     
     if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
         logging::disable();
@@ -80,17 +101,37 @@ int main_(int argc, char** argv) {
         printUsage(argv[0]);
         return 0;
     } 
+    LOG("Printipi: built for machine: '" STRINGIFY(MACHINE) "'\n");
     
     char* fsRootArg = argparse::getCmdOption(argv, argv+argc, "--fsroot");
     std::string fsRoot = fsRootArg ? std::string(fsRootArg) : "/";
+    LOG("Filesystem root: %s\n", fsRoot.c_str());
+    FileSystem fs(fsRoot);
     
-    if (argc < 2 || argv[1][0] == '-') { //if no arguments, or if first argument (and therefore all args) is an option
-        //printUsage(argv[0]);
-        serialFileName = defaultSerialFile;
+    gparse::Com com;
+    //if input is stdin, or a two-way pipe, then it likely means we want to keep that channel open forever
+    //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
+    bool keepPersistentCom = false;
+
+    //if no arguments, or if first argument (and therefore all args) is an option, 
+    //  then take gcode commands from stdin
+    if (argc < 2 || argv[1][0] == '-') { 
+        //std::cin does not allow to check if there are characters to be read, whereas /dev/stdin DOES.
+        //  we need nonblocking I/O, so this is crucial.
+        //com = std::move(gparse::Com(gparse::Com::shareOwnership(&std::cin)));
+        com = std::move(gparse::Com("/dev/stdin"));
+        //reading from stdin; want to keep that channel active even when printing from file, etc.
+        keepPersistentCom = true;
     } else {
-        serialFileName = std::string(argv[1]);
-        if (argc >2 && argv[2][0] != '-') { //second argument is for the output file
-            outFile = std::string(argv[2]);
+        //otherwise, first parameter must be a filename from which to read gcode commands
+        //second argument is for the output file
+        if (argc > 2 && argv[2][0] != '-') { 
+            com = std::move(gparse::Com(std::string(argv[1]), std::string(argv[2])));
+            //hints at a dual-way pipe (host <-> firmware communication); preserve communiation channel to host
+            keepPersistentCom = true;
+        } else {
+            //no second file; just read from the supplied input file
+            com = std::move(gparse::Com(std::string(argv[1])));
         }
     }
     
@@ -99,46 +140,38 @@ int main_(int argc, char** argv) {
     if (retval) {
         LOGW("Warning: mlockall (prevent memory swaps) in main.cpp::main() returned non-zero: %i\n", retval);
     }
-    
-    //Open the serial device:
-    LOG("Serial file: %s\n", serialFileName.c_str());
-    gparse::Com com = gparse::Com(serialFileName, outFile);
-    
-    //instantiate main driver:
-    typedef machines::MACHINE MachineT;
-    MachineT driver;
-    
-    LOG("Filesystem root: %s\n", fsRoot.c_str());
-    FileSystem fs(fsRoot);
-    
-    //if input is stdin, or a two-way pipe, then it likely means we want to keep this input channel forever,
-    //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
-    State<MachineT> state(driver, fs, com, com.hasWriteFile() || serialFileName == "/dev/stdin");
-    
+        
+    State<machines::MACHINE> state(machines::MACHINE(), fs, keepPersistentCom);
+    state.addComChannel(std::move(com));
     state.eventLoop();
     return 0;
 }
 
 int main(int argc, char** argv) {
-    try { //wrap in a try/catch loop so we can safely clean up (disable IOs)
-        return main_(argc, argv);
-    } catch (const std::exception *e) {
-        LOGE("caught std::exception*: %s. ... Exiting\n", e->what());
-        #ifdef CLEAN_EXIT
-            return 1; //don't rethrow exceptions; return an error code instead
-        #endif
-        throw;
-    } catch (const std::exception &e) {
-        LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
-        #ifdef CLEAN_EXIT
-            return 1; //don't rethrow exceptions; return an error code instead
-        #endif
-        throw;
-    } catch (...) {
-        LOGE("caught unknown exception. Exiting\n");
-        #ifdef CLEAN_EXIT
-            return 1; //don't rethrow exceptions; return an error code instead
-        #endif
-        throw;
+    if (DO_TESTS) {
+        return testmain(argc, argv);
+    } else {
+        try { //wrap in a try/catch loop so we can safely clean up (disable IOs)
+            return main_(argc, argv);
+        } catch (const std::exception *e) {
+            LOGE("caught std::exception*: %s. ... Exiting\n", e->what());
+            #if CLEAN_EXIT
+                return 1; //don't rethrow exceptions; return an error code instead
+            #endif
+            throw;
+        } catch (const std::exception &e) {
+            LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
+            #if CLEAN_EXIT
+                return 1; //don't rethrow exceptions; return an error code instead
+            #endif
+            throw;
+        } catch (...) {
+            LOGE("caught unknown exception. Exiting\n");
+            #if CLEAN_EXIT
+                return 1; //don't rethrow exceptions; return an error code instead
+            #endif
+            throw;
+        }
     }
 }
+

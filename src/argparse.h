@@ -20,19 +20,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
-/* 
- * Printipi/argparse.h
- * based on a stackoverflow post
- *
- * argparse provides some basic functions for parsing command line options.
- */
 
 #ifndef ARGPARSE_H
 #define ARGPARSE_H
 
 #include <string>
 
+
+/* 
+ * based on a stackoverflow post
+ *
+ * argparse provides some basic functions for parsing command line options.
+ */
 namespace argparse {
 
 char* getCmdOption(char ** begin, char ** end, const std::string &option);

@@ -20,31 +20,33 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
-/* 
- * Printipi/motion/constantacceleration.h
- *
- * ConstantAcceleration is an implementation of motion/AccelerationProfile in which 
- *  v(t) = {at [if at < vmax], vmax [if t < duration-accelTime], vmax - a(t-t1) [if t > duration-accelTime] }
- *
- * Polynomial acceleration profiles turn out to be non-trivial, so only constant, linear, and quadratic acceleration have a closed-form solution (above that requires solving the roots of an n+1 degree polynomial. Event just linear acceleration requires solving a degree 3 polynomial.
- */
+
 
 #ifndef MOTION_CONSTANTACCELERATION_H
 #define MOTION_CONSTANTACCELERATION_H
 
+#include <cmath> //for std::isnan
+#include <algorithm> //for std::min
 #include "accelerationprofile.h"
 #include "common/logging.h"
 
+namespace motion {
+
+/* 
+ * ConstantAcceleration is an implementation of motion::AccelerationProfile in which 
+ *  v(t) = {at [if at < vmax], vmax [if t < duration-accelTime], vmax - a(t-t1) [if t > duration-accelTime] }
+ *
+ * Polynomial acceleration profiles turn out to be non-trivial, so only constant, linear, and quadratic acceleration have a closed-form solution (above that requires solving the roots of an n+1 degree polynomial. Event just linear acceleration requires solving a degree 3 polynomial.
+ */
 class ConstantAcceleration : public AccelerationProfile {
     float _accel;
     float moveDuration;
     float tmax1, tmax2;
     float tbase3;
     float twiceVmax_a;
-    float a() const { return _accel; }
+    inline float a() const { return _accel; }
     public:
-        ConstantAcceleration(float accel) : _accel(accel) {}
+        inline ConstantAcceleration(float accel) : _accel(accel) {}
         inline void begin(float moveDuration, float Vmax) {
             this->moveDuration = moveDuration;
             this->tmax1 = Vmax/2/a();
@@ -74,5 +76,7 @@ class ConstantAcceleration : public AccelerationProfile {
             }
         }
 };
+
+}
 
 #endif

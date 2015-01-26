@@ -20,22 +20,15 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
- 
-/* 
- * gparse/response.h
- *
- * Response objects encapsulate a single response from the client (us) to a gcode Command sent by the host.
- * When converted to strings, they typically appear like "ok" or "ok T:153.7"
- *
- * It was decided to make a thin wrapper around the raw string responses in order to standardize the 'ok', '!!' (error), etc response prefixes.
- *
- * Response::Ok provides easy access to a response formatted as "ok"
- */
+
 
 #ifndef GPARSE_RESPONSE_H
 #define GPARSE_RESPONSE_H
 
 #include <string>
+#include <sstream>
+#include <utility> //for std::pair
+#include <initializer_list>
 
 namespace gparse {
 
@@ -44,21 +37,65 @@ enum ResponseCode {
     ResponseNull
 };
 
+/* 
+ * Response objects encapsulate a single response from the client (us) to a gcode Command sent by the host.
+ * When converted to strings, they typically appear like "ok" or "ok T:153.7"
+ *
+ * It was decided to make a thin wrapper around the raw string responses in order to standardize the 'ok', '!!' (error), etc response prefixes.
+ */
 class Response {
     ResponseCode code;
     std::string rest;
     public:
+        // Response::Ok provides easy access to a response formatted as "ok"
         static const Response Ok;
+        // Response::NULL allows one to indicate that no response should be sent
         static const Response Null;
-        inline Response(ResponseCode nCode) : code(nCode) {
+
+        //Construct a response from a code, followed by an optional extra string (implicitly joined by a space)
+        inline Response(ResponseCode code, const std::string &rest="") : code(code), rest(rest) {
         }
-        inline Response(ResponseCode nCode, const std::string &nRest) : code(nCode), rest(nRest) {
-        }
+
+        //Construct a response from a code, a set of Key:Value pairs, and then an extra string (all 3 are joined by spaced)
+        //@pairs is given as any container whose elements are std::pairs<std::string, std::string>,
+        //  in which std::pair::first is the key, and std::pair::second is the value.
+        template <typename Container> Response(ResponseCode code, const Container &pairs, const std::string &rest="")
+          : code(code), rest(joinPairsAndStr(pairs, rest)) {}
+
+        //Construct a response from a code and a set of Key:Value pairs (joined by a space)
+        //Allow construction, using an std::initializer_list of std::pair<std::string, std::string> (or const char*, etc) for @pairs.
+        //Example: Response(ResponseOk, {make_pair("T", "65"), make_pair("B", "20")})
+        //This specialization is only needed in gcc-4.6, where automatic deduction of a std::initializer_list as Container would cause a warning in the other version
+        template <typename T> Response(ResponseCode code, std::initializer_list<T> pairs, const std::string &rest="")
+          : code(code), rest(joinPairsAndStr(pairs, rest)) {}
+
         inline std::string toString() const {
-            return (code == ResponseOk ? "ok" : "") + (rest.empty() ? "" : " " + rest) + "\n";
+            return (code == ResponseOk ? "ok" : "") + (rest.empty() ? "" : " " + rest);
         }
-        inline bool isNull() {
+        inline bool isNull() const {
             return code == ResponseNull;
+        }
+    private:
+        template <typename Container> std::string joinPairsAndStr(const Container &pairs, const std::string &append) {
+            std::ostringstream imploded;
+            bool first=true;
+            for (const auto& elem : pairs) {
+                //to join each pair by a space, prepend each element EXCEPT the first with a space.
+                if (first) {
+                    first = false;
+                } else {
+                    imploded << ' ';
+                }
+                imploded << elem.first << ':' << elem.second;
+            }
+            if (!append.empty()) {
+                if (!first) {
+                    //join the two strings with a space, but only if neither of them are empty
+                    imploded << ' ';
+                }
+                imploded << append;
+            }
+            return imploded.str();
         }
 };
 

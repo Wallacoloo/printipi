@@ -20,24 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-/* 
- * gparse/command.h
- *
- * Command objects represent a single line of gcode.
- * They can be parsed from a string, and then can be queried by opcode and parameters.
- * They can also be constructed and used as replies to the host (although this may change in future implementations)
- */
  
-
-#ifndef GPARSE_COMMAND_H
-#define GPARSE_COMMAND_H
-
-#include <string>
-#include <array>
-#include <cstdint> //for uint32_t
-#include <cmath> //for NAN
-#define GPARSE_ARG_NOT_PRESENT NAN
 
 /*#List of commands on Reprap Wiki:
 cmds = ['G0', 'G1', 'G2', 'G3', 'G4', 'G10', 'G20', 'G21', 'G28', 'G29', 'G30', 'G31', 'G32', 'G90', 'G91', 'G92', 'M0', 'M1', 'M3', 'M4', 'M5', 'M7', 'M8', 'M9', 'M10', 'M11', 'M17', 'M18', 'M20', 'M21', 'M22', 'M23', 'M24', 'M25', 'M26', 'M27', 'M28', 'M29', 'M30', 'M32', 'M40', 'M41', 'M42', 'M43', 'M80', 'M81', 'M82', 'M83', 'M84', 'M92', 'M98', 'M99', 'M103', 'M104', 'M105', 'M106', 'M107', 'M108', 'M109', 'M110', 'M111', 'M112', 'M113', 'M114', 'M115', 'M116', 'M117', 'M118', 'M119', 'M120', 'M121', 'M122', 'M123', 'M124', 'M126', 'M127', 'M128', 'M129', 'M130', 'M131', 'M132', 'M133', 'M134', 'M135', 'M136', 'M140', 'M141', 'M142', 'M143', 'M144', 'M160', 'M190', 'M200', 'M201', 'M202', 'M203', 'M204', 'M205', 'M206', 'M207', 'M208', 'M209', 'M210', 'M220', 'M221', 'M226', 'M227', 'M228', 'M229', 'M230', 'M240', 'M241', 'M245', 'M246', 'M280', 'M300', 'M301', 'M302', 'M303', 'M304', 'M305', 'M400', 'M420', 'M540', 'M550', 'M551', 'M552', 'M553', 'M554', 'M555', 'M556', 'M557', 'M558', 'M559', 'M560', 'M561', 'M562', 'M563', 'M564', 'M565', 'M566', 'M567', 'M568', 'M569', 'M665', 'M906', 'M998', 'M999']
@@ -48,40 +31,60 @@ pretty = "\n".join("        %s" %f for f in funcs)
 print pretty
 */
 
+#ifndef GPARSE_COMMAND_H
+#define GPARSE_COMMAND_H
+
+#include <string>
+#include <array>
+#include <cstdint> //for uint32_t
+#include <cmath> //for NAN
+#define GPARSE_ARG_NOT_PRESENT NAN
+
+
 namespace gparse {
 
-//bigEndianStr turns a series of characters into a uint32_t for fast string-comparisons.
-//Eg bigEndianStr('G', '1', '0') is similar to an array, x, where x[0] == 'G', x[1] == '1' and x[2] == '0', but held in fixed-width.
-inline uint32_t bigEndianStr(char a) {
-    return a;
-}
-inline uint32_t bigEndianStr(char a, char b) {
-    return (a<<8) + b;
-}
-inline uint32_t bigEndianStr(char a, char b, char c) {
-    return (a<<16) + (b<<8) + c;
-}
-inline uint32_t bigEndianStr(char a, char b, char c, char d) {
-    return (a<<24) + (b<<16) + (c<<8) + d;
+//internal functions - treat as private
+namespace {
+    //bigEndianStr turns a series of characters into a uint32_t for fast string-comparisons.
+    //Eg bigEndianStr('G', '1', '0') is similar to an array, x, where x[0] == 'G', x[1] == '1' and x[2] == '0', but held in fixed-width.
+    inline uint32_t bigEndianStr(char a) {
+        return a;
+    }
+    inline uint32_t bigEndianStr(char a, char b) {
+        return (a<<8) + b;
+    }
+    inline uint32_t bigEndianStr(char a, char b, char c) {
+        return (a<<16) + (b<<8) + c;
+    }
+    inline uint32_t bigEndianStr(char a, char b, char c, char d) {
+        return (a<<24) + (b<<16) + (c<<8) + d;
+    }
 }
 
-
+/* 
+ * Command objects represent a single line of gcode.
+ * They can be parsed from a string, and then can be queried by opcode and parameters.
+ */
 class Command {
     public:
     //std::string opcode;
     uint32_t opcodeStr; //opcode still encoded as a 4-character string. MSB=first char, LSB=last char. String is right-adjusted (ie, the MSBs are 0 in the case that opcode isn't full 4 characters).
     //std::vector<std::string> pieces; //the command when split on spaces. Eg "G1 X2 Y3" -> ["G1", "X2", "Y3"]
     std::array<float, 26> arguments; //26 alphabetic possible arguments per Gcode. Case insensitive. Internally, this will default to NaN
-    //sadly, M32 and the like use an unnamed string parameter for the filename
+    //sadly, M32, M117 and the like use an unnamed string parameter for the filename
     //I think it's relatively safe to say that there can only be one unnamed str param per gcode, as parameter order is irrelevant for all other commands, so unnamed parameters would have undefined orders.
     //  That assumption allows for significant performance benefits (ie, only one string, rather than a vector of strings)
     //  and if it turns out to be false, one can just join all the parameters into a single string with a defined delimiter (ie, a space)
-    std::string filepathParam;
+    //format: M32 filename.gco
+    //format: M117 Message To Display
+    //both of these are valid commands, and the ONLY way to reliably parse M117 is to detect the opcode, and then store everything that follows (up until a comment) into one string.
+    std::string specialStringParam;
     public:
-        //initialize the command object from a line of GCode
+        //default initialization. All parameters will be initialized to GPARSE_ARG_NOT_PRESENT (typically NaN)
         inline Command() : opcodeStr(0) {
             arguments.fill(GPARSE_ARG_NOT_PRESENT); //initialize all arguments to default value
         }
+        //initialize the command object from a line of GCode
         Command(std::string const&);
         inline bool empty() const {
             return opcodeStr == 0;
@@ -90,77 +93,101 @@ class Command {
         std::string toGCode() const;
         bool hasParam(char label) const;
         
-        float getFloatParam(char label, float def, bool &hasParam) const;
+        /*float getFloatParam(char label, float def, bool &hasParam) const;
         inline float getFloatParam(char label, float def=NAN) const {
             bool _ignore;
             return getFloatParam(label, def, _ignore);
+        }*/
+        float getFloatParam(char label, float def) const;
+        float getFloatParam(char label) const;
+        //The specialStringParam is a filename, for M32, or a message to display, for M117.
+        inline const std::string& getSpecialStringParam() const {
+            return specialStringParam;
         }
-        inline float getFloatParam(char label, bool &hasParam) const {
-            return getFloatParam(label, NAN, hasParam);
+        //extrusion distance
+        inline float getE() const {
+            return getFloatParam('E');
         }
-        
-        inline const std::string& getFilepathParam() const {
-            return filepathParam;
-        }
-        inline float getE(float def=NAN) const { //extrusion distance
+        inline float getE(float def) const {
             return getFloatParam('E', def);
         }
-        inline float getE(bool &hasParam) const {
-            return getFloatParam('E', hasParam);
+        //extruder feed-rate
+        inline float getF() const {
+            return getFloatParam('F');
         }
-        inline float getF(float def=NAN) const { //extruder feed-rate.
+        inline float getF(float def) const {
             return getFloatParam('F', def);
         }
-        inline float getF(bool &hasParam) const {
-            return getFloatParam('F', hasParam);
+        //arc center X coordinate
+        inline float getI() const {
+            return getFloatParam('I');
         }
-        inline float getI(float def=NAN) const { //arc center X coordinate
+        inline float getI(float def) const {
             return getFloatParam('I', def);
         }
-        inline float getI(bool &hasParam) const {
-            return getFloatParam('I', hasParam);
+        //arc center Y coordinate
+        inline float getJ() const {
+            return getFloatParam('J');
         }
-        inline float getJ(float def=NAN) const { //arc center Y coordinate
+        inline float getJ(float def) const {
             return getFloatParam('J', def);
         }
-        inline float getJ(bool &hasParam) const {
-            return getFloatParam('J', hasParam);
+        //arc center Z coordinate
+        inline float getK() const {
+            return getFloatParam('K');
         }
-        inline float getK(float def=NAN) const { //arc center Z coordinate
+        inline float getK(float def) const {
             return getFloatParam('K', def);
         }
-        inline float getK(bool &hasParam) const {
-            return getFloatParam('K', hasParam);
+        //Servo Index
+        inline float getP() const {
+            return getFloatParam('P');
         }
-        inline float getS(float def=NAN) const { //PWM rate
+        inline float getP(float def) const {
+            return getFloatParam('P', def);
+        }
+        //PWM rate or servo angle
+        inline float getS() const {
+            return getFloatParam('S');
+        }
+        inline float getS(float def) const {
             return getFloatParam('S', def);
         }
-        inline float getS(bool &hasParam) const {
-            return getFloatParam('S', hasParam);
+        inline float getX() const {
+            return getFloatParam('X');
         }
-        inline float getX(float def=NAN) const {
-            return getFloatParam('C', def);
+        inline float getX(float def) const {
+            return getFloatParam('X', def);
         }
-        inline float getX(bool &hasParam) const {
-            return getFloatParam('X', hasParam);
+        inline float getY() const {
+            return getFloatParam('Y');
         }
-        inline float getY(float def=NAN) const {
+        inline float getY(float def) const {
             return getFloatParam('Y', def);
         }
-        inline float getY(bool &hasParam) const {
-            return getFloatParam('Y', hasParam);
+        inline float getZ() const {
+            return getFloatParam('Z');
         }
-        inline float getZ(float def=NAN) const {
+        inline float getZ(float def) const {
             return getFloatParam('Z', def);
-        }
-        inline float getZ(bool &hasParam) const {
-            return getFloatParam('Z', hasParam);
         }
         inline bool hasE() const {
             return hasParam('E');
         }
         inline bool hasF() const {
             return hasParam('F');
+        }
+        inline bool hasI() const {
+            return hasParam('I');
+        }
+        inline bool hasJ() const {
+            return hasParam('J');
+        }
+        inline bool hasK() const {
+            return hasParam('K');
+        }
+        inline bool hasP() const {
+            return hasParam('P');
         }
         inline bool hasS() const {
             return hasParam('S');
@@ -331,9 +358,9 @@ class Command {
         inline bool isM999() const { return isOpcode(bigEndianStr('M', '9', '9', '9')); }
         inline bool isTxxx() const { return isFirstChar('T'); }
     private:
+        //Make the letter passed uppercase if it was not before.
+        //Must be done because gcode is case-insensitive (G1 == g1)
         inline char upper(char letter) const {
-            //Make the letter passed uppercase if it was not before.
-            //Must be done because gcode is case-insensitive (G1 == g1)
             if (letter >= 'a' && letter <= 'z') { //if lowercase
                 letter += ('A' - 'a'); //add the offset between uppercase and lowercase letters for our character set.
             }

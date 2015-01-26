@@ -12,42 +12,71 @@ CXX=g++
 #Check if using gcc >= 4.7; Then we can use -flto flag. 4.6 and lower support lto, but have errors (specifically when "functional" is included)
 GCC_GTEQ_470 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40700)
 GCC_GTEQ_490 := $(shell expr `$(CXX) -dumpversion | sed -e 's/\.\([0-9][0-9]\)/\1/g' -e 's/\.\([0-9]\)/0\1/g' -e 's/^[0-9]\{3,4\}$$/&00/'` \>= 40900)
+
+#Allow user to pass flags related to logging defaults:
+LOGFLAGS=-DDNO_LOG_M105
+DEFINES:=$(DEFINES) $(LOGFLAGS)
+
 #Allow user to pass USE_PTHREAD=0 for a system that doesn't support pthreads (it's only used for upping the priority)
 ifneq "$(USE_PTHREAD)" "0"
-    USE_PTHREAD := 1
+	DEFINES:=$(DEFINES) -DDUSE_PTHREAD
+else
+	NAME_EXT:=-NO_PTHREAD$(NAME_EXT)
 endif
-LOGFLAGS=-DDNO_LOG_M105
-PROFFLAGS=
+
+ifeq "$(DO_TESTS)" "1"
+	DEFINES:=$(DEFINES) -DDDO_TESTS
+	NAME_EXT:=-DO_TESTS$(NAME_EXT)
+	LIBS:=$(LIBS) -pthread
+endif
+
+#gcc < 4.9 doesn't support colorized diagnostics (error messages)
 ifeq "$(GCC_GTEQ_490)" "1"
 	DIAGFLAG=-fdiagnostics-color=auto
-else
-	DIAGFLAG= #gcc < 4.9 doesn't support colorized diagnostics (error messages)
 endif
+
 ifeq "$(GCC_GTEQ_470)" "1"
-	LTOFLAG=-flto #Enable link-time optimization
+	DEFAULT_LTOFLAG=-flto #Enable link-time optimization
 	ARCHFLAGS=-march=native -mtune=native
 else #gcc < 4.7, or non-gcc compiler
-	LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
+	DEFAULT_LTOFLAG= #Disable link-time optimization, as it often leads to link-time errors for gcc < 4.8
 	ARCHFLAGS= #gcc-4.6 on arm doesn't support march=native
 endif
+
+#if no LTO flag present, then use the default. Note: the default may vary based on debug/release build
+LTOFLAG=$(DEFAULT_LTOFLAG)
+
 #Default machine if not given via command line argument:
-MACHINE=rpi::KosselPi
-MACHINECPP=$(subst /,::,$(MACHINE))
-LOWERMACHINE=$(subst ::,/,$(shell echo $(MACHINE) | tr A-Z a-z))
-MACHINE_PATH=machines/$(LOWERMACHINE).h
-LOWER_MACHINE_CLASS=$(subst /,,$(dir $(LOWERMACHINE)))
-MACHINE_CLASS_DIR=drivers/$(LOWER_MACHINE_CLASS)
-MACHINE_CLASS=$(shell echo $(LOWER_MACHINE_CLASS) | tr a-z A-Z)
+MACHINE=rpi/kosselrampsfd.h
+ifeq "$(suffix $(MACHINE))" ".h"
+	MACHINEPARSED:=$(basename $(MACHINE))
+else
+	MACHINEPARSED:=$(MACHINE)
+endif
+#Allow for one to specify either the full path (machines/<platform>/<machine>.h) OR a partial path, without the machines prefix (<platform>/machine.h)
+MACHINEPARSED:=$(MACHINEPARSED:machines/%=%)
+MACHINECPP=$(subst /,::,$(MACHINEPARSED))
+
+
+MACHINE_ENDPATH=$(subst ::,/,$(MACHINEPARSED))
+MACHINE_PATH=machines/$(MACHINE_ENDPATH).h
+MACHINE_CLASS=$(subst /,,$(dir $(MACHINE_ENDPATH)))
+MACHINE_CLASS_DIR=platforms/$(MACHINE_CLASS)
+
 #Check for platform-specific file overrides:
-ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"drivers/$(LOWER_MACHINE_CLASS)/chronoclock.h"'
+ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/chronoclock.h)","")
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"platforms/$(MACHINE_CLASS)/chronoclock.h"'
 endif
-ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"drivers/$(LOWER_MACHINE_CLASS)/hardwarescheduler.h"'
+ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/hardwarescheduler.h)","")
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"platforms/$(MACHINE_CLASS)/hardwarescheduler.h"'
 endif
-ifneq ("$(wildcard drivers/$(LOWER_MACHINE_CLASS)/thisthreadsleep.h)","")
-    DEFINES:=$(DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"drivers/$(LOWER_MACHINE_CLASS)/thisthreadsleep.h"'
+ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/thisthreadsleep.h)","")
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"platforms/$(MACHINE_CLASS)/thisthreadsleep.h"'
 endif
+ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/primitiveiopin.h)","")
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"platforms/$(MACHINE_CLASS)/primitiveiopin.h"'
+endif
+PLAT_DEFINES:=$(PLAT_DEFINES) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)"
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
@@ -58,32 +87,50 @@ endif
 #-fweb allows local variables to not have a 'home' register - more efficient partitioning, but also more difficult to debug.
 UNSAFEOPT=-fno-signaling-nans -fno-rounding-math -fno-signed-zeros -freciprocal-math -fno-math-errno 
 #gcc <= 4.6 has c++11 support, but doesn't recognize the c++11 flag, so use -std=c++0x.
-CFLAGS=-std=c++0x -I$(SRCDIR) -Wall -Wextra -Wwrite-strings -Wno-unused-result -Wno-pmf-conversions $(LOGFLAGS) $(PROFFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_$(MACHINE_CLASS) -DDTARGET_PLATFORM_LOWER="$(LOWER_MACHINE_CLASS)" -DDUSE_PTHREAD=$(USE_PTHREAD) $(DEFINES) -DBUILD_TYPE_$(TARGET)
-# -DDMACHINE_CLASS_DIR=$(MACHINE_CLASS_DIR)
-MAINCFLAGS=#-fwhole-program
-LD=ld
-LDFLAGS= $(LTOFLAG)
+INCFLAGS=-I$(SRCDIR) -I$(SRCDIR)/../lib
+STDFLAGS=-std=c++0x
+WARNFLAGS= -Wall -Wextra -Wundef -Wwrite-strings -Wno-unused-result
+CFLAGS=$(STDFLAGS) $(WARNFLAGS) $(INCFLAGS) $(DIAGFLAG) $(LTOFLAG) $(UNSAFEOPT) $(ARCHFLAGS) $(DEFINES) $(PLAT_DEFINES) -DBUILD_TYPE_$(TARGET)
+#Need the --no-as-needed flag to fix bug in some gcc versions when compiling with multithreading (for tests): http://stackoverflow.com/questions/19463602/compiling-multithread-code-with-g
+LDFLAGS=-Wl,--no-as-needed
+#Extra flags to apply JUST to main.cpp (eg -fwhole-program)
+MAINCFLAGS=
 #-lrt is the realtime posix library. Appears to be needed for things like clock_nanosleep
-LIBS=-lrt
+LIBS:=$(LIBS) -lrt
 BUILDROOT=../build
-DEBUGDIR=$(BUILDROOT)/debug
-DEBUGRELDIR=$(BUILDROOT)/debugrel
-RELEASEDIR=$(BUILDROOT)/release
-PROFILEDIR=$(BUILDROOT)/prof
-MINSIZEDIR=$(BUILDROOT)/minsize
-#name of binary file:
-NAME=printipi-$(subst /,-,$(LOWERMACHINE))
 #NAMELINK will become a symbolic link to the actual binary
 NAMELINK=printipi
+#NAME_EXT is the version-info that should be tagged onto the binary name
+#Note: explicitly prefix with MACHINE_CLASS, because it's possible to build (eg) a rpi Machine with the generic platform implementation
+NAME_EXT:=-$(MACHINE_CLASS)-$(subst /,-,$(MACHINEPARSED))-$(CXX)$(NAME_EXT)
+#NAME of binary file:
+NAME=$(NAMELINK)$(NAME_EXT)
 
-all: debug
+DEBUGDIR_BASE=$(BUILDROOT)/debug
+DEBUGRELDIR_BASE=$(BUILDROOT)/debugrel
+RELEASEDIR_BASE=$(BUILDROOT)/release
+PROFILEDIR_BASE=$(BUILDROOT)/prof
+MINSIZEDIR_BASE=$(BUILDROOT)/minsize
+
+DEBUGDIR=$(DEBUGDIR_BASE)$(NAME_EXT)
+DEBUGRELDIR=$(DEBUGRELDIR_BASE)$(NAME_EXT)
+RELEASEDIR=$(RELEASEDIR_BASE)$(NAME_EXT)
+PROFILEDIR=$(PROFILEDIR_BASE)$(NAME_EXT)
+MINSIZEDIR=$(MINSIZEDIR_BASE)$(NAME_EXT)
+
+SOURCES=$(wildcard *.cpp common/**.cpp gparse/**.cpp iodrivers/**.cpp machines/*.cpp motion/**.cpp $(MACHINE_CLASS_DIR)/**.cpp)
+OBJECTS=$(SOURCES:%.cpp=%.o)
+DEPFILES=$(SOURCES:%.cpp=%.d)
+
+all: debugrel
 
 #include auto-generated dependencies:
--include $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
+#-include $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
+-include $(DEPFILES)
 
 #Configure debug/release settings:
-# -fsanitize=address (gcc 4.8)
 debug: TARGET=debug
+debug: DEFAULT_LTOFLAG=
 debug: CFLAGS+=-O0 -ggdb3 -fno-omit-frame-pointer
 debug: $(DEBUGDIR)/$(NAME)
 #optimized debug build, suitable for using with gdb, perf, etc:
@@ -105,12 +152,9 @@ minsize: LOGFLAGS+= -DDNO_LOGGING
 minsize: $(MINSIZEDIR)/$(NAME)
 	@strip --strip-all --remove-section=.comment --remove-section=.note $(BUILDROOT)/$(NAME)-$(TARGET)
 
-#Sometimes need an empty dependency in order to avoid 'no input file' errors, etc:
-%/empty.cpp:
-	touch $@
 	
-%/$(NAME): %/common/common.a %/drivers/drivers.a %/gparse/gparse.a %/rest.a
-	$(CXX) $^ -o $@ $(CFLAGS) $(MAINCFLAGS) $(LIBS)
+%/$(NAME): $(addprefix %/,$(OBJECTS))
+	$(CXX) $^ -o $@ $(CFLAGS) $(LDFLAGS) $(MAINCFLAGS) $(LIBS)
 	cp $@ $(BUILDROOT)/$(NAME)-$(TARGET)
 	ln -f -s $(BUILDROOT)/$(NAME)-$(TARGET) $(BUILDROOT)/$(NAMELINK)
 	
@@ -118,36 +162,30 @@ $(DEBUGDIR)/%.o $(DEBUGRELDIR)/%.o $(RELEASEDIR)/%.o $(PROFILEDIR)/%.o $(MINSIZE
 	@mkdir -p $(@D)
 	$(CXX) -MM -MP -MT $@ -MT $*.d $(CFLAGS) $< > $*.d
 	$(CXX) -c -o $@ $*.cpp $(CFLAGS)
-	
-%/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a: $(addprefix %/,$(patsubst %.cpp,%.o,$(wildcard drivers/$(LOWER_MACHINE_CLASS)/*.cpp))) %/empty.o
-	@mkdir -p $(@D)
-	$(LD) -r $^ -o $@ $(LDFLAGS)
-	
-%/drivers/drivers.a: %/drivers/axisstepper.o %/drivers/$(LOWER_MACHINE_CLASS)/$(LOWER_MACHINE_CLASS).a
-	$(LD) -r $^ -o $@ $(LDFLAGS)
 
-%/gparse/gparse.a: %/gparse/com.o %/gparse/command.o %/gparse/response.o
-	$(LD) -r $^ -o $@ $(LDFLAGS)
-	
-%/common/common.a: %/common/logging.o
-	$(LD) -r $^ -o $@ $(LDFLAGS)
-	
-%/rest.a: %/argparse.o %/event.o %/filesystem.o %/main.o %/schedulerbase.o 
-	$(LD) -r $^ -o $@ $(LDFLAGS)
+#main.cpp dynamically #includes the MACHINE, so we want to make that an explicit dependency.	
 %/main.cpp: $(MACHINE_PATH)
+
+#Make documentation:
+doc: TARGET=doc
+doc:
+	rm -rf ../doc
+	@mkdir -p ../doc
+	cldoc generate $(STDFLAGS) $(INCFLAGS) $(DEFINES) -DMACHINE_PATH='"machines/generic/cartesian.h"' -DMACHINE="generic::cartesian" -- --report --merge docs --output ../doc `find . -type f -name '*.cpp'` `find . -type f -name '*.h'`
 	
-#Prevent the automatic deletion of "intermediate" .o files by nulling .SECONDARY as follows.
+#Prevent the automatic deletion of "intermediate" .o files after the build by nulling .SECONDARY as follows.
 .SECONDARY:
 
-.PHONY: clean cleandebug cleanrelease cleanprofile cleanminsize debug release profile minsize
+.PHONY: clean cleandebug cleanrelease cleanprofile cleanminsize debug debugrel release profile minsize doc
 cleandebug:
-	rm -rf $(DEBUGDIR)
+	rm -rf $(DEBUGDIR_BASE)-*
+cleandebugrel:
+	rm -rf $(DEBUGRELDIR_BASE)-*
 cleanrelease:
-	rm -rf $(RELEASEDIR)
+	rm -rf $(RELEASEDIR_BASE)-*
 cleanprofile:
-	rm -rf $(PROFILEDIR)
+	rm -rf $(PROFILEDIR_BASE)-*
 cleanminsize:
-	rm -rf $(MINSIZEDIR)
-clean: cleandebug cleanrelease cleanprofile cleanminsize
-	rm -rf $(BUILDROOT)/$(NAME)
-	rm -rf $(wildcard *.d */*.d */*/*.d */*/*/*.d)
+	rm -rf $(MINSIZEDIR_BASE)-*
+clean: cleandebug cleandebugrel cleanrelease cleanprofile cleanminsize
+	rm -rf `find . -type f -name '*.d'` `find $(MACHINE_CLASS_DIR) -type f -name '*.d'`
