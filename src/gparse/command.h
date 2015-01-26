@@ -109,74 +109,53 @@ class Command {
         inline float getE(float def=NAN) const {
             return getFloatParam('E', def);
         }
-        inline float getE(bool &hasParam) const {
-            return getFloatParam('E', hasParam);
-        }
         //extruder feed-rate
         inline float getF(float def=NAN) const {
             return getFloatParam('F', def);
-        }
-        inline float getF(bool &hasParam) const {
-            return getFloatParam('F', hasParam);
         }
         //arc center X coordinate
         inline float getI(float def=NAN) const {
             return getFloatParam('I', def);
         }
-        inline float getI(bool &hasParam) const {
-            return getFloatParam('I', hasParam);
-        }
         //arc center Y coordinate
         inline float getJ(float def=NAN) const {
             return getFloatParam('J', def);
-        }
-        inline float getJ(bool &hasParam) const {
-            return getFloatParam('J', hasParam);
         }
         //arc center Z coordinate
         inline float getK(float def=NAN) const {
             return getFloatParam('K', def);
         }
-        inline float getK(bool &hasParam) const {
-            return getFloatParam('K', hasParam);
-        }
         //Servo Index
         inline float getP(float def=NAN) const {
             return getFloatParam('P', def);
-        }
-        inline float getP(bool &hasParam) const {
-            return getFloatParam('P', hasParam);
         }
         //PWM rate or servo angle
         inline float getS(float def=NAN) const {
             return getFloatParam('S', def);
         }
-        inline float getS(bool &hasParam) const {
-            return getFloatParam('S', hasParam);
-        }
         inline float getX(float def=NAN) const {
             return getFloatParam('C', def);
-        }
-        inline float getX(bool &hasParam) const {
-            return getFloatParam('X', hasParam);
         }
         inline float getY(float def=NAN) const {
             return getFloatParam('Y', def);
         }
-        inline float getY(bool &hasParam) const {
-            return getFloatParam('Y', hasParam);
-        }
         inline float getZ(float def=NAN) const {
             return getFloatParam('Z', def);
-        }
-        inline float getZ(bool &hasParam) const {
-            return getFloatParam('Z', hasParam);
         }
         inline bool hasE() const {
             return hasParam('E');
         }
         inline bool hasF() const {
             return hasParam('F');
+        }
+        inline bool hasI() const {
+            return hasParam('I');
+        }
+        inline bool hasJ() const {
+            return hasParam('J');
+        }
+        inline bool hasK() const {
+            return hasParam('K');
         }
         inline bool hasP() const {
             return hasParam('P');

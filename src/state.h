@@ -459,17 +459,14 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
             this->homeEndstops();
         }
         
-        bool hasX, hasY, hasZ, hasE;
-        bool hasF;
         float curX, curY, curZ, curE;
         std::tie(curX, curY, curZ, curE) = destMm().tuple();
-        float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
-        Vector4f cmdDest(cmd.getX(hasX), cmd.getY(hasY), cmd.getZ(hasZ), cmd.getE(hasE));
+        Vector4f cmdDest(cmd.getX(), cmd.getY(), cmd.getZ(), cmd.getE());
 
         cmdDest = coordToPrimitive(cmdDest);
-        Vector4f trueDest = Vector4f(hasX ? cmdDest.x() : curX, hasY ? cmdDest.y() : curY, hasZ ? cmdDest.z() : curZ, hasE ? cmdDest.e() : curE);
-        if (hasF) {
-            this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
+        Vector4f trueDest = Vector4f(cmd.hasX() ? cmdDest.x() : curX, cmd.hasY() ? cmdDest.y() : curY, cmd.hasZ() ? cmdDest.z() : curZ, cmd.hasE() ? cmdDest.e() : curE);
+        if (cmd.hasF()) {
+            this->setDestMoveRatePrimitive(fUnitToPrimitive(cmd.getF()));
         }
         this->queueMovement(trueDest);
         reply(gparse::Response::Ok);
@@ -488,25 +485,21 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         }
         LOGW("Warning: G2/G3 is experimental\n");
         //first, get the end coordinate and optional feed-rate:
-        bool hasX, hasY, hasZ, hasE;
-        bool hasF;
         float curX, curY, curZ, curE;
         std::tie(curX, curY, curZ, curE) = destMm().tuple();
-        float f = cmd.getF(hasF); //feed-rate (XYZ move speed)
-        Vector4f cmdDest(cmd.getX(hasX), cmd.getY(hasY), cmd.getZ(hasZ), cmd.getE(hasE));
+        Vector4f cmdDest(cmd.getX(), cmd.getY(), cmd.getZ(), cmd.getE());
 
         cmdDest = coordToPrimitive(cmdDest);
-        Vector4f trueDest = Vector4f(hasX ? cmdDest.x() : curX, hasY ? cmdDest.y() : curY, hasZ ? cmdDest.z() : curZ, hasE ? cmdDest.e() : curE);
-        if (hasF) {
-            this->setDestMoveRatePrimitive(fUnitToPrimitive(f));
+        Vector4f trueDest = Vector4f(cmd.hasX() ? cmdDest.x() : curX, cmd.hasY() ? cmdDest.y() : curY, cmd.hasZ() ? cmdDest.z() : curZ, cmd.hasE() ? cmdDest.e() : curE);
+        if (cmd.hasF()) {
+            this->setDestMoveRatePrimitive(fUnitToPrimitive(cmd.getF()));
         }
         //Now get the center-point coordinate:
-        bool hasK; //center-z is optional.
         float i = cmd.getI();
         float j = cmd.getJ();
-        float k = cmd.getK(hasK);
+        float k = cmd.getK();
         Vector3f center = coordToPrimitive(Vector4f(i, j, k, 0)).xyz();
-        center = center.withZ(hasK ? center.z() : curZ);
+        center = center.withZ(cmd.hasK() ? center.z() : curZ);
         this->queueArc(trueDest, center, cmd.isG2());
         reply(gparse::Response::Ok);
     } else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
@@ -538,8 +531,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         reply(gparse::Response::Ok);
     } else if (cmd.isG92()) { //set current position = 0
         float actualX, actualY, actualZ, actualE;
-        bool hasXYZE = cmd.hasAnyXYZEParam();
-        if (!hasXYZE) { //make current position (0, 0, 0, 0)
+        if (!cmd.hasAnyXYZEParam()) {
+            //make current position (0, 0, 0, 0)
             actualX = actualY = actualZ = actualE = 0; 
         } else {
             Vector4f cmdPosMm = coordToMm(Vector4f(cmd.getX(), cmd.getY(), cmd.getZ(), cmd.getE()));
@@ -596,10 +589,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
             gcodeFileStack.pop_back();
         }
     } else if (cmd.isM104()) { //set hotend temperature and return immediately.
-        bool hasS;
-        float t = cmd.getS(hasS);
-        if (hasS) {
-            ioDrivers.setHotendTemp(t);
+        if (cmd.hasS()) {
+            ioDrivers.setHotendTemp(cmd.getS());
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM105()) { //get temperature, in C
@@ -631,10 +622,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         reply(gparse::Response::Ok);
     } else if (cmd.isM109()) { //set extruder temperature to S param and wait.
         LOGW("(state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
-        bool hasS;
-        float t = cmd.getS(hasS);
-        if (hasS) {
-            ioDrivers.setHotendTemp(t);
+        if (cmd.hasS()) {
+            ioDrivers.setHotendTemp(cmd.getS());
         }
         _isWaitingForHotend = true;
         reply(gparse::Response::Ok);
@@ -670,10 +659,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         reply(gparse::Response(gparse::ResponseOk, getEndstopStatusString()));
     } else if (cmd.isM140()) { //set BED temp and return immediately.
         LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");
-        bool hasS;
-        float t = cmd.getS(hasS);
-        if (hasS) {
-            ioDrivers.setBedTemp(t);
+        if (cmd.hasS()) {
+            ioDrivers.setBedTemp(cmd.getS());
         }
         reply(gparse::Response::Ok);
     } else if(cmd.isM280()) {
