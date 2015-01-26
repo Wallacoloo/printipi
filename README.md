@@ -43,6 +43,15 @@ Configuration Files
 
 The files under `src/machines` define classes of machines - deltabots, cartesian bots, polar bots, etc. Each one of these is analogous to a master "config file". That is to say, you should find the machine definition in that folder that is most similar to your own (eg `src/machines/rpi/kosselrampsfd.h`), make a copy of it (eg copy it to `src/machines/rpi/customkossel.h` and be sure to rename the `kosselrampsfd` C++ class contained in the file to `customkossel` in order to reflect the path change), and then customize it. Unless you are a developer, you should never have to edit code outside of your config file. To build your CustomKossel machine, type `make MACHINE=rpi/customkossel.h`.
 
+Documentation/Assistance
+========
+
+Besides this readme, there is also the auto-generated documentation. You can view this online [here](http://wallacoloo.github.io/printipi/) (note that this documentation is based on the *devel* version and is really aimed towards the Printipi developers rather than its end-users) or you can compile the documentation via `make doc` and view the resulting `index.html` in a web-browser.
+
+If you need assistance in anything Prinitpi-related, feel free to post a thread on the Printipi [Google Group](https://groups.google.com/forum/#!forum/printipi) or email me.
+
+If you would like to report a bug or request a feature, use the [issue tracker](https://github.com/Wallacoloo/printipi/issues).
+
 Supporting Other CPU Architectures
 ========
 
@@ -53,6 +62,11 @@ That's all you need. Now you can create a new machine in `src/machines/<platform
 The Printipi build system will automatically detect the files you added to `src/platforms/<platform>` and will use those in place of the generic implementations, so there's no need to edit any other files.
 
 If you're looking to extract some platform-specific performance boosts, there are a variety of other interfaces you can implement under your `src/platforms/<platform>`. These include `hardwarescheduler.h`, which you can implement to use (e.g.) interrupts instead of cpu busy-waiting for I/O servicing routines. You may also implement `chronoclock.h` to read a system clock without context-switching into a Linux kernel (only relevant on Linux systems or if your compiler doesn't support `std::chrono::*` for your platform).
+
+Developing
+========
+
+If you wish to support Printipi development, take a look at the issue tracker for tasks that need to be completed. After creating a fork with your changes, please submit your pull requests against the `devel` branch.
 
 Limitations
 ========
