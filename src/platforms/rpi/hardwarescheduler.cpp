@@ -712,7 +712,7 @@ void UnwrappedHardwareScheduler::queuePwm(const PrimitiveIoPin &pin, float ratio
     //  if charge > 0 && transitionCharge > L: out = 1
     //  charge -= out
     auto pinId = pin.id();
-    float minPeriod = std::chrono::duration_cast<std::chrono::seconds>(idealPeriod).count()*(float)(FRAMES_PER_SEC);
+    float minPeriod = std::chrono::duration_cast<std::chrono::duration<float> >(idealPeriod).count()*(float)(FRAMES_PER_SEC);
     float charge=0;
     float transitionCharge=0;
     bool out = (ratio >= 0.5);
