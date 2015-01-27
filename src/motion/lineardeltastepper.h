@@ -266,11 +266,11 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
     private:
         const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
         float _r, _L, _MM_STEPS; //settings which will be obtained from the CoordMap
-        float M0; //initial coordinate of THIS axis.
+        float M0; //initial coordinate of THIS axis, in mm.
         int sTotal; //current step offset from M0
-        Vector3f v; //cartesian velocity vector
-        float w; //angle of this axis
-        Vector3f P0; //initial cartesian position
+        Vector3f v; //cartesian velocity vector, in mm/sec
+        float w; //angle of this axis, in radians
+        Vector3f P0; //initial cartesian position, in mm
         inline float r() const { return _r; }
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
@@ -292,16 +292,21 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
             }
         inline float testDir(float s) {
             /* For linear movement, we are given P(t) = P0 + v*t
-             * thus L^2 = |(P0+v*t) - <rsin(w), rcos(w), D>|^2
+             * thus L^2 = |(P0+v*t) - {r*Sin[w], r*Cos[w], D}|^2
              * manually expand based on property that |x|^2 = x . x:
-             *   L^2 = (P0+v*t) . (P0+v*t) - 2*(P0+v*t) . <rsin(w), rcos(w), D> + r^2sin^2(w) + r^2cos^2(w) + D^2
-             * manually simplify & put into Mathematica notation:
+             *   L^2 = (P0+v*t) . (P0+v*t) - 2*(P0+v*t) . {r*Sin[w], r*Cos[w], D} + r^2*Sin[w]^2 + r^2*Cos[w]^2 + D^2
+             * manually simplify:
              *   0 = (P0+v*t) . (P0+v*t) - 2*(P0+v*t) . {r*Sin[w], r*Cos[w], D} + r^2 + D^2 - L^2
              *   0 = P0 . P0 + 2*t*P0 . v + t^2*v . v - 2*P0 . {r*Sin[w], r*Cos[w], D} - 2*t*v . {r*Sin[w], r*Cos[w], D} + r^2 + D^2 - L^2
              * Collect t terms:
              *   0 == P0 . P0 - 2*P0 . {r*Sin[w], r*Cos[w], D} + r^2 + D^2 - L^2
                   + t*(2*P0 . v - 2*v . {r*Sin[w], r*Cos[w], D})
                   + t^2*(v . v)
+             * Simplify the terms:
+             *   0 == |P0 - {r*Sin[w], r*Cos[w], D}|^2 - L^2
+                  + t*2*v . (P0 - {r*Sin[w], r*Cos[w], D})
+                  + t^2*(v . v)
+             
              * Apply quadratic equation to solve for t as a function of D.
              * There are two solutions; both may be valid, but have different meanings. 
              *   If one solution is at a time in the past, then it's just a projection of the current path into the past. 
@@ -312,19 +317,23 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
              */
             float D = M0 + s;
             Vector3f carriagePos(r()*sin(w), r()*cos(w), D);
+            //t = a*x^2 + b*x + c
             float a = v.magSq();
-            float b = 2*P0.dot(v) - 2*v.dot(carriagePos);
-            float c = P0.magSq() - 2*P0.dot(carriagePos) + r()*r() + D*D - L()*L();
+            float b = 2*v.dot(P0 - carriagePos);
+            float c = (P0 - carriagePos).magSq() - L()*L();
             //t = (-b +- sqrt(b*b-4*a*c))/(2a)
-            float term1 = -b/(2*a);
-            float rootParam = b*b-4*a*c;
+            float term1 = -b;
+            float rootParam = (b*b-4*a*c);
+            float divisor = 2*a;
             //check if the sqrt argument is negative
             if (rootParam < 0) {
                 return NAN;
             }
             float root = std::sqrt(rootParam);
-            float t1 = term1 - root;
-            float t2 = term1 + root;
+            float t1 = (term1 - root)/divisor;
+            float t2 = (term1 + root)/divisor;
+            //float t1 = term1 - root;
+            //float t2 = term1 + root;
             //return the nearest of the two times that is > current time.
             if (root > term1) { //if this is true, then t1 MUST be negative.
                 //return t2 if t2 > last_step_time else None
