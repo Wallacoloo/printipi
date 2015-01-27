@@ -90,7 +90,7 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type builtin="yes" name="float" />
     </argument>
     <argument id="iodrv::IoPin::makePwmOutput::desiredPeriod" name="desiredPeriod">
-      <type builtin="yes" name="float" />
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
   </method>
   <method abstract="yes" id="iodrv::IoPin::operator=" name="operator=">
@@ -126,7 +126,7 @@ Each microcontroller platform should provide its own IoPin implementation that i
     </argument>
     <argument id="iodrv::IoPin::pwmWrite::desiredPeriod" name="desiredPeriod">
       <doc>*desired* PWM cycle length (the actual length isn't guaranteed). Useful for decreasing fet/relay switching frequency, etc.</doc>
-      <type builtin="yes" name="float" />
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
   </method>
   <method id="iodrv::IoPin::setDefaultState" name="setDefaultState">

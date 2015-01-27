@@ -28,7 +28,7 @@
   </method>
   <method id="machines::generic::cartesian::getCoordMap" name="getCoordMap" override="yes">
     <return>
-      <type name="motion::LinearCoordMap&lt;iodrv::A4988, iodrv::A4988, iodrv::A4988, iodrv::A4988, Matrix3x3&gt;" />
+      <type name="motion::LinearCoordMap&lt;iodrv::StepDirStepperDriver, iodrv::StepDirStepperDriver, iodrv::StepDirStepperDriver, iodrv::StepDirStepperDriver, Matrix3x3&gt;" />
     </return>
     <override name="Machine::getCoordMap" ref="machines::Machine#machines::Machine::getCoordMap" />
   </method>

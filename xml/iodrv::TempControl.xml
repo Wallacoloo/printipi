@@ -37,7 +37,7 @@ Currently, it assumes an RC-based thermistor, but in the future it may be expand
       <type name="const Filter" qualifier=" const &amp;" />
     </argument>
     <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::pwmPeriod" name="pwmPeriod">
-      <type builtin="yes" name="float" />
+      <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
     <argument id="iodrv::TempControl::TempControl&lt;Thermistor, PID, Filter&gt;::pwmUpdateInterval" name="pwmUpdateInterval">
       <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />

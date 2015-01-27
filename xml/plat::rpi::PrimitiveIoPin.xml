@@ -67,7 +67,7 @@ Of course, it's still a VERY GOOD IDEA to use hardware pull resistors as well.
       <type builtin="yes" name="float" />
     </argument>
     <argument id="plat::rpi::PrimitiveIoPin::makePwmOutput::desiredPeriod" name="desiredPeriod">
-      <type builtin="yes" name="float" />
+      <type name="generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
   </method>
   <method id="plat::rpi::PrimitiveIoPin::null" name="null" static="yes">
@@ -86,7 +86,7 @@ Of course, it's still a VERY GOOD IDEA to use hardware pull resistors as well.
       <type builtin="yes" name="float" />
     </argument>
     <argument id="plat::rpi::PrimitiveIoPin::pwmWrite::desiredPeriod" name="desiredPeriod">
-      <type builtin="yes" name="float" />
+      <type name="generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
   </method>
 </class>

@@ -32,7 +32,7 @@
     <doc>We are using a LinearDelta coordinate system, where vertically-moving carriages are
 attached to an end effector via fixed-length, rotatable rods.</doc>
     <return>
-      <type name="motion::LinearDeltaCoordMap&lt;iodrv::A4988, iodrv::A4988, iodrv::A4988, iodrv::A4988, Matrix3x3&gt;" />
+      <type name="motion::LinearDeltaCoordMap&lt;iodrv::StepDirStepperDriver, iodrv::StepDirStepperDriver, iodrv::StepDirStepperDriver, iodrv::StepDirStepperDriver, Matrix3x3&gt;" />
     </return>
     <override name="Machine::getCoordMap" ref="machines::Machine#machines::Machine::getCoordMap" />
   </method>

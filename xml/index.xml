@@ -101,7 +101,6 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <class name="Response" ref="gparse::Response#gparse::Response" />
   </namespace>
   <namespace name="iodrv" ref="iodrv#iodrv">
-    <class name="A4988" ref="iodrv::A4988#iodrv::A4988" />
     <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
       <brief>forward declare for class in "endstop.h"</brief>
     </class>
@@ -140,6 +139,7 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
       <brief>Controls a Servo motor.</brief>
     </class>
+    <class name="StepDirStepperDriver" ref="iodrv::StepDirStepperDriver#iodrv::StepDirStepperDriver" />
     <classtemplate name="TempControl" ref="iodrv::TempControl#iodrv::TempControl">
       <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
       <templatetypeparameter id="iodrv::TempControl::PID" name="PID">

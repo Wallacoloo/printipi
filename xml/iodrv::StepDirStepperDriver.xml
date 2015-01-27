@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<class id="iodrv::StepDirStepperDriver" name="StepDirStepperDriver" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+A "StepDirStepperDriver" is used to generically drive any stepper motor driver chip that accepts a "step" input and a "direction" input.
+  This includes A4988 and DRV8825 current-chopping stepper driver ICs
+
+Documentation for A4988 stepper driver: http://www.pololu.com/file/download/a4988_DMOS_microstepping_driver_with_translator.pdf?file_id=0J450
+Documentation for DRV8825: https://www.pololu.com/product/2133
+Low -&gt; High transition on STEP pin trigger the step.
+Minimum STEP high pulse: 1uS (A4988), 1.9uS (DRV8825)
+Minimum STEP low pulse:  1uS (A4988), 1.9uS (DRV8825)</doc>
+  <base access="public">
+    <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  </base>
+  <constructor id="iodrv::StepDirStepperDriver::StepDirStepperDriver" name="StepDirStepperDriver">
+    <argument id="iodrv::StepDirStepperDriver::StepDirStepperDriver::stepPin" name="stepPin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::StepDirStepperDriver::StepDirStepperDriver::dirPin" name="dirPin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+    <argument id="iodrv::StepDirStepperDriver::StepDirStepperDriver::enablePin" name="enablePin">
+      <type name="IoPin &amp;&amp;" />
+    </argument>
+  </constructor>
+  <method id="iodrv::StepDirStepperDriver::getEventOutputSequence" name="getEventOutputSequence">
+    <return>
+      <type name="std::array&lt;OutputEvent, 3&gt;" />
+    </return>
+    <argument id="iodrv::StepDirStepperDriver::getEventOutputSequence::evtTime" name="evtTime">
+      <type name="plat::generic::ChronoClock::time_point" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::time_point" />
+    </argument>
+    <argument id="iodrv::StepDirStepperDriver::getEventOutputSequence::dir" name="dir">
+      <type name="motion::StepDirection" ref="motion#motion::StepDirection" />
+    </argument>
+  </method>
+  <method id="iodrv::StepDirStepperDriver::lockAxis" name="lockAxis" override="yes">
+    <brief>called by M17; Enable/power all stepper motors</brief>
+    <doc>OVERRIDE THIS (stepper motor drivers only)</doc>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <override name="IODriver::lockAxis" ref="iodrv::IODriver#iodrv::IODriver::lockAxis" />
+  </method>
+  <method id="iodrv::StepDirStepperDriver::unlockAxis" name="unlockAxis" override="yes">
+    <brief>called by M18; Disable all stepper motors. Intention is to let them move 'freely', eg, for manual adjustment or to disable idle noise.</brief>
+    <doc>OVERRIDE THIS (stepper motor drivers only)</doc>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <override name="IODriver::unlockAxis" ref="iodrv::IODriver#iodrv::IODriver::unlockAxis" />
+  </method>
+</class>

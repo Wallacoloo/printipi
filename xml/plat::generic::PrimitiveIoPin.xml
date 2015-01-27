@@ -62,7 +62,7 @@
       <type builtin="yes" name="float" />
     </argument>
     <argument id="plat::generic::PrimitiveIoPin::makePwmOutput::desiredPeriod" name="desiredPeriod">
-      <type builtin="yes" name="float" />
+      <type name="ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
   </method>
   <method id="plat::generic::PrimitiveIoPin::null" name="null" static="yes">
@@ -79,7 +79,7 @@
       <type builtin="yes" name="float" />
     </argument>
     <argument id="plat::generic::PrimitiveIoPin::pwmWrite::desiredPeriod" name="desiredPeriod">
-      <type builtin="yes" name="float" />
+      <type name="ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
   </method>
 </class>

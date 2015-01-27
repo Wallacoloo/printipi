@@ -39,7 +39,7 @@ DMA timing is done by configuring the PWM module to request a sample at a given 
       <type builtin="yes" name="float" />
     </argument>
     <argument id="plat::rpi::HardwareScheduler::queuePwm::maxPeriod" name="maxPeriod">
-      <type builtin="yes" name="float" />
+      <type name="generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
   </method>
   <method id="plat::rpi::HardwareScheduler::schedTime" name="schedTime">
