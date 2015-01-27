@@ -438,29 +438,29 @@
 //  One should not attempt to directly drive a fan off of the Pi's GPIOs.
 //  Instead, obtain a transistor, wire base to 12V, collector to the GPIO, and emitter should be
 //    connected through the fan and into ground.
-#define PIN_FAN                   mitpi::V2_GPIO_P1_08    //maps to FD Shield D10 (Extruder 2 / Fan)
+#define PIN_FAN                   mitpi::V2_GPIO_P1_08           //maps to FD Shield D10 (Extruder 2 / Fan)
 #define PIN_FAN_INVERSIONS        INVERT_WRITES
 #define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
 //during RPi boot, fan can be set to be either on or off by using internal pull resistors
 #define PIN_FAN_PULL              mitpi::GPIOPULL_UP
-#define FAN_PWM_MULTIPLIER        0.60                    //weight the fan's PWM value to be XXX * (whatever value received by M106)
-#define FAN_MIN_PWM_PERIOD        0.01                    //MOSFETS have a limited switching frequency             
+#define FAN_PWM_MULTIPLIER        0.60                           //weight the fan's PWM value to be XXX * (whatever value received by M106)
+#define FAN_IDEAL_PWM_PERIOD        std::chrono::milliseconds(10)  //MOSFETS have a limited switching frequency             
 
-#define PIN_STEPPER_A_EN          mitpi::V2_GPIO_P5_04    //maps to FD Shield D48  (X_EN)
-#define PIN_STEPPER_A_STEP        mitpi::V2_GPIO_P1_22    //maps to FD Shield AD9  (X_STEP)
-#define PIN_STEPPER_A_DIR         mitpi::V2_GPIO_P1_23    //maps to FD Sheild AD8  (X_DIR)
+#define PIN_STEPPER_A_EN          mitpi::V2_GPIO_P5_04           //maps to FD Shield D48  (X_EN)
+#define PIN_STEPPER_A_STEP        mitpi::V2_GPIO_P1_22           //maps to FD Shield AD9  (X_STEP)
+#define PIN_STEPPER_A_DIR         mitpi::V2_GPIO_P1_23           //maps to FD Sheild AD8  (X_DIR)
 
-#define PIN_STEPPER_B_EN          mitpi::V2_GPIO_P5_05    //maps to FD Shield D46  (Y_EN)
-#define PIN_STEPPER_B_STEP        mitpi::V2_GPIO_P1_19    //maps to FD Shield AD11 (Y_STEP)
-#define PIN_STEPPER_B_DIR         mitpi::V2_GPIO_P1_21    //maps to FD Shield AD10 (Y_DIR)
+#define PIN_STEPPER_B_EN          mitpi::V2_GPIO_P5_05           //maps to FD Shield D46  (Y_EN)
+#define PIN_STEPPER_B_STEP        mitpi::V2_GPIO_P1_19           //maps to FD Shield AD11 (Y_STEP)
+#define PIN_STEPPER_B_DIR         mitpi::V2_GPIO_P1_21           //maps to FD Shield AD10 (Y_DIR)
 
-#define PIN_STEPPER_C_EN          mitpi::V2_GPIO_P5_06    //maps to FD Shield D44  (Z_EN)
-#define PIN_STEPPER_C_STEP        mitpi::V2_GPIO_P1_24    //maps to FD Shield AD13 (Z_STEP)
-#define PIN_STEPPER_C_DIR         mitpi::V2_GPIO_P1_26    //maps to FD Shield AD12 (Z_DIR)
+#define PIN_STEPPER_C_EN          mitpi::V2_GPIO_P5_06           //maps to FD Shield D44  (Z_EN)
+#define PIN_STEPPER_C_STEP        mitpi::V2_GPIO_P1_24           //maps to FD Shield AD13 (Z_STEP)
+#define PIN_STEPPER_C_DIR         mitpi::V2_GPIO_P1_26           //maps to FD Shield AD12 (Z_DIR)
 
-#define PIN_STEPPER_E_EN          mitpi::V2_GPIO_P1_16    //maps to FD Shield D42  (E0_EN)
-#define PIN_STEPPER_E_STEP        mitpi::V2_GPIO_P1_03    //maps to FD Shield D36  (E0_STEP)
-#define PIN_STEPPER_E_DIR         mitpi::V2_GPIO_P1_05    //maps to FD Shield D28  (E0_DIR)
+#define PIN_STEPPER_E_EN          mitpi::V2_GPIO_P1_16           //maps to FD Shield D42  (E0_EN)
+#define PIN_STEPPER_E_STEP        mitpi::V2_GPIO_P1_03           //maps to FD Shield D36  (E0_STEP)
+#define PIN_STEPPER_E_DIR         mitpi::V2_GPIO_P1_05           //maps to FD Shield D28  (E0_DIR)
 //A4988 EN pin is logically inverted (writing HIGH to the /EN pin disables the stepper motor)
 #define PIN_STEPPER_EN_INVERSIONS INVERT_WRITES
 //Set the pin to pull HIGH so that the stepper is disabled during RPi boot
@@ -468,13 +468,13 @@
 
 //define the hotend:
 //  The hotend is controlled in the same PWM manner as the fan
-#define PIN_HOTEND                mitpi::V2_GPIO_P1_10    //maps to FD Shield D9  (Extruder 1)
-#define PIN_HOTEND_INVERSIONS     INVERT_WRITES           //Ramps-FD mosfets are inverted
+#define PIN_HOTEND                mitpi::V2_GPIO_P1_10           //maps to FD Shield D9  (Extruder 1)
+#define PIN_HOTEND_INVERSIONS     INVERT_WRITES                  //Ramps-FD mosfets are inverted
 //hotend state during boot, if hardware pull resistors weren't present.
 //NOTE: if you have a hotend that is active LOW, then you want the pull resistor to pull HIGH!
 #define PIN_HOTEND_PULL           mitpi::GPIOPULL_DOWN
 //MOSFETS have a limited switching frequency, which can be accounted for with a minimum PWM_PERIOD
-#define HOTEND_MIN_PWM_PERIOD     0.01    
+#define HOTEND_IDEAL_PWM_PERIOD   std::chrono::milliseconds(10)
 
 //Refer to the RcThermistor2Pin documentation.
 //One pin is used to discharge the capacitor through the thermistor (variable resistance)
@@ -520,7 +520,7 @@ class kosselrampsfd : public Machine {
         //return a list of miscellaneous IoDrivers (Endstops & A4988 drivers are reachable via <getCoordMap>)
         inline std::tuple<Fan, TempControl<RCThermistor2Pin, PID, LowPassFilter> > getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_PWM_MULTIPLIER, FAN_MIN_PWM_PERIOD),
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN, PIN_FAN_PULL), PIN_FAN_DEFAULT_STATE, FAN_PWM_MULTIPLIER, FAN_IDEAL_PWM_PERIOD),
                 TempControl<RCThermistor2Pin, PID, LowPassFilter>(
                     iodrv::HotendType,
                     IoPin(PIN_HOTEND_INVERSIONS, PIN_HOTEND), 
@@ -537,7 +537,8 @@ class kosselrampsfd : public Machine {
                         THERM_R0_OHMS, 
                         THERM_BETA), 
                     PID(HOTEND_PID_P, HOTEND_PID_I, HOTEND_PID_D), 
-                    LowPassFilter(3.000)
+                    LowPassFilter(3.000),
+                    HOTEND_IDEAL_PWM_PERIOD
                 )
             );
                 //TempControl<_HotendOut, _Thermistor, PID, LowPassFilter>(

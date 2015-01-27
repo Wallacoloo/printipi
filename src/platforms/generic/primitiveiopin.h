@@ -29,6 +29,7 @@
 
 #include "compileflags.h" //for IoLevel
 #include "common/logging.h"
+#include "platforms/auto/chronoclock.h"
 
 namespace plat {
 namespace generic {
@@ -56,7 +57,7 @@ class PrimitiveIoPin {
             LOGW_ONCE("Attempt to makeDigitalInput() the generic PrimitiveIoPin interface\n");
         }
         //configure the pin as a PWM output & set its duty cycle and period (if applicable)
-        inline void makePwmOutput(float duty, float desiredPeriod) {
+        inline void makePwmOutput(float duty, EventClockT::duration desiredPeriod) {
             (void)duty; (void)desiredPeriod;
             LOGW_ONCE("Attempt to makePwmOutput() the generic PrimitiveIoPin interface\n");
         }
@@ -71,7 +72,7 @@ class PrimitiveIoPin {
             LOGW_ONCE("Attempt to digitalWrite() the generic PrimitiveIoPin interface\n");
         }
         //set pwm duty cycle & period (if applicable). Must call makePwmOutput beforehand.
-        inline void pwmWrite(float duty, float desiredPeriod) {
+        inline void pwmWrite(float duty, EventClockT::duration desiredPeriod) {
             (void)duty; (void)desiredPeriod;
             LOGW_ONCE("Attempt to pwmWrite() the generic PrimitiveIoPin interface\n");
         }

@@ -28,6 +28,7 @@
 
 #include "mitpi.h" //for GpioPin
 #include "hardwarescheduler.h" //for ability to schedule PWM
+#include "platforms/auto/chronoclock.h" //for EventClockT.
 //for MAX_RPI_PIN_ID
 #include "compileflags.h"
 
@@ -74,7 +75,7 @@ class PrimitiveIoPin {
             digitalWrite(lev);
         }
         //configure the pin as a PWM output & set its duty cycle and period (if applicable)
-        inline void makePwmOutput(float duty, float desiredPeriod) {
+        inline void makePwmOutput(float duty, EventClockT::duration desiredPeriod) {
         	mitpi::makeOutput(pinIdx);
         	pwmWrite(duty, desiredPeriod);
         }
@@ -91,7 +92,7 @@ class PrimitiveIoPin {
             mitpi::setPinState(pinIdx, lev);
         }
         //set pwm duty cycle & period (if applicable). Must call makePwmOutput beforehand.
-        inline void pwmWrite(float duty, float desiredPeriod) {
+        inline void pwmWrite(float duty, EventClockT::duration desiredPeriod) {
         	HardwareScheduler().queuePwm(*this, duty, desiredPeriod);
         }
 };
