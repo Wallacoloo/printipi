@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#ifndef DRIVERS_ENDSTOP_H
-#define DRIVERS_ENDSTOP_H
+#ifndef IODRIVERS_ENDSTOP_H
+#define IODRIVERS_ENDSTOP_H
 
 #include <utility> //for std::move
 #include "iodriver.h"

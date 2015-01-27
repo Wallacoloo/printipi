@@ -22,8 +22,8 @@
  */
  
 
-#ifndef DRIVERS_TEMPCONTROL_H
-#define DRIVERS_TEMPCONTROL_H
+#ifndef IODRIVERS_TEMPCONTROL_H
+#define IODRIVERS_TEMPCONTROL_H
 
 #include <utility> //for std::move
 

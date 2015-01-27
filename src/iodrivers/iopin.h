@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#ifndef DRIVERS_IOPIN_H
-#define DRIVERS_IOPIN_H
+#ifndef IODRIVERS_IOPIN_H
+#define IODRIVERS_IOPIN_H
 
 #include <set>
 #include <utility> //for std::move

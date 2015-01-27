@@ -22,8 +22,8 @@
  */
 
 
-#ifndef DRIVERS_FAN_H
-#define DRIVERS_FAN_H
+#ifndef IODRIVERS_FAN_H
+#define IODRIVERS_FAN_H
  
 #include <utility> //for std::move
 #include "iodriver.h"
