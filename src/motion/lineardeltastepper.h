@@ -306,7 +306,6 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
              *   0 == |P0 - {r*Sin[w], r*Cos[w], D}|^2 - L^2
                   + t*2*v . (P0 - {r*Sin[w], r*Cos[w], D})
                   + t^2*(v . v)
-             
              * Apply quadratic equation to solve for t as a function of D.
              * There are two solutions; both may be valid, but have different meanings. 
              *   If one solution is at a time in the past, then it's just a projection of the current path into the past. 
