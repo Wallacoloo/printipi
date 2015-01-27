@@ -1936,7 +1936,7 @@ return values.
         <location column="9" file="motion/lineardeltacoordmap.h" line="157" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/lineardeltastepper.h" line="336" />
+        <location column="9" file="motion/lineardeltastepper.h" line="345" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::testDir" name="testDir">
         <location column="9" file="motion/lineardeltastepper.h" line="293" />
