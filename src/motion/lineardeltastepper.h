@@ -316,15 +316,16 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
              */
             float D = M0 + s;
             Vector3f carriagePos(r()*sin(w), r()*cos(w), D);
-            //t = a*x^2 + b*x + c
+            //obtain coefficients for t = a*x^2 + b*x + c
             float a = v.magSq();
             float b = 2*v.dot(P0 - carriagePos);
             float c = (P0 - carriagePos).magSq() - L()*L();
-            //t = (-b +- sqrt(b*b-4*a*c))/(2a)
+            //solve t = (-b +- sqrt(b*b-4*a*c))/(2a)
             float term1 = -b;
             float rootParam = (b*b-4*a*c);
             float divisor = 2*a;
             //check if the sqrt argument is negative
+            //TODO: can it ever be negative?
             if (rootParam < 0) {
                 return NAN;
             }
