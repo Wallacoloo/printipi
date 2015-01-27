@@ -59,10 +59,10 @@
 
 
 //Movement rates:
-#define MAX_ACCEL_MM_SEC2 900.000   // Maximum cartesian acceleration of end effector in mm / s^2
-#define MAX_MOVE_RATE_MM_SEC 120    // Maximum cartesian verlocity of end effector, in mm/s
-#define HOME_RATE_MM_SEC 10         // Speed at which to home the endstops, in mm/s
-#define MAX_EXT_RATE_MM_SEC 150     // Maximum rate at which filament should ever be extruded, in mm of filament / s
+#define MAX_ACCEL_MM_SEC2 900.000     // Maximum cartesian acceleration of end effector in mm / s^2
+#define MAX_MOVE_RATE_MM_SEC 120      // Maximum cartesian verlocity of end effector, in mm/s
+#define HOME_RATE_MM_SEC 10           // Speed at which to home the endstops, in mm/s
+#define MAX_EXT_RATE_MM_SEC 150       // Maximum rate at which filament should ever be extruded, in mm of filament / s
 
 
 //Pin Definitions:
@@ -83,7 +83,8 @@
 #define PIN_FAN                   -1    
 #define PIN_FAN_INVERSIONS        INVERT_WRITES
 #define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
-#define FAN_MIN_PWM_PERIOD        0.01                    
+#define FAN_MAX_POWER             1.0                     //The fan can be configured such that M106 only puts it to some other maximum power.
+#define FAN_IDEAL_PWM_PERIOD      std::chrono::microseconds(1000)
 
 #define PIN_HOTEND                -1    
 #define PIN_HOTEND_INVERSIONS     NO_INVERSIONS
@@ -104,7 +105,7 @@
 #define PIN_STEPPER_E_EN          -1    
 #define PIN_STEPPER_E_STEP        -1    
 #define PIN_STEPPER_E_DIR         -1    
-#define PIN_STEPPER_EN_INVERSIONS INVERT_WRITES
+#define PIN_STEPPER_EN_INVERSIONS INVERT_WRITES           //stepper ENABLE pin is active LOW
 
 //PID thermistor->hotend feedback settings
 //  We need to take the current temperature and use that to drive how much power we are sending to the hotend.
@@ -163,7 +164,7 @@ class cartesian : public Machine {
         inline std::tuple<Fan, Servo, TempControl<RCThermistor2Pin, PID, LowPassFilter> > 
           getIoDrivers() const {
             return std::make_tuple(
-                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN), PIN_FAN_DEFAULT_STATE, FAN_MIN_PWM_PERIOD),
+                Fan(IoPin(PIN_FAN_INVERSIONS, PIN_FAN), PIN_FAN_DEFAULT_STATE, FAN_MAX_POWER, FAN_IDEAL_PWM_PERIOD),
                 Servo(IoPin::null(), std::chrono::milliseconds(100), 
                     std::make_pair(std::chrono::milliseconds(1), std::chrono::milliseconds(2)),
                     std::make_pair(0.0f, 360.0f)),

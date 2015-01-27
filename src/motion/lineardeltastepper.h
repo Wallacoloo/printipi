@@ -63,63 +63,15 @@
  * |                  |
  *
  * The '.' represents the effector.
- * Each tower has a rod of fixed-length 'L' connecting to the effector. The other end of the rod is connected to a carriage that slides up and down the axis. The connection points allow the rot to pivot freely.
+ * Each tower has a rod of fixed-length 'L' connecting to the effector. 
+ *   The other end of the rod is connected to a carriage that slides up and down the axis. The connection points allow the rot to pivot freely.
  * The height of the carriage above the bed is indicated by 'A' for the A carriage, 'B' for the B carriage, and 'C' for the C carriage.
  *
- * This gives us the following equations for relating A, B, C to x, y, z:
- * (A-z)^2 + (x-rsin(0)  )^2 + (y-rcos(0)  )^2 = L^2
- * (B-z)^2 + (x-rsin(120))^2 + (y-rcos(120))^2 = L^2
- * (C-z)^2 + (x-rsin(240))^2 + (y-rcos(240))^2 = L^2
+ * From here, we have the constraint equation: |P - <rsin(w), rcos(w), D>| = L
+ *   where <rsin(w), rcos(w), D> is the carriage position and P is the effector position
  *
- * We can solve this system for A, B, and C to get the "Inverse Kinematics":
- * A = z + sqrt(L^2 - (y-rcos(0)  )^2 - (x-rsin(0)  )^2)
- * B = z + sqrt(L^2 - (y-rcos(120))^2 - (x-rsin(120))^2)
- * C = z + sqrt(L^2 - (y-rcos(240))^2 - (x-rsin(240))^2)
- *
- * If we want to move linearly along x,y,z at a constant velocity (acceleration will be introduced later):
- *   let x(t) = x0 + vx t
- *       y(t) = y0 + vy t
- *       z(t) = z0 + vz t
- *
- * Then A(t) = z0 + vz*t + sqrt( L^2 - (y0 + vy*t - rcos(0)  )^2 + (x0 + vx*t - rsin(0)  )^2 )
- *      B(t) = z0 + vz*t + sqrt( L^2 - (y0 + vy*t - rcos(120))^2 + (x0 + vx*t - rsin(120))^2 )
- *      C(t) = z0 + vz*t + sqrt( L^2 - (y0 + vy*t - rcos(240))^2 + (x0 + vx*t - rsin(240))^2 )
- *
- * Now, if we are at A=A0, we want to find the next time at which we'll be at A=A0 +/- 1,
- *   That is, the time at which A is stepped exactly +/-1 step.
- *   It is important to note that along a linear movement, it is possible for dA/dt to change sign. That is, a given carriage might be moving up at the beginning of the line, and moving down at the end of the line.
- *
- * So, let A0 = A(t=0).
- * Then we want to solve A(t) = A0 + s for t, where s is the number of steps from A0.
- *   This will allow us to test t(A0-1) and t(A0+1) to determine the direction and time to take our first step. If it is positive, then we will next test t(A0+1-1) and t(A0+1+1), and so on, to form our path.
- * To make this generic, we will replace A, B, C with D, and cos(0), cos(120), ... with cos(w).
- *   That way we only have to solve one axis, and can then obtain results for all axes.
- * 
- * D0 + s = z0 + vz*t + sqrt( L^2 - (y0 + vy*t - rcos(w))^2 + (x0 + vx*t - rsin(w))^2 )
- * Expand:
- *   (D0 + s - z0 - vz*t)^2 = L^2 - ((y0 - rcos(w)) + vy*t)^2 + ((x0 - rsin(w)) + vx*t)^2
- *
- *   ((D0 + s - z0) - vz*t)^2 - L^2 = (y0-rcos(w))^2 + 2vy*t*(y0 - rcos(w)) + vy*vy*t*t   +   (x0-rsin(w))^2 + 2vx*t*(x0-rsin(w)) + vx*vx*t
- *
- *   (D0 + s - z0)^2 - 2(D0 + s - z0)*vz*t + vz*vz*t*t - L^2 = (y0-rcos(w))^2 + 2vy*t*(y0 - rcos(w)) + vy*vy*t*t   +   (x0-rsin(w))^2 + 2vx*t*(x0-rsin(w)) + vx*vx*t
- *
- * This looks like a quadratic equation of t; group the powers of t:
- *   0 = -(D0 + s - z0)^2 + 2(D0 + s - z0)*vz*t - vz*vz*t*t + L^2 + (y0-rcos(w))^2 + 2vy*t*(y0 - rcos(w)) + vy*vy*t*t   +   (x0-rsin(w))^2 + 2vx*t*(x0-rsin(w)) + vx*vx*t
- *
- *   0 = t^2*(-vz^2 + vy^2 +vx^2)  +  t*(2(D0 + s - z0)*vz + 2vy*(y0 - rcos(w)) + 2vx*(x0-rsin(w)))  +  (-(D0 + s - z0)^2 + L^2 + (y0-rcos(w))^2 + (x0-rsin(w))^2)
- *
- * Thus, 0 = a t^2 + b t + c, where
- *   a = -vz^2 + vy^2 +vx^2
- *   b = 2(D0 + s - z0)*vz + 2vy*(y0 - rcos(w)) + 2vx*(x0-rsin(w))
- *   c = -(D0 + s - z0)^2 + L^2 + (y0-rcos(w))^2 + (x0-rsin(w))^2
- * So t = [-b +/- sqrt(b^2 - 4 ac)] / [2a]  according to the quadratic formula
- *
- * There are two solutions; both may be valid, but have different meanings. If one solution is at a time in the past, then it's just a projection of the current path into the past. If both solutions are in the future, then pick the nearest one; it means that there are two points in this path where the carriage should be at the same spot. This happens, for example, when the effector nears a tower for half of the line-segment, and then continues past the tower, so that the carriage movement is (pseudo) parabolic.
- * The above quadratic solution is used in LinearDeltaStepper::_nextStep(), although it has been optimized.
- *
- * Note: all motion in this file is planned at a constant velocity. Cartesian-space acceleration is introduced by a post-transformation of the step times applied elsewhere in the motion planning system.
- *
- *
+ * For linear movement, we are given P(t) = P0 + v*t
+ * This is combined with the constraint equation and solved further down in the LinearDeltaStepper::testDir() function
  *
  *
  *
@@ -137,7 +89,10 @@
  *     y = yc + r*Cos[m*t]*uy + r*Sin[m*t]*vy
  *     z = zc + r*Cos[m*t]*uz + r*Sin[m*t]*vz
  *
- *   This is solved further down in the testDir() function.   
+ *   This is solved further down in the LinearDeltaArcStepper::testDir() function.  
+ *
+ * Note: all motion in this file is planned at a constant velocity. 
+ *   Cartesian-space acceleration is introduced by a post-transformation of the step times applied elsewhere in the motion planning system. 
  */
 
 
@@ -311,13 +266,11 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
     private:
         const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
         float _r, _L, _MM_STEPS; //settings which will be obtained from the CoordMap
-        float M0; //initial coordinate of THIS axis.
+        float M0; //initial coordinate of THIS axis, in mm.
         int sTotal; //current step offset from M0
-        float inv_v2; //1/v^2, where v is the linear speed in cartesian-space
-        float vz_over_v2; //vz/v^2, where vz is the 
-        float _almostTerm1; //used for caching & reducing computational complexity inside nextStep()
-        float _almostRootParam;
-        float _almostRootParamV2S;
+        Vector3f v; //cartesian velocity vector, in mm/sec
+        float w; //angle of this axis, in radians
+        Vector3f P0; //initial cartesian position, in mm
         inline float r() const { return _r; }
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
@@ -331,64 +284,57 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
              _r(map.r()), _L(map.L()), _MM_STEPS(map.MM_STEPS(AxisIdx)),
              M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
              sTotal(0),
-             //vx(vx), vy(vy), vz(vz),
-             //v2(vx*vx + vy*vy + vz*vz), 
-             inv_v2(1/(vel.xyz().magSq())),
-             vz_over_v2(vel.z()*inv_v2) {
+             v(vel.xyz()),
+             w(AxisIdx*2*M_PI/3),
+             P0(map.xyzeFromMechanical(curPos).xyz()) {
                 static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
                 this->time = 0; //this may NOT be zero-initialized by parent.
-                float vx, vy, vz;
-                std::tie(vx, vy, vz) = vel.xyz().tuple();
-                float x0, y0, z0;
-                std::tie(x0, y0, z0) = map.xyzeFromMechanical(curPos).xyz().tuple();
-                //precompute as much as possible:
-                _almostRootParamV2S = 2*M0 - 2*z0;
-                if (AxisIdx == DELTA_AXIS_A) {
-                    _almostTerm1 = inv_v2*(r()*vy - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
-                    //rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
-                    //rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 + 2*M0*s - 2*M0*z0 + s*s - 2*s*z0 + z0*z0);
-                    //rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0) - v2*s*(2*M0 + s - 2*z0);
-                    _almostRootParam = -inv_v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + M0*M0 - 2*M0*z0 + z0*z0);
-                    //_almostRootParamV2S = 2*M0 - 2*z0; // (...+s)*-1/v2*s
-                } else if (AxisIdx == DELTA_AXIS_B) { 
-                    _almostTerm1 = inv_v2*(r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
-                    //rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-                    _almostRootParam = -inv_v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
-                    //_almostRootParamV2S = 2*M0 - 2*z0;
-                } else if (AxisIdx == DELTA_AXIS_C) {
-                    _almostTerm1 = inv_v2*(-r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 - z0)); // + vz/v2*s;
-                    //rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-                    _almostRootParam = -inv_v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + M0*M0 - 2*M0*z0 + z0*z0);
-                    //_almostRootParamV2S = 2*M0 - 2*z0;
-                }
             }
-        inline void getTerm1AndRootParam(float &term1, float &rootParam, float s) {
-            //Therefore, we should cache values calculatable at init-time, like all of the second-half on rootParam.
-            term1 = _almostTerm1 + vz_over_v2*s;
-            rootParam = term1*term1 + _almostRootParam - inv_v2*s*(_almostRootParamV2S + s);
-            /*if (AxisIdx == 0) {
-                term1 = r()*vy - vx*x0 - vy*y0 + vz*(M0 + s - z0);
-                rootParam = term1*term1 - v2*(-L()*L() + x0*x0 + (r() - y0)*(r() - y0) + (M0 + s - z0)*(M0 + s - z0));
-            } else if (AxisIdx == 1) { 
-                term1 = r()*(sqrt(3)*vx - vy)/2. - vx*x0 - vy*y0 + vz*(M0 + s - z0);
-                rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(-sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-            } else if (AxisIdx == 2) {
-                term1 = -r()*(sqrt(3)*vx + vy)/2 - vx*x0 - vy*y0 + vz*(M0 + s - z0);
-                rootParam = term1*term1 - v2*(-L()*L() + r()*r() + x0*x0 + y0*y0 + r()*(sqrt(3)*x0 + y0) + (M0 + s - z0)*(M0 + s - z0));
-            }*/
-            /*float root = std::sqrt(rootParam);
-            float t1 = (term1 - root)/v2;
-            float t2 = (term1 + root)/v2;*/
-        }
         inline float testDir(float s) {
-            float term1, rootParam;
-            getTerm1AndRootParam(term1, rootParam, s);
+            /* For linear movement, we are given P(t) = P0 + v*t
+             * thus L^2 = |(P0+v*t) - {r*Sin[w], r*Cos[w], D}|^2
+             * manually expand based on property that |x|^2 = x . x:
+             *   L^2 = (P0+v*t) . (P0+v*t) - 2*(P0+v*t) . {r*Sin[w], r*Cos[w], D} + r^2*Sin[w]^2 + r^2*Cos[w]^2 + D^2
+             * manually simplify:
+             *   0 = (P0+v*t) . (P0+v*t) - 2*(P0+v*t) . {r*Sin[w], r*Cos[w], D} + r^2 + D^2 - L^2
+             *   0 = P0 . P0 + 2*t*P0 . v + t^2*v . v - 2*P0 . {r*Sin[w], r*Cos[w], D} - 2*t*v . {r*Sin[w], r*Cos[w], D} + r^2 + D^2 - L^2
+             * Collect t terms:
+             *   0 == P0 . P0 - 2*P0 . {r*Sin[w], r*Cos[w], D} + r^2 + D^2 - L^2
+                  + t*(2*P0 . v - 2*v . {r*Sin[w], r*Cos[w], D})
+                  + t^2*(v . v)
+             * Simplify the terms:
+             *   0 == |P0 - {r*Sin[w], r*Cos[w], D}|^2 - L^2
+                  + t*2*v . (P0 - {r*Sin[w], r*Cos[w], D})
+                  + t^2*(v . v)
+             * Apply quadratic equation to solve for t as a function of D.
+             * There are two solutions; both may be valid, but have different meanings. 
+             *   If one solution is at a time in the past, then it's just a projection of the current path into the past. 
+             *   If both solutions are in the future, then pick the nearest one; 
+             *   it means that there are two points in this path where the carriage should be at the same spot. 
+             *   This happens, for example, when the effector nears a tower for half of the line-segment, and 
+             *    then continues past the tower, so that the carriage movement is (pseudo) parabolic.
+             */
+            float D = M0 + s;
+            Vector3f carriagePos(r()*sin(w), r()*cos(w), D);
+            //obtain coefficients for t = a*x^2 + b*x + c
+            float a = v.magSq();
+            float b = 2*v.dot(P0 - carriagePos);
+            float c = (P0 - carriagePos).magSq() - L()*L();
+            //solve t = (-b +- sqrt(b*b-4*a*c))/(2a)
+            float term1 = -b;
+            float rootParam = (b*b-4*a*c);
+            float divisor = 2*a;
+            //check if the sqrt argument is negative
+            //TODO: can it ever be negative?
             if (rootParam < 0) {
                 return NAN;
             }
             float root = std::sqrt(rootParam);
-            float t1 = term1 - root;
-            float t2 = term1 + root;
+            float t1 = (term1 - root)/divisor;
+            float t2 = (term1 + root)/divisor;
+            //float t1 = term1 - root;
+            //float t2 = term1 + root;
+            //return the nearest of the two times that is > current time.
             if (root > term1) { //if this is true, then t1 MUST be negative.
                 //return t2 if t2 > last_step_time else None
                 return t2 > this->time ? t2 : NAN;

@@ -240,7 +240,7 @@ class UnwrappedHardwareScheduler {
             return EventClockT::time_point(evtTime.time_since_epoch() - std::chrono::microseconds(MAX_SCHED_AHEAD_USEC));
         }
         void queue(const OutputEvent &evt);
-        void queuePwm(const PrimitiveIoPin &pin, float ratio, float maxPeriod);
+        void queuePwm(const PrimitiveIoPin &pin, float ratio, EventClockT::duration maxPeriod);
         bool onIdleCpu(OnIdleCpuIntervalT interval);
     private:
         void makeMaps();
@@ -284,7 +284,7 @@ class HardwareScheduler {
         inline void queue(const OutputEvent &evt) {
             return _sched->queue(evt);
         }
-        inline void queuePwm(const PrimitiveIoPin &pin, float ratio, float maxPeriod) {
+        inline void queuePwm(const PrimitiveIoPin &pin, float ratio, EventClockT::duration maxPeriod) {
             return _sched->queuePwm(pin, ratio, maxPeriod);
         }
         inline bool onIdleCpu(OnIdleCpuIntervalT interval) {

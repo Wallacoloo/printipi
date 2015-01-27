@@ -22,8 +22,8 @@
  */
  
 
-#ifndef DRIVERS_RCTHERMISTOR_H
-#define DRIVERS_RCTHERMISTOR_H
+#ifndef IODRIVERS_RCTHERMISTOR_H
+#define IODRIVERS_RCTHERMISTOR_H
 
 #include <cmath>
 #include <utility> //for std::move

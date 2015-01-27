@@ -22,16 +22,16 @@
  */
 
 
-#ifndef IODRIVERS_A4988_H
-#define IODRIVERS_A4988_H
+#ifndef IODRIVERS_DRV8825_H
+#define IODRIVERS_DRV8825_H
 
 #include "stepdirstepperdriver.h"
 
 namespace iodrv {
-    //The A4988 is just a stock STEP+DIRECTION stepper driver.
-    //A4988 docs: http://www.pololu.com/file/download/a4988_DMOS_microstepping_driver_with_translator.pdf?file_id=0J450
+    //The DRV8825 is just a stock STEP+DIRECTION stepper driver.
+    //DRV8825 docs: https://www.pololu.com/product/2133
     //TODO: in future, we ought to pass the minimum high/low time into the StepDirStepperDriver
-    typedef StepDirStepperDriver A4988;
+    typedef StepDirStepperDriver DRV8825;
 }
 
 

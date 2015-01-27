@@ -21,8 +21,8 @@
  * SOFTWARE.
  */
 
-#ifndef DRIVERS_IOPIN_H
-#define DRIVERS_IOPIN_H
+#ifndef IODRIVERS_IOPIN_H
+#define IODRIVERS_IOPIN_H
 
 #include <set>
 #include <utility> //for std::move
@@ -124,7 +124,7 @@ class IoPin {
         void makeDigitalOutput(IoLevel lev);
         //set the pin as a pwm output & give it the desired duty / period.
         //Doing these two actions together allow us to prevent the pin from ever being in an undefined state.
-        void makePwmOutput(float duty, float desiredPeriod=0);
+        void makePwmOutput(float duty, EventClockT::duration desiredPeriod=EventClockT::duration(0));
         //Configure the pin as an input
         void makeDigitalInput();
         //Read a binary logic level from the pin. MUST first call makeDigitalInput() to put the pin in input mode.
@@ -134,7 +134,7 @@ class IoPin {
         //Set the pin to output a PWM signal. MUST first call makePwmOutput() to put the pin in pwm mode.
         //@duty proportion of time that the pin should be ACTIVE (0.0 - 1.0).
         //@desiredPeriod *desired* PWM cycle length (the actual length isn't guaranteed). Useful for decreasing fet/relay switching frequency, etc. 
-        void pwmWrite(float duty, float desiredPeriod=0);
+        void pwmWrite(float duty, EventClockT::duration desiredPeriod=EventClockT::duration(0));
         //put the pin into its default state, as set by setDefaultState(...).
         void setToDefault();
 };
