@@ -170,7 +170,7 @@ return values.
         <location column="13" file="motion/axisstepper.h" line="91" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::ArcStepperT" name="ArcStepperT">
-        <location column="9" file="motion/lineardeltastepper.h" line="325" />
+        <location column="9" file="motion/lineardeltastepper.h" line="278" />
       </undocumented>
       <undocumented id="motion::LinearStepper::ArcStepperT" name="ArcStepperT">
         <location column="9" file="motion/linearstepper.h" line="51" />
@@ -308,7 +308,7 @@ return values.
         <location column="9" file="motion/linearcoordmap.h" line="103" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="181" />
+        <location column="9" file="motion/lineardeltastepper.h" line="136" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::executeHomeRoutine" name="executeHomeRoutine">
         <location column="9" file="motion/lineardeltacoordmap.h" line="127" />
@@ -317,7 +317,7 @@ return values.
         <location column="9" file="motion/lineardeltacoordmap.h" line="123" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="327" />
+        <location column="9" file="motion/lineardeltastepper.h" line="280" />
       </undocumented>
       <undocumented id="motion::LinearStepper::TIME_PER_STEP" name="TIME_PER_STEP">
         <location column="9" file="motion/linearstepper.h" line="53" />
@@ -722,10 +722,10 @@ return values.
         <location column="19" file="motion/linearcoordmap.h" line="111" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="181" />
+        <location column="19" file="motion/lineardeltastepper.h" line="136" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::StepperDriverT" name="StepperDriverT">
-        <location column="11" file="motion/lineardeltastepper.h" line="164" />
+        <location column="11" file="motion/lineardeltastepper.h" line="119" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::BedLevelT" name="BedLevelT">
         <location column="87" file="motion/lineardeltacoordmap.h" line="57" />
@@ -746,10 +746,10 @@ return values.
         <location column="19" file="motion/lineardeltacoordmap.h" line="127" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="327" />
+        <location column="19" file="motion/lineardeltastepper.h" line="280" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT">
-        <location column="11" file="motion/lineardeltastepper.h" line="310" />
+        <location column="11" file="motion/lineardeltastepper.h" line="265" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::CoordMapT" name="CoordMapT">
         <location column="19" file="motion/linearstepper.h" line="66" />
@@ -853,7 +853,7 @@ return values.
         <location column="1" file="motion/linearstepper.h" line="37" />
       </undocumented>
       <undocumented id="motion::DeltaAxis" name="DeltaAxis">
-        <location column="1" file="motion/lineardeltastepper.h" line="154" />
+        <location column="1" file="motion/lineardeltastepper.h" line="109" />
       </undocumented>
       <undocumented id="motion::StepDirection" name="StepDirection">
         <location column="1" file="motion/axisstepper.h" line="44" />
@@ -934,7 +934,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="149" name="method" undocumented="358">
+    <type documented="149" name="method" undocumented="357">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1885,7 +1885,7 @@ return values.
         <location column="9" file="motion/linearcoordmap.h" line="131" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/lineardeltastepper.h" line="260" />
+        <location column="9" file="motion/lineardeltastepper.h" line="215" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::L" name="L">
         <location column="9" file="motion/lineardeltacoordmap.h" line="81" />
@@ -1936,13 +1936,10 @@ return values.
         <location column="9" file="motion/lineardeltacoordmap.h" line="157" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/lineardeltastepper.h" line="399" />
-      </undocumented>
-      <undocumented id="motion::LinearDeltaStepper::getTerm1AndRootParam" name="getTerm1AndRootParam">
-        <location column="9" file="motion/lineardeltastepper.h" line="365" />
+        <location column="9" file="motion/lineardeltastepper.h" line="336" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::testDir" name="testDir">
-        <location column="9" file="motion/lineardeltastepper.h" line="383" />
+        <location column="9" file="motion/lineardeltastepper.h" line="293" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize::maxSize" name="maxSize">
         <location column="9" file="motion/motionplanner.h" line="73" />
@@ -2073,19 +2070,19 @@ return values.
         <location column="19" file="motion/linearcoordmap.h" line="103" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::AxisIdx" name="AxisIdx">
-        <location column="36" file="motion/lineardeltastepper.h" line="164" />
+        <location column="36" file="motion/lineardeltastepper.h" line="119" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
-        <location column="39" file="motion/lineardeltastepper.h" line="181" />
+        <location column="39" file="motion/lineardeltastepper.h" line="136" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::getStepperDriver::idx" name="idx">
         <location column="19" file="motion/lineardeltacoordmap.h" line="123" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
-        <location column="36" file="motion/lineardeltastepper.h" line="310" />
+        <location column="36" file="motion/lineardeltastepper.h" line="265" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
-        <location column="39" file="motion/lineardeltastepper.h" line="327" />
+        <location column="39" file="motion/lineardeltastepper.h" line="280" />
       </undocumented>
       <undocumented id="motion::LinearStepper::CoordType" name="CoordType">
         <location column="36" file="motion/linearstepper.h" line="47" />
@@ -2266,13 +2263,13 @@ return values.
         <location column="9" file="motion/linearcoordmap.h" line="71" />
       </undocumented>
       <undocumented id="motion::LinearDeltaArcStepper::LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaArcStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="180" />
+        <location column="9" file="motion/lineardeltastepper.h" line="135" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;" name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;">
         <location column="9" file="motion/lineardeltacoordmap.h" line="86" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="326" />
+        <location column="9" file="motion/lineardeltastepper.h" line="279" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::MotionPlanner&lt;Interface&gt;" name="MotionPlanner&lt;Interface&gt;">
         <location column="9" file="motion/motionplanner.h" line="136" />
@@ -2637,16 +2634,16 @@ return values.
         <location column="5" file="motion/linearstepper.h" line="40" />
       </undocumented>
       <undocumented id="motion::DELTA_AXIS_A" name="DELTA_AXIS_A">
-        <location column="5" file="motion/lineardeltastepper.h" line="155" />
+        <location column="5" file="motion/lineardeltastepper.h" line="110" />
       </undocumented>
       <undocumented id="motion::DELTA_AXIS_B" name="DELTA_AXIS_B">
-        <location column="5" file="motion/lineardeltastepper.h" line="156" />
+        <location column="5" file="motion/lineardeltastepper.h" line="111" />
       </undocumented>
       <undocumented id="motion::DELTA_AXIS_C" name="DELTA_AXIS_C">
-        <location column="5" file="motion/lineardeltastepper.h" line="157" />
+        <location column="5" file="motion/lineardeltastepper.h" line="112" />
       </undocumented>
       <undocumented id="motion::DELTA_AXIS_E" name="DELTA_AXIS_E">
-        <location column="5" file="motion/lineardeltastepper.h" line="158" />
+        <location column="5" file="motion/lineardeltastepper.h" line="113" />
       </undocumented>
       <undocumented id="motion::MOTIONFLAGS_DEFAULT" name="MOTIONFLAGS_DEFAULT">
         <location column="5" file="motion/motionplanner.h" line="48" />
@@ -3562,7 +3559,7 @@ return values.
       <undocumented name="desiredPeriod" />
     </function>
     <function id="motion::LinearDeltaArcStepper::testDir" name="testDir">
-      <location column="9" file="motion/lineardeltastepper.h" line="208" />
+      <location column="9" file="motion/lineardeltastepper.h" line="163" />
       <undocumented-return />
       <undocumented name="s" />
     </function>
@@ -3734,19 +3731,19 @@ return values.
       </doctype>
     </class>
     <field id="motion::LinearDeltaArcStepper::vx" name="vx">
-      <location column="9" file="motion/lineardeltastepper.h" line="172" />
+      <location column="9" file="motion/lineardeltastepper.h" line="127" />
       <doctype name="brief">
         <ref name="xc, yc, zc" />
       </doctype>
     </field>
     <field id="motion::LinearDeltaArcStepper::vy" name="vy">
-      <location column="9" file="motion/lineardeltastepper.h" line="172" />
+      <location column="9" file="motion/lineardeltastepper.h" line="127" />
       <doctype name="brief">
         <ref name="xc, yc, zc" />
       </doctype>
     </field>
     <field id="motion::LinearDeltaArcStepper::vz" name="vz">
-      <location column="9" file="motion/lineardeltastepper.h" line="172" />
+      <location column="9" file="motion/lineardeltastepper.h" line="127" />
       <doctype name="brief">
         <ref name="xc, yc, zc" />
       </doctype>

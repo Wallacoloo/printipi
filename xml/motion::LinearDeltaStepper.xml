@@ -35,20 +35,6 @@ LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-s
       <type name="std::size_t" />
     </templatenontypeparameter>
   </methodtemplate>
-  <method id="motion::LinearDeltaStepper::getTerm1AndRootParam" name="getTerm1AndRootParam">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="motion::LinearDeltaStepper::getTerm1AndRootParam::term1" name="term1">
-      <type builtin="yes" name="float" qualifier=" &amp;" />
-    </argument>
-    <argument id="motion::LinearDeltaStepper::getTerm1AndRootParam::rootParam" name="rootParam">
-      <type builtin="yes" name="float" qualifier=" &amp;" />
-    </argument>
-    <argument id="motion::LinearDeltaStepper::getTerm1AndRootParam::s" name="s">
-      <type builtin="yes" name="float" />
-    </argument>
-  </method>
   <method id="motion::LinearDeltaStepper::testDir" name="testDir">
     <return>
       <type builtin="yes" name="float" />
