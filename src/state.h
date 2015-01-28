@@ -666,10 +666,10 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if(cmd.isM280()) {
         //set servo angle. P=servo index, S=angle (in degrees, presumably)
         int index = cmd.getP(-1);
-        if (index >= 0) {
-            float angleDeg = cmd.getS(0);
+        float angleDeg = cmd.getS(0);
+        if (index >= 0 && (unsigned)index < ioDrivers.servos().length()) {
             ioDrivers.servos()[index].setServoAngleDegrees(angleDeg);
-        }
+        } //else: index error
         reply(gparse::Response::Ok);
     } else if (cmd.isM999()) {
         //Restart after being stopped by error.

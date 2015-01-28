@@ -310,14 +310,20 @@ template <typename TupleT> class IODrivers {
 	    		iterator<Predicate> end() {
 	    			return iterator<Predicate>(drivers, std::tuple_size<TupleT>::value, false);
 	    		}
+                //return the number of IODrivers included in this set.
+                std::size_t length() {
+                    return reduce([](std::size_t numSeen, const iteratorbase&) {
+                        return numSeen + 1;
+                    }, 0);
+                }
 	    		iterator<Predicate> operator[](std::size_t idx) {
 	    			return begin() + idx;
 	    		}
-                template <typename PredB> iterinfo<Union<Predicate, PredB> > unionWith(const iterinfo<PredB> &other) {
+                template <typename PredB> iterinfo<Union<Predicate, PredB> > unionWith(const iterinfo<PredB> &other) const {
                     (void)other; //only used for type-deducation
                     return iterinfo<Union<Predicate, PredB> >(drivers);
                 }
-                template <typename PredB> iterinfo<Intersection<Predicate, PredB> > filter(const iterinfo<PredB> &other) {
+                template <typename PredB> iterinfo<Intersection<Predicate, PredB> > filter(const iterinfo<PredB> &other) const {
                     (void)other; //only used for type-deducation
                     return iterinfo<Intersection<Predicate, PredB> >(drivers);
                 }
