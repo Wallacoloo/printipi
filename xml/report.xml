@@ -280,10 +280,10 @@ return values.
         <location column="13" file="iodrivers/iodrivers.h" line="92" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::filter" name="filter">
-        <location column="17" file="iodrivers/iodrivers.h" line="320" />
+        <location column="17" file="iodrivers/iodrivers.h" line="326" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::unionWith" name="unionWith">
-        <location column="17" file="iodrivers/iodrivers.h" line="316" />
+        <location column="17" file="iodrivers/iodrivers.h" line="322" />
       </undocumented>
       <undocumented id="motion::AxisStepper::getNextTime" name="getNextTime">
         <location column="9" file="motion/axisstepper.h" line="76" />
@@ -578,49 +578,49 @@ return values.
         <location column="23" file="iodrivers/iodrivers.h" line="92" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::filter::Predicate" name="Predicate">
-        <location column="19" file="iodrivers/iodrivers.h" line="392" />
+        <location column="19" file="iodrivers/iodrivers.h" line="398" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
         <location column="16" file="iodrivers/iodrivers.h" line="303" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::all::Args" name="Args">
-        <location column="30" file="iodrivers/iodrivers.h" line="358" />
+        <location column="30" file="iodrivers/iodrivers.h" line="364" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::all::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="358" />
+        <location column="18" file="iodrivers/iodrivers.h" line="364" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::all::F" name="F">
-        <location column="27" file="iodrivers/iodrivers.h" line="365" />
+        <location column="27" file="iodrivers/iodrivers.h" line="371" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::any::Args" name="Args">
-        <location column="30" file="iodrivers/iodrivers.h" line="345" />
+        <location column="30" file="iodrivers/iodrivers.h" line="351" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::any::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="345" />
+        <location column="18" file="iodrivers/iodrivers.h" line="351" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::any::F" name="F">
-        <location column="27" file="iodrivers/iodrivers.h" line="352" />
+        <location column="27" file="iodrivers/iodrivers.h" line="358" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::apply::Args" name="Args">
-        <location column="30" file="iodrivers/iodrivers.h" line="325" />
+        <location column="30" file="iodrivers/iodrivers.h" line="331" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::apply::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="325" />
+        <location column="18" file="iodrivers/iodrivers.h" line="331" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::filter::PredB" name="PredB">
-        <location column="27" file="iodrivers/iodrivers.h" line="320" />
+        <location column="27" file="iodrivers/iodrivers.h" line="326" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::Args" name="Args">
-        <location column="44" file="iodrivers/iodrivers.h" line="335" />
+        <location column="44" file="iodrivers/iodrivers.h" line="341" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="335" />
+        <location column="18" file="iodrivers/iodrivers.h" line="341" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::Ret" name="Ret">
-        <location column="30" file="iodrivers/iodrivers.h" line="335" />
+        <location column="30" file="iodrivers/iodrivers.h" line="341" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::unionWith::PredB" name="PredB">
-        <location column="27" file="iodrivers/iodrivers.h" line="316" />
+        <location column="27" file="iodrivers/iodrivers.h" line="322" />
       </undocumented>
       <undocumented id="iodrv::IoPin::IoPin::Args" name="Args">
         <location column="19" file="iodrivers/iopin.h" line="95" />
@@ -934,7 +934,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="149" name="method" undocumented="357">
+    <type documented="150" name="method" undocumented="357">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1674,7 +1674,7 @@ return values.
         <location column="13" file="iodrivers/iodrivers.h" line="59" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::heaters" name="heaters">
-        <location column="9" file="iodrivers/iodrivers.h" line="408" />
+        <location column="9" file="iodrivers/iodrivers.h" line="414" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iteratorbase::consumeNextEvent" name="consumeNextEvent">
         <location column="17" file="iodrivers/iodrivers.h" line="258" />
@@ -1743,10 +1743,10 @@ return values.
         <location column="8" file="iodrivers/iodrivers.h" line="310" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::operator[]" name="operator[]">
-        <location column="8" file="iodrivers/iodrivers.h" line="313" />
+        <location column="8" file="iodrivers/iodrivers.h" line="319" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::peekNextEvent" name="peekNextEvent">
-        <location column="9" file="iodrivers/iodrivers.h" line="444" />
+        <location column="9" file="iodrivers/iodrivers.h" line="450" />
       </undocumented>
       <undocumented id="iodrv::IoPin::operator=" name="operator=">
         <location column="9" file="iodrivers/iopin.h" line="88" />
@@ -3233,98 +3233,102 @@ return values.
       <undocumented-return />
       <undocumented name="add" />
     </function>
+    <function id="iodrv::IODrivers::iterinfo::length" name="length">
+      <location column="17" file="iodrivers/iodrivers.h" line="314" />
+      <undocumented-return />
+    </function>
     <function id="iodrv::IODrivers::iterinfo::apply" name="apply">
-      <location column="8" file="iodrivers/iodrivers.h" line="325" />
+      <location column="8" file="iodrivers/iodrivers.h" line="331" />
       <undocumented name="args" />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::reduce" name="reduce">
-      <location column="8" file="iodrivers/iodrivers.h" line="335" />
+      <location column="8" file="iodrivers/iodrivers.h" line="341" />
       <undocumented-return />
       <undocumented name="args" />
       <undocumented name="dflt" />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::any" name="any">
-      <location column="8" file="iodrivers/iodrivers.h" line="345" />
+      <location column="8" file="iodrivers/iodrivers.h" line="351" />
       <undocumented-return />
       <undocumented name="shortCircuit" />
       <undocumented name="args" />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::any" name="any">
-      <location column="17" file="iodrivers/iodrivers.h" line="352" />
+      <location column="17" file="iodrivers/iodrivers.h" line="358" />
       <undocumented-return />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::all" name="all">
-      <location column="8" file="iodrivers/iodrivers.h" line="358" />
+      <location column="8" file="iodrivers/iodrivers.h" line="364" />
       <undocumented-return />
       <undocumented name="shortCircuit" />
       <undocumented name="args" />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::all" name="all">
-      <location column="17" file="iodrivers/iodrivers.h" line="365" />
+      <location column="17" file="iodrivers/iodrivers.h" line="371" />
       <undocumented-return />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iter" name="iter">
-      <location column="6" file="iodrivers/iodrivers.h" line="371" />
+      <location column="6" file="iodrivers/iodrivers.h" line="377" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::begin" name="begin">
-      <location column="9" file="iodrivers/iodrivers.h" line="375" />
+      <location column="9" file="iodrivers/iodrivers.h" line="381" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::end" name="end">
-      <location column="9" file="iodrivers/iodrivers.h" line="379" />
+      <location column="9" file="iodrivers/iodrivers.h" line="385" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::operator[]" name="operator[]">
-      <location column="9" file="iodrivers/iodrivers.h" line="384" />
+      <location column="9" file="iodrivers/iodrivers.h" line="390" />
       <undocumented-return />
       <undocumented name="idx" />
       <misspelled name="return" />
     </function>
     <function id="iodrv::IODrivers::filter" name="filter">
-      <location column="9" file="iodrivers/iodrivers.h" line="392" />
+      <location column="9" file="iodrivers/iodrivers.h" line="398" />
       <undocumented name="p" />
     </function>
     <function id="iodrv::IODrivers::fans" name="fans">
-      <location column="6" file="iodrivers/iodrivers.h" line="397" />
+      <location column="6" file="iodrivers/iodrivers.h" line="403" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::hotends" name="hotends">
-      <location column="6" file="iodrivers/iodrivers.h" line="401" />
+      <location column="6" file="iodrivers/iodrivers.h" line="407" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::heatedBeds" name="heatedBeds">
-      <location column="6" file="iodrivers/iodrivers.h" line="405" />
+      <location column="6" file="iodrivers/iodrivers.h" line="411" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::servos" name="servos">
-      <location column="6" file="iodrivers/iodrivers.h" line="412" />
+      <location column="6" file="iodrivers/iodrivers.h" line="418" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::endstops" name="endstops">
-      <location column="6" file="iodrivers/iodrivers.h" line="416" />
+      <location column="6" file="iodrivers/iodrivers.h" line="422" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::setHotendTemp" name="setHotendTemp">
-      <location column="3" file="iodrivers/iodrivers.h" line="428" />
+      <location column="3" file="iodrivers/iodrivers.h" line="434" />
       <undocumented name="temp" />
     </function>
     <function id="iodrv::IODrivers::setBedTemp" name="setBedTemp">
-      <location column="3" file="iodrivers/iodrivers.h" line="432" />
+      <location column="3" file="iodrivers/iodrivers.h" line="438" />
       <undocumented name="temp" />
     </function>
     <function id="iodrv::IODrivers::setFanDutyCycle" name="setFanDutyCycle">
-      <location column="3" file="iodrivers/iodrivers.h" line="436" />
+      <location column="3" file="iodrivers/iodrivers.h" line="442" />
       <undocumented name="duty" />
     </function>
     <function id="iodrv::IODrivers::onIdleCpu" name="onIdleCpu">
-      <location column="3" file="iodrivers/iodrivers.h" line="441" />
+      <location column="3" file="iodrivers/iodrivers.h" line="447" />
       <undocumented-return />
       <undocumented name="interval" />
     </function>
