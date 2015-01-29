@@ -735,6 +735,11 @@ template <typename Drv> bool State<Drv>::areHeatersReady() {
 }
 
 template <typename Drv> std::string State<Drv>::getEndstopStatusString() {
+    //give a useful message if the machine doesn't have any endstops
+    if (ioDrivers.endstops().empty()) {
+        return "(no endstops)";
+    }
+    //return the endstop status strings joined by spaces, eg "triggered open triggered"
     std::ostringstream imploded;
     bool first = true;
     for (auto& driver : ioDrivers.endstops()) {
