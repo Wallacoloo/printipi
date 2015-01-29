@@ -658,7 +658,6 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         reply(gparse::Response::Ok);
     } else if (cmd.isM119()) {
         //get endstop status
-        LOGW("M119 not tested\n");
         reply(gparse::Response(gparse::ResponseOk, getEndstopStatusString()));
     } else if (cmd.isM140()) { //set BED temp and return immediately.
         LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");

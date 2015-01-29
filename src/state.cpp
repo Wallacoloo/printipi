@@ -206,6 +206,10 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
             helper.sendCommand("M117 Hello, World!", "ok");
             //"then the machine shouldn't crash"
         }
+         WHEN("The M117 command is sent") {
+            helper.sendCommand("M119", "ok");
+            //"then the machine shouldn't crash"
+        }
         WHEN("The M280 command is sent with servo index=0") {
             helper.sendCommand("M280 P0 S40.5", "ok");
             //"then the machine shouldn't crash"
