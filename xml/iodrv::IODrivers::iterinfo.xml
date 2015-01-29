@@ -22,12 +22,6 @@
       <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
     </return>
   </method>
-  <method id="iodrv::IODrivers::iterinfo::length" name="length">
-    <brief>return the number of IODrivers included in this set.</brief>
-    <return>
-      <type name="std::size_t" />
-    </return>
-  </method>
   <method id="iodrv::IODrivers::iterinfo::operator[]" name="operator[]">
     <return>
       <type name="IODrivers&lt;TupleT&gt;::iterator&lt;Predicate&gt;" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator" />
