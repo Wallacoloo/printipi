@@ -18,13 +18,15 @@ Printipi powering a Mini Kossel (2014/08/18): http://youtu.be/g4UD5MRas3E
 Compiling
 ========
 
-**Prereqs**: gcc >= 4.6 or another compiler with support for C++11  
+**Prereqs**: gcc >= 4.6, clang++ >= 3.4 or another compiler with support for C++11  
 gcc >= 4.7 is highly recommended because of the benefits gained from link-time optimization, which isn't supported in gcc 4.6 when using C++11  
 gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get install g++-4.7` and to use it over the system's gcc, compile with `make CXX=g++-4.7`
 
 First, get the sources: `git clone https://github.com/Wallacoloo/printipi.git`  
 
-To compile Printipi, navigate to the src directory and type `make MACHINE=<path/to/machine.h> <target>`, where `<machine>` is the relative path to some machine contained under src/machines, eg `rpi/kosselrampsfd.h` or the `generic/cartesian.h` machine, and `<target>` is either debug, release, debugrel, profile, or minsize. Both are case-sensitive. A binary will be produced under the `build` directory with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run e.g. `sudo ./printipi`).
+To compile Printipi, navigate to the src directory and type `make MACHINE=<path/to/machine.h> <target>`, where `<machine>` is the **relative** path to some machine contained under src/machines, eg `rpi/kosselrampsfd.h` or the `generic/cartesian.h` machine, and `<target>` is either debug, release, debugrel, profile, or minsize. Both are case-sensitive. Example: `make MACHINE=rpi/kosselrampsfd.h release`.
+
+A binary will be produced under the `build` directory with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run e.g. `sudo ./printipi`).
 
 Usage
 ========
@@ -36,7 +38,7 @@ Using with Octoprint:
 
 **Prereqs**: install the program "socat". Eg `sudo apt-get install socat`
 
-Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. 
+Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. In theory, this should work with most printer controllers that connect to a printer via serial/USB, but only Octoprint has been tested.
 
 Configuration Files
 ========
@@ -48,12 +50,14 @@ Documentation/Assistance
 
 Besides this readme, there is also the auto-generated documentation. You can view this online [here](http://wallacoloo.github.io/printipi/) (note that this documentation is based on the *devel* version and is really aimed towards the Printipi developers rather than its end-users) or you can compile the documentation via `make doc` and view the resulting `index.html` in a web-browser.
 
-If you need assistance in anything Prinitpi-related, feel free to post a thread on the Printipi [Google Group](https://groups.google.com/forum/#!forum/printipi) or email me.
+If you need assistance in anything Prinitpi-related, feel free to post a thread on the Printipi [Google Group](https://groups.google.com/forum/#!forum/printipi) or email wallace.colin.a@gmail.com.
 
 If you would like to report a bug or request a feature, use the [issue tracker](https://github.com/Wallacoloo/printipi/issues).
 
 Supporting Other CPU Architectures
 ========
+
+To get Printipi running on another platform besides the Raspberry Pi, there are only 2 things you need to do:
 
 1. Add a folder under src/platforms for your platform (e.g. `src/platforms/arduino` if you aim to add Arduino support).
 2. Implement `src/platforms/<platform>/primitiveiopin.h`. This interface is documented in `src/platforms/generic/primitiveiopin.h` and an example implementation can be found in `src/platforms/rpi/primitiveiopin.h`.
@@ -71,7 +75,7 @@ If you wish to support Printipi development, take a look at the issue tracker fo
 Limitations
 ========
 
-Printipi currently runs entirely in userland. While this makes development and usage trivial, it makes hardware management less safe. Printipi uses one of the Raspberry Pi's DMA channels in order to achieve precise output timing (2~4uS precision), however if another program tries to access the same DMA channel as Printipi, it **will** lead to errors.
+Printipi currently runs entirely in userland. While this makes development and usage trivial, it makes hardware management less safe. Printipi uses one of the Raspberry Pi's DMA channels in order to achieve precise output timing (2~4uS precision), however if you install another program that tries to access the same DMA channel as Printipi, it **will** lead to errors (Very, *very* few programs use DMA directly though, so conflicts are pretty unlikely).
 
 Also, very heavy bus contention may degrade timing accuracy. Experiments show 500ksamples/sec (2uS resolution) to be dependable under most operating conditions, except heavy network/disk usage. 250ksamples/sec (4uS resolution) is dependable for at least 1 MB/sec network loads, and is the default data rate.
 
