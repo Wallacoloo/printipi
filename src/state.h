@@ -594,9 +594,14 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM105()) { //get temperature, in C
-        CelciusType t, b;
-        t = ioDrivers.hotends()[0].getMeasuredTemperature();
-        b = ioDrivers.heatedBeds()[0].getMeasuredTemperature();
+        CelciusType t = mathutil::ABSOLUTE_ZERO_CELCIUS;
+        CelciusType b = mathutil::ABSOLUTE_ZERO_CELCIUS;
+        if (ioDrivers.hotends().length()) {
+            t = ioDrivers.hotends()[0].getMeasuredTemperature();
+        }
+        if (ioDrivers.heatedBeds().length()) {
+            b = ioDrivers.heatedBeds()[0].getMeasuredTemperature();
+        }
         reply(gparse::Response(gparse::ResponseOk, {
             std::make_pair("T", std::to_string(t)),
             std::make_pair("B", std::to_string(b))
