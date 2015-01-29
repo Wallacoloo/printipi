@@ -601,23 +601,21 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
             std::make_pair("T", std::to_string(t)),
             std::make_pair("B", std::to_string(b))
         }));
-    } else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
-        float s = cmd.getS(1.0); //PWM duty cycle
+    } else if (cmd.isM106() || cmd.isM107()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
+        if (cmd.isM107()) {
+            LOGW("M107 is deprecated. Use M106 with S=0 instead.\n");
+        }
+        float s = cmd.isM107() ? 0.0 : cmd.getS(1.0); //PWM duty cycle
         if (s > 1) { //host thinks we're working from 0 to 255
             s = s/256.0; //TODO: move this logic into cmd.getSNorm()
         }
         if (cmd.hasP()) {
-            this->ioDrivers.fans()[cmd.getP()].setFanDutyCycle(s);
+            int index = cmd.getP();
+            if (index >= 0 && (unsigned)index < ioDrivers.fans().length()) {
+                this->ioDrivers.fans()[index].setFanDutyCycle(s);
+            } //TODO: else: index error
         } else {
             this->ioDrivers.setFanDutyCycle(s);
-        }
-        reply(gparse::Response::Ok);
-    } else if (cmd.isM107()) { //set fan = off.
-        LOGW("M107 is deprecated. Use M106 with S=0 instead.\n");
-        if (cmd.hasP()) {
-            this->ioDrivers.fans()[cmd.getP()].setFanDutyCycle(0);
-        } else {
-            this->ioDrivers.setFanDutyCycle(0);
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM109()) { //set extruder temperature to S param and wait.
@@ -669,7 +667,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float angleDeg = cmd.getS(0);
         if (index >= 0 && (unsigned)index < ioDrivers.servos().length()) {
             ioDrivers.servos()[index].setServoAngleDegrees(angleDeg);
-        } //else: index error
+        } //TODO: else: index error
         reply(gparse::Response::Ok);
     } else if (cmd.isM999()) {
         //Restart after being stopped by error.

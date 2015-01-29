@@ -191,6 +191,14 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
             helper.sendCommand("M106 S64", "ok");
             //"then the machine shouldn't crash", and S64 should be interpreted as 64/255 duty cycle.
         }
+        WHEN("The M106 command is sent to activate a fan at a specific index") {
+            helper.sendCommand("M106 P0", "ok");
+            //"then the machine shouldn't crash"
+        }
+        WHEN("The M106 command is sent to activate a fan at an invalid index (-1)") {
+            helper.sendCommand("M106 P-1", "ok");
+            //"then the machine shouldn't crash"
+        }
         WHEN("The M115 command is sent to get firmware info") {
             helper.sendCommand("M115", "ok");
         }
