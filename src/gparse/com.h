@@ -85,6 +85,8 @@ class Com {
     std::string _pending;
     //The last parsed command that is awaiting a reply
     Command _parsed;
+    //Some hosts will accept lines starting with "//" and treat them as comments (useful for debugging). Others may not.
+    bool _doSendGcodeComments;
     //Most of the time, the files being read from are actually streams of some sort, and so an EOF just means the data isn't yet ready.
     //But when reading from an ACTUAL file, an EOF actually does indicate the end of commands.
     bool _dieOnEof;
@@ -105,9 +107,11 @@ class Com {
         //useful when dealing with "subprograms" (printing from a file), in which the replies don't need to be sent back to the main com channel.
         //Com(const std::string &fileR=NULL_FILE_STR, const std::string &fileW=NULL_FILE_STR, bool dieOnEof=false);
         inline Com(const ComStreamOwnershipMarker<std::istream*> &readStream=nullptr, 
-            const ComStreamOwnershipMarker<std::ostream*> &writeStream=nullptr, bool dieOnEof=false) 
+            const ComStreamOwnershipMarker<std::ostream*> &writeStream=nullptr, bool dieOnEof=false,
+            bool doSendGcodeComments=true) 
           : _readFd(readStream.argument, ComStreamDeleter(readStream.hasOwnership)), 
             _writeFd(writeStream.argument, ComStreamDeleter(writeStream.hasOwnership)),
+            _doSendGcodeComments(doSendGcodeComments), 
             _dieOnEof(dieOnEof),
             _isAtEof(false) {
         }

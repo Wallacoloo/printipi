@@ -89,6 +89,10 @@ class Response {
         inline bool isNull() const {
             return code == ResponseNull;
         }
+        //return true if the response represents a comment (a line starting with // ), which the host can safely ignore
+        inline bool isComment() const {
+            return code == ResponseWarning;
+        }
     private:
         template <typename Container> std::string joinPairsAndStr(const Container &pairs, const std::string &append) {
             std::ostringstream imploded;
