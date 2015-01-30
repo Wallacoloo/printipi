@@ -34,7 +34,8 @@ namespace gparse {
 
 enum ResponseCode {
     ResponseOk,
-    ResponseNull
+    ResponseNull,
+    ResponseWarning,
 };
 
 /* 
@@ -55,6 +56,9 @@ class Response {
         //Construct a response from a code, followed by an optional extra string (implicitly joined by a space)
         inline Response(ResponseCode code, const std::string &rest="") : code(code), rest(rest) {
         }
+        //Construct a response from a code, followed by an optional extra C string (implicitly joined by a space)
+        inline Response(ResponseCode code, const char* rest) : code(code), rest(rest) {
+        }
 
         //Construct a response from a code, a set of Key:Value pairs, and then an extra string (all 3 are joined by spaced)
         //@pairs is given as any container whose elements are std::pairs<std::string, std::string>,
@@ -69,8 +73,18 @@ class Response {
         template <typename T> Response(ResponseCode code, std::initializer_list<T> pairs, const std::string &rest="")
           : code(code), rest(joinPairsAndStr(pairs, rest)) {}
 
+        //Convert the Response object to a string
+        //Note: no newline character is appended to the end; the string is a single line of text.
         inline std::string toString() const {
-            return (code == ResponseOk ? "ok" : "") + (rest.empty() ? "" : " " + rest);
+            switch (code) {
+                case ResponseOk:
+                    return "ok" + (rest.empty() ? "" : " " + rest);
+                case ResponseWarning:
+                    return "// warning: " + rest;
+                case ResponseNull:
+                default:
+                    return rest;
+            }
         }
         inline bool isNull() const {
             return code == ResponseNull;

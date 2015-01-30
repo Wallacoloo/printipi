@@ -141,7 +141,7 @@ template <typename MachineT=machines::Machine> class TestHelper {
             *inputFile << cmd << '\n';
             inputFile->flush();
             INFO("It should be acknowledged with something that begins with '" + expect + "'");
-            std::string got = readLine();
+            std::string got = readLineIgnoreComments();
             REQUIRE(got.substr(0, expect.length()) == expect);
         }
 
@@ -198,7 +198,15 @@ template <typename MachineT=machines::Machine> class TestHelper {
                 } 
             }
             return read;
-        };          
+        };
+        //get the next line from Printipi's output that ISN'T a comment (i.e. must be a gcode response)
+        std::string readLineIgnoreComments() {
+            std::string line;
+            do { 
+                line=readLine();
+            } while (line.substr(0, 2) == "//");
+            return line;
+        }        
 };
 
 template <typename MachineT, typename ... Args> TestHelper<MachineT> makeTestHelper(MachineT &&machine, Args ...args) {

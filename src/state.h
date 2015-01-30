@@ -591,6 +591,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if (cmd.isM104()) { //set hotend temperature and return immediately.
         if (cmd.hasS()) {
             ioDrivers.setHotendTemp(cmd.getS());
+        } else {
+            reply(gparse::Response(gparse::ResponseWarning, "No temperature given"));
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM105()) { //get temperature, in C
@@ -618,7 +620,9 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
             int index = cmd.getP();
             if (index >= 0 && (unsigned)index < ioDrivers.fans().length()) {
                 this->ioDrivers.fans()[index].setFanDutyCycle(s);
-            } //TODO: else: index error
+            }  else {
+                reply(gparse::Response(gparse::ResponseWarning, "Invalid fan index"));
+            }
         } else {
             this->ioDrivers.setFanDutyCycle(s);
         }
@@ -627,6 +631,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         LOGW("(state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
         if (cmd.hasS()) {
             ioDrivers.setHotendTemp(cmd.getS());
+        } else {
+            reply(gparse::Response(gparse::ResponseWarning, "No temperature given"));
         }
         _isWaitingForHotend = true;
         reply(gparse::Response::Ok);
@@ -663,6 +669,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");
         if (cmd.hasS()) {
             ioDrivers.setBedTemp(cmd.getS());
+        } else {
+            reply(gparse::Response(gparse::ResponseWarning, "No temperature given"));
         }
         reply(gparse::Response::Ok);
     } else if(cmd.isM280()) {
@@ -671,7 +679,9 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float angleDeg = cmd.getS(0);
         if (index >= 0 && (unsigned)index < ioDrivers.servos().length()) {
             ioDrivers.servos()[index].setServoAngleDegrees(angleDeg);
-        } //TODO: else: index error
+        } else {
+            reply(gparse::Response(gparse::ResponseWarning, "Invalid servo index"));
+        }
         reply(gparse::Response::Ok);
     } else if (cmd.isM999()) {
         //Restart after being stopped by error.
