@@ -61,9 +61,6 @@ class CoordMap {
             //return a tuple of uninitialized AxisSteppers for moving in a straight line. See axisstepper.h for the definition of AxisStepper.
             return std::tuple<>();
         }
-        inline std::tuple<> getHomeSteppers() const {
-            return std::tuple<>();
-        }
         inline std::tuple<> getArcSteppers() const {
             return std::tuple<>();
         }
