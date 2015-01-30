@@ -60,12 +60,29 @@ This specialization is only needed in gcc-4.6, where automatic deduction of a st
       <type name="std::string" qualifier=" const &amp;" />
     </argument>
   </constructor>
+  <constructor id="gparse::Response::Response" name="Response">
+    <brief>Construct a response from a code, followed by an optional extra C string (implicitly joined by a space)</brief>
+    <argument id="gparse::Response::Response::code" name="code">
+      <type name="ResponseCode" ref="gparse#gparse::ResponseCode" />
+    </argument>
+    <argument id="gparse::Response::Response::rest" name="rest">
+      <type builtin="yes" name="char" qualifier=" const *" />
+    </argument>
+  </constructor>
+  <method id="gparse::Response::isComment" name="isComment">
+    <brief>return true if the response represents a comment (a line starting with // ), which the host can safely ignore</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
   <method id="gparse::Response::isNull" name="isNull">
     <return>
       <type builtin="yes" name="bool" />
     </return>
   </method>
   <method id="gparse::Response::toString" name="toString">
+    <brief>Convert the Response object to a string</brief>
+    <doc>Note: no newline character is appended to the end; the string is a single line of text.</doc>
     <return>
       <type name="std::string" />
     </return>

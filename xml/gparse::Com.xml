@@ -43,6 +43,9 @@ Com(const std::string &amp;fileR=NULL_FILE_STR, const std::string &amp;fileW=NUL
     <argument id="gparse::Com::Com::dieOnEof" name="dieOnEof">
       <type builtin="yes" name="bool" />
     </argument>
+    <argument id="gparse::Com::Com::doSendGcodeComments" name="doSendGcodeComments">
+      <type builtin="yes" name="bool" />
+    </argument>
   </constructor>
   <method id="gparse::Com::getCommand" name="getCommand">
     <brief>returns any pending command.</brief>

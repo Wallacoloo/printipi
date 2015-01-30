@@ -95,4 +95,10 @@
       <type name="std::string" />
     </return>
   </method>
+  <method id="TestHelper::readLineIgnoreComments" name="readLineIgnoreComments">
+    <brief>get the next line from Printipi's output that ISN'T a comment (i.e. must be a gcode response)</brief>
+    <return>
+      <type name="std::string" />
+    </return>
+  </method>
 </classtemplate>
