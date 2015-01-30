@@ -86,11 +86,6 @@ Note: the term "axis coordinates" refers to an individual motor's microstep inde
       <type name="std::array&lt;int, 0&gt;" qualifier=" const &amp;" />
     </argument>
   </method>
-  <method id="motion::CoordMap::getHomeSteppers" name="getHomeSteppers">
-    <return>
-      <type name="std::tuple&lt;&gt;" />
-    </return>
-  </method>
   <method id="motion::CoordMap::numAxis" name="numAxis" static="yes">
     <brief>return the number of axis (physical motors) that we have.</brief>
     <return>

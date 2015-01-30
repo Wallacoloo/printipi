@@ -280,10 +280,10 @@ return values.
         <location column="13" file="iodrivers/iodrivers.h" line="92" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::filter" name="filter">
-        <location column="17" file="iodrivers/iodrivers.h" line="326" />
+        <location column="17" file="iodrivers/iodrivers.h" line="330" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::unionWith" name="unionWith">
-        <location column="17" file="iodrivers/iodrivers.h" line="322" />
+        <location column="17" file="iodrivers/iodrivers.h" line="326" />
       </undocumented>
       <undocumented id="motion::AxisStepper::getNextTime" name="getNextTime">
         <location column="9" file="motion/axisstepper.h" line="76" />
@@ -578,49 +578,49 @@ return values.
         <location column="23" file="iodrivers/iodrivers.h" line="92" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::filter::Predicate" name="Predicate">
-        <location column="19" file="iodrivers/iodrivers.h" line="398" />
+        <location column="19" file="iodrivers/iodrivers.h" line="402" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::Predicate" name="Predicate">
         <location column="16" file="iodrivers/iodrivers.h" line="303" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::all::Args" name="Args">
-        <location column="30" file="iodrivers/iodrivers.h" line="364" />
+        <location column="30" file="iodrivers/iodrivers.h" line="368" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::all::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="364" />
+        <location column="18" file="iodrivers/iodrivers.h" line="368" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::all::F" name="F">
-        <location column="27" file="iodrivers/iodrivers.h" line="371" />
+        <location column="27" file="iodrivers/iodrivers.h" line="375" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::any::Args" name="Args">
-        <location column="30" file="iodrivers/iodrivers.h" line="351" />
+        <location column="30" file="iodrivers/iodrivers.h" line="355" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::any::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="351" />
+        <location column="18" file="iodrivers/iodrivers.h" line="355" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::any::F" name="F">
-        <location column="27" file="iodrivers/iodrivers.h" line="358" />
+        <location column="27" file="iodrivers/iodrivers.h" line="362" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::apply::Args" name="Args">
-        <location column="30" file="iodrivers/iodrivers.h" line="331" />
+        <location column="30" file="iodrivers/iodrivers.h" line="335" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::apply::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="331" />
+        <location column="18" file="iodrivers/iodrivers.h" line="335" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::filter::PredB" name="PredB">
-        <location column="27" file="iodrivers/iodrivers.h" line="326" />
+        <location column="27" file="iodrivers/iodrivers.h" line="330" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::Args" name="Args">
-        <location column="44" file="iodrivers/iodrivers.h" line="341" />
+        <location column="44" file="iodrivers/iodrivers.h" line="345" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::F" name="F">
-        <location column="18" file="iodrivers/iodrivers.h" line="341" />
+        <location column="18" file="iodrivers/iodrivers.h" line="345" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::reduce::Ret" name="Ret">
-        <location column="30" file="iodrivers/iodrivers.h" line="341" />
+        <location column="30" file="iodrivers/iodrivers.h" line="345" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::unionWith::PredB" name="PredB">
-        <location column="27" file="iodrivers/iodrivers.h" line="322" />
+        <location column="27" file="iodrivers/iodrivers.h" line="326" />
       </undocumented>
       <undocumented id="iodrv::IoPin::IoPin::Args" name="Args">
         <location column="19" file="iodrivers/iopin.h" line="95" />
@@ -701,7 +701,7 @@ return values.
         <location column="11" file="motion/axisstepper.h" line="97" />
       </undocumented>
       <undocumented id="motion::CoordMap::executeHomeRoutine::Interface" name="Interface">
-        <location column="19" file="motion/coordmap.h" line="81" />
+        <location column="19" file="motion/coordmap.h" line="78" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::BedLevelT" name="BedLevelT">
         <location column="87" file="motion/linearcoordmap.h" line="44" />
@@ -934,7 +934,7 @@ return values.
         <location column="1" file="motion/motionplanner.h" line="63" />
       </undocumented>
     </type>
-    <type documented="150" name="method" undocumented="357">
+    <type documented="151" name="method" undocumented="356">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1674,7 +1674,7 @@ return values.
         <location column="13" file="iodrivers/iodrivers.h" line="59" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::heaters" name="heaters">
-        <location column="9" file="iodrivers/iodrivers.h" line="414" />
+        <location column="9" file="iodrivers/iodrivers.h" line="418" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iteratorbase::consumeNextEvent" name="consumeNextEvent">
         <location column="17" file="iodrivers/iodrivers.h" line="258" />
@@ -1743,10 +1743,10 @@ return values.
         <location column="8" file="iodrivers/iodrivers.h" line="310" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::iterinfo::operator[]" name="operator[]">
-        <location column="8" file="iodrivers/iodrivers.h" line="319" />
+        <location column="8" file="iodrivers/iodrivers.h" line="323" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::peekNextEvent" name="peekNextEvent">
-        <location column="9" file="iodrivers/iodrivers.h" line="450" />
+        <location column="9" file="iodrivers/iodrivers.h" line="454" />
       </undocumented>
       <undocumented id="iodrv::IoPin::operator=" name="operator=">
         <location column="9" file="iodrivers/iopin.h" line="88" />
@@ -1843,13 +1843,10 @@ return values.
         <location column="9" file="motion/constantacceleration.h" line="50" />
       </undocumented>
       <undocumented id="motion::CoordMap::getArcSteppers" name="getArcSteppers">
-        <location column="9" file="motion/coordmap.h" line="67" />
+        <location column="9" file="motion/coordmap.h" line="64" />
       </undocumented>
       <undocumented id="motion::CoordMap::getAxisSteppers" name="getAxisSteppers">
         <location column="9" file="motion/coordmap.h" line="60" />
-      </undocumented>
-      <undocumented id="motion::CoordMap::getHomeSteppers" name="getHomeSteppers">
-        <location column="9" file="motion/coordmap.h" line="64" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::MM_STEPS" name="MM_STEPS">
         <location column="9" file="motion/linearcoordmap.h" line="66" />
@@ -3237,98 +3234,102 @@ return values.
       <location column="17" file="iodrivers/iodrivers.h" line="314" />
       <undocumented-return />
     </function>
+    <function id="iodrv::IODrivers::iterinfo::empty" name="empty">
+      <location column="17" file="iodrivers/iodrivers.h" line="320" />
+      <undocumented-return />
+    </function>
     <function id="iodrv::IODrivers::iterinfo::apply" name="apply">
-      <location column="8" file="iodrivers/iodrivers.h" line="331" />
+      <location column="8" file="iodrivers/iodrivers.h" line="335" />
       <undocumented name="args" />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::reduce" name="reduce">
-      <location column="8" file="iodrivers/iodrivers.h" line="341" />
+      <location column="8" file="iodrivers/iodrivers.h" line="345" />
       <undocumented-return />
       <undocumented name="args" />
       <undocumented name="dflt" />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::any" name="any">
-      <location column="8" file="iodrivers/iodrivers.h" line="351" />
+      <location column="8" file="iodrivers/iodrivers.h" line="355" />
       <undocumented-return />
       <undocumented name="shortCircuit" />
       <undocumented name="args" />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::any" name="any">
-      <location column="17" file="iodrivers/iodrivers.h" line="358" />
+      <location column="17" file="iodrivers/iodrivers.h" line="362" />
       <undocumented-return />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::all" name="all">
-      <location column="8" file="iodrivers/iodrivers.h" line="364" />
+      <location column="8" file="iodrivers/iodrivers.h" line="368" />
       <undocumented-return />
       <undocumented name="shortCircuit" />
       <undocumented name="args" />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iterinfo::all" name="all">
-      <location column="17" file="iodrivers/iodrivers.h" line="371" />
+      <location column="17" file="iodrivers/iodrivers.h" line="375" />
       <undocumented-return />
       <undocumented name="f" />
     </function>
     <function id="iodrv::IODrivers::iter" name="iter">
-      <location column="6" file="iodrivers/iodrivers.h" line="377" />
+      <location column="6" file="iodrivers/iodrivers.h" line="381" />
       <undocumented-return />
     </function>
     <function id="iodrv::IODrivers::begin" name="begin">
-      <location column="9" file="iodrivers/iodrivers.h" line="381" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IODrivers::end" name="end">
       <location column="9" file="iodrivers/iodrivers.h" line="385" />
       <undocumented-return />
     </function>
+    <function id="iodrv::IODrivers::end" name="end">
+      <location column="9" file="iodrivers/iodrivers.h" line="389" />
+      <undocumented-return />
+    </function>
     <function id="iodrv::IODrivers::operator[]" name="operator[]">
-      <location column="9" file="iodrivers/iodrivers.h" line="390" />
+      <location column="9" file="iodrivers/iodrivers.h" line="394" />
       <undocumented-return />
       <undocumented name="idx" />
       <misspelled name="return" />
     </function>
     <function id="iodrv::IODrivers::filter" name="filter">
-      <location column="9" file="iodrivers/iodrivers.h" line="398" />
+      <location column="9" file="iodrivers/iodrivers.h" line="402" />
       <undocumented name="p" />
     </function>
     <function id="iodrv::IODrivers::fans" name="fans">
-      <location column="6" file="iodrivers/iodrivers.h" line="403" />
-      <undocumented-return />
-    </function>
-    <function id="iodrv::IODrivers::hotends" name="hotends">
       <location column="6" file="iodrivers/iodrivers.h" line="407" />
       <undocumented-return />
     </function>
-    <function id="iodrv::IODrivers::heatedBeds" name="heatedBeds">
+    <function id="iodrv::IODrivers::hotends" name="hotends">
       <location column="6" file="iodrivers/iodrivers.h" line="411" />
       <undocumented-return />
     </function>
-    <function id="iodrv::IODrivers::servos" name="servos">
-      <location column="6" file="iodrivers/iodrivers.h" line="418" />
+    <function id="iodrv::IODrivers::heatedBeds" name="heatedBeds">
+      <location column="6" file="iodrivers/iodrivers.h" line="415" />
       <undocumented-return />
     </function>
-    <function id="iodrv::IODrivers::endstops" name="endstops">
+    <function id="iodrv::IODrivers::servos" name="servos">
       <location column="6" file="iodrivers/iodrivers.h" line="422" />
       <undocumented-return />
     </function>
-    <function id="iodrv::IODrivers::setHotendTemp" name="setHotendTemp">
-      <location column="3" file="iodrivers/iodrivers.h" line="434" />
-      <undocumented name="temp" />
+    <function id="iodrv::IODrivers::endstops" name="endstops">
+      <location column="6" file="iodrivers/iodrivers.h" line="426" />
+      <undocumented-return />
     </function>
-    <function id="iodrv::IODrivers::setBedTemp" name="setBedTemp">
+    <function id="iodrv::IODrivers::setHotendTemp" name="setHotendTemp">
       <location column="3" file="iodrivers/iodrivers.h" line="438" />
       <undocumented name="temp" />
     </function>
-    <function id="iodrv::IODrivers::setFanDutyCycle" name="setFanDutyCycle">
+    <function id="iodrv::IODrivers::setBedTemp" name="setBedTemp">
       <location column="3" file="iodrivers/iodrivers.h" line="442" />
+      <undocumented name="temp" />
+    </function>
+    <function id="iodrv::IODrivers::setFanDutyCycle" name="setFanDutyCycle">
+      <location column="3" file="iodrivers/iodrivers.h" line="446" />
       <undocumented name="duty" />
     </function>
     <function id="iodrv::IODrivers::onIdleCpu" name="onIdleCpu">
-      <location column="3" file="iodrivers/iodrivers.h" line="447" />
+      <location column="3" file="iodrivers/iodrivers.h" line="451" />
       <undocumented-return />
       <undocumented name="interval" />
     </function>
@@ -3375,41 +3376,41 @@ return values.
       <undocumented-return />
     </function>
     <function id="motion::CoordMap::getEndstop" name="getEndstop">
-      <location column="9" file="motion/coordmap.h" line="72" />
+      <location column="9" file="motion/coordmap.h" line="69" />
       <undocumented-return />
       <undocumented name="axis" />
     </function>
     <function id="motion::CoordMap::numAxis" name="numAxis">
-      <location column="9" file="motion/coordmap.h" line="77" />
+      <location column="9" file="motion/coordmap.h" line="74" />
       <undocumented-return />
     </function>
     <function id="motion::CoordMap::executeHomeRoutine" name="executeHomeRoutine">
-      <location column="9" file="motion/coordmap.h" line="81" />
+      <location column="9" file="motion/coordmap.h" line="78" />
       <undocumented name="interface" />
     </function>
     <function id="motion::CoordMap::getHomePosition" name="getHomePosition">
-      <location column="9" file="motion/coordmap.h" line="86" />
+      <location column="9" file="motion/coordmap.h" line="83" />
       <undocumented-return />
       <undocumented name="cur" />
       <misspelled name="return" />
     </function>
     <function id="motion::CoordMap::applyLeveling" name="applyLeveling">
-      <location column="9" file="motion/coordmap.h" line="92" />
+      <location column="9" file="motion/coordmap.h" line="89" />
       <undocumented-return />
       <undocumented name="xyz" />
     </function>
     <function id="motion::CoordMap::bound" name="bound">
-      <location column="9" file="motion/coordmap.h" line="96" />
+      <location column="9" file="motion/coordmap.h" line="93" />
       <undocumented-return />
       <undocumented name="xyze" />
     </function>
     <function id="motion::CoordMap::xyzeFromMechanical" name="xyzeFromMechanical">
-      <location column="9" file="motion/coordmap.h" line="100" />
+      <location column="9" file="motion/coordmap.h" line="97" />
       <undocumented-return />
       <undocumented name="mech" />
     </function>
     <function id="motion::CoordMap::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement">
-      <location column="9" file="motion/coordmap.h" line="107" />
+      <location column="9" file="motion/coordmap.h" line="104" />
       <undocumented-return />
     </function>
     <function id="machines::Machine::maxRetractRate" name="maxRetractRate">

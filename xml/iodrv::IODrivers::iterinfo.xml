@@ -23,9 +23,15 @@
     </return>
   </method>
   <method id="iodrv::IODrivers::iterinfo::length" name="length">
-    <brief>return the number of IODrivers included in this set.</brief>
+    <brief>@return the number of IODrivers included in this set.</brief>
     <return>
       <type name="std::size_t" />
+    </return>
+  </method>
+  <method id="iodrv::IODrivers::iterinfo::empty" name="empty">
+    <brief>@return true if there are no items in the set</brief>
+    <return>
+      <type builtin="yes" name="bool" />
     </return>
   </method>
   <method id="iodrv::IODrivers::iterinfo::operator[]" name="operator[]">
