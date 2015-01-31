@@ -30,7 +30,7 @@ LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-s
     <templatetypeparameter id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;::CoordMapT" name="CoordMapT" />
   </methodtemplate>
   <methodtemplate id="motion::LinearDeltaStepper::beginLine" name="beginLine">
-    <brief>linear motion initializer</brief>
+    <brief>function to initiate a linear (through cartesian space) motion</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -49,7 +49,7 @@ LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-s
     </templatenontypeparameter>
   </methodtemplate>
   <methodtemplate id="motion::LinearDeltaStepper::beginArc" name="beginArc">
-    <brief>arc motion initializer</brief>
+    <brief>function to initiate a circular arc (through cartesian space) motion</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>

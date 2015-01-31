@@ -19,6 +19,21 @@
     </argument>
   </constructor>
   <destructor id="TestHelper::~TestHelper&lt;MachineT&gt;" name="~TestHelper&lt;MachineT&gt;" />
+  <method id="TestHelper::testHoming" name="testHoming">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="TestHelper::testLinearMovement" name="testLinearMovement">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="TestHelper::testArcMovement" name="testArcMovement">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
   <method id="TestHelper::sendCommand" name="sendCommand">
     <brief>@cmd g-code command to send to printer (a newline character will be appended)</brief>
     <return>

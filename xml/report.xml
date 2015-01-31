@@ -295,7 +295,7 @@ return values.
         <location column="9" file="motion/lineardeltacoordmap.h" line="121" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;" name="LinearDeltaStepper&lt;StepperDriverT&gt;">
-        <location column="9" file="motion/lineardeltastepper.h" line="141" />
+        <location column="9" file="motion/lineardeltastepper.h" line="142" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;" name="LinearStepper&lt;StepperDriverT&gt;">
         <location column="9" file="motion/linearstepper.h" line="52" />
@@ -364,28 +364,28 @@ return values.
         <location column="11" file="testhelper.h" line="93" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::AClock" name="AClock">
-        <location column="19" file="testhelper.h" line="155" />
+        <location column="19" file="testhelper.h" line="200" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::ADur" name="ADur">
-        <location column="36" file="testhelper.h" line="155" />
+        <location column="36" file="testhelper.h" line="200" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::BClock" name="BClock">
-        <location column="51" file="testhelper.h" line="155" />
+        <location column="51" file="testhelper.h" line="200" />
       </undocumented>
       <undocumented id="TestHelper::requireDurationsApproxEqual::BDur" name="BDur">
-        <location column="68" file="testhelper.h" line="155" />
+        <location column="68" file="testhelper.h" line="200" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::AClock" name="AClock">
-        <location column="19" file="testhelper.h" line="173" />
+        <location column="19" file="testhelper.h" line="218" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::ADur" name="ADur">
-        <location column="36" file="testhelper.h" line="173" />
+        <location column="36" file="testhelper.h" line="218" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::BClock" name="BClock">
-        <location column="51" file="testhelper.h" line="173" />
+        <location column="51" file="testhelper.h" line="218" />
       </undocumented>
       <undocumented id="TestHelper::requireTimesApproxEqual::BDur" name="BDur">
-        <location column="68" file="testhelper.h" line="173" />
+        <location column="68" file="testhelper.h" line="218" />
       </undocumented>
       <undocumented id="TestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
         <location column="95" file="testhelper.h" line="74" />
@@ -613,19 +613,19 @@ return values.
         <location column="11" file="iodrivers/tempcontrol.h" line="54" />
       </undocumented>
       <undocumented id="makeTestHelper::Args" name="Args">
-        <location column="30" file="testhelper.h" line="212" />
+        <location column="30" file="testhelper.h" line="257" />
       </undocumented>
       <undocumented id="makeTestHelper::MachineT" name="MachineT">
-        <location column="11" file="testhelper.h" line="212" />
+        <location column="11" file="testhelper.h" line="257" />
       </undocumented>
       <undocumented id="makeTestMachine::GetAccelerationProfile" name="GetAccelerationProfile">
-        <location column="1" file="testhelper.h" line="223" />
+        <location column="1" file="testhelper.h" line="268" />
       </undocumented>
       <undocumented id="makeTestMachine::GetCoordMap" name="GetCoordMap">
-        <location column="54" file="testhelper.h" line="222" />
+        <location column="54" file="testhelper.h" line="267" />
       </undocumented>
       <undocumented id="makeTestMachine::GetIoDrivers" name="GetIoDrivers">
-        <location column="11" file="testhelper.h" line="222" />
+        <location column="11" file="testhelper.h" line="267" />
       </undocumented>
       <undocumented id="mathutil::CtoK::T" name="T">
         <location column="11" file="common/mathutil.h" line="38" />
@@ -715,16 +715,16 @@ return values.
         <location column="19" file="motion/lineardeltacoordmap.h" line="121" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="141" />
+        <location column="19" file="motion/lineardeltastepper.h" line="142" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT">
         <location column="11" file="motion/lineardeltastepper.h" line="120" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::beginArc::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="164" />
+        <location column="19" file="motion/lineardeltastepper.h" line="165" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::beginLine::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/lineardeltastepper.h" line="154" />
+        <location column="19" file="motion/lineardeltastepper.h" line="155" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;::CoordMapT" name="CoordMapT">
         <location column="19" file="motion/linearstepper.h" line="52" />
@@ -840,8 +840,8 @@ return values.
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
         <location column="1" file="gparse/response.cpp" line="3" />
-        <location column="1" file="gparse/com.cpp" line="26" />
         <location column="1" file="gparse/command.cpp" line="26" />
+        <location column="1" file="gparse/com.cpp" line="26" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -906,7 +906,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="89" />
       </undocumented>
     </type>
-    <type documented="153" name="method" undocumented="347">
+    <type documented="153" name="method" undocumented="350">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -992,10 +992,19 @@ return values.
         <location column="9" file="state.h" line="213" />
       </undocumented>
       <undocumented id="TestHelper::exitOnce" name="exitOnce">
-        <location column="9" file="testhelper.h" line="178" />
+        <location column="9" file="testhelper.h" line="223" />
+      </undocumented>
+      <undocumented id="TestHelper::testArcMovement" name="testArcMovement">
+        <location column="9" file="testhelper.h" line="162" />
+      </undocumented>
+      <undocumented id="TestHelper::testHoming" name="testHoming">
+        <location column="9" file="testhelper.h" line="137" />
+      </undocumented>
+      <undocumented id="TestHelper::testLinearMovement" name="testLinearMovement">
+        <location column="9" file="testhelper.h" line="143" />
       </undocumented>
       <undocumented id="TestHelper::threadedEventLoop" name="threadedEventLoop">
-        <location column="9" file="testhelper.h" line="185" />
+        <location column="9" file="testhelper.h" line="230" />
       </undocumented>
       <undocumented id="TestMachine::getAccelerationProfile" name="getAccelerationProfile">
         <location column="9" file="testhelper.h" line="87" />
@@ -1881,7 +1890,7 @@ return values.
         <location column="9" file="motion/lineardeltacoordmap.h" line="151" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/lineardeltastepper.h" line="287" />
+        <location column="9" file="motion/lineardeltastepper.h" line="290" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize::maxSize" name="maxSize">
         <location column="9" file="motion/motionplanner.h" line="70" />
@@ -2009,10 +2018,10 @@ return values.
         <location column="48" file="motion/axisstepper.h" line="164" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::beginArc::sz" name="sz">
-        <location column="39" file="motion/lineardeltastepper.h" line="164" />
+        <location column="39" file="motion/lineardeltastepper.h" line="165" />
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::beginLine::sz" name="sz">
-        <location column="39" file="motion/lineardeltastepper.h" line="154" />
+        <location column="39" file="motion/lineardeltastepper.h" line="155" />
       </undocumented>
       <undocumented id="motion::LinearStepper::beginArc::sz" name="sz">
         <location column="39" file="motion/linearstepper.h" line="72" />
@@ -2050,7 +2059,7 @@ return values.
     <type documented="5" name="structtemplate" undocumented="0" />
     <type documented="8" name="functiontemplate" undocumented="3">
       <undocumented id="makeTestHelper" name="makeTestHelper">
-        <location column="1" file="testhelper.h" line="212" />
+        <location column="1" file="testhelper.h" line="257" />
       </undocumented>
       <undocumented id="motion::stepDirFromSign" name="stepDirFromSign">
         <location column="1" file="motion/axisstepper.h" line="49" />
@@ -3344,35 +3353,35 @@ return values.
       <undocumented name="b" />
     </function>
     <function id="TestHelper::sendCommand" name="sendCommand">
-      <location column="9" file="testhelper.h" line="139" />
+      <location column="9" file="testhelper.h" line="184" />
       <undocumented name="cmd" />
     </function>
     <function id="TestHelper::verifyPosition" name="verifyPosition">
-      <location column="9" file="testhelper.h" line="149" />
+      <location column="9" file="testhelper.h" line="194" />
       <undocumented name="y" />
       <undocumented name="x" />
       <undocumented name="z" />
     </function>
     <function id="TestHelper::requireDurationsApproxEqual" name="requireDurationsApproxEqual">
-      <location column="9" file="testhelper.h" line="155" />
+      <location column="9" file="testhelper.h" line="200" />
       <undocumented name="a" />
       <undocumented name="b" />
     </function>
     <function id="TestHelper::requireTimesApproxEqual" name="requireTimesApproxEqual">
-      <location column="9" file="testhelper.h" line="173" />
+      <location column="9" file="testhelper.h" line="218" />
       <undocumented name="a" />
       <undocumented name="b" />
     </function>
     <function id="TestHelper::readLine" name="readLine">
-      <location column="9" file="testhelper.h" line="192" />
+      <location column="9" file="testhelper.h" line="237" />
       <undocumented-return />
     </function>
     <function id="TestHelper::readLineIgnoreComments" name="readLineIgnoreComments">
-      <location column="9" file="testhelper.h" line="203" />
+      <location column="9" file="testhelper.h" line="248" />
       <undocumented-return />
     </function>
     <function id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="222" />
+      <location column="1" file="testhelper.h" line="267" />
       <undocumented-return />
       <undocumented name="getCoordMap" />
       <undocumented name="getIoDrivers" />
@@ -3486,13 +3495,13 @@ return values.
       <undocumented name="desiredPeriod" />
     </function>
     <function id="motion::LinearDeltaStepper::beginLine" name="beginLine">
-      <location column="9" file="motion/lineardeltastepper.h" line="154" />
+      <location column="9" file="motion/lineardeltastepper.h" line="155" />
       <undocumented name="map" />
       <undocumented name="vel" />
       <undocumented name="curPos" />
     </function>
     <function id="motion::LinearDeltaStepper::beginArc" name="beginArc">
-      <location column="9" file="motion/lineardeltastepper.h" line="164" />
+      <location column="9" file="motion/lineardeltastepper.h" line="165" />
       <undocumented name="map" />
       <undocumented name="center" />
       <undocumented name="v" />
@@ -3503,7 +3512,7 @@ return values.
       <undocumented name="extVel" />
     </function>
     <function id="motion::LinearDeltaStepper::testDir" name="testDir">
-      <location column="9" file="motion/lineardeltastepper.h" line="179" />
+      <location column="9" file="motion/lineardeltastepper.h" line="180" />
       <undocumented-return />
       <undocumented name="s" />
     </function>
@@ -3661,7 +3670,7 @@ return values.
       </doctype>
     </typedef>
     <functiontemplate id="makeTestMachine" name="makeTestMachine">
-      <location column="1" file="testhelper.h" line="222" />
+      <location column="1" file="testhelper.h" line="267" />
       <doctype name="doc">
         <ref name="typename ... Args" />
         <ref name="Args..." />
