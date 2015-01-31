@@ -7,18 +7,6 @@ LinearStepper implements the AxisStepper interface for Cartesian-style robots.
     <type name="" />
   </base>
   <templatetypeparameter id="motion::LinearStepper::StepperDriverT" name="StepperDriverT" />
-  <methodtemplate access="protected" id="motion::LinearStepper::TIME_PER_STEP" name="TIME_PER_STEP">
-    <return>
-      <type builtin="yes" name="float" />
-    </return>
-    <argument id="motion::LinearStepper::TIME_PER_STEP::map" name="map">
-      <type name="const CoordMapT" qualifier=" const &amp;" />
-    </argument>
-    <argument id="motion::LinearStepper::TIME_PER_STEP::vel" name="vel">
-      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
-    </argument>
-    <templatetypeparameter id="motion::LinearStepper::TIME_PER_STEP::CoordMapT" name="CoordMapT" />
-  </methodtemplate>
   <methodtemplate id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;" name="LinearStepper&lt;StepperDriverT&gt;">
     <return>
       <type builtin="yes" name="void" />
