@@ -56,11 +56,10 @@ namespace motion {
  */
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public CoordMap {
     typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
-    typedef std::tuple<LinearDeltaStepper<Stepper1, DELTA_AXIS_A>, 
-                       LinearDeltaStepper<Stepper2, DELTA_AXIS_B>, 
-                       LinearDeltaStepper<Stepper3, DELTA_AXIS_C>, 
-                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
+    typedef std::tuple<LinearDeltaStepper<Stepper1>, 
+                       LinearDeltaStepper<Stepper2>, 
+                       LinearDeltaStepper<Stepper3>, 
+                       LinearStepper<Stepper4> > _AxisStepperTypes;
 
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
     float _r, _L, _h, _buildrad;
@@ -105,10 +104,12 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                 endstops[2]);
         }
         inline _AxisStepperTypes getAxisSteppers() const {
-            return _AxisStepperTypes();
-        }
-        inline _ArcStepperTypes getArcSteppers() const {
-            return _ArcStepperTypes();
+            return std::make_tuple(
+                       LinearDeltaStepper<Stepper1>(0, DELTA_AXIS_A,     *this, std::get<0>(stepperDrivers), &endstops[0]), 
+                       LinearDeltaStepper<Stepper2>(1, DELTA_AXIS_B,     *this, std::get<1>(stepperDrivers), &endstops[1]), 
+                       LinearDeltaStepper<Stepper3>(2, DELTA_AXIS_C,     *this, std::get<2>(stepperDrivers), &endstops[2]), 
+                       LinearStepper<Stepper4>     (3, CARTESIAN_AXIS_E, *this, std::get<3>(stepperDrivers), &endstops[3])
+            );
         }
 
         inline static constexpr std::size_t numAxis() {
@@ -116,13 +117,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         }
         inline int getAxisPosition(const std::array<int, 4> &cur, std::size_t axis) const {
             return cur[axis];
-        }
-        inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
-            return endstops[axis];
-        }
-        template <std::size_t idx> auto getStepperDriver() const
-         -> const typename std::tuple_element<idx, StepperDriverTypes>::type& {
-            return std::get<idx>(stepperDrivers);
         }
         template <typename Interface> void executeHomeRoutine(Interface &interface) {
             //must disable buffering so that endstops can be reliably checked

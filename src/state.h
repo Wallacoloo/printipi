@@ -96,9 +96,9 @@ template <typename Drv> class State {
                 IntervalTimer timer;
                 timer.clock();
                 bool hwNeedsCpu = _hardwareScheduler.onIdleCpu(interval);
-                LOGV("Time spent in _hardwareScheduler:onIdleCpu: %" PRId64 ", %i, ret %i\n", timer.clockDiff().count(), interval, hwNeedsCpu);
+                LOGV("Time spent in _hardwareScheduler:onIdleCpu: %" PRId64 ", %i, ret %i\n", (int64_t)timer.clockDiff().count(), interval, hwNeedsCpu);
                 bool stateNeedsCpu = _state.onIdleCpu(interval);
-                LOGV("Time spent in state.h:onIdleCpu: %" PRId64 ", %i, ret %i\n", timer.clockDiff().count(), interval, stateNeedsCpu);
+                LOGV("Time spent in state.h:onIdleCpu: %" PRId64 ", %i, ret %i\n", (int64_t)timer.clockDiff().count(), interval, stateNeedsCpu);
                 return hwNeedsCpu || stateNeedsCpu;
             }
             inline void queue(const OutputEvent &evt) {
@@ -591,39 +591,48 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if (cmd.isM104()) { //set hotend temperature and return immediately.
         if (cmd.hasS()) {
             ioDrivers.setHotendTemp(cmd.getS());
+        } else {
+            reply(gparse::Response(gparse::ResponseWarning, "No temperature given"));
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM105()) { //get temperature, in C
-        CelciusType t, b;
-        t = ioDrivers.hotends()[0].getMeasuredTemperature();
-        b = ioDrivers.heatedBeds()[0].getMeasuredTemperature();
+        CelciusType t = mathutil::ABSOLUTE_ZERO_CELCIUS;
+        CelciusType b = mathutil::ABSOLUTE_ZERO_CELCIUS;
+        if (ioDrivers.hotends().length()) {
+            t = ioDrivers.hotends()[0].getMeasuredTemperature();
+        }
+        if (ioDrivers.heatedBeds().length()) {
+            b = ioDrivers.heatedBeds()[0].getMeasuredTemperature();
+        }
         reply(gparse::Response(gparse::ResponseOk, {
             std::make_pair("T", std::to_string(t)),
             std::make_pair("B", std::to_string(b))
         }));
-    } else if (cmd.isM106()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
-        float s = cmd.getS(1.0); //PWM duty cycle
+    } else if (cmd.isM106() || cmd.isM107()) { //set fan speed. Takes parameter S. Can be 0-255 (PWM) or in some implementations, 0.0-1.0
+        if (cmd.isM107()) {
+            LOGW("M107 is deprecated. Use M106 with S=0 instead.\n");
+        }
+        float s = cmd.isM107() ? 0.0 : cmd.getS(1.0); //PWM duty cycle
         if (s > 1) { //host thinks we're working from 0 to 255
             s = s/256.0; //TODO: move this logic into cmd.getSNorm()
         }
         if (cmd.hasP()) {
-            this->ioDrivers.fans()[cmd.getP()].setFanDutyCycle(s);
+            int index = cmd.getP();
+            if (index >= 0 && (unsigned)index < ioDrivers.fans().length()) {
+                this->ioDrivers.fans()[index].setFanDutyCycle(s);
+            }  else {
+                reply(gparse::Response(gparse::ResponseWarning, "Invalid fan index"));
+            }
         } else {
             this->ioDrivers.setFanDutyCycle(s);
-        }
-        reply(gparse::Response::Ok);
-    } else if (cmd.isM107()) { //set fan = off.
-        LOGW("M107 is deprecated. Use M106 with S=0 instead.\n");
-        if (cmd.hasP()) {
-            this->ioDrivers.fans()[cmd.getP()].setFanDutyCycle(0);
-        } else {
-            this->ioDrivers.setFanDutyCycle(0);
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM109()) { //set extruder temperature to S param and wait.
         LOGW("(state.h): OP_M109 (set extruder temperature and wait) not fully implemented\n");
         if (cmd.hasS()) {
             ioDrivers.setHotendTemp(cmd.getS());
+        } else {
+            reply(gparse::Response(gparse::ResponseWarning, "No temperature given"));
         }
         _isWaitingForHotend = true;
         reply(gparse::Response::Ok);
@@ -655,20 +664,23 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         reply(gparse::Response::Ok);
     } else if (cmd.isM119()) {
         //get endstop status
-        LOGW("M119 not tested\n");
         reply(gparse::Response(gparse::ResponseOk, getEndstopStatusString()));
     } else if (cmd.isM140()) { //set BED temp and return immediately.
         LOGW("(gparse/state.h): OP_M140 (set bed temp) is untested\n");
         if (cmd.hasS()) {
             ioDrivers.setBedTemp(cmd.getS());
+        } else {
+            reply(gparse::Response(gparse::ResponseWarning, "No temperature given"));
         }
         reply(gparse::Response::Ok);
     } else if(cmd.isM280()) {
         //set servo angle. P=servo index, S=angle (in degrees, presumably)
         int index = cmd.getP(-1);
-        if (index >= 0) {
-            float angleDeg = cmd.getS(0);
+        float angleDeg = cmd.getS(0);
+        if (index >= 0 && (unsigned)index < ioDrivers.servos().length()) {
             ioDrivers.servos()[index].setServoAngleDegrees(angleDeg);
+        } else {
+            reply(gparse::Response(gparse::ResponseWarning, "Invalid servo index"));
         }
         reply(gparse::Response::Ok);
     } else if (cmd.isM999()) {
@@ -732,6 +744,11 @@ template <typename Drv> bool State<Drv>::areHeatersReady() {
 }
 
 template <typename Drv> std::string State<Drv>::getEndstopStatusString() {
+    //give a useful message if the machine doesn't have any endstops
+    if (ioDrivers.endstops().empty()) {
+        return "(no endstops)";
+    }
+    //return the endstop status strings joined by spaces, eg "triggered open triggered"
     std::ostringstream imploded;
     bool first = true;
     for (auto& driver : ioDrivers.endstops()) {

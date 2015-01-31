@@ -44,43 +44,37 @@ enum CartesianAxis {
 /* 
  * LinearStepper implements the AxisStepper interface for Cartesian-style robots.
  */
-template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper : public AxisStepperWithDriver<StepperDriverT> {
+template <typename StepperDriverT> class LinearStepper : public AxisStepperWithDriver<StepperDriverT> {
+    CartesianAxis coordType;
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
     public:
-        typedef LinearStepper<StepperDriverT, CoordType> ArcStepperT;
-    protected:
-        template <typename CoordMapT> float TIME_PER_STEP(const CoordMapT &map, const Vector4f &vel) const {
-            //return units of time. v is mm/sec, STEPS_MM is steps/mm.
-            //therefore v*STEPS_MM = steps/sec.
-            //1/(v*STEPS_MM) is sec/steps.
-            //multiplied by 1 step and units are sec. Therefore t = 1/(v*STEPS_MM);
-            //NOTE: this may return a NEGATIVE time, indicating that the stepping direction is backward.
-            assert(CoordType==CARTESIAN_AXIS_X || CoordType==CARTESIAN_AXIS_Y || CoordType==CARTESIAN_AXIS_Z || CoordType==CARTESIAN_AXIS_E);
-            return 1./ (vel.array()[CoordType] * map.STEPS_MM(CoordType));
+        template <typename CoordMapT> inline LinearStepper(int idx, CartesianAxis coordType, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop)
+         : AxisStepperWithDriver<StepperDriverT>(idx, stepper),
+           coordType(coordType),
+           endstop(endstop) {
+            (void)map;
+            assert(coordType==CARTESIAN_AXIS_X || coordType==CARTESIAN_AXIS_Y || coordType==CARTESIAN_AXIS_Z || coordType==CARTESIAN_AXIS_E);
         }
-    public:
-        //default constructor
-        inline LinearStepper() : endstop(nullptr) {}
         //Linear movement constructor
-        template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, 
-          const Vector4f &vel)
-        : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<CoordType>()),
-          endstop(&map.getEndstop(CoordType)),
-          timePerStep(std::fabs( TIME_PER_STEP(map, vel) )) {
-                (void)map; (void)curPos; //unused
-                this->time = 0;
-                this->direction = stepDirFromSign( TIME_PER_STEP(map, vel) );
-            }
+        template <typename CoordMapT, std::size_t sz> void beginLine(const CoordMapT &map, const std::array<int, sz>& curPos, 
+          const Vector4f &vel) {
+            (void)curPos; //unused
+            //timePerStep is in units of sec/step. v is mm/sec, STEPS_MM is steps/mm.
+            //therefore v*STEPS_MM = steps/sec, so 1. / (v*STEPS_MM) is steps/sec
+            float myVel = vel.array()[coordType];
+            float signedTimePerStep = 1. / (myVel * map.STEPS_MM(coordType));
+            timePerStep = std::fabs(signedTimePerStep);
+            this->time = 0;
+            this->direction = stepDirFromSign(signedTimePerStep);
+        }
         //Arc movement constructor
-        template <typename CoordMapT, std::size_t sz> LinearStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, 
+        template <typename CoordMapT, std::size_t sz> void beginArc(const CoordMapT &map, const std::array<int, sz> &curPos, 
           const Vector3f &center, const Vector3f &u, const Vector3f &v,  
-          float arcRad, float arcVel, float extVel)
-        : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<CoordType>()), 
-          endstop(&map.getEndstop(CoordType)),
-          timePerStep(std::fabs(1./ (extVel * map.STEPS_MM(CoordType)))) {
-            (void)map; (void)idx; (void)curPos; (void)center; (void)u; (void)v; (void)arcRad; (void)arcVel; //unused
-            assert(CoordType == CARTESIAN_AXIS_E); //can only use a LinearStepper as an Arc implementation for the extruder axis, since that moves at const velocity
+          float arcRad, float arcVel, float extVel) {
+            (void)map; (void)curPos; (void)center; (void)u; (void)v; (void)arcRad; (void)arcVel; //unused
+            assert(coordType == CARTESIAN_AXIS_E); //can only use a LinearStepper as an Arc implementation for the extruder axis, since that moves at const velocity
+            timePerStep = std::fabs(1./ (extVel * map.STEPS_MM(coordType)));
             this->time = 0;
             this->direction = stepDirFromSign(extVel);
         }

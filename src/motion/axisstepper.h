@@ -71,7 +71,6 @@ class AxisStepper {
         float time; //time of next step
         StepDirection direction; //direction of next step
         inline int index() const { return _index; } //NOT TO BE OVERRIDEN
-        inline AxisStepper() {}
         
         template <typename TupleT> static AxisStepper& getNextTime(TupleT &axes);
         template <typename TupleT, typename CoordMapT, std::size_t MechSize> static void initAxisSteppers(TupleT &steppers, bool useEndstops, const CoordMapT &map, const std::array<int, MechSize>& curPos, const Vector4f &vel);
@@ -85,19 +84,11 @@ class AxisStepper {
             (void)useEndstops;
             assert(false && "AxisStepper::_nextStep() must be overriden in any child classes");
         } 
-    public:
-        //Arc steppers:
-        template <typename... Types> struct GetArcStepperTypes {
-            typedef std::tuple<typename Types::ArcStepperT...> ArcStepperTypes;
-        };
-        template <typename... Types> struct GetArcStepperTypes<std::tuple<Types...> > : GetArcStepperTypes<Types...> {};
-        
 };
 
 template <typename StepperDriver> class AxisStepperWithDriver : public AxisStepper {
     const StepperDriver *driver; //must be pointer, because cannot move a reference
     public:
-        AxisStepperWithDriver() : AxisStepper() {}
         AxisStepperWithDriver(int idx, const StepperDriver &d) : AxisStepper(idx), driver(&d) {}
         inline auto getStepOutputEventSequence(EventClockT::time_point absoluteTime) const
          -> decltype(driver->getEventOutputSequence(absoluteTime, direction)) {
@@ -137,7 +128,7 @@ namespace {
     struct _AxisStepper__initAxisSteppers {
         template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, bool useEndstops, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector4f &vel) {
             (void)_myIdx; (void)stepper; //unused
-            std::get<MyIdx>(*steppers) = std::move(T(MyIdx, *map, curPos, vel));
+            std::get<MyIdx>(*steppers).beginLine(*map, curPos, vel);
             std::get<MyIdx>(*steppers)._nextStep(useEndstops);
         }
     };
@@ -146,7 +137,7 @@ namespace {
     struct _AxisStepper__initAxisArcSteppers {
         template <std::size_t MyIdx, typename TupleT, typename T, typename CoordMapT, std::size_t MechSize> void operator()(std::integral_constant<std::size_t, MyIdx> _myIdx, T &stepper, TupleT *steppers, bool useEndstops, const CoordMapT *map, std::array<int, MechSize>& curPos, const Vector3f &center, const Vector3f &u, const Vector3f &v, float arcRad, float arcVel, float extVel) {
             (void)_myIdx; (void)stepper; //unused
-            std::get<MyIdx>(*steppers) = T(MyIdx, *map, curPos, center, u, v, arcRad, arcVel, extVel);
+            std::get<MyIdx>(*steppers).beginArc(*map, curPos, center, u, v, arcRad, arcVel, extVel);
             std::get<MyIdx>(*steppers)._nextStep(useEndstops);
         }
     };

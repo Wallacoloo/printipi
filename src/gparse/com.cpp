@@ -78,14 +78,19 @@ const Command& Com::getCommand() const {
 }
 
 void Com::reply(const Response &resp) {
-    if (hasWriteFile() && !resp.isNull()) {
+    //Only send a response if we have an output stream,
+    //  and the response either isn't a comment, or it is a comment and we're configured to send comments.
+    if (hasWriteFile() && (_doSendGcodeComments || !resp.isComment())) {
         std::string respStr = resp.toString();
         (*_writeFd) << respStr;
         _writeFd->put('\n');
         _writeFd->flush();
     }
-    //The pending command has be replied to, so reset it.
-    _parsed = Command();
+    if (!resp.isComment()) {
+        //The pending command has been replied to, so reset it.
+        //We must check that the response wasn't a comment, as a comment doesn't count as acknowledgement of a command.
+        _parsed = Command();
+    }
 }
 
 }

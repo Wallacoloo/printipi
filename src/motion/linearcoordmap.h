@@ -43,11 +43,10 @@ namespace motion {
  */
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
     typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
-    typedef std::tuple<LinearStepper<Stepper1, CARTESIAN_AXIS_X>, 
-                       LinearStepper<Stepper2, CARTESIAN_AXIS_Y>, 
-                       LinearStepper<Stepper3, CARTESIAN_AXIS_Z>, 
-                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
+    typedef std::tuple<LinearStepper<Stepper1>, 
+                       LinearStepper<Stepper2>, 
+                       LinearStepper<Stepper3>, 
+                       LinearStepper<Stepper4> > _AxisStepperTypes;
 
     float _STEPS_MM_X, _MM_STEPS_X;
     float _STEPS_MM_Y, _MM_STEPS_Y;
@@ -92,17 +91,12 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                 endstops[2]);
         }
         inline _AxisStepperTypes getAxisSteppers() const {
-            return _AxisStepperTypes();
-        }
-        inline _ArcStepperTypes getArcSteppers() const {
-            return _ArcStepperTypes();
-        }
-        inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
-            return endstops[axis];
-        }
-        template <std::size_t idx> auto getStepperDriver() const
-         -> const typename std::tuple_element<idx, StepperDriverTypes>::type& {
-            return std::get<idx>(stepperDrivers);
+            return std::make_tuple(
+                LinearStepper<Stepper1>(0, CARTESIAN_AXIS_X, *this, std::get<0>(stepperDrivers), &endstops[0]), 
+                LinearStepper<Stepper2>(1, CARTESIAN_AXIS_Y, *this, std::get<1>(stepperDrivers), &endstops[1]), 
+                LinearStepper<Stepper3>(2, CARTESIAN_AXIS_Z, *this, std::get<2>(stepperDrivers), &endstops[2]), 
+                LinearStepper<Stepper4>(3, CARTESIAN_AXIS_E, *this, std::get<3>(stepperDrivers), &endstops[3])
+            );
         }
 
         inline static constexpr std::size_t numAxis() {

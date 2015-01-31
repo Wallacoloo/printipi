@@ -134,6 +134,51 @@ template <typename MachineT=machines::Machine> class TestHelper {
             remove("PRINTIPI_TEST_OUTPUT");
         }
 
+        void testHoming() {
+            WHEN("The machine is homed") {
+                sendCommand("G28", "ok");
+                //Then, there is no error
+            }
+        }
+        void testLinearMovement() {
+            WHEN("The machine is homed & moved to (40, -10, 50)") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X40 Y-10 Z50", "ok");
+                //test G1 movement
+                THEN("The actual position should be near (40, -10, 50)") {
+                    exitOnce(); //force the G1 code to complete
+                    verifyPosition(40, -10, 50);
+                }
+                //test successive G1 movements
+                WHEN("The machine is moved to another absolute position afterward, (-30, 20, 80) at F=3000") {
+                    sendCommand("G1 X-30 Y20 Z80 F3000", "ok");
+                    THEN("The actual position should be near (-30, 20, 80)") {
+                        exitOnce(); //force the G1 code to complete
+                        verifyPosition(-30, 20, 80);
+                    }
+                }
+            }
+        }
+        void testArcMovement() {
+            WHEN("The machine is homed & moved to (0, 40, 20)") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X0 Y40 Z20", "ok");
+                WHEN("The machine is told to do a CCW arc to (-40, 0, 20) about (0, 0, 20)") {
+                    sendCommand("G3 X-40 Y0 I0 J0", "ok");
+                    THEN("The actual position should be near (-40, 0, 20)") {
+                        exitOnce(); //force the G1 code to complete
+                        verifyPosition(-40, 0, 20);
+                    }
+                }
+                WHEN("The machine is told to do a CW arc to (40, 0, 20) about (0, 0, 20)") {
+                    sendCommand("G2 X40 Y0 I0 J0", "ok");
+                    THEN("The actual position should be near (40, 0, 20)") {
+                        exitOnce(); //force the G1 code to complete
+                        verifyPosition(40, 0, 20);
+                    }
+                }
+            }
+        }
         //@cmd g-code command to send to printer (a newline character will be appended)
         //@expect expected response
         void sendCommand(const std::string &cmd, const std::string &expect) {
@@ -141,7 +186,7 @@ template <typename MachineT=machines::Machine> class TestHelper {
             *inputFile << cmd << '\n';
             inputFile->flush();
             INFO("It should be acknowledged with something that begins with '" + expect + "'");
-            std::string got = readLine();
+            std::string got = readLineIgnoreComments();
             REQUIRE(got.substr(0, expect.length()) == expect);
         }
 
@@ -198,7 +243,15 @@ template <typename MachineT=machines::Machine> class TestHelper {
                 } 
             }
             return read;
-        };          
+        };
+        //get the next line from Printipi's output that ISN'T a comment (i.e. must be a gcode response)
+        std::string readLineIgnoreComments() {
+            std::string line;
+            do { 
+                line=readLine();
+            } while (line.substr(0, 2) == "//");
+            return line;
+        }        
 };
 
 template <typename MachineT, typename ... Args> TestHelper<MachineT> makeTestHelper(MachineT &&machine, Args ...args) {
