@@ -158,7 +158,7 @@ template <typename StepperDriverT> class LinearDeltaStepper : public AxisStepper
             line_P0 = map.xyzeFromMechanical(curPos).xyz();
             line_v = vel.xyz();
             isArcMotion = false;
-            this->time = 0; //this may NOT be zero-initialized by parent.
+            this->time = 0;
         }
         //arc motion initializer
         template <typename CoordMapT, std::size_t sz> void beginArc(const CoordMapT &map, const std::array<int, sz> &curPos, 
@@ -173,7 +173,7 @@ template <typename StepperDriverT> class LinearDeltaStepper : public AxisStepper
             arcRad = arcRad;
             arc_m = arcVel;
             isArcMotion = true;
-            this->time = 0; //this may NOT be zero-initialized by parent.
+            this->time = 0;
         }
     //protected:
         inline float testDir(float s) {
@@ -219,7 +219,7 @@ template <typename StepperDriverT> class LinearDeltaStepper : public AxisStepper
                 //float n = 2*arcRad*(-D*uz+ux*xc+uy*yc+uz*zc-r()*(uy*cos(w)+ux*sin(w)));
                 float n = 2*arcRad*(-D*u.z()+u.dot(Pc) - r()*(u.y()*cos(w)+u.x()*sin(w)));
                 //        2 s      (-D vz+vx xc+vy yc+vz zc-r   (vy Cos[w]+vx Sin[w]))
-                float m = 2*arcRad*(-D*u.z()+u.dot(Pc) - r()*(v.y()*cos(w)+v.x()*sin(w)));
+                float m = 2*arcRad*(-D*v.z()+v.dot(Pc) - r()*(v.y()*cos(w)+v.x()*sin(w)));
                 
                 float mt_1 = atan2((-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
                 float mt_2 = atan2((-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
