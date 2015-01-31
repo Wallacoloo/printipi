@@ -104,7 +104,12 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                 endstops[2]);
         }
         inline _AxisStepperTypes getAxisSteppers() const {
-            return _AxisStepperTypes();
+            return std::make_tuple(
+                       LinearDeltaStepper<Stepper1, DELTA_AXIS_A>(0, *this, std::get<0>(stepperDrivers), &endstops[0]), 
+                       LinearDeltaStepper<Stepper2, DELTA_AXIS_B>(1, *this, std::get<1>(stepperDrivers), &endstops[1]), 
+                       LinearDeltaStepper<Stepper3, DELTA_AXIS_C>(2, *this, std::get<2>(stepperDrivers), &endstops[2]), 
+                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> (3, *this, std::get<3>(stepperDrivers), &endstops[3])
+            );
         }
 
         inline static constexpr std::size_t numAxis() {

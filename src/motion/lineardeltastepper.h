@@ -138,45 +138,40 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
     public:
-        inline LinearDeltaStepper() : endstop(nullptr), _r(0), _L(0), _MM_STEPS(0) {}
+        template <typename CoordMapT> LinearDeltaStepper(int idx, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop)
+         : AxisStepperWithDriver<StepperDriverT>(idx, stepper),
+           endstop(endstop),
+           _r(map.r()), 
+           _L(map.L()),
+           _MM_STEPS(map.MM_STEPS(AxisIdx)),
+           w(AxisIdx*2*M_PI/3) {
+              static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
+        }
+
         //linear motion initializer
-        template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, 
-        const Vector4f &vel)
-        : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()),
-            endstop(&map.getEndstop(AxisIdx)),
-            _r(map.r()), 
-            _L(map.L()), 
-            _MM_STEPS(map.MM_STEPS(AxisIdx)),
-            w(AxisIdx*2*M_PI/3),
-            M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
-            sTotal(0),
-            line_P0(map.xyzeFromMechanical(curPos).xyz()),
-            line_v(vel.xyz()),
-            isArcMotion(false) {
-                static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
-                this->time = 0; //this may NOT be zero-initialized by parent.
-            }
-        //arc motion initializer:
-        template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz> &curPos, 
+        template <typename CoordMapT, std::size_t sz> void beginLine(const CoordMapT &map, const std::array<int, sz>& curPos, 
+        const Vector4f &vel) {
+            M0 = map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx); 
+            sTotal = 0;
+            line_P0 = map.xyzeFromMechanical(curPos).xyz();
+            line_v = vel.xyz();
+            isArcMotion = false;
+            this->time = 0; //this may NOT be zero-initialized by parent.
+        }
+        //arc motion initializer
+        template <typename CoordMapT, std::size_t sz> void beginArc(const CoordMapT &map, const std::array<int, sz> &curPos, 
         const Vector3f &center, const Vector3f &u, const Vector3f &v,  
-        float arcRad, float arcVel, float extVel)
-        : AxisStepperWithDriver<StepperDriverT>(idx, map.template getStepperDriver<AxisIdx>()),
-          endstop(&map.getEndstop(AxisIdx)),
-          _r(map.r()),
-          _L(map.L()),
-          _MM_STEPS(map.MM_STEPS(AxisIdx)),
-          w(AxisIdx*2*M_PI/3),
-          M0(map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx)), 
-          sTotal(0),
-          arc_Pc(center),
-          arc_u(u),
-          arc_v(v),
-          arcRad(arcRad),
-          arc_m(arcVel),
-          isArcMotion(true) {
-                (void)map, (void)idx; (void)extVel; //unused
-                static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
-                this->time = 0; //this may NOT be zero-initialized by parent.
+        float arcRad, float arcVel, float extVel) {
+            (void)map, (void)extVel; //unused
+            M0 = map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx);
+            sTotal = 0;
+            arc_Pc = center;
+            arc_u = u;
+            arc_v = v;
+            arcRad = arcRad;
+            arc_m = arcVel;
+            isArcMotion = true;
+            this->time = 0; //this may NOT be zero-initialized by parent.
         }
     //protected:
         inline float testDir(float s) {
