@@ -34,7 +34,6 @@ namespace gparse {
 
 enum ResponseCode {
     ResponseOk,
-    ResponseNull,
     ResponseWarning,
 };
 
@@ -50,8 +49,6 @@ class Response {
     public:
         // Response::Ok provides easy access to a response formatted as "ok"
         static const Response Ok;
-        // Response::NULL allows one to indicate that no response should be sent
-        static const Response Null;
 
         //Construct a response from a code, followed by an optional extra string (implicitly joined by a space)
         inline Response(ResponseCode code, const std::string &rest="") : code(code), rest(rest) {
@@ -81,13 +78,9 @@ class Response {
                     return "ok" + (rest.empty() ? "" : " " + rest);
                 case ResponseWarning:
                     return "// warning: " + rest;
-                case ResponseNull:
                 default:
                     return rest;
             }
-        }
-        inline bool isNull() const {
-            return code == ResponseNull;
         }
         //return true if the response represents a comment (a line starting with // ), which the host can safely ignore
         inline bool isComment() const {

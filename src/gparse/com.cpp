@@ -79,9 +79,8 @@ const Command& Com::getCommand() const {
 
 void Com::reply(const Response &resp) {
     //Only send a response if we have an output stream,
-    //  the response isn't NULL,
-    //  and it either isn't a comment, or it is a comment and we're configured to send comments.
-    if (hasWriteFile() && !resp.isNull() && (_doSendGcodeComments || !resp.isComment())) {
+    //  and the response either isn't a comment, or it is a comment and we're configured to send comments.
+    if (hasWriteFile() && (_doSendGcodeComments || !resp.isComment())) {
         std::string respStr = resp.toString();
         (*_writeFd) << respStr;
         _writeFd->put('\n');
