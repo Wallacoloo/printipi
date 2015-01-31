@@ -96,9 +96,9 @@ template <typename Drv> class State {
                 IntervalTimer timer;
                 timer.clock();
                 bool hwNeedsCpu = _hardwareScheduler.onIdleCpu(interval);
-                LOGV("Time spent in _hardwareScheduler:onIdleCpu: %" PRId64 ", %i, ret %i\n", timer.clockDiff().count(), interval, hwNeedsCpu);
+                LOGV("Time spent in _hardwareScheduler:onIdleCpu: %" PRId64 ", %i, ret %i\n", (int64_t)timer.clockDiff().count(), interval, hwNeedsCpu);
                 bool stateNeedsCpu = _state.onIdleCpu(interval);
-                LOGV("Time spent in state.h:onIdleCpu: %" PRId64 ", %i, ret %i\n", timer.clockDiff().count(), interval, stateNeedsCpu);
+                LOGV("Time spent in state.h:onIdleCpu: %" PRId64 ", %i, ret %i\n", (int64_t)timer.clockDiff().count(), interval, stateNeedsCpu);
                 return hwNeedsCpu || stateNeedsCpu;
             }
             inline void queue(const OutputEvent &evt) {
