@@ -478,13 +478,13 @@ return values.
         <location column="11" file="gparse/com.h" line="37" />
       </undocumented>
       <undocumented id="gparse::Response::Response::Container" name="Container">
-        <location column="19" file="gparse/response.h" line="66" />
+        <location column="19" file="gparse/response.h" line="63" />
       </undocumented>
       <undocumented id="gparse::Response::Response::T" name="T">
-        <location column="19" file="gparse/response.h" line="73" />
+        <location column="19" file="gparse/response.h" line="70" />
       </undocumented>
       <undocumented id="gparse::Response::joinPairsAndStr::Container" name="Container">
-        <location column="19" file="gparse/response.h" line="97" />
+        <location column="19" file="gparse/response.h" line="90" />
       </undocumented>
       <undocumented id="iodrv::IODrivers::IndexOptional::T" name="T">
         <location column="13" file="iodrivers/iodrivers.h" line="73" />
@@ -839,9 +839,9 @@ return values.
         <location column="1" file="gparse/command.h" line="44" />
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
-        <location column="1" file="gparse/com.cpp" line="26" />
         <location column="1" file="gparse/response.cpp" line="3" />
         <location column="1" file="gparse/command.cpp" line="26" />
+        <location column="1" file="gparse/com.cpp" line="26" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -906,7 +906,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="89" />
       </undocumented>
     </type>
-    <type documented="153" name="method" undocumented="348">
+    <type documented="153" name="method" undocumented="347">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1603,9 +1603,6 @@ return values.
         <location column="9" file="gparse/command.h" line="93" />
         <location column="1" file="gparse/command.cpp" line="145" />
       </undocumented>
-      <undocumented id="gparse::Response::isNull" name="isNull">
-        <location column="9" file="gparse/response.h" line="89" />
-      </undocumented>
       <undocumented id="iodrv::Endstop::isEndstop" name="isEndstop">
         <location column="9" file="iodrivers/endstop.h" line="47" />
       </undocumented>
@@ -2203,7 +2200,7 @@ return values.
         <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="411" />
       </undocumented>
     </type>
-    <type documented="4" name="variable" undocumented="7">
+    <type documented="3" name="variable" undocumented="7">
       <undocumented id="NotPresent" name="NotPresent">
         <location column="23" file="common/optionalarg.h" line="46" />
       </undocumented>
@@ -2231,7 +2228,7 @@ return values.
       </undocumented>
     </type>
     <type documented="6" name="conversionfunction" undocumented="0" />
-    <type documented="9" name="enumvalue" undocumented="116">
+    <type documented="9" name="enumvalue" undocumented="115">
       <undocumented id="OnIdleCpuIntervalShort" name="OnIdleCpuIntervalShort">
         <location column="5" file="schedulerbase.h" line="43" />
       </undocumented>
@@ -2262,14 +2259,11 @@ return values.
       <undocumented id="UNIT_MM" name="UNIT_MM">
         <location column="5" file="state.h" line="68" />
       </undocumented>
-      <undocumented id="gparse::ResponseNull" name="ResponseNull">
-        <location column="5" file="gparse/response.h" line="37" />
-      </undocumented>
       <undocumented id="gparse::ResponseOk" name="ResponseOk">
         <location column="5" file="gparse/response.h" line="36" />
       </undocumented>
       <undocumented id="gparse::ResponseWarning" name="ResponseWarning">
-        <location column="5" file="gparse/response.h" line="38" />
+        <location column="5" file="gparse/response.h" line="37" />
       </undocumented>
       <undocumented id="iodrv::HeatedBedType" name="HeatedBedType">
         <location column="5" file="iodrivers/tempcontrol.h" line="45" />
@@ -2669,32 +2663,32 @@ return values.
       <undocumented-return />
     </function>
     <function id="gparse::Response::Response" name="Response">
+      <location column="9" file="gparse/response.h" line="54" />
+      <undocumented name="code" />
+      <undocumented name="rest" />
+    </function>
+    <function id="gparse::Response::Response" name="Response">
       <location column="9" file="gparse/response.h" line="57" />
       <undocumented name="code" />
       <undocumented name="rest" />
     </function>
     <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="60" />
+      <location column="9" file="gparse/response.h" line="63" />
       <undocumented name="code" />
       <undocumented name="rest" />
     </function>
     <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="66" />
-      <undocumented name="code" />
-      <undocumented name="rest" />
-    </function>
-    <function id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="73" />
+      <location column="9" file="gparse/response.h" line="70" />
       <undocumented name="pairs" />
       <undocumented name="code" />
       <undocumented name="rest" />
     </function>
     <function id="gparse::Response::toString" name="toString">
-      <location column="9" file="gparse/response.h" line="78" />
+      <location column="9" file="gparse/response.h" line="75" />
       <undocumented-return />
     </function>
     <function id="gparse::Response::isComment" name="isComment">
-      <location column="9" file="gparse/response.h" line="93" />
+      <location column="9" file="gparse/response.h" line="86" />
       <undocumented-return />
     </function>
     <function id="gparse::Com::shareOwnership" name="shareOwnership">
@@ -3542,13 +3536,13 @@ return values.
       </doctype>
     </field>
     <methodtemplate id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="66" />
+      <location column="9" file="gparse/response.h" line="63" />
       <doctype component="pairs" name="params">
         <ref name="std::string, std::string" />
       </doctype>
     </methodtemplate>
     <methodtemplate id="gparse::Response::Response" name="Response">
-      <location column="9" file="gparse/response.h" line="73" />
+      <location column="9" file="gparse/response.h" line="70" />
       <doctype name="doc">
         <ref name="std::string, std::string" />
       </doctype>

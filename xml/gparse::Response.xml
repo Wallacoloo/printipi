@@ -6,10 +6,6 @@ When converted to strings, they typically appear like "ok" or "ok T:153.7"
 
 It was decided to make a thin wrapper around the raw string responses in order to standardize the 'ok', '!!' (error), etc response prefixes.
 </doc>
-  <variable id="gparse::Response::Null" name="Null">
-    <brief>Response::NULL allows one to indicate that no response should be sent</brief>
-    <type name="Response" qualifier=" const" ref="gparse::Response#gparse::Response" />
-  </variable>
   <variable id="gparse::Response::Ok" name="Ok">
     <brief>Response::Ok provides easy access to a response formatted as "ok"</brief>
     <type name="Response" qualifier=" const" ref="gparse::Response#gparse::Response" />
@@ -71,11 +67,6 @@ This specialization is only needed in gcc-4.6, where automatic deduction of a st
   </constructor>
   <method id="gparse::Response::isComment" name="isComment">
     <brief>return true if the response represents a comment (a line starting with // ), which the host can safely ignore</brief>
-    <return>
-      <type builtin="yes" name="bool" />
-    </return>
-  </method>
-  <method id="gparse::Response::isNull" name="isNull">
     <return>
       <type builtin="yes" name="bool" />
     </return>
