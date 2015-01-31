@@ -46,26 +46,15 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
 
         LOG("state.cpp: BEGIN TEST\n");
         //test homing
-        WHEN("The machine is homed") {
-            helper.sendCommand("G28", "ok");
-        }
-        //test G1 movement
+        helper.testHoming();
+        //test G0/G1 linear movement
+        helper.testLinearMovement();
+        //test G2/G3 arc movement
+        //helper.testArcMovement();
+        //test G1 movement with G91
         WHEN("The machine is homed & moved to (40, -10, 50)") {
             helper.sendCommand("G28", "ok");
             helper.sendCommand("G1 X40 Y-10 Z50", "ok");
-            //test G1 movement
-            THEN("The actual position should be near (40, -10, 50)") {
-                helper.exitOnce(); //force the G1 code to complete
-                helper.verifyPosition(40, -10, 50);
-            }
-            //test successive G1 movements
-            WHEN("The machine is moved to another absolute position afterward, (-30, 20, 80) at F=3000") {
-                helper.sendCommand("G1 X-30 Y20 Z80 F3000", "ok");
-                THEN("The actual position should be near (-30, 20, 80)") {
-                    helper.exitOnce(); //force the G1 code to complete
-                    helper.verifyPosition(-30, 20, 80);
-                }
-            }
             //test G91 (relative) movement
             WHEN("The machine is moved a RELATIVE amount (-70, 30, 30) at F=3000") {
                 //put into relative movement mode
@@ -93,15 +82,7 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
                 helper.verifyPosition(40, -10, 50);
             }
         }
-        //test automatic homing using G0
-        WHEN("The machine is moved to (40, -10, 50) before being homed, using G0 command") {
-            helper.sendCommand("G0 X40 Y-10 Z50", "ok");
-            THEN("The actual position should be near (40, -10, 50)") {
-                helper.exitOnce(); //force the G0 code to complete
-                helper.verifyPosition(40, -10, 50);
-            }
-        }
-        //test using inch coordinates
+        //test linear movement using inch coordinates
         WHEN("The machine is moved to (-1, 2, 1) in inches") {
             //home machine
             helper.sendCommand("G28", "ok");

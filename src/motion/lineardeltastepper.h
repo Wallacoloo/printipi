@@ -129,6 +129,7 @@ template <typename StepperDriverT> class LinearDeltaStepper : public AxisStepper
     Vector3f line_P0; //initial cartesian position, in mm
     Vector3f line_v; //cartesian velocity vector, in mm/sec
     
+    //variables used during arc motion
     Vector3f arc_Pc; //arc centerpoint (cartesian)
     Vector3f arc_u, arc_v; //u and v vectors (cartesian); P(t) = Pc + u*cos(mt) + v*sin(mt)
     float arcRad; //radius of arc
@@ -150,29 +151,29 @@ template <typename StepperDriverT> class LinearDeltaStepper : public AxisStepper
               assert(axisIdx == DELTA_AXIS_A || axisIdx == DELTA_AXIS_B || axisIdx == DELTA_AXIS_C);
         }
 
-        //linear motion initializer
+        //function to initiate a linear (through cartesian space) motion
         template <typename CoordMapT, std::size_t sz> void beginLine(const CoordMapT &map, const std::array<int, sz>& curPos, 
         const Vector4f &vel) {
-            M0 = map.getAxisPosition(curPos, axisIdx)*map.MM_STEPS(axisIdx); 
-            sTotal = 0;
-            line_P0 = map.xyzeFromMechanical(curPos).xyz();
-            line_v = vel.xyz();
-            isArcMotion = false;
+            this->M0 = map.getAxisPosition(curPos, axisIdx)*map.MM_STEPS(axisIdx); 
+            this->sTotal = 0;
+            this->line_P0 = map.xyzeFromMechanical(curPos).xyz();
+            this->line_v = vel.xyz();
+            this->isArcMotion = false;
             this->time = 0;
         }
-        //arc motion initializer
+        //function to initiate a circular arc (through cartesian space) motion
         template <typename CoordMapT, std::size_t sz> void beginArc(const CoordMapT &map, const std::array<int, sz> &curPos, 
         const Vector3f &center, const Vector3f &u, const Vector3f &v,  
         float arcRad, float arcVel, float extVel) {
             (void)map, (void)extVel; //unused
-            M0 = map.getAxisPosition(curPos, axisIdx)*map.MM_STEPS(axisIdx);
-            sTotal = 0;
-            arc_Pc = center;
-            arc_u = u;
-            arc_v = v;
-            arcRad = arcRad;
-            arc_m = arcVel;
-            isArcMotion = true;
+            this->M0 = map.getAxisPosition(curPos, axisIdx)*map.MM_STEPS(axisIdx);
+            this->sTotal = 0;
+            this->arc_Pc = center;
+            this->arc_u = u;
+            this->arc_v = v;
+            this->arcRad = arcRad;
+            this->arc_m = arcVel;
+            this->isArcMotion = true;
             this->time = 0;
         }
     //protected:
@@ -212,6 +213,7 @@ template <typename StepperDriverT> class LinearDeltaStepper : public AxisStepper
                 auto Pc = arc_Pc;
                 auto u = arc_u;
                 auto v = arc_v;
+
                 float D = M0+s;
                 //        r^2      +s^2          +xc^2 +yc^2 +(D-zc)^2     -2 r   (yc Cos[w]+xc Sin[w]) - L^2
                 float p = r()*r()  +arcRad*arcRad+Pc.x()*Pc.x()+Pc.y()*Pc.y()+(D-Pc.z())*(D-Pc.z())-2*r()*(Pc.y()*cos(w)+Pc.x()*sin(w)) - L()*L();
@@ -219,8 +221,9 @@ template <typename StepperDriverT> class LinearDeltaStepper : public AxisStepper
                 //float n = 2*arcRad*(-D*uz+ux*xc+uy*yc+uz*zc-r()*(uy*cos(w)+ux*sin(w)));
                 float n = 2*arcRad*(-D*u.z()+u.dot(Pc) - r()*(u.y()*cos(w)+u.x()*sin(w)));
                 //        2 s      (-D vz+vx xc+vy yc+vz zc-r   (vy Cos[w]+vx Sin[w]))
+                //float m = 2*arcRad*(-D*vz+vx*xc+vy*yc+vz*zc-r()*(vy*cos(w)+vx*sin(w)));
                 float m = 2*arcRad*(-D*v.z()+v.dot(Pc) - r()*(v.y()*cos(w)+v.x()*sin(w)));
-                
+
                 float mt_1 = atan2((-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
                 float mt_2 = atan2((-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
                 float t1 = mt_1/this->arc_m;
