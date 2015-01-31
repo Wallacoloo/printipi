@@ -89,7 +89,7 @@
  *     y = yc + r*Cos[m*t]*uy + r*Sin[m*t]*vy
  *     z = zc + r*Cos[m*t]*uz + r*Sin[m*t]*vz
  *
- *   This is solved further down in the LinearDeltaArcStepper::testDir() function.  
+ *   This is solved further down in the LinearDeltaStepper::testDir() function.  
  *
  * Note: all motion in this file is planned at a constant velocity. 
  *   Cartesian-space acceleration is introduced by a post-transformation of the step times applied elsewhere in the motion planning system. 
@@ -114,7 +114,8 @@ enum DeltaAxis {
 };
 
 /* 
- * LinearDeltaArcStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel, for arc movements (G2/G3)
+ * LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel, 
+ *   for linear (G0/G1) and arc movements (G2/G3)
  */
 template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
     private:
@@ -137,7 +138,6 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
         inline float L() const { return _L; }
         inline float MM_STEPS() const { return _MM_STEPS; }
     public:
-        typedef LinearDeltaStepper<StepperDriverT, AxisIdx> ArcStepperT;
         inline LinearDeltaStepper() : endstop(nullptr), _r(0), _L(0), _MM_STEPS(0) {}
         //linear motion initializer
         template <typename CoordMapT, std::size_t sz> LinearDeltaStepper(int idx, const CoordMapT &map, const std::array<int, sz>& curPos, 
@@ -301,7 +301,7 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
                 float posTime = testDir((this->sTotal+1)*MM_STEPS());
                 if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                     if (posTime > this->time) {
-                        LOGV("LinearDeltaArcStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
                         this->time = posTime;
                         this->direction = StepForward;
                         ++this->sTotal;
@@ -310,7 +310,7 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
                     }
                 } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
                     if (negTime > this->time) {
-                        LOGV("LinearDeltaArcStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
                         this->time = negTime;
                         this->direction = StepBackward;
                         --this->sTotal;
@@ -319,12 +319,12 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
                     }
                 } else { //neither time is invalid
                     if (negTime < posTime) {
-                        LOGV("LinearDeltaArcStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
                         this->time = negTime;
                         this->direction = StepBackward;
                         --this->sTotal;
                     } else {
-                        LOGV("LinearDeltaArcStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
                         this->time = posTime;
                         this->direction = StepForward;
                         ++this->sTotal;

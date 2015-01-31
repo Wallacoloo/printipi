@@ -47,8 +47,6 @@ enum CartesianAxis {
 template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper : public AxisStepperWithDriver<StepperDriverT> {
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
-    public:
-        typedef LinearStepper<StepperDriverT, CoordType> ArcStepperT;
     protected:
         template <typename CoordMapT> float TIME_PER_STEP(const CoordMapT &map, const Vector4f &vel) const {
             //return units of time. v is mm/sec, STEPS_MM is steps/mm.

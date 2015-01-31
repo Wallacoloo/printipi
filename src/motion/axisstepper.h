@@ -85,13 +85,6 @@ class AxisStepper {
             (void)useEndstops;
             assert(false && "AxisStepper::_nextStep() must be overriden in any child classes");
         } 
-    public:
-        //Arc steppers:
-        template <typename... Types> struct GetArcStepperTypes {
-            typedef std::tuple<typename Types::ArcStepperT...> ArcStepperTypes;
-        };
-        template <typename... Types> struct GetArcStepperTypes<std::tuple<Types...> > : GetArcStepperTypes<Types...> {};
-        
 };
 
 template <typename StepperDriver> class AxisStepperWithDriver : public AxisStepper {

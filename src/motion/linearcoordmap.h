@@ -47,7 +47,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                        LinearStepper<Stepper2, CARTESIAN_AXIS_Y>, 
                        LinearStepper<Stepper3, CARTESIAN_AXIS_Z>, 
                        LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
 
     float _STEPS_MM_X, _MM_STEPS_X;
     float _STEPS_MM_Y, _MM_STEPS_Y;
@@ -93,9 +92,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         }
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
-        }
-        inline _ArcStepperTypes getArcSteppers() const {
-            return _ArcStepperTypes();
         }
         inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
             return endstops[axis];

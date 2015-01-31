@@ -60,7 +60,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                        LinearDeltaStepper<Stepper2, DELTA_AXIS_B>, 
                        LinearDeltaStepper<Stepper3, DELTA_AXIS_C>, 
                        LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
 
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
     float _r, _L, _h, _buildrad;
@@ -106,9 +105,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         }
         inline _AxisStepperTypes getAxisSteppers() const {
             return _AxisStepperTypes();
-        }
-        inline _ArcStepperTypes getArcSteppers() const {
-            return _ArcStepperTypes();
         }
 
         inline static constexpr std::size_t numAxis() {
