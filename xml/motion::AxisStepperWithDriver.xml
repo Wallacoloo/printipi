@@ -4,7 +4,6 @@
     <type name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper" />
   </base>
   <templatetypeparameter id="motion::AxisStepperWithDriver::StepperDriver" name="StepperDriver" />
-  <constructor id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;" name="AxisStepperWithDriver&lt;StepperDriver&gt;" />
   <constructor id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;" name="AxisStepperWithDriver&lt;StepperDriver&gt;">
     <argument id="motion::AxisStepperWithDriver::AxisStepperWithDriver&lt;StepperDriver&gt;::idx" name="idx">
       <type builtin="yes" name="int" />

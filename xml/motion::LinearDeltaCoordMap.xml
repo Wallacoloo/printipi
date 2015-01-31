@@ -140,23 +140,6 @@ The math is described more in /code/proof-of-concept/coordmath.py and coord-math
       <type name="std::size_t" />
     </argument>
   </method>
-  <method id="motion::LinearDeltaCoordMap::getEndstop" name="getEndstop" override="yes">
-    <return>
-      <type name="iodrv::Endstop" qualifier=" const &amp;" ref="iodrv::Endstop#iodrv::Endstop" />
-    </return>
-    <argument id="motion::LinearDeltaCoordMap::getEndstop::axis" name="axis">
-      <type name="std::size_t" />
-    </argument>
-    <override name="CoordMap::getEndstop" ref="motion::CoordMap#motion::CoordMap::getEndstop" />
-  </method>
-  <methodtemplate id="motion::LinearDeltaCoordMap::getStepperDriver" name="getStepperDriver">
-    <return>
-      <type name="const typename std::tuple_element&lt;idx, StepperDriverTypes&gt;::type" qualifier=" const &amp;" />
-    </return>
-    <templatenontypeparameter default="std" id="motion::LinearDeltaCoordMap::getStepperDriver::idx" name="idx">
-      <type name="std::size_t" />
-    </templatenontypeparameter>
-  </methodtemplate>
   <methodtemplate id="motion::LinearDeltaCoordMap::executeHomeRoutine" name="executeHomeRoutine" override="yes">
     <return>
       <type builtin="yes" name="void" />

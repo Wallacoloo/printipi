@@ -85,23 +85,6 @@ This is the CoordMap that your machine should use if it is a Cartesian robot.
     </return>
     <override name="CoordMap::getAxisSteppers" ref="motion::CoordMap#motion::CoordMap::getAxisSteppers" />
   </method>
-  <method id="motion::LinearCoordMap::getEndstop" name="getEndstop" override="yes">
-    <return>
-      <type name="iodrv::Endstop" qualifier=" const &amp;" ref="iodrv::Endstop#iodrv::Endstop" />
-    </return>
-    <argument id="motion::LinearCoordMap::getEndstop::axis" name="axis">
-      <type name="std::size_t" />
-    </argument>
-    <override name="CoordMap::getEndstop" ref="motion::CoordMap#motion::CoordMap::getEndstop" />
-  </method>
-  <methodtemplate id="motion::LinearCoordMap::getStepperDriver" name="getStepperDriver">
-    <return>
-      <type name="const typename std::tuple_element&lt;idx, StepperDriverTypes&gt;::type" qualifier=" const &amp;" />
-    </return>
-    <templatenontypeparameter default="std" id="motion::LinearCoordMap::getStepperDriver::idx" name="idx">
-      <type name="std::size_t" />
-    </templatenontypeparameter>
-  </methodtemplate>
   <method id="motion::LinearCoordMap::numAxis" name="numAxis" override="yes" static="yes">
     <return>
       <type name="std::size_t" />

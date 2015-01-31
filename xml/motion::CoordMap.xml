@@ -62,16 +62,6 @@ Note: the term "axis coordinates" refers to an individual motor's microstep inde
       <type name="std::tuple&lt;&gt;" />
     </return>
   </method>
-  <method id="motion::CoordMap::getEndstop" name="getEndstop">
-    <brief>return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)</brief>
-    <doc>Depending on which AxisSteppers your CoordMap uses, you may not need to implement this function.</doc>
-    <return>
-      <type name="iodrv::Endstop" qualifier=" const &amp;" ref="iodrv::Endstop#iodrv::Endstop" />
-    </return>
-    <argument id="motion::CoordMap::getEndstop::axis" name="axis">
-      <type name="std::size_t" />
-    </argument>
-  </method>
   <method id="motion::CoordMap::getHomePosition" name="getHomePosition">
     <brief>given the current tracked motor coordinates, and knowing that we are at home position,</brief>
     <return>

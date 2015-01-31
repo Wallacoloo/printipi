@@ -214,15 +214,9 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     </classtemplate>
     <classtemplate name="LinearDeltaStepper" ref="motion::LinearDeltaStepper#motion::LinearDeltaStepper">
       <templatetypeparameter id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT" />
-      <templatenontypeparameter id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
-        <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
-      </templatenontypeparameter>
     </classtemplate>
     <classtemplate name="LinearStepper" ref="motion::LinearStepper#motion::LinearStepper">
       <templatetypeparameter id="motion::LinearStepper::StepperDriverT" name="StepperDriverT" />
-      <templatenontypeparameter id="motion::LinearStepper::CoordType" name="CoordType">
-        <type name="motion::CartesianAxis" ref="motion#motion::CartesianAxis" />
-      </templatenontypeparameter>
     </classtemplate>
     <classtemplate name="MaxOutputEventSequenceSize" ref="motion::MaxOutputEventSequenceSize#motion::MaxOutputEventSequenceSize">
       <brief>given a tuple of AxisSteppers, MaxOutputEventSequenceSize&amp;lt;myTuple&amp;gt;::maxSize will return the maximum size</brief>

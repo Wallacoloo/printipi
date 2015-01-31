@@ -12,6 +12,7 @@ These implementations must provide the functions outlined further down in the he
 </doc>
   <subclass access="public" name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver" />
   <methodtemplate id="motion::AxisStepper::getNextTime" name="getNextTime" static="yes">
+    <brief>NOT TO BE OVERRIDEN</brief>
     <return>
       <type name="AxisStepper" qualifier=" &amp;" ref="motion::AxisStepper#motion::AxisStepper" />
     </return>
@@ -35,7 +36,7 @@ These implementations must provide the functions outlined further down in the he
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AxisStepper::initAxisArcSteppers::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AxisStepper::initAxisArcSteppers::center" name="center">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
@@ -80,7 +81,7 @@ These implementations must provide the functions outlined further down in the he
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AxisStepper::initAxisSteppers::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AxisStepper::initAxisSteppers::vel" name="vel">
       <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
@@ -116,9 +117,6 @@ These implementations must provide the functions outlined further down in the he
     <brief>time of next step</brief>
     <type name="StepDirection" ref="motion#motion::StepDirection" />
   </field>
-  <constructor id="motion::AxisStepper::AxisStepper" name="AxisStepper">
-    <brief>NOT TO BE OVERRIDEN</brief>
-  </constructor>
   <method id="motion::AxisStepper::index" name="index">
     <brief>direction of next step</brief>
     <return>

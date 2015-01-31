@@ -8,66 +8,77 @@ LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-s
     <type name="" />
   </base>
   <templatetypeparameter id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT" />
-  <templatenontypeparameter id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
-    <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
-  </templatenontypeparameter>
-  <constructor id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" />
-  <methodtemplate id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
+  <methodtemplate id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;" name="LinearDeltaStepper&lt;StepperDriverT&gt;">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;::axisIdx" name="axisIdx">
+      <type name="DeltaAxis" ref="motion#motion::DeltaAxis" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;::stepper" name="stepper">
+      <type name="const StepperDriverT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;::endstop" name="endstop">
+      <type name="iodrv::Endstop" qualifier=" const *" ref="iodrv::Endstop#iodrv::Endstop" />
+    </argument>
+    <templatetypeparameter id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT&gt;::CoordMapT" name="CoordMapT" />
+  </methodtemplate>
+  <methodtemplate id="motion::LinearDeltaStepper::beginLine" name="beginLine">
     <brief>linear motion initializer</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::idx" name="idx">
-      <type builtin="yes" name="int" />
-    </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::map" name="map">
+    <argument id="motion::LinearDeltaStepper::beginLine::map" name="map">
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::curPos" name="curPos">
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+    <argument id="motion::LinearDeltaStepper::beginLine::curPos" name="curPos">
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::vel" name="vel">
+    <argument id="motion::LinearDeltaStepper::beginLine::vel" name="vel">
       <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
     </argument>
-    <templatetypeparameter id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT" />
-    <templatenontypeparameter default="std" id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
+    <templatetypeparameter id="motion::LinearDeltaStepper::beginLine::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::LinearDeltaStepper::beginLine::sz" name="sz">
       <type name="std::size_t" />
     </templatenontypeparameter>
   </methodtemplate>
-  <methodtemplate id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
-    <brief>arc motion initializer:</brief>
+  <methodtemplate id="motion::LinearDeltaStepper::beginArc" name="beginArc">
+    <brief>arc motion initializer</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::idx" name="idx">
-      <type builtin="yes" name="int" />
-    </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::map" name="map">
+    <argument id="motion::LinearDeltaStepper::beginArc::map" name="map">
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::curPos" name="curPos">
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+    <argument id="motion::LinearDeltaStepper::beginArc::curPos" name="curPos">
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::center" name="center">
+    <argument id="motion::LinearDeltaStepper::beginArc::center" name="center">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::u" name="u">
+    <argument id="motion::LinearDeltaStepper::beginArc::u" name="u">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::v" name="v">
+    <argument id="motion::LinearDeltaStepper::beginArc::v" name="v">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::arcRad" name="arcRad">
+    <argument id="motion::LinearDeltaStepper::beginArc::arcRad" name="arcRad">
       <type builtin="yes" name="float" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::arcVel" name="arcVel">
+    <argument id="motion::LinearDeltaStepper::beginArc::arcVel" name="arcVel">
       <type builtin="yes" name="float" />
     </argument>
-    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::extVel" name="extVel">
+    <argument id="motion::LinearDeltaStepper::beginArc::extVel" name="extVel">
       <type builtin="yes" name="float" />
     </argument>
-    <templatetypeparameter id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT" />
-    <templatenontypeparameter default="std" id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
+    <templatetypeparameter id="motion::LinearDeltaStepper::beginArc::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::LinearDeltaStepper::beginArc::sz" name="sz">
       <type name="std::size_t" />
     </templatenontypeparameter>
   </methodtemplate>

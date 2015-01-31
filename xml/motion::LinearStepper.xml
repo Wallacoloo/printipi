@@ -7,9 +7,6 @@ LinearStepper implements the AxisStepper interface for Cartesian-style robots.
     <type name="" />
   </base>
   <templatetypeparameter id="motion::LinearStepper::StepperDriverT" name="StepperDriverT" />
-  <templatenontypeparameter id="motion::LinearStepper::CoordType" name="CoordType">
-    <type name="motion::CartesianAxis" ref="motion#motion::CartesianAxis" />
-  </templatenontypeparameter>
   <methodtemplate access="protected" id="motion::LinearStepper::TIME_PER_STEP" name="TIME_PER_STEP">
     <return>
       <type builtin="yes" name="float" />
@@ -22,65 +19,77 @@ LinearStepper implements the AxisStepper interface for Cartesian-style robots.
     </argument>
     <templatetypeparameter id="motion::LinearStepper::TIME_PER_STEP::CoordMapT" name="CoordMapT" />
   </methodtemplate>
-  <constructor id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
-    <brief>default constructor</brief>
-  </constructor>
-  <methodtemplate id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
+  <methodtemplate id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;" name="LinearStepper&lt;StepperDriverT&gt;">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;::coordType" name="coordType">
+      <type name="CartesianAxis" ref="motion#motion::CartesianAxis" />
+    </argument>
+    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;::stepper" name="stepper">
+      <type name="const StepperDriverT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;::endstop" name="endstop">
+      <type name="iodrv::Endstop" qualifier=" const *" ref="iodrv::Endstop#iodrv::Endstop" />
+    </argument>
+    <templatetypeparameter id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;::CoordMapT" name="CoordMapT" />
+  </methodtemplate>
+  <methodtemplate id="motion::LinearStepper::beginLine" name="beginLine">
     <brief>Linear movement constructor</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::idx" name="idx">
-      <type builtin="yes" name="int" />
-    </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::map" name="map">
+    <argument id="motion::LinearStepper::beginLine::map" name="map">
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::curPos" name="curPos">
+    <argument id="motion::LinearStepper::beginLine::curPos" name="curPos">
       <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::vel" name="vel">
+    <argument id="motion::LinearStepper::beginLine::vel" name="vel">
       <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
     </argument>
-    <templatetypeparameter id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::CoordMapT" name="CoordMapT" />
-    <templatenontypeparameter default="std" id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::sz" name="sz">
+    <templatetypeparameter id="motion::LinearStepper::beginLine::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::LinearStepper::beginLine::sz" name="sz">
       <type name="std::size_t" />
     </templatenontypeparameter>
   </methodtemplate>
-  <methodtemplate id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;" name="LinearStepper&lt;StepperDriverT, CoordType&gt;">
+  <methodtemplate id="motion::LinearStepper::beginArc" name="beginArc">
     <brief>Arc movement constructor</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::idx" name="idx">
-      <type builtin="yes" name="int" />
-    </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::map" name="map">
+    <argument id="motion::LinearStepper::beginArc::map" name="map">
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::curPos" name="curPos">
+    <argument id="motion::LinearStepper::beginArc::curPos" name="curPos">
       <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::center" name="center">
+    <argument id="motion::LinearStepper::beginArc::center" name="center">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::u" name="u">
+    <argument id="motion::LinearStepper::beginArc::u" name="u">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::v" name="v">
+    <argument id="motion::LinearStepper::beginArc::v" name="v">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::arcRad" name="arcRad">
+    <argument id="motion::LinearStepper::beginArc::arcRad" name="arcRad">
       <type builtin="yes" name="float" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::arcVel" name="arcVel">
+    <argument id="motion::LinearStepper::beginArc::arcVel" name="arcVel">
       <type builtin="yes" name="float" />
     </argument>
-    <argument id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::extVel" name="extVel">
+    <argument id="motion::LinearStepper::beginArc::extVel" name="extVel">
       <type builtin="yes" name="float" />
     </argument>
-    <templatetypeparameter id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::CoordMapT" name="CoordMapT" />
-    <templatenontypeparameter default="std" id="motion::LinearStepper::LinearStepper&lt;StepperDriverT, CoordType&gt;::sz" name="sz">
+    <templatetypeparameter id="motion::LinearStepper::beginArc::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::LinearStepper::beginArc::sz" name="sz">
       <type name="std::size_t" />
     </templatenontypeparameter>
   </methodtemplate>
