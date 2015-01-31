@@ -5,7 +5,7 @@ Printipi is a software package designed to bring 3d printing to the Raspberry Pi
 
 Although called Printi<i>pi</i>, it is not necessarily limited to running on the Pi. The `Example` machine can compile and run on most Linux machines, as a proof of concept (it does no electrical I/O), and new machines can be supported by implementing a handful of interfaces (see the section below for more info).
 
-Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/machines that exposes its coordinate system and peripherals through a handful of public member functions and typedefs. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
+Printipi also aims to support a multitude of printers including typical cartesian printers, delta-style printers like the Kossel, or polar-based printers - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/machines that exposes its coordinate system and peripherals through a handful of public member functions. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
 
 **Note:** Printipi is in a very developmental state and only has limited documentation. As of this time, it is *not* recommended to users who aren't comfortable with digging into the source code to figure out how things work.
 
@@ -29,7 +29,7 @@ Printipi currently runs entirely in userland. While this makes development and u
 
 Also, very heavy bus contention may degrade timing accuracy. Experiments show 500ksamples/sec (2uS resolution) to be dependable under most operating conditions, except heavy network/disk usage. 250ksamples/sec (4uS resolution) is dependable for at least 1 MB/sec network loads, and is the default data rate.
 
-The Raspberry Pi has no user-accessible analog to digital (A/D) converters, meaning that it's *slightly* more complicated to read analog sensors, like thermistors and force-sensitive resistors (FSRs). Since both of these act as resistors, this limitation is bypassed by using an RC circuit - a capacitor of known capacitance is charged to its capacity, and the time it takes to discharge through the resistor is measured.
+The Raspberry Pi has no user-accessible analog to digital (A/D) converters, meaning that it's slightly more complicated to read analog sensors, like thermistors and force-sensitive resistors (FSRs). Since both of these act as resistors, this limitation is bypassed by using an RC circuit - a capacitor of known capacitance is charged to its capacity, and the time it takes to discharge through the resistor is measured.
 
 Lastly, only a limited set of gcode commands are currently supported. Namely, testing has been done using Cura for slicing.
 
@@ -61,8 +61,6 @@ Configuration Files
 
 The files under `src/machines` define classes of machines - deltabots, cartesian bots, polar bots, etc. Each one of these is analogous to a master "config file". That is to say, you should find the machine definition in that folder that is most similar to your own (eg `src/machines/rpi/kosselpi.h`), make a copy of it (eg copy it to `src/machines/rpi/customkossel.h` and be sure to rename the `KosselPi` C++ class contained in the file to `CustomKossel` in order to reflect the path change), and then customize it. Unless you are a developer, you should never have to edit code outside of your config file. To build your CustomKossel machine, type `make MACHINE=rpi::CustomKossel`.
 
-Until the documention for these config files is improved, you may be best off referencing [this](http://forums.reprap.org/read.php?2,396157,431972#msg-431972) forum post for configuring your GPIOs and calibrating your printer.
-
 Supporting Other CPU Architectures
 ========
 
@@ -80,7 +78,5 @@ The Future
 ========
 
 More effort will be put into the motion planning system, which currently has no concept of curves and thus forces a full deceleration to 0 at each joint in the path.
-
-Also, it will be necessary to make the gcode parser properly handle serial transmission errors.
 
 See the issues section for more info.
