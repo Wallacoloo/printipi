@@ -118,13 +118,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline int getAxisPosition(const std::array<int, 4> &cur, std::size_t axis) const {
             return cur[axis];
         }
-        inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
-            return endstops[axis];
-        }
-        template <std::size_t idx> auto getStepperDriver() const
-         -> const typename std::tuple_element<idx, StepperDriverTypes>::type& {
-            return std::get<idx>(stepperDrivers);
-        }
         template <typename Interface> void executeHomeRoutine(Interface &interface) {
             //must disable buffering so that endstops can be reliably checked
             //interface.setUnbufferedMove(true);

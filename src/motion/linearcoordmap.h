@@ -98,13 +98,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                 LinearStepper<Stepper4>(3, CARTESIAN_AXIS_E, *this, std::get<3>(stepperDrivers), &endstops[3])
             );
         }
-        inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
-            return endstops[axis];
-        }
-        template <std::size_t idx> auto getStepperDriver() const
-         -> const typename std::tuple_element<idx, StepperDriverTypes>::type& {
-            return std::get<idx>(stepperDrivers);
-        }
 
         inline static constexpr std::size_t numAxis() {
             return 4; //A, B, C + Extruder

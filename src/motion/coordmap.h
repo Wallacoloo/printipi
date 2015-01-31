@@ -61,12 +61,6 @@ class CoordMap {
             //return a tuple of uninitialized AxisSteppers for moving in a straight line. See axisstepper.h for the definition of AxisStepper.
             return std::tuple<>();
         }
-        //return a reference to the Endstop associated with a given axis (eg X-endstop, Y-endstop, etc)
-        //Depending on which AxisSteppers your CoordMap uses, you may not need to implement this function.
-        inline const iodrv::Endstop& getEndstop(std::size_t axis) const {
-            (void)axis; //unused
-            return *(iodrv::Endstop*)(nullptr);
-        }
         //return the number of axis (physical motors) that we have.
         inline static constexpr std::size_t numAxis() {
             return 0;
