@@ -10,9 +10,6 @@ LinearStepper implements the AxisStepper interface for Cartesian-style robots.
   <templatenontypeparameter id="motion::LinearStepper::CoordType" name="CoordType">
     <type name="motion::CartesianAxis" ref="motion#motion::CartesianAxis" />
   </templatenontypeparameter>
-  <typedef id="motion::LinearStepper::ArcStepperT" name="ArcStepperT">
-    <type name="StepperDriverT" />
-  </typedef>
   <methodtemplate access="protected" id="motion::LinearStepper::TIME_PER_STEP" name="TIME_PER_STEP">
     <return>
       <type builtin="yes" name="float" />

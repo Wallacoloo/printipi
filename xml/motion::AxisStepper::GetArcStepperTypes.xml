@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<structtemplate id="motion::AxisStepper::GetArcStepperTypes" name="GetArcStepperTypes" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>Arc steppers:</brief>
-  <templatetypeparameter id="motion::AxisStepper::GetArcStepperTypes::Types" name="Types" />
-  <typedef id="motion::AxisStepper::GetArcStepperTypes::ArcStepperTypes" name="ArcStepperTypes">
-    <type name="Types" />
-  </typedef>
-</structtemplate>

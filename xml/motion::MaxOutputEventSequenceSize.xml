@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="motion::MaxOutputEventSequenceSize" name="MaxOutputEventSequenceSize" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>given a tuple of AxisSteppers, MaxOutputEventSequenceSize&amp;lt;myTuple&amp;gt;::maxSize will return the maximum size</brief>
+  <doc>of a possible OutputEvent sequence that one of the AxisSteppers might produce.</doc>
   <templatetypeparameter id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes" />
   <templatenontypeparameter default="std" id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
     <type name="std::size_t" />

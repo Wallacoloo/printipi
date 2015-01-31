@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
 <classtemplate id="motion::LinearDeltaStepper" name="LinearDeltaStepper" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
-LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel, for linear movements (G0/G1)
+LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel,
+  for linear (G0/G1) and arc movements (G2/G3)
 </doc>
   <base access="public">
     <type name="" />
@@ -10,11 +11,9 @@ LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-s
   <templatenontypeparameter id="motion::LinearDeltaStepper::AxisIdx" name="AxisIdx">
     <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
   </templatenontypeparameter>
-  <typedef id="motion::LinearDeltaStepper::ArcStepperT" name="ArcStepperT">
-    <type name="StepperDriverT" />
-  </typedef>
   <constructor id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" />
   <methodtemplate id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
+    <brief>linear motion initializer</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -35,7 +34,45 @@ LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-s
       <type name="std::size_t" />
     </templatenontypeparameter>
   </methodtemplate>
+  <methodtemplate id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;" name="LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;">
+    <brief>arc motion initializer:</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::curPos" name="curPos">
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::center" name="center">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::u" name="u">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::v" name="v">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::arcRad" name="arcRad">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::arcVel" name="arcVel">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::extVel" name="extVel">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::LinearDeltaStepper::LinearDeltaStepper&lt;StepperDriverT, AxisIdx&gt;::sz" name="sz">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
   <method id="motion::LinearDeltaStepper::testDir" name="testDir">
+    <brief>protected:</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>

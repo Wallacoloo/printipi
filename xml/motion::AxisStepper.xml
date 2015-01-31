@@ -109,10 +109,6 @@ These implementations must provide the functions outlined further down in the he
     <templatetypeparameter id="motion::AxisStepper::nextStep::TupleT" name="TupleT" />
     <templatetypeparameter id="motion::AxisStepper::nextStep::TupleT" name="TupleT" />
   </methodtemplate>
-  <structtemplate name="GetArcStepperTypes" ref="motion::AxisStepper::GetArcStepperTypes#motion::AxisStepper::GetArcStepperTypes">
-    <brief>Arc steppers:</brief>
-    <templatetypeparameter id="motion::AxisStepper::GetArcStepperTypes::Types" name="Types" />
-  </structtemplate>
   <field id="motion::AxisStepper::time" name="time">
     <type builtin="yes" name="float" />
   </field>

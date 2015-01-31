@@ -123,12 +123,6 @@ The math is described more in /code/proof-of-concept/coordmath.py and coord-math
     </return>
     <override name="CoordMap::getAxisSteppers" ref="motion::CoordMap#motion::CoordMap::getAxisSteppers" />
   </method>
-  <method id="motion::LinearDeltaCoordMap::getArcSteppers" name="getArcSteppers" override="yes">
-    <return>
-      <type name="LinearDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_ArcStepperTypes" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap::_ArcStepperTypes" />
-    </return>
-    <override name="CoordMap::getArcSteppers" ref="motion::CoordMap#motion::CoordMap::getArcSteppers" />
-  </method>
   <method id="motion::LinearDeltaCoordMap::numAxis" name="numAxis" override="yes" static="yes">
     <return>
       <type name="std::size_t" />

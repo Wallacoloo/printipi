@@ -12,6 +12,7 @@
   </functiontemplate>
   <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
   <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
+    <brief>Easiest way to extract the size of an array from its type.</brief>
     <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
   </structtemplate>
   <class name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper" />
@@ -30,12 +31,6 @@
         <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
       </default>
     </templatetypeparameter>
-  </classtemplate>
-  <classtemplate name="LinearDeltaArcStepper" ref="motion::LinearDeltaArcStepper#motion::LinearDeltaArcStepper">
-    <templatetypeparameter id="motion::LinearDeltaArcStepper::StepperDriverT" name="StepperDriverT" />
-    <templatenontypeparameter id="motion::LinearDeltaArcStepper::AxisIdx" name="AxisIdx">
-      <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
-    </templatenontypeparameter>
   </classtemplate>
   <classtemplate name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap">
     <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper1" name="Stepper1" />
@@ -61,6 +56,7 @@
     </templatenontypeparameter>
   </classtemplate>
   <classtemplate name="MaxOutputEventSequenceSize" ref="motion::MaxOutputEventSequenceSize#motion::MaxOutputEventSequenceSize">
+    <brief>given a tuple of AxisSteppers, MaxOutputEventSequenceSize&amp;lt;myTuple&amp;gt;::maxSize will return the maximum size</brief>
     <templatetypeparameter id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes" />
     <templatenontypeparameter default="std" id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
       <type name="std::size_t" />
@@ -102,12 +98,6 @@
         <type name="MotionFlags" ref="motion#motion::MotionFlags" />
       </argument>
     </function>
-  </enum>
-  <enum anonymous="yes" id="motion::MotionType" name="MotionType">
-    <brief>There are 3 distinct types of motion that can occur at any given time:</brief>
-    <enumvalue id="motion::MotionNone" name="MotionNone" value="0" />
-    <enumvalue id="motion::MotionLinear" name="MotionLinear" value="1" />
-    <enumvalue id="motion::MotionArc" name="MotionArc" value="2" />
   </enum>
   <enum anonymous="yes" id="motion::StepDirection" name="StepDirection">
     <enumvalue id="motion::StepBackward" name="StepBackward" value="0" />

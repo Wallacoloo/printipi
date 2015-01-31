@@ -51,11 +51,6 @@ Note: the term "axis coordinates" refers to an individual motor's microstep inde
       <type builtin="yes" name="bool" />
     </return>
   </method>
-  <method id="motion::CoordMap::getArcSteppers" name="getArcSteppers">
-    <return>
-      <type name="std::tuple&lt;&gt;" />
-    </return>
-  </method>
   <method id="motion::CoordMap::getAxisSteppers" name="getAxisSteppers">
     <return>
       <type name="std::tuple&lt;&gt;" />

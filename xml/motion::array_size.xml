@@ -1,4 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <structtemplate id="motion::array_size" name="array_size" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>Easiest way to extract the size of an array from its type.</brief>
+  <doc>for example, array_size&amp;lt;std::array&lt;int, 4&amp;gt; &gt;::size will give 4.</doc>
   <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
 </structtemplate>

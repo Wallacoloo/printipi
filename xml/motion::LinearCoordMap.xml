@@ -85,12 +85,6 @@ This is the CoordMap that your machine should use if it is a Cartesian robot.
     </return>
     <override name="CoordMap::getAxisSteppers" ref="motion::CoordMap#motion::CoordMap::getAxisSteppers" />
   </method>
-  <method id="motion::LinearCoordMap::getArcSteppers" name="getArcSteppers" override="yes">
-    <return>
-      <type name="LinearCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_ArcStepperTypes" ref="motion::LinearCoordMap#motion::LinearCoordMap::_ArcStepperTypes" />
-    </return>
-    <override name="CoordMap::getArcSteppers" ref="motion::CoordMap#motion::CoordMap::getArcSteppers" />
-  </method>
   <method id="motion::LinearCoordMap::getEndstop" name="getEndstop" override="yes">
     <return>
       <type name="iodrv::Endstop" qualifier=" const &amp;" ref="iodrv::Endstop#iodrv::Endstop" />

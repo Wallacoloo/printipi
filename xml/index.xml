@@ -181,14 +181,10 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <brief>for motion::USE_ENDSTOPS</brief>
     <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
     <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
+      <brief>Easiest way to extract the size of an array from its type.</brief>
       <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
     </structtemplate>
-    <class name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper">
-      <structtemplate name="GetArcStepperTypes" ref="motion::AxisStepper::GetArcStepperTypes#motion::AxisStepper::GetArcStepperTypes">
-        <brief>Arc steppers:</brief>
-        <templatetypeparameter id="motion::AxisStepper::GetArcStepperTypes::Types" name="Types" />
-      </structtemplate>
-    </class>
+    <class name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper" />
     <classtemplate name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver">
       <templatetypeparameter id="motion::AxisStepperWithDriver::StepperDriver" name="StepperDriver" />
     </classtemplate>
@@ -204,12 +200,6 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
           <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
         </default>
       </templatetypeparameter>
-    </classtemplate>
-    <classtemplate name="LinearDeltaArcStepper" ref="motion::LinearDeltaArcStepper#motion::LinearDeltaArcStepper">
-      <templatetypeparameter id="motion::LinearDeltaArcStepper::StepperDriverT" name="StepperDriverT" />
-      <templatenontypeparameter id="motion::LinearDeltaArcStepper::AxisIdx" name="AxisIdx">
-        <type name="motion::DeltaAxis" ref="motion#motion::DeltaAxis" />
-      </templatenontypeparameter>
     </classtemplate>
     <classtemplate name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap">
       <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper1" name="Stepper1" />
@@ -235,6 +225,7 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
       </templatenontypeparameter>
     </classtemplate>
     <classtemplate name="MaxOutputEventSequenceSize" ref="motion::MaxOutputEventSequenceSize#motion::MaxOutputEventSequenceSize">
+      <brief>given a tuple of AxisSteppers, MaxOutputEventSequenceSize&amp;lt;myTuple&amp;gt;::maxSize will return the maximum size</brief>
       <templatetypeparameter id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes" />
       <templatenontypeparameter default="std" id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
         <type name="std::size_t" />
