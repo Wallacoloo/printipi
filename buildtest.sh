@@ -24,7 +24,7 @@ do
 			make CXX=$compiler MACHINE=$machine $target
 			make CXX=$compiler MACHINE=$machine $target MACHINE_CLASS=generic DO_TESTS=1
 			#only run valgrind on debug builds or clang builds to avoid gcc generating instructions valgrind doesn't recognize
-			if [ "$target" == "debug" || "$compiler" == "clang++"]; then 
+			if [ "$target" == "debug" || "$compiler" == "clang++" ]; then 
 				valgrind --leak-check=full --track-fds=yes --error-exitcode=1 ../build/printipi
 			else
 				../build/printipi
