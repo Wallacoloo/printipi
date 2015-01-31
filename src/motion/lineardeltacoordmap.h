@@ -56,10 +56,10 @@ namespace motion {
  */
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class LinearDeltaCoordMap : public CoordMap {
     typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
-    typedef std::tuple<LinearDeltaStepper<Stepper1, DELTA_AXIS_A>, 
-                       LinearDeltaStepper<Stepper2, DELTA_AXIS_B>, 
-                       LinearDeltaStepper<Stepper3, DELTA_AXIS_C>, 
-                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
+    typedef std::tuple<LinearDeltaStepper<Stepper1>, 
+                       LinearDeltaStepper<Stepper2>, 
+                       LinearDeltaStepper<Stepper3>, 
+                       LinearStepper<Stepper4> > _AxisStepperTypes;
 
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
     float _r, _L, _h, _buildrad;
@@ -105,10 +105,10 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         }
         inline _AxisStepperTypes getAxisSteppers() const {
             return std::make_tuple(
-                       LinearDeltaStepper<Stepper1, DELTA_AXIS_A>(0, *this, std::get<0>(stepperDrivers), &endstops[0]), 
-                       LinearDeltaStepper<Stepper2, DELTA_AXIS_B>(1, *this, std::get<1>(stepperDrivers), &endstops[1]), 
-                       LinearDeltaStepper<Stepper3, DELTA_AXIS_C>(2, *this, std::get<2>(stepperDrivers), &endstops[2]), 
-                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> (3, *this, std::get<3>(stepperDrivers), &endstops[3])
+                       LinearDeltaStepper<Stepper1>(0, DELTA_AXIS_A,     *this, std::get<0>(stepperDrivers), &endstops[0]), 
+                       LinearDeltaStepper<Stepper2>(1, DELTA_AXIS_B,     *this, std::get<1>(stepperDrivers), &endstops[1]), 
+                       LinearDeltaStepper<Stepper3>(2, DELTA_AXIS_C,     *this, std::get<2>(stepperDrivers), &endstops[2]), 
+                       LinearStepper<Stepper4>     (3, CARTESIAN_AXIS_E, *this, std::get<3>(stepperDrivers), &endstops[3])
             );
         }
 

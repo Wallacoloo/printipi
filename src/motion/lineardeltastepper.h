@@ -117,41 +117,43 @@ enum DeltaAxis {
  * LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel, 
  *   for linear (G0/G1) and arc movements (G2/G3)
  */
-template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
-    private:
-        const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
-        float _r, _L, _MM_STEPS; //calibration settings which will be obtained from the CoordMap
-        float w; //angle of this axis, in radians
-        float M0; //initial coordinate of THIS axis. CW from +y axis
-        int sTotal; //current step offset from M0
-        
-        //variables used during linear motion
-        Vector3f line_P0; //initial cartesian position, in mm
-        Vector3f line_v; //cartesian velocity vector, in mm/sec
-        
-        Vector3f arc_Pc; //arc centerpoint (cartesian)
-        Vector3f arc_u, arc_v; //u and v vectors (cartesian); P(t) = Pc + u*cos(mt) + v*sin(mt)
-        float arcRad; //radius of arc
-        float arc_m; //angular velocity of the arc.
-        bool isArcMotion;
-        inline float r() const { return _r; }
-        inline float L() const { return _L; }
-        inline float MM_STEPS() const { return _MM_STEPS; }
+template <typename StepperDriverT> class LinearDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
+    DeltaAxis axisIdx;
+    const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
+    float _r, _L, _MM_STEPS; //calibration settings which will be obtained from the CoordMap
+    float w; //angle of this axis, in radians
+    float M0; //initial coordinate of THIS axis. CW from +y axis
+    int sTotal; //current step offset from M0
+    
+    //variables used during linear motion
+    Vector3f line_P0; //initial cartesian position, in mm
+    Vector3f line_v; //cartesian velocity vector, in mm/sec
+    
+    Vector3f arc_Pc; //arc centerpoint (cartesian)
+    Vector3f arc_u, arc_v; //u and v vectors (cartesian); P(t) = Pc + u*cos(mt) + v*sin(mt)
+    float arcRad; //radius of arc
+    float arc_m; //angular velocity of the arc.
+    bool isArcMotion;
+    inline float r() const { return _r; }
+    inline float L() const { return _L; }
+    inline float MM_STEPS() const { return _MM_STEPS; }
     public:
-        template <typename CoordMapT> LinearDeltaStepper(int idx, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop)
+        template <typename CoordMapT> LinearDeltaStepper(int idx, DeltaAxis axisIdx, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop)
          : AxisStepperWithDriver<StepperDriverT>(idx, stepper),
+           axisIdx(axisIdx),
            endstop(endstop),
            _r(map.r()), 
            _L(map.L()),
-           _MM_STEPS(map.MM_STEPS(AxisIdx)),
-           w(AxisIdx*2*M_PI/3) {
-              static_assert(AxisIdx < 3, "LinearDeltaStepper only supports axis A, B, or C (0, 1, 2)");
+           _MM_STEPS(map.MM_STEPS(axisIdx)),
+           w(axisIdx*2*M_PI/3) {
+              //E axis has to be controlled using a LinearStepper (as if it were cartesian)
+              assert(axisIdx == DELTA_AXIS_A || axisIdx == DELTA_AXIS_B || axisIdx == DELTA_AXIS_C);
         }
 
         //linear motion initializer
         template <typename CoordMapT, std::size_t sz> void beginLine(const CoordMapT &map, const std::array<int, sz>& curPos, 
         const Vector4f &vel) {
-            M0 = map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx); 
+            M0 = map.getAxisPosition(curPos, axisIdx)*map.MM_STEPS(axisIdx); 
             sTotal = 0;
             line_P0 = map.xyzeFromMechanical(curPos).xyz();
             line_v = vel.xyz();
@@ -163,7 +165,7 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
         const Vector3f &center, const Vector3f &u, const Vector3f &v,  
         float arcRad, float arcVel, float extVel) {
             (void)map, (void)extVel; //unused
-            M0 = map.getAxisPosition(curPos, AxisIdx)*map.MM_STEPS(AxisIdx);
+            M0 = map.getAxisPosition(curPos, axisIdx)*map.MM_STEPS(axisIdx);
             sTotal = 0;
             arc_Pc = center;
             arc_u = u;
@@ -296,7 +298,7 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
                 float posTime = testDir((this->sTotal+1)*MM_STEPS());
                 if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                     if (posTime > this->time) {
-                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
                         this->time = posTime;
                         this->direction = StepForward;
                         ++this->sTotal;
@@ -305,7 +307,7 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
                     }
                 } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
                     if (negTime > this->time) {
-                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", axisIdx, negTime, posTime);
                         this->time = negTime;
                         this->direction = StepBackward;
                         --this->sTotal;
@@ -314,12 +316,12 @@ template <typename StepperDriverT, DeltaAxis AxisIdx> class LinearDeltaStepper :
                     }
                 } else { //neither time is invalid
                     if (negTime < posTime) {
-                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", AxisIdx, negTime, posTime);
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", axisIdx, negTime, posTime);
                         this->time = negTime;
                         this->direction = StepBackward;
                         --this->sTotal;
                     } else {
-                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", AxisIdx, posTime, negTime);
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
                         this->time = posTime;
                         this->direction = StepForward;
                         ++this->sTotal;

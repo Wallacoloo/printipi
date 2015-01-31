@@ -43,10 +43,10 @@ namespace motion {
  */
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class LinearCoordMap : public CoordMap {
     typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
-    typedef std::tuple<LinearStepper<Stepper1, CARTESIAN_AXIS_X>, 
-                       LinearStepper<Stepper2, CARTESIAN_AXIS_Y>, 
-                       LinearStepper<Stepper3, CARTESIAN_AXIS_Z>, 
-                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
+    typedef std::tuple<LinearStepper<Stepper1>, 
+                       LinearStepper<Stepper2>, 
+                       LinearStepper<Stepper3>, 
+                       LinearStepper<Stepper4> > _AxisStepperTypes;
 
     float _STEPS_MM_X, _MM_STEPS_X;
     float _STEPS_MM_Y, _MM_STEPS_Y;
@@ -92,10 +92,10 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         }
         inline _AxisStepperTypes getAxisSteppers() const {
             return std::make_tuple(
-                LinearStepper<Stepper1, CARTESIAN_AXIS_X>(0, *this, std::get<0>(stepperDrivers), &endstops[0]), 
-                LinearStepper<Stepper2, CARTESIAN_AXIS_Y>(1, *this, std::get<1>(stepperDrivers), &endstops[1]), 
-                LinearStepper<Stepper3, CARTESIAN_AXIS_Z>(2, *this, std::get<2>(stepperDrivers), &endstops[2]), 
-                LinearStepper<Stepper4, CARTESIAN_AXIS_E>(3, *this, std::get<3>(stepperDrivers), &endstops[3])
+                LinearStepper<Stepper1>(0, CARTESIAN_AXIS_X, *this, std::get<0>(stepperDrivers), &endstops[0]), 
+                LinearStepper<Stepper2>(1, CARTESIAN_AXIS_Y, *this, std::get<1>(stepperDrivers), &endstops[1]), 
+                LinearStepper<Stepper3>(2, CARTESIAN_AXIS_Z, *this, std::get<2>(stepperDrivers), &endstops[2]), 
+                LinearStepper<Stepper4>(3, CARTESIAN_AXIS_E, *this, std::get<3>(stepperDrivers), &endstops[3])
             );
         }
         inline const iodrv::Endstop& getEndstop(std::size_t axis) const {

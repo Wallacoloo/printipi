@@ -44,7 +44,8 @@ enum CartesianAxis {
 /* 
  * LinearStepper implements the AxisStepper interface for Cartesian-style robots.
  */
-template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper : public AxisStepperWithDriver<StepperDriverT> {
+template <typename StepperDriverT> class LinearStepper : public AxisStepperWithDriver<StepperDriverT> {
+    CartesianAxis coordType;
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
     protected:
@@ -54,14 +55,15 @@ template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper 
             //1/(v*STEPS_MM) is sec/steps.
             //multiplied by 1 step and units are sec. Therefore t = 1/(v*STEPS_MM);
             //NOTE: this may return a NEGATIVE time, indicating that the stepping direction is backward.
-            assert(CoordType==CARTESIAN_AXIS_X || CoordType==CARTESIAN_AXIS_Y || CoordType==CARTESIAN_AXIS_Z || CoordType==CARTESIAN_AXIS_E);
-            return 1./ (vel.array()[CoordType] * map.STEPS_MM(CoordType));
+            return 1./ (vel.array()[coordType] * map.STEPS_MM(coordType));
         }
     public:
-        template <typename CoordMapT> inline LinearStepper(int idx, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop)
+        template <typename CoordMapT> inline LinearStepper(int idx, CartesianAxis coordType, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop)
          : AxisStepperWithDriver<StepperDriverT>(idx, stepper),
+           coordType(coordType),
            endstop(endstop) {
             (void)map;
+            assert(coordType==CARTESIAN_AXIS_X || coordType==CARTESIAN_AXIS_Y || coordType==CARTESIAN_AXIS_Z || coordType==CARTESIAN_AXIS_E);
         }
         //Linear movement constructor
         template <typename CoordMapT, std::size_t sz> void beginLine(const CoordMapT &map, const std::array<int, sz>& curPos, 
@@ -76,8 +78,8 @@ template <typename StepperDriverT, CartesianAxis CoordType> class LinearStepper 
           const Vector3f &center, const Vector3f &u, const Vector3f &v,  
           float arcRad, float arcVel, float extVel) {
             (void)map; (void)curPos; (void)center; (void)u; (void)v; (void)arcRad; (void)arcVel; //unused
-            assert(CoordType == CARTESIAN_AXIS_E); //can only use a LinearStepper as an Arc implementation for the extruder axis, since that moves at const velocity
-            timePerStep = std::fabs(1./ (extVel * map.STEPS_MM(CoordType)));
+            assert(coordType == CARTESIAN_AXIS_E); //can only use a LinearStepper as an Arc implementation for the extruder axis, since that moves at const velocity
+            timePerStep = std::fabs(1./ (extVel * map.STEPS_MM(coordType)));
             this->time = 0;
             this->direction = stepDirFromSign(extVel);
         }
