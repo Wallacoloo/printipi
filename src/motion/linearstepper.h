@@ -48,15 +48,6 @@ template <typename StepperDriverT> class LinearStepper : public AxisStepperWithD
     CartesianAxis coordType;
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float timePerStep;
-    protected:
-        template <typename CoordMapT> float TIME_PER_STEP(const CoordMapT &map, const Vector4f &vel) const {
-            //return units of time. v is mm/sec, STEPS_MM is steps/mm.
-            //therefore v*STEPS_MM = steps/sec.
-            //1/(v*STEPS_MM) is sec/steps.
-            //multiplied by 1 step and units are sec. Therefore t = 1/(v*STEPS_MM);
-            //NOTE: this may return a NEGATIVE time, indicating that the stepping direction is backward.
-            return 1./ (vel.array()[coordType] * map.STEPS_MM(coordType));
-        }
     public:
         template <typename CoordMapT> inline LinearStepper(int idx, CartesianAxis coordType, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop)
          : AxisStepperWithDriver<StepperDriverT>(idx, stepper),
@@ -69,9 +60,13 @@ template <typename StepperDriverT> class LinearStepper : public AxisStepperWithD
         template <typename CoordMapT, std::size_t sz> void beginLine(const CoordMapT &map, const std::array<int, sz>& curPos, 
           const Vector4f &vel) {
             (void)curPos; //unused
-            timePerStep = std::fabs( TIME_PER_STEP(map, vel) );
+            //timePerStep is in units of sec/step. v is mm/sec, STEPS_MM is steps/mm.
+            //therefore v*STEPS_MM = steps/sec, so 1. / (v*STEPS_MM) is steps/sec
+            float myVel = vel.array()[coordType];
+            float signedTimePerStep = 1. / (myVel * map.STEPS_MM(coordType));
+            timePerStep = std::fabs(signedTimePerStep);
             this->time = 0;
-            this->direction = stepDirFromSign( TIME_PER_STEP(map, vel) );
+            this->direction = stepDirFromSign(signedTimePerStep);
         }
         //Arc movement constructor
         template <typename CoordMapT, std::size_t sz> void beginArc(const CoordMapT &map, const std::array<int, sz> &curPos, 
