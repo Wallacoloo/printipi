@@ -54,6 +54,7 @@ namespace motion {
  *
  * The math is described more in /code/proof-of-concept/coordmath.py and coord-math.nb (note: file has been deleted; must view an archived version of printipi on Github to view this documentation)
  */
+
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class AngularDeltaCoordMap : public CoordMap {
     typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
     typedef std::tuple<AngularDeltaStepper<Stepper1, DELTA_AXIS_A>, 
@@ -63,7 +64,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
     typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
 
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
-    float _r, _L, _h, _buildrad;
+    float e, f, re, rf, _buildrad;
     float _STEPS_DEGREE, _DEGREES_STEP;
     float _STEPS_MM_EXT, _MM_STEPS_EXT;
     float homeVelocity;
@@ -80,16 +81,14 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline float STEPS_MM_EXT() const { return _STEPS_MM_EXT; }
         inline float MM_STEPS_EXT() const { return _MM_STEPS_EXT; }
     public:
-        inline float r() const { return _r; }
-        inline float L() const { return _L; }
-        inline float h() const { return _h; }
         inline float buildrad() const { return _buildrad; }
         //inline float STEPS_MM(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? STEPS_MM_EXT() : STEPS_MM(); }
         //inline float MM_STEPS(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? MM_STEPS_EXT() : MM_STEPS(); }
         inline AngularDeltaCoordMap(
-		float r,
-		float L, 
-		float h, 
+		float e,
+		float f, 
+		float re, 
+        float rf,
 		float buildrad, 
 		float STEPS_DEGREE, 
 		float STEPS_MM_EXT, 
@@ -107,9 +106,10 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
 		const BedLevelT &t)
 
 	        :
-		_r(r),
-		_L(L),
-		_h(h), 
+		e(e),
+        f(f),
+        re(re),
+        rf(rf),
 		_buildrad(buildrad),
            	_STEPS_DEGREE(STEPS_DEGREE), _DEGREES_STEP(1. / STEPS_DEGREE),
            	_STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
@@ -175,7 +175,8 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             //interface.setUnbufferedMove(true);
             Vector4f curPos = interface.actualCartesianPosition();
             //try to move to <here> + <height> & will stop along the way if we hit an endstop.
-            Vector4f destPos = curPos + Vector4f(0, 0, h(), 0);
+            float veryHighZ = 1000; //just pick any value that will cause us to (try to) move past the endstop position
+            Vector4f destPos = curPos + Vector4f(0, 0, veryHighZ, 0);
             interface.moveTo(destPos, homeVelocity, motion::USE_ENDSTOPS | motion::NO_LEVELING | motion::NO_BOUNDING);
             //reset the indexed axis positions:
             interface.resetAxisPositions(getHomePosition(interface.axisPositions()));
@@ -191,64 +192,85 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             return bedLevel.transform(xyz);
         }
         inline Vector4f bound(const Vector4f &xyze) const {
-            //bound z:
-            float z = std::max(MIN_Z(), std::min((float)((h()+sqrt(L()*L()-r()*r()))*STEPS_MM()), xyze.z()));
-            float x = xyze.x();
-            float y = xyze.y();
-            if (x*x + y*y > buildrad()*buildrad()) { //bring x, y onto the platform.
-                float ratio = std::sqrt(buildrad()*buildrad() / (x*x + y*y));
-                x *= ratio;
-                y *= ratio;
-            }
-            //TODO: force x & y to be on the platform.
-            return Vector4f(x, y, z, xyze.e());
+            //implement this function later to make sure we don't try to move to any invalid coordinate.
+            return xyze;
         }
-        inline Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
-            float e = mech[DELTA_AXIS_E]*MM_STEPS_EXT();
-            float x, y, z;
-            float A = mech[DELTA_AXIS_A]*MM_STEPS(); //convert mechanical positions (steps) to MM.
-            float B = mech[DELTA_AXIS_B]*MM_STEPS();
-            float C = mech[DELTA_AXIS_C]*MM_STEPS();
+    private:
+        // Function taken from http://forums.trossenrobotics.com/tutorials/introduction-129/delta-robot-kinematics-3276/
+        // forward kinematics: (theta1, theta2, theta3) -> (x0, y0, z0)
+        // returned status: 0=OK, -1=non-existing position
+         int delta_calcForward(float theta1, float theta2, float theta3, float &x0, float &y0, float &z0) {
+             // define useful constants
+             float pi = M_PI;
+             float tan30 = tan(30*pi/180.0);
+             float sin30 = sin(30*pi/180.0);
+             float tan60 = tan(60*pi/180.0);
 
-            if (A == B && B == C) { //prevent a division-by-zero.
-                LOGV("AngularDeltaCoordMap::A==B==C\n");
-
-                x = 0;
-                y = 0;
-                z = A-sqrt(L()*L()-r()*r());
-                //LOGV("AngularDeltaCoordMap::z=%f (%f)\n", z, A-sqrt(L*L-r*r));
-
-            } else if (B == C) { //prevent a division-by-zero.
-                LOGV("AngularDeltaCoordMap::A!=B==C\n");
-
-                auto ydiv = 2*(4*A*A - 8*A*B + 4*B*B + 9*r()*r());
-                auto ya = 2*(A-B)*(A-B)*r();
-                auto yb = 4*sqrt((A - B)*(A - B)*(-(A - B)*(A - B)*(A - B)*(A - B) + 4*(A - B)*(A - B)*L()*L() + 3*(-2*(A - B)*(A - B) + 3*L()*L())*r()*r() - 9*r()*r()*r()*r()));
-                auto com1 = fabs(yb/((A-B)*ydiv));
-                auto com2 = ya/ydiv;
-
-                z = 0.5*(A+B - 3*r()*(com2/(A-B) + com1));
-                y = com2 + (A-B)*com1;
-                x = 0;
-
-            } else {
-                LOGV("AngularDeltaCoordMap::B!=C\n");
-
-                auto za = (B - C)*r()*(2*A*A*A - A*A*(B + C) - A*(B*B + C*C - 3*r()*r()) + (B + C)*(2*B*B - 3*B*C + 2*C*C + 3*r()*r()));
-                auto zb = sqrt(3)*sqrt(-((B - C)*(B - C)*r()*r()*((A - B)*(A - B)*(A - C)*(A - C)*(B - C)*(B - C) + 3*(A*A + B*B - B*C + C*C - A*(B + C))*(A*A + B*B - B*C + C*C - A*(B + C) - 4*L()*L())*r()*r() + 9*(2*(A*A + B*B - B*C + C*C - A*(B + C)) - 3*L()*L())*r()*r()*r()*r() + 27*r()*r()*r()*r()*r()*r())));
-                auto zdiv = (B - C)*r()*(4*(A*A + B*B - B*C + C*C - A*(B + C)) + 9*r()*r());
-
-                //will use smaller of z.
-                //if sign(zb) == sign(zdiv), this should be z2, else z1.
-                //therefore z = za/zdiv - abs(zb/zdiv)
-
-                z = za/zdiv - fabs(zb/zdiv);
-                //Solving for x, y in terms of z gives 
-                x = ((B - C)*(B + C - 2*z))/(2*sqrt(3)*r());
-                y = -((-2*A*A + B*B + C*C + 4*A*z - 2*B*z - 2*C*z)/(6*r()));
-            }
-            return Vector4f(x, y, z, e);
-        }
+             float t = (f-e)*tan30/2;
+             float dtr = pi/(float)180.0;
+         
+             theta1 *= dtr;
+             theta2 *= dtr;
+             theta3 *= dtr;
+         
+             float y1 = -(t + rf*cos(theta1));
+             float z1 = -rf*sin(theta1);
+         
+             float y2 = (t + rf*cos(theta2))*sin30;
+             float x2 = y2*tan60;
+             float z2 = -rf*sin(theta2);
+         
+             float y3 = (t + rf*cos(theta3))*sin30;
+             float x3 = -y3*tan60;
+             float z3 = -rf*sin(theta3);
+         
+             float dnm = (y2-y1)*x3-(y3-y1)*x2;
+         
+             float w1 = y1*y1 + z1*z1;
+             float w2 = x2*x2 + y2*y2 + z2*z2;
+             float w3 = x3*x3 + y3*y3 + z3*z3;
+             
+             // x = (a1*z + b1)/dnm
+             float a1 = (z2-z1)*(y3-y1)-(z3-z1)*(y2-y1);
+             float b1 = -((w2-w1)*(y3-y1)-(w3-w1)*(y2-y1))/2.0;
+         
+             // y = (a2*z + b2)/dnm;
+             float a2 = -(z2-z1)*x3+(z3-z1)*x2;
+             float b2 = ((w2-w1)*x3 - (w3-w1)*x2)/2.0;
+         
+             // a*z^2 + b*z + c = 0
+             float a = a1*a1 + a2*a2 + dnm*dnm;
+             float b = 2*(a1*b1 + a2*(b2-y1*dnm) - z1*dnm*dnm);
+             float c = (b2-y1*dnm)*(b2-y1*dnm) + b1*b1 + dnm*dnm*(z1*z1 - re*re);
+          
+             // discriminant
+             float d = b*b - (float)4.0*a*c;
+             if (d < 0) return -1; // non-existing point
+         
+             z0 = -(float)0.5*(b+sqrt(d))/a;
+             x0 = (a1*z0 + b1)/dnm;
+             y0 = (a2*z0 + b2)/dnm;
+             return 0;
+         }
+         
+    public:
+         // Inside your AngularDeltaCoordMap, your forward kinematics should look like:
+         Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
+            // The "mech" coordinates given are the locations of each axis *in microsteps*.
+            // So convert these into angles for the 3 towers,
+            // and millimeters for the extruder:
+            float theta1 =   mech[0] / MICROSTEPS_PER_DEGREE; 
+            float theta2 =   mech[1] / MICROSTEPS_PER_DEGREE;
+            float theta3 =   mech[2] / MICROSTEPS_PER_DEGREE;
+            float extruder = mech[3] / MICROSTEPS_PER_MM_EXTRUDER;
+            
+            // Now you can use your previous forward kinematics code:
+            float x0, y0, z0;
+            delta_calcForward(theta1, theta2, theta3, x0, y0, z0);
+            
+            //Now return x0, y0, z0, extruder - all coordinates in millimeters:
+            return Vector4f(x0, y0, z0, extruder);
+         }
 
 };
 
