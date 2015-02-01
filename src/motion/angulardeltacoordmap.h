@@ -64,16 +64,19 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
 
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
     float _r, _L, _h, _buildrad;
-    float _STEPS_MM, _MM_STEPS;
+    float _STEPS_DEGREE, _DEGREES_STEP;
     float _STEPS_MM_EXT, _MM_STEPS_EXT;
     float homeVelocity;
+    float homeAngle; //the angle at which the endstops are positioned
     BedLevelT bedLevel;
 
     std::array<iodrv::Endstop, 4> endstops; //A, B, C and E (E is null)
     StepperDriverTypes stepperDrivers;    
     private:
-        inline float STEPS_MM() const { return _STEPS_MM; }
-        inline float MM_STEPS() const { return _MM_STEPS; }
+        //return number of (micro)steps it takes to rotate a motor by 1 degree.
+        inline float STEPS_DEGREE() const { return _STEPS_DEGREE; }
+        //Return the numner of degrees rotated by advancing a motor by 1 (micro)step
+        inline float DEGREES_STEP() const { return _DEGREES_STEP; }
         inline float STEPS_MM_EXT() const { return _STEPS_MM_EXT; }
         inline float MM_STEPS_EXT() const { return _MM_STEPS_EXT; }
     public:
@@ -81,16 +84,17 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline float L() const { return _L; }
         inline float h() const { return _h; }
         inline float buildrad() const { return _buildrad; }
-        inline float STEPS_MM(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? STEPS_MM_EXT() : STEPS_MM(); }
-        inline float MM_STEPS(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? MM_STEPS_EXT() : MM_STEPS(); }
+        //inline float STEPS_MM(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? STEPS_MM_EXT() : STEPS_MM(); }
+        //inline float MM_STEPS(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? MM_STEPS_EXT() : MM_STEPS(); }
         inline AngularDeltaCoordMap(
 		float r,
 		float L, 
 		float h, 
 		float buildrad, 
-		float STEPS_MM, 
+		float STEPS_DEGREE, 
 		float STEPS_MM_EXT, 
 		float homeVelocity,
+        float homeAngle,
 
             	Stepper1 &&stepper1, 
 		Stepper2 &&stepper2, 
@@ -107,9 +111,10 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
 		_L(L),
 		_h(h), 
 		_buildrad(buildrad),
-           	_STEPS_MM(STEPS_MM), _MM_STEPS(1. / STEPS_MM),
+           	_STEPS_DEGREE(STEPS_DEGREE), _DEGREES_STEP(1. / STEPS_DEGREE),
            	_STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
            	homeVelocity(homeVelocity),
+            homeAngle(homeAngle),
            	bedLevel(t),
 
            	endstops({{
@@ -177,7 +182,10 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             //interface.setUnbufferedMove(false);
         }
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
-            return std::array<int, 4>({{(int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), (int)(h()*STEPS_MM()), cur[3]}});
+            //When we're at the home position, we know the angle of each axis.
+            //Convert these angles into the microstep positions of the stepper motors and return that.
+            //Extruder is unaffected by homing.
+            return std::array<int, 4>({{(int)(homeAngle*STEPS_DEGREE()), (int)(homeAngle*STEPS_DEGREE()), (int)(homeAngle*STEPS_DEGREE()), cur[3]}});
         }
         inline Vector3f applyLeveling(const Vector3f &xyz) const {
             return bedLevel.transform(xyz);

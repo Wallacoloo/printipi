@@ -628,7 +628,7 @@ class firepickdelta : public Machine {
             //    bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
             return AngularDeltaCoordMap<A4988, A4988, A4988, A4988>(
-                DELTA_E, DELTA_F, DELTA_RE, DELTA_PRINTABLE_RADIUS, STEPS_XYZ, STEPS_MM_EXT, HOME_RATE_MM_SEC, 
+                DELTA_E, DELTA_F, DELTA_RE, DELTA_PRINTABLE_RADIUS, STEPS_XYZ, STEPS_MM_EXT, HOME_RATE_MM_SEC, Z_HOME_ANGLE
                 //A tower:
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_A_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_A_DIR), 
