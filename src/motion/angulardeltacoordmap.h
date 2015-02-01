@@ -57,11 +57,10 @@ namespace motion {
 
 template <typename Stepper1, typename Stepper2, typename Stepper3, typename Stepper4, typename BedLevelT=Matrix3x3> class AngularDeltaCoordMap : public CoordMap {
     typedef std::tuple<Stepper1, Stepper2, Stepper3, Stepper4> StepperDriverTypes;
-    typedef std::tuple<AngularDeltaStepper<Stepper1, DELTA_AXIS_A>, 
-                       AngularDeltaStepper<Stepper2, DELTA_AXIS_B>, 
-                       AngularDeltaStepper<Stepper3, DELTA_AXIS_C>, 
-                       LinearStepper<Stepper4, CARTESIAN_AXIS_E> > _AxisStepperTypes;
-    typedef typename AxisStepper::GetArcStepperTypes<_AxisStepperTypes>::ArcStepperTypes _ArcStepperTypes;
+    typedef std::tuple<AngularDeltaStepper<Stepper1>, 
+                       AngularDeltaStepper<Stepper2>, 
+                       AngularDeltaStepper<Stepper3>, 
+                       LinearStepper<Stepper4> > _AxisStepperTypes;
 
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
     float e, f, re, rf, _buildrad;
@@ -81,9 +80,14 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline float STEPS_MM_EXT() const { return _STEPS_MM_EXT; }
         inline float MM_STEPS_EXT() const { return _MM_STEPS_EXT; }
     public:
+        //define these functions so our AxisSteppers can know a bit about their coordinate system
+        inline float STEPS_DEGREE(std::size_t axisIdx) const { return _STEPS_DEGREE; }
+        inline float DEGREES_STEP(std::size_t axisIdx) const { return _DEGREES_STEP; }
+        //The following are only valid for the extruder:
+        inline float STEPS_MM(std::size_t axisIdx)     const { assert(axisIdx==CARTESIAN_AXIS_E); return _STEPS_MM_EXT; }
+        inline float MM_STEPS(std::size_t axisIdx)     const { assert(axisIdx==CARTESIAN_AXIS_E); return _MM_STEPS_EXT; }
         inline float buildrad() const { return _buildrad; }
-        //inline float STEPS_MM(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? STEPS_MM_EXT() : STEPS_MM(); }
-        //inline float MM_STEPS(std::size_t axisIdx) const { return axisIdx == DELTA_AXIS_E ? MM_STEPS_EXT() : MM_STEPS(); }
+
         inline AngularDeltaCoordMap(
 		float e,
 		float f, 
@@ -151,10 +155,12 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                 endstops[2]);
         }
         inline _AxisStepperTypes getAxisSteppers() const {
-            return _AxisStepperTypes();
-        }
-        inline _ArcStepperTypes getArcSteppers() const {
-            return _ArcStepperTypes();
+            return std::make_tuple(
+                       AngularDeltaStepper<Stepper1>(0, ANGULARDELTA_AXIS_A, *this, std::get<0>(stepperDrivers), &endstops[0]), 
+                       AngularDeltaStepper<Stepper2>(1, ANGULARDELTA_AXIS_B, *this, std::get<1>(stepperDrivers), &endstops[1]), 
+                       AngularDeltaStepper<Stepper3>(2, ANGULARDELTA_AXIS_C, *this, std::get<2>(stepperDrivers), &endstops[2]), 
+                       LinearStepper<Stepper4>      (3, CARTESIAN_AXIS_E,    *this, std::get<3>(stepperDrivers), &endstops[3])
+            );
         }
 
         inline static constexpr std::size_t numAxis() {
@@ -199,7 +205,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         // Function taken from http://forums.trossenrobotics.com/tutorials/introduction-129/delta-robot-kinematics-3276/
         // forward kinematics: (theta1, theta2, theta3) -> (x0, y0, z0)
         // returned status: 0=OK, -1=non-existing position
-         int delta_calcForward(float theta1, float theta2, float theta3, float &x0, float &y0, float &z0) {
+         int delta_calcForward(float theta1, float theta2, float theta3, float &x0, float &y0, float &z0) const {
              // define useful constants
              float pi = M_PI;
              float tan30 = tan(30*pi/180.0);
@@ -259,10 +265,10 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             // The "mech" coordinates given are the locations of each axis *in microsteps*.
             // So convert these into angles for the 3 towers,
             // and millimeters for the extruder:
-            float theta1 =   mech[0] / MICROSTEPS_PER_DEGREE; 
-            float theta2 =   mech[1] / MICROSTEPS_PER_DEGREE;
-            float theta3 =   mech[2] / MICROSTEPS_PER_DEGREE;
-            float extruder = mech[3] / MICROSTEPS_PER_MM_EXTRUDER;
+            float theta1 =   mech[0] * DEGREES_STEP(); 
+            float theta2 =   mech[1] * DEGREES_STEP();
+            float theta3 =   mech[2] * DEGREES_STEP();
+            float extruder = mech[3] * MM_STEPS_EXT();
             
             // Now you can use your previous forward kinematics code:
             float x0, y0, z0;

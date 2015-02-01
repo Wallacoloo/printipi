@@ -350,7 +350,7 @@
 #include "pid.h"
 #include "common/filters/lowpassfilter.h"
 #include "common/matrix.h"
-#include "motion/constantacceleration.h"+
+#include "motion/constantacceleration.h"
 #include "iodrivers/a4988.h"
 #include "motion/angulardeltacoordmap.h"
 #include "iodrivers/rcthermistor2pin.h"
@@ -628,7 +628,7 @@ class firepickdelta : public Machine {
             //    bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
             return AngularDeltaCoordMap<A4988, A4988, A4988, A4988>(
-                DELTA_E, DELTA_F, DELTA_RE, DELTA_RF, DELTA_PRINTABLE_RADIUS, STEPS_XYZ, STEPS_MM_EXT, HOME_RATE_MM_SEC, Z_HOME_ANGLE
+                DELTA_E, DELTA_F, DELTA_RE, DELTA_RF, DELTA_PRINTABLE_RADIUS, STEPS_XYZ, STEPS_MM_EXT, HOME_RATE_MM_SEC, Z_HOME_ANGLE,
                 //A tower:
                 A4988(IoPin(NO_INVERSIONS, PIN_STEPPER_A_STEP), 
                       IoPin(NO_INVERSIONS, PIN_STEPPER_A_DIR), 
@@ -651,9 +651,9 @@ class firepickdelta : public Machine {
                 Endstop(IoPin(PIN_ENDSTOP_INVERSIONS, PIN_ENDSTOP_C, PIN_ENDSTOP_PULL)),
                 //bed-level matrix
                 Matrix3x3(
-                0.999975003, 0.000005356, -0.007070522, 
-                0.000005356, 0.999998852, 0.001515111, 
-                0.007070522, -0.001515111, 0.999973855));
+                1.000000000, 0.000000000, 0.000000000, 
+                0.000005356, 1.000000000, 0.000000000, 
+                0.000000000, 0.000000000, 1.000000000));
         }
 
         //Expose default and maximum velocities:
