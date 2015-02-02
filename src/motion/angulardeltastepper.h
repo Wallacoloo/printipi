@@ -34,7 +34,7 @@
  *
  * For solving this just in the YZ plane,
  * we get the following constraints:
- * |J1 - E1'| = re, |F1-J1| = rf and J1 = F1 + rf<0, cos(a), sin(a)>
+ * |J1 - E1'| = re, |F1-J1| = rf and J1 = F1 + rf<0, cos(a), -sin(a)>
  *
  * Rewrite |x| as x . x:
  *       (J1 - E1') . (J1 - E1') == re^2
@@ -44,18 +44,18 @@
  *   and J1 . J1 - 2 J1 . F1  + F1  . F1  == rf^2
  * Subtract equations:
  *   2 J1 . (F1 - E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
- * Substitute J1 = F1 + rf<0, cos(a), sin(a)>
- *   2(F1 + rf<0, cos(a), sin(a)>) . (F1 - E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
+ * Substitute J1 = F1 + rf<0, cos(a), -sin(a)>
+ *   2(F1 + rf<0, cos(a), -sin(a)>) . (F1 - E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
  * Expand:
- *   2F1 . F1 - 2F1 . E1' + 2rf<0, cos(a), sin(a)> . (F1-E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
+ *   2F1 . F1 - 2F1 . E1' + 2rf<0, cos(a), -sin(a)> . (F1-E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
  * Combine terms & rearrange:
- *   F1 . F1 - 2F1 . E1' + E1' . E1' + 2rf<0, cos(a), sin(a)> . (F1-E1') == re^2 - rf^2
+ *   F1 . F1 - 2F1 . E1' + E1' . E1' + 2rf<0, cos(a), -sin(a)> . (F1-E1') == re^2 - rf^2
  * Notice that F1 . F1 - 2F1 . E1' + E1' . E1' is equal to (F1 - E1') . (F1 - E1')
- *   2rf<0, cos(a), sin(a)> . (F1-E1') == re^2 - rf^2 - |F1-E1'|^2
+ *   2rf<0, cos(a), -sin(a)> . (F1-E1') == re^2 - rf^2 - |F1-E1'|^2
  * Expand and divide by 2rf:
- *   (F1y-E1'y)cos(a) + (F1z-E1'z)sin(a) == 1/2rf*(re^2 - rf^2 - |F1-E1'|^2)
+ *   (F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) == 1/2rf*(re^2 - rf^2 - |F1-E1'|^2)
  * Move to one side:
- *   (F1y-E1'y)cos(a) + (F1z-E1'z)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'|^2) == 0
+ *   (F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'|^2) == 0
  *
  * This is solved later in the testDir function.
  */
@@ -86,6 +86,7 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
     DeltaAxis axisIdx;
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
     float e, f, re, rf;
+    float w; //angle of this arm about the +z axis, in radians
     float _DEGREES_STEP;
 
     float M0; //initial coordinate of THIS axis. CW from +y axis
@@ -106,6 +107,7 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
            f(f),
            re(re),
            rf(rf),
+           w(axisIdx*2*M_PI/3), 
            _DEGREES_STEP(map.DEGREES_STEP(axisIdx)) {
               //E axis has to be controlled using a LinearStepper (as if it were cartesian)
               assert(axisIdx == ANGULARDELTA_AXIS_A || axisIdx == ANGULARDELTA_AXIS_B || axisIdx == ANGULARDELTA_AXIS_C);
@@ -131,28 +133,30 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
         inline float testDir(float s) {
             /*
              * Given the constraint equations derived further up the page:
+             *    (F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'|^2) == 0
              * For linear motion, E1' = E1'o + v*t.
-             * Then (F1y-E1'oy-vy*t)cos(a) + (F1z-E1'oz-vz*t)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'o-v*t|^2) == 0
+             * Then (F1y-E1'oy-vy*t)cos(a) - (F1z-E1'oz-vz*t)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'o-v*t|^2) == 0
              *
              * We desire to test at what time t will a = D*RADIANS_STEP = (M0+s)*RADIANS_STEP
-             *    (F1y-E1'oy)cos(D) - vy*t*cos(D) + (F1z-E1'oz)sin(D) - vz*t*sin(D) - 1/2rf*(re^2 - rf^2 - (F1-E1'o-v*t) . (F1-E1'o-v*t)) == 0
-             *    2rf( (F1y-E1'oy)cos(D) - vy*t*cos(D) + (F1z-E1'oz)sin(D) - vz*t*sin(D) ) - re^2 + rf^2 + (F1-E1'o) . (F1-E1'o) - 2(F1-E1'o) . v*t + |v*t|^2 == 0
+             *    (F1y-E1'oy)cos(D) - vy*t*cos(D) - (F1z-E1'oz)sin(D) + vz*t*sin(D) - 1/2rf*(re^2 - rf^2 - (F1-E1'o-v*t) . (F1-E1'o-v*t)) == 0
+             *    2rf( (F1y-E1'oy)cos(D) - vy*t*cos(D) - (F1z-E1'oz)sin(D) + vz*t*sin(D) ) - re^2 + rf^2 + (F1-E1'o) . (F1-E1'o) - 2(F1-E1'o) . v*t + |v*t|^2 == 0
              *    t^2 * (|v|^2)
-                + t*(-2rf*vy*cos(D) - 2rf*vz*sin(D) - 2(F1-E1'o) . v)
-                + 2rf(F1y-E1'oy)cos(D) + 2rf(F1z-E1'oz)sin(D) - re^2 + rf^2 + (F1-E1'o) . (F1-E1'o) == 0
+                + t*(-2rf*vy*cos(D) + 2rf*vz*sin(D) - 2(F1-E1'o) . v)
+                + 2rf(F1y-E1'oy)cos(D) - 2rf(F1z-E1'oz)sin(D) - re^2 + rf^2 + (F1-E1'o) . (F1-E1'o) == 0
              * This is a quadratic equation of t that we can solve using t = (-b +/- sqrt(b^2-4a*c)) / (2*a)
              * There are two solutions; both may be valid, but have different meanings. 
              *   If one solution is at a time in the past, then it's just a projection of the current path into the past. 
              *   If both solutions are in the future, then pick the nearest one; 
              *   it means that there are two points in this path where the arm angle should be the same.
              */
-            auto v = line_v;
+            auto rot = Matrix3x3::rotationAboutPositiveZ(w);
+            auto v = rot.transform(line_v);
             Vector3f F1 = Vector3f(0, -f/(2*sqrt(3)), 0);
-            Vector3f E1prime0 = line_P0 + Vector3f(0, -e/(2*sqrt(3)), 0); //initial E1' at the start of the move.
+            Vector3f E1prime0 = rot.transform(line_P0 + Vector3f(0, -e/(2*sqrt(3)), 0)); //initial E1' at the start of the move.
             float angle = (M0+s)*DEGREES_STEP() * M_PI / 180.0;
             float a = v.magSq();
-            float b = -2*rf*v.y()*cos(angle) - 2*rf*v.z()*sin(angle) - 2*(F1-E1prime0).dot(v);
-            float c = 2*rf*(F1.y()-E1prime0.y())*cos(angle) + 2*rf*(F1.z()-E1prime0.z())*sin(angle) - re*re + rf*rf + (F1-E1prime0).magSq();
+            float b = -2*rf*v.y()*cos(angle) + 2*rf*v.z()*sin(angle) - 2*(F1-E1prime0).dot(v);
+            float c = 2*rf*(F1.y()-E1prime0.y())*cos(angle) - 2*rf*(F1.z()-E1prime0.z())*sin(angle) - re*re + rf*rf + (F1-E1prime0).magSq();
 
             float term1 = -b;
             float rootParam = (b*b-4*a*c);
