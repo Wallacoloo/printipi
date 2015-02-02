@@ -85,21 +85,21 @@ enum DeltaAxis {
 template <typename StepperDriverT> class AngularDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
     DeltaAxis axisIdx;
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
-    float e, f, re, rf;
+    float e, f, re, rf, _zoffset;
     float w; //angle of this arm about the +z axis, in radians
     float _DEGREES_STEP;
 
-    float M0; //initial coordinate of THIS axis. CW from +y axis
+    float M0; //initial coordinate of THIS axis in degrees
     int sTotal; //current step offset from M0
 
     //variables used during linear motion
     Vector3f line_P0; //initial cartesian position, in mm
     Vector3f line_v; //cartesian velocity vector, in mm/sec
-    float DEGREES_STEP() const { return _DEGREES_STEP; }
+    float DEGREES_STEP() const { return _DEGREES_STEP; } //number of degrees per step
     public:
         template <typename CoordMapT> AngularDeltaStepper(
             int idx, DeltaAxis axisIdx, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop,
-            float e, float f, float re, float rf)
+            float e, float f, float re, float rf, float zoffset)
          : AxisStepperWithDriver<StepperDriverT>(idx, stepper),
            axisIdx(axisIdx),
            endstop(endstop),
@@ -107,6 +107,7 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
            f(f),
            re(re),
            rf(rf),
+           _zoffset(zoffset),
            w(axisIdx*2*M_PI/3), 
            _DEGREES_STEP(map.DEGREES_STEP(axisIdx)) {
               //E axis has to be controlled using a LinearStepper (as if it were cartesian)
@@ -151,9 +152,10 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
              */
             auto rot = Matrix3x3::rotationAboutPositiveZ(w);
             auto v = rot.transform(line_v);
-            Vector3f F1 = Vector3f(0, -f/(2*sqrt(3)), 0);
-            Vector3f E1prime0 = rot.transform(line_P0 + Vector3f(0, -e/(2*sqrt(3)), 0)); //initial E1' at the start of the move.
-            float angle = (M0+s)*DEGREES_STEP() * M_PI / 180.0;
+            Vector3f F1 = Vector3f(0, f/(2*sqrt(3)), _zoffset);
+            //Vector3f E1prime0 = rot.transform(line_P0 + Vector3f(0, e/(2*sqrt(3)), 0)); //initial E1' at the start of the move.
+            Vector3f E1prime0 = rot.transform(line_P0) + Vector3f(0, e/(2*sqrt(3)), 0); //initial E1' at the start of the move.
+            float angle = (M0+s) * M_PI / 180.0;
             float a = v.magSq();
             float b = -2*rf*v.y()*cos(angle) + 2*rf*v.z()*sin(angle) - 2*(F1-E1prime0).dot(v);
             float c = 2*rf*(F1.y()-E1prime0.y())*cos(angle) - 2*rf*(F1.z()-E1prime0.z())*sin(angle) - re*re + rf*rf + (F1-E1prime0).magSq();
@@ -192,7 +194,7 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
                 float posTime = testDir((this->sTotal+1)*DEGREES_STEP());
                 if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                     if (posTime > this->time) {
-                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
+                        LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
                         this->time = posTime;
                         this->direction = StepForward;
                         ++this->sTotal;
@@ -201,7 +203,7 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
                     }
                 } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
                     if (negTime > this->time) {
-                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", axisIdx, negTime, posTime);
+                        LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", axisIdx, negTime, posTime);
                         this->time = negTime;
                         this->direction = StepBackward;
                         --this->sTotal;
@@ -210,12 +212,12 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
                     }
                 } else { //neither time is invalid
                     if (negTime < posTime) {
-                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", axisIdx, negTime, posTime);
+                        LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", axisIdx, negTime, posTime);
                         this->time = negTime;
                         this->direction = StepBackward;
                         --this->sTotal;
                     } else {
-                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
+                        LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
                         this->time = posTime;
                         this->direction = StepForward;
                         ++this->sTotal;
