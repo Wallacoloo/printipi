@@ -44,7 +44,15 @@ class Matrix3x3 {
             r2(a20, a21, a22) {}
         template <typename VecT> VecT transform(const VecT &xyz) const {
             return VecT(r0.dot(xyz), r1.dot(xyz), r2.dot(xyz));
-    }
+        }
+
+        static inline Matrix3x3 rotationAboutPositiveZ(float angleRad) {
+            float cosa = cos(angleRad);
+            float sina = sin(angleRad);
+            return Matrix3x3(cosa, -sina, 0,
+                             sina,  cosa, 0,
+                             0,        0, 1);
+        }
 
 };
 

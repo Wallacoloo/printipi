@@ -141,6 +141,14 @@ template <typename MachineT=machines::Machine> class TestHelper {
             }
         }
         void testLinearMovement() {
+            WHEN("The machine is homed & moved to (0, 0, 0)") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X0 Y0 Z0", "ok");
+                THEN("The actual position should be near (0, 0, 0)") {
+                    exitOnce(); //force the G1 code to complete
+                    verifyPosition(0, 0, 0);
+                }
+            }
             WHEN("The machine is homed & moved to (40, -10, 50)") {
                 sendCommand("G28", "ok");
                 sendCommand("G1 X40 Y-10 Z50", "ok");
