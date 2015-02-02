@@ -371,15 +371,16 @@
 //Accounting for pulley reduction system 
 #define BELT_THICKNESS 1.49 					// thickest part of belt
 #define TOOTH_DEPTH 0.74 					// thinnest part of the belt
-#define XYZ_FULL_STEPS_PER_ROTATION 200.0               	//1.8° steppers--> 200.0 | 0.9°steppers --> 400.0 
-#define XYZ_MICROSTEPS 32.0					//DRV8825 set to 1/32 stepping
-#define SMALL_PULLEY_TEETH 16.0					//GT2 pulley
-#define BIG_PULLEY_TEETH 150.0					//3D002 Pulley - FirePickDelta
 #define TOOTH_SPACING 2.0 					// 2mm for GT2 belts
 
 // recalculate circumference to take into account tooth thickness, as this adds to the radius of the pulley
 #define BIG_PULLEY_CIRCUM BIG_PULLEY_TEETH*TOOTH_SPACING + (BELT_THICKNESS - TOOTH_DEPTH)*6.283185
-#define SMALL_PULLEY_CIRCUM SMALL_PULLEY_TEETH * TOOTH_SPACING
+#define SMALL_PULLEY_CIRCUM SMALL_PULLEY_TEETH * TOOTH_SPACING*6.283185
+
+#define XYZ_FULL_STEPS_PER_ROTATION 200.0               	//1.8° steppers--> 200.0 | 0.9°steppers --> 400.0 
+#define XYZ_MICROSTEPS 32.0					//DRV8825 set to 1/32 stepping
+#define SMALL_PULLEY_TEETH 16.0					//GT2 pulley
+#define BIG_PULLEY_TEETH 150.0					//3D002 Pulley - FirePickDelta
 #define PULLEY_REDUCTION BIG_PULLEY_CIRCUM/SMALL_PULLEY_CIRCUM
 #define XYZ_STEPS (XYZ_FULL_STEPS_PER_ROTATION*XYZ_MICROSTEPS*PULLEY_REDUCTION)/360.0
 // probably not needed but defined for now 
