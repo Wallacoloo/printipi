@@ -63,7 +63,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
                        LinearStepper<Stepper4> > _AxisStepperTypes;
 
     static constexpr float MIN_Z() { return -2; } //useful to be able to go a little under z=0 when tuning.
-    float e, f, re, rf, _buildrad;
+    float e, f, re, rf, _zoffset, _buildrad;
     float _STEPS_DEGREE, _DEGREES_STEP;
     float _STEPS_MM_EXT, _MM_STEPS_EXT;
     float homeVelocity;
@@ -93,6 +93,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
 		float f, 
 		float re, 
         float rf,
+        float zoffset, 
 		float buildrad, 
 		float STEPS_DEGREE, 
 		float STEPS_MM_EXT, 
@@ -114,6 +115,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         f(f),
         re(re),
         rf(rf),
+        _zoffset(zoffset),
 		_buildrad(buildrad),
            	_STEPS_DEGREE(STEPS_DEGREE), _DEGREES_STEP(1. / STEPS_DEGREE),
            	_STEPS_MM_EXT(STEPS_MM_EXT), _MM_STEPS_EXT(1./ STEPS_MM_EXT),
@@ -185,7 +187,9 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             Vector4f destPos = curPos + Vector4f(0, 0, veryHighZ, 0);
             interface.moveTo(destPos, homeVelocity, motion::USE_ENDSTOPS | motion::NO_LEVELING | motion::NO_BOUNDING);
             //reset the indexed axis positions:
-            interface.resetAxisPositions(getHomePosition(interface.axisPositions()));
+            auto axesCoords = getHomePosition(interface.axisPositions());
+            interface.resetAxisPositions(axesCoords);
+            LOG("homed position: %s\n", xyzeFromMechanical(axesCoords).str().c_str());
             //interface.setUnbufferedMove(false);
         }
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
@@ -205,7 +209,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         // Function taken from http://forums.trossenrobotics.com/tutorials/introduction-129/delta-robot-kinematics-3276/
         // forward kinematics: (theta1, theta2, theta3) -> (x0, y0, z0)
         // returned status: 0=OK, -1=non-existing position
-         int delta_calcForward(float theta1, float theta2, float theta3, float &x0, float &y0, float &z0) const {
+        void delta_calcForward(float theta1, float theta2, float theta3, float &x0, float &y0, float &z0) const {
              // define useful constants
              float pi = M_PI;
              float tan30 = tan(30*pi/180.0);
@@ -251,12 +255,13 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
           
              // discriminant
              float d = b*b - (float)4.0*a*c;
-             if (d < 0) return -1; // non-existing point
+             assert (d >= 0);
+             //if (d < 0) return -1; // non-existing point
          
              z0 = -(float)0.5*(b+sqrt(d))/a;
              x0 = (a1*z0 + b1)/dnm;
              y0 = (a2*z0 + b2)/dnm;
-             return 0;
+             //return 0;
          }
          
     public:
@@ -275,7 +280,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             delta_calcForward(theta1, theta2, theta3, x0, y0, z0);
             
             //Now return x0, y0, z0, extruder - all coordinates in millimeters:
-            return Vector4f(x0, y0, z0, extruder);
+            return Vector4f(x0, y0, z0+_zoffset, extruder);
          }
 
 };
