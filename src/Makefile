@@ -47,7 +47,7 @@ endif
 LTOFLAG=$(DEFAULT_LTOFLAG)
 
 #Default machine if not given via command line argument:
-MACHINE=rpi/kosselrampsfd.h
+MACHINE=rpi/firepickdelta.h
 ifeq "$(suffix $(MACHINE))" ".h"
 	MACHINEPARSED:=$(basename $(MACHINE))
 else
