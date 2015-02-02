@@ -30,69 +30,34 @@
     This website has some efficient trig implementations: http://http.developer.nvidia.com/Cg/atan2.html
 */
 
-/* Useful kinematics document: https://docs.google.com/viewer?a=v&pid=forums&srcid=MTgyNjQwODAyMDkxNzQxMTUwNzIBMDc2NTg4NjQ0MjUxMTE1ODY5OTkBdmZiejRRR2phZjhKATAuMQEBdjI
- * 
- *Locations of towers:
- * Each tower is situated at the corner of an equilateral triangle,
- *   at a distance 'r' from the center of the triangle.
- * Tower A is at (rsin(0)  , rcos(0)  ) = (0           , r     )
- * Tower B is at (rsin(120), rcos(120)) = (sqrt(3)/2 r , -1/2 r)
- * Tower C is at (rsin(240), rcos(240)) = (-sqrt(3)/2 r, -1/2 r)
+/* Kinematics described in detail here: http://forums.trossenrobotics.com/tutorials/introduction-129/delta-robot-kinematics-3276/
  *
- * Top-down view:
- *         A
- *        /|\
- *       / | \
- *      /  |  \
- *     /  r|   \
- *    /    .    \
- *   /   (0,0)   \
- *  /             \
- * /               \
- *C-----------------B
+ * For solving this just in the YZ plane,
+ * we get the following constraints:
+ * |J1 - E1'| = re, |F1-J1| = rf and J1 = F1 + rf<0, cos(a), sin(a)>
  *
- * Front-face view:
+ * Rewrite |x| as x . x:
+ *       (J1 - E1') . (J1 - E1') == re^2
+ *   and (J1 - F1) . (J1 - F1)   == rf^2
+ * Expand:
+ *       J1 . J1 - 2 J1 . E1' + E1' . E1' == re^2
+ *   and J1 . J1 - 2 J1 . F1  + F1  . F1  == rf^2
+ * Subtract equations:
+ *   2 J1 . (F1 - E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
+ * Substitute J1 = F1 + rf<0, cos(a), sin(a)>
+ *   2(F1 + rf<0, cos(a), sin(a)>) . (F1 - E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
+ * Expand:
+ *   2F1 . F1 - 2F1 . E1' + 2rf<0, cos(a), sin(a)> . (F1-E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
+ * Combine terms & rearrange:
+ *   F1 . F1 - 2F1 . E1' + E1' . E1' + 2rf<0, cos(a), sin(a)> . (F1-E1') == re^2 - rf^2
+ * Notice that F1 . F1 - 2F1 . E1' + E1' . E1' is equal to (F1 - E1') . (F1 - E1')
+ *   2rf<0, cos(a), sin(a)> . (F1-E1') == re^2 - rf^2 - |F1-E1'|^2
+ * Expand and divide by 2rf:
+ *   (F1y-E1'y)cos(a) + (F1z-E1'z)sin(a) == 1/2rf*(re^2 - rf^2 - |F1-E1'|^2)
+ * Move to one side:
+ *   (F1y-E1'y)cos(a) + (F1z-E1'z)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'|^2) == 0
  *
- * C         A        B
- * |\       /|     __/|
- * | \ L   / |  __/   |
- * |  \   /  |_/      |
- * |   \./__/|        |
- * | (x,y,z) |        |
- * |                  |
- * |                  |
- *
- * The '.' represents the effector.
- * Each tower has a rod of fixed-length 'L' connecting to the effector. 
- *   The other end of the rod is connected to a carriage that slides up and down the axis. The connection points allow the rot to pivot freely.
- * The height of the carriage above the bed is indicated by 'A' for the A carriage, 'B' for the B carriage, and 'C' for the C carriage.
- *
- * From here, we have the constraint equation: |P - <rsin(w), rcos(w), D>| = L
- *   where <rsin(w), rcos(w), D> is the carriage position and P is the effector position
- *
- * For linear movement, we are given P(t) = P0 + v*t
- * This is combined with the constraint equation and solved further down in the AngularDeltaStepper::testDir() function
- *
- *
- *
- *If we want to move in an ARC along x,y at a constant velocity (acceleration will be introduced later):
- *   a circle in 2d is x(t) = rcos(wt), y(t) = rsin(wt)
- *   can write this as P(t) = rcos(wt)*i + rsin(wt)*j
- *   Replace i and j with perpindicular vectors to extend to multiple dimensions:
- *   P(t) = <xc, yc, zc> + rcos(wt)*u+ rsin(wt)*v
- *   Let x0, y0, z0 be P(0) (the starting point), and P(end) = Pe=<xe, ye, ze>, and Pc=<xc, yc, zc> will be the center of the arc.
- *   The u is just <x0-xc, y0-yc, z0-zc>,
- *   and v will be a vector perpindicular to u and with equal magnitude that is in the plane of the arc.
- *
- *   Given u, v, Pc, and let m be the angular velocity:
- *     x = xc + r*Cos[m*t]*ux + r*Sin[m*t]*vx
- *     y = yc + r*Cos[m*t]*uy + r*Sin[m*t]*vy
- *     z = zc + r*Cos[m*t]*uz + r*Sin[m*t]*vz
- *
- *   This is solved further down in the LinearDeltaArcStepper::testDir() function.  
- *
- * Note: all motion in this file is planned at a constant velocity. 
- *   Cartesian-space acceleration is introduced by a post-transformation of the step times applied elsewhere in the motion planning system. 
+ * This is solved later in the testDir function.
  */
 
 
@@ -120,15 +85,28 @@ enum DeltaAxis {
 template <typename StepperDriverT> class AngularDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
     DeltaAxis axisIdx;
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
-    
+    float e, f, re, rf;
+    float _DEGREES_STEP;
+
     float M0; //initial coordinate of THIS axis. CW from +y axis
     int sTotal; //current step offset from M0
-    
+
+    //variables used during linear motion
+    Vector3f line_P0; //initial cartesian position, in mm
+    Vector3f line_v; //cartesian velocity vector, in mm/sec
+    float DEGREES_STEP() const { return _DEGREES_STEP; }
     public:
-        template <typename CoordMapT> AngularDeltaStepper(int idx, DeltaAxis axisIdx, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop)
+        template <typename CoordMapT> AngularDeltaStepper(
+            int idx, DeltaAxis axisIdx, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop,
+            float e, float f, float re, float rf)
          : AxisStepperWithDriver<StepperDriverT>(idx, stepper),
            axisIdx(axisIdx),
-           endstop(endstop)  {
+           endstop(endstop),
+           e(e),
+           f(f),
+           re(re),
+           rf(rf),
+           _DEGREES_STEP(map.DEGREES_STEP(axisIdx)) {
               //E axis has to be controlled using a LinearStepper (as if it were cartesian)
               assert(axisIdx == ANGULARDELTA_AXIS_A || axisIdx == ANGULARDELTA_AXIS_B || axisIdx == ANGULARDELTA_AXIS_C);
         }
@@ -138,6 +116,8 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
         const Vector4f &vel) {
             this->M0 = map.getAxisPosition(curPos, axisIdx)*map.DEGREES_STEP(axisIdx); 
             this->sTotal = 0;
+            this->line_P0 = map.xyzeFromMechanical(curPos).xyz();
+            this->line_v = vel.xyz();
             this->time = 0;
         }
         //function to initiate a circular arc (through cartesian space) motion
@@ -146,6 +126,52 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
         float arcRad, float arcVel, float extVel) {
             //arc motions not yet supported.
             assert(false);
+        }
+
+        inline float testDir(float s) {
+            /*
+             * Given the constraint equations derived further up the page:
+             * For linear motion, E1' = E1'o + v*t.
+             * Then (F1y-E1'oy-vy*t)cos(a) + (F1z-E1'oz-vz*t)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'o-v*t|^2) == 0
+             *
+             * We desire to test at what time t will a = D*RADIANS_STEP = (M0+s)*RADIANS_STEP
+             *    (F1y-E1'oy)cos(D) - vy*t*cos(D) + (F1z-E1'oz)sin(D) - vz*t*sin(D) - 1/2rf*(re^2 - rf^2 - (F1-E1'o-v*t) . (F1-E1'o-v*t)) == 0
+             *    2rf( (F1y-E1'oy)cos(D) - vy*t*cos(D) + (F1z-E1'oz)sin(D) - vz*t*sin(D) ) - re^2 + rf^2 + (F1-E1'o) . (F1-E1'o) - 2(F1-E1'o) . v*t + |v*t|^2 == 0
+             *    t^2 * (|v|^2)
+                + t*(-2rf*vy*cos(D) - 2rf*vz*sin(D) - 2(F1-E1'o) . v)
+                + 2rf(F1y-E1'oy)cos(D) + 2rf(F1z-E1'oz)sin(D) - re^2 + rf^2 + (F1-E1'o) . (F1-E1'o) == 0
+             * This is a quadratic equation of t that we can solve using t = (-b +/- sqrt(b^2-4a*c)) / (2*a)
+             * There are two solutions; both may be valid, but have different meanings. 
+             *   If one solution is at a time in the past, then it's just a projection of the current path into the past. 
+             *   If both solutions are in the future, then pick the nearest one; 
+             *   it means that there are two points in this path where the arm angle should be the same.
+             */
+            auto v = line_v;
+            Vector3f F1 = Vector3f(0, -f/(2*sqrt(3)), 0);
+            Vector3f E1prime0 = line_P0 + Vector3f(0, -e/(2*sqrt(3)), 0); //initial E1' at the start of the move.
+            float angle = (M0+s)*DEGREES_STEP() * M_PI / 180.0;
+            float a = v.magSq();
+            float b = -2*rf*v.y()*cos(angle) - 2*rf*v.z()*sin(angle) - 2*(F1-E1prime0).dot(v);
+            float c = 2*rf*(F1.y()-E1prime0.y())*cos(angle) + 2*rf*(F1.z()-E1prime0.z())*sin(angle) - re*re + rf*rf + (F1-E1prime0).magSq();
+
+            float term1 = -b;
+            float rootParam = (b*b-4*a*c);
+            float divisor = 2*a;
+            //check if the sqrt argument is negative
+            //TODO: can it ever be negative?
+            if (rootParam < 0) {
+                return NAN;
+            }
+            float root = std::sqrt(rootParam);
+            float t1 = (term1 - root)/divisor;
+            float t2 = (term1 + root)/divisor;
+            //return the nearest of the two times that is > current time.
+            if (root > term1) { //if this is true, then t1 MUST be negative.
+                //return t2 if t2 > last_step_time else None
+                return t2 > this->time ? t2 : NAN;
+            } else {
+                return t1 > this->time ? t1 : (t2 > this->time ? t2 : NAN); //ensure no value < time is returned.
+            }
         }
     
         inline void _nextStep(bool useEndstops) {
@@ -158,7 +184,39 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
             if (useEndstops && endstop->isEndstopTriggered()) {
                 this->time = NAN; //at endstop; no more steps.
             } else {
-                // TODO: calculate the time of the next step
+                float negTime = testDir((this->sTotal-1)*DEGREES_STEP()); //get the time at which next steps would occur.
+                float posTime = testDir((this->sTotal+1)*DEGREES_STEP());
+                if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
+                    if (posTime > this->time) {
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
+                        this->time = posTime;
+                        this->direction = StepForward;
+                        ++this->sTotal;
+                    } else {
+                        this->time = NAN;
+                    }
+                } else if (posTime < this->time || std::isnan(posTime)) { //posTime is invalid
+                    if (negTime > this->time) {
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", axisIdx, negTime, posTime);
+                        this->time = negTime;
+                        this->direction = StepBackward;
+                        --this->sTotal;
+                    } else {
+                        this->time = NAN;
+                    }
+                } else { //neither time is invalid
+                    if (negTime < posTime) {
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (neg) vs %f (pos)\n", axisIdx, negTime, posTime);
+                        this->time = negTime;
+                        this->direction = StepBackward;
+                        --this->sTotal;
+                    } else {
+                        //LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
+                        this->time = posTime;
+                        this->direction = StepForward;
+                        ++this->sTotal;
+                    }
+                }
             }
         }
 };

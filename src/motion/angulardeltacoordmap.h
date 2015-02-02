@@ -156,9 +156,9 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         }
         inline _AxisStepperTypes getAxisSteppers() const {
             return std::make_tuple(
-                       AngularDeltaStepper<Stepper1>(0, ANGULARDELTA_AXIS_A, *this, std::get<0>(stepperDrivers), &endstops[0]), 
-                       AngularDeltaStepper<Stepper2>(1, ANGULARDELTA_AXIS_B, *this, std::get<1>(stepperDrivers), &endstops[1]), 
-                       AngularDeltaStepper<Stepper3>(2, ANGULARDELTA_AXIS_C, *this, std::get<2>(stepperDrivers), &endstops[2]), 
+                       AngularDeltaStepper<Stepper1>(0, ANGULARDELTA_AXIS_A, *this, std::get<0>(stepperDrivers), &endstops[0], e, f, re, rf), 
+                       AngularDeltaStepper<Stepper2>(1, ANGULARDELTA_AXIS_B, *this, std::get<1>(stepperDrivers), &endstops[1], e, f, re, rf), 
+                       AngularDeltaStepper<Stepper3>(2, ANGULARDELTA_AXIS_C, *this, std::get<2>(stepperDrivers), &endstops[2], e, f, re, rf), 
                        LinearStepper<Stepper4>      (3, CARTESIAN_AXIS_E,    *this, std::get<3>(stepperDrivers), &endstops[3])
             );
         }
