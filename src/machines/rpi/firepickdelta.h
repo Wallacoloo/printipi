@@ -617,9 +617,11 @@ class firepickdelta : public Machine {
 
         //Define the acceleration method to use. This uses a constant acceleration (resulting in linear velocity).
         inline ConstantAcceleration getAccelerationProfile() const {
+ 		LOG("fpdelta XYZ_STEPS: %f\n", XYZ_STEPS);
             return ConstantAcceleration(MAX_ACCEL_MM_SEC2);
         }
         
+
         //Define the coordinate system:
         //  We are using a LinearDelta coordinate system, where vertically-moving carriages are
         //    attached to an end effector via fixed-length, rotatable rods.
