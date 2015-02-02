@@ -4,6 +4,9 @@
   <subclass access="public" name="generic::cartesian" ref="machines::generic::cartesian#machines::generic::cartesian">
     <brief>for Acceleration &amp; such</brief>
   </subclass>
+  <subclass access="public" name="rpi::firepickdelta" ref="machines::rpi::firepickdelta#machines::rpi::firepickdelta">
+    <brief>for ConstantAcceleration &amp; such</brief>
+  </subclass>
   <subclass access="public" name="rpi::kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
     <brief>for ConstantAcceleration &amp; such</brief>
   </subclass>

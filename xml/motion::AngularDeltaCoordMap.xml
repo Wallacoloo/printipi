@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="motion::AngularDeltaCoordMap" name="AngularDeltaCoordMap" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+AngularDeltaCoordMap implements the CoordMap interface for (rail-based) Delta-style robots like the Kossel
+This class allows for translating mechanical positions to the cartesian x, y, z, e system.
+It assumes there are 3 legs arranged in a circle (120 degrees between each adjacent pair)
+  and these legs have carriages a distance d from their base.
+The leg at (x=0, y=+) is axis A,
+The leg at (x&gt;0, y&lt;0) is axis B,
+The leg at (x&lt;0, y&lt;0) is axis C
+Additionally, the carriages host a free-spinning joint with an arm of length L linked to an end effector,
+and the carriages are r units apart.
+
+R1000 is 'r' (in mm) multiplied by 1000,
+L1000 is 'L' (in mm) multiplied by 1000
+
+The math is described more in /code/proof-of-concept/coordmath.py and coord-math.nb (note: file has been deleted; must view an archived version of printipi on Github to view this documentation)
+</doc>
+  <base access="public">
+    <type name="CoordMap" ref="motion::CoordMap#motion::CoordMap" />
+  </base>
+  <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper1" name="Stepper1" />
+  <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper2" name="Stepper2" />
+  <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper3" name="Stepper3" />
+  <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper4" name="Stepper4" />
+  <templatetypeparameter id="motion::AngularDeltaCoordMap::BedLevelT" name="BedLevelT">
+    <default>
+      <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+    </default>
+  </templatetypeparameter>
+  <method id="motion::AngularDeltaCoordMap::STEPS_DEGREE" name="STEPS_DEGREE">
+    <brief>define these functions so our AxisSteppers can know a bit about their coordinate system</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::STEPS_DEGREE::axisIdx" name="axisIdx">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <method id="motion::AngularDeltaCoordMap::DEGREES_STEP" name="DEGREES_STEP">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::DEGREES_STEP::axisIdx" name="axisIdx">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <method id="motion::AngularDeltaCoordMap::STEPS_MM" name="STEPS_MM">
+    <brief>The following are only valid for the extruder:</brief>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::STEPS_MM::axisIdx" name="axisIdx">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <method id="motion::AngularDeltaCoordMap::MM_STEPS" name="MM_STEPS">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::MM_STEPS::axisIdx" name="axisIdx">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <method id="motion::AngularDeltaCoordMap::buildrad" name="buildrad">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <constructor id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;" name="AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;">
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::e" name="e">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::f" name="f">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::re" name="re">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::rf" name="rf">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::zoffset" name="zoffset">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::buildrad" name="buildrad">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::STEPS_DEGREE" name="STEPS_DEGREE">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::STEPS_MM_EXT" name="STEPS_MM_EXT">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::homeVelocity" name="homeVelocity">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::homeAngle" name="homeAngle">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper1" name="stepper1">
+      <type name="Stepper1 &amp;&amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper2" name="stepper2">
+      <type name="Stepper2 &amp;&amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper3" name="stepper3">
+      <type name="Stepper3 &amp;&amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::stepper4" name="stepper4">
+      <type name="Stepper4 &amp;&amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::endstopA" name="endstopA">
+      <type name="iodrv::Endstop &amp;&amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::endstopB" name="endstopB">
+      <type name="iodrv::Endstop &amp;&amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::endstopC" name="endstopC">
+      <type name="iodrv::Endstop &amp;&amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::t" name="t">
+      <type name="const BedLevelT" qualifier=" const &amp;" />
+    </argument>
+  </constructor>
+  <method id="motion::AngularDeltaCoordMap::getDependentIoDrivers" name="getDependentIoDrivers" override="yes">
+    <return>
+      <type name="std::tuple&lt;_Elements&gt;" />
+    </return>
+    <override name="CoordMap::getDependentIoDrivers" ref="motion::CoordMap#motion::CoordMap::getDependentIoDrivers" />
+  </method>
+  <method id="motion::AngularDeltaCoordMap::getAxisSteppers" name="getAxisSteppers" override="yes">
+    <return>
+      <type name="AngularDeltaCoordMap&lt;Stepper1, Stepper2, Stepper3, Stepper4, BedLevelT&gt;::_AxisStepperTypes" ref="motion::AngularDeltaCoordMap#motion::AngularDeltaCoordMap::_AxisStepperTypes" />
+    </return>
+    <override name="CoordMap::getAxisSteppers" ref="motion::CoordMap#motion::CoordMap::getAxisSteppers" />
+  </method>
+  <method id="motion::AngularDeltaCoordMap::numAxis" name="numAxis" override="yes" static="yes">
+    <return>
+      <type name="std::size_t" />
+    </return>
+    <override name="CoordMap::numAxis" ref="motion::CoordMap#motion::CoordMap::numAxis" />
+  </method>
+  <method id="motion::AngularDeltaCoordMap::getAxisPosition" name="getAxisPosition">
+    <return>
+      <type builtin="yes" name="int" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::getAxisPosition::cur" name="cur">
+      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaCoordMap::getAxisPosition::axis" name="axis">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <method id="motion::AngularDeltaCoordMap::getEndstop" name="getEndstop">
+    <return>
+      <type name="iodrv::Endstop" qualifier=" const &amp;" ref="iodrv::Endstop#iodrv::Endstop" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::getEndstop::axis" name="axis">
+      <type name="std::size_t" />
+    </argument>
+  </method>
+  <methodtemplate id="motion::AngularDeltaCoordMap::getStepperDriver" name="getStepperDriver">
+    <return>
+      <type name="const typename std::tuple_element&lt;idx, StepperDriverTypes&gt;::type" qualifier=" const &amp;" />
+    </return>
+    <templatenontypeparameter default="std" id="motion::AngularDeltaCoordMap::getStepperDriver::idx" name="idx">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+  <methodtemplate id="motion::AngularDeltaCoordMap::executeHomeRoutine" name="executeHomeRoutine" override="yes">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::executeHomeRoutine::interface" name="interface">
+      <type name="Interface" qualifier=" &amp;" />
+    </argument>
+    <override name="CoordMap::executeHomeRoutine" ref="motion::CoordMap#motion::CoordMap::executeHomeRoutine" />
+    <templatetypeparameter id="motion::AngularDeltaCoordMap::executeHomeRoutine::Interface" name="Interface" />
+  </methodtemplate>
+  <method id="motion::AngularDeltaCoordMap::getHomePosition" name="getHomePosition" override="yes">
+    <return>
+      <type name="std::array&lt;int, 4&gt;" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::getHomePosition::cur" name="cur">
+      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+    </argument>
+    <override name="CoordMap::getHomePosition" ref="motion::CoordMap#motion::CoordMap::getHomePosition" />
+  </method>
+  <method id="motion::AngularDeltaCoordMap::applyLeveling" name="applyLeveling" override="yes">
+    <return>
+      <type name="Vector3f" ref="index#Vector3f" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::applyLeveling::xyz" name="xyz">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
+    </argument>
+    <override name="CoordMap::applyLeveling" ref="motion::CoordMap#motion::CoordMap::applyLeveling" />
+  </method>
+  <method id="motion::AngularDeltaCoordMap::bound" name="bound" override="yes">
+    <return>
+      <type name="Vector4f" ref="index#Vector4f" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::bound::xyze" name="xyze">
+      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
+    </argument>
+    <override name="CoordMap::bound" ref="motion::CoordMap#motion::CoordMap::bound" />
+  </method>
+  <method id="motion::AngularDeltaCoordMap::xyzeFromMechanical" name="xyzeFromMechanical" override="yes">
+    <brief>Inside your AngularDeltaCoordMap, your forward kinematics should look like:</brief>
+    <return>
+      <type name="Vector4f" ref="index#Vector4f" />
+    </return>
+    <argument id="motion::AngularDeltaCoordMap::xyzeFromMechanical::mech" name="mech">
+      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+    </argument>
+    <override name="CoordMap::xyzeFromMechanical" ref="motion::CoordMap#motion::CoordMap::xyzeFromMechanical" />
+  </method>
+</classtemplate>
