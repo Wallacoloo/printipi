@@ -374,14 +374,15 @@
 #define TOOTH_SPACING 2.0 					// 2mm for GT2 belts
 
 // recalculate circumference to take into account tooth thickness, as this adds to the radius of the pulley
-#define BIG_PULLEY_CIRCUM BIG_PULLEY_TEETH*TOOTH_SPACING + (BELT_THICKNESS - TOOTH_DEPTH)*6.283185
+#define BIG_PULLEY_CIRCUM (BIG_PULLEY_TEETH*TOOTH_SPACING + (BELT_THICKNESS - TOOTH_DEPTH))*6.283185
 #define SMALL_PULLEY_CIRCUM SMALL_PULLEY_TEETH * TOOTH_SPACING*6.283185
 
 #define XYZ_FULL_STEPS_PER_ROTATION 200.0               	//1.8° steppers--> 200.0 | 0.9°steppers --> 400.0 
 #define XYZ_MICROSTEPS 32.0					//DRV8825 set to 1/32 stepping
 #define SMALL_PULLEY_TEETH 16.0					//GT2 pulley
 #define BIG_PULLEY_TEETH 150.0					//3D002 Pulley - FirePickDelta
-#define PULLEY_REDUCTION BIG_PULLEY_CIRCUM/SMALL_PULLEY_CIRCUM
+//#define PULLEY_REDUCTION BIG_PULLEY_CIRCUM/SMALL_PULLEY_CIRCUM
+#define PULLEY_REDUCTION BIG_PULLEY_TEETH/SMALL_PULLEY_TEETH
 #define XYZ_STEPS (XYZ_FULL_STEPS_PER_ROTATION*XYZ_MICROSTEPS*PULLEY_REDUCTION)/360.0
 // probably not needed but defined for now 
 #define STEPS_XYZ 360.0/(XYZ_FULL_STEPS_PER_ROTATION*XYZ_MICROSTEPS*PULLEY_REDUCTION)
@@ -630,6 +631,7 @@ class firepickdelta : public Machine {
             //  This is a matrix such that M * {x,y,z} should transform desired coordinates into a 
             //    bed-level-compensated equivalent.
             //  Usually, this is just a rotation matrix.
+            LOG("fpdelta XYZ_STEPS: %f\n", XYZ_STEPS);
             return AngularDeltaCoordMap<A4988, A4988, A4988, A4988>(
                 DELTA_E, DELTA_F, DELTA_RE, DELTA_RF, DELTA_Z_OFFSET, DELTA_PRINTABLE_RADIUS, XYZ_STEPS, STEPS_MM_EXT, HOME_RATE_MM_SEC, Z_HOME_ANGLE,
                 //A tower:
