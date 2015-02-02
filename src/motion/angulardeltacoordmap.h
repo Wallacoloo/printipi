@@ -280,7 +280,8 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             delta_calcForward(theta1, theta2, theta3, x0, y0, z0);
             
             //Now return x0, y0, z0, extruder - all coordinates in millimeters:
-            return Vector4f(x0, y0, z0+_zoffset, extruder);
+            //must invert y0 because the trossen derivation uses a left-hand coordinate system.
+            return Vector4f(x0, -y0, z0+_zoffset, extruder);
          }
 
 };
