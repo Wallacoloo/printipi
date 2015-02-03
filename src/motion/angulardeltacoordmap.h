@@ -184,9 +184,10 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
 
             // maxAngles represents the angles that are the furthest away from the endstops
             // This doesn't need to be precise - use 89.9 degrees instead of 90.0 to avoid the rounding errors forcing us beyond 90
-            std::array<int, 4> maxAngles({{ 89.9*STEPS_DEGREE(),  89.9*STEPS_DEGREE(),  89.9*STEPS_DEGREE(), curExtMechanical}});
+            int maxAngle = (int)(89.9*STEPS_DEGREE());
+            std::array<int, 4> maxAngles({{ maxAngle,  maxAngle,  maxAngle, curExtMechanical}});
             // minAngles represents the angle as far PAST the endstops as possible.
-            std::array<int, 4> minAngles({{-89.9*STEPS_DEGREE(), -89.9*STEPS_DEGREE(), -89.9*STEPS_DEGREE(), curExtMechanical}});
+            std::array<int, 4> minAngles({{-maxAngle, -maxAngle, -maxAngle, curExtMechanical}});
             // Turn the angles into cartesian coordinates
             Vector4f highestCartesianPoint = xyzeFromMechanical(minAngles);
 
