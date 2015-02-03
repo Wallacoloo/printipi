@@ -179,18 +179,34 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             return std::get<idx>(stepperDrivers);
         }
         template <typename Interface> void executeHomeRoutine(Interface &interface) {
-            //must disable buffering so that endstops can be reliably checked
-            //interface.setUnbufferedMove(true);
-            Vector4f curPos = interface.actualCartesianPosition();
-            //try to move to <here> + <height> & will stop along the way if we hit an endstop.
-            float veryHighZ = 1000; //just pick any value that will cause us to (try to) move past the endstop position
-            Vector4f destPos = curPos + Vector4f(0, 0, veryHighZ, 0);
-            interface.moveTo(destPos, homeVelocity, motion::USE_ENDSTOPS | motion::NO_LEVELING | motion::NO_BOUNDING);
-            //reset the indexed axis positions:
+            // save the extruder position so we can preserve it
+            auto curExtMechanical = interface.axisPositions()[3];
+
+            // maxAngles represents the angles that are the furthest away from the endstops
+            // This doesn't need to be precise - use 89.9 degrees instead of 90.0 to avoid the rounding errors forcing us beyond 90
+            std::array<int, 4> maxAngles({{ 89.9*STEPS_DEGREE(),  89.9*STEPS_DEGREE(),  89.9*STEPS_DEGREE(), curExtMechanical}});
+            // minAngles represents the angle as far PAST the endstops as possible.
+            std::array<int, 4> minAngles({{-89.9*STEPS_DEGREE(), -89.9*STEPS_DEGREE(), -89.9*STEPS_DEGREE(), curExtMechanical}});
+            // Turn the angles into cartesian coordinates
+            Vector4f highestCartesianPoint = xyzeFromMechanical(minAngles);
+
+            // Trick the machine into thinking it's as far away from the endstops as possible,
+            // and then try to move it as far PAST the endstops as possible. It should hit the endstops, stop, and then be homed.
+            // If the user's machine is significantly miscalibrated (e.g. programmed for 8x microstepping, but steppers are set to 16x),
+            //   then this may not actually reach the endstops & user will have to issue multiple G28s.
+            interface.resetAxisPositions(maxAngles);
+            interface.moveTo(highestCartesianPoint, homeVelocity, motion::USE_ENDSTOPS | motion::NO_LEVELING | motion::NO_BOUNDING);
+
+            // Update the stored position with the known location of the endstops.
             auto axesCoords = getHomePosition(interface.axisPositions());
             interface.resetAxisPositions(axesCoords);
-            LOG("homed position: %s\n", xyzeFromMechanical(axesCoords).str().c_str());
-            //interface.setUnbufferedMove(false);
+            LOG("Cartesian position at endstops: %s\n", xyzeFromMechanical(axesCoords).str().c_str());
+
+            // Move to where the arms are completely horizontal
+            std::array<int, 4> anglesAtHorizon({{0, 0, 0, curExtMechanical}});
+            Vector4f horizontalArmsCartesianPoint = xyzeFromMechanical(anglesAtHorizon);
+            interface.moveTo(horizontalArmsCartesianPoint, homeVelocity, motion::NO_LEVELING);
+            LOG("Cartesian position when arms are horizontal: %s\n", interface.actualCartesianPosition().str().c_str());
         }
         inline std::array<int, 4> getHomePosition(const std::array<int, 4> &cur) const {
             //When we're at the home position, we know the angle of each axis.
@@ -204,6 +220,10 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
         inline Vector4f bound(const Vector4f &xyze) const {
             //implement this function later to make sure we don't try to move to any invalid coordinate.
             return xyze;
+        }
+        //if we get a G0/G1 before the first G28, should we attempt to home first?
+        inline bool doHomeBeforeFirstMovement() const {
+            return false;
         }
     private:
         // Function taken from http://forums.trossenrobotics.com/tutorials/introduction-129/delta-robot-kinematics-3276/
@@ -263,7 +283,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
              y0 = (a2*z0 + b2)/dnm;
              //return 0;
          }
-         
     public:
          // Inside your AngularDeltaCoordMap, your forward kinematics should look like:
          Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
