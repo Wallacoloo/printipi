@@ -205,6 +205,13 @@ The math is described more in /code/proof-of-concept/coordmath.py and coord-math
     </argument>
     <override name="CoordMap::bound" ref="motion::CoordMap#motion::CoordMap::bound" />
   </method>
+  <method id="motion::AngularDeltaCoordMap::doHomeBeforeFirstMovement" name="doHomeBeforeFirstMovement" override="yes">
+    <brief>if we get a G0/G1 before the first G28, should we attempt to home first?</brief>
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <override name="CoordMap::doHomeBeforeFirstMovement" ref="motion::CoordMap#motion::CoordMap::doHomeBeforeFirstMovement" />
+  </method>
   <method id="motion::AngularDeltaCoordMap::xyzeFromMechanical" name="xyzeFromMechanical" override="yes">
     <brief>Inside your AngularDeltaCoordMap, your forward kinematics should look like:</brief>
     <return>
