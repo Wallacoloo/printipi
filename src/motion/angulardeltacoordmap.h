@@ -285,7 +285,6 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
              //return 0;
          }
     public:
-         // Inside your AngularDeltaCoordMap, your forward kinematics should look like:
          Vector4f xyzeFromMechanical(const std::array<int, 4> &mech) const {
             // The "mech" coordinates given are the locations of each axis *in microsteps*.
             // So convert these into angles for the 3 towers,
@@ -300,8 +299,7 @@ template <typename Stepper1, typename Stepper2, typename Stepper3, typename Step
             delta_calcForward(theta1, theta2, theta3, x0, y0, z0);
             
             //Now return x0, y0, z0, extruder - all coordinates in millimeters:
-            //must invert y0 because the trossen derivation uses a left-hand coordinate system.
-            return Vector4f(x0, -y0, z0+_zoffset, extruder);
+            return Vector4f(x0, y0, z0+_zoffset, extruder);
          }
 
 };

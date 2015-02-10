@@ -34,28 +34,37 @@
  *
  * For solving this just in the YZ plane,
  * we get the following constraints:
- * |J1 - E1'| = re, |F1-J1| = rf and J1 = F1 + rf<0, cos(a), -sin(a)>
+ * |J1 - E1| = re, |F1-J1| = rf and J1 = F1 + rf<0, -cos(a), -sin(a)>
+ * Since E1' = E1-x, this implies the following more useful constraints:
+ * |J1 - E1'| = sqrt(re^2-x^2), and the above: |F1-J1| = rf and J1 = F1 + rf<0, -cos(a), -sin(a)>
  *
- * Rewrite |x| as x . x:
- *       (J1 - E1') . (J1 - E1') == re^2
+ * Note: y-z plane is defined with directions:
+ *        ^ 
+ *        | z
+ *        |
+ * <------+
+ *  y     
+ *
+ * Rewrite |x|^2 as x . x:
+ *       (J1 - E1') . (J1 - E1') == re^2-E1x^2
  *   and (J1 - F1) . (J1 - F1)   == rf^2
  * Expand:
- *       J1 . J1 - 2 J1 . E1' + E1' . E1' == re^2
+ *       J1 . J1 - 2 J1 . E1' + E1' . E1' == re^2-E1x^2
  *   and J1 . J1 - 2 J1 . F1  + F1  . F1  == rf^2
  * Subtract equations:
- *   2 J1 . (F1 - E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
- * Substitute J1 = F1 + rf<0, cos(a), -sin(a)>
- *   2(F1 + rf<0, cos(a), -sin(a)>) . (F1 - E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
+ *   2 J1 . (F1 - E1') + E1' . E1' - F1 . F1 == re^2-E1x^2 - rf^2
+ * Substitute J1 = F1 + rf<0, -cos(a), -sin(a)>
+ *   2(F1 + rf<0, cos(a), -sin(a)>) . (F1 - E1') + E1' . E1' - F1 . F1 == re^2-E1x^2 - rf^2
  * Expand:
- *   2F1 . F1 - 2F1 . E1' + 2rf<0, cos(a), -sin(a)> . (F1-E1') + E1' . E1' - F1 . F1 == re^2 - rf^2
+ *   2F1 . F1 - 2F1 . E1' + 2rf<0, -cos(a), -sin(a)> . (F1-E1') + E1' . E1' - F1 . F1 == re^2-E1x^2 - rf^2
  * Combine terms & rearrange:
- *   F1 . F1 - 2F1 . E1' + E1' . E1' + 2rf<0, cos(a), -sin(a)> . (F1-E1') == re^2 - rf^2
+ *   F1 . F1 - 2F1 . E1' + E1' . E1' + 2rf<0, -cos(a), -sin(a)> . (F1-E1') == re^2-E1x^2 - rf^2
  * Notice that F1 . F1 - 2F1 . E1' + E1' . E1' is equal to (F1 - E1') . (F1 - E1')
- *   2rf<0, cos(a), -sin(a)> . (F1-E1') == re^2 - rf^2 - |F1-E1'|^2
+ *   2rf<0, -cos(a), -sin(a)> . (F1-E1') == re^2-E1x^2 - rf^2 - |F1-E1'|^2
  * Expand and divide by 2rf:
- *   (F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) == 1/2rf*(re^2 - rf^2 - |F1-E1'|^2)
+ *   -(F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) == 1/2rf*(re^2-E1x^2 - rf^2 - |F1-E1'|^2)
  * Move to one side:
- *   (F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'|^2) == 0
+ *   -(F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) - 1/2rf*(re^2-E1x^2 - rf^2 - |F1-E1'|^2) == 0
  *
  * This is solved later in the testDir function.
  */
@@ -134,31 +143,37 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
         inline float testDir(float s) {
             /*
              * Given the constraint equations derived further up the page:
-             *    (F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'|^2) == 0
-             * For linear motion, E1' = E1'o + v*t.
-             * Then (F1y-E1'oy-vy*t)cos(a) - (F1z-E1'oz-vz*t)sin(a) - 1/2rf*(re^2 - rf^2 - |F1-E1'o-v*t|^2) == 0
+             *    -(F1y-E1'y)cos(a) - (F1z-E1'z)sin(a) - 1/2rf*(re^2-x^2 - rf^2 - |F1-E1'|^2) == 0
+             * For linear motion, E1' = E1'o + E1'v*t and E1 = E1o + E1v*t
+             * Then -(F1y-E1'oy-E1'vy*t)cos(a) - (F1z-E1'oz-E1'vz*t)sin(a) - 1/2rf*(re^2-(E1ox+E1vx*t)^2 - rf^2 - |F1-E1'o-E1'v*t|^2) == 0
              *
              * We desire to test at what time t will a = D*RADIANS_STEP = (M0+s)*RADIANS_STEP
-             *    (F1y-E1'oy)cos(D) - vy*t*cos(D) - (F1z-E1'oz)sin(D) + vz*t*sin(D) - 1/2rf*(re^2 - rf^2 - (F1-E1'o-v*t) . (F1-E1'o-v*t)) == 0
-             *    2rf( (F1y-E1'oy)cos(D) - vy*t*cos(D) - (F1z-E1'oz)sin(D) + vz*t*sin(D) ) - re^2 + rf^2 + (F1-E1'o) . (F1-E1'o) - 2(F1-E1'o) . v*t + |v*t|^2 == 0
-             *    t^2 * (|v|^2)
-                + t*(-2rf*vy*cos(D) + 2rf*vz*sin(D) - 2(F1-E1'o) . v)
-                + 2rf(F1y-E1'oy)cos(D) - 2rf(F1z-E1'oz)sin(D) - re^2 + rf^2 + (F1-E1'o) . (F1-E1'o) == 0
+             *    -(F1y-E1'oy)cos(D) + E1'vy*t*cos(D) - (F1z-E1'oz)sin(D) + E1'vz*t*sin(D) - 1/2rf*(re^2 - (E1ox^2+2*E1vx*t+E1vx^2*t^2) - rf^2 - (F1-E1'o-E1'v*t) . (F1-E1'o-E1'v*t)) == 0
+             *    2rf( -(F1y-E1'oy)cos(D) + E1'vy*t*cos(D) - (F1z-E1'oz)sin(D) + E1'vz*t*sin(D) ) - re^2 + E1ox^2+2*E1vx*t+E1vx^2*t^2 + rf^2 + (F1-E1'o) . (F1-E1'o) - 2(F1-E1'o) . E1'v*t + |E1'v*t|^2 == 0
+             *    t^2 * (E1vx^2 + |E1'v|^2)
+                + t*(-2rf*E1'vy*-cos(D) + 2rf*E1'vz*sin(D) + 2*E1vx - 2(F1-E1'o) . E1'v)
+                + 2rf(F1y-E1'oy)*-cos(D) - 2rf(F1z-E1'oz)sin(D) - re^2 + E1ox^2 + rf^2 + (F1-E1'o) . (F1-E1'o) == 0
              * This is a quadratic equation of t that we can solve using t = (-b +/- sqrt(b^2-4a*c)) / (2*a)
              * There are two solutions; both may be valid, but have different meanings. 
              *   If one solution is at a time in the past, then it's just a projection of the current path into the past. 
              *   If both solutions are in the future, then pick the nearest one; 
              *   it means that there are two points in this path where the arm angle should be the same.
              */
-            auto rot = Matrix3x3::rotationAboutPositiveZ(w);
-            auto v = rot.transform(line_v);
+            // rotate everything by the angle of this axis so that we can do all calculations in the 'y-z' plane
+            // auto rot = Matrix3x3::identity();
+            auto rot = Matrix3x3::rotationAboutPositiveZ(-w);
+            // we are only interested in the portion of v in the plane corresponding to possible motion of THIS arm.
+            // 
+            auto E1v = rot.transform(line_v);
             Vector3f F1 = Vector3f(0, f/(2*sqrt(3)), _zoffset);
-            //Vector3f E1prime0 = rot.transform(line_P0 + Vector3f(0, e/(2*sqrt(3)), 0)); //initial E1' at the start of the move.
-            Vector3f E1prime0 = rot.transform(line_P0) + Vector3f(0, e/(2*sqrt(3)), 0); //initial E1' at the start of the move.
+            Vector3f E1_0 = rot.transform(line_P0)  + Vector3f(0, e/(2*sqrt(3)), 0);
+
+            Vector3f E1prime0 = Vector3f(0, E1_0.y(), E1_0.z()); //initial E1' at the start of the move.
+            Vector3f E1primev = Vector3f(0, E1v.y(), E1v.z()); // movement of E1' (which is restricted to our plane)
             float angle = (M0+s) * M_PI / 180.0;
-            float a = v.magSq();
-            float b = -2*rf*v.y()*cos(angle) + 2*rf*v.z()*sin(angle) - 2*(F1-E1prime0).dot(v);
-            float c = 2*rf*(F1.y()-E1prime0.y())*cos(angle) - 2*rf*(F1.z()-E1prime0.z())*sin(angle) - re*re + rf*rf + (F1-E1prime0).magSq();
+            float a = E1v.x()*E1v.x() + E1primev.magSq();
+            float b = -2*rf*E1primev.y()*cos(angle) + 2*rf*E1primev.z()*sin(angle)  + 2*E1v.x() - 2*(F1-E1prime0).dot(E1primev);
+            float c = 2*rf*(F1.y()-E1prime0.y())*cos(angle) - 2*rf*(F1.z()-E1prime0.z())*sin(angle) - re*re  + E1_0.x()*E1_0.x() + rf*rf + (F1-E1prime0).magSq();
 
             float term1 = -b;
             float rootParam = (b*b-4*a*c);

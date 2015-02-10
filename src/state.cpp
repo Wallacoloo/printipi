@@ -52,34 +52,34 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
         //test G2/G3 arc movement
         //helper.testArcMovement();
         //test G1 movement with G91
-        WHEN("The machine is homed & moved to (40, -10, 50)") {
+        WHEN("The machine is homed & moved to (30, -10, 15)") {
             helper.sendCommand("G28", "ok");
-            helper.sendCommand("G1 X40 Y-10 Z50", "ok");
+            helper.sendCommand("G1 X30 Y-10 Z15", "ok");
             //test G91 (relative) movement
-            WHEN("The machine is moved a RELATIVE amount (-70, 30, 30) at F=3000") {
+            WHEN("The machine is moved a RELATIVE amount (-60, 30, -10) at F=3000") {
                 //put into relative movement mode
                 helper.sendCommand("G91", "ok");
-                helper.sendCommand("G1 X-70 Y30 Z30 F3000", "ok");
-                THEN("The actual position should be near (-30, 20, 80)") {
+                helper.sendCommand("G1 X-60 Y30 Z-10 F3000", "ok");
+                THEN("The actual position should be near (-30, 20, 5)") {
                     helper.exitOnce(); //force the G1 code to complete
-                    helper.verifyPosition(-30, 20, 80);
+                    helper.verifyPosition(-30, 20, 5);
                 }
             }
             //test comment parsing
-            WHEN("A movement command to (30, 10, 30) is coupled with a comment") {
-                helper.sendCommand("G1 X30 Y10 Z30; HELLO, I am a comment!", "ok");
-                THEN("The actual position should be near (30, 10, 30)") {
+            WHEN("A movement command to (30, 10, 20) is coupled with a comment") {
+                helper.sendCommand("G1 X30 Y10 Z20; HELLO, I am a comment!", "ok");
+                THEN("The actual position should be near (30, 10, 20)") {
                     helper.exitOnce(); //force the G1 code to complete
-                    helper.verifyPosition(30, 10, 30);
+                    helper.verifyPosition(30, 10, 20);
                 }
             }
         }
         //test automatic homing
-        WHEN("The machine is moved to (40, -10, 50) before being homed") {
-            helper.sendCommand("G1 X40 Y-10 Z50", "ok");
-            THEN("The actual position should be near (40, -10, 50)") {
+        WHEN("The machine is moved to (30, -10, 15) before being homed") {
+            helper.sendCommand("G1 X30 Y-10 Z15", "ok");
+            THEN("The actual position should be near (30, -10, 15)") {
                 helper.exitOnce(); //force the G1 code to complete
-                helper.verifyPosition(40, -10, 50);
+                helper.verifyPosition(30, -10, 15);
             }
         }
         //test linear movement using inch coordinates
@@ -112,17 +112,17 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
             gfile << " \t \n";
             //test comment & G90
             gfile << "G90 \t ; comment \n";
-            gfile << "G1 X40 Y-10 Z50";
+            gfile << "G1 X30 Y-10 Z15";
             AND_WHEN("The file is terminated with a newline") {
                 //test ending the file WITHOUT a newline
                 gfile << "\n" << std::flush;
                 //load & run the file
                 helper.sendCommand("M32 test-printipi-m32.gcode", "ok");
-                THEN("The actual position should be near (40, -10, 50)") {
+                THEN("The actual position should be near (30, -10, 15)") {
                     //note: Since running with TESTHELPER_NO_PERSISTENT_ROOT_COM, the M0 exit command from us is guaranteed to be processed
                     //  after the end of the gcode file, so no sleep is needed.
                     helper.exitOnce(); //force the G0 code to complete
-                    helper.verifyPosition(40, -10, 50);
+                    helper.verifyPosition(30, -10, 15);
                 }
             }
             AND_WHEN("The file does NOT end on an empty line") {
@@ -130,11 +130,11 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
                 gfile << std::flush;
                 //load & run the file
                 helper.sendCommand("M32 test-printipi-m32.gcode", "ok");
-                THEN("The actual position should be near (40, -10, 50)") {
+                THEN("The actual position should be near (30, -10, 15)") {
                     //note: Since running with TESTHELPER_NO_PERSISTENT_ROOT_COM, the M0 exit command from us is guaranteed to be processed
                     //  after the end of the gcode file, so no sleep is needed.
                     helper.exitOnce(); //force the G0 code to complete
-                    helper.verifyPosition(40, -10, 50);
+                    helper.verifyPosition(30, -10, 15);
                 }
             }
             AND_WHEN("The file contains more commands after a M99 command") {
@@ -143,11 +143,11 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
                 gfile << "G1 X0 Y0 Z50\n" << std::flush;
                 //load & run the file
                 helper.sendCommand("M32 test-printipi-m32.gcode", "ok");
-                THEN("The no commands past M99 should be processed & the actual position should be near (40, -10, 50)") {
+                THEN("No commands past M99 should be processed & the actual position should be near (30, -10, 15)") {
                     //note: Since running with TESTHELPER_NO_PERSISTENT_ROOT_COM, the M0 exit command from us is guaranteed to be processed
                     //  after the end of the gcode file, so no sleep is needed.
                     helper.exitOnce(); //force the G0 code to complete
-                    helper.verifyPosition(40, -10, 50);
+                    helper.verifyPosition(30, -10, 15);
                 }
             }
             remove("test-printipi-m32.gcode");
