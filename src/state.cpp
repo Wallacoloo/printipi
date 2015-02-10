@@ -56,10 +56,10 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
             helper.sendCommand("G28", "ok");
             helper.sendCommand("G1 X30 Y-10 Z15", "ok");
             //test G91 (relative) movement
-            WHEN("The machine is moved a RELATIVE amount (-60, 30, -10) at F=3000") {
+            WHEN("The machine is moved a RELATIVE amount (-60, 30, -10)") {
                 //put into relative movement mode
                 helper.sendCommand("G91", "ok");
-                helper.sendCommand("G1 X-60 Y30 Z-10 F3000", "ok");
+                helper.sendCommand("G1 X-60 Y30 Z-10", "ok");
                 THEN("The actual position should be near (-30, 20, 5)") {
                     helper.exitOnce(); //force the G1 code to complete
                     helper.verifyPosition(-30, 20, 5);

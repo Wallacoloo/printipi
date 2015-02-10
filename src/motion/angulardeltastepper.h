@@ -160,10 +160,8 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
              *   it means that there are two points in this path where the arm angle should be the same.
              */
             // rotate everything by the angle of this axis so that we can do all calculations in the 'y-z' plane
-            // auto rot = Matrix3x3::identity();
-            auto rot = Matrix3x3::rotationAboutPositiveZ(-w);
-            // we are only interested in the portion of v in the plane corresponding to possible motion of THIS arm.
-            // 
+            // we must add Pi because the first arm starts at NEGATIVE y.
+            auto rot = Matrix3x3::rotationAboutPositiveZ(-w+M_PI);
             auto E1v = rot.transform(line_v);
             Vector3f F1 = Vector3f(0, f/(2*sqrt(3)), _zoffset);
             Vector3f E1_0 = rot.transform(line_P0)  + Vector3f(0, e/(2*sqrt(3)), 0);

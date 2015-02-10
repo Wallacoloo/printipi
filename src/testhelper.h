@@ -168,10 +168,20 @@ template <typename MachineT=machines::Machine> class TestHelper {
                 }
             }
             //test successive G1 movements
-            WHEN("The machine is homed & moved to (30, -10, 15) and then an absolute position afterward, (-30, 20, 5) at F=3000") {
+            WHEN("The machine is homed & moved to (30, -10, 15) and then an absolute position afterward, (-30, 20, 5)") {
                 sendCommand("G28", "ok");
                 sendCommand("G1 X30 Y-10 Z15", "ok");
+                sendCommand("G1 X-30 Y20 Z5", "ok");
+                THEN("The actual position should be near (-30, 20, 5)") {
+                    exitOnce(); //force the G1 code to complete
+                    verifyPosition(-30, 20, 5);
+                }
+            }
+            //test F parameter
+            WHEN("The machine is homed & moved to (-30, 20, 5) at F3000") {
+                sendCommand("G28", "ok");
                 sendCommand("G1 X-30 Y20 Z5 F3000", "ok");
+                //test G1 movement
                 THEN("The actual position should be near (-30, 20, 5)") {
                     exitOnce(); //force the G1 code to complete
                     verifyPosition(-30, 20, 5);
