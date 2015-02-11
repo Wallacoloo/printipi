@@ -508,7 +508,7 @@
 //  One should not attempt to directly drive a fan off of the Pi's GPIOs.
 //  Instead, obtain a transistor, wire base to 12V, collector to the GPIO, and emitter should be
 //    connected through the fan and into ground.
-#define PIN_FAN                   mitpi::V2_GPIO_P1_08           //maps to FD Shield D10 (Extruder 2 / Fan)
+#define PIN_FAN                   mitpi::V2_GPIO_P1_03           //maps to FD Shield D10 (Extruder 2 / Fan)
 #define PIN_FAN_INVERSIONS        INVERT_WRITES
 #define PIN_FAN_DEFAULT_STATE     IO_DEFAULT_LOW
 //during RPi boot, fan can be set to be either on or off by using internal pull resistors
