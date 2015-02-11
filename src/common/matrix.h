@@ -46,6 +46,12 @@ class Matrix3x3 {
             return VecT(r0.dot(xyz), r1.dot(xyz), r2.dot(xyz));
         }
 
+        static inline Matrix3x3 identity() {
+            return Matrix3x3(1, 0, 0,
+                             0, 1, 0,
+                             0, 0, 1);
+        }
+
         static inline Matrix3x3 rotationAboutPositiveZ(float angleRad) {
             float cosa = cos(angleRad);
             float sina = sin(angleRad);

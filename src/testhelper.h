@@ -149,21 +149,42 @@ template <typename MachineT=machines::Machine> class TestHelper {
                     verifyPosition(0, 0, 0);
                 }
             }
-            WHEN("The machine is homed & moved to (40, -10, 50)") {
+            WHEN("The machine is homed & moved to (30, -10, 15)") {
                 sendCommand("G28", "ok");
-                sendCommand("G1 X40 Y-10 Z50", "ok");
+                sendCommand("G1 X30 Y-10 Z15", "ok");
                 //test G1 movement
-                THEN("The actual position should be near (40, -10, 50)") {
+                THEN("The actual position should be near (30, -10, 15)") {
                     exitOnce(); //force the G1 code to complete
-                    verifyPosition(40, -10, 50);
+                    verifyPosition(30, -10, 15);
                 }
-                //test successive G1 movements
-                WHEN("The machine is moved to another absolute position afterward, (-30, 20, 80) at F=3000") {
-                    sendCommand("G1 X-30 Y20 Z80 F3000", "ok");
-                    THEN("The actual position should be near (-30, 20, 80)") {
-                        exitOnce(); //force the G1 code to complete
-                        verifyPosition(-30, 20, 80);
-                    }
+            }
+            WHEN("The machine is homed & moved to (-30, 20, 5)") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X-30 Y20 Z5", "ok");
+                //test G1 movement
+                THEN("The actual position should be near (-30, 20, 5)") {
+                    exitOnce(); //force the G1 code to complete
+                    verifyPosition(-30, 20, 5);
+                }
+            }
+            //test successive G1 movements
+            WHEN("The machine is homed & moved to (30, -10, 15) and then an absolute position afterward, (-30, 20, 5)") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X30 Y-10 Z15", "ok");
+                sendCommand("G1 X-30 Y20 Z5", "ok");
+                THEN("The actual position should be near (-30, 20, 5)") {
+                    exitOnce(); //force the G1 code to complete
+                    verifyPosition(-30, 20, 5);
+                }
+            }
+            //test F parameter
+            WHEN("The machine is homed & moved to (-30, 20, 5) at F3000") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X-30 Y20 Z5 F3000", "ok");
+                //test G1 movement
+                THEN("The actual position should be near (-30, 20, 5)") {
+                    exitOnce(); //force the G1 code to complete
+                    verifyPosition(-30, 20, 5);
                 }
             }
         }
