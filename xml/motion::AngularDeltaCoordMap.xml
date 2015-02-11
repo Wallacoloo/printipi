@@ -213,7 +213,6 @@ The math is described more in /code/proof-of-concept/coordmath.py and coord-math
     <override name="CoordMap::doHomeBeforeFirstMovement" ref="motion::CoordMap#motion::CoordMap::doHomeBeforeFirstMovement" />
   </method>
   <method id="motion::AngularDeltaCoordMap::xyzeFromMechanical" name="xyzeFromMechanical" override="yes">
-    <brief>Inside your AngularDeltaCoordMap, your forward kinematics should look like:</brief>
     <return>
       <type name="Vector4f" ref="index#Vector4f" />
     </return>
