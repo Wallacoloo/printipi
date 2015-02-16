@@ -11,20 +11,21 @@ pushd src
 make clean
 #things to test:
 #Multiple machines
-#at least g++-4.6, g++-4.7, clang++-3.4, clang++-3.5
+#at least g++-4.6, g++-4.7, clang++-3.4
 #must test both release & debug/debugrel builds,
 #as sometimes having the NDEBUG flag present alters the code path
+#Must test g++-4.7 in addition to g++-4.6, as the later uses LTO which can introduce failed compilations
 for compiler in "clang++" "g++-4.6" "g++-4.7"
 do
 	for machine in machines/*/*.h
 	do
-		for target in "debugrel" "release"
+		for target in "debug" "release"
 		do
 			#check for compilation with and without tests enabled
 			make CXX=$compiler MACHINE=$machine $target
 			make CXX=$compiler MACHINE=$machine $target MACHINE_CLASS=generic DO_TESTS=1
 			#only run valgrind on debug builds or clang builds to avoid gcc generating instructions valgrind doesn't recognize
-			if [ "$target" == "debugrel" ] || [ "$compiler" == "clang++" ] ; then 
+			if [ "$target" == "debug" ] || [ "$compiler" == "clang++" ] ; then 
 				valgrind --leak-check=full --track-fds=yes --error-exitcode=1 ../build/printipi
 			else
 				../build/printipi
