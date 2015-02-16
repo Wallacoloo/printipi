@@ -98,17 +98,21 @@ enum DeltaAxis {
 template <typename StepperDriverT> class AngularDeltaStepper : public AxisStepperWithDriver<StepperDriverT> {
     DeltaAxis axisIdx;
     const iodrv::Endstop *endstop; //must be pointer, because cannot move a reference
+    // calibration settings from the CoordMap
     float e, f, re, rf, _zoffset;
     float w; //angle of this arm about the +z axis, in radians
-    float _DEGREES_STEP;
+    float _RADIANS_STEP;
 
-    float M0; //initial coordinate of THIS axis in degrees
+    float M0_rad; //initial coordinate of THIS axis in radians
     int sTotal; //current step offset from M0
 
+    Vector3f F1; //position of F1 joint in our YZ reference frame
+
     //variables used during linear motion
-    Vector3f line_P0; //initial cartesian position, in mm
-    Vector3f line_v; //cartesian velocity vector, in mm/sec
-    float DEGREES_STEP() const { return _DEGREES_STEP; } //number of degrees per step
+    Vector3f line_E1v; //velocity of the E1 point in our YZ reference frame
+    Vector3f line_E1_0; //initial position of the E1 point in our YZ reference frame at the start of the movement
+    float line_inverseVelocitySquared;
+    float RADIANS_STEP() const { return _RADIANS_STEP; } //number of radians per step
     public:
         template <typename CoordMapT> AngularDeltaStepper(
             int idx, DeltaAxis axisIdx, const CoordMapT &map, const StepperDriverT &stepper, const iodrv::Endstop *endstop,
@@ -122,19 +126,30 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
            rf(rf),
            _zoffset(zoffset),
            w(axisIdx*2*M_PI/3), 
-           _DEGREES_STEP(map.DEGREES_STEP(axisIdx)) {
-              //E axis has to be controlled using a LinearStepper (as if it were cartesian)
+           _RADIANS_STEP(map.DEGREES_STEP(axisIdx) * M_PI / 180.0f) {
+              // E axis has to be controlled using a LinearStepper (as if it were cartesian)
               assert(axisIdx == ANGULARDELTA_AXIS_A || axisIdx == ANGULARDELTA_AXIS_B || axisIdx == ANGULARDELTA_AXIS_C);
+              // The location of F1 is fixed in our rotated reference frame
+              this->F1 = Vector3f(0, -f/(2*sqrtf(3.f)), _zoffset);
         }
 
         //function to initiate a linear (through cartesian space) motion
         template <typename CoordMapT, std::size_t sz> void beginLine(const CoordMapT &map, const std::array<int, sz>& curPos, 
         const Vector4f &vel) {
-            this->M0 = map.getAxisPosition(curPos, axisIdx)*map.DEGREES_STEP(axisIdx); 
+            this->M0_rad = map.getAxisPosition(curPos, axisIdx)*RADIANS_STEP(); 
             this->sTotal = 0;
-            this->line_P0 = map.xyzeFromMechanical(curPos).xyz();
-            this->line_v = vel.xyz();
             this->time = 0;
+            Vector3f line_P0 = map.xyzeFromMechanical(curPos).xyz();
+            Vector3f line_v = vel.xyz();
+
+            // rotate the cartesian position function into our flat YZ reference frame
+            auto rot = Matrix3x3::rotationAboutPositiveZ(-w);
+            this->line_E1v = rot.transform(line_v);
+            // line_P0 specifies the initial center of the effector; translate that into our rotated coordinate system
+            Vector3f E0_0 = rot.transform(line_P0);
+            // E1 is a fixed offset from E0
+            this->line_E1_0 = E0_0  + Vector3f(0, -e/(2*sqrt(3)), 0);
+            this->line_inverseVelocitySquared = 1.f / line_v.magSq();
         }
         //function to initiate a circular arc (through cartesian space) motion
         template <typename CoordMapT, std::size_t sz> void beginArc(const CoordMapT &map, const std::array<int, sz> &curPos, 
@@ -167,38 +182,48 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
              *   If both solutions are in the future, then pick the nearest one; 
              *   it means that there are two points in this path where the arm angle should be the same.
              */
-            // rotate everything by the angle of this axis so that we can do all calculations in the 'y-z' plane
-            auto rot = Matrix3x3::rotationAboutPositiveZ(-w);
-            auto E1v = rot.transform(line_v);
-            // The location of F1 is fixed in our rotated reference frame
-            Vector3f F1 = Vector3f(0, -f/(2*sqrt(3)), _zoffset);
-            // line_P0 specifies the initial center of the effector; translate that into our rotated coordinate system
-            Vector3f E0_0 = rot.transform(line_P0);
-            // E1 is a fixed offset from E0
-            Vector3f E1_0 = E0_0  + Vector3f(0, -e/(2*sqrt(3)), 0);
-            // E1' is the projection of E1 onto the y-z plane.
-            Vector3f E1prime0 = Vector3f(0, E1_0.y(), E1_0.z()); //initial E1' at the start of the move.
-            Vector3f E1primev = Vector3f(0, E1v.y(), E1v.z()); // movement of E1' (which is restricted to our plane)
+            
+            Vector3f E1v = line_E1v;
+            Vector3f E1_0 = line_E1_0;
             // determine the queried angle of our arm, in radians
-            float angle = (M0+s) * M_PI / 180.0;
+            float angle = M0_rad+s;
+            float sinAngle = sinf(angle);
+            float cosAngle = cosf(angle);
+            
             // determine the coefficients to at^2 + bt + c = 0, which gives the time at which our arm will be at the above angle (possibly non-existant).
-            float a = E1v.x()*E1v.x() + E1primev.magSq();
-            float b = 2*rf*E1primev.y()*cos(angle) + 2*rf*E1primev.z()*sin(angle)  + 2*E1_0.x()*E1v.x() - 2*(F1-E1prime0).dot(E1primev);
-            float c = -2*rf*(F1.y()-E1prime0.y())*cos(angle) - 2*rf*(F1.z()-E1prime0.z())*sin(angle) - re*re  + E1_0.x()*E1_0.x() + rf*rf + (F1-E1prime0).magSq();
+            // unoptimized (preserve for reference)
+            // float a = E1v.x()*E1v.x() + E1primev.magSq();
+            // float b = 2*(rf*E1primev.y()*cos(angle) + rf*E1primev.z()*sin(angle)  + E1_0.x()*E1v.x() - (F1-E1prime0).dot(E1primev));
+            // float c = -2*rf*(F1.y()-E1prime0.y())*cosAngle - 2*rf*(F1.z()-E1prime0.z())*sinAngle - re*re  + E1_0.x()*E1_0.x() + rf*rf + (F1-E1prime0).magSq();
+            
+            // More efficient implementation than the above
+            // cache the inverse of a to avoid a float division
+            float inv_a = line_inverseVelocitySquared;
+            // calculate only b/(2*a) (see below for explanation)
+            // float b_2a = inv_a*(rf*E1primev.y()*cosAngle + rf*E1primev.z()*sinAngle  + E1_0.x()*E1v.x() - (F1-E1prime0).dot(E1primev));
+            float b_2a = inv_a*(rf*E1v.y()*cosAngle + rf*E1v.z()*sinAngle  - (F1-E1_0).dot(E1v));
+            // calculate only c/a (see below for explanation)
+            // float c_a = inv_a*(-2*rf*(F1.y()-E1prime0.y())*cosAngle - 2*rf*(F1.z()-E1prime0.z())*sinAngle - re*re  + E1_0.x()*E1_0.x() + rf*rf + (F1-E1prime0).magSq());
+            float c_a = inv_a*(-2*rf*(F1.y()-E1_0.y())*cosAngle - 2*rf*(F1.z()-E1_0.z())*sinAngle - re*re  + rf*rf + (F1-E1_0).magSq());
 
             // Solve the quadratic equation: x = (-b +/- sqrt(b^2-4ac)) / (2a)
-            float term1 = -b;
-            float rootParam = (b*b-4*a*c);
-            float divisor = 2*a;
+            // Note: if we divide numerator and denominator by 2, we get:
+            //   x = (-b/2 +/- sqrt((b/2)^2-ac)) / a, which is slightly easier to compute given that our b has a factor of 2.
+            // also, divide top and bottom by a, and we get:
+            //   x = -b/a/2 +/- sqrt((b/a/2)^2-c/a)
+            // we can do that because a is guaranteed to be positive, since it is the square of the velocity
+            float term1 = -b_2a;
+            float rootParam = b_2a*b_2a - c_a;
             //check if the sqrt argument is negative
             //TODO: can it ever be negative?
             if (rootParam < 0) {
                 return NAN;
             }
-            float root = std::sqrt(rootParam);
-            float t1 = (term1 - root)/divisor;
-            float t2 = (term1 + root)/divisor;
+            float root = sqrtf(rootParam);
+            float t1 = term1 - root;
+            float t2 = term1 + root;
             //return the nearest of the two times that is > current time.
+            //note: root will always be positive.
             if (root > term1) { //if this is true, then t1 MUST be negative.
                 //return t2 if t2 > last_step_time else None
                 return t2 > this->time ? t2 : NAN;
@@ -217,8 +242,8 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
             if (useEndstops && endstop->isEndstopTriggered()) {
                 this->time = NAN; //at endstop; no more steps.
             } else {
-                float negTime = testDir((this->sTotal-1)*DEGREES_STEP()); //get the time at which next steps would occur.
-                float posTime = testDir((this->sTotal+1)*DEGREES_STEP());
+                float negTime = testDir((this->sTotal-1)*RADIANS_STEP()); //get the time at which next steps would occur.
+                float posTime = testDir((this->sTotal+1)*RADIANS_STEP());
                 if (negTime < this->time || std::isnan(negTime)) { //negTime is invalid
                     if (posTime > this->time) {
                         LOGV("LinearDeltaStepper<%u>::chose %f (pos) vs %f (neg)\n", axisIdx, posTime, negTime);
