@@ -51,29 +51,7 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
         helper.testLinearMovement();
         //test G2/G3 arc movement
         //helper.testArcMovement();
-        //test G1 movement with G91
-        WHEN("The machine is homed & moved to (30, -10, 15)") {
-            helper.sendCommand("G28", "ok");
-            helper.sendCommand("G1 X30 Y-10 Z15", "ok");
-            //test G91 (relative) movement
-            WHEN("The machine is moved a RELATIVE amount (-60, 30, -10)") {
-                //put into relative movement mode
-                helper.sendCommand("G91", "ok");
-                helper.sendCommand("G1 X-60 Y30 Z-10", "ok");
-                THEN("The actual position should be near (-30, 20, 5)") {
-                    helper.exitOnce(); //force the G1 code to complete
-                    helper.verifyPosition(-30, 20, 5);
-                }
-            }
-            //test comment parsing
-            WHEN("A movement command to (30, 10, 20) is coupled with a comment") {
-                helper.sendCommand("G1 X30 Y10 Z20; HELLO, I am a comment!", "ok");
-                THEN("The actual position should be near (30, 10, 20)") {
-                    helper.exitOnce(); //force the G1 code to complete
-                    helper.verifyPosition(30, 10, 20);
-                }
-            }
-        }
+
         //test automatic homing
         WHEN("The machine is moved to (30, -10, 15) before being homed") {
             helper.sendCommand("G1 X30 Y-10 Z15", "ok");

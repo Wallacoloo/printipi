@@ -167,11 +167,33 @@ template <typename MachineT=machines::Machine> class TestHelper {
                     verifyPosition(-30, 20, 5);
                 }
             }
-            //test successive G1 movements
+            //test successive G1 movements, starting at the center of the build platform
+            WHEN("The machine is homed & moved to (0, 0, 15) and then an absolute position afterward, (-30, 20, 5)") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X0 Y0 Z15", "ok");
+                sendCommand("G1 X-30 Y20 Z5", "ok");
+                THEN("The actual position should be near (-30, 20, 5)") {
+                    exitOnce(); //force the G1 code to complete
+                    verifyPosition(-30, 20, 5);
+                }
+            }
+            //test successive G1 movements, starting at an arbitrary location (some incorrect movement algorithms may work at the origin, but not everywhere)
             WHEN("The machine is homed & moved to (30, -10, 15) and then an absolute position afterward, (-30, 20, 5)") {
                 sendCommand("G28", "ok");
                 sendCommand("G1 X30 Y-10 Z15", "ok");
                 sendCommand("G1 X-30 Y20 Z5", "ok");
+                THEN("The actual position should be near (-30, 20, 5)") {
+                    exitOnce(); //force the G1 code to complete
+                    verifyPosition(-30, 20, 5);
+                }
+            }
+            //test successive RELATIVE movements
+            WHEN("The machine is homed & moved to (30, -10, 15) and then a relative position afterward, (-60, 30, -10)") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X30 Y-10 Z15", "ok");
+                //put into relative movement mode
+                sendCommand("G91", "ok");
+                sendCommand("G1 X-60 Y30 Z-10", "ok");
                 THEN("The actual position should be near (-30, 20, 5)") {
                     exitOnce(); //force the G1 code to complete
                     verifyPosition(-30, 20, 5);
