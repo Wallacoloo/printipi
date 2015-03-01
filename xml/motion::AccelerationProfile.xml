@@ -11,10 +11,10 @@ Note that the events are already encoded at a *constant* velocity of Vmax (mm/se
 
 Note: AccelerationProfile is an interface and all derivatives must implement the methods outlined in the AccelerationProfile class. NoAcceleration can be considered a default implementation of this interface.
 </doc>
-  <subclass access="public" name="ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
   <subclass access="public" name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration">
     <brief>AccelerationProfile implementation that doesn't perform any acceleration transformation</brief>
   </subclass>
+  <subclass access="public" name="ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
   <method id="motion::AccelerationProfile::begin" name="begin">
     <brief>Optional, but almost surely needed:</brief>
     <return>

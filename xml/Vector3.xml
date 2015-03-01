@@ -42,13 +42,13 @@
   <method id="Vector3::array" name="array">
     <brief>cast to a std::array of &amp;lt;x, y, z&amp;gt;</brief>
     <return>
-      <type name="std::array&lt;_Tp, _Nm&gt;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" />
     </return>
   </method>
   <conversionfunction id="Vector3::operator array&lt;type-parameter-0-0, 3&gt;" name="operator array&lt;type-parameter-0-0, 3&gt;">
     <brief>cast to a std::array of &amp;lt;x, y, z&amp;gt;</brief>
     <return>
-      <type name="std::array&lt;_Tp, _Nm&gt;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" />
     </return>
   </conversionfunction>
   <method id="Vector3::str" name="str">
@@ -207,6 +207,20 @@
       <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
     </argument>
   </method>
+  <method id="Vector3::dot" name="dot">
+    <return>
+      <type name="F" />
+    </return>
+    <argument id="Vector3::dot::ox" name="ox">
+      <type name="F" />
+    </argument>
+    <argument id="Vector3::dot::oy" name="oy">
+      <type name="F" />
+    </argument>
+    <argument id="Vector3::dot::oz" name="oz">
+      <type name="F" />
+    </argument>
+  </method>
   <method id="Vector3::cross" name="cross">
     <brief>The vector cross product: this x v</brief>
     <doc>|   i   j   k   |
@@ -218,6 +232,20 @@
     </return>
     <argument id="Vector3::cross::v" name="v">
       <type name="Vector3&lt;F&gt;" qualifier=" const &amp;" ref="Vector3#Vector3" />
+    </argument>
+  </method>
+  <method id="Vector3::cross" name="cross">
+    <return>
+      <type name="Vector3&lt;F&gt;" ref="Vector3#Vector3" />
+    </return>
+    <argument id="Vector3::cross::ox" name="ox">
+      <type name="F" />
+    </argument>
+    <argument id="Vector3::cross::oy" name="oy">
+      <type name="F" />
+    </argument>
+    <argument id="Vector3::cross::oz" name="oz">
+      <type name="F" />
     </argument>
   </method>
   <method id="Vector3::scalarProj" name="scalarProj">
