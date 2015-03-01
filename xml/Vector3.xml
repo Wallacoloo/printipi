@@ -42,13 +42,13 @@
   <method id="Vector3::array" name="array">
     <brief>cast to a std::array of &amp;lt;x, y, z&amp;gt;</brief>
     <return>
-      <type name="std::array&lt;typename, std::size_t&gt;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" />
     </return>
   </method>
   <conversionfunction id="Vector3::operator array&lt;type-parameter-0-0, 3&gt;" name="operator array&lt;type-parameter-0-0, 3&gt;">
     <brief>cast to a std::array of &amp;lt;x, y, z&amp;gt;</brief>
     <return>
-      <type name="std::array&lt;typename, std::size_t&gt;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" />
     </return>
   </conversionfunction>
   <method id="Vector3::str" name="str">
