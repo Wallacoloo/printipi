@@ -34,7 +34,16 @@
  */
 namespace argparse {
 
-char* getCmdOption(char ** begin, char ** end, const std::string &option);
+// return a pointer into the argv array that matches option when dereferenced, or NULL if non-existent
+char** getCmdOptionPtr(char ** begin, char ** end, const std::string &option);
+
+// return the argument following <option>, or NULL if the option or its argument doesn't exist
+char* getArgumentForCmdOption(char ** begin, char ** end, const std::string &option);
+
+// retrieve the index of the command option in the provided argv array, or dflt if non-existent
+int getCmdOptionIdx(char ** begin, char ** end, const std::string &option, int dflt=-1);
+
+// return true if option is located in the provided argv array
 bool cmdOptionExists(char ** begin, char ** end, const std::string &option);
 
 }
