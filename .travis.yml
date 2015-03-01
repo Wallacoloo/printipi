@@ -6,11 +6,11 @@ script:
 - ./pushdoc.sh
 - ./buildtest.sh
 before_install:
-#Add repository needed for clang3.4
-#- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+#Add repository needed for clang3.4 and g++-4.7
+- sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
 #Add repository needed for valgrind 3.8.10
 #- sudo add-apt-repository -y ppa:jtaylor/jtaylor
-#- apt-get update -qq
+- apt-get update -qq
 install:
 #Install compilers
 - sudo apt-get install -qq g++-4.7 libclang-3.4-dev clang-3.4 libclang1-3.4 libclang-common-3.4-dev
