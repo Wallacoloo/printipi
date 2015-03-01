@@ -26,7 +26,7 @@ install:
 #- make install 
 #- popd
 #install cldoc from source (could use pip install cldoc for an outdated version)
-- pip install cldoc
+- sudo pip install cldoc
 #- pushd `mktemp -d`
 #- git clone https://github.com/jessevdk/cldoc.git
 #- cd cldoc
