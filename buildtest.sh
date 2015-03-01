@@ -23,7 +23,7 @@ do
 		do
 			#check for compilation against the native platform and the generic platform
 			make CXX=$compiler MACHINE=$machine $target -j2
-			make CXX=$compiler MACHINE=$machine $target MACHINE_CLASS=generic DO_TESTS=1 -j2
+			make CXX=$compiler MACHINE=$machine $target PLATFORM=generic DO_TESTS=1 -j2
 			#only run valgrind on clang builds to avoid gcc generating instructions valgrind doesn't recognize
 			if [ "$compiler" == "clang++" ] ; then 
 				valgrind --leak-check=full --track-fds=yes --error-exitcode=1 ../build/printipi --do-tests

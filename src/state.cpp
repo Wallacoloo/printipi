@@ -50,7 +50,7 @@ SCENARIO("State will respond correctly to gcode commands", "[state]") {
         //test G0/G1 linear movement
         helper.testLinearMovement();
         //test G2/G3 arc movement
-        //helper.testArcMovement();
+        helper.testArcMovement();
 
         //test automatic homing
         WHEN("The machine is moved to (30, -10, 15) before being homed") {
