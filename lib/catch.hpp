@@ -5,7 +5,7 @@
 
 #include "compileflags.h"
 
-#if DO_TESTS
+#if ENABLE_TESTS
 	#include "catch/catch.hpp"
 #else
 	//Taken from catch.hpp to generate unique variable/function names:

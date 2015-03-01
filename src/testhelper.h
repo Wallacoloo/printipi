@@ -221,6 +221,10 @@ template <typename MachineT=machines::Machine> class TestHelper {
                         verifyPosition(-40, 0, 20);
                     }
                 }
+            }
+            WHEN("The machine is homed & moved to (0, 40, 20)") {
+                sendCommand("G28", "ok");
+                sendCommand("G1 X0 Y40 Z20", "ok");
                 WHEN("The machine is told to do a CW arc to (40, 0, 20) about (0, 0, 20)") {
                     sendCommand("G2 X40 Y0 I0 J0", "ok");
                     THEN("The actual position should be near (40, 0, 20)") {

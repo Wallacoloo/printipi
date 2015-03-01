@@ -70,7 +70,7 @@ static void printUsage(char* cmd) {
     LOGE("usage: %s [input-file] [output-file] [--help] [--quiet] [--verbose] [--do-tests [CATCH-arguments ...] ]\n", cmd);
     LOGE("  if input-file is not provided, it defaults to stdin\n");
     LOGE("  if output-file is not provided, it defaults to strout\n");
-    LOGE("  --do-tests is only recognized if program was compiled with DO_TESTS=1\n");
+    LOGE("  --do-tests is only recognized if program was compiled with ENABLE_TESTS=1\n");
     LOGE("examples:\n");
     LOGE("  print a gcode file: %s file.gcode\n", cmd);
     LOGE("  mock serial port: %s /dev/tty3dpm /dev/tty3dps\n", cmd);
@@ -100,7 +100,7 @@ int main_(int argc, char **argv) {
     LOG("Filesystem root: %s\n", fsRoot.c_str());
     FileSystem fs(fsRoot);
 
-    #if DO_TESTS
+    #if ENABLE_TESTS
         int doTestsArgIdx = argparse::getCmdOptionIdx(argv, argv+argc, "--do-tests");
         if (doTestsArgIdx != -1) {
             // prepare arguments for the test suite:

@@ -178,8 +178,7 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
         template <typename CoordMapT, std::size_t sz> void beginArc(const CoordMapT &map, const std::array<int, sz> &curPos, 
         const Vector3f &center, const Vector3f &u, const Vector3f &v,  
         float arcRad, float arcVel, float extVel) {
-            //arc motions not yet supported.
-            (void)map; (void)curPos; (void)center; (void)u; (void)v; (void)arcRad; (void)arcVel; (void)extVel; //unused
+            (void)extVel; //unused
             this->M0_rad = map.getAxisPosition(curPos, axisIdx)*RADIANS_STEP(); 
             this->sTotal = 0;
             this->time = 0;
@@ -208,12 +207,12 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
                  * Substitute:
                  *   0 == 2rf*[(F1y-E1'oy)cos(a) + (F1z-E1'oz)sin(a) - s*uy*cos(m*t)*cos(a) - s*vy*sin(m*t)*cos(a) - s*uz*cos(m*t)*sin(a) - s*vz*sin(m*t)*sin(a)] + re^2 - rf^2 - [|F1-E1o|^2 + s^2*cos(m*t)^2|u|^2 + s^2*sin(m*t)^2|v|^2 - 2*(F1-E1o) . s*cos(m*t)u - 2*(F1-E1o) . s*sin(m*t)v + s^2*cos(m*t)sin(m*t)*u . v]
                  * u and v are perpindicular, therefore u . v = 0
-                 * also |u|=s and |v|=s
-                 *   0 == 2rf*[(F1y-E1'oy)cos(a) + (F1z-E1'oz)sin(a) - s*uy*cos(m*t)*cos(a) - s*vy*sin(m*t)*cos(a) - s*uz*cos(m*t)*sin(a) - s*vz*sin(m*t)*sin(a)] + re^2 - rf^2 - [|F1-E1o|^2 + s^2*s^2 - 2*(F1-E1o) . s*cos(m*t)u - 2*(F1-E1o) . s*sin(m*t)v]
+                 * also |u|=1 and |v|=1
+                 *   0 == 2rf*[(F1y-E1'oy)cos(a) + (F1z-E1'oz)sin(a) - s*uy*cos(m*t)*cos(a) - s*vy*sin(m*t)*cos(a) - s*uz*cos(m*t)*sin(a) - s*vz*sin(m*t)*sin(a)] + re^2 - rf^2 - [|F1-E1o|^2 + s^2 - 2*(F1-E1o) . s*cos(m*t)u - 2*(F1-E1o) . s*sin(m*t)v]
                  * Expand to separate the cos(m*t) from the sin(m*t):
-                 *   0 == 2rf*[(F1y-E1'oy)cos(a) + (F1z-E1'oz)sin(a)] - 2rf*s*uy*cos(m*t)*cos(a) - 2rf*s*vy*sin(m*t)*cos(a) - 2rf*s*uz*cos(m*t)*sin(a) - 2rf*s*vz*sin(m*t)*sin(a) + re^2 - rf^2 - |F1-E1o|^2 - s^4 + 2*(F1-E1o) . s*cos(m*t)u + 2*(F1-E1o) . s*sin(m*t)v
+                 *   0 == 2rf*[(F1y-E1'oy)cos(a) + (F1z-E1'oz)sin(a)] - 2rf*s*uy*cos(m*t)*cos(a) - 2rf*s*vy*sin(m*t)*cos(a) - 2rf*s*uz*cos(m*t)*sin(a) - 2rf*s*vz*sin(m*t)*sin(a) + re^2 - rf^2 - |F1-E1o|^2 - s^2 + 2*(F1-E1o) . s*cos(m*t)u + 2*(F1-E1o) . s*sin(m*t)v
                  * Group the cos(m*t), sin(m*t) and constant terms:
-                 *   0 == 2rf*[(F1y-E1'oy)cos(a) + (F1z-E1'oz)sin(a)] + re^2 - rf^2 - |F1-E1o|^2 - s^4
+                 *   0 == 2rf*[(F1y-E1'oy)cos(a) + (F1z-E1'oz)sin(a)] + re^2 - rf^2 - |F1-E1o|^2 - s^2
                  *     + cos(m*t)*[ - 2rf*s*uy*cos(a) - 2rf*s*uz*sin(a) + 2*(F1-E1o) . s*u]
                  *     + sin(m*t)*[ - 2rf*s*vy*cos(a) - 2rf*s*vz*sin(a) + 2*(F1-E1o) . s*v]
                  *
@@ -233,11 +232,11 @@ template <typename StepperDriverT> class AngularDeltaStepper : public AxisSteppe
                 // cos(m*t)*[ - 2rf*s*uy*cos(a) - 2rf*s*uz*sin(a) + 2*(F1-E1o) . s*u]
                 float n = -2*rf*arc_rad*u.dot(0, cosAngle, sinAngle) + 2*arc_rad*(F1-E1_0).dot(u);
                 // 2rf*[(F1y-E1'oy)cos(a) + (F1z-E1'oz)sin(a)] + re^2 - rf^2 - |F1-E1o|^2 - s^2*|u|^2
-                float p = 2*rf*(F1-E1_0).dot(0, cosAngle, sinAngle) + re*re - rf*rf - (F1-E1_0).magSq() - arc_rad*arc_rad*arc_rad*arc_rad;
+                float p = 2*rf*(F1-E1_0).dot(0, cosAngle, sinAngle) + re*re - rf*rf - (F1-E1_0).magSq() - arc_rad*arc_rad;
 
                 // solve {m,n,p} . {Sin[q], Cos[q], 1} == 0:
-                float mt_1 = atan2((-m*p + n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p - m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
-                float mt_2 = atan2((-m*p - n*sqrt(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrt(m*m+n*n-p*p))/(m*m+n*n));
+                float mt_1 = atan2f((-m*p + n*sqrtf(m*m+n*n-p*p))/(m*m + n*n), (-n*p - m*sqrtf(m*m+n*n-p*p))/(m*m+n*n));
+                float mt_2 = atan2f((-m*p - n*sqrtf(m*m+n*n-p*p))/(m*m + n*n), (-n*p + m*sqrtf(m*m+n*n-p*p))/(m*m+n*n));
                 float t1 = mt_1/this->arc_m;
                 float t2 = mt_2/this->arc_m;
                 //two possible solutions; choose the NEAREST one that is not in the past:
