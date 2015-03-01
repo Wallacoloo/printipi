@@ -9,7 +9,7 @@ script:
 - ./buildtest.sh
 before_install:
 #Add repository needed for clang3.4
-- add-apt-repository -y ppa:ubuntu-toolchain-r/test
+# - add-apt-repository -y ppa:ubuntu-toolchain-r/test
 #Add repository needed for valgrind 3.8.10
 #- sudo add-apt-repository -y ppa:jtaylor/jtaylor
 - apt-get update -qq
