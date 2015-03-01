@@ -26,14 +26,14 @@ install:
 #- make install 
 #- popd
 #install cldoc from source (could use pip install cldoc for an outdated version)
-- sudo pip install cldoc
-#- pushd `mktemp -d`
-#- git clone https://github.com/jessevdk/cldoc.git
-#- cd cldoc
-#- make install
-#- popd
-#- echo $PATH
-#- sudo ls /home/travis/.local/bin
+#- sudo pip install cldoc
+- pushd `mktemp -d`
+- git clone https://github.com/jessevdk/cldoc.git
+- cd cldoc
+- make install
+- popd
+- echo $PATH
+- sudo ls /home/travis/.local/bin
 
 env:
   global:
