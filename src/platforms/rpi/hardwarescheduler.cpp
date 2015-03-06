@@ -26,12 +26,6 @@
     #define NUM_GPIO_WORDS 2
 #endif
 
-
-#define TIMER_BASE   0x20003000
-#define TIMER_CLO    0x00000004 //lower 32-bits of 1 MHz timer
-#define TIMER_CHI    0x00000008 //upper 32-bits
- 
-
 #define GPIO_BASE 0x20200000 //base address of the GPIO control registers.
 #define GPIO_BASE_BUS 0x7E200000 //this is the physical bus address of the GPIO module. This is only used when other peripherals directly connected to the bus (like DMA) need to read/write the GPIOs
 #define PAGE_SIZE 4096 //mmap maps pages of memory, so we must give it multiples of this size
@@ -101,7 +95,8 @@
 #define DMA_CB_TI_TDMODE      (1<<1)
 
 
-//https://dev.openwrt.org/browser/trunk/target/linux/brcm2708/patches-3.10/0070-bcm2708_fb-DMA-acceleration-for-fb_copyarea.patch?rev=39770 says that YLENGTH should actually be written as # of copies *MINUS ONE*
+//https://dev.openwrt.org/browser/trunk/target/linux/brcm2708/patches-3.10/0070-bcm2708_fb-DMA-acceleration-for-fb_copyarea.patch?rev=39770
+// says that YLENGTH should actually be written as # of copies *MINUS ONE*
 #define DMA_CB_TXFR_LEN_YLENGTH(y) (((y-1)&0x4fff) << 16)
 #define DMA_CB_TXFR_LEN_XLENGTH(x) ((x)&0xffff)
 #define DMA_CB_TXFR_YLENGTH_MASK (0x4fff << 16)
@@ -441,7 +436,6 @@ void UnwrappedHardwareScheduler::makeMaps() {
     //gpioBaseMem = mapPeripheral(GPIO_BASE);
     dmaBaseMem = mapPeripheral(DMA_BASE);
     pwmBaseMem = mapPeripheral(PWM_BASE);
-    timerBaseMem = mapPeripheral(TIMER_BASE);
     clockBaseMem = mapPeripheral(CLOCK_BASE);
 }
 
