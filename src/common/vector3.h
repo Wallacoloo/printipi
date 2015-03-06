@@ -51,7 +51,7 @@ template <typename F> class Vector3 {
 		}
 		//cast to a std::array of <x, y, z>
 		std::array<F, 3> array() const {
-			return std::array<F, 4>({{x(), y(), z()}});
+			return std::array<F, 3>({{x(), y(), z()}});
 		}
 		//cast to a std::array of <x, y, z>
 		operator std::array<F, 3>() const {
