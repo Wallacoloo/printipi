@@ -94,6 +94,7 @@
 #include "axisstepper.h"
 #include "linearstepper.h" //for LinearHomeStepper
 #include "iodrivers/endstop.h"
+#include "common/matrix.h"
 #include "common/logging.h"
 
 namespace motion {
