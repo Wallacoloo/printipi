@@ -81,6 +81,14 @@ LinearStepper implements the AxisStepper interface for Cartesian-style robots.
       <type name="std::size_t" />
     </templatenontypeparameter>
   </methodtemplate>
+  <method id="motion::LinearStepper::arcTestDir" name="arcTestDir">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::LinearStepper::arcTestDir::s" name="s">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
   <method id="motion::LinearStepper::_nextStep" name="_nextStep">
     <brief>protected:</brief>
     <return>

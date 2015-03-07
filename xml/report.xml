@@ -266,7 +266,7 @@ return values.
         <location column="9" file="motion/angulardeltacoordmap.h" line="177" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;" name="AngularDeltaStepper&lt;StepperDriverT&gt;">
-        <location column="9" file="motion/angulardeltastepper.h" line="139" />
+        <location column="9" file="motion/angulardeltastepper.h" line="140" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers" name="initAxisArcSteppers">
         <location column="9" file="motion/axisstepper.h" line="77" />
@@ -281,7 +281,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="170" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::executeHomeRoutine" name="executeHomeRoutine">
-        <location column="9" file="motion/linearcoordmap.h" line="105" />
+        <location column="9" file="motion/linearcoordmap.h" line="108" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::executeHomeRoutine" name="executeHomeRoutine">
         <location column="9" file="motion/lineardeltacoordmap.h" line="121" />
@@ -290,7 +290,7 @@ return values.
         <location column="9" file="motion/lineardeltastepper.h" line="142" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;" name="LinearStepper&lt;StepperDriverT&gt;">
-        <location column="9" file="motion/linearstepper.h" line="52" />
+        <location column="9" file="motion/linearstepper.h" line="61" />
       </undocumented>
       <undocumented id="motion::MotionPlanner::UpdateOutputEvents::operator()" name="operator()">
         <location column="13" file="motion/motionplanner.h" line="92" />
@@ -326,11 +326,11 @@ return values.
       </undocumented>
       <undocumented id="plat::rpi::DmaControlBlock" name="DmaControlBlock">
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="205" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="221" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="216" />
       </undocumented>
       <undocumented id="plat::rpi::PwmHeader" name="PwmHeader">
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="206" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="254" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="249" />
       </undocumented>
     </type>
     <type documented="18" name="classtemplate" undocumented="3">
@@ -625,16 +625,16 @@ return values.
         <location column="19" file="motion/angulardeltacoordmap.h" line="181" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/angulardeltastepper.h" line="139" />
+        <location column="19" file="motion/angulardeltastepper.h" line="140" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::StepperDriverT" name="StepperDriverT">
-        <location column="11" file="motion/angulardeltastepper.h" line="112" />
+        <location column="11" file="motion/angulardeltastepper.h" line="113" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::beginArc::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/angulardeltastepper.h" line="178" />
+        <location column="19" file="motion/angulardeltastepper.h" line="179" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::beginLine::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/angulardeltastepper.h" line="159" />
+        <location column="19" file="motion/angulardeltastepper.h" line="160" />
       </undocumented>
       <undocumented id="motion::AxisStepper::getNextTime::TupleT" name="TupleT">
         <location column="19" file="motion/axisstepper.h" line="75" />
@@ -694,7 +694,7 @@ return values.
         <location column="68" file="motion/linearcoordmap.h" line="44" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::executeHomeRoutine::Interface" name="Interface">
-        <location column="19" file="motion/linearcoordmap.h" line="105" />
+        <location column="19" file="motion/linearcoordmap.h" line="108" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::BedLevelT" name="BedLevelT">
         <location column="87" file="motion/lineardeltacoordmap.h" line="57" />
@@ -727,16 +727,16 @@ return values.
         <location column="19" file="motion/lineardeltastepper.h" line="155" />
       </undocumented>
       <undocumented id="motion::LinearStepper::LinearStepper&lt;StepperDriverT&gt;::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/linearstepper.h" line="52" />
+        <location column="19" file="motion/linearstepper.h" line="61" />
       </undocumented>
       <undocumented id="motion::LinearStepper::StepperDriverT" name="StepperDriverT">
         <location column="11" file="motion/linearstepper.h" line="47" />
       </undocumented>
       <undocumented id="motion::LinearStepper::beginArc::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/linearstepper.h" line="72" />
+        <location column="19" file="motion/linearstepper.h" line="83" />
       </undocumented>
       <undocumented id="motion::LinearStepper::beginLine::CoordMapT" name="CoordMapT">
-        <location column="19" file="motion/linearstepper.h" line="60" />
+        <location column="19" file="motion/linearstepper.h" line="70" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes">
         <location column="11" file="motion/motionplanner.h" line="60" />
@@ -871,7 +871,7 @@ return values.
       </undocumented>
       <undocumented id="motion::DeltaAxis" name="DeltaAxis">
         <location column="1" file="motion/lineardeltastepper.h" line="109" />
-        <location column="1" file="motion/angulardeltastepper.h" line="101" />
+        <location column="1" file="motion/angulardeltastepper.h" line="102" />
       </undocumented>
       <undocumented id="motion::StepDirection" name="StepDirection">
         <location column="1" file="motion/axisstepper.h" line="44" />
@@ -921,7 +921,7 @@ return values.
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="35" />
         <location column="1" file="platforms/generic/primitiveiopin.h" line="34" />
         <location column="5" file="platforms/generic/thisthreadsleep.h" line="32" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="174" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="169" />
         <location column="1" file="platforms/rpi/chronoclock.h" line="32" />
         <location column="1" file="platforms/rpi/chronoclock.cpp" line="26" />
         <location column="1" file="platforms/generic/hardwarescheduler.h" line="38" />
@@ -935,13 +935,13 @@ return values.
       <undocumented id="plat::rpi" name="rpi">
         <location column="1" file="platforms/rpi/hardwarescheduler.h" line="198" />
         <location column="1" file="platforms/rpi/primitiveiopin.h" line="36" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="175" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="170" />
         <location column="1" file="platforms/rpi/chronoclock.h" line="33" />
         <location column="1" file="platforms/rpi/chronoclock.cpp" line="27" />
       </undocumented>
     </type>
     <type documented="5" name="structtemplate" undocumented="0" />
-    <type documented="161" name="method" undocumented="370">
+    <type documented="161" name="method" undocumented="372">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1892,10 +1892,10 @@ return values.
         <location column="10" file="motion/angulardeltacoordmap.h" line="288" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::_nextStep" name="_nextStep">
-        <location column="9" file="motion/angulardeltastepper.h" line="321" />
+        <location column="9" file="motion/angulardeltastepper.h" line="322" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::testDir" name="testDir">
-        <location column="9" file="motion/angulardeltastepper.h" line="198" />
+        <location column="9" file="motion/angulardeltastepper.h" line="199" />
       </undocumented>
       <undocumented id="motion::AxisStepperWithDriver::getStepOutputEventSequence" name="getStepOutputEventSequence">
         <location column="9" file="motion/axisstepper.h" line="93" />
@@ -1913,10 +1913,13 @@ return values.
         <location column="9" file="motion/linearcoordmap.h" line="60" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::applyLeveling" name="applyLeveling">
-        <location column="9" file="motion/linearcoordmap.h" line="119" />
+        <location column="9" file="motion/linearcoordmap.h" line="122" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::bound" name="bound">
-        <location column="9" file="motion/linearcoordmap.h" line="122" />
+        <location column="9" file="motion/linearcoordmap.h" line="125" />
+      </undocumented>
+      <undocumented id="motion::LinearCoordMap::getAxisPosition" name="getAxisPosition">
+        <location column="9" file="motion/linearcoordmap.h" line="105" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::getAxisSteppers" name="getAxisSteppers">
         <location column="9" file="motion/linearcoordmap.h" line="93" />
@@ -1925,13 +1928,13 @@ return values.
         <location column="9" file="motion/linearcoordmap.h" line="82" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::getHomePosition" name="getHomePosition">
-        <location column="9" file="motion/linearcoordmap.h" line="116" />
+        <location column="9" file="motion/linearcoordmap.h" line="119" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::numAxis" name="numAxis">
         <location column="9" file="motion/linearcoordmap.h" line="102" />
       </undocumented>
       <undocumented id="motion::LinearCoordMap::xyzeFromMechanical" name="xyzeFromMechanical">
-        <location column="9" file="motion/linearcoordmap.h" line="125" />
+        <location column="9" file="motion/linearcoordmap.h" line="128" />
       </undocumented>
       <undocumented id="motion::LinearDeltaCoordMap::L" name="L">
         <location column="9" file="motion/lineardeltacoordmap.h" line="80" />
@@ -1977,6 +1980,9 @@ return values.
       </undocumented>
       <undocumented id="motion::LinearDeltaStepper::_nextStep" name="_nextStep">
         <location column="9" file="motion/lineardeltastepper.h" line="290" />
+      </undocumented>
+      <undocumented id="motion::LinearStepper::arcTestDir" name="arcTestDir">
+        <location column="9" file="motion/linearstepper.h" line="115" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize::maxSize" name="maxSize">
         <location column="9" file="motion/motionplanner.h" line="70" />
@@ -2040,27 +2046,27 @@ return values.
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::DmaMem::physAddrAtByteOffset" name="physAddrAtByteOffset">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="219" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="395" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="390" />
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::DmaMem::virtToPhys" name="virtToPhys">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="220" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="399" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="394" />
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::cleanup" name="cleanup">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="238" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="422" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="417" />
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::onIdleCpu" name="onIdleCpu">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="244" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="634" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="628" />
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::queue" name="queue">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="242" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="640" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="634" />
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::queuePwm" name="queuePwm">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="243" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="673" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="667" />
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::schedTime" name="schedTime">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="239" />
@@ -2083,10 +2089,10 @@ return values.
         <location column="19" file="motion/angulardeltacoordmap.h" line="177" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::beginArc::sz" name="sz">
-        <location column="39" file="motion/angulardeltastepper.h" line="178" />
+        <location column="39" file="motion/angulardeltastepper.h" line="179" />
       </undocumented>
       <undocumented id="motion::AngularDeltaStepper::beginLine::sz" name="sz">
-        <location column="39" file="motion/angulardeltastepper.h" line="159" />
+        <location column="39" file="motion/angulardeltastepper.h" line="160" />
       </undocumented>
       <undocumented id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
         <location column="56" file="motion/axisstepper.h" line="77" />
@@ -2107,10 +2113,10 @@ return values.
         <location column="39" file="motion/lineardeltastepper.h" line="155" />
       </undocumented>
       <undocumented id="motion::LinearStepper::beginArc::sz" name="sz">
-        <location column="39" file="motion/linearstepper.h" line="72" />
+        <location column="39" file="motion/linearstepper.h" line="83" />
       </undocumented>
       <undocumented id="motion::LinearStepper::beginLine::sz" name="sz">
-        <location column="39" file="motion/linearstepper.h" line="60" />
+        <location column="39" file="motion/linearstepper.h" line="70" />
       </undocumented>
       <undocumented id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
         <location column="38" file="motion/motionplanner.h" line="60" />
@@ -2308,11 +2314,11 @@ return values.
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::DmaMem::DmaMem" name="DmaMem">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="222" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="385" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="380" />
       </undocumented>
       <undocumented id="plat::rpi::UnwrappedHardwareScheduler::UnwrappedHardwareScheduler" name="UnwrappedHardwareScheduler">
         <location column="9" file="platforms/rpi/hardwarescheduler.h" line="237" />
-        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="411" />
+        <location column="1" file="platforms/rpi/hardwarescheduler.cpp" line="406" />
       </undocumented>
     </type>
     <type documented="3" name="variable" undocumented="7">
@@ -2648,16 +2654,16 @@ return values.
         <location column="5" file="platforms/rpi/mitpi.h" line="96" />
       </undocumented>
       <undocumented id="motion::ANGULARDELTA_AXIS_A" name="ANGULARDELTA_AXIS_A">
-        <location column="5" file="motion/angulardeltastepper.h" line="102" />
-      </undocumented>
-      <undocumented id="motion::ANGULARDELTA_AXIS_B" name="ANGULARDELTA_AXIS_B">
         <location column="5" file="motion/angulardeltastepper.h" line="103" />
       </undocumented>
-      <undocumented id="motion::ANGULARDELTA_AXIS_C" name="ANGULARDELTA_AXIS_C">
+      <undocumented id="motion::ANGULARDELTA_AXIS_B" name="ANGULARDELTA_AXIS_B">
         <location column="5" file="motion/angulardeltastepper.h" line="104" />
       </undocumented>
-      <undocumented id="motion::ANGULARDELTA_AXIS_E" name="ANGULARDELTA_AXIS_E">
+      <undocumented id="motion::ANGULARDELTA_AXIS_C" name="ANGULARDELTA_AXIS_C">
         <location column="5" file="motion/angulardeltastepper.h" line="105" />
+      </undocumented>
+      <undocumented id="motion::ANGULARDELTA_AXIS_E" name="ANGULARDELTA_AXIS_E">
+        <location column="5" file="motion/angulardeltastepper.h" line="106" />
       </undocumented>
       <undocumented id="motion::CARTESIAN_AXIS_E" name="CARTESIAN_AXIS_E">
         <location column="5" file="motion/linearstepper.h" line="41" />
@@ -3537,13 +3543,13 @@ return values.
       <undocumented-return />
     </function>
     <function id="motion::LinearStepper::beginLine" name="beginLine">
-      <location column="9" file="motion/linearstepper.h" line="60" />
+      <location column="9" file="motion/linearstepper.h" line="70" />
       <undocumented name="map" />
       <undocumented name="vel" />
       <undocumented name="curPos" />
     </function>
     <function id="motion::LinearStepper::beginArc" name="beginArc">
-      <location column="9" file="motion/linearstepper.h" line="72" />
+      <location column="9" file="motion/linearstepper.h" line="83" />
       <undocumented name="map" />
       <undocumented name="center" />
       <undocumented name="v" />
@@ -3554,7 +3560,7 @@ return values.
       <undocumented name="extVel" />
     </function>
     <function id="motion::LinearStepper::_nextStep" name="_nextStep">
-      <location column="9" file="motion/linearstepper.h" line="82" />
+      <location column="9" file="motion/linearstepper.h" line="133" />
       <undocumented name="useEndstops" />
     </function>
     <function id="machines::Machine::maxRetractRate" name="maxRetractRate">
@@ -3668,13 +3674,13 @@ return values.
       <undocumented name="s" />
     </function>
     <function id="motion::AngularDeltaStepper::beginLine" name="beginLine">
-      <location column="9" file="motion/angulardeltastepper.h" line="159" />
+      <location column="9" file="motion/angulardeltastepper.h" line="160" />
       <undocumented name="map" />
       <undocumented name="vel" />
       <undocumented name="curPos" />
     </function>
     <function id="motion::AngularDeltaStepper::beginArc" name="beginArc">
-      <location column="9" file="motion/angulardeltastepper.h" line="178" />
+      <location column="9" file="motion/angulardeltastepper.h" line="179" />
       <undocumented name="map" />
       <undocumented name="center" />
       <undocumented name="v" />
