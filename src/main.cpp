@@ -76,10 +76,12 @@ static void printUsage(char* cmd) {
     LOGE("  mock serial port: %s /dev/tty3dpm /dev/tty3dps\n", cmd);
 }
 
-int main_(int argc, char **argv) {
+int main_(int fullArgc, char **argv) {
     //useful to setup fail-safe exit routines first-thing for catching debug info.
     SchedulerBase::configureExitHandlers(); 
-    
+    // alter argc in order to ignore everything after "--do-tests"
+    int doTestsArgIdx = argparse::getCmdOptionIdx(argv, argv+fullArgc, "--do-tests");
+    int argc = (doTestsArgIdx == -1) ? fullArgc : doTestsArgIdx;
     if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
         logging::disable();
     }
@@ -101,14 +103,13 @@ int main_(int argc, char **argv) {
     FileSystem fs(fsRoot);
 
     #if ENABLE_TESTS
-        int doTestsArgIdx = argparse::getCmdOptionIdx(argv, argv+argc, "--do-tests");
         if (doTestsArgIdx != -1) {
             // prepare arguments for the test suite:
             // place argv[0] (executable path) at current index, overwriting --do-tests
             //   and modify argc & argv.
             argv[doTestsArgIdx] = argv[0];
-            argc -= doTestsArgIdx;
-            int result = Catch::Session().run(argc, argv);
+            int numToPass = fullArgc - doTestsArgIdx;
+            int result = Catch::Session().run(numToPass, &argv[doTestsArgIdx]);
             return result;
         }
     #endif
