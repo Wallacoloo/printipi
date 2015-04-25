@@ -6,7 +6,6 @@ based on a stackoverflow post
 argparse provides some basic functions for parsing command line options.
 </doc>
   <function id="argparse::cmdOptionExists" name="cmdOptionExists">
-    <brief>return true if option is located in the provided argv array</brief>
     <return>
       <type builtin="yes" name="bool" />
     </return>
@@ -20,51 +19,17 @@ argparse provides some basic functions for parsing command line options.
       <type name="std::string" qualifier=" const &amp;" />
     </argument>
   </function>
-  <function id="argparse::getArgumentForCmdOption" name="getArgumentForCmdOption">
-    <brief>return the argument following <ref ref="argparse#argparse::getArgumentForCmdOption::option">option</ref>, or NULL if the option or its argument doesn't exist</brief>
+  <function id="argparse::getCmdOption" name="getCmdOption">
     <return>
       <type builtin="yes" name="char" qualifier="*" />
     </return>
-    <argument id="argparse::getArgumentForCmdOption::begin" name="begin">
+    <argument id="argparse::getCmdOption::begin" name="begin">
       <type builtin="yes" name="char" qualifier="**" />
     </argument>
-    <argument id="argparse::getArgumentForCmdOption::end" name="end">
+    <argument id="argparse::getCmdOption::end" name="end">
       <type builtin="yes" name="char" qualifier="**" />
     </argument>
-    <argument id="argparse::getArgumentForCmdOption::option" name="option">
-      <type name="std::string" qualifier=" const &amp;" />
-    </argument>
-  </function>
-  <function id="argparse::getCmdOptionIdx" name="getCmdOptionIdx">
-    <brief>retrieve the index of the command option in the provided argv array, or dflt if non-existent</brief>
-    <return>
-      <type builtin="yes" name="int" />
-    </return>
-    <argument id="argparse::getCmdOptionIdx::begin" name="begin">
-      <type builtin="yes" name="char" qualifier="**" />
-    </argument>
-    <argument id="argparse::getCmdOptionIdx::end" name="end">
-      <type builtin="yes" name="char" qualifier="**" />
-    </argument>
-    <argument id="argparse::getCmdOptionIdx::option" name="option">
-      <type name="std::string" qualifier=" const &amp;" />
-    </argument>
-    <argument id="argparse::getCmdOptionIdx::dflt" name="dflt">
-      <type builtin="yes" name="int" />
-    </argument>
-  </function>
-  <function id="argparse::getCmdOptionPtr" name="getCmdOptionPtr">
-    <brief>return a pointer into the argv array that matches option when dereferenced, or NULL if non-existent</brief>
-    <return>
-      <type builtin="yes" name="char" qualifier="**" />
-    </return>
-    <argument id="argparse::getCmdOptionPtr::begin" name="begin">
-      <type builtin="yes" name="char" qualifier="**" />
-    </argument>
-    <argument id="argparse::getCmdOptionPtr::end" name="end">
-      <type builtin="yes" name="char" qualifier="**" />
-    </argument>
-    <argument id="argparse::getCmdOptionPtr::option" name="option">
+    <argument id="argparse::getCmdOption::option" name="option">
       <type name="std::string" qualifier=" const &amp;" />
     </argument>
   </function>

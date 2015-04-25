@@ -1,8 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="machines::rpi" name="rpi" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <class name="firepickdelta" ref="machines::rpi::firepickdelta#machines::rpi::firepickdelta">
-    <brief>for ConstantAcceleration &amp; such</brief>
-  </class>
   <class name="kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
     <brief>for ConstantAcceleration &amp; such</brief>
   </class>

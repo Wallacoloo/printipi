@@ -43,17 +43,4 @@ Notably, they can be used to adjust coordinates to a different coordinate-space 
       <type builtin="yes" name="float" />
     </argument>
   </constructor>
-  <method id="Matrix3x3::identity" name="identity" static="yes">
-    <return>
-      <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
-    </return>
-  </method>
-  <method id="Matrix3x3::rotationAboutPositiveZ" name="rotationAboutPositiveZ" static="yes">
-    <return>
-      <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
-    </return>
-    <argument id="Matrix3x3::rotationAboutPositiveZ::angleRad" name="angleRad">
-      <type builtin="yes" name="float" />
-    </argument>
-  </method>
 </class>
