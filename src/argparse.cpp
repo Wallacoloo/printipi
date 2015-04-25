@@ -27,12 +27,28 @@
 
 namespace argparse {
 
-char* getCmdOption(char ** begin, char ** end, const std::string & option) {
-    char ** itr = std::find(begin, end, option);
-    if (itr != end && ++itr != end) {
-        return *itr;
+char** getCmdOptionPtr(char ** begin, char ** end, const std::string &option) {
+	char ** itr = std::find(begin, end, option);
+    if (itr != end) {
+        return itr;
     }
-    return 0;
+    return NULL;
+}
+
+char* getArgumentForCmdOption(char ** begin, char ** end, const std::string &option) {
+	char **itr = getCmdOptionPtr(begin, end, option);
+	if (itr && ++itr != end) {
+		return *itr;
+	}
+	return NULL;
+}
+
+int getCmdOptionIdx(char ** begin, char ** end, const std::string &option, int dflt) {
+	char ** ptr = getCmdOptionPtr(begin, end, option);
+	if (!ptr) {
+		return dflt;
+	}
+	return (ptr - begin);
 }
 
 

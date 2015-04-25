@@ -24,9 +24,9 @@ else
 	NAME_EXT:=-NO_PTHREAD$(NAME_EXT)
 endif
 
-ifeq "$(DO_TESTS)" "1"
-	DEFINES:=$(DEFINES) -DDDO_TESTS
-	NAME_EXT:=-DO_TESTS$(NAME_EXT)
+ifeq "$(ENABLE_TESTS)" "1"
+	DEFINES:=$(DEFINES) -DDENABLE_TESTS
+	NAME_EXT:=-ENABLE_TESTS$(NAME_EXT)
 	LIBS:=$(LIBS) -pthread
 endif
 
@@ -60,23 +60,23 @@ MACHINECPP=$(subst /,::,$(MACHINEPARSED))
 
 MACHINE_ENDPATH=$(subst ::,/,$(MACHINEPARSED))
 MACHINE_PATH=machines/$(MACHINE_ENDPATH).h
-MACHINE_CLASS=$(subst /,,$(dir $(MACHINE_ENDPATH)))
-MACHINE_CLASS_DIR=platforms/$(MACHINE_CLASS)
+PLATFORM=$(subst /,,$(dir $(MACHINE_ENDPATH)))
+PLATFORM_DIR=platforms/$(PLATFORM)
 
 #Check for platform-specific file overrides:
-ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/chronoclock.h)","")
-    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"platforms/$(MACHINE_CLASS)/chronoclock.h"'
+ifneq ("$(wildcard platforms/$(PLATFORM)/chronoclock.h)","")
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_CHRONOCLOCK='"platforms/$(PLATFORM)/chronoclock.h"'
 endif
-ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/hardwarescheduler.h)","")
-    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"platforms/$(MACHINE_CLASS)/hardwarescheduler.h"'
+ifneq ("$(wildcard platforms/$(PLATFORM)/hardwarescheduler.h)","")
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_HARDWARESCHEDULER='"platforms/$(PLATFORM)/hardwarescheduler.h"'
 endif
-ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/thisthreadsleep.h)","")
-    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"platforms/$(MACHINE_CLASS)/thisthreadsleep.h"'
+ifneq ("$(wildcard platforms/$(PLATFORM)/thisthreadsleep.h)","")
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_THISTHREADSLEEP='"platforms/$(PLATFORM)/thisthreadsleep.h"'
 endif
-ifneq ("$(wildcard platforms/$(MACHINE_CLASS)/primitiveiopin.h)","")
-    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"platforms/$(MACHINE_CLASS)/primitiveiopin.h"'
+ifneq ("$(wildcard platforms/$(PLATFORM)/primitiveiopin.h)","")
+    PLAT_DEFINES:=$(PLAT_DEFINES) -DPLATFORM_DRIVER_PRIMITIVEIOPIN='"platforms/$(PLATFORM)/primitiveiopin.h"'
 endif
-PLAT_DEFINES:=$(PLAT_DEFINES) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_LOWER="$(MACHINE_CLASS)"
+PLAT_DEFINES:=$(PLAT_DEFINES) -DMACHINE='$(MACHINECPP)' -DMACHINE_PATH='"$(MACHINE_PATH)"' -DDTARGET_PLATFORM_LOWER="$(PLATFORM)"
 #fno-rounding-math lets compiler round floats either towards 0 or round down - whatever is most efficient
 #fno-signed-zeros lets gcc treat -0.0 the same as +0.0
 #freciprocal-math turns division-by-constant into multiplication-by-constant
@@ -101,8 +101,8 @@ BUILDROOT=../build
 #NAMELINK will become a symbolic link to the actual binary
 NAMELINK=printipi
 #NAME_EXT is the version-info that should be tagged onto the binary name
-#Note: explicitly prefix with MACHINE_CLASS, because it's possible to build (eg) a rpi Machine with the generic platform implementation
-NAME_EXT:=-$(MACHINE_CLASS)-$(subst /,-,$(MACHINEPARSED))-$(CXX)$(NAME_EXT)
+#Note: explicitly prefix with PLATFORM, because it's possible to build (eg) a rpi Machine with the generic platform implementation
+NAME_EXT:=-$(PLATFORM)-$(subst /,-,$(MACHINEPARSED))-$(CXX)$(NAME_EXT)
 #NAME of binary file:
 NAME=$(NAMELINK)$(NAME_EXT)
 
@@ -118,14 +118,13 @@ RELEASEDIR=$(RELEASEDIR_BASE)$(NAME_EXT)
 PROFILEDIR=$(PROFILEDIR_BASE)$(NAME_EXT)
 MINSIZEDIR=$(MINSIZEDIR_BASE)$(NAME_EXT)
 
-SOURCES=$(wildcard *.cpp common/**.cpp gparse/**.cpp iodrivers/**.cpp machines/*.cpp motion/**.cpp $(MACHINE_CLASS_DIR)/**.cpp)
+SOURCES=$(wildcard *.cpp common/**.cpp gparse/**.cpp iodrivers/**.cpp machines/*.cpp motion/**.cpp $(PLATFORM_DIR)/**.cpp)
 OBJECTS=$(SOURCES:%.cpp=%.o)
 DEPFILES=$(SOURCES:%.cpp=%.d)
 
 all: debugrel
 
 #include auto-generated dependencies:
-#-include $(wildcard *.d */*.d */*/*.d */*/*/*.d $(MACHINE_CLASS_DIR)/*.d $(MACHINE_CLASS_DIR)/*/*.d)
 -include $(DEPFILES)
 
 #Configure debug/release settings:
@@ -188,4 +187,4 @@ cleanprofile:
 cleanminsize:
 	rm -rf $(MINSIZEDIR_BASE)-*
 clean: cleandebug cleandebugrel cleanrelease cleanprofile cleanminsize
-	rm -rf `find . -type f -name '*.d'` `find $(MACHINE_CLASS_DIR) -type f -name '*.d'`
+	rm -rf `find . -type f -name '*.d'` `find $(PLATFORM_DIR) -type f -name '*.d'`

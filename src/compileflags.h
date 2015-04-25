@@ -70,10 +70,10 @@
     #define CLEAN_EXIT 0
 #endif
 
-#ifdef DDO_TESTS
-	#define DO_TESTS 1
+#ifdef DENABLE_TESTS
+	#define ENABLE_TESTS 1
 #else
-	#define DO_TESTS 0
+	#define ENABLE_TESTS 0
 #endif
 
 

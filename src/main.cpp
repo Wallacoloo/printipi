@@ -67,27 +67,21 @@
 
 static void printUsage(char* cmd) {
     //#ifndef NO_USAGE_INFO
-    LOGE("usage: %s [input file=/dev/stdin] [output file=/dev/null] [--help] [--quiet] [--verbose]\n", cmd);
+    LOGE("usage: %s [input-file] [output-file] [--help] [--quiet] [--verbose] [--do-tests [CATCH-arguments ...] ]\n", cmd);
+    LOGE("  if input-file is not provided, it defaults to stdin\n");
+    LOGE("  if output-file is not provided, it defaults to strout\n");
+    LOGE("  --do-tests is only recognized if program was compiled with ENABLE_TESTS=1\n");
     LOGE("examples:\n");
     LOGE("  print a gcode file: %s file.gcode\n", cmd);
     LOGE("  mock serial port: %s /dev/tty3dpm /dev/tty3dps\n", cmd);
 }
 
-int testmain(int argc, char **argv) {
-    //if the program was compiled in test mode, then run the unit tests and exit
-    #if DO_TESTS
-        int result = Catch::Session().run(argc, argv);
-        return result;
-    #else
-        (void)argc; (void)argv; //unused
-    #endif
-    return 0;
-}
-
-int main_(int argc, char **argv) {
+int main_(int fullArgc, char **argv) {
     //useful to setup fail-safe exit routines first-thing for catching debug info.
     SchedulerBase::configureExitHandlers(); 
-    
+    // alter argc in order to ignore everything after "--do-tests"
+    int doTestsArgIdx = argparse::getCmdOptionIdx(argv, argv+fullArgc, "--do-tests");
+    int argc = (doTestsArgIdx == -1) ? fullArgc : doTestsArgIdx;
     if (argparse::cmdOptionExists(argv, argv+argc, "--quiet")) {
         logging::disable();
     }
@@ -103,11 +97,24 @@ int main_(int argc, char **argv) {
     } 
     LOG("Printipi: built for machine: '" STRINGIFY(MACHINE) "'\n");
     
-    char* fsRootArg = argparse::getCmdOption(argv, argv+argc, "--fsroot");
+    char* fsRootArg = argparse::getArgumentForCmdOption(argv, argv+argc, "--fsroot");
     std::string fsRoot = fsRootArg ? std::string(fsRootArg) : "/";
     LOG("Filesystem root: %s\n", fsRoot.c_str());
     FileSystem fs(fsRoot);
-    
+
+    #if ENABLE_TESTS
+        if (doTestsArgIdx != -1) {
+            // prepare arguments for the test suite:
+            // place argv[0] (executable path) at current index, overwriting --do-tests
+            //   and modify argc & argv.
+            argv[doTestsArgIdx] = argv[0];
+            int numToPass = fullArgc - doTestsArgIdx;
+            int result = Catch::Session().run(numToPass, &argv[doTestsArgIdx]);
+            return result;
+        }
+    #endif
+
+    // run the normal program
     gparse::Com com;
     //if input is stdin, or a two-way pipe, then it likely means we want to keep that channel open forever
     //  whereas if it's a gcode file, then calls to M32 (print from file) should pause the original input file
@@ -148,30 +155,26 @@ int main_(int argc, char **argv) {
 }
 
 int main(int argc, char** argv) {
-    if (DO_TESTS) {
-        return testmain(argc, argv);
-    } else {
-        try { //wrap in a try/catch loop so we can safely clean up (disable IOs)
-            return main_(argc, argv);
-        } catch (const std::exception *e) {
-            LOGE("caught std::exception*: %s. ... Exiting\n", e->what());
-            #if CLEAN_EXIT
-                return 1; //don't rethrow exceptions; return an error code instead
-            #endif
-            throw;
-        } catch (const std::exception &e) {
-            LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
-            #if CLEAN_EXIT
-                return 1; //don't rethrow exceptions; return an error code instead
-            #endif
-            throw;
-        } catch (...) {
-            LOGE("caught unknown exception. Exiting\n");
-            #if CLEAN_EXIT
-                return 1; //don't rethrow exceptions; return an error code instead
-            #endif
-            throw;
-        }
+    try { //wrap in a try/catch loop so we can safely clean up (disable IOs)
+        return main_(argc, argv);
+    } catch (const std::exception *e) {
+        LOGE("caught std::exception*: %s. ... Exiting\n", e->what());
+        #if CLEAN_EXIT
+            return 1; //don't rethrow exceptions; return an error code instead
+        #endif
+        throw;
+    } catch (const std::exception &e) {
+        LOGE("caught std::exception&: %s. ... Exiting\n", e.what());
+        #if CLEAN_EXIT
+            return 1; //don't rethrow exceptions; return an error code instead
+        #endif
+        throw;
+    } catch (...) {
+        LOGE("caught unknown exception. Exiting\n");
+        #if CLEAN_EXIT
+            return 1; //don't rethrow exceptions; return an error code instead
+        #endif
+        throw;
     }
 }
 

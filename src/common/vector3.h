@@ -51,7 +51,7 @@ template <typename F> class Vector3 {
 		}
 		//cast to a std::array of <x, y, z>
 		std::array<F, 3> array() const {
-			return std::array<F, 4>({{x(), y(), z()}});
+			return std::array<F, 3>({{x(), y(), z()}});
 		}
 		//cast to a std::array of <x, y, z>
 		operator std::array<F, 3>() const {
@@ -142,6 +142,9 @@ template <typename F> class Vector3 {
 		F dot(const Vector3<F> &v) const {
 			return x() * v.x() + y() * v.y() + z() * v.z();
 		}
+		F dot(F ox, F oy, F oz) const {
+			return dot(Vector3<F>(ox, oy, oz));
+		}
 		//The vector cross product: this x v
 		//|   i   j   k   |
 		//|   ux  uy  uz  |
@@ -149,6 +152,9 @@ template <typename F> class Vector3 {
 		// = <uy*vz - uz*vy, uz*vx - ux*vz, ux*vy - uy*vx>
 		Vector3<F> cross(const Vector3<F> &v) const {
 			return Vector3<F>(y()*v.z() - z()*v.y(), z()*v.x() - x()*v.z(), x()*v.y() - y()*v.x());
+		}
+		Vector3<F> cross(F ox, F oy, F oz) const {
+			return cross(Vector3<F>(ox, oy, oz));
 		}
 		//The scalar projection of `this' onto v.
 		//That is, the scalar component of `this' in the direction of v.
