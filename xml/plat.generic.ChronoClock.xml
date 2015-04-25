@@ -4,16 +4,16 @@
     <type builtin="yes" name="bool" qualifier=" const" />
   </variable>
   <typedef id="plat::generic::ChronoClock::duration" name="duration">
-    <type name="std::chrono::nanoseconds" />
+    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000000&gt; &gt;" />
   </typedef>
   <typedef id="plat::generic::ChronoClock::period" name="period">
-    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000000&gt; &gt;::period" />
+    <type name="std::ratio&lt;1, 1000000000&gt;" />
   </typedef>
   <typedef id="plat::generic::ChronoClock::rep" name="rep">
-    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000000&gt; &gt;::rep" />
+    <type builtin="yes" name="long" />
   </typedef>
   <typedef id="plat::generic::ChronoClock::time_point" name="time_point">
-    <type name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
+    <type name="std::chrono::time_point&lt;plat::generic::ChronoClock, std::chrono::duration&lt;long, std::ratio&lt;1, 1000000000&gt; &gt; &gt;" />
   </typedef>
   <method id="plat::generic::ChronoClock::now" name="now" static="yes">
     <return>

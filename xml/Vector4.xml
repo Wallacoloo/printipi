@@ -59,13 +59,13 @@
   <method id="Vector4::array" name="array">
     <brief>cast to a std::array of &amp;lt;x, y, z, e&amp;gt;</brief>
     <return>
-      <type name="std::array&lt;typename, std::size_t&gt;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" />
     </return>
   </method>
   <conversionfunction id="Vector4::operator array&lt;type-parameter-0-0, 4&gt;" name="operator array&lt;type-parameter-0-0, 4&gt;">
     <brief>cast to a std::array of &amp;lt;x, y, z, e&amp;gt;</brief>
     <return>
-      <type name="std::array&lt;typename, std::size_t&gt;" />
+      <type name="std::array&lt;_Tp, _Nm&gt;" />
     </return>
   </conversionfunction>
   <method id="Vector4::str" name="str">

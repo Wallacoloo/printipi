@@ -10,16 +10,16 @@ NOTE: The time reported by ChronoClockRpi may be different than the actual syste
     <type builtin="yes" name="bool" qualifier=" const" />
   </variable>
   <typedef id="plat::rpi::ChronoClock::duration" name="duration">
-    <type name="std::chrono::microseconds" />
+    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000&gt; &gt;" />
   </typedef>
   <typedef id="plat::rpi::ChronoClock::period" name="period">
-    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000&gt; &gt;::period" />
+    <type name="std::ratio&lt;1, 1000000&gt;" />
   </typedef>
   <typedef id="plat::rpi::ChronoClock::rep" name="rep">
-    <type name="std::chrono::duration&lt;long, std::ratio&lt;1, 1000000&gt; &gt;::rep" />
+    <type builtin="yes" name="long" />
   </typedef>
   <typedef id="plat::rpi::ChronoClock::time_point" name="time_point">
-    <type name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
+    <type name="std::chrono::time_point&lt;plat::rpi::ChronoClock, std::chrono::duration&lt;long, std::ratio&lt;1, 1000000&gt; &gt; &gt;" />
   </typedef>
   <method id="plat::rpi::ChronoClock::now" name="now" static="yes">
     <return>

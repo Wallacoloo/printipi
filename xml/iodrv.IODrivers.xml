@@ -25,52 +25,52 @@ Provides several conveniences, like iterators and filtering
   <typedef id="iodrv::IODrivers::GenericLockAxis" name="GenericLockAxis">
     <brief>Wrap the generic functions to either accept (driver, args...) or (index, driver, args...) as function arguments</brief>
     <doc>The index argument is provided by tupleutil::callOn*, but other places (e.g. predicates) expect no index argument.</doc>
-    <type name="IODrivers&lt;TupleT&gt;::_GenericLockAxis" ref="iodrv::IODrivers::_GenericLockAxis#iodrv::IODrivers::_GenericLockAxis" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericUnlockAxis" name="GenericUnlockAxis">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericUnlockAxis" ref="iodrv::IODrivers::_GenericUnlockAxis#iodrv::IODrivers::_GenericUnlockAxis" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericIsFan" name="GenericIsFan">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericIsFan" ref="iodrv::IODrivers::_GenericIsFan#iodrv::IODrivers::_GenericIsFan" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericIsHotend" name="GenericIsHotend">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericIsHotend" ref="iodrv::IODrivers::_GenericIsHotend#iodrv::IODrivers::_GenericIsHotend" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericIsHeatedBed" name="GenericIsHeatedBed">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericIsHeatedBed" ref="iodrv::IODrivers::_GenericIsHeatedBed#iodrv::IODrivers::_GenericIsHeatedBed" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericIsServo" name="GenericIsServo">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericIsServo" ref="iodrv::IODrivers::_GenericIsServo#iodrv::IODrivers::_GenericIsServo" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericIsEndstop" name="GenericIsEndstop">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericIsEndstop" ref="iodrv::IODrivers::_GenericIsEndstop#iodrv::IODrivers::_GenericIsEndstop" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericIsEndstopTriggered" name="GenericIsEndstopTriggered">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericIsEndstopTriggered" ref="iodrv::IODrivers::_GenericIsEndstopTriggered#iodrv::IODrivers::_GenericIsEndstopTriggered" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericSetFanDutyCycle" name="GenericSetFanDutyCycle">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericSetFanDutyCycle" ref="iodrv::IODrivers::_GenericSetFanDutyCycle#iodrv::IODrivers::_GenericSetFanDutyCycle" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericSetTargetTemperature" name="GenericSetTargetTemperature">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericSetTargetTemperature" ref="iodrv::IODrivers::_GenericSetTargetTemperature#iodrv::IODrivers::_GenericSetTargetTemperature" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericGetTargetTemperature" name="GenericGetTargetTemperature">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericGetTargetTemperature" ref="iodrv::IODrivers::_GenericGetTargetTemperature#iodrv::IODrivers::_GenericGetTargetTemperature" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericGetMeasuredTemperature" name="GenericGetMeasuredTemperature">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericGetMeasuredTemperature" ref="iodrv::IODrivers::_GenericGetMeasuredTemperature#iodrv::IODrivers::_GenericGetMeasuredTemperature" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericSetServoAngleDegrees" name="GenericSetServoAngleDegrees">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericSetServoAngleDegrees" ref="iodrv::IODrivers::_GenericSetServoAngleDegrees#iodrv::IODrivers::_GenericSetServoAngleDegrees" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericPeekNextEvent" name="GenericPeekNextEvent">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericPeekNextEvent" ref="iodrv::IODrivers::_GenericPeekNextEvent#iodrv::IODrivers::_GenericPeekNextEvent" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericConsumeNextEvent" name="GenericConsumeNextEvent">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericConsumeNextEvent" ref="iodrv::IODrivers::_GenericConsumeNextEvent#iodrv::IODrivers::_GenericConsumeNextEvent" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <typedef id="iodrv::IODrivers::GenericOnIdleCpu" name="GenericOnIdleCpu">
-    <type name="IODrivers&lt;TupleT&gt;::_GenericOnIdleCpu" ref="iodrv::IODrivers::_GenericOnIdleCpu#iodrv::IODrivers::_GenericOnIdleCpu" />
+    <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
   <classtemplate name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator">
     <brief>iterator class that also supports a filter predicate.</brief>

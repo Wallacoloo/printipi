@@ -15,7 +15,12 @@ SchedulerBase allows any file to insert exit handlers, without adding the entire
       <type builtin="yes" name="bool" />
     </return>
     <argument id="SchedulerBase::registerExitHandler::handler" name="handler">
-      <type name="void ()" qualifier="*" />
+      <type class="function" qualifier="*">
+        <result>
+          <type builtin="yes" name="void" />
+        </result>
+        <arguments />
+      </type>
     </argument>
     <argument id="SchedulerBase::registerExitHandler::level" name="level">
       <type builtin="yes" name="unsigned int" />
