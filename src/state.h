@@ -735,12 +735,13 @@ template <typename Drv> void State<Drv>::homeEndstops() {
 
 template <typename Drv> bool State<Drv>::areHeatersReady() {
     if (_isWaitingForHotend) {
-        return ioDrivers.heaters().all([](typename IODriverTypes::iteratorbase &d) {
+        // check if ALL heaters have reached their targets
+        bool isReady = ioDrivers.heaters().all([](typename IODriverTypes::iteratorbase &d) {
             return d.getMeasuredTemperature() > d.getTargetTemperature();
         });
-    } else {
-        return true;
+        _isWaitingForHotend = !isReady;
     }
+    return !_isWaitingForHotend;
 }
 
 template <typename Drv> std::string State<Drv>::getEndstopStatusString() {
