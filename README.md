@@ -67,7 +67,7 @@ The Printipi build system will automatically detect the files you added to `src/
 
 If you're looking to extract some platform-specific performance boosts, there are a variety of other interfaces you can implement under your `src/platforms/<platform>`. These include `hardwarescheduler.h`, which you can implement to use (e.g.) interrupts instead of cpu busy-waiting for I/O servicing routines. You may also implement `chronoclock.h` to read a system clock without context-switching into a Linux kernel (only relevant on Linux systems or if your compiler doesn't support `std::chrono::*` for your platform).
 
-Developing
+Contributing
 ========
 
 If you wish to support Printipi development, take a look at the issue tracker for tasks that need to be completed. After creating a fork with your changes, please submit your pull requests against the `master` branch.
@@ -82,13 +82,6 @@ Also, very heavy bus contention may degrade timing accuracy. Experiments show 50
 The Raspberry Pi has no user-accessible analog to digital (A/D) converters, meaning that it's slightly more complicated to read analog sensors, like thermistors and force-sensitive resistors (FSRs). Since both of these act as resistors, this limitation is bypassed by using an RC circuit - a capacitor of known capacitance is charged to its capacity, and the time it takes to discharge through the resistor is measured.
 
 Lastly, only a limited set of gcode commands are currently supported. Namely, testing has been done using Cura for slicing.
-
-The Future
-========
-
-More effort will be put into the motion planning system, which currently has no concept of curves and thus forces a full deceleration to 0 at each joint in the path.
-
-See the issues section for more info.
 
 License
 ========
