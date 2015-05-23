@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='utf-8'?>
+<classtemplate id="motion::AngularDeltaStepper" name="AngularDeltaStepper" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <doc>
+LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-style robots like the Kossel,
+  for linear (G0/G1) and arc movements (G2/G3)
+</doc>
+  <base access="public">
+    <type name="" />
+  </base>
+  <templatetypeparameter id="motion::AngularDeltaStepper::StepperDriverT" name="StepperDriverT" />
+  <methodtemplate id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;" name="AngularDeltaStepper&lt;StepperDriverT&gt;">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::idx" name="idx">
+      <type builtin="yes" name="int" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::axisIdx" name="axisIdx">
+      <type name="DeltaAxis" ref="motion#motion::DeltaAxis" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::stepper" name="stepper">
+      <type name="const StepperDriverT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::endstop" name="endstop">
+      <type name="iodrv::Endstop" qualifier=" const *" ref="iodrv::Endstop#iodrv::Endstop" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::e" name="e">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::f" name="f">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::re" name="re">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::rf" name="rf">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::zoffset" name="zoffset">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="motion::AngularDeltaStepper::AngularDeltaStepper&lt;StepperDriverT&gt;::CoordMapT" name="CoordMapT" />
+  </methodtemplate>
+  <methodtemplate id="motion::AngularDeltaStepper::beginLine" name="beginLine">
+    <brief>function to initiate a linear (through cartesian space) motion</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AngularDeltaStepper::beginLine::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginLine::curPos" name="curPos">
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginLine::vel" name="vel">
+      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
+    </argument>
+    <templatetypeparameter id="motion::AngularDeltaStepper::beginLine::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::AngularDeltaStepper::beginLine::sz" name="sz">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+  <methodtemplate id="motion::AngularDeltaStepper::beginArc" name="beginArc">
+    <brief>function to initiate a circular arc (through cartesian space) motion</brief>
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AngularDeltaStepper::beginArc::map" name="map">
+      <type name="const CoordMapT" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginArc::curPos" name="curPos">
+      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginArc::center" name="center">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginArc::u" name="u">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginArc::v" name="v">
+      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginArc::arcRad" name="arcRad">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginArc::arcVel" name="arcVel">
+      <type builtin="yes" name="float" />
+    </argument>
+    <argument id="motion::AngularDeltaStepper::beginArc::extVel" name="extVel">
+      <type builtin="yes" name="float" />
+    </argument>
+    <templatetypeparameter id="motion::AngularDeltaStepper::beginArc::CoordMapT" name="CoordMapT" />
+    <templatenontypeparameter default="std" id="motion::AngularDeltaStepper::beginArc::sz" name="sz">
+      <type name="std::size_t" />
+    </templatenontypeparameter>
+  </methodtemplate>
+  <method id="motion::AngularDeltaStepper::testDir" name="testDir">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="motion::AngularDeltaStepper::testDir::s" name="s">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="motion::AngularDeltaStepper::_nextStep" name="_nextStep">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="motion::AngularDeltaStepper::_nextStep::useEndstops" name="useEndstops">
+      <type builtin="yes" name="bool" />
+    </argument>
+  </method>
+</classtemplate>

@@ -162,6 +162,9 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
       </class>
     </namespace>
     <namespace name="rpi" ref="machines::rpi#machines::rpi">
+      <class name="firepickdelta" ref="machines::rpi::firepickdelta#machines::rpi::firepickdelta">
+        <brief>for ConstantAcceleration &amp; such</brief>
+      </class>
       <class name="kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
         <brief>for ConstantAcceleration &amp; such</brief>
       </class>
@@ -180,6 +183,20 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
   <namespace name="motion" ref="motion#motion">
     <brief>for motion::USE_ENDSTOPS</brief>
     <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
+    <classtemplate name="AngularDeltaCoordMap" ref="motion::AngularDeltaCoordMap#motion::AngularDeltaCoordMap">
+      <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper1" name="Stepper1" />
+      <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper2" name="Stepper2" />
+      <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper3" name="Stepper3" />
+      <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper4" name="Stepper4" />
+      <templatetypeparameter id="motion::AngularDeltaCoordMap::BedLevelT" name="BedLevelT">
+        <default>
+          <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+        </default>
+      </templatetypeparameter>
+    </classtemplate>
+    <classtemplate name="AngularDeltaStepper" ref="motion::AngularDeltaStepper#motion::AngularDeltaStepper">
+      <templatetypeparameter id="motion::AngularDeltaStepper::StepperDriverT" name="StepperDriverT" />
+    </classtemplate>
     <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
       <brief>Easiest way to extract the size of an array from its type.</brief>
       <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />

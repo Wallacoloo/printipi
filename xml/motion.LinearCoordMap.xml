@@ -91,6 +91,17 @@ This is the CoordMap that your machine should use if it is a Cartesian robot.
     </return>
     <override name="CoordMap::numAxis" ref="motion::CoordMap#motion::CoordMap::numAxis" />
   </method>
+  <method id="motion::LinearCoordMap::getAxisPosition" name="getAxisPosition">
+    <return>
+      <type builtin="yes" name="int" />
+    </return>
+    <argument id="motion::LinearCoordMap::getAxisPosition::cur" name="cur">
+      <type name="std::array&lt;int, 4&gt;" qualifier=" const &amp;" />
+    </argument>
+    <argument id="motion::LinearCoordMap::getAxisPosition::axis" name="axis">
+      <type name="std::size_t" />
+    </argument>
+  </method>
   <methodtemplate id="motion::LinearCoordMap::executeHomeRoutine" name="executeHomeRoutine" override="yes">
     <return>
       <type builtin="yes" name="void" />
