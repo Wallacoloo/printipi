@@ -48,7 +48,7 @@ The files under `src/machines` define classes of machines - deltabots, cartesian
 Documentation/Assistance
 ========
 
-Besides this readme, there is also the auto-generated documentation. You can view this online [here](http://wallacoloo.github.io/printipi/) (note that this documentation is based on the *devel* version and is really aimed towards the Printipi developers rather than its end-users) or you can compile the documentation via `make doc` and view the resulting `index.html` in a web-browser.
+Besides this readme, there is also the auto-generated documentation. You can view this online [here](http://wallacoloo.github.io/printipi/) (note that this documentation is aimed towards the Printipi developers rather than its end-users) or you can compile the documentation via `make doc` and view the resulting `index.html` in a web-browser.
 
 If you need assistance in anything Prinitpi-related, feel free to post a thread on the Printipi [Google Group](https://groups.google.com/forum/#!forum/printipi) or email wallace.colin.a@gmail.com.
 
@@ -70,7 +70,7 @@ If you're looking to extract some platform-specific performance boosts, there ar
 Developing
 ========
 
-If you wish to support Printipi development, take a look at the issue tracker for tasks that need to be completed. After creating a fork with your changes, please submit your pull requests against the `devel` branch.
+If you wish to support Printipi development, take a look at the issue tracker for tasks that need to be completed. After creating a fork with your changes, please submit your pull requests against the `master` branch.
 
 Limitations
 ========
@@ -93,6 +93,6 @@ See the issues section for more info.
 License
 ========
 
-With the exception of certain files*, Printipi is licensed under the MIT license. This means that you are free to use, modify, distribute, and sublicense the code as you see fit. You are perfectly free to use it in your own closed-source or commercial projects. While you are not obligated to do so by the license, it would be appreciated that you share any improvements you make (eg make a public fork on github containing your modifications and then submit a pull request to have it merged with the devel branch).
+With the exception of certain files*, Printipi is licensed under the MIT license. This means that you are free to use, modify, distribute, and sublicense the code as you see fit. You are perfectly free to use it in your own closed-source or commercial projects. While you are not obligated to do so by the license, it would be appreciated that you share any improvements you make (eg make a public fork on github containing your modifications and then submit a pull request to have it merged with the master branch).
 
 *util/rotation_matrix.py is (c) Edward d'Auvergne and reproduced here only to aid in calibration
