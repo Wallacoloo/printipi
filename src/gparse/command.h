@@ -92,13 +92,10 @@ class Command {
         std::string getOpcode() const;
         std::string toGCode() const;
         bool hasParam(char label) const;
-        
-        /*float getFloatParam(char label, float def, bool &hasParam) const;
-        inline float getFloatParam(char label, float def=NAN) const {
-            bool _ignore;
-            return getFloatParam(label, def, _ignore);
-        }*/
+
+        // get a param, or @def if it wasn't set in this gcode command
         float getFloatParam(char label, float def) const;
+        // get a param, returning @GPARSE_ARG_NOT_PRESENT (typically null) if not explicitly set
         float getFloatParam(char label) const;
         //The specialStringParam is a filename, for M32, or a message to display, for M117.
         inline const std::string& getSpecialStringParam() const {
@@ -152,6 +149,14 @@ class Command {
         }
         inline float getS(float def) const {
             return getFloatParam('S', def);
+        }
+        // Some hosts think S should be between 0.0-1.0, others think it should be between 0-255.
+        // Make a guess of the intended range based on the value & return something in the range of 0.0-1.0
+        inline float getNormalizedS() const {
+            return normalizeDutyCycle(getS());
+        }
+        inline float getNormalizedS(float def) const {
+            return normalizeDutyCycle(getS(def));
         }
         inline float getX() const {
             return getFloatParam('X');
@@ -373,6 +378,13 @@ class Command {
         }
         inline bool isOpcode(uint32_t op) const {
             return opcodeStr == op;
+        }
+        inline float normalizeDutyCycle(float duty) const {
+            if (duty > 1) {
+                //host thinks we're working from 0 to 255
+                return duty / 255.0f;
+            }
+            return duty;
         }
         bool isFirstChar(char c) const;
 };

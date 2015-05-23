@@ -612,10 +612,8 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         if (cmd.isM107()) {
             LOGW("M107 is deprecated. Use M106 with S=0 instead.\n");
         }
-        float s = cmd.isM107() ? 0.0 : cmd.getS(1.0); //PWM duty cycle
-        if (s > 1) { //host thinks we're working from 0 to 255
-            s = s/256.0; //TODO: move this logic into cmd.getSNorm()
-        }
+        float s = cmd.isM107() ? 0.0f : cmd.getNormalizedS(1.0f); //PWM duty cycle
+
         if (cmd.hasP()) {
             int index = cmd.getP();
             if (index >= 0 && (unsigned)index < ioDrivers.fans().length()) {
