@@ -499,7 +499,10 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
         float j = cmd.getJ();
         float k = cmd.getK();
         Vector3f center = coordToPrimitive(Vector4f(i, j, k, 0)).xyz();
-        center = center.withZ(cmd.hasK() ? center.z() : curZ);
+
+        // if the center z is not explicitly set, make it the midpoint between current z and end z
+        center = center.withZ(cmd.hasK() ? center.z() : 0.5f*(curZ+trueDest.z()));
+
         this->queueArc(trueDest, center, cmd.isG2());
         reply(gparse::Response::Ok);
     } else if (cmd.isG20()) { //g-code coordinates will now be interpreted as inches
@@ -640,7 +643,7 @@ template <typename Drv> template <typename ReplyFunc> void State<Drv>::execute(g
     } else if (cmd.isM111()) {
         //set debug info.
         //the S parameter is a bitfield indicating log level. bit 0 = verbose, bit 1 = debug, bit 2 = info+errors
-        int bitfield = cmd.getS();
+        int bitfield = cmd.getS(0);
         logging::enableVerbose(bitfield & 1);
         logging::enableDebug(bitfield & 2);
         logging::enableInfo(bitfield & 4);
