@@ -67,11 +67,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </argument>
   </method>
   <method id="gparse::Command::getFloatParam" name="getFloatParam">
-    <brief>float getFloatParam(char label, float def, bool &amp;hasParam) const;</brief>
-    <doc>inline float getFloatParam(char label, float def=NAN) const {
- bool _ignore;
- return getFloatParam(label, def, _ignore);
-}</doc>
+    <brief>get a param, or @def if it wasn't set in this gcode command</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -83,8 +79,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
     </argument>
   </method>
   <method id="gparse::Command::getFloatParam" name="getFloatParam">
-    <brief> TODO: hasParam will always return false when GPARSE_ARG_NOT_PRESENT is NaN (a will be false).</brief>
-    <doc>We should instead just replace GPARSE_ARG_NOT_PRESENT with NaN and use std::isnan</doc>
+    <brief>get a param, returning @GPARSE_ARG_NOT_PRESENT (typically null) if not explicitly set</brief>
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -131,6 +126,21 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="float" />
     </return>
     <argument id="gparse::Command::getK::def" name="def">
+      <type builtin="yes" name="float" />
+    </argument>
+  </method>
+  <method id="gparse::Command::getNormalizedS" name="getNormalizedS">
+    <brief>Some hosts think S should be between 0.0-1.0, others think it should be between 0-255.</brief>
+    <doc>Make a guess of the intended range based on the value &amp; return something in the range of 0.0-1.0</doc>
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+  </method>
+  <method id="gparse::Command::getNormalizedS" name="getNormalizedS">
+    <return>
+      <type builtin="yes" name="float" />
+    </return>
+    <argument id="gparse::Command::getNormalizedS::def" name="def">
       <type builtin="yes" name="float" />
     </argument>
   </method>

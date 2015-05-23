@@ -940,7 +940,7 @@ return values.
         <location column="1" file="motion/axisstepper.h" line="89" />
       </undocumented>
     </type>
-    <type documented="161" name="method" undocumented="372">
+    <type documented="162" name="method" undocumented="373">
       <undocumented id="DefaultGetAccelerationProfile::operator()" name="operator()">
         <location column="5" file="testhelper.h" line="69" />
       </undocumented>
@@ -1128,531 +1128,534 @@ return values.
         <location column="9" file="gparse/command.h" line="89" />
       </undocumented>
       <undocumented id="gparse::Command::getE" name="getE">
-        <location column="9" file="gparse/command.h" line="111" />
+        <location column="9" file="gparse/command.h" line="108" />
       </undocumented>
       <undocumented id="gparse::Command::getF" name="getF">
-        <location column="9" file="gparse/command.h" line="118" />
+        <location column="9" file="gparse/command.h" line="115" />
       </undocumented>
       <undocumented id="gparse::Command::getI" name="getI">
-        <location column="9" file="gparse/command.h" line="125" />
+        <location column="9" file="gparse/command.h" line="122" />
       </undocumented>
       <undocumented id="gparse::Command::getJ" name="getJ">
-        <location column="9" file="gparse/command.h" line="132" />
+        <location column="9" file="gparse/command.h" line="129" />
       </undocumented>
       <undocumented id="gparse::Command::getK" name="getK">
-        <location column="9" file="gparse/command.h" line="139" />
+        <location column="9" file="gparse/command.h" line="136" />
+      </undocumented>
+      <undocumented id="gparse::Command::getNormalizedS" name="getNormalizedS">
+        <location column="9" file="gparse/command.h" line="158" />
       </undocumented>
       <undocumented id="gparse::Command::getOpcode" name="getOpcode">
         <location column="9" file="gparse/command.h" line="92" />
         <location column="1" file="gparse/command.cpp" line="127" />
       </undocumented>
       <undocumented id="gparse::Command::getP" name="getP">
-        <location column="9" file="gparse/command.h" line="146" />
+        <location column="9" file="gparse/command.h" line="143" />
       </undocumented>
       <undocumented id="gparse::Command::getS" name="getS">
-        <location column="9" file="gparse/command.h" line="153" />
+        <location column="9" file="gparse/command.h" line="150" />
       </undocumented>
       <undocumented id="gparse::Command::getX" name="getX">
-        <location column="9" file="gparse/command.h" line="156" />
+        <location column="9" file="gparse/command.h" line="161" />
       </undocumented>
       <undocumented id="gparse::Command::getX" name="getX">
-        <location column="9" file="gparse/command.h" line="159" />
+        <location column="9" file="gparse/command.h" line="164" />
       </undocumented>
       <undocumented id="gparse::Command::getY" name="getY">
-        <location column="9" file="gparse/command.h" line="162" />
+        <location column="9" file="gparse/command.h" line="167" />
       </undocumented>
       <undocumented id="gparse::Command::getY" name="getY">
-        <location column="9" file="gparse/command.h" line="165" />
+        <location column="9" file="gparse/command.h" line="170" />
       </undocumented>
       <undocumented id="gparse::Command::getZ" name="getZ">
-        <location column="9" file="gparse/command.h" line="168" />
+        <location column="9" file="gparse/command.h" line="173" />
       </undocumented>
       <undocumented id="gparse::Command::getZ" name="getZ">
-        <location column="9" file="gparse/command.h" line="171" />
+        <location column="9" file="gparse/command.h" line="176" />
       </undocumented>
       <undocumented id="gparse::Command::hasAnyXYZEParam" name="hasAnyXYZEParam">
-        <location column="9" file="gparse/command.h" line="207" />
+        <location column="9" file="gparse/command.h" line="212" />
       </undocumented>
       <undocumented id="gparse::Command::hasAnyXYZParam" name="hasAnyXYZParam">
-        <location column="9" file="gparse/command.h" line="204" />
+        <location column="9" file="gparse/command.h" line="209" />
       </undocumented>
       <undocumented id="gparse::Command::hasE" name="hasE">
-        <location column="9" file="gparse/command.h" line="174" />
+        <location column="9" file="gparse/command.h" line="179" />
       </undocumented>
       <undocumented id="gparse::Command::hasF" name="hasF">
-        <location column="9" file="gparse/command.h" line="177" />
+        <location column="9" file="gparse/command.h" line="182" />
       </undocumented>
       <undocumented id="gparse::Command::hasI" name="hasI">
-        <location column="9" file="gparse/command.h" line="180" />
+        <location column="9" file="gparse/command.h" line="185" />
       </undocumented>
       <undocumented id="gparse::Command::hasJ" name="hasJ">
-        <location column="9" file="gparse/command.h" line="183" />
+        <location column="9" file="gparse/command.h" line="188" />
       </undocumented>
       <undocumented id="gparse::Command::hasK" name="hasK">
-        <location column="9" file="gparse/command.h" line="186" />
+        <location column="9" file="gparse/command.h" line="191" />
       </undocumented>
       <undocumented id="gparse::Command::hasP" name="hasP">
-        <location column="9" file="gparse/command.h" line="189" />
+        <location column="9" file="gparse/command.h" line="194" />
       </undocumented>
       <undocumented id="gparse::Command::hasParam" name="hasParam">
         <location column="9" file="gparse/command.h" line="94" />
         <location column="1" file="gparse/command.cpp" line="161" />
       </undocumented>
       <undocumented id="gparse::Command::hasS" name="hasS">
-        <location column="9" file="gparse/command.h" line="192" />
+        <location column="9" file="gparse/command.h" line="197" />
       </undocumented>
       <undocumented id="gparse::Command::hasX" name="hasX">
-        <location column="9" file="gparse/command.h" line="195" />
+        <location column="9" file="gparse/command.h" line="200" />
       </undocumented>
       <undocumented id="gparse::Command::hasY" name="hasY">
-        <location column="9" file="gparse/command.h" line="198" />
+        <location column="9" file="gparse/command.h" line="203" />
       </undocumented>
       <undocumented id="gparse::Command::hasZ" name="hasZ">
-        <location column="9" file="gparse/command.h" line="201" />
+        <location column="9" file="gparse/command.h" line="206" />
       </undocumented>
       <undocumented id="gparse::Command::isG1" name="isG1">
-        <location column="9" file="gparse/command.h" line="212" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG10" name="isG10">
-        <location column="9" file="gparse/command.h" line="216" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG2" name="isG2">
-        <location column="9" file="gparse/command.h" line="213" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG20" name="isG20">
         <location column="9" file="gparse/command.h" line="217" />
       </undocumented>
-      <undocumented id="gparse::Command::isG21" name="isG21">
-        <location column="9" file="gparse/command.h" line="218" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG28" name="isG28">
-        <location column="9" file="gparse/command.h" line="219" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG29" name="isG29">
-        <location column="9" file="gparse/command.h" line="220" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG3" name="isG3">
-        <location column="9" file="gparse/command.h" line="214" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG30" name="isG30">
+      <undocumented id="gparse::Command::isG10" name="isG10">
         <location column="9" file="gparse/command.h" line="221" />
       </undocumented>
-      <undocumented id="gparse::Command::isG31" name="isG31">
+      <undocumented id="gparse::Command::isG2" name="isG2">
+        <location column="9" file="gparse/command.h" line="218" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG20" name="isG20">
         <location column="9" file="gparse/command.h" line="222" />
       </undocumented>
-      <undocumented id="gparse::Command::isG32" name="isG32">
+      <undocumented id="gparse::Command::isG21" name="isG21">
         <location column="9" file="gparse/command.h" line="223" />
       </undocumented>
-      <undocumented id="gparse::Command::isG4" name="isG4">
-        <location column="9" file="gparse/command.h" line="215" />
-      </undocumented>
-      <undocumented id="gparse::Command::isG90" name="isG90">
+      <undocumented id="gparse::Command::isG28" name="isG28">
         <location column="9" file="gparse/command.h" line="224" />
       </undocumented>
-      <undocumented id="gparse::Command::isG91" name="isG91">
+      <undocumented id="gparse::Command::isG29" name="isG29">
         <location column="9" file="gparse/command.h" line="225" />
       </undocumented>
-      <undocumented id="gparse::Command::isG92" name="isG92">
+      <undocumented id="gparse::Command::isG3" name="isG3">
+        <location column="9" file="gparse/command.h" line="219" />
+      </undocumented>
+      <undocumented id="gparse::Command::isG30" name="isG30">
         <location column="9" file="gparse/command.h" line="226" />
       </undocumented>
-      <undocumented id="gparse::Command::isM0" name="isM0">
+      <undocumented id="gparse::Command::isG31" name="isG31">
         <location column="9" file="gparse/command.h" line="227" />
       </undocumented>
-      <undocumented id="gparse::Command::isM1" name="isM1">
+      <undocumented id="gparse::Command::isG32" name="isG32">
         <location column="9" file="gparse/command.h" line="228" />
       </undocumented>
-      <undocumented id="gparse::Command::isM10" name="isM10">
-        <location column="9" file="gparse/command.h" line="235" />
+      <undocumented id="gparse::Command::isG4" name="isG4">
+        <location column="9" file="gparse/command.h" line="220" />
       </undocumented>
-      <undocumented id="gparse::Command::isM103" name="isM103">
-        <location column="9" file="gparse/command.h" line="263" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM104" name="isM104">
-        <location column="9" file="gparse/command.h" line="264" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM105" name="isM105">
-        <location column="9" file="gparse/command.h" line="265" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM106" name="isM106">
-        <location column="9" file="gparse/command.h" line="266" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM107" name="isM107">
-        <location column="9" file="gparse/command.h" line="267" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM108" name="isM108">
-        <location column="9" file="gparse/command.h" line="268" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM109" name="isM109">
-        <location column="9" file="gparse/command.h" line="269" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM11" name="isM11">
-        <location column="9" file="gparse/command.h" line="236" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM110" name="isM110">
-        <location column="9" file="gparse/command.h" line="270" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM111" name="isM111">
-        <location column="9" file="gparse/command.h" line="271" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM112" name="isM112">
-        <location column="9" file="gparse/command.h" line="272" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM113" name="isM113">
-        <location column="9" file="gparse/command.h" line="273" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM114" name="isM114">
-        <location column="9" file="gparse/command.h" line="274" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM115" name="isM115">
-        <location column="9" file="gparse/command.h" line="275" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM116" name="isM116">
-        <location column="9" file="gparse/command.h" line="276" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM117" name="isM117">
-        <location column="9" file="gparse/command.h" line="277" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM118" name="isM118">
-        <location column="9" file="gparse/command.h" line="278" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM119" name="isM119">
-        <location column="9" file="gparse/command.h" line="279" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM120" name="isM120">
-        <location column="9" file="gparse/command.h" line="280" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM121" name="isM121">
-        <location column="9" file="gparse/command.h" line="281" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM122" name="isM122">
-        <location column="9" file="gparse/command.h" line="282" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM123" name="isM123">
-        <location column="9" file="gparse/command.h" line="283" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM124" name="isM124">
-        <location column="9" file="gparse/command.h" line="284" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM126" name="isM126">
-        <location column="9" file="gparse/command.h" line="285" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM127" name="isM127">
-        <location column="9" file="gparse/command.h" line="286" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM128" name="isM128">
-        <location column="9" file="gparse/command.h" line="287" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM129" name="isM129">
-        <location column="9" file="gparse/command.h" line="288" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM130" name="isM130">
-        <location column="9" file="gparse/command.h" line="289" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM131" name="isM131">
-        <location column="9" file="gparse/command.h" line="290" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM132" name="isM132">
-        <location column="9" file="gparse/command.h" line="291" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM133" name="isM133">
-        <location column="9" file="gparse/command.h" line="292" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM134" name="isM134">
-        <location column="9" file="gparse/command.h" line="293" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM135" name="isM135">
-        <location column="9" file="gparse/command.h" line="294" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM136" name="isM136">
-        <location column="9" file="gparse/command.h" line="295" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM140" name="isM140">
-        <location column="9" file="gparse/command.h" line="296" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM141" name="isM141">
-        <location column="9" file="gparse/command.h" line="297" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM142" name="isM142">
-        <location column="9" file="gparse/command.h" line="298" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM143" name="isM143">
-        <location column="9" file="gparse/command.h" line="299" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM144" name="isM144">
-        <location column="9" file="gparse/command.h" line="300" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM160" name="isM160">
-        <location column="9" file="gparse/command.h" line="301" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM17" name="isM17">
-        <location column="9" file="gparse/command.h" line="237" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM18" name="isM18">
-        <location column="9" file="gparse/command.h" line="238" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM190" name="isM190">
-        <location column="9" file="gparse/command.h" line="302" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM20" name="isM20">
-        <location column="9" file="gparse/command.h" line="239" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM200" name="isM200">
-        <location column="9" file="gparse/command.h" line="303" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM201" name="isM201">
-        <location column="9" file="gparse/command.h" line="304" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM202" name="isM202">
-        <location column="9" file="gparse/command.h" line="305" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM203" name="isM203">
-        <location column="9" file="gparse/command.h" line="306" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM204" name="isM204">
-        <location column="9" file="gparse/command.h" line="307" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM205" name="isM205">
-        <location column="9" file="gparse/command.h" line="308" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM206" name="isM206">
-        <location column="9" file="gparse/command.h" line="309" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM207" name="isM207">
-        <location column="9" file="gparse/command.h" line="310" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM208" name="isM208">
-        <location column="9" file="gparse/command.h" line="311" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM209" name="isM209">
-        <location column="9" file="gparse/command.h" line="312" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM21" name="isM21">
-        <location column="9" file="gparse/command.h" line="240" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM210" name="isM210">
-        <location column="9" file="gparse/command.h" line="313" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM22" name="isM22">
-        <location column="9" file="gparse/command.h" line="241" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM220" name="isM220">
-        <location column="9" file="gparse/command.h" line="314" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM221" name="isM221">
-        <location column="9" file="gparse/command.h" line="315" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM226" name="isM226">
-        <location column="9" file="gparse/command.h" line="316" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM227" name="isM227">
-        <location column="9" file="gparse/command.h" line="317" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM228" name="isM228">
-        <location column="9" file="gparse/command.h" line="318" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM229" name="isM229">
-        <location column="9" file="gparse/command.h" line="319" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM23" name="isM23">
-        <location column="9" file="gparse/command.h" line="242" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM230" name="isM230">
-        <location column="9" file="gparse/command.h" line="320" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM24" name="isM24">
-        <location column="9" file="gparse/command.h" line="243" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM240" name="isM240">
-        <location column="9" file="gparse/command.h" line="321" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM241" name="isM241">
-        <location column="9" file="gparse/command.h" line="322" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM245" name="isM245">
-        <location column="9" file="gparse/command.h" line="323" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM246" name="isM246">
-        <location column="9" file="gparse/command.h" line="324" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM25" name="isM25">
-        <location column="9" file="gparse/command.h" line="244" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM26" name="isM26">
-        <location column="9" file="gparse/command.h" line="245" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM27" name="isM27">
-        <location column="9" file="gparse/command.h" line="246" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM28" name="isM28">
-        <location column="9" file="gparse/command.h" line="247" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM280" name="isM280">
-        <location column="9" file="gparse/command.h" line="325" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM29" name="isM29">
-        <location column="9" file="gparse/command.h" line="248" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM3" name="isM3">
+      <undocumented id="gparse::Command::isG90" name="isG90">
         <location column="9" file="gparse/command.h" line="229" />
       </undocumented>
-      <undocumented id="gparse::Command::isM30" name="isM30">
-        <location column="9" file="gparse/command.h" line="249" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM300" name="isM300">
-        <location column="9" file="gparse/command.h" line="326" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM301" name="isM301">
-        <location column="9" file="gparse/command.h" line="327" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM302" name="isM302">
-        <location column="9" file="gparse/command.h" line="328" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM303" name="isM303">
-        <location column="9" file="gparse/command.h" line="329" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM304" name="isM304">
-        <location column="9" file="gparse/command.h" line="330" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM305" name="isM305">
-        <location column="9" file="gparse/command.h" line="331" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM32" name="isM32">
-        <location column="9" file="gparse/command.h" line="250" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM4" name="isM4">
+      <undocumented id="gparse::Command::isG91" name="isG91">
         <location column="9" file="gparse/command.h" line="230" />
       </undocumented>
-      <undocumented id="gparse::Command::isM40" name="isM40">
-        <location column="9" file="gparse/command.h" line="251" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM400" name="isM400">
-        <location column="9" file="gparse/command.h" line="332" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM41" name="isM41">
-        <location column="9" file="gparse/command.h" line="252" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM42" name="isM42">
-        <location column="9" file="gparse/command.h" line="253" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM420" name="isM420">
-        <location column="9" file="gparse/command.h" line="333" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM43" name="isM43">
-        <location column="9" file="gparse/command.h" line="254" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM5" name="isM5">
+      <undocumented id="gparse::Command::isG92" name="isG92">
         <location column="9" file="gparse/command.h" line="231" />
       </undocumented>
-      <undocumented id="gparse::Command::isM540" name="isM540">
-        <location column="9" file="gparse/command.h" line="334" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM550" name="isM550">
-        <location column="9" file="gparse/command.h" line="335" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM551" name="isM551">
-        <location column="9" file="gparse/command.h" line="336" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM552" name="isM552">
-        <location column="9" file="gparse/command.h" line="337" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM553" name="isM553">
-        <location column="9" file="gparse/command.h" line="338" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM554" name="isM554">
-        <location column="9" file="gparse/command.h" line="339" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM555" name="isM555">
-        <location column="9" file="gparse/command.h" line="340" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM556" name="isM556">
-        <location column="9" file="gparse/command.h" line="341" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM557" name="isM557">
-        <location column="9" file="gparse/command.h" line="342" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM558" name="isM558">
-        <location column="9" file="gparse/command.h" line="343" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM559" name="isM559">
-        <location column="9" file="gparse/command.h" line="344" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM560" name="isM560">
-        <location column="9" file="gparse/command.h" line="345" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM561" name="isM561">
-        <location column="9" file="gparse/command.h" line="346" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM562" name="isM562">
-        <location column="9" file="gparse/command.h" line="347" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM563" name="isM563">
-        <location column="9" file="gparse/command.h" line="348" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM564" name="isM564">
-        <location column="9" file="gparse/command.h" line="349" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM565" name="isM565">
-        <location column="9" file="gparse/command.h" line="350" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM566" name="isM566">
-        <location column="9" file="gparse/command.h" line="351" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM567" name="isM567">
-        <location column="9" file="gparse/command.h" line="352" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM568" name="isM568">
-        <location column="9" file="gparse/command.h" line="353" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM569" name="isM569">
-        <location column="9" file="gparse/command.h" line="354" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM665" name="isM665">
-        <location column="9" file="gparse/command.h" line="355" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM7" name="isM7">
+      <undocumented id="gparse::Command::isM0" name="isM0">
         <location column="9" file="gparse/command.h" line="232" />
       </undocumented>
-      <undocumented id="gparse::Command::isM8" name="isM8">
+      <undocumented id="gparse::Command::isM1" name="isM1">
         <location column="9" file="gparse/command.h" line="233" />
       </undocumented>
-      <undocumented id="gparse::Command::isM80" name="isM80">
-        <location column="9" file="gparse/command.h" line="255" />
+      <undocumented id="gparse::Command::isM10" name="isM10">
+        <location column="9" file="gparse/command.h" line="240" />
       </undocumented>
-      <undocumented id="gparse::Command::isM81" name="isM81">
-        <location column="9" file="gparse/command.h" line="256" />
+      <undocumented id="gparse::Command::isM103" name="isM103">
+        <location column="9" file="gparse/command.h" line="268" />
       </undocumented>
-      <undocumented id="gparse::Command::isM82" name="isM82">
-        <location column="9" file="gparse/command.h" line="257" />
+      <undocumented id="gparse::Command::isM104" name="isM104">
+        <location column="9" file="gparse/command.h" line="269" />
       </undocumented>
-      <undocumented id="gparse::Command::isM83" name="isM83">
-        <location column="9" file="gparse/command.h" line="258" />
+      <undocumented id="gparse::Command::isM105" name="isM105">
+        <location column="9" file="gparse/command.h" line="270" />
       </undocumented>
-      <undocumented id="gparse::Command::isM84" name="isM84">
-        <location column="9" file="gparse/command.h" line="259" />
+      <undocumented id="gparse::Command::isM106" name="isM106">
+        <location column="9" file="gparse/command.h" line="271" />
       </undocumented>
-      <undocumented id="gparse::Command::isM9" name="isM9">
+      <undocumented id="gparse::Command::isM107" name="isM107">
+        <location column="9" file="gparse/command.h" line="272" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM108" name="isM108">
+        <location column="9" file="gparse/command.h" line="273" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM109" name="isM109">
+        <location column="9" file="gparse/command.h" line="274" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM11" name="isM11">
+        <location column="9" file="gparse/command.h" line="241" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM110" name="isM110">
+        <location column="9" file="gparse/command.h" line="275" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM111" name="isM111">
+        <location column="9" file="gparse/command.h" line="276" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM112" name="isM112">
+        <location column="9" file="gparse/command.h" line="277" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM113" name="isM113">
+        <location column="9" file="gparse/command.h" line="278" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM114" name="isM114">
+        <location column="9" file="gparse/command.h" line="279" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM115" name="isM115">
+        <location column="9" file="gparse/command.h" line="280" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM116" name="isM116">
+        <location column="9" file="gparse/command.h" line="281" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM117" name="isM117">
+        <location column="9" file="gparse/command.h" line="282" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM118" name="isM118">
+        <location column="9" file="gparse/command.h" line="283" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM119" name="isM119">
+        <location column="9" file="gparse/command.h" line="284" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM120" name="isM120">
+        <location column="9" file="gparse/command.h" line="285" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM121" name="isM121">
+        <location column="9" file="gparse/command.h" line="286" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM122" name="isM122">
+        <location column="9" file="gparse/command.h" line="287" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM123" name="isM123">
+        <location column="9" file="gparse/command.h" line="288" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM124" name="isM124">
+        <location column="9" file="gparse/command.h" line="289" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM126" name="isM126">
+        <location column="9" file="gparse/command.h" line="290" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM127" name="isM127">
+        <location column="9" file="gparse/command.h" line="291" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM128" name="isM128">
+        <location column="9" file="gparse/command.h" line="292" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM129" name="isM129">
+        <location column="9" file="gparse/command.h" line="293" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM130" name="isM130">
+        <location column="9" file="gparse/command.h" line="294" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM131" name="isM131">
+        <location column="9" file="gparse/command.h" line="295" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM132" name="isM132">
+        <location column="9" file="gparse/command.h" line="296" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM133" name="isM133">
+        <location column="9" file="gparse/command.h" line="297" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM134" name="isM134">
+        <location column="9" file="gparse/command.h" line="298" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM135" name="isM135">
+        <location column="9" file="gparse/command.h" line="299" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM136" name="isM136">
+        <location column="9" file="gparse/command.h" line="300" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM140" name="isM140">
+        <location column="9" file="gparse/command.h" line="301" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM141" name="isM141">
+        <location column="9" file="gparse/command.h" line="302" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM142" name="isM142">
+        <location column="9" file="gparse/command.h" line="303" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM143" name="isM143">
+        <location column="9" file="gparse/command.h" line="304" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM144" name="isM144">
+        <location column="9" file="gparse/command.h" line="305" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM160" name="isM160">
+        <location column="9" file="gparse/command.h" line="306" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM17" name="isM17">
+        <location column="9" file="gparse/command.h" line="242" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM18" name="isM18">
+        <location column="9" file="gparse/command.h" line="243" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM190" name="isM190">
+        <location column="9" file="gparse/command.h" line="307" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM20" name="isM20">
+        <location column="9" file="gparse/command.h" line="244" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM200" name="isM200">
+        <location column="9" file="gparse/command.h" line="308" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM201" name="isM201">
+        <location column="9" file="gparse/command.h" line="309" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM202" name="isM202">
+        <location column="9" file="gparse/command.h" line="310" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM203" name="isM203">
+        <location column="9" file="gparse/command.h" line="311" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM204" name="isM204">
+        <location column="9" file="gparse/command.h" line="312" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM205" name="isM205">
+        <location column="9" file="gparse/command.h" line="313" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM206" name="isM206">
+        <location column="9" file="gparse/command.h" line="314" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM207" name="isM207">
+        <location column="9" file="gparse/command.h" line="315" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM208" name="isM208">
+        <location column="9" file="gparse/command.h" line="316" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM209" name="isM209">
+        <location column="9" file="gparse/command.h" line="317" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM21" name="isM21">
+        <location column="9" file="gparse/command.h" line="245" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM210" name="isM210">
+        <location column="9" file="gparse/command.h" line="318" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM22" name="isM22">
+        <location column="9" file="gparse/command.h" line="246" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM220" name="isM220">
+        <location column="9" file="gparse/command.h" line="319" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM221" name="isM221">
+        <location column="9" file="gparse/command.h" line="320" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM226" name="isM226">
+        <location column="9" file="gparse/command.h" line="321" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM227" name="isM227">
+        <location column="9" file="gparse/command.h" line="322" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM228" name="isM228">
+        <location column="9" file="gparse/command.h" line="323" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM229" name="isM229">
+        <location column="9" file="gparse/command.h" line="324" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM23" name="isM23">
+        <location column="9" file="gparse/command.h" line="247" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM230" name="isM230">
+        <location column="9" file="gparse/command.h" line="325" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM24" name="isM24">
+        <location column="9" file="gparse/command.h" line="248" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM240" name="isM240">
+        <location column="9" file="gparse/command.h" line="326" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM241" name="isM241">
+        <location column="9" file="gparse/command.h" line="327" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM245" name="isM245">
+        <location column="9" file="gparse/command.h" line="328" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM246" name="isM246">
+        <location column="9" file="gparse/command.h" line="329" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM25" name="isM25">
+        <location column="9" file="gparse/command.h" line="249" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM26" name="isM26">
+        <location column="9" file="gparse/command.h" line="250" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM27" name="isM27">
+        <location column="9" file="gparse/command.h" line="251" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM28" name="isM28">
+        <location column="9" file="gparse/command.h" line="252" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM280" name="isM280">
+        <location column="9" file="gparse/command.h" line="330" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM29" name="isM29">
+        <location column="9" file="gparse/command.h" line="253" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM3" name="isM3">
         <location column="9" file="gparse/command.h" line="234" />
       </undocumented>
-      <undocumented id="gparse::Command::isM906" name="isM906">
+      <undocumented id="gparse::Command::isM30" name="isM30">
+        <location column="9" file="gparse/command.h" line="254" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM300" name="isM300">
+        <location column="9" file="gparse/command.h" line="331" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM301" name="isM301">
+        <location column="9" file="gparse/command.h" line="332" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM302" name="isM302">
+        <location column="9" file="gparse/command.h" line="333" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM303" name="isM303">
+        <location column="9" file="gparse/command.h" line="334" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM304" name="isM304">
+        <location column="9" file="gparse/command.h" line="335" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM305" name="isM305">
+        <location column="9" file="gparse/command.h" line="336" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM32" name="isM32">
+        <location column="9" file="gparse/command.h" line="255" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM4" name="isM4">
+        <location column="9" file="gparse/command.h" line="235" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM40" name="isM40">
+        <location column="9" file="gparse/command.h" line="256" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM400" name="isM400">
+        <location column="9" file="gparse/command.h" line="337" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM41" name="isM41">
+        <location column="9" file="gparse/command.h" line="257" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM42" name="isM42">
+        <location column="9" file="gparse/command.h" line="258" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM420" name="isM420">
+        <location column="9" file="gparse/command.h" line="338" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM43" name="isM43">
+        <location column="9" file="gparse/command.h" line="259" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM5" name="isM5">
+        <location column="9" file="gparse/command.h" line="236" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM540" name="isM540">
+        <location column="9" file="gparse/command.h" line="339" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM550" name="isM550">
+        <location column="9" file="gparse/command.h" line="340" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM551" name="isM551">
+        <location column="9" file="gparse/command.h" line="341" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM552" name="isM552">
+        <location column="9" file="gparse/command.h" line="342" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM553" name="isM553">
+        <location column="9" file="gparse/command.h" line="343" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM554" name="isM554">
+        <location column="9" file="gparse/command.h" line="344" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM555" name="isM555">
+        <location column="9" file="gparse/command.h" line="345" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM556" name="isM556">
+        <location column="9" file="gparse/command.h" line="346" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM557" name="isM557">
+        <location column="9" file="gparse/command.h" line="347" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM558" name="isM558">
+        <location column="9" file="gparse/command.h" line="348" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM559" name="isM559">
+        <location column="9" file="gparse/command.h" line="349" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM560" name="isM560">
+        <location column="9" file="gparse/command.h" line="350" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM561" name="isM561">
+        <location column="9" file="gparse/command.h" line="351" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM562" name="isM562">
+        <location column="9" file="gparse/command.h" line="352" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM563" name="isM563">
+        <location column="9" file="gparse/command.h" line="353" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM564" name="isM564">
+        <location column="9" file="gparse/command.h" line="354" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM565" name="isM565">
+        <location column="9" file="gparse/command.h" line="355" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM566" name="isM566">
         <location column="9" file="gparse/command.h" line="356" />
       </undocumented>
-      <undocumented id="gparse::Command::isM92" name="isM92">
-        <location column="9" file="gparse/command.h" line="260" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM98" name="isM98">
-        <location column="9" file="gparse/command.h" line="261" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM99" name="isM99">
-        <location column="9" file="gparse/command.h" line="262" />
-      </undocumented>
-      <undocumented id="gparse::Command::isM998" name="isM998">
+      <undocumented id="gparse::Command::isM567" name="isM567">
         <location column="9" file="gparse/command.h" line="357" />
       </undocumented>
-      <undocumented id="gparse::Command::isM999" name="isM999">
+      <undocumented id="gparse::Command::isM568" name="isM568">
         <location column="9" file="gparse/command.h" line="358" />
       </undocumented>
-      <undocumented id="gparse::Command::isTxxx" name="isTxxx">
+      <undocumented id="gparse::Command::isM569" name="isM569">
         <location column="9" file="gparse/command.h" line="359" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM665" name="isM665">
+        <location column="9" file="gparse/command.h" line="360" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM7" name="isM7">
+        <location column="9" file="gparse/command.h" line="237" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM8" name="isM8">
+        <location column="9" file="gparse/command.h" line="238" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM80" name="isM80">
+        <location column="9" file="gparse/command.h" line="260" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM81" name="isM81">
+        <location column="9" file="gparse/command.h" line="261" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM82" name="isM82">
+        <location column="9" file="gparse/command.h" line="262" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM83" name="isM83">
+        <location column="9" file="gparse/command.h" line="263" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM84" name="isM84">
+        <location column="9" file="gparse/command.h" line="264" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM9" name="isM9">
+        <location column="9" file="gparse/command.h" line="239" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM906" name="isM906">
+        <location column="9" file="gparse/command.h" line="361" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM92" name="isM92">
+        <location column="9" file="gparse/command.h" line="265" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM98" name="isM98">
+        <location column="9" file="gparse/command.h" line="266" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM99" name="isM99">
+        <location column="9" file="gparse/command.h" line="267" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM998" name="isM998">
+        <location column="9" file="gparse/command.h" line="362" />
+      </undocumented>
+      <undocumented id="gparse::Command::isM999" name="isM999">
+        <location column="9" file="gparse/command.h" line="363" />
+      </undocumented>
+      <undocumented id="gparse::Command::isTxxx" name="isTxxx">
+        <location column="9" file="gparse/command.h" line="364" />
       </undocumented>
       <undocumented id="gparse::Command::toGCode" name="toGCode">
         <location column="9" file="gparse/command.h" line="93" />
@@ -2747,52 +2750,56 @@ return values.
       <undocumented name="" />
     </function>
     <function id="gparse::Command::getFloatParam" name="getFloatParam">
-      <location column="9" file="gparse/command.h" line="101" />
+      <location column="9" file="gparse/command.h" line="97" />
       <location column="1" file="gparse/command.cpp" line="176" />
       <undocumented-return />
       <undocumented name="def" />
       <undocumented name="label" />
     </function>
     <function id="gparse::Command::getFloatParam" name="getFloatParam">
-      <location column="9" file="gparse/command.h" line="102" />
+      <location column="9" file="gparse/command.h" line="99" />
       <location column="1" file="gparse/command.cpp" line="172" />
       <undocumented-return />
       <undocumented name="label" />
     </function>
     <function id="gparse::Command::getSpecialStringParam" name="getSpecialStringParam">
-      <location column="9" file="gparse/command.h" line="104" />
+      <location column="9" file="gparse/command.h" line="101" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::getE" name="getE">
-      <location column="9" file="gparse/command.h" line="108" />
+      <location column="9" file="gparse/command.h" line="105" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::getF" name="getF">
-      <location column="9" file="gparse/command.h" line="115" />
+      <location column="9" file="gparse/command.h" line="112" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::getI" name="getI">
-      <location column="9" file="gparse/command.h" line="122" />
+      <location column="9" file="gparse/command.h" line="119" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::getJ" name="getJ">
-      <location column="9" file="gparse/command.h" line="129" />
+      <location column="9" file="gparse/command.h" line="126" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::getK" name="getK">
-      <location column="9" file="gparse/command.h" line="136" />
+      <location column="9" file="gparse/command.h" line="133" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::getP" name="getP">
-      <location column="9" file="gparse/command.h" line="143" />
+      <location column="9" file="gparse/command.h" line="140" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::getS" name="getS">
-      <location column="9" file="gparse/command.h" line="150" />
+      <location column="9" file="gparse/command.h" line="147" />
+      <undocumented-return />
+    </function>
+    <function id="gparse::Command::getNormalizedS" name="getNormalizedS">
+      <location column="9" file="gparse/command.h" line="155" />
       <undocumented-return />
     </function>
     <function id="gparse::Command::isG0" name="isG0">
-      <location column="9" file="gparse/command.h" line="211" />
+      <location column="9" file="gparse/command.h" line="216" />
       <undocumented-return />
     </function>
     <function id="gparse::Response::Response" name="Response">
