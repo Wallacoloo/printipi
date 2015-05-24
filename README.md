@@ -3,11 +3,11 @@ Printipi
 
 Printipi is a software package designed to bring 3d printing to the Raspberry Pi. It takes on all of the roles generally given to dedicated microcontrollers (interfacing with stepper drivers, temperature control of the hotend, and cooling fans) while also running under an operating system. This means that the same device that is running the firmware can also perform other tasks while printing, such as hosting a web interface like Octoprint.
 
-Although called Printi<i>pi</i>, it is not necessarily limited to running on the Pi. New platforms can be supported by implementing a handful of interfaces (see the section further down for more info), and all machines can be built to target any gcc-supported Linux platform (without electrical I/O) via `make MACHINE_CLASS=generic` (very useful for testing).
+Although called Printi<i>pi</i>, it is not necessarily limited to running on the Pi. New platforms can be supported by implementing a handful of interfaces (see the [wiki](https://github.com/Wallacoloo/printipi/wiki/Adding-support-for-a-new-CPU-architecture) page for more info), and all machines can be built to target any gcc or clang-supported Linux platform (without electrical I/O) via `make MACHINE_CLASS=generic` (very useful for testing).
 
 Printipi also aims to support a multitude of printers including typical cartesian printers (supported), deltabot-style printers (supported), or polar-based printers (not yet supported) - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/machines that exposes its coordinate system and peripherals through a handful of public member functions. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
 
-**Note:** The internal documentation for Printipi is still a bit lacking. As of this time, it is *not* recommended to users who aren't comfortable with digging into the source code to figure out how things work.
+**Note:** The documentation for Printipi is still a bit lacking. As of this time, it is *not* recommended to users who aren't comfortable with digging into the source code to figure out how things work.
 
 Demos
 ========
@@ -54,23 +54,12 @@ If you need assistance in anything Prinitpi-related, feel free to post a thread 
 
 If you would like to report a bug or request a feature, use the [issue tracker](https://github.com/Wallacoloo/printipi/issues).
 
-Supporting Other CPU Architectures
-========
-
-To get Printipi running on another platform besides the Raspberry Pi, there are only 2 things you need to do:
-
-1. Add a folder under src/platforms for your platform (e.g. `src/platforms/arduino` if you aim to add Arduino support).
-2. Implement `src/platforms/<platform>/primitiveiopin.h`. This interface is documented in `src/platforms/generic/primitiveiopin.h` and an example implementation can be found in `src/platforms/rpi/primitiveiopin.h`.
-
-That's all you need. Now you can create a new machine in `src/machines/<platform>` (make sure `<platform>` matches the same folder name you added to `src/platforms/`) and compile it with `make MACHINE=<platform>/<machinename>.h`.
-The Printipi build system will automatically detect the files you added to `src/platforms/<platform>` and will use those in place of the generic implementations, so there's no need to edit any other files.
-
-If you're looking to extract some platform-specific performance boosts, there are a variety of other interfaces you can implement under your `src/platforms/<platform>`. These include `hardwarescheduler.h`, which you can implement to use (e.g.) interrupts instead of cpu busy-waiting for I/O servicing routines. You may also implement `chronoclock.h` to read a system clock without context-switching into a Linux kernel (only relevant on Linux systems or if your compiler doesn't support `std::chrono::*` for your platform).
-
 Contributing
 ========
 
 If you wish to support Printipi development, take a look at the issue tracker for tasks that need to be completed. After creating a fork with your changes, please submit your pull requests against the `master` branch.
+
+If you wish to port Printipi to a new platform, just follow the [instructions](https://github.com/Wallacoloo/printipi/wiki/Adding-support-for-a-new-CPU-architecture) in the wiki.
 
 Limitations
 ========
