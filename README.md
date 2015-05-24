@@ -24,26 +24,26 @@ gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get inst
 
 First, get the sources: `git clone https://github.com/Wallacoloo/printipi.git`  
 
-To compile Printipi, navigate to the src directory and type `make MACHINE=<path/to/machine.h> <target>`, where `<machine>` is the **relative** path to some machine contained under src/machines, eg `rpi/kosselrampsfd.h` or the `generic/cartesian.h` machine, and `<target>` is either debug, release, debugrel, profile, or minsize. Both are case-sensitive. Example: `make MACHINE=rpi/kosselrampsfd.h release`.
+To compile Printipi, navigate to the src directory and type `make MACHINE=<path/to/machine.h> <target>`, where `<machine>` is the **relative** path to some machine contained under src/machines, e.g. `rpi/kosselrampsfd.h` or the `generic/cartesian.h` machine, and `<target>` is either debug, release, debugrel, profile, or minsize. Both are case-sensitive. Example: `make MACHINE=rpi/kosselrampsfd.h release`.
 
 A binary will be produced under the `build` directory with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run e.g. `sudo ./printipi`).
 
 Usage
 ========
 
-The firmware can either be called with no arguments, in which case it will take gcode commands from the standard input (useful for testing & debugging). Or, you can provide the path to a gcode file. The provided file can be **any** file-like object, including device-files. This allows one to pass eg `/dev/ttyAMA0` to take commands from the serial port.
+The firmware can either be called with no arguments, in which case it will take gcode commands from the standard input (useful for testing & debugging). Or, you can provide the path to a gcode file. The provided file can be **any** file-like object, including device-files. This allows one to pass (e.g.) `/dev/ttyAMA0` to take commands from the serial port.
 
 Using with Octoprint:
 --------
 
-**Prereqs**: install the program "socat". Eg `sudo apt-get install socat`
+**Prereqs**: install the program "socat". E.g. `sudo apt-get install socat`
 
 Because Octoprint prints to a serial-like Linux device-file, and Printipi can take commands from any file-like object, it's possible to create a *virtual* serial port to pipe commands from Octoprint to Printipi. This is just what the provided "launch-firmware.sh" file does. After running that script, a new device should be visible in the Octoprint web interface (a refresh will be required) to which you can connect. In theory, this should work with most printer controllers that connect to a printer via serial/USB, but only Octoprint has been tested.
 
 Configuration Files
 ========
 
-The files under `src/machines` define classes of machines - deltabots, cartesian bots, polar bots, etc. Each one of these is analogous to a master "config file". That is to say, you should find the machine definition in that folder that is most similar to your own (eg `src/machines/rpi/kosselrampsfd.h`), make a copy of it (eg copy it to `src/machines/rpi/customkossel.h` and be sure to rename the `kosselrampsfd` C++ class contained in the file to `customkossel` in order to reflect the path change), and then customize it. Unless you are a developer, you should never have to edit code outside of your config file. To build your CustomKossel machine, type `make MACHINE=rpi/customkossel.h`.
+The files under `src/machines` define classes of machines - deltabots, cartesian bots, polar bots, etc. Each one of these is analogous to a master "config file". That is to say, you should find the machine definition in that folder that is most similar to your own (e.g. `src/machines/rpi/kosselrampsfd.h`), make a copy of it (e.g. copy it to `src/machines/rpi/customkossel.h` and be sure to rename the `kosselrampsfd` C++ class contained in the file to `customkossel` in order to reflect the path change), and then customize it. Unless you are a developer, you should never have to edit code outside of your config file. To build your CustomKossel machine, type `make MACHINE=rpi/customkossel.h`.
 
 Documentation/Assistance
 ========
@@ -75,6 +75,6 @@ Lastly, only a limited set of gcode commands are currently supported. Namely, te
 License
 ========
 
-With the exception of certain files*, Printipi is licensed under the MIT license. This means that you are free to use, modify, distribute, and sublicense the code as you see fit. You are perfectly free to use it in your own closed-source or commercial projects. While you are not obligated to do so by the license, it would be appreciated that you share any improvements you make (eg make a public fork on github containing your modifications and then submit a pull request to have it merged with the master branch).
+With the exception of certain files*, Printipi is licensed under the MIT license. This means that you are free to use, modify, distribute, and sublicense the code as you see fit. You are perfectly free to use it in your own closed-source or commercial projects. While you are not obligated to do so by the license, it would be appreciated that you share any improvements you make (e.g. make a public fork on github containing your modifications and then submit a pull request to have it merged with the master branch).
 
 *util/rotation_matrix.py is (c) Edward d'Auvergne and reproduced here only to aid in calibration
