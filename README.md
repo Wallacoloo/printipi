@@ -3,7 +3,7 @@ Printipi
 
 Printipi is a software package designed to bring 3d printing to the Raspberry Pi. It takes on all of the roles generally given to dedicated microcontrollers (interfacing with stepper drivers, temperature control of the hotend, and cooling fans) while also running under an operating system. This means that the same device that is running the firmware can also perform other tasks while printing, such as hosting a web interface like Octoprint.
 
-Although called Printi<i>pi</i>, it is not necessarily limited to running on the Pi. New platforms can be supported by implementing a handful of interfaces (see the [wiki](https://github.com/Wallacoloo/printipi/wiki/Adding-support-for-a-new-CPU-architecture) page for more info), and all machines can be built to target any gcc or clang-supported Linux platform (without electrical I/O) via `make MACHINE_CLASS=generic` (very useful for testing).
+Although called Printi<i>pi</i>, it is not necessarily limited to running on the Pi. New platforms can be supported by implementing a handful of interfaces (see the [wiki](https://github.com/Wallacoloo/printipi/wiki/Adding-support-for-a-new-CPU-architecture) page for more info)
 
 Printipi also aims to support a multitude of printers including typical cartesian printers (supported), deltabot-style printers (supported), or polar-based printers (not yet supported) - **without** the messy use of hundreds of #defines, some of which may not even be applicable to your printer. Instead, each machine type gets its own file and C++ class under src/machines that exposes its coordinate system and peripherals through a handful of public member functions. In this way it is possible to add support for a new type of printer without digging into the guts of Printipi.
 
@@ -48,7 +48,7 @@ The files under `src/machines` define classes of machines - deltabots, cartesian
 Documentation/Assistance
 ========
 
-Besides this readme, there is also the auto-generated documentation. You can view this online [here](http://wallacoloo.github.io/printipi/) (note that this documentation is aimed towards the Printipi developers rather than its end-users) or you can compile the documentation via `make doc` and view the resulting `index.html` in a web-browser.
+Besides this readme, there is also the auto-generated documentation that can be viewed [online](http://wallacoloo.github.io/printipi/) (note that this documentation is aimed towards Printipi developers moreso than end-users) or you can compile the documentation via `make doc` and view the resulting `index.html` in a web-browser.
 
 If you need assistance in anything Prinitpi-related, feel free to post a thread on the Printipi [Google Group](https://groups.google.com/forum/#!forum/printipi) or email wallace.colin.a@gmail.com.
 
