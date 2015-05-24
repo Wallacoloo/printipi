@@ -45,7 +45,7 @@ Because Octoprint prints to a serial-like Linux device-file, and Printipi can ta
 Configuration Files
 ========
 
-The files under `src/machines` define classes of machines - deltabots, cartesian bots, polar bots, etc. Each one of these is analogous to a master "config file". That is to say, you should find the machine definition in that folder that is most similar to your own (e.g. `src/machines/rpi/kosselrampsfd.h`), make a copy of it (e.g. copy it to `src/machines/rpi/customkossel.h` and be sure to rename the `kosselrampsfd` C++ class contained in the file to `customkossel` in order to reflect the path change), and then customize it. Unless you are a developer, you should never have to edit code outside of your config file. To build your CustomKossel machine, type `make MACHINE=rpi/customkossel.h`.
+The files under `src/machines` define classes of machines - deltabots, cartesian bots, polar bots, etc. Each one of these is analogous to a master "config file". That is to say, you should find the machine definition in that folder that is most similar to your own (e.g. `src/machines/rpi/kosselrampsfd.h`), make a copy of it (e.g. copy it to `src/machines/rpi/customkossel.h` and be sure to rename the `kosselrampsfd` C++ class contained in the file to `customkossel` in order to reflect the path change), and then customize it. Unless you are a developer, you should never have to edit code outside of your config file. To build your customkossel machine, type `make MACHINE=rpi/customkossel.h`.
 
 Documentation/Assistance
 ========
