@@ -53,7 +53,7 @@ LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-s
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AngularDeltaStepper::beginLine::curPos" name="curPos">
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AngularDeltaStepper::beginLine::vel" name="vel">
       <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
@@ -72,7 +72,7 @@ LinearDeltaStepper implements the AxisStepper interface for (rail-based) Delta-s
       <type name="const CoordMapT" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AngularDeltaStepper::beginArc::curPos" name="curPos">
-      <type name="std::array&lt;_Tp, _Nm&gt;" qualifier=" const &amp;" />
+      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
     </argument>
     <argument id="motion::AngularDeltaStepper::beginArc::center" name="center">
       <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
