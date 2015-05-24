@@ -859,8 +859,8 @@ return values.
         <location column="1" file="motion/linearstepper.h" line="37" />
       </undocumented>
       <undocumented id="motion::DeltaAxis" name="DeltaAxis">
-        <location column="1" file="motion/lineardeltastepper.h" line="109" />
         <location column="1" file="motion/angulardeltastepper.h" line="102" />
+        <location column="1" file="motion/lineardeltastepper.h" line="109" />
       </undocumented>
       <undocumented id="motion::StepDirection" name="StepDirection">
         <location column="1" file="motion/axisstepper.h" line="44" />
@@ -872,8 +872,8 @@ return values.
         <location column="1" file="gparse/response.h" line="33" />
         <location column="1" file="gparse/com.h" line="33" />
         <location column="1" file="gparse/response.cpp" line="3" />
-        <location column="1" file="gparse/command.cpp" line="26" />
         <location column="1" file="gparse/com.cpp" line="26" />
+        <location column="1" file="gparse/command.cpp" line="26" />
       </undocumented>
       <undocumented id="iodrv" name="iodrv">
         <location column="1" file="iodrivers/iopin.h" line="31" />
@@ -887,22 +887,22 @@ return values.
         <location column="1" file="iodrivers/tempcontrol.h" line="39" />
         <location column="1" file="iodrivers/rcthermistor2pin.h" line="37" />
         <location column="1" file="iodrivers/servo.h" line="38" />
-        <location column="1" file="iodrivers/servo.cpp" line="27" />
         <location column="1" file="iodrivers/iopin.cpp" line="34" />
+        <location column="1" file="iodrivers/servo.cpp" line="27" />
         <location column="1" file="iodrivers/drv8825.h" line="30" />
       </undocumented>
       <undocumented id="machines" name="machines">
         <location column="1" file="machines/machine.h" line="32" />
         <location column="1" file="machines/generic/cartesian.h" line="130" />
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="509" />
         <location column="1" file="machines/rpi/firepickdelta.h" line="579" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="509" />
       </undocumented>
       <undocumented id="machines::generic" name="generic">
         <location column="1" file="machines/generic/cartesian.h" line="131" />
       </undocumented>
       <undocumented id="machines::rpi" name="rpi">
-        <location column="1" file="machines/rpi/kosselrampsfd.h" line="510" />
         <location column="1" file="machines/rpi/firepickdelta.h" line="580" />
+        <location column="1" file="machines/rpi/kosselrampsfd.h" line="510" />
       </undocumented>
       <undocumented id="plat" name="plat">
         <location column="5" file="platforms/generic/chronoclock.h" line="37" />
@@ -3658,28 +3658,6 @@ return values.
       <undocumented name="end" />
       <undocumented name="option" />
     </function>
-    <function id="motion::LinearDeltaStepper::beginLine" name="beginLine">
-      <location column="9" file="motion/lineardeltastepper.h" line="155" />
-      <undocumented name="map" />
-      <undocumented name="vel" />
-      <undocumented name="curPos" />
-    </function>
-    <function id="motion::LinearDeltaStepper::beginArc" name="beginArc">
-      <location column="9" file="motion/lineardeltastepper.h" line="165" />
-      <undocumented name="map" />
-      <undocumented name="center" />
-      <undocumented name="v" />
-      <undocumented name="curPos" />
-      <undocumented name="arcVel" />
-      <undocumented name="u" />
-      <undocumented name="arcRad" />
-      <undocumented name="extVel" />
-    </function>
-    <function id="motion::LinearDeltaStepper::testDir" name="testDir">
-      <location column="9" file="motion/lineardeltastepper.h" line="180" />
-      <undocumented-return />
-      <undocumented name="s" />
-    </function>
     <function id="motion::AngularDeltaStepper::beginLine" name="beginLine">
       <location column="9" file="motion/angulardeltastepper.h" line="160" />
       <undocumented name="map" />
@@ -3711,26 +3689,6 @@ return values.
       <location column="9" file="motion/angulardeltacoordmap.h" line="226" />
       <undocumented-return />
     </function>
-    <function id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="521" />
-      <undocumented-return />
-    </function>
-    <function id="machines::rpi::kosselrampsfd::getAccelerationProfile" name="getAccelerationProfile">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="550" />
-      <undocumented-return />
-    </function>
-    <function id="machines::rpi::kosselrampsfd::getCoordMap" name="getCoordMap">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="557" />
-      <undocumented-return />
-    </function>
-    <function id="machines::rpi::kosselrampsfd::defaultMoveRate" name="defaultMoveRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="592" />
-      <undocumented-return />
-    </function>
-    <function id="machines::rpi::kosselrampsfd::maxRetractRate" name="maxRetractRate">
-      <location column="9" file="machines/rpi/kosselrampsfd.h" line="596" />
-      <undocumented-return />
-    </function>
     <function id="machines::rpi::firepickdelta::getIoDrivers" name="getIoDrivers">
       <location column="9" file="machines/rpi/firepickdelta.h" line="591" />
       <undocumented-return />
@@ -3749,6 +3707,48 @@ return values.
     </function>
     <function id="machines::rpi::firepickdelta::maxRetractRate" name="maxRetractRate">
       <location column="9" file="machines/rpi/firepickdelta.h" line="669" />
+      <undocumented-return />
+    </function>
+    <function id="motion::LinearDeltaStepper::beginLine" name="beginLine">
+      <location column="9" file="motion/lineardeltastepper.h" line="155" />
+      <undocumented name="map" />
+      <undocumented name="vel" />
+      <undocumented name="curPos" />
+    </function>
+    <function id="motion::LinearDeltaStepper::beginArc" name="beginArc">
+      <location column="9" file="motion/lineardeltastepper.h" line="165" />
+      <undocumented name="map" />
+      <undocumented name="center" />
+      <undocumented name="v" />
+      <undocumented name="curPos" />
+      <undocumented name="arcVel" />
+      <undocumented name="u" />
+      <undocumented name="arcRad" />
+      <undocumented name="extVel" />
+    </function>
+    <function id="motion::LinearDeltaStepper::testDir" name="testDir">
+      <location column="9" file="motion/lineardeltastepper.h" line="180" />
+      <undocumented-return />
+      <undocumented name="s" />
+    </function>
+    <function id="machines::rpi::kosselrampsfd::getIoDrivers" name="getIoDrivers">
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="521" />
+      <undocumented-return />
+    </function>
+    <function id="machines::rpi::kosselrampsfd::getAccelerationProfile" name="getAccelerationProfile">
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="550" />
+      <undocumented-return />
+    </function>
+    <function id="machines::rpi::kosselrampsfd::getCoordMap" name="getCoordMap">
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="557" />
+      <undocumented-return />
+    </function>
+    <function id="machines::rpi::kosselrampsfd::defaultMoveRate" name="defaultMoveRate">
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="592" />
+      <undocumented-return />
+    </function>
+    <function id="machines::rpi::kosselrampsfd::maxRetractRate" name="maxRetractRate">
+      <location column="9" file="machines/rpi/kosselrampsfd.h" line="596" />
       <undocumented-return />
     </function>
   </arguments>
