@@ -22,11 +22,13 @@ Compiling
 gcc >= 4.7 is highly recommended because of the benefits gained from link-time optimization, which isn't supported in gcc 4.6 when using C++11  
 gcc 4.7 can be installed in the stock version of Raspbian via `sudo apt-get install g++-4.7` and to use it over the system's gcc, compile with `make CXX=g++-4.7`
 
-First, get the sources: `git clone https://github.com/Wallacoloo/printipi.git`  
+The easiest way to build Printipi is to actually do the compilation directly on the Raspberry Pi.
 
-To compile Printipi, navigate to the src directory and type `make MACHINE=<path/to/machine.h> <target>`, where `<machine>` is the **relative** path to some machine contained under src/machines, e.g. `rpi/kosselrampsfd.h` or the `generic/cartesian.h` machine, and `<target>` is either debug, release, debugrel, profile, or minsize. Both are case-sensitive. Example: `make MACHINE=rpi/kosselrampsfd.h release`.
+First, log into your Raspberry Pi and get the sources: `git clone https://github.com/Wallacoloo/printipi.git`  
 
-A binary will be produced under the `build` directory with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the priority of the task, so run e.g. `sudo ./printipi`).
+Then navigate to the src directory and type `make MACHINE=<path/to/machine.h> <target>`, where `<machine>` is the **relative** path to some machine contained under src/machines, e.g. `rpi/kosselrampsfd.h` or the `generic/cartesian.h` machine, and `<target>` is either debug, release, debugrel, profile, or minsize. Both are case-sensitive. Example: `make MACHINE=rpi/kosselrampsfd.h release`.
+
+A binary will be produced under the `build` directory with the name `printipi`. Navigate to that folder and run the binary (you will want root permissions in order to elevate the scheduling priority of the task, so run e.g. `sudo ./printipi`).
 
 Usage
 ========
