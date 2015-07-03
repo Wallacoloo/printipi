@@ -514,9 +514,7 @@ using namespace motion; //for ConstantAcceleration & such
 
 class kosselrampsfd : public Machine {
     public:
-        //getXXX define wrappers for all the above types. 
-        //  Note that these should serve more as "factory" methods - creating objects - rather than as accessors.
-        
+
         //return a list of miscellaneous IoDrivers (Endstops & A4988 drivers are reachable via <getCoordMap>)
         inline std::tuple<Fan, TempControl<RCThermistor2Pin, PID, LowPassFilter> > getIoDrivers() const {
             return std::make_tuple(
