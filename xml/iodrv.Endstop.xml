@@ -1,6 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="iodrv::Endstop" name="Endstop" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>forward declare for class in "endstop.h"</brief>
+  <doc>
+Endstops are queriable switches placed at the axis limits.
+They typically represent a "known" point to which the device can be homed upon initiailization,
+  or a point beyond which the device should not be pushed.
+</doc>
   <base access="public">
     <type name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
   </base>

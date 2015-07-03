@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class id="gparse::Command" name="Command" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<class abstract="true" id="gparse::Command" name="Command" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
 Command objects represent a single line of gcode.
 They can be parsed from a string, and then can be queried by opcode and parameters.
@@ -27,7 +27,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
   <constructor id="gparse::Command::Command" name="Command">
     <brief>default initialization. All parameters will be initialized to GPARSE_ARG_NOT_PRESENT (typically NaN)</brief>
   </constructor>
-  <constructor id="gparse::Command::Command" name="Command">
+  <constructor abstract="yes" id="gparse::Command::Command" name="Command">
     <brief>initialize the command object from a line of GCode</brief>
     <argument id="gparse::Command::Command::" name="">
       <type name="std::string" qualifier=" const &amp;" />
@@ -66,7 +66,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="float" />
     </argument>
   </method>
-  <method id="gparse::Command::getFloatParam" name="getFloatParam">
+  <method abstract="yes" id="gparse::Command::getFloatParam" name="getFloatParam">
     <brief>get a param, or @def if it wasn't set in this gcode command</brief>
     <return>
       <type builtin="yes" name="float" />
@@ -78,7 +78,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="float" />
     </argument>
   </method>
-  <method id="gparse::Command::getFloatParam" name="getFloatParam">
+  <method abstract="yes" id="gparse::Command::getFloatParam" name="getFloatParam">
     <brief>get a param, returning @GPARSE_ARG_NOT_PRESENT (typically null) if not explicitly set</brief>
     <return>
       <type builtin="yes" name="float" />
@@ -144,7 +144,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="float" />
     </argument>
   </method>
-  <method id="gparse::Command::getOpcode" name="getOpcode">
+  <method abstract="yes" id="gparse::Command::getOpcode" name="getOpcode">
     <return>
       <type name="std::string" />
     </return>
@@ -262,7 +262,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="bool" />
     </return>
   </method>
-  <method id="gparse::Command::hasParam" name="hasParam">
+  <method abstract="yes" id="gparse::Command::hasParam" name="hasParam">
     <return>
       <type builtin="yes" name="bool" />
     </return>
@@ -1036,7 +1036,7 @@ both of these are valid commands, and the ONLY way to reliably parse M117 is to 
       <type builtin="yes" name="bool" />
     </return>
   </method>
-  <method id="gparse::Command::toGCode" name="toGCode">
+  <method abstract="yes" id="gparse::Command::toGCode" name="toGCode">
     <return>
       <type name="std::string" />
     </return>

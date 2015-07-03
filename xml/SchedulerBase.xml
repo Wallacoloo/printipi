@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class id="SchedulerBase" name="SchedulerBase" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<class id="SchedulerBase" interface="true" name="SchedulerBase" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
 SchedulerBase allows any file to insert exit handlers, without adding the entire Scheduler as a dependency.
 </doc>
   <subclass access="public" name="Scheduler" ref="Scheduler#Scheduler" />
-  <method id="SchedulerBase::configureExitHandlers" name="configureExitHandlers" static="yes">
+  <method abstract="yes" id="SchedulerBase::configureExitHandlers" name="configureExitHandlers" static="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
-  <method id="SchedulerBase::registerExitHandler" name="registerExitHandler" static="yes">
+  <method abstract="yes" id="SchedulerBase::registerExitHandler" name="registerExitHandler" static="yes">
     <brief>need to return a value so we can do tricks like `static bool _wasInit=registerExitHandler(...)` to do something just once</brief>
     <return>
       <type builtin="yes" name="bool" />

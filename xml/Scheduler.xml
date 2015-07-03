@@ -59,4 +59,53 @@ This gives the onIdleCpu function the possibility to schedule events using Sched
       <type builtin="yes" name="void" />
     </return>
   </method>
+  <constructor id="Scheduler::Scheduler&lt;Interface&gt;" name="Scheduler&lt;Interface&gt;">
+    <argument id="Scheduler::Scheduler&lt;Interface&gt;::interface" name="interface">
+      <type name="Interface" />
+    </argument>
+  </constructor>
+  <method id="Scheduler::queue" name="queue">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Scheduler::queue::evt" name="evt">
+      <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
+    </argument>
+  </method>
+  <method id="Scheduler::initSchedThread" name="initSchedThread">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="Scheduler::isRoomInBuffer" name="isRoomInBuffer">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+  </method>
+  <method id="Scheduler::eventLoop" name="eventLoop">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="Scheduler::exitEventLoop" name="exitEventLoop">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+  </method>
+  <method id="Scheduler::sleepUntilEvent" name="sleepUntilEvent">
+    <return>
+      <type builtin="yes" name="void" />
+    </return>
+    <argument id="Scheduler::sleepUntilEvent::evt" name="evt">
+      <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
+    </argument>
+  </method>
+  <method id="Scheduler::isEventTime" name="isEventTime">
+    <return>
+      <type builtin="yes" name="bool" />
+    </return>
+    <argument id="Scheduler::isEventTime::evt" name="evt">
+      <type name="OutputEvent" qualifier=" const &amp;" ref="OutputEvent#OutputEvent" />
+    </argument>
+  </method>
 </classtemplate>

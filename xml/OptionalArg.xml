@@ -25,4 +25,7 @@ doSomething(velocity.get(this-&gt;currentVelocity()));
       <type name="const T" qualifier=" const &amp;" />
     </argument>
   </method>
+  <variable id="OptionalArg::NotPresent" name="NotPresent">
+    <type name="OptionalArg&lt;T&gt;" qualifier=" const" ref="OptionalArg#OptionalArg" />
+  </variable>
 </classtemplate>

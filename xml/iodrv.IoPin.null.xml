@@ -1,7 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="iodrv::IoPin::null" name="null" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
-  <doc>null() cannot be implemented as a function, as it would necessitate a copy, which is prohibited</doc>
   <base access="public">
     <type name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
   </base>

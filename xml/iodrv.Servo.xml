@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class id="iodrv::Servo" name="Servo" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<class abstract="true" id="iodrv::Servo" name="Servo" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <brief>Controls a Servo motor.</brief>
   <doc>Servos are controlled by periodically sending a pulse of a specified length.
 The length of that pulse determines the position at which the servo should be placed, and the servo will attempt to stay at that location until the next command.
@@ -28,7 +28,7 @@ while the pulses must occur between 40-200 times per second.</doc>
       <type builtin="yes" name="float" />
     </argument>
   </constructor>
-  <method id="iodrv::Servo::consumeNextEvent" name="consumeNextEvent" override="yes">
+  <method abstract="yes" id="iodrv::Servo::consumeNextEvent" name="consumeNextEvent" override="yes">
     <brief>Used by State for event scheduling.</brief>
     <doc>When the State calls this, it is an acknowledgement that the last event returned from peekNextEvent() has been scheduled.</doc>
     <return>
@@ -42,7 +42,7 @@ while the pulses must occur between 40-200 times per second.</doc>
     </return>
     <override name="IODriver::isServo" ref="iodrv::IODriver#iodrv::IODriver::isServo" />
   </method>
-  <method id="iodrv::Servo::peekNextEvent" name="peekNextEvent" override="yes">
+  <method abstract="yes" id="iodrv::Servo::peekNextEvent" name="peekNextEvent" override="yes">
     <brief>Used by State for event scheduling.</brief>
     <doc>Queries information about the next time this Servo needs to toggle an IoPin</doc>
     <return>
@@ -50,7 +50,7 @@ while the pulses must occur between 40-200 times per second.</doc>
     </return>
     <override name="IODriver::peekNextEvent" ref="iodrv::IODriver#iodrv::IODriver::peekNextEvent" />
   </method>
-  <method id="iodrv::Servo::setServoAngleDegrees" name="setServoAngleDegrees" override="yes">
+  <method abstract="yes" id="iodrv::Servo::setServoAngleDegrees" name="setServoAngleDegrees" override="yes">
     <return>
       <type builtin="yes" name="void" />
     </return>

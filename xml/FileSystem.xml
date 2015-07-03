@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class id="FileSystem" name="FileSystem" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <constructor id="FileSystem::FileSystem" name="FileSystem">
+<class id="FileSystem" interface="true" name="FileSystem" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <constructor abstract="yes" id="FileSystem::FileSystem" name="FileSystem">
     <argument id="FileSystem::FileSystem::nBase" name="nBase">
       <type name="std::string" qualifier=" const &amp;" />
     </argument>
   </constructor>
-  <method id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
+  <method abstract="yes" id="FileSystem::relGcodePathToAbs" name="relGcodePathToAbs">
     <return>
       <type name="std::string" />
     </return>

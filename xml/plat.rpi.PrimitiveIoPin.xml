@@ -1,6 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
 <class id="plat::rpi::PrimitiveIoPin" name="PrimitiveIoPin" xmlns="http://jessevdk.github.com/cldoc/1.0">
-  <brief>forward declare class defined in platforms/rpi/primitiveiopin.h</brief>
   <constructor id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin" name="PrimitiveIoPin">
     <brief>@pinIdx *logical* index of the pin</brief>
     <argument id="plat::rpi::PrimitiveIoPin::PrimitiveIoPin::pinIdx" name="pinIdx">

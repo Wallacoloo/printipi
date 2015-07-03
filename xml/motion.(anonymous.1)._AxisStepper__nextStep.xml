@@ -1,26 +1,26 @@
 <?xml version='1.0' encoding='utf-8'?>
-<struct id="gparse::(anonymous::1)::_AxisStepper__nextStep" name="_AxisStepper__nextStep" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<struct id="motion::(anonymous::1)::_AxisStepper__nextStep" name="_AxisStepper__nextStep" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <brief>Helper class for AxisStepper::nextStep method</brief>
   <doc>this iterates through all steppers and checks if their index is equal to the index of the desired stepper to step.
 if so, it calls _nextStep().
 This allows for _nextStep to act as if it were virtual (by defining a method of that name in a derived type), but without using a vtable.
 It also allows for the compiler to easily optimize the if statements into a jump-table.</doc>
-  <methodtemplate id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()" name="operator()">
+  <methodtemplate id="motion::(anonymous::1)::_AxisStepper__nextStep::operator()" name="operator()">
     <return>
       <type builtin="yes" name="void" />
     </return>
-    <argument id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()::myIdx" name="myIdx">
+    <argument id="motion::(anonymous::1)::_AxisStepper__nextStep::operator()::myIdx" name="myIdx">
       <type name="std::size_t" />
     </argument>
-    <argument id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()::stepper" name="stepper">
+    <argument id="motion::(anonymous::1)::_AxisStepper__nextStep::operator()::stepper" name="stepper">
       <type name="T" qualifier=" &amp;" />
     </argument>
-    <argument id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()::desiredIdx" name="desiredIdx">
+    <argument id="motion::(anonymous::1)::_AxisStepper__nextStep::operator()::desiredIdx" name="desiredIdx">
       <type name="std::size_t" />
     </argument>
-    <argument id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()::useEndstops" name="useEndstops">
+    <argument id="motion::(anonymous::1)::_AxisStepper__nextStep::operator()::useEndstops" name="useEndstops">
       <type builtin="yes" name="bool" />
     </argument>
-    <templatetypeparameter id="gparse::(anonymous::1)::_AxisStepper__nextStep::operator()::T" name="T" />
+    <templatetypeparameter id="motion::(anonymous::1)::_AxisStepper__nextStep::operator()::T" name="T" />
   </methodtemplate>
 </struct>

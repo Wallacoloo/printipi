@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class id="gparse::Com" name="Com" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<class abstract="true" id="gparse::Com" name="Com" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
 Com manages the low-level interfacing with whatever is controlling this printer.
 reads are non-blocking, so tendCom() must be called on a regular basis.
@@ -47,31 +47,31 @@ Com(const std::string &amp;fileR=NULL_FILE_STR, const std::string &amp;fileW=NUL
       <type builtin="yes" name="bool" />
     </argument>
   </constructor>
-  <method id="gparse::Com::getCommand" name="getCommand">
+  <method abstract="yes" id="gparse::Com::getCommand" name="getCommand">
     <brief>returns any pending command.</brief>
     <doc>sequential calls to getCommand() will all return the same command, until reply() is called, at which point the next command will be parsed.</doc>
     <return>
       <type name="Command" qualifier=" const &amp;" ref="gparse::Command#gparse::Command" />
     </return>
   </method>
-  <method id="gparse::Com::hasReadFile" name="hasReadFile">
+  <method abstract="yes" id="gparse::Com::hasReadFile" name="hasReadFile">
     <return>
       <type builtin="yes" name="bool" />
     </return>
   </method>
-  <method id="gparse::Com::hasWriteFile" name="hasWriteFile">
+  <method abstract="yes" id="gparse::Com::hasWriteFile" name="hasWriteFile">
     <return>
       <type builtin="yes" name="bool" />
     </return>
   </method>
-  <method id="gparse::Com::isAtEof" name="isAtEof">
+  <method abstract="yes" id="gparse::Com::isAtEof" name="isAtEof">
     <brief>if reading with dieOnEof=true, and the last command has been parsed (but not necessarily responded to),</brief>
     <doc>then this function will return true</doc>
     <return>
       <type builtin="yes" name="bool" />
     </return>
   </method>
-  <method id="gparse::Com::reply" name="reply">
+  <method abstract="yes" id="gparse::Com::reply" name="reply">
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -79,7 +79,7 @@ Com(const std::string &amp;fileR=NULL_FILE_STR, const std::string &amp;fileW=NUL
       <type name="Response" qualifier=" const &amp;" ref="gparse::Response#gparse::Response" />
     </argument>
   </method>
-  <method id="gparse::Com::tendCom" name="tendCom">
+  <method abstract="yes" id="gparse::Com::tendCom" name="tendCom">
     <brief>returns true if there is a command ready to be interpreted.</brief>
     <return>
       <type builtin="yes" name="bool" />

@@ -14,9 +14,7 @@ These implementations must provide the functions outlined further down in the he
     <brief>Controls a Servo motor.</brief>
   </subclass>
   <subclass access="public" name="TempControl" ref="iodrv::TempControl#iodrv::TempControl" />
-  <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
-    <brief>forward declare for class in "endstop.h"</brief>
-  </subclass>
+  <subclass access="public" name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
   <subclass access="public" name="StepDirStepperDriver" ref="iodrv::StepDirStepperDriver#iodrv::StepDirStepperDriver" />
   <constructor id="iodrv::IODriver::IODriver" name="IODriver" />
   <method id="iodrv::IODriver::consumeNextEvent" name="consumeNextEvent">
