@@ -55,36 +55,59 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
   <namespace name="gparse" ref="gparse#gparse">
     <namespace name="(anonymous::1)" ref="gparse::(anonymous::1)#gparse::(anonymous::1)">
       <brief>internal functions - treat as private</brief>
+      <structtemplate name="__callOnAll" ref="gparse::(anonymous::1)::__callOnAll#gparse::(anonymous::1)::__callOnAll">
+        <brief>callOnAll helper functions:</brief>
+        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::TupleT" name="TupleT" />
+        <templatenontypeparameter default="std" id="gparse::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
+          <type name="std::size_t" />
+        </templatenontypeparameter>
+        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::Func" name="Func" />
+        <templatetypeparameter id="gparse::(anonymous::1)::__callOnAll::Args" name="Args" />
+      </structtemplate>
+      <structtemplate name="__callOnIndex" ref="gparse::(anonymous::1)::__callOnIndex#gparse::(anonymous::1)::__callOnIndex">
+        <brief>callOnIndex helper functions:</brief>
+        <templatetypeparameter id="gparse::(anonymous::1)::__callOnIndex::TupleT" name="TupleT" />
+        <templatenontypeparameter default="std" id="gparse::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
+          <type name="std::size_t" />
+        </templatenontypeparameter>
+        <templatetypeparameter id="gparse::(anonymous::1)::__callOnIndex::Func" name="Func" />
+        <templatetypeparameter id="gparse::(anonymous::1)::__callOnIndex::Args" name="Args" />
+      </structtemplate>
+      <structtemplate name="_AxisStepper__getNextTime" ref="gparse::(anonymous::1)::_AxisStepper__getNextTime#gparse::(anonymous::1)::_AxisStepper__getNextTime">
+        <brief>Helper classes for AxisStepper::getNextTime method</brief>
+        <templatetypeparameter id="gparse::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT" />
+        <templatenontypeparameter id="gparse::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
+          <type builtin="yes" name="int" />
+        </templatenontypeparameter>
+      </structtemplate>
+      <struct name="_AxisStepper__initAxisArcSteppers" ref="gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers#gparse::(anonymous::1)::_AxisStepper__initAxisArcSteppers">
+        <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
+      </struct>
+      <struct name="_AxisStepper__initAxisSteppers" ref="gparse::(anonymous::1)::_AxisStepper__initAxisSteppers#gparse::(anonymous::1)::_AxisStepper__initAxisSteppers">
+        <brief>Helper class for AxisStepper::initAxisSteppers</brief>
+      </struct>
+      <struct name="_AxisStepper__nextStep" ref="gparse::(anonymous::1)::_AxisStepper__nextStep#gparse::(anonymous::1)::_AxisStepper__nextStep">
+        <brief>Helper class for AxisStepper::nextStep method</brief>
+      </struct>
     </namespace>
-    <class name="Command" ref="gparse::Command#gparse::Command" />
-  </namespace>
-  <namespace name="gparse" ref="gparse#gparse">
-    <class name="Response" ref="gparse::Response#gparse::Response" />
-  </namespace>
-  <namespace name="gparse" ref="gparse#gparse">
     <class name="Com" ref="gparse::Com#gparse::Com" />
+    <class name="Command" ref="gparse::Command#gparse::Command" />
     <classtemplate name="ComStreamOwnershipMarker" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker">
       <brief>Used during Com construction to wrap the stream input to give an indication of who owns the stream.</brief>
       <templatetypeparameter id="gparse::ComStreamOwnershipMarker::T" name="T" />
     </classtemplate>
     <class name="ComStreamOwnershipMarker" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker" />
     <class name="ComStreamOwnershipMarker" ref="gparse::ComStreamOwnershipMarker#gparse::ComStreamOwnershipMarker" />
+    <class name="Response" ref="gparse::Response#gparse::Response" />
   </namespace>
   <namespace name="iodrv" ref="iodrv#iodrv">
-    <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin">
-      <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
-        <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
-      </class>
-      <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null" />
+    <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
+      <brief>forward declare for class in "endstop.h"</brief>
     </class>
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv">
+    <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
     <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv">
     <classtemplate name="IODrivers" ref="iodrv::IODrivers#iodrv::IODrivers">
       <templatetypeparameter id="iodrv::IODrivers::TupleT" name="TupleT" />
-      <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
       <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase">
         <brief>Base type for iterators.</brief>
       </class>
@@ -107,23 +130,16 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
         </templatetypeparameter>
       </classtemplate>
     </classtemplate>
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv">
-    <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
-      <brief>forward declare for class in "endstop.h"</brief>
+    <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin">
+      <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
+        <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
+      </class>
     </class>
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv">
-    <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop" />
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv">
+    <class name="RCThermistor2Pin" ref="iodrv::RCThermistor2Pin#iodrv::RCThermistor2Pin" />
+    <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
+      <brief>Controls a Servo motor.</brief>
+    </class>
     <class name="StepDirStepperDriver" ref="iodrv::StepDirStepperDriver#iodrv::StepDirStepperDriver" />
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv" />
-  <namespace name="iodrv" ref="iodrv#iodrv">
-    <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv">
     <classtemplate name="TempControl" ref="iodrv::TempControl#iodrv::TempControl">
       <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
       <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
@@ -138,39 +154,22 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
       </templatetypeparameter>
     </classtemplate>
   </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv">
-    <class name="RCThermistor2Pin" ref="iodrv::RCThermistor2Pin#iodrv::RCThermistor2Pin" />
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv">
-    <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
-      <brief>Controls a Servo motor.</brief>
-    </class>
-  </namespace>
-  <namespace name="iodrv" ref="iodrv#iodrv" />
   <namespace name="logging" ref="logging#logging" />
-  <namespace name="machines" ref="machines#machines">
-    <class name="Machine" ref="machines::Machine#machines::Machine" />
-  </namespace>
   <namespace name="machines" ref="machines#machines">
     <namespace name="generic" ref="machines::generic#machines::generic">
       <class name="cartesian" ref="machines::generic::cartesian#machines::generic::cartesian">
         <brief>for Acceleration &amp; such</brief>
       </class>
     </namespace>
-  </namespace>
-  <namespace name="machines" ref="machines#machines">
-    <namespace name="rpi" ref="machines::rpi#machines::rpi">
-      <class name="kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
-        <brief>for ConstantAcceleration &amp; such</brief>
-      </class>
-    </namespace>
-  </namespace>
-  <namespace name="machines" ref="machines#machines">
     <namespace name="rpi" ref="machines::rpi#machines::rpi">
       <class name="firepickdelta" ref="machines::rpi::firepickdelta#machines::rpi::firepickdelta">
         <brief>for ConstantAcceleration &amp; such</brief>
       </class>
+      <class name="kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
+        <brief>for ConstantAcceleration &amp; such</brief>
+      </class>
     </namespace>
+    <class name="Machine" ref="machines::Machine#machines::Machine" />
   </namespace>
   <namespace name="mathutil" ref="mathutil#mathutil" />
   <namespace name="mitpi" ref="mitpi#mitpi">
@@ -182,101 +181,8 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     </typedef>
   </namespace>
   <namespace name="motion" ref="motion#motion">
+    <brief>for motion::USE_ENDSTOPS</brief>
     <struct name="AccelerationProfile" ref="motion::AccelerationProfile#motion::AccelerationProfile" />
-    <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration">
-      <brief>AccelerationProfile implementation that doesn't perform any acceleration transformation</brief>
-    </struct>
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <namespace name="(anonymous::1)" ref="motion::(anonymous::1)#motion::(anonymous::1)">
-      <structtemplate name="_AxisStepper__getNextTime" ref="motion::(anonymous::1)::_AxisStepper__getNextTime#motion::(anonymous::1)::_AxisStepper__getNextTime">
-        <brief>Helper classes for AxisStepper::getNextTime method</brief>
-        <templatetypeparameter id="motion::(anonymous::1)::_AxisStepper__getNextTime::TupleT" name="TupleT" />
-        <templatenontypeparameter id="motion::(anonymous::1)::_AxisStepper__getNextTime::idx" name="idx">
-          <type builtin="yes" name="int" />
-        </templatenontypeparameter>
-      </structtemplate>
-      <struct name="_AxisStepper__initAxisArcSteppers" ref="motion::(anonymous::1)::_AxisStepper__initAxisArcSteppers#motion::(anonymous::1)::_AxisStepper__initAxisArcSteppers">
-        <brief>Helper class for AxisStepper::initAxisArcSteppers</brief>
-      </struct>
-      <struct name="_AxisStepper__initAxisSteppers" ref="motion::(anonymous::1)::_AxisStepper__initAxisSteppers#motion::(anonymous::1)::_AxisStepper__initAxisSteppers">
-        <brief>Helper class for AxisStepper::initAxisSteppers</brief>
-      </struct>
-      <struct name="_AxisStepper__nextStep" ref="motion::(anonymous::1)::_AxisStepper__nextStep#motion::(anonymous::1)::_AxisStepper__nextStep">
-        <brief>Helper class for AxisStepper::nextStep method</brief>
-      </struct>
-    </namespace>
-    <class name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper" />
-    <classtemplate name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver">
-      <templatetypeparameter id="motion::AxisStepperWithDriver::StepperDriver" name="StepperDriver" />
-    </classtemplate>
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
-      <brief>Easiest way to extract the size of an array from its type.</brief>
-      <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
-    </structtemplate>
-    <classtemplate name="MaxOutputEventSequenceSize" ref="motion::MaxOutputEventSequenceSize#motion::MaxOutputEventSequenceSize">
-      <brief>given a tuple of AxisSteppers, MaxOutputEventSequenceSize&amp;lt;myTuple&amp;gt;::maxSize will return the maximum size</brief>
-      <templatetypeparameter id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes" />
-      <templatenontypeparameter default="std" id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
-        <type name="std::size_t" />
-      </templatenontypeparameter>
-    </classtemplate>
-    <classtemplate name="MotionPlanner" ref="motion::MotionPlanner#motion::MotionPlanner">
-      <templatetypeparameter id="motion::MotionPlanner::Interface" name="Interface" />
-    </classtemplate>
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <class name="CoordMap" ref="motion::CoordMap#motion::CoordMap" />
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <class name="ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <classtemplate name="LinearStepper" ref="motion::LinearStepper#motion::LinearStepper">
-      <templatetypeparameter id="motion::LinearStepper::StepperDriverT" name="StepperDriverT" />
-    </classtemplate>
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <classtemplate name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap">
-      <templatetypeparameter id="motion::LinearCoordMap::Stepper1" name="Stepper1" />
-      <templatetypeparameter id="motion::LinearCoordMap::Stepper2" name="Stepper2" />
-      <templatetypeparameter id="motion::LinearCoordMap::Stepper3" name="Stepper3" />
-      <templatetypeparameter id="motion::LinearCoordMap::Stepper4" name="Stepper4" />
-      <templatetypeparameter id="motion::LinearCoordMap::BedLevelT" name="BedLevelT">
-        <default>
-          <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
-        </default>
-      </templatetypeparameter>
-    </classtemplate>
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <classtemplate name="LinearDeltaStepper" ref="motion::LinearDeltaStepper#motion::LinearDeltaStepper">
-      <templatetypeparameter id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT" />
-    </classtemplate>
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <brief>for motion::USE_ENDSTOPS</brief>
-    <classtemplate name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap">
-      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper1" name="Stepper1" />
-      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper2" name="Stepper2" />
-      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper3" name="Stepper3" />
-      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper4" name="Stepper4" />
-      <templatetypeparameter id="motion::LinearDeltaCoordMap::BedLevelT" name="BedLevelT">
-        <default>
-          <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
-        </default>
-      </templatetypeparameter>
-    </classtemplate>
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <classtemplate name="AngularDeltaStepper" ref="motion::AngularDeltaStepper#motion::AngularDeltaStepper">
-      <templatetypeparameter id="motion::AngularDeltaStepper::StepperDriverT" name="StepperDriverT" />
-    </classtemplate>
-  </namespace>
-  <namespace name="motion" ref="motion#motion">
-    <brief>for motion::USE_ENDSTOPS</brief>
     <classtemplate name="AngularDeltaCoordMap" ref="motion::AngularDeltaCoordMap#motion::AngularDeltaCoordMap">
       <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper1" name="Stepper1" />
       <templatetypeparameter id="motion::AngularDeltaCoordMap::Stepper2" name="Stepper2" />
@@ -288,36 +194,79 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
         </default>
       </templatetypeparameter>
     </classtemplate>
+    <classtemplate name="AngularDeltaStepper" ref="motion::AngularDeltaStepper#motion::AngularDeltaStepper">
+      <templatetypeparameter id="motion::AngularDeltaStepper::StepperDriverT" name="StepperDriverT" />
+    </classtemplate>
+    <structtemplate name="array_size" ref="motion::array_size#motion::array_size">
+      <brief>Easiest way to extract the size of an array from its type.</brief>
+      <templatetypeparameter id="motion::array_size::ArrayT" name="ArrayT" />
+    </structtemplate>
+    <class name="AxisStepper" ref="motion::AxisStepper#motion::AxisStepper" />
+    <classtemplate name="AxisStepperWithDriver" ref="motion::AxisStepperWithDriver#motion::AxisStepperWithDriver">
+      <templatetypeparameter id="motion::AxisStepperWithDriver::StepperDriver" name="StepperDriver" />
+    </classtemplate>
+    <class name="ConstantAcceleration" ref="motion::ConstantAcceleration#motion::ConstantAcceleration" />
+    <class name="CoordMap" ref="motion::CoordMap#motion::CoordMap" />
+    <classtemplate name="LinearCoordMap" ref="motion::LinearCoordMap#motion::LinearCoordMap">
+      <templatetypeparameter id="motion::LinearCoordMap::Stepper1" name="Stepper1" />
+      <templatetypeparameter id="motion::LinearCoordMap::Stepper2" name="Stepper2" />
+      <templatetypeparameter id="motion::LinearCoordMap::Stepper3" name="Stepper3" />
+      <templatetypeparameter id="motion::LinearCoordMap::Stepper4" name="Stepper4" />
+      <templatetypeparameter id="motion::LinearCoordMap::BedLevelT" name="BedLevelT">
+        <default>
+          <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+        </default>
+      </templatetypeparameter>
+    </classtemplate>
+    <classtemplate name="LinearDeltaCoordMap" ref="motion::LinearDeltaCoordMap#motion::LinearDeltaCoordMap">
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper1" name="Stepper1" />
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper2" name="Stepper2" />
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper3" name="Stepper3" />
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::Stepper4" name="Stepper4" />
+      <templatetypeparameter id="motion::LinearDeltaCoordMap::BedLevelT" name="BedLevelT">
+        <default>
+          <type name="Matrix3x3" ref="Matrix3x3#Matrix3x3" />
+        </default>
+      </templatetypeparameter>
+    </classtemplate>
+    <classtemplate name="LinearDeltaStepper" ref="motion::LinearDeltaStepper#motion::LinearDeltaStepper">
+      <templatetypeparameter id="motion::LinearDeltaStepper::StepperDriverT" name="StepperDriverT" />
+    </classtemplate>
+    <classtemplate name="LinearStepper" ref="motion::LinearStepper#motion::LinearStepper">
+      <templatetypeparameter id="motion::LinearStepper::StepperDriverT" name="StepperDriverT" />
+    </classtemplate>
+    <classtemplate name="MaxOutputEventSequenceSize" ref="motion::MaxOutputEventSequenceSize#motion::MaxOutputEventSequenceSize">
+      <brief>given a tuple of AxisSteppers, MaxOutputEventSequenceSize&amp;lt;myTuple&amp;gt;::maxSize will return the maximum size</brief>
+      <templatetypeparameter id="motion::MaxOutputEventSequenceSize::AxisStepperTypes" name="AxisStepperTypes" />
+      <templatenontypeparameter default="std" id="motion::MaxOutputEventSequenceSize::IdxPlusOne" name="IdxPlusOne">
+        <type name="std::size_t" />
+      </templatenontypeparameter>
+    </classtemplate>
+    <classtemplate name="MotionPlanner" ref="motion::MotionPlanner#motion::MotionPlanner">
+      <templatetypeparameter id="motion::MotionPlanner::Interface" name="Interface" />
+    </classtemplate>
+    <struct name="NoAcceleration" ref="motion::NoAcceleration#motion::NoAcceleration">
+      <brief>AccelerationProfile implementation that doesn't perform any acceleration transformation</brief>
+    </struct>
   </namespace>
   <namespace name="plat" ref="plat#plat">
     <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
-    </namespace>
-  </namespace>
-  <namespace name="plat" ref="plat#plat">
-    <namespace name="generic" ref="plat::generic#plat::generic">
+      <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
       <class name="PrimitiveIoPin" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin">
         <brief>Implementation for a basic (do-nothing) GPIO pin</brief>
       </class>
-    </namespace>
-  </namespace>
-  <namespace name="plat" ref="plat#plat">
-    <namespace name="generic" ref="plat::generic#plat::generic">
       <class name="ThisThreadSleep" ref="plat::generic::ThisThreadSleep#plat::generic::ThisThreadSleep" />
     </namespace>
-  </namespace>
-  <namespace name="plat" ref="plat#plat">
-    <namespace name="generic" ref="plat::generic#plat::generic">
-      <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
-    </namespace>
-  </namespace>
-  <namespace name="plat" ref="plat#plat">
     <namespace name="rpi" ref="plat::rpi#plat::rpi">
+      <class name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
       <struct name="DmaChannelHeader" ref="plat::rpi::DmaChannelHeader#plat::rpi::DmaChannelHeader">
         <brief>forward declare classes defined in the platforms/rpi/hardwarescheduler.cpp</brief>
       </struct>
       <struct name="DmaControlBlock" ref="plat::rpi::DmaControlBlock#plat::rpi::DmaControlBlock" />
-      <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame" />
+      <struct name="GpioBufferFrame" ref="plat::rpi::GpioBufferFrame#plat::rpi::GpioBufferFrame">
+        <brief>custom structure used for storing the GPIO buffer.</brief>
+      </struct>
       <class name="HardwareScheduler" ref="plat::rpi::HardwareScheduler#plat::rpi::HardwareScheduler" />
       <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin">
         <brief>forward declare class defined in platforms/rpi/primitiveiopin.h</brief>
@@ -326,38 +275,7 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
       <class name="UnwrappedHardwareScheduler" ref="plat::rpi::UnwrappedHardwareScheduler#plat::rpi::UnwrappedHardwareScheduler" />
     </namespace>
   </namespace>
-  <namespace name="plat" ref="plat#plat">
-    <namespace name="rpi" ref="plat::rpi#plat::rpi">
-      <class name="PrimitiveIoPin" ref="plat::rpi::PrimitiveIoPin#plat::rpi::PrimitiveIoPin" />
-    </namespace>
-  </namespace>
-  <namespace name="plat" ref="plat#plat">
-    <namespace name="rpi" ref="plat::rpi#plat::rpi">
-      <class name="ChronoClock" ref="plat::rpi::ChronoClock#plat::rpi::ChronoClock" />
-    </namespace>
-  </namespace>
-  <namespace name="tupleutil" ref="tupleutil#tupleutil">
-    <namespace name="(anonymous::1)" ref="tupleutil::(anonymous::1)#tupleutil::(anonymous::1)">
-      <structtemplate name="__callOnAll" ref="tupleutil::(anonymous::1)::__callOnAll#tupleutil::(anonymous::1)::__callOnAll">
-        <brief>callOnAll helper functions:</brief>
-        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::TupleT" name="TupleT" />
-        <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnAll::IdxPlusOne" name="IdxPlusOne">
-          <type name="std::size_t" />
-        </templatenontypeparameter>
-        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::Func" name="Func" />
-        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnAll::Args" name="Args" />
-      </structtemplate>
-      <structtemplate name="__callOnIndex" ref="tupleutil::(anonymous::1)::__callOnIndex#tupleutil::(anonymous::1)::__callOnIndex">
-        <brief>callOnIndex helper functions:</brief>
-        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::TupleT" name="TupleT" />
-        <templatenontypeparameter default="std" id="tupleutil::(anonymous::1)::__callOnIndex::MyIdxPlusOne" name="MyIdxPlusOne">
-          <type name="std::size_t" />
-        </templatenontypeparameter>
-        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::Func" name="Func" />
-        <templatetypeparameter id="tupleutil::(anonymous::1)::__callOnIndex::Args" name="Args" />
-      </structtemplate>
-    </namespace>
-  </namespace>
+  <namespace name="tupleutil" ref="tupleutil#tupleutil" />
   <templatetypeparameter id="Drv" name="Drv" />
   <struct name="DefaultGetAccelerationProfile" ref="DefaultGetAccelerationProfile#DefaultGetAccelerationProfile" />
   <struct name="DefaultGetCoordMap" ref="DefaultGetCoordMap#DefaultGetCoordMap" />
@@ -372,12 +290,6 @@ template &amp;lt;typename ... Args&amp;gt; TestMachine&amp;lt;Args...&amp;gt; ma
     <templatetypeparameter id="OptionalArg::T" name="T" />
   </classtemplate>
   <class name="OutputEvent" ref="OutputEvent#OutputEvent" />
-  <class name="OutputEvent" ref="OutputEvent#OutputEvent">
-    <brief>forward declare for class defined in outputevent.h</brief>
-  </class>
-  <class name="OutputEvent" ref="OutputEvent#OutputEvent">
-    <brief>forward declare class defined in outputevent.h</brief>
-  </class>
   <class name="PID" ref="PID#PID" />
   <classtemplate name="Scheduler" ref="Scheduler#Scheduler">
     <templatetypeparameter id="Scheduler::Interface" name="Interface" />

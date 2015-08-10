@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<class abstract="true" id="PID" name="PID" xmlns="http://jessevdk.github.com/cldoc/1.0">
+<class id="PID" name="PID" xmlns="http://jessevdk.github.com/cldoc/1.0">
   <doc>
 PID provides a Proportional-Integral-Derivative controller that can be used as a control feedback mechanism.
 Notably, it is used to determine PWM settings for the hotend based on feedback from a thermistor.
@@ -16,7 +16,7 @@ PID workings: http://en.wikipedia.org/wiki/PID_controller
       <type builtin="yes" name="float" />
     </argument>
   </constructor>
-  <method abstract="yes" id="PID::feed" name="feed">
+  <method id="PID::feed" name="feed">
     <brief> notify PID controller of a newly-read error value.</brief>
     <doc>Returns a recalculated output</doc>
     <return>

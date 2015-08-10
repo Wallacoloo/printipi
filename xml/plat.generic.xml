@@ -1,4 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="plat::generic" name="generic" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <class name="ChronoClock" ref="plat::generic::ChronoClock#plat::generic::ChronoClock" />
   <struct name="HardwareScheduler" ref="plat::generic::HardwareScheduler#plat::generic::HardwareScheduler" />
+  <class name="PrimitiveIoPin" ref="plat::generic::PrimitiveIoPin#plat::generic::PrimitiveIoPin">
+    <brief>Implementation for a basic (do-nothing) GPIO pin</brief>
+  </class>
+  <class name="ThisThreadSleep" ref="plat::generic::ThisThreadSleep#plat::generic::ThisThreadSleep" />
 </namespace>

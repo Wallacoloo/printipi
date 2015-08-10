@@ -20,14 +20,6 @@ These implementations must provide the functions outlined further down in the he
       <type name="TupleT" qualifier=" &amp;" />
     </argument>
     <templatetypeparameter id="motion::AxisStepper::getNextTime::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate id="motion::AxisStepper::getNextTime" name="getNextTime" static="yes">
-    <return>
-      <type name="AxisStepper" qualifier=" &amp;" ref="motion::AxisStepper#motion::AxisStepper" />
-    </return>
-    <argument id="motion::AxisStepper::getNextTime::axes" name="axes">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
     <templatetypeparameter id="motion::AxisStepper::getNextTime::TupleT" name="TupleT" />
   </methodtemplate>
   <methodtemplate id="motion::AxisStepper::initAxisArcSteppers" name="initAxisArcSteppers" static="yes">
@@ -69,41 +61,6 @@ These implementations must provide the functions outlined further down in the he
     <templatenontypeparameter default="std" id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
       <type name="std::size_t" />
     </templatenontypeparameter>
-  </methodtemplate>
-  <methodtemplate id="motion::AxisStepper::initAxisArcSteppers" name="initAxisArcSteppers" static="yes">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::steppers" name="steppers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::useEndstops" name="useEndstops">
-      <type builtin="yes" name="bool" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::map" name="map">
-      <type name="const CoordMapT" qualifier=" const &amp;" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::center" name="center">
-      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::u" name="u">
-      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::v" name="v">
-      <type name="Vector3f" qualifier=" const &amp;" ref="index#Vector3f" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::arcRad" name="arcRad">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::arcVel" name="arcVel">
-      <type builtin="yes" name="float" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisArcSteppers::extVel" name="extVel">
-      <type builtin="yes" name="float" />
-    </argument>
     <templatetypeparameter id="motion::AxisStepper::initAxisArcSteppers::TupleT" name="TupleT" />
     <templatetypeparameter id="motion::AxisStepper::initAxisArcSteppers::CoordMapT" name="CoordMapT" />
     <templatenontypeparameter default="std" id="motion::AxisStepper::initAxisArcSteppers::MechSize" name="MechSize">
@@ -134,26 +91,6 @@ These implementations must provide the functions outlined further down in the he
     <templatenontypeparameter default="std" id="motion::AxisStepper::initAxisSteppers::MechSize" name="MechSize">
       <type name="std::size_t" />
     </templatenontypeparameter>
-  </methodtemplate>
-  <methodtemplate id="motion::AxisStepper::initAxisSteppers" name="initAxisSteppers" static="yes">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="motion::AxisStepper::initAxisSteppers::steppers" name="steppers">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisSteppers::useEndstops" name="useEndstops">
-      <type builtin="yes" name="bool" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisSteppers::map" name="map">
-      <type name="const CoordMapT" qualifier=" const &amp;" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisSteppers::curPos" name="curPos">
-      <type name="std::array&lt;typename, std::size_t&gt;" qualifier=" const &amp;" />
-    </argument>
-    <argument id="motion::AxisStepper::initAxisSteppers::vel" name="vel">
-      <type name="Vector4f" qualifier=" const &amp;" ref="index#Vector4f" />
-    </argument>
     <templatetypeparameter id="motion::AxisStepper::initAxisSteppers::TupleT" name="TupleT" />
     <templatetypeparameter id="motion::AxisStepper::initAxisSteppers::CoordMapT" name="CoordMapT" />
     <templatenontypeparameter default="std" id="motion::AxisStepper::initAxisSteppers::MechSize" name="MechSize">
@@ -171,17 +108,6 @@ These implementations must provide the functions outlined further down in the he
       <type builtin="yes" name="bool" />
     </argument>
     <templatetypeparameter id="motion::AxisStepper::nextStep::TupleT" name="TupleT" />
-  </methodtemplate>
-  <methodtemplate id="motion::AxisStepper::nextStep" name="nextStep">
-    <return>
-      <type builtin="yes" name="void" />
-    </return>
-    <argument id="motion::AxisStepper::nextStep::axes" name="axes">
-      <type name="TupleT" qualifier=" &amp;" />
-    </argument>
-    <argument id="motion::AxisStepper::nextStep::useEndstops" name="useEndstops">
-      <type builtin="yes" name="bool" />
-    </argument>
     <templatetypeparameter id="motion::AxisStepper::nextStep::TupleT" name="TupleT" />
   </methodtemplate>
   <field id="motion::AxisStepper::time" name="time">

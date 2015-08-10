@@ -3,4 +3,7 @@
   <class name="firepickdelta" ref="machines::rpi::firepickdelta#machines::rpi::firepickdelta">
     <brief>for ConstantAcceleration &amp; such</brief>
   </class>
+  <class name="kosselrampsfd" ref="machines::rpi::kosselrampsfd#machines::rpi::kosselrampsfd">
+    <brief>for ConstantAcceleration &amp; such</brief>
+  </class>
 </namespace>

@@ -1,4 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="machines" name="machines" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <namespace name="generic" ref="machines::generic#machines::generic" />
   <namespace name="rpi" ref="machines::rpi#machines::rpi" />
+  <class name="Machine" ref="machines::Machine#machines::Machine" />
 </namespace>

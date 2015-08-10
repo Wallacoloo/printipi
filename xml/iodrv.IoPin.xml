@@ -4,7 +4,9 @@
 IoPin defines the interface for a GPIO pin, as well as default implementations of each function in case they aren't supported by the actual driver.
 Each microcontroller platform should provide its own IoPin implementation that inherits from this class.
 </doc>
-  <subclass access="public" name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null" />
+  <subclass access="public" name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
+    <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
+  </subclass>
   <methodtemplate id="iodrv::IoPin::IoPin" name="IoPin">
     <brief>Create an IoPin given its inversions, and forward the remaining arguments to PrimitiveIoPin</brief>
     <return>
@@ -21,7 +23,6 @@ Each microcontroller platform should provide its own IoPin implementation that i
   <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null">
     <brief>forward-declare a 'null' class for IoPin so that we can initialze IoPin(IoPin::null()) explicitly</brief>
   </class>
-  <class name="null" ref="iodrv::IoPin::null#iodrv::IoPin::null" />
   <constructor abstract="yes" id="iodrv::IoPin::IoPin" name="IoPin">
     <brief>prevent copy operations to make pin lifetime-tracking easier.</brief>
     <doc>otherwise, we end up with a pin resetting itself everytime its copied</doc>
@@ -29,26 +30,26 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type name="IoPin" qualifier=" const &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
     </argument>
   </constructor>
-  <constructor abstract="yes" id="iodrv::IoPin::IoPin" name="IoPin">
+  <constructor id="iodrv::IoPin::IoPin" name="IoPin">
     <brief>allow the move constructor</brief>
     <argument id="iodrv::IoPin::IoPin::other" name="other">
       <type name="IoPin &amp;&amp;" />
     </argument>
   </constructor>
-  <destructor abstract="yes" id="iodrv::IoPin::~IoPin" name="~IoPin" />
-  <method abstract="yes" id="iodrv::IoPin::deactivateAll" name="deactivateAll" static="yes">
+  <destructor id="iodrv::IoPin::~IoPin" name="~IoPin" />
+  <method id="iodrv::IoPin::deactivateAll" name="deactivateAll" static="yes">
     <brief>set all pins to their (safe) default output:</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::digitalRead" name="digitalRead">
+  <method id="iodrv::IoPin::digitalRead" name="digitalRead">
     <brief>Read a binary logic level from the pin. MUST first call makeDigitalInput() to put the pin in input mode.</brief>
     <return>
       <type name="IoLevel" ref="index#IoLevel" />
     </return>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::digitalWrite" name="digitalWrite">
+  <method id="iodrv::IoPin::digitalWrite" name="digitalWrite">
     <brief>Write a binary logic level to the pin (IoHigh or IoLow). MUST first call makeDigitalOutput() to put the pin in output mode.</brief>
     <return>
       <type builtin="yes" name="void" />
@@ -57,19 +58,19 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type name="IoLevel" ref="index#IoLevel" />
     </argument>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::isNull" name="isNull">
+  <method id="iodrv::IoPin::isNull" name="isNull">
     <brief>@return true if the underlying PrimitiveIoPin is null (either IoPin was construction via IoPin::null(), or IoPin(..., PrimitiveIoPin::null()))</brief>
     <return>
       <type builtin="yes" name="bool" />
     </return>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::makeDigitalInput" name="makeDigitalInput">
+  <method id="iodrv::IoPin::makeDigitalInput" name="makeDigitalInput">
     <brief>Configure the pin as an input</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
+  <method id="iodrv::IoPin::makeDigitalOutput" name="makeDigitalOutput">
     <brief>set the pin as a digital output, and give it the specified state.</brief>
     <doc>Doing these two actions together allow us to prevent the pin from ever being in an undefined state.</doc>
     <return>
@@ -79,7 +80,7 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type name="IoLevel" ref="index#IoLevel" />
     </argument>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::makePwmOutput" name="makePwmOutput">
+  <method id="iodrv::IoPin::makePwmOutput" name="makePwmOutput">
     <brief>set the pin as a pwm output &amp; give it the desired duty / period.</brief>
     <doc>Doing these two actions together allow us to prevent the pin from ever being in an undefined state.</doc>
     <return>
@@ -100,7 +101,7 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type name="IoPin" qualifier=" const &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
     </argument>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::operator=" name="operator=">
+  <method id="iodrv::IoPin::operator=" name="operator=">
     <brief>allow move assignment</brief>
     <return>
       <type name="IoPin" qualifier=" &amp;" ref="iodrv::IoPin#iodrv::IoPin" />
@@ -109,12 +110,12 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type name="IoPin &amp;&amp;" />
     </argument>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::primitiveIoPin" name="primitiveIoPin">
+  <method id="iodrv::IoPin::primitiveIoPin" name="primitiveIoPin">
     <return>
       <type name="PrimitiveIoPin" qualifier=" const &amp;" ref="index#PrimitiveIoPin" />
     </return>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::pwmWrite" name="pwmWrite">
+  <method id="iodrv::IoPin::pwmWrite" name="pwmWrite">
     <brief>Set the pin to output a PWM signal. MUST first call makePwmOutput() to put the pin in pwm mode.</brief>
     <return>
       <type builtin="yes" name="void" />
@@ -128,7 +129,7 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type name="plat::generic::ChronoClock::duration" ref="plat::generic::ChronoClock#plat::generic::ChronoClock::duration" />
     </argument>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::setDefaultState" name="setDefaultState">
+  <method id="iodrv::IoPin::setDefaultState" name="setDefaultState">
     <return>
       <type builtin="yes" name="void" />
     </return>
@@ -136,13 +137,13 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type name="DefaultIoState" ref="iodrv#iodrv::DefaultIoState" />
     </argument>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::setToDefault" name="setToDefault">
+  <method id="iodrv::IoPin::setToDefault" name="setToDefault">
     <brief>put the pin into its default state, as set by setDefaultState(...).</brief>
     <return>
       <type builtin="yes" name="void" />
     </return>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::translateDutyCycleToPrimitive" name="translateDutyCycleToPrimitive">
+  <method id="iodrv::IoPin::translateDutyCycleToPrimitive" name="translateDutyCycleToPrimitive">
     <return>
       <type builtin="yes" name="float" />
     </return>
@@ -150,7 +151,7 @@ Each microcontroller platform should provide its own IoPin implementation that i
       <type builtin="yes" name="float" />
     </argument>
   </method>
-  <method abstract="yes" id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
+  <method id="iodrv::IoPin::translateWriteToPrimitive" name="translateWriteToPrimitive">
     <brief>Convert a write level such that IoPin.digitalWrite(lev) is the same as IoPin.primitiveIoPin().digitalWrite(&amp;lt;translated level&amp;gt;)</brief>
     <doc>where &amp;lt;translated level&amp;gt; is the value returned by this function</doc>
     <return>

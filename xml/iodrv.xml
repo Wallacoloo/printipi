@@ -1,5 +1,76 @@
 <?xml version='1.0' encoding='utf-8'?>
 <namespace id="iodrv" name="iodrv" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <class name="Endstop" ref="iodrv::Endstop#iodrv::Endstop">
+    <brief>forward declare for class in "endstop.h"</brief>
+  </class>
+  <class name="Fan" ref="iodrv::Fan#iodrv::Fan" />
+  <class name="IODriver" ref="iodrv::IODriver#iodrv::IODriver" />
+  <classtemplate name="IODrivers" ref="iodrv::IODrivers#iodrv::IODrivers">
+    <templatetypeparameter id="iodrv::IODrivers::TupleT" name="TupleT" />
+  </classtemplate>
+  <class name="IoPin" ref="iodrv::IoPin#iodrv::IoPin" />
+  <class name="RCThermistor2Pin" ref="iodrv::RCThermistor2Pin#iodrv::RCThermistor2Pin" />
+  <class name="Servo" ref="iodrv::Servo#iodrv::Servo">
+    <brief>Controls a Servo motor.</brief>
+  </class>
+  <class name="StepDirStepperDriver" ref="iodrv::StepDirStepperDriver#iodrv::StepDirStepperDriver" />
+  <classtemplate name="TempControl" ref="iodrv::TempControl#iodrv::TempControl">
+    <templatetypeparameter id="iodrv::TempControl::Thermistor" name="Thermistor" />
+    <templatetypeparameter id="iodrv::TempControl::PID" name="PID">
+      <default>
+        <type name="PID" ref="PID#PID" />
+      </default>
+    </templatetypeparameter>
+    <templatetypeparameter id="iodrv::TempControl::Filter" name="Filter">
+      <default>
+        <type name="NoFilter" ref="NoFilter#NoFilter" />
+      </default>
+    </templatetypeparameter>
+  </classtemplate>
+  <enum anonymous="yes" id="iodrv::DefaultIoState" name="DefaultIoState">
+    <enumvalue id="iodrv::IO_DEFAULT_NONE" name="IO_DEFAULT_NONE" value="0" />
+    <enumvalue id="iodrv::IO_DEFAULT_HIGH_IMPEDANCE" name="IO_DEFAULT_HIGH_IMPEDANCE" value="1" />
+    <enumvalue id="iodrv::IO_DEFAULT_LOW" name="IO_DEFAULT_LOW" value="2" />
+    <enumvalue id="iodrv::IO_DEFAULT_HIGH" name="IO_DEFAULT_HIGH" value="3" />
+  </enum>
+  <enum anonymous="yes" id="iodrv::IoPinInversions" name="IoPinInversions">
+    <enumvalue id="iodrv::NO_INVERSIONS" name="NO_INVERSIONS" value="0">
+      <brief>bitfield that can be used to indicate whether a pin has logically-inverted reads/writes</brief>
+    </enumvalue>
+    <enumvalue id="iodrv::INVERT_READS" name="INVERT_READS" value="1" />
+    <enumvalue id="iodrv::INVERT_WRITES" name="INVERT_WRITES" value="2" />
+    <function id="iodrv::operator|" name="operator|">
+      <brief>bitwise OR operator for IoPinInversions, to avoid INVERT_READS|INVERT_WRITES resulting in an integer type instead of a IoPinInversions type.</brief>
+      <return>
+        <type name="IoPinInversions" ref="iodrv#iodrv::IoPinInversions" />
+      </return>
+      <argument id="iodrv::operator|::a" name="a">
+        <type name="IoPinInversions" ref="iodrv#iodrv::IoPinInversions" />
+      </argument>
+      <argument id="iodrv::operator|::b" name="b">
+        <type name="IoPinInversions" ref="iodrv#iodrv::IoPinInversions" />
+      </argument>
+    </function>
+  </enum>
+  <enum anonymous="yes" id="iodrv::IoPinMode" name="IoPinMode">
+    <brief>Used only in debug mode to detect errors when a write is attempted on a pin set to input mode, etc.</brief>
+    <enumvalue id="iodrv::IOPIN_MODE_UNSPECIFIED" name="IOPIN_MODE_UNSPECIFIED" value="0" />
+    <enumvalue id="iodrv::IOPIN_MODE_INPUT" name="IOPIN_MODE_INPUT" value="1" />
+    <enumvalue id="iodrv::IOPIN_MODE_OUTPUT" name="IOPIN_MODE_OUTPUT" value="2" />
+    <enumvalue id="iodrv::IOPIN_MODE_PWM" name="IOPIN_MODE_PWM" value="3" />
+  </enum>
+  <enum anonymous="yes" id="iodrv::TempControlType" name="TempControlType">
+    <brief>enum passed to instructor to define the TempControl instance as either controlling a Hotend or a Heated Bed.</brief>
+    <doc>Functionally, they work the same, but each type responds to different G-codes.</doc>
+    <enumvalue id="iodrv::HotendType" name="HotendType" value="0" />
+    <enumvalue id="iodrv::HeatedBedType" name="HeatedBedType" value="1" />
+  </enum>
+  <typedef id="iodrv::A4988" name="A4988">
+    <brief>The A4988 is just a stock STEP+DIRECTION stepper driver.</brief>
+    <doc>A4988 docs: http://www.pololu.com/file/download/a4988_DMOS_microstepping_driver_with_translator.pdf?file_id=0J450
+TODO: in future, we ought to pass the minimum high/low time into the StepDirStepperDriver</doc>
+    <type name="StepDirStepperDriver" ref="iodrv::StepDirStepperDriver#iodrv::StepDirStepperDriver" />
+  </typedef>
   <typedef id="iodrv::DRV8825" name="DRV8825">
     <brief>The DRV8825 is just a stock STEP+DIRECTION stepper driver.</brief>
     <doc>DRV8825 docs: https://www.pololu.com/product/2133

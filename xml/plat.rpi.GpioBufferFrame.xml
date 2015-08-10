@@ -1,2 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<struct id="plat::rpi::GpioBufferFrame" name="GpioBufferFrame" xmlns="http://jessevdk.github.com/cldoc/1.0" />
+<struct id="plat::rpi::GpioBufferFrame" name="GpioBufferFrame" xmlns="http://jessevdk.github.com/cldoc/1.0">
+  <brief>custom structure used for storing the GPIO buffer.</brief>
+  <doc>These BufferFrame's are DMA'd into the GPIO memory, potentially using the DmaEngine's Stride facility</doc>
+</struct>

@@ -19,7 +19,9 @@ Provides several conveniences, like iterators and filtering
       <type name="TupleT" qualifier=" &amp;" />
     </return>
   </method>
-  <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase" />
+  <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase">
+    <brief>Base type for iterators.</brief>
+  </class>
   <typedef id="iodrv::IODrivers::GenericLockAxis" name="GenericLockAxis">
     <brief>Wrap the generic functions to either accept (driver, args...) or (index, driver, args...) as function arguments</brief>
     <doc>The index argument is provided by tupleutil::callOn*, but other places (e.g. predicates) expect no index argument.</doc>
@@ -70,9 +72,6 @@ Provides several conveniences, like iterators and filtering
   <typedef id="iodrv::IODrivers::GenericOnIdleCpu" name="GenericOnIdleCpu">
     <type name="IODrivers&lt;TupleT&gt;::IndexOptional&lt;T&gt;" ref="iodrv::IODrivers::IndexOptional#iodrv::IODrivers::IndexOptional" />
   </typedef>
-  <class name="iteratorbase" ref="iodrv::IODrivers::iteratorbase#iodrv::IODrivers::iteratorbase">
-    <brief>Base type for iterators.</brief>
-  </class>
   <classtemplate name="iterator" ref="iodrv::IODrivers::iterator#iodrv::IODrivers::iterator">
     <brief>iterator class that also supports a filter predicate.</brief>
     <templatetypeparameter id="iodrv::IODrivers::iterator::Predicate" name="Predicate">
