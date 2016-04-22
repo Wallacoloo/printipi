@@ -15,6 +15,10 @@ Demos
 Printipi powering a Mini Kossel @ 120mm/sec (2014/10/19): http://youtu.be/gAruwqOEuPs  
 Printipi powering a Mini Kossel (2014/08/18): http://youtu.be/g4UD5MRas3E  
 
+Pi2/Pi Zero/Pi [future version]
+========
+A handful of users have reported issues when using Printipi on the Raspberry Pi 2, which are most likely related to DMA. Don't expect Printipi to work on a Pi 2 without modification (but please do contact me if you get it working).
+
 Compiling
 ========
 
